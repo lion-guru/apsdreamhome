@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>सुपर एडमिन यूजर गाइड</title>
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .guide-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .guide-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .step {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        .tip {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+            margin: 10px 0;
+        }
+        #language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <select id="language-selector" class="form-select" onchange="switchLanguage(this.value)">
+        <option value="hi">हिंदी</option>
+        <option value="en">English</option>
+    </select>
+
+    <div class="container">
+        <h1 class="text-center mb-4">सुपर एडमिन यूजर गाइड</h1>
+
+        <div class="guide-section">
+            <h3 id="template-management">1. टेम्पलेट मैनेजमेंट</h3>
+            <div class="step">
+                <h4 id="new-template">नया टेम्पलेट बनाना:</h4>
+                <ol id="new-template-steps">
+                    <li>टेम्पलेट लिस्ट पेज पर जाएं</li>
+                    <li>"Create New Template" बटन पर क्लिक करें</li>
+                    <li>टेम्पलेट का नाम और विवरण दर्ज करें</li>
+                    <li>कंटेंट एडिटर में टेम्पलेट का डिज़ाइन करें</li>
+                    <li>Save बटन पर क्लिक करें</li>
+                </ol>
+            </div>
+            <div class="step">
+                <h4 id="edit-template">टेम्पलेट एडिट करना:</h4>
+                <ol id="edit-template-steps">
+                    <li>टेम्पलेट लिस्ट में से टेम्पलेट चुनें</li>
+                    <li>Edit बटन पर क्लिक करें</li>
+                    <li>आवश्यक बदलाव करें</li>
+                    <li>Save बटन पर क्लिक करें</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3 id="user-management">2. यूजर मैनेजमेंट</h3>
+            <div class="step">
+                <h4 id="new-user">नया यूजर बनाना:</h4>
+                <ol id="new-user-steps">
+                    <li>एडमिन लिस्ट पेज पर जाएं</li>
+                    <li>"Add New Admin" बटन पर क्लिक करें</li>
+                    <li>यूजर की जानकारी भरें</li>
+                    <li>रोल और परमिशन सेट करें</li>
+                    <li>Save बटन पर क्लिक करें</li>
+                </ol>
+            </div>
+            <div class="step">
+                <h4 id="manage-permissions">यूजर परमिशन मैनेज करना:</h4>
+                <ol id="permission-steps">
+                    <li>एडमिन लिस्ट में से यूजर चुनें</li>
+                    <li>Edit बटन पर क्लिक करें</li>
+                    <li>परमिशन सेक्शन में जाएं</li>
+                    <li>आवश्यक परमिशन अपडेट करें</li>
+                    <li>Save बटन पर क्लिक करें</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3 id="content-management">3. कंटेंट मैनेजमेंट</h3>
+            <div class="step">
+                <h4 id="update-page">पेज कंटेंट अपडेट करना:</h4>
+                <ol id="update-page-steps">
+                    <li>कंटेंट मैनेजमेंट सेक्शन में जाएं</li>
+                    <li>एडिट करने के लिए पेज चुनें</li>
+                    <li>कंटेंट एडिटर में बदलाव करें</li>
+                    <li>प्रीव्यू चेक करें</li>
+                    <li>Publish बटन पर क्लिक करें</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3 id="important-tips">4. महत्वपूर्ण टिप्स</h3>
+            <div class="tip">
+                <p id="security-tip"><strong>सुरक्षा टिप:</strong> हमेशा मजबूत पासवर्ड का उपयोग करें और नियमित रूप से पासवर्ड बदलें।</p>
+            </div>
+            <div class="tip">
+                <p id="backup-tip"><strong>बैकअप टिप:</strong> महत्वपूर्ण बदलाव करने से पहले बैकअप लें।</p>
+            </div>
+            <div class="tip">
+                <p id="permission-tip"><strong>परमिशन टिप:</strong> यूजर्स को केवल वही परमिशन दें जो उन्हें वास्तव में चाहिए।</p>
+            </div>
+        </div>
+
+        <div class="guide-section">
+            <h3 id="help-support">5. सहायता और समर्थन</h3>
+            <p id="contact-info">किसी भी समस्या या सहायता के लिए, कृपया संपर्क करें:</p>
+            <ul>
+                <li id="technical-support">टेक्निकल सपोर्ट: support@example.com</li>
+                <li id="help-desk">हेल्प डेस्क: 1800-XXX-XXXX</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="../assets/js/language-switcher.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Set base directory
+RewriteBase /apsdreamhomefinal/
+
+# Ensure HTTPS is optional for development
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# PHP configuration
+php_value display_errors 1
+php_value error_reporting E_ALL
+php_value session.cookie_httponly 1
+php_value session.use_only_cookies 1
+php_value session.cookie_secure 0
+php_value session.gc_maxlifetime 1800
+
+# Set PHP version
+AddHandler application/x-httpd-php81 .php
+AddType application/x-httpd-php81 .php
+
+# Enable PHP 8.1 features
+php_flag opcache.enable 1
+php_value opcache.memory_consumption 128
+php_value opcache.interned_strings_buffer 8
+php_value opcache.max_accelerated_files 4000
+php_flag opcache.validate_timestamps 1
+
+# Prevent directory listing
+Options -Indexes
+
+# Set default character set
+AddDefaultCharset UTF-8
+
+# Enable PHP short tags
+php_flag short_open_tag on
+
+# Set maximum execution time
+php_value max_execution_time 300
+
+# Set maximum upload size
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+
+ErrorDocument 404 /404.php

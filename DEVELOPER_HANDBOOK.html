@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>APS Dream Homes Developer & Admin Handbook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; color: #222; }
+    .container { max-width: 900px; margin-top: 40px; margin-bottom: 40px; background: #fff; border-radius: 10px; box-shadow: 0 5px 30px rgba(0,0,0,0.07); padding: 40px; }
+    h1, h2, h3 { color: #0d6efd; }
+    pre, code { background: #f1f3f4; border-radius: 4px; padding: 2px 6px; }
+    hr { margin: 2rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>APS Dream Homes Developer & Admin Handbook</h1>
+    <h2>1. Project Overview</h2>
+    <p>APS Dream Homes is an enterprise-grade real estate platform with advanced automation, AI, analytics, marketplace, and multi-cloud support.</p>
+    <h2>2. Architecture</h2>
+    <ul>
+      <li><strong>Backend:</strong> Modular PHP, MySQL, RBAC, API-first</li>
+      <li><strong>Frontend:</strong> Bootstrap, custom JS, onboarding tours, push notifications</li>
+      <li><strong>Cloud:</strong> Multi-cloud ready, auto-scaling, backup/restore scripts</li>
+      <li><strong>APIs:</strong> Internal/external, developer portal, monetization</li>
+    </ul>
+    <h2>3. Module Guide</h2>
+    <ul>
+      <li><strong>Admin:</strong> <code>/admin/</code> – Dashboards, analytics, compliance, onboarding, chat, rewards, feedback, app store, scaling, partner tools</li>
+      <li><strong>Customer/Agent:</strong> Portals for search, onboarding, bookings, support</li>
+      <li><strong>AI/ML:</strong> Fraud detection, legal review, app recommendation, sentiment analysis</li>
+      <li><strong>Marketplace:</strong> App listing, reviews, partner certification, monetization</li>
+      <li><strong>No-Code:</strong> Drag-and-drop builder for workflows/dashboards</li>
+      <li><strong>Payments:</strong> Global, multi-currency, in-app purchases</li>
+    </ul>
+    <h2>4. Operations</h2>
+    <ul>
+      <li><strong>Backups:</strong> Use <code>scripts/backup.sh</code> and <code>scripts/restore.sh</code></li>
+      <li><strong>CI/CD:</strong> <code>scripts/ci_cd.ps1</code> for linting, tests, and deployment</li>
+      <li><strong>Health:</strong> <code>admin/health_check.php</code> for self-healing and monitoring</li>
+      <li><strong>Duplicate Scan:</strong> Use <code>duplicate_files_report.csv</code> for codebase hygiene</li>
+    </ul>
+    <h2>5. Developer Onboarding</h2>
+    <ul>
+      <li>Read <code>README.md</code> and this handbook</li>
+      <li>Set up <code>.env</code> and database as per instructions</li>
+      <li>Run all migration scripts in <code>/database/</code></li>
+      <li>Use onboarding tours and analytics dashboard for feature discovery</li>
+    </ul>
+    <h2>6. Coding & Database Standards</h2>
+    <ul>
+      <li>Use prepared statements for all DB queries</li>
+      <li>Modularize new features (separate admin, API, customer, and DB logic)</li>
+      <li>Document new modules in this handbook and README</li>
+      <li>Use RBAC and audit logging for all sensitive actions</li>
+    </ul>
+    <h2>7. Troubleshooting & Escalation</h2>
+    <ul>
+      <li>Check <code>admin/health_check.php</code> for system health</li>
+      <li>Review error logs and analytics dashboard for issues</li>
+      <li>Restore from backup if needed</li>
+      <li>Escalate to lead dev/ops for critical incidents</li>
+    </ul>
+    <h2>8. Future Roadmap (2025+)</h2>
+    <ul>
+      <li>Expand marketplace and AI/ML integrations</li>
+      <li>Add more onboarding and automation flows</li>
+      <li>Enhance analytics with real-time and predictive insights</li>
+      <li>Move toward fully autonomous, self-healing infrastructure</li>
+    </ul>
+    <hr>
+    <p><strong>Keep this handbook updated with every major release and share it with all new team members!</strong></p>
+  </div>
+</body>
+</html>
