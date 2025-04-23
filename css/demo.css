@@ -1,0 +1,158 @@
+/* Demo styles for organizational charts and special features */
+
+/* Basic reset */
+* {
+    box-sizing: border-box;
+}
+
+/* Demo-specific styles */
+.demo-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+
+.demo-title {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Organizational chart styles */
+.org-chart {
+    text-align: center;
+}
+
+.org-chart ul {
+    padding-top: 20px;
+    position: relative;
+    transition: all 0.5s;
+}
+
+.org-chart li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0 5px;
+    transition: all 0.5s;
+}
+
+.org-chart li::before,
+.org-chart li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 50%;
+    border-top: 1px solid #ccc;
+    width: 50%;
+    height: 20px;
+}
+
+.org-chart li::after {
+    right: auto;
+    left: 50%;
+    border-left: 1px solid #ccc;
+}
+
+.org-chart li:only-child::after,
+.org-chart li:only-child::before {
+    display: none;
+}
+
+.org-chart li:only-child {
+    padding-top: 0;
+}
+
+.org-chart li:first-child::before,
+.org-chart li:last-child::after {
+    border: 0 none;
+}
+
+.org-chart li:last-child::before {
+    border-right: 1px solid #ccc;
+    border-radius: 0 5px 0 0;
+}
+
+.org-chart li:first-child::after {
+    border-radius: 5px 0 0 0;
+}
+
+.org-chart ul ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    border-left: 1px solid #ccc;
+    width: 0;
+    height: 20px;
+}
+
+.org-chart li a {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #333;
+    background-color: white;
+    display: inline-block;
+    border-radius: 5px;
+    transition: all 0.5s;
+}
+
+.org-chart li a:hover {
+    background-color: #f8f8f8;
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* Downline specific styles */
+.downline-container {
+    margin-top: 30px;
+}
+
+.downline-level {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.downline-level-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #3498db;
+}
+
+.downline-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.downline-member {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    min-width: 150px;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .org-chart li {
+        float: none;
+        display: block;
+        padding: 0;
+        margin: 0 0 10px 0;
+    }
+    
+    .org-chart li::before,
+    .org-chart li::after,
+    .org-chart ul ul::before {
+        display: none;
+    }
+}

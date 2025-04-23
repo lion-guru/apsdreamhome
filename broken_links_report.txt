@@ -1,0 +1,277 @@
+टूटे हुए लिंक्स रिपोर्ट - 2025-04-15 16:58:38
+
+2025-04-15 16:58:38 - टूटे हुए लिंक्स की जांच शुरू हो रही है...
+2025-04-15 16:58:38 - डायरेक्टरी में 97 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: testingdash.php
+2025-04-15 16:58:38 -   - मिसिंग CSS: assets/vendor/perfect-scrollbar/perfect-scrollbar.css
+2025-04-15 16:58:38 -   - मिसिंग JS: vendor/jquery-3.2.1.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: vendor/counter-up/jquery.waypoints.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: vendor/counter-up/jquery.counterup.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: vendor/circle-progress/circle-progress.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: vendor/chartjs/Chart.bundle.min.js
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: varanasi-ganga-nagri.php
+2025-04-15 16:58:38 -   - मिसिंग CSS: js/bootstrap/bootstrap.min.css
+2025-04-15 16:58:38 -   - मिसिंग CSS: js/mainmenu/menu.css
+2025-04-15 16:58:38 -   - मिसिंग CSS: js/masterslider/style/masterslider.css
+2025-04-15 16:58:38 -   - मिसिंग CSS: js/cubeportfolio/cubeportfolio.min.css
+2025-04-15 16:58:38 -   - मिसिंग CSS: js/style-swicher/style-swicher.css
+2025-04-15 16:58:38 -   - मिसिंग CSS: js/custom-scrollbar/jquery.mCustomScrollbar.css
+2025-04-15 16:58:38 -   - मिसिंग CSS: sidenavi-right.css
+2025-04-15 16:58:38 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/PHPMailer
+2025-04-15 16:58:38 - डायरेक्टरी में 57 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/PHPMailer/language
+2025-04-15 16:58:38 - डायरेक्टरी में 7 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/PHPMailer/src
+2025-04-15 16:58:38 - डायरेक्टरी में 123 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: aboutedit.php
+2025-04-15 16:58:38 -   - मिसिंग CSS: assets\plugins\summernote\dist\summernote-bs4.css
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: assosiate_managment.php
+2025-04-15 16:58:38 -   - मिसिंग CSS: styles.css
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: financial_module.php
+2025-04-15 16:58:38 -   - मिसिंग इंक्लूड: footer.php
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: gallaryedit.php
+2025-04-15 16:58:38 -   - मिसिंग CSS: assets\plugins\summernote\dist\summernote-bs4.css
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: index.php
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/html5shiv.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/respond.min.js
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: leads.php
+2025-04-15 16:58:38 -   - मिसिंग इंक्लूड: footer.php
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: opportunities.php
+2025-04-15 16:58:38 -   - मिसिंग इंक्लूड: footer.php
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: super-admin-dashboard.php
+2025-04-15 16:58:38 -   - मिसिंग CSS: assets/plugins/summernote/summernote-bs4.min.css
+2025-04-15 16:58:38 -   - मिसिंग CSS: assets/plugins/toastr/toastr.min.css
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/jquery.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/bootstrap.bundle.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/plugins/summernote/summernote-bs4.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/plugins/toastr/toastr.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/plugins/sortablejs/Sortable.min.js
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: template-builder.php
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/jquery.min.js
+2025-04-15 16:58:38 - 
+फाइल में समस्याएं: template-list.php
+2025-04-15 16:58:38 -   - मिसिंग CSS: assets/css/dataTables.bootstrap5.min.css
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/jquery.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/jquery.dataTables.min.js
+2025-04-15 16:58:38 -   - मिसिंग JS: assets/js/dataTables.bootstrap5.min.js
+2025-04-15 16:58:39 - डायरेक्टरी में 3 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/ajax
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/api
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/api/projects
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/fonts
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/img/profiles
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/js
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/datatables
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/light-gallery
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/light-gallery/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/light-gallery/fonts
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/light-gallery/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/light-gallery/js
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/morris
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/raphael
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/slimscroll
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/codesample
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/codesample/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/emoticons
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/emoticons/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/help
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/help/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/visualblocks
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/plugins/visualblocks/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/skins
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/skins/lightgray
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/skins/lightgray/fonts
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/assets/plugins/tinymce/skins/lightgray/img
+2025-04-15 16:58:39 - डायरेक्टरी में 3 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/config
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/controllers
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/docs
+2025-04-15 16:58:39 - डायरेक्टरी में 4 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/includes
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/js
+2025-04-15 16:58:39 - डायरेक्टरी में 6 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/models
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/property
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/property/aps site image
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/sql
+2025-04-15 16:58:39 - डायरेक्टरी में 3 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/templates
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/upload
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/upload/job_application_resum
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/uploads
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/user
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/views
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/admin/views/projects
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: index.php
+2025-04-15 16:58:39 -   - मिसिंग CSS: ../assets/css/bootstrap.min.css
+2025-04-15 16:58:39 -   - मिसिंग CSS: ../assets/css/dataTables.bootstrap5.min.css
+2025-04-15 16:58:39 -   - मिसिंग JS: ../assets/js/jquery-3.6.0.min.js
+2025-04-15 16:58:39 -   - मिसिंग JS: ../assets/js/bootstrap.bundle.min.js
+2025-04-15 16:58:39 -   - मिसिंग JS: ../assets/js/jquery.dataTables.min.js
+2025-04-15 16:58:39 -   - मिसिंग JS: ../assets/js/dataTables.bootstrap5.min.js
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/api
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/Helpers
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/config
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/controllers
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/core
+2025-04-15 16:58:39 - डायरेक्टरी में 3 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/models
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/services
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/views
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: 404.php
+2025-04-15 16:58:39 -   - मिसिंग CSS: /march2025apssite/public/css/style.css
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/app/views/layouts
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: base.php
+2025-04-15 16:58:39 -   - मिसिंग CSS: /public/css/bootstrap.min.css
+2025-04-15 16:58:39 -   - मिसिंग CSS: /public/css/responsive.css
+2025-04-15 16:58:39 -   - मिसिंग CSS: /public/css/font-awesome.min.css
+2025-04-15 16:58:39 -   - मिसिंग JS: /public/js/jquery.min.js
+2025-04-15 16:58:39 -   - मिसिंग JS: /public/js/bootstrap.bundle.min.js
+2025-04-15 16:58:39 -   - मिसिंग JS: /public/js/main.js
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/fonts
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/fonts/flaticon
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/about
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/amenities
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/banner
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/bg-image
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/bg-image/pattern
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/legal
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/logo
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/profile
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/promotionalpic
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/property
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/property/aps site image
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/site_photo
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/site_photo/gorakhpur
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/site_photo/gorakhpur/suryoday
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/thank
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/thumbnail4
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/images/user
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/codesample
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/codesample/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/emoticons
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/emoticons/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/help
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/help/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/visualblocks
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/plugins/visualblocks/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/skins
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/skins/lightgray
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/skins/lightgray/fonts
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/assets/js/tinymce/skins/lightgray/img
+2025-04-15 16:58:39 - डायरेक्टरी में 3 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/auth
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/bootstrap
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/bootstrap/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/bootstrap/js
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/cgi-bin
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/css
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/database
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/database/backups
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/database/migrations
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/database/schema
+2025-04-15 16:58:39 - डायरेक्टरी में 8 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/database/scripts
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: execute_migration.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: execute_migration_fixed.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: execute_resell_plots_migration.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: execute_sql_manually.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: execute_sql_manually_fixed.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 - 
+फाइल में समस्याएं: execute_user_associate_separation.php
+2025-04-15 16:58:39 -   - मिसिंग इंक्लूड: config.php
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/docs
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/fonts
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/fonts/flaticon
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/functions
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/include
+2025-04-15 16:58:39 - डायरेक्टरी में 23 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/includes
+2025-04-15 16:58:39 - डायरेक्टरी में 7 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/includes/classes
+2025-04-15 16:58:39 - डायरेक्टरी में 5 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/includes/config
+2025-04-15 16:58:39 - डायरेक्टरी में 5 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/includes/functions
+2025-04-15 16:58:39 - डायरेक्टरी में 5 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/includes/templates
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/codesample
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/codesample/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/emoticons
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/emoticons/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/help
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/help/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/visualblocks
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/plugins/visualblocks/css
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/skins
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/skins/lightgray
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/skins/lightgray/fonts
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/js/tinymce/skins/lightgray/img
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/logs
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/public
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/public/css
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/scripts
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/Auth
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/Controllers
+2025-04-15 16:58:39 - डायरेक्टरी में 2 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/Database
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/Helpers
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/Models
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/Services
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/Views
+2025-04-15 16:58:39 - डायरेक्टरी में 3 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/config
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/src/utils
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/template
+2025-04-15 16:58:39 - डायरेक्टरी में 1 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/test
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/uploads
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/uploads/property
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/uploads/users
+2025-04-15 16:58:39 - डायरेक्टरी में 0 PHP फाइल्स मिलीं: C:\xampp\htdocs\march2025apssite/webfonts
+2025-04-15 16:58:39 - 
+जांच पूरी हुई!
+2025-04-15 16:58:39 - कुल 21 फाइल्स में 60 समस्याएं मिलीं।
+2025-04-15 16:58:39 - 
+सुझाव:
+2025-04-15 16:58:39 - ==========================
+
+2025-04-15 16:58:39 - 1. सभी टूटे हुए लिंक्स को ठीक करें, विशेष रूप से इंक्लूड पाथ।
+2025-04-15 16:58:39 - 2. अगर कोई फाइल मिसिंग है, तो उसे सही लोकेशन पर कॉपी करें या पाथ अपडेट करें।
+2025-04-15 16:58:39 - 3. अगर कोई एसेट (CSS, JS, इमेज) मिसिंग है, तो उसे सही फोल्डर में मूव करें।
+2025-04-15 16:58:39 - 4. अगर बहुत सारी समस्याएं हैं, तो update_paths.php स्क्रिप्ट को फिर से चलाएं और पैटर्न अपडेट करें।
+2025-04-15 16:58:39 - 
+एक्जीक्यूशन टाइम: 0.88 सेकंड
+2025-04-15 16:58:39 - विस्तृत रिपोर्ट broken_links_report.txt फाइल में देखें।

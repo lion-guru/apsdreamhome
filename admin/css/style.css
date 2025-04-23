@@ -1,0 +1,135 @@
+.wrapper {
+  margin-top: 5vh;
+}
+
+.dataTables_filter {
+  float: right;
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: #ccffff;
+}
+
+@media only screen and (min-width: 768px) {
+  .table {
+    table-layout: fixed;
+    max-width: 100% !important;
+  }
+}
+
+thead {
+  background: #ddd;
+}
+
+.table td:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.highlight {
+  background: #ffff99;
+}
+
+@media only screen and (max-width: 767px) {
+  /* Force table to not be like tables anymore */
+  table,
+thead,
+tbody,
+th,
+td,
+tr {
+    display: block;
+  }
+
+  /* Hide table headers (but not display: none;, for accessibility) */
+  thead tr,
+tfoot tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  td {
+    /* Behave  like a "row" */
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50% !important;
+  }
+
+  td:before {
+    /* Now like a table header */
+    position: absolute;
+    /* Top/left values mimic padding */
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+  }
+
+  /*.table td:nth-child(1) {
+    background: #ccc;
+    height: 100%;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+  }*/
+
+  /*
+  Label the data
+  */
+/*  td:nth-of-type(1):before {
+    content: "Site Name";
+  }
+
+  td:nth-of-type(2):before {
+    content: "Site District";
+  }
+
+  td:nth-of-type(3):before {
+    content: "Site Tehsil";
+  }
+
+  td:nth-of-type(4):before {
+    content: "Site Gram";
+  }
+
+  td:nth-of-type(5):before {
+    content: "Total Site Area";
+  }
+
+  td:nth-of-type(6):before {
+    content: "Site Area left for Gata Allocation";
+  }
+   td:nth-of-type(7):before {
+    content: "Gata No";
+  }
+  td:nth-of-type(8):before {
+    content: "Total Gata Area";
+  }
+  td:nth-of-type(9):before {
+    content: "Gata Area left for Plot Allocation";
+  }
+  td:nth-of-type(10):before {
+    content: "Kissan Under the Gata";
+  }
+  td:nth-of-type(11):before {
+    content: "Plot NO";
+  }
+  td:nth-of-type(12):before {
+    content: "Plot Area in Gata";
+td:nth-of-type(13):before {
+    content: "Plot Dimension";
+td:nth-of-type(14):before {
+    content: "Plot Facing";
+td:nth-of-type(15):before {
+    content: "Plot Rate/Sq.ft";
+td:nth-of-type(16):before {
+    content: "Plot Status";
+  }*/
+
+  .dataTables_length {
+    display: none;
+  } 
+}

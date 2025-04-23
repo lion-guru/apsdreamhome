@@ -1,0 +1,81 @@
+/* General Styles */
+body {
+    font-family: 'Muli', sans-serif;
+    background-color: #f4f4f4; /* Light background for contrast */
+    color: #333; /* Default text color */
+}
+
+/* Container Styles */
+.container {
+    margin-top: 20px; /* Space above the container */
+}
+
+/* Header Styles */
+h2 {
+    color: #007bff; /* Primary color for headings */
+    margin-bottom: 20px; /* Space below headings */
+}
+
+/* Profile Picture Section */
+.dashboard-personal-info {
+    background-color: #ffffff; /* White background for sections */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 20px; /* Padding inside sections */
+    margin-bottom: 20px; /* Space below sections */
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px; /* Space between form groups */
+}
+
+.form-control {
+    border-radius: 5px; /* Rounded input fields */
+    border: 1px solid #ccc; /* Light border */
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #007bff; /* Primary color */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for buttons */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Image Preview */
+#image-preview {
+    margin-top: 10px; /* Space above the image */
+    border-radius: 5px; /* Rounded corners for images */
+}
+
+/* Password Feedback */
+#password-errors {
+    color: red; /* Error text color */
+}
+
+#password-match-error {
+    display: none; /* Initially hidden */
+    color: red; /* Error text color */
+}
+
+#password-match-success {
+    display: none; /* Initially hidden */
+    color: green; /* Success text color */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .dashboard-personal-info {
+        padding: 15px; /* Reduce padding on smaller screens */
+    }
+
+    .btn-primary {
+        width: 100%; /* Full-width buttons on mobile */
+    }
+}
