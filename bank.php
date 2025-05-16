@@ -4,7 +4,7 @@ session_cache_limiter(false);
 session_start();
 include("config.php");
 include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/common-functions.php');
+include(__DIR__ . '/includes/functions/common-functions.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -90,7 +90,7 @@ include(__DIR__ . '/includes/common-functions.php');
         <!--	About Our Company -->
 
        <!--	Footer   start-->
-        <?php include(__DIR__ . '/includes/footer.php');?>
+        <?php include(__DIR__ . '/includes/templates/new_footer.php');?>
         <!--	Footer   start-->
 
         <!-- Scroll to top -->

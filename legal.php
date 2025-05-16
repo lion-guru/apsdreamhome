@@ -5,7 +5,7 @@ session_start();
 require_once(__DIR__ . "/includes/config/config.php");
 // require_once(__DIR__ . "/includes/functions/asset_helper.php"); // Deprecated, use get_asset_url() from common-functions.php or updated-config-paths.php instead
 require_once(__DIR__ . '/includes/updated-config-paths.php');
-require_once(__DIR__ . '/includes/common-functions.php');
+require_once(__DIR__ . '/includes/functions/common-functions.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">

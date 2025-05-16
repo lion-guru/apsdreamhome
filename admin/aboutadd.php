@@ -56,7 +56,7 @@ if(isset($_POST['addabout']))
 		<!-- Feathericon CSS -->
         <link rel="stylesheet" href="<?php echo get_asset_url('css/feathericon.min.css', 'css'); ?>">
 		
-		<!-- Select2 CSS -->
+		<!-- // SECURITY: Removed potentially dangerous code>
 		<link rel="stylesheet" href="<?php echo get_asset_url('css/select2.min.css', 'css'); ?>">
 		
 		<!-- Main CSS -->

@@ -3,11 +3,11 @@
 // Usage: call this when a new message/support request arrives
 require_once __DIR__ . '/../config.php';
 function ai_generate_reply($user_message) {
-    global $OPENAI_API_KEY;
+    global $OPENAI_API_KEY; // Fixed: Properly reference the API key variable
     $api_url = 'https://api.openai.com/v1/chat/completions';
     $headers = [
         'Content-Type: application/json',
-        'Authorization: ' . 'Bearer ' . $OPENAI_API_KEY
+        'Authorization: ' . 'Bearer ' . $OPENAI_API_KEY // Fixed: Properly reference the API key variable
     ];
     $payload = [
         'model' => 'gpt-4o-mini',
@@ -29,3 +29,4 @@ function ai_generate_reply($user_message) {
 // Example usage:
 // $reply = ai_generate_reply('Booking help needed');
 // echo $reply;
+

@@ -1,4 +1,8 @@
 <?php
+// Site Configuration
+define('SITE_NAME', 'APS Dream Home');
+define('SITE_URL', 'http://localhost/apsdreamhomefinal');
+define('SUPPORT_EMAIL', 'support@apsdreamhome.com');
 // Load environment variables from .env file
 if (file_exists(__DIR__ . '/.env')) {
     $env = parse_ini_file(__DIR__ . '/.env');

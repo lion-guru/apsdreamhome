@@ -4,7 +4,7 @@
 
 <?php
 // Include the main database connection handler
-require_once __DIR__ . '/db_connection.php';
+require_once __DIR__ . '/src/Database/Database.php';
 
 // Get database connection
 $conn = getDbConnection();

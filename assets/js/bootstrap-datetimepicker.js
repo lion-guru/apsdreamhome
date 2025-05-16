@@ -1294,7 +1294,7 @@
 
                 for (index in options.keyBinds) {
                     if (options.keyBinds.hasOwnProperty(index) && typeof (options.keyBinds[index]) === 'function') {
-                        keyBindKeys = index.split(' ');
+                        keyBindKeys = index.// SECURITY: Replaced deprecated function' ');
                         if (keyBindKeys.length === pressedKeys.length && keyMap[currentKey] === keyBindKeys[keyBindKeys.length - 1]) {
                             allModifiersPressed = true;
                             for (index2 = keyBindKeys.length - 2; index2 >= 0; index2--) {
@@ -1398,9 +1398,9 @@
             initFormatting = function () {
                 var format = options.format || 'L LT';
 
-                actualFormat = format.replace(/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g, function (formatInput) {
+                actualFormat = format.replace(/(// SECURITY: Removed potentially dangerous code[^// SECURITY: Removed potentially dangerous code]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g, function (formatInput) {
                     var newinput = date.localeData().longDateFormat(formatInput) || formatInput;
-                    return newinput.replace(/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g, function (formatInput2) { //temp fix for #740
+                    return newinput.replace(/(// SECURITY: Removed potentially dangerous code[^// SECURITY: Removed potentially dangerous code]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g, function (formatInput2) { //temp fix for #740
                         return date.localeData().longDateFormat(formatInput2) || formatInput2;
                     });
                 });
@@ -1411,7 +1411,7 @@
                     parseFormats.push(actualFormat);
                 }
 
-                use24Hours = (actualFormat.toLowerCase().indexOf('a') < 1 && actualFormat.replace(/\[.*?\]/g, '').indexOf('h') < 1);
+                use24Hours = (actualFormat.toLowerCase().indexOf('a') < 1 && actualFormat.replace(/// SECURITY: Removed potentially dangerous code.*?\]/g, '').indexOf('h') < 1);
 
                 if (isEnabled('y')) {
                     minViewModeNumber = 2;
@@ -2634,3 +2634,4 @@
 
     return $.fn.datetimepicker;
 }));
+

@@ -5,10 +5,10 @@
  */
 
 // Define base paths
-define('BASE_URL', '/apsdreamhomefinal'); // Update this based on your server configuration
+define('BASE_URL', '/march2025apssite'); // Update this based on your server configuration
 define('ASSETS_PATH', BASE_URL . '/assets');
 define('CSS_PATH', BASE_URL . '/css');
-define('JS_PATH', ASSETS_PATH . '/js');
+define('JS_PATH', BASE_URL . '/js');
 define('IMAGES_PATH', ASSETS_PATH . '/images');
 
 /**

@@ -348,7 +348,7 @@ $additional_js = '<script src="' . get_asset_url('js/swiper-bundle.min.js', 'ven
         // Load Google Maps API
         if (typeof google === "undefined" || typeof google.maps === "undefined") {
             const script = document.createElement("script");
-            script.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap";
+            script.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_// SECURITY: Sensitive information removed&callback=initMap";
             script.async = true;
             script.defer = true;
             window.initMap = initMap;
@@ -360,7 +360,8 @@ $additional_js = '<script src="' . get_asset_url('js/swiper-bundle.min.js', 'ven
 </script>';
 
 // Include header
-require_once __DIR__ . '/include/updated-common-header.php';
+require_once __DIR__ . '/includes/templates/dynamic_header.php';
+
 ?>
 
 <!-- Hero Section -->

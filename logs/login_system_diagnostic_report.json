@@ -1,0 +1,61 @@
+{
+    "timestamp": "2025-05-09 20:57:01",
+    "diagnostic_report": {
+        "php_extensions": {
+            "loaded": [
+                "Core",
+                "bcmath",
+                "calendar",
+                "ctype",
+                "date",
+                "filter",
+                "hash",
+                "iconv",
+                "json",
+                "SPL",
+                "pcre",
+                "random",
+                "readline",
+                "Reflection",
+                "session",
+                "standard",
+                "mysqlnd",
+                "tokenizer",
+                "zlib",
+                "libxml",
+                "dom",
+                "PDO",
+                "bz2",
+                "SimpleXML",
+                "xml",
+                "xmlreader",
+                "xmlwriter",
+                "openssl",
+                "curl",
+                "fileinfo",
+                "gettext",
+                "mbstring",
+                "exif",
+                "mysqli",
+                "pdo_mysql",
+                "pdo_sqlite",
+                "Phar",
+                "ftp"
+            ],
+            "missing": []
+        },
+        "database_connection": true,
+        "session_configuration": {
+            "session.gc_maxlifetime": "1440",
+            "session.cookie_httponly": "",
+            "session.use_strict_mode": "0",
+            "session.cookie_secure": "0"
+        }
+    },
+    "critical_issues": [
+        "Syntax error in \/admin\/admin_login_handler.php: Parse error: syntax error, unexpected token \"catch\", expecting \"function\" or \"const\" in C:\\xampp\\htdocs\\apsdreamhomefinal\/admin\/admin_login_handler.php on line 289\nErrors parsing C:\\xampp\\htdocs\\apsdreamhomefinal\/admin\/admin_login_handler.php",
+        "Syntax error in \/admin\/login_error_handler.php: Parse error: Unmatched '}' in C:\\xampp\\htdocs\\apsdreamhomefinal\/admin\/login_error_handler.php on line 109\nErrors parsing C:\\xampp\\htdocs\\apsdreamhomefinal\/admin\/login_error_handler.php",
+        "Session Configuration Issues: session.gc_maxlifetime is not optimally configured, session.cookie_httponly is not optimally configured, session.use_strict_mode is not optimally configured, session.cookie_secure is not optimally configured"
+    ],
+    "status": "failed"
+}

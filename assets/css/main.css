@@ -1,0 +1,97 @@
+/* Global Styles */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background: url('/assets/images/hero-bg.jpg') no-repeat center center/cover;
+    color: white;
+    padding: 150px 0;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.property-search-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Property Cards */
+.property-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.property-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.property-details {
+    color: var(--secondary-color);
+}
+
+/* Testimonials */
+.testimonial-card {
+    border: none;
+    background-color: var(--light-color);
+    transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: scale(1.05);
+}
+
+.testimonial-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+/* Call to Action */
+.cta {
+    background-color: var(--primary-color);
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark-color);
+}
+
+footer a {
+    color: var(--light-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 100px 0;
+    }
+
+    .property-search-form {
+        padding: 20px;
+    }
+}

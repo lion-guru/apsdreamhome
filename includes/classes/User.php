@@ -7,10 +7,10 @@ class User {
         $this->db = $database;
     }
 
-    public function getById(int $id): ?array {
+    public function getById(string $uid): ?array {
         return $this->db->fetchOne(
-            "SELECT * FROM {$this->table} WHERE id = ?",
-            [$id]
+            "SELECT * FROM {$this->table} WHERE uid = ?",
+            [$uid]
         );
     }
 
@@ -18,13 +18,6 @@ class User {
         return $this->db->fetchOne(
             "SELECT * FROM {$this->table} WHERE email = ?",
             [$email]
-        );
-    }
-
-    public function getByPhone(string $phone): ?array {
-        return $this->db->fetchOne(
-            "SELECT * FROM {$this->table} WHERE phone = ?",
-            [$phone]
         );
     }
 

@@ -13,18 +13,14 @@ class CSRFProtection {
      */
     public static function initializeSession() {
         if (session_status() === PHP_SESSION_NONE) {
-            ini_set('session.cookie_httponly', '1');
-            ini_set('session.cookie_secure', '1');
-            ini_set('session.cookie_samesite', 'Strict');
-            ini_set('session.use_strict_mode', '1');
-            
-            session_start([
-                'cookie_lifetime' => 86400, // 24 hours
-                'cookie_secure' => true,
-                'cookie_httponly' => true,
-                'cookie_samesite' => 'Strict',
-                'use_strict_mode' => true
-            ]);
+            // Development-friendly session settings
+            try {
+                session_start();
+            } catch (Exception $e) {
+                error_log('CSRF Session Initialization Error: ' . $e->getMessage());
+                // Fallback to default session start
+                @session_start();
+            }
         }
     }
     

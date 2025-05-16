@@ -4,7 +4,7 @@
 
 require_once(__DIR__ . '/includes/config/ai_settings.php');
 require_once(__DIR__ . '/includes/config/site_settings.php');
-require_once(__DIR__ . '/includes/classes/Database.php');
+require_once(__DIR__ . '/src/Database/Database.php');
 $db = new Database();
 $con = $db->getConnection();
 $ai = include(__DIR__ . '/includes/config/ai_settings.php');

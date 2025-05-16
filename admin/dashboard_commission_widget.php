@@ -3,6 +3,27 @@
 require_once __DIR__ . '/../includes/config/config.php';
 require_once __DIR__ . '/../includes/functions/mlm_commission_ledger.php';
 
+// Create associates table if not exists
+$con->query("CREATE TABLE IF NOT EXISTS associates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    contact VARCHAR(50),
+    email VARCHAR(100),
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+// Create MLM Commission Ledger table if not exists
+$con->query("CREATE TABLE IF NOT EXISTS mlm_commission_ledger (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    associate_id INT,
+    commission_amount DECIMAL(10,2) NOT NULL,
+    commission_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    description TEXT,
+    status ENUM('pending', 'paid', 'cancelled') DEFAULT 'pending',
+    FOREIGN KEY (associate_id) REFERENCES associates(id)
+)");
+
 // Total commission distributed to all associates
 $res = $con->query("SELECT SUM(commission_amount) as total FROM mlm_commission_ledger");
 $row = $res->fetch_assoc();

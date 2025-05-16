@@ -31,17 +31,7 @@ if(!isset($_SESSION['auser'])) {
     exit();
 }
 
-// Process delete operation
-if(isset($_GET['delid'])) {
-    $id = $_GET['delid'];
-    $sql = "DELETE FROM user WHERE uid = $id";
-    $result = mysqli_query($con, $sql);
-    if($result) {
-        $msg = "<p class='alert alert-success'>User Deleted Successfully!</p>";
-    } else {
-        $error = "<p class='alert alert-warning'>User Not Deleted!</p>";
-    }
-}
+// Delete now handled by centralized delete.php
 ?>
 
 <!-- Main Content -->
@@ -81,7 +71,7 @@ if(isset($_GET['delid'])) {
                                 <td><?php echo htmlspecialchars($row['urole']); ?></td>
                                 <td>
                                     <a href="useredit.php?id=<?php echo htmlspecialchars($row['uid']); ?>" class="btn btn-info">Edit</a>
-                                    <a href="userlist.php?delid=<?php echo htmlspecialchars($row['uid']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                                    <a href="delete.php?type=user&id=<?php echo htmlspecialchars($row['uid']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                                 </td>
                             </tr>
                             <?php } ?>

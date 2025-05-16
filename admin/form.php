@@ -100,7 +100,7 @@
 											<label class="col-form-label col-md-2">Default Select</label>
 											<div class="col-md-10">
 												<select class="form-control">
-													<option>-- Select --</option>
+													<option>-- // SECURITY: Removed potentially dangerous code</option>
 													<option>Option 1</option>
 													<option>Option 2</option>
 													<option>Option 3</option>

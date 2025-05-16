@@ -1,6 +1,6 @@
 <?php
 include("../includes/templates/dynamic_header.php");
-include('db_connection.php');
+include('src/Database/Database.php');
 
 if (isset($_GET['id'])) {
     $opportunity_id = intval($_GET['id']);

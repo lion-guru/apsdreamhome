@@ -1,259 +1,262 @@
-<?php
-try {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Cache-Control" content="public, max-age=31536000, immutable">
+    
+    <title><?php echo isset($page_title) ? htmlspecialchars($page_title) : 'APS Dream Homes'; ?></title>
+    <meta name="description" content="<?php echo isset($meta_description) ? htmlspecialchars($meta_description) : 'APS Dream Homes - Your trusted partner in real estate'; ?>">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
+    <?php if (isset($additional_css)) echo $additional_css; ?>
 
-    require_once __DIR__ . '/../../config.php';
-    require_once __DIR__ . '/../config/base_url.php';
-    // require_once __DIR__ . '/../functions/asset_helper.php'; // Deprecated, use get_asset_url() from common-functions.php or updated-config-paths.php instead
-    require_once __DIR__ . '/../db_config.php';
-
-    // Ensure $conn is initialized
-    if (!isset($conn)) {
-        $conn = getDbConnection();
-    }
-
-    // Load header settings from database
-    $menu_db_error = false;
-    $settings = [];
-    try {
-        $sql = "SELECT * FROM site_settings WHERE setting_name IN ('header_menu_items', 'site_logo', 'header_styles')";
-        $result = $conn->query($sql);
-        while ($row = $result->fetch_assoc()) {
-            $settings[$row['setting_name']] = json_decode($row['value'], true);
-        }
-    } catch (Throwable $e) {
-        $menu_db_error = true;
-    }
-
-    // Fallback default menu (if DB fails or menu JSON is invalid)
-    $default_menu = [
-        ['text' => 'Home', 'url' => $base_url . 'index.php', 'icon' => 'fa-home'],
-        ['text' => 'Properties', 'url' => $base_url . 'property-listings.php', 'icon' => 'fa-building'],
-        ['text' => 'About', 'url' => $base_url . 'about.php', 'icon' => 'fa-info-circle'],
-        ['text' => 'Contact', 'url' => $base_url . 'contact.php', 'icon' => 'fa-envelope'],
-        ['text' => 'News', 'url' => $base_url . 'news.php', 'icon' => 'fa-newspaper'],
-        ['text' => 'Feedback', 'url' => $base_url . 'submit_feedback.php', 'icon' => 'fa-comments'],
-        ['text' => 'Register', 'url' => $base_url . 'register.php', 'icon' => 'fa-user-plus'],
-        ['text' => 'Login', 'url' => $base_url . 'login.php', 'icon' => 'fa-sign-in-alt'],
-        ['text' => 'Dashboard', 'url' => $base_url . 'user_dashboard.php', 'icon' => 'fa-tachometer-alt'],
-        ['text' => 'Logout', 'url' => $base_url . 'logout.php', 'icon' => 'fa-sign-out-alt']
-    ];
-
-    // Use menu from DB if available and valid, else fallback
-    $menu_items = $default_menu;
-    if (!$menu_db_error && isset($settings['header_menu_items']) && is_array($settings['header_menu_items']) && count($settings['header_menu_items']) > 0) {
-        $menu_items = $settings['header_menu_items'];
-    }
-
-    // Set default values if not found in database
-    if (!isset($settings['site_logo'])) {
-        $settings['site_logo'] = [
-            'url' => $base_url . 'assets/images/logo/aps1.png'
-        ];
-    }
-
-    $header_styles = $settings['header_styles'] ?? [
-        'background' => '#1e3c72',
-        'text_color' => '#ffffff'
-    ];
-
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?php echo isset($page_title) ? $page_title : 'APS Dream Homes - Your Trusted Real Estate Partner'; ?></title>
-        <meta name="description" content="<?php echo isset($meta_description) ? $meta_description : 'APS Dream Homes offers premium real estate services in Gorakhpur, Lucknow and across UP. Find your dream property with our expert guidance.'; ?>">
-        <meta name="keywords" content="real estate, property, APS Dream Homes, Gorakhpur property, Lucknow property, residential plots, commercial property, property investment, real estate agency UP">
-        <meta name="author" content="APS Dream Homes">
-        <meta name="robots" content="index, follow">
-        
-        <!-- SEO & Social Meta Tags -->
-        <meta name="description" content="APS Dream Homes - Premium properties, expert guidance, and trusted service in Gorakhpur, Lucknow & beyond.">
-        <meta name="keywords" content="real estate, property, buy home, Gorakhpur, Lucknow, APS Dream Homes, flats, plots, houses">
-        <meta property="og:title" content="APS Dream Homes - Find Your Dream Home">
-        <meta property="og:description" content="Premium properties, expert guidance, and trusted service in Gorakhpur, Lucknow & beyond.">
-        <meta property="og:image" content="<?php echo $base_url; ?>assets/images/banner/ban1.jpg">
-        <meta property="og:url" content="<?php echo $base_url; ?>">
-        <meta property="og:type" content="website">
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="APS Dream Homes - Find Your Dream Home">
-        <meta name="twitter:description" content="Premium properties, expert guidance, and trusted service in Gorakhpur, Lucknow & beyond.">
-        <meta name="twitter:image" content="<?php echo $base_url; ?>assets/images/banner/ban1.jpg">
-        
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css?v=1.0" rel="stylesheet">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css?v=1.0">
-        <!-- Custom CSS Fallback -->
-        <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/home.css?v=1.0">
-        <!-- If get_asset_url fails, fallback above will ensure styling -->
-        <style>
-            .header-desktop { background: #1e3c72; color: #fff; }
-            .header-nav { display: flex; justify-content: space-between; align-items: center; }
-            .logo img { height: 42px; margin-right: 10px; }
-            .logo-text { font-size: 1.25rem; font-weight: 600; }
-            .nav-menu { display: flex; gap: 1.3rem; align-items: center; list-style: none; }
-            .nav-item a { color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 5px; transition: color 0.3s; }
-            .nav-item a:hover, .nav-item.active a { color: #e74c3c; background: #fbeeee; }
-            @media (max-width: 991px) { .nav-menu { flex-direction: column; } }
-        </style>
-        <!-- Sticky Navigation Enhancement -->
-        <style>
-        .sticky-nav {
-            position: sticky;
-            top: 0;
-            z-index: 1050;
-            box-shadow: 0 2px 16px rgba(42,82,152,0.07);
-            background: #fff;
-            transition: box-shadow 0.2s, background 0.2s;
-        }
-        .sticky-nav.scrolled {
-            box-shadow: 0 4px 24px rgba(42,82,152,0.16);
-            background: #f6f9fc;
-        }
-        </style>
-        <!-- Dark Mode Toggle Styles -->
-        <style>
+    <!-- Cross-browser compatibility styles -->
+    <style>
         :root {
-          --primary-bg: #fff;
-          --primary-text: #222;
-          --secondary-bg: #f6f9fc;
-          --card-bg: #fff;
+            color-scheme: light;
         }
-        body.dark-mode {
-          --primary-bg: #141d2b;
-          --primary-text: #eaeaea;
-          --secondary-bg: #1e293b;
-          --card-bg: #212c3b;
-          background: var(--primary-bg) !important;
-          color: var(--primary-text) !important;
+        html {
+            text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            tab-size: 4;
+            -moz-tab-size: 4;
         }
-        body.dark-mode .bg-light { background-color: var(--secondary-bg) !important; }
-        body.dark-mode .bg-white { background-color: var(--card-bg) !important; }
-        body.dark-mode .card, body.dark-mode .feature-card { background-color: var(--card-bg) !important; color: var(--primary-text) !important; }
-        body.dark-mode .navbar, body.dark-mode .sticky-nav { background: var(--primary-bg) !important; }
-        body.dark-mode .text-dark { color: #f9fafb !important; }
-        body.dark-mode .text-secondary { color: #cbd5e1 !important; }
-        body.dark-mode .btn-outline-primary { border-color: #eaeaea; color: #eaeaea; }
-        body.dark-mode .btn-outline-primary:hover { background: #eaeaea; color: #222; }
-        .dark-toggle-btn {
-          position: fixed;
-          bottom: 100px;
-          right: 24px;
-          z-index: 9999;
-          background: #222;
-          color: #fff;
-          border: none;
-          border-radius: 50%;
-          width: 48px;
-          height: 48px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-          font-size: 1.4rem;
-          cursor: pointer;
-          transition: background 0.2s;
+        body {
+            margin: 0;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
-        .dark-toggle-btn.active { background: #ffc107; color: #222; }
-        </style>
-        <?php if(isset($additional_css)) echo $additional_css; ?>
-    </head>
-    <body>
-        <?php if (isset($additional_js)) echo $additional_js; ?>
-        <header class="header-desktop sticky-nav" role="banner">
-            <nav class="navbar navbar-expand-lg navbar-light" aria-label="Main navigation" role="navigation">
-                <div class="container">
-                    <a href="<?php echo $base_url; ?>" class="logo navbar-brand" aria-label="Home">
-                        <img src="<?php echo $base_url; ?>assets/images/logo/aps1.png" alt="Logo" style="max-height:60px;object-fit:contain;display:block;">
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<?php
+require_once __DIR__ . '/../../includes/db_settings.php';
+
+// Default menu items if database settings are not available
+$default_menu = [
+    ['url' => '/apsdreamhomefinal/', 'text' => 'Home', 'icon' => 'fa-home', 'aria_label' => 'Home Page'],
+    ['url' => '/apsdreamhomefinal/properties.php', 'text' => 'Properties', 'icon' => 'fa-building', 'aria_label' => 'View our properties'],
+    ['url' => '/apsdreamhomefinal/about.php', 'text' => 'About', 'icon' => 'fa-info-circle', 'aria_label' => 'About Us'],
+    ['url' => '/apsdreamhomefinal/contact.php', 'text' => 'Contact', 'icon' => 'fa-envelope', 'aria_label' => 'Contact Us'],
+    ['url' => '/apsdreamhomefinal/login.php', 'text' => 'Login', 'icon' => 'fa-sign-in-alt', 'aria_label' => 'Login to Your Account']
+];
+
+// Default settings
+$settings = [
+    'header_menu_items' => json_encode($default_menu),
+    'site_logo' => '/apsdreamhomefinal/assets/images/logo.png',
+    'header_styles' => json_encode([
+        'background' => '#ffffff',
+        'text_color' => '#333333',
+        'hover_color' => '#007bff'
+    ])
+];
+
+// Try to fetch settings from database
+$conn = get_db_connection();
+
+// Try to get settings from database if connection is successful
+if ($conn) {
+    $sql = "SELECT * FROM site_settings WHERE setting_name IN ('header_menu_items', 'site_logo', 'header_styles')";
+    try {
+        $result = $conn->query($sql);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $settings[$row['setting_name']] = $row['value'];
+            }
+            $result->free();
+        }
+    } catch (Exception $e) {
+        error_log('Header DB error: ' . $e->getMessage());
+        // Using default settings, no need to show error to user
+    }
+}
+
+// Parse the settings
+$menu_items = json_decode($settings['header_menu_items'], true) ?: $default_menu;
+// Default header styles
+$default_header_styles = [
+    'background' => '#ffffff',
+    'text_color' => '#333333',
+    'hover_color' => '#007bff'
+];
+
+// Merge with database settings, ensuring all keys exist
+$header_styles = array_merge(
+    $default_header_styles,
+    json_decode($settings['header_styles'] ?? '{}', true) ?: []
+);
+$logo_path = $settings['site_logo'] ?: '/apsdreamhomefinal/assets/images/logo.png';
+
+// Extract colors for easier access
+$backgroundColor = $header_styles['background'];
+$textColor = $header_styles['text_color'];
+$hoverColor = $header_styles['hover_color'];
+?>
+
+<!-- Custom Header Styles -->
+<style>
+    /* Cross-browser compatibility */
+    .site-header {
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: <?php echo htmlspecialchars($backgroundColor); ?>;
+        color: <?php echo htmlspecialchars($textColor); ?>;
+        padding: 1rem 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 1000;
+    }
+    .site-header a {
+        color: <?php echo htmlspecialchars($textColor); ?>;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        display: inline-block;
+        position: relative;
+    }
+    .site-header a:hover,
+    .site-header a:focus {
+        color: <?php echo htmlspecialchars($hoverColor); ?>;
+        text-decoration: none;
+        outline: none;
+    }
+    .site-header a:focus-visible {
+        outline: 2px solid <?php echo htmlspecialchars($hoverColor); ?>;
+        outline-offset: 2px;
+    }
+    .site-logo {
+        display: inline-block;
+        line-height: 1;
+    }
+    .site-logo img {
+        display: block;
+        max-height: 60px;
+        width: auto;
+        height: auto;
+    }
+    .nav-item {
+        margin: 0 10px;
+        position: relative;
+    }
+    .nav-item i {
+        display: inline-block;
+        margin-right: 5px;
+        width: 1em;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .nav-link {
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+    .navbar-toggler {
+        border: 1px solid <?php echo htmlspecialchars($textColor); ?>;
+        padding: 0.5rem;
+        background: transparent;
+        transition: all 0.3s ease;
+        -webkit-transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
+    }
+    .navbar-toggler:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px <?php echo htmlspecialchars($hoverColor); ?>;
+        -webkit-box-shadow: 0 0 0 2px <?php echo htmlspecialchars($hoverColor); ?>;
+    }
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='<?php echo urlencode($textColor); ?>' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        display: block;
+        width: 1.5em;
+        height: 1.5em;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100%;
+    }
+    @media (max-width: 991.98px) {
+        .navbar-collapse {
+            background-color: <?php echo htmlspecialchars($backgroundColor); ?>;
+            padding: 1rem;
+            -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    }
+</style>
+
+<!-- Header Section -->
+<header class="site-header" role="banner">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <a href="/apsdreamhomefinal/" class="site-logo" aria-label="APS Dream Homes - Return to Homepage">
+                    <img src="<?php echo htmlspecialchars($logo_path); ?>" alt="APS Dream Homes Logo" width="180" height="60">
+                </a>
+            </div>
+            <div class="col-md-9">
+                <nav class="navbar navbar-expand-lg" role="navigation" aria-label="Main Navigation">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu">
+                        <span class="navbar-toggler-icon" aria-hidden="true"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="mainNavbar">
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0" role="menubar">
-                        <?php
-                        function render_menu_items($items) {
-                            foreach ($items as $item) {
-                                $has_children = isset($item['children']) && is_array($item['children']) && count($item['children']) > 0;
-                                if ($has_children) {
-                                    echo '<li class="nav-item dropdown" role="none">';
-                                    echo '<a class="nav-link dropdown-toggle" href="#" id="dropdown'.md5($item['text']).'" role="button" data-bs-toggle="dropdown" aria-expanded="false">';
-                                    if (!empty($item['icon'])) echo '<i class="fa '.$item['icon'].'"></i> ';
-                                    echo htmlspecialchars($item['text']);
-                                    echo '</a>';
-                                    echo '<ul class="dropdown-menu" aria-labelledby="dropdown'.md5($item['text']).'">';
-                                    foreach ($item['children'] as $child) {
-                                        echo '<li><a class="dropdown-item" href="'.htmlspecialchars($child['url']).'">';
-                                        if (!empty($child['icon'])) echo '<i class="fa '.$child['icon'].'"></i> ';
-                                        echo htmlspecialchars($child['text']);
-                                        echo '</a></li>';
-                                    }
-                                    echo '</ul>';
-                                    echo '</li>';
-                                } else {
-                                    echo '<li class="nav-item" role="none">';
-                                    echo '<a class="nav-link" href="'.htmlspecialchars($item['url']).'">';
-                                    if (!empty($item['icon'])) echo '<i class="fa '.$item['icon'].'"></i> ';
-                                    echo htmlspecialchars($item['text']);
-                                    echo '</a>';
-                                    echo '</li>';
-                                }
-                            }
-                        }
-                        // Filter for login/logout/dashboard/register etc based on session
-                        $filtered_menu = [];
-                        foreach ($menu_items as $item) {
-                            if (in_array($item['text'], ['Login','Register']) && isset($_SESSION['user_id'])) continue;
-                            if (in_array($item['text'], ['Dashboard','Logout']) && !isset($_SESSION['user_id'])) continue;
-                            $filtered_menu[] = $item;
-                        }
-                        render_menu_items($filtered_menu);
-                        ?>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <?php foreach ($menu_items as $item): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo htmlspecialchars($item['url']); ?>" aria-label="<?php echo htmlspecialchars($item['aria_label'] ?? $item['text']); ?>">
+                                    <?php if (!empty($item['icon'])): ?>
+                                        <i class="fas <?php echo htmlspecialchars($item['icon']); ?>" aria-hidden="true"></i>
+                                    <?php endif; ?>
+                                    <span><?php echo htmlspecialchars($item['text']); ?></span>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
                         </ul>
                     </div>
-                </div>
-            </nav>
-        </header>
-        <!-- Dark Mode Toggle Button -->
-        <button class="dark-toggle-btn" id="darkModeToggle" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
-        <script>
-        // Dark mode toggle logic
-        const darkToggle = document.getElementById('darkModeToggle');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        function setDarkMode(on) {
-          document.body.classList.toggle('dark-mode', on);
-          darkToggle.classList.toggle('active', on);
-          localStorage.setItem('aps_dark_mode', on ? '1' : '0');
-          darkToggle.innerHTML = on ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        }
-        darkToggle.addEventListener('click', function() {
-          setDarkMode(!document.body.classList.contains('dark-mode'));
-        });
-        // On load
-        const saved = localStorage.getItem('aps_dark_mode');
-        if (saved === '1' || (saved === null && prefersDark)) setDarkMode(true);
-        </script>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const nav = document.querySelector('header, .main-header, .header-desktop');
-            if (nav) {
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY > 30) {
-                        nav.classList.add('scrolled');
-                    } else {
-                        nav.classList.remove('scrolled');
-                    }
-                });
-            }
-        });
-        </script>
-    <?php } catch (Throwable $e) {
-        // Fallback to static header on error
-        include __DIR__ . '/static_header.php';
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    .nav-link:hover {
+        color: <?php echo htmlspecialchars($header_styles['hover_color']); ?> !important;
     }
-    ?>
+</style>

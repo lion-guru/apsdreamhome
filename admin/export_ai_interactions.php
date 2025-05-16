@@ -1,6 +1,6 @@
 <?php
 // Exports all AI interaction logs as CSV for APS model training or review
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 $db = new Database();
 $con = $db->getConnection();
 

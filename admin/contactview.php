@@ -106,7 +106,7 @@ if(!isset($_SESSION['auser']))
                                                     <td><?php echo $row['3']; ?></td>
                                                     <td><?php echo $row['4']; ?></td>
 													<td><?php echo $row['5']; ?></td>
-                                                    <td><a href="contactdelete.php?id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
+                                                    <td><a href="convert_inquiry_to_lead.php?inquiry_id=<?php echo $row['0']; ?>" class="btn btn-success btn-sm">Convert to Lead</a> <a href="contactdelete.php?id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
                                                 </tr>
                                                 <?php
 												$cnt=$cnt+1;

@@ -60,7 +60,7 @@ if ($conn) {
                                     <td><?php echo htmlspecialchars($p['description']); ?></td>
                                     <td>
                                         <a href="propertyedit.php?id=<?php echo $p['id']; ?>" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                                        <a href="propertydelete.php?id=<?php echo $p['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this property type?');"><i class="fas fa-trash-alt"></i></a>
+                                        <a href="delete.php?type=property&id=<?php echo $p['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this property type?');"><i class="fas fa-trash-alt"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

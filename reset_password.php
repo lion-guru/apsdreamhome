@@ -15,7 +15,7 @@
     $validToken = false;
     $email = isset($_GET['email']) ? $_GET['email'] : '';
     $token = isset($_GET['token']) ? $_GET['token'] : '';
-    $con = new mysqli("localhost", "DB_USER", "DB_PASSWORD", "DB_NAME");
+    $con = new mysqli("localhost", "DB_USER", "// SECURITY: Sensitive information removed", "DB_NAME");
     if ($con->connect_error) {
         die("<div class='alert alert-danger'>Database connection failed: " . $con->connect_error . "</div>");
     }

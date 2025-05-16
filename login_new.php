@@ -360,4 +360,42 @@ if(isset($_POST['login'])) {
                     
                     <div class="form-group">
                         <label for="pass">Password</label>
-                        <input type="password" name="
+                        <input type="password" name="pass" class="form-control" id="pass" required>
+                    </div>
+                    <button type="submit" name="login" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                    <div class="register-options">
+                        <h5>Don't have an account?</h5>
+                        <a href="register.php" class="register-btn user">Register as User</a>
+                        <a href="register_associate.php" class="register-btn associate">Register as Associate</a>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                    <script>
+                    $(document).ready(function() {
+                        $('.login-type-selector .btn').click(function() {
+                            $('.login-type-selector .btn').removeClass('active');
+                            $(this).addClass('active');
+                            var loginType = $(this).find('input').val();
+                            $('#loginTypeInput').val(loginType);
+                            if (loginType === 'associate') {
+                                $('#userLoginSection').hide();
+                                $('#associateLoginSection').show();
+                            } else {
+                                $('#associateLoginSection').hide();
+                                $('#userLoginSection').show();
+                            }
+                        });
+                        $('#googleAssociateLogin').click(function(e) {
+                            e.preventDefault();
+                            window.location.href = '<?php echo $google_associate_login_url; ?>';
+                        });
+                    });
+                    </script>
+                    </body>
+                    </html>

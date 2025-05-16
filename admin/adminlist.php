@@ -35,20 +35,7 @@ if(!isset($_SESSION['auser'])) {
     exit();
 }
 
-// Process delete operation
-if(isset($_GET['delid'])) {
-    $id = $_GET['delid'];
-    $sql = "DELETE FROM admin WHERE aid = $id";
-    $result = mysqli_query($con, $sql);
-    require_once __DIR__ . '/../includes/log_admin_action_db.php';
-    if($result) {
-        $msg = "<p class='alert alert-success'>Admin Deleted Successfully!</p>";
-        log_admin_action_db('delete_admin', "Deleted admin with ID: $id (by Super Admin)");
-    } else {
-        $error = "<p class='alert alert-warning'>Admin Not Deleted!</p>";
-        log_admin_action_db('delete_admin_failed', "Failed to delete admin with ID: $id (by Super Admin)");
-    }
-}
+// Delete now handled by centralized delete.php
 ?>
 
 <!-- Main Content -->
@@ -84,7 +71,7 @@ if(isset($_GET['delid'])) {
                                 <td><?php echo htmlspecialchars($row['aemail']); ?></td>
                                 <td>
                                     <a href="adminedit.php?id=<?php echo htmlspecialchars($row['aid']); ?>" class="btn btn-info">Edit</a>
-                                    <a href="adminlist.php?delid=<?php echo htmlspecialchars($row['aid']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this admin?');">Delete</a>
+                                    <a href="delete.php?type=admin&id=<?php echo htmlspecialchars($row['aid']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this admin?');">Delete</a>
                                 </td>
                             </tr>
                             <?php } ?>

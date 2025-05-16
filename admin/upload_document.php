@@ -19,7 +19,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['document'])) {
         if ($stmt->execute()) {
             require_once __DIR__ . '/../includes/functions/notification_util.php';
             addNotification($conn, 'Document', 'Document uploaded: ' . $doc_type, $uploaded_by);
-            $msg = 'Document uploaded successfully.';
+            // Auto-upload to Google Drive and save file ID
+            require_once __DIR__ . '/includes/integration_helpers.php';
+            $driveId = upload_to_google_drive_and_save_id($target_file, 'documents', 'id', $stmt->insert_id, 'drive_file_id');
+            if ($driveId) {
+                $msg = 'Document uploaded successfully and sent to Google Drive.';
+            } else {
+                $msg = 'Document uploaded, but Google Drive upload failed.';
+            }
+            // Slack notification
+            require_once __DIR__ . '/includes/integration_helpers.php';
+            $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+            $slackMsg = "📄 *New Document Uploaded*\n" .
+                "Type: $doc_type\n" .
+                "Owner: $owner_type #$owner_id\n" .
+                "By: $uploaded_by\n" .
+                ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+            send_slack_notification($slackMsg);
+            send_telegram_notification($slackMsg);
+            require_once __DIR__ . '/includes/upload_audit_log.php';
+            $slack_status = 'sent'; // You may want to check/send status from send_slack_notification
+            $telegram_status = 'sent'; // You may want to check/send status from send_telegram_notification
+            log_upload_event($conn, 'document', $stmt->insert_id, 'documents', $filename, $driveId, $uploaded_by, $slack_status, $telegram_status);
         } else {
             $msg = 'Database error: ' . htmlspecialchars($stmt->error);
         }

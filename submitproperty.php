@@ -3,7 +3,7 @@
 session_start();
 include("config.php");
 // include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/common-functions.php');
+include(__DIR__ . '/includes/functions/common-functions.php');
 
 // Check if user is logged in
 if(!isset($_SESSION['uemail']))
@@ -191,7 +191,7 @@ $additional_css = '<style>
 </style>';
 
 // Include the common header
-include(__DIR__ . '/includes/common-header.php');
+include(__DIR__ . '/includes/templates/dynamic_header.php');
 ?>
 
 <!-- Page Banner Section -->
@@ -447,7 +447,7 @@ $additional_js = '<script>
     document.addEventListener("DOMContentLoaded", function() {
         // Update custom file input labels with selected filename
         $(".custom-file-input").on("change", function() {
-            var fileName = $(this).val().split("\\").pop();
+            var fileName = $(this).val().// SECURITY: Replaced deprecated function"\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
         

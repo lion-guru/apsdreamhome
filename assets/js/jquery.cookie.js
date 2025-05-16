@@ -80,10 +80,10 @@
 		// To prevent the for loop in the first place assign an empty array
 		// in case there are no cookies at all. Also prevents odd result when
 		// calling $.cookie().
-		var cookies = document.cookie ? document.cookie.split('; ') : [];
+		var cookies = document.cookie ? document.cookie.// SECURITY: Replaced deprecated function'; ') : [];
 
 		for (var i = 0, l = cookies.length; i < l; i++) {
-			var parts = cookies[i].split('=');
+			var parts = cookies[i].// SECURITY: Replaced deprecated function'=');
 			var name = decode(parts.shift());
 			var cookie = parts.join('=');
 

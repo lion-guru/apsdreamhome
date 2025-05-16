@@ -1,39 +1,15 @@
 <?php
-include("config.php");
-$aid = intval($_GET['id']);
-$sql = "DELETE FROM admin WHERE aid = {$aid}";
-$result = mysqli_query($con, $sql);
-if($result == true)
-{
-	$msg="<p class='alert alert-success'>Admin Deleted</p>";
-	header("Location:adminlist.php?msg=$msg");
+session_start();
+require_once("config.php");
+if (!isset($_SESSION['auser'])) {
+    header("Location: index.php");
+    exit();
 }
-else{
-	$msg="<p class='alert alert-warning'>Admin Not Deleted</p>";
-	header("Location:adminlist.php?msg=$msg");
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $id = (int)$_GET['id'];
+    $stmt = $con->prepare("DELETE FROM admin WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
 }
-mysqli_close($con);
-?>
-
-<html>
-<body>
-<?php include __DIR__ . '/../includes/templates/dynamic_header.php'; ?>
-<?php
-include("config.php");
-$aid = intval($_GET['id']);
-$sql = "DELETE FROM admin WHERE aid = {$aid}";
-$result = mysqli_query($con, $sql);
-if($result == true)
-{
-	$msg="<p class='alert alert-success'>Admin Deleted</p>";
-	header("Location:adminlist.php?msg=$msg");
-}
-else{
-	$msg="<p class='alert alert-warning'>Admin Not Deleted</p>";
-	header("Location:adminlist.php?msg=$msg");
-}
-mysqli_close($con);
-?>
-<?php include __DIR__ . '/../includes/templates/new_footer.php'; ?>
-</body>
-</html>
+header("Location: adminlist.php?msg=Deleted");
+exit();

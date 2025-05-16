@@ -85,9 +85,9 @@ class EmailManager {
                 'subject' => '[Security Alert] {title}',
                 'template' => 'security_alert.html'
             ],
-            'api_key_expired' => [
+            '// SECURITY: Sensitive information removed_expired' => [
                 'subject' => '[API Key Alert] API Key Expired',
-                'template' => 'api_key_expired.html'
+                'template' => '// SECURITY: Sensitive information removed_expired.html'
             ],
             'rate_limit_exceeded' => [
                 'subject' => '[Rate Limit Alert] Rate Limit Exceeded',
@@ -126,8 +126,8 @@ class EmailManager {
      * Send API key expiration notice
      */
     public function sendApiKeyExpiredAlert($keyData, $userEmail) {
-        $template = $this->loadEmailTemplate('api_key_expired');
-        $subject = $this->templates['api_key_expired']['subject'];
+        $template = $this->loadEmailTemplate('// SECURITY: Sensitive information removed_expired');
+        $subject = $this->templates['// SECURITY: Sensitive information removed_expired']['subject'];
 
         $data = [
             'key_name' => $keyData['name'],
@@ -278,3 +278,4 @@ class EmailManager {
 
 // Create global email manager instance
 $emailManager = new EmailManager($securityLogger ?? null);
+

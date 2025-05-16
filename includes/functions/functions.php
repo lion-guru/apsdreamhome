@@ -1,17 +1,14 @@
 <?php
 // Include configuration
-require_once __DIR__ . '/common-functions.php';
 require_once __DIR__ . '/../config.php';
 
 // Existing sanitize_input function
-if (!function_exists('sanitize_input')) {
-    function sanitize_input($data) {
-        global $con;
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return mysqli_real_escape_string($con, $data);
-    }
+function sanitize_input($data) {
+    global $con;
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return mysqli_real_escape_string($con, $data);
 }
 
 // Enhanced token generation with expiry
@@ -136,19 +133,60 @@ function validate_password($password) {
     return true;
 }
 
-// --- Google OAuth Login URL Generator (Proxy) ---
-if (!function_exists('getGoogleLoginUrl')) {
-    function getGoogleLoginUrl($redirectUri = null) {
-        require_once __DIR__ . '/common-functions.php';
-        return \getGoogleLoginUrl($redirectUri);
+// Fetch latest news from database (fallback to static array if DB fails)
+function get_latest_news($limit = 3, $allow_html = false, $offset = 0) {
+    global $conn;
+    $news = [];
+    // Try DB first
+    if (isset($conn) && $conn) {
+        $sql = "SELECT id, title, date, summary, image, content FROM news ORDER BY date DESC, id DESC LIMIT ? OFFSET ?";
+        if ($stmt = $conn->prepare($sql)) {
+            $stmt->bind_param('ii', $limit, $offset);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            while ($row = $result->fetch_assoc()) {
+                $news[] = [
+                    'title' => $row['title'],
+                    'date' => $row['date'],
+                    'summary' => $row['summary'],
+                    'url' => '/news-detail.php?id=' . $row['id'],
+                    'image' => $row['image'],
+                    'content' => $allow_html ? $row['content'] : strip_tags($row['content'])
+                ];
+            }
+            $stmt->close();
+        }
     }
-}
-
-// --- Google OAuth Associate Login URL Generator (Proxy) ---
-if (!function_exists('getAssociateGoogleLoginUrl')) {
-    function getAssociateGoogleLoginUrl($redirectUri = null) {
-        require_once __DIR__ . '/common-functions.php';
-        return \getAssociateGoogleLoginUrl($redirectUri);
+    // Fallback to static array if DB fails
+    if (empty($news)) {
+        $news = [
+            [
+                'title' => 'APS Dream Homes Launches New Smart Villas',
+                'date' => '2025-04-10',
+                'summary' => 'Introducing our latest smart villas equipped with home automation and eco-friendly features.',
+                'url' => '/news-detail.php?id=1',
+                'image' => '/assets/images/news/villa-launch.jpg',
+                'content' => $allow_html ? '<p>APS Dream Homes is excited to announce the launch of our <strong>new Smart Villas</strong>. These state-of-the-art homes feature <ul><li>integrated home automation</li><li>solar panels</li><li>energy-efficient appliances</li></ul>Enjoy modern living with eco-friendly benefits and advanced security systems. <a href="/contact.php">Contact us</a> for a private tour and more details!</p>' : 'APS Dream Homes is excited to announce the launch of our new Smart Villas. These state-of-the-art homes feature integrated home automation, solar panels, and energy-efficient appliances. Enjoy modern living with eco-friendly benefits and advanced security systems. Contact us for a private tour and more details!'
+            ],
+            [
+                'title' => 'Awarded Best Real Estate Agency 2025',
+                'date' => '2025-03-22',
+                'summary' => 'We are honored to receive the Best Real Estate Agency award for 2025.',
+                'url' => '/news-detail.php?id=2',
+                'image' => '/assets/images/news/award.jpg',
+                'content' => $allow_html ? '<p>APS Dream Homes has been recognized as the <strong>Best Real Estate Agency of 2025</strong> by the National Realty Council. This award celebrates our commitment to <em>client satisfaction</em>, transparency, and innovation in the real estate sector. Thank you to our clients and partners for your trust and support.</p>' : 'APS Dream Homes has been recognized as the Best Real Estate Agency of 2025 by the National Realty Council. This award celebrates our commitment to client satisfaction, transparency, and innovation in the real estate sector. Thank you to our clients and partners for your trust and support.'
+            ],
+            [
+                'title' => 'Now Offering Virtual Property Tours',
+                'date' => '2025-02-15',
+                'summary' => 'Explore properties from the comfort of your home with our new virtual tour feature.',
+                'url' => '/news-detail.php?id=3',
+                'image' => '/assets/images/news/virtual-tour.jpg',
+                'content' => $allow_html ? '<p>We are thrilled to introduce <strong>virtual property tours</strong> for all our listings. Experience immersive <ul><li>3D walkthroughs</li><li>live video calls with agents</li><li>detailed floor plans</li></ul>all from your device. <a href="/properties.php">Schedule a virtual tour</a> today and find your dream home safely and conveniently.</p>' : 'We are thrilled to introduce virtual property tours for all our listings. Experience immersive 3D walkthroughs, live video calls with agents, and detailed floor plans, all from your device. Schedule a virtual tour today and find your dream home safely and conveniently.'
+            ],
+            // Add more news as needed
+        ];
     }
+    return array_slice($news, 0, $limit);
 }
 ?>

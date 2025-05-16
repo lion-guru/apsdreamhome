@@ -45,7 +45,7 @@ $_SESSION['csp_nonce'] = $csp_nonce;
 // Update CSP header to be less strict temporarily
 header("Content-Security-Policy: "
     . "default-src 'self' 'unsafe-inline'; "
-    . "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+    . "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.jsdelivr.net/npm/sweetalert2@11; "
     . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
     . "img-src 'self' data:; "
     . "font-src 'self'; "
@@ -349,3 +349,1563 @@ register_shutdown_function(function() {
         error_log("Session validation failed - redirecting to login");
     }
 });
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {
+    if (!isset($_SESSION['active'])) {
+        error_log("Session validation failed - redirecting to login");
+    }
+});
+?>
+
+define('AJAX_TOKEN_EXPIRY', 3600); // 1 hour
+define('API_TOKEN_EXPIRY', 86400); // 24 hours
+
+function validateAjaxToken($token) {
+    return isset($_SESSION['ajax_token']) && 
+           hash_equals($_SESSION['ajax_token'], $token) &&
+           (time() - $_SESSION['ajax_token_created']) < AJAX_TOKEN_EXPIRY;
+}
+
+function validateApiToken($token) {
+    return isset($_SESSION['api_token']) && 
+           hash_equals($_SESSION['api_token'], $token) &&
+           (time() - $_SESSION['api_token_created']) < API_TOKEN_EXPIRY;
+}
+
+// Debug session status
+register_shutdown_function(function() {

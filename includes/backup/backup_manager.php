@@ -79,7 +79,7 @@ class BackupManager {
             $dbHost = $this->con->host_info;
             $dbName = trim($this->con->query("SELECT DATABASE()")->fetch_row()[0]);
             $dbUser = getenv('DB_USERNAME');
-            $dbPass = getenv('DB_PASSWORD');
+            $dbPass = getenv('// SECURITY: Sensitive information removed');
 
             // Create backup using mysqldump
             $command = sprintf(
@@ -316,7 +316,7 @@ class BackupManager {
             $dbHost = $this->con->host_info;
             $dbName = trim($this->con->query("SELECT DATABASE()")->fetch_row()[0]);
             $dbUser = getenv('DB_USERNAME');
-            $dbPass = getenv('DB_PASSWORD');
+            $dbPass = getenv('// SECURITY: Sensitive information removed');
 
             // Restore using mysql command
             $command = sprintf(
@@ -454,3 +454,4 @@ class BackupManager {
 
 // Create global backup manager instance
 $backupManager = new BackupManager($con ?? null, $securityLogger ?? null, $emailManager ?? null);
+

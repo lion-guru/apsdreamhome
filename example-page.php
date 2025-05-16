@@ -25,7 +25,7 @@ $additional_css = '<style>
 </style>';
 
 // Include the updated common header
-include(__DIR__ . '/includes/templates/header.php');
+include(__DIR__ . '/includes/templates/dynamic_header.php');
 ?>
 
 <!-- Main Content Start -->

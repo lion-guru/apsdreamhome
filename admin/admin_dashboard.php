@@ -1,5 +1,13 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// DEBUG: Output session contents for troubleshooting
+if (isset($_GET['debug_session'])) {
+    echo '<pre>SESSION DEBUG:\n';
+    print_r($_SESSION);
+    echo '</pre>';
+}
 include 'config.php';
 
 if (!isset($_SESSION['auser'])) {

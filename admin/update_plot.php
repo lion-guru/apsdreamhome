@@ -206,7 +206,7 @@ if (empty($_SESSION['csrf_token'])) {
 							
 						  <tr>
 							<td><a href="plot_edit.php?id=<?php echo $arg; ?>"><button class="btn btn-info">Edit</button></td>
-							<td><a href="delete_plot.php?id=<?php echo $arg; ?>"><button class="btn btn-info">Delete</button></td>
+							<td><a href="delete.php?type=plot&id=<?php echo $arg; ?>"><button class="btn btn-info">Delete</button></a></td>
 							<td><?php echo $i; ?></td>
 							<td><?php echo $plot_no; ?></td>
 							<td><?php echo $area; ?></td>

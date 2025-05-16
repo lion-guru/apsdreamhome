@@ -103,7 +103,7 @@
     function pluralize(format, count) {
         var plural = "s", singular = "";
         if (format) {
-            format = format.replace(/(:|;|\s)/gi, "").split(/\,/);
+            format = format.replace(/(:|;|\s)/gi, "").// SECURITY: Replaced deprecated function/\,/);
             if (format.length === 1) {
                 plural = format[0];
             } else {

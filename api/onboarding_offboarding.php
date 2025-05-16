@@ -15,6 +15,6 @@ if ($admin_check->num_rows == 0) {
     exit;
 }
 $res = $conn->query("SELECT al.id, e.name as user, al.action, al.details, al.ip_address, al.created_at FROM audit_log al LEFT JOIN employees e ON al.user_id = e.id WHERE al.action IN ('Onboarding','Offboarding') ORDER BY al.id DESC LIMIT 100");
-events = [];
+$events = [];
 while($row = $res->fetch_assoc()) $events[] = $row;
 echo json_encode(['onboarding_offboarding'=>$events]);

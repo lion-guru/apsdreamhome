@@ -7,7 +7,7 @@
 
 // Include necessary files
 require_once 'config.php';
-require_once 'includes/db_connection.php';
+require_once 'includes/src/Database/Database.php';
 require_once 'includes/migration_helper.php';
 
 // Set error reporting for development (disable in production)

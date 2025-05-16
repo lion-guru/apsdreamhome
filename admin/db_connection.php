@@ -8,15 +8,19 @@
  * to avoid duplication and ensure consistent database connections.
  */
 
-// Include the centralized database configuration
-require_once __DIR__ . '/../includes/db_config.php';
+// Include the centralized database connection
+require_once __DIR__ . '/../includes/db_connection.php';
 
 // For backward compatibility, make sure $con is available
-if (!isset($con) || !$con) {
+try {
     $con = getDbConnection();
-}
-
-// Log successful connection for debugging
-if ($con) {
+    
+    // Log successful connection for debugging
     error_log('Admin panel database connection established successfully');
+} catch (Exception $e) {
+    // Log detailed connection error
+    error_log('Admin panel database connection failed: ' . $e->getMessage());
+    
+    // Handle connection failure (you might want to display a user-friendly error or redirect)
+    die('Database connection error. Please contact support.');
 }

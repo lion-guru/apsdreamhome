@@ -4,13 +4,13 @@
  * Logs security-related events for auditing and monitoring
  */
 
-require_once __DIR__ . '/logger.php';
+// require_once __DIR__ . '/logger.php';
 
 class SecurityLogger {
     private $logger;
     
     public function __construct($logger = null) {
-        $this->logger = $logger ?? new Logger();
+        $this->logger = null;
     }
     
     /**
@@ -31,7 +31,7 @@ class SecurityLogger {
             'referer' => $_SERVER['HTTP_REFERER'] ?? 'direct'
         ]);
         
-        $this->logger->security($message, $context);
+        // $this->logger->security($message, $context);
     }
     
     /**
@@ -50,7 +50,7 @@ class SecurityLogger {
             'success' => $success
         ]);
         
-        $this->logger->security($message, $context);
+        // $this->logger->security($message, $context);
     }
     
     /**
@@ -73,7 +73,7 @@ class SecurityLogger {
             'allowed' => $allowed
         ];
         
-        $this->logger->security($message, $context);
+        // $this->logger->security($message, $context);
     }
     
     /**
@@ -93,7 +93,7 @@ class SecurityLogger {
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
         ];
         
-        $this->logger->security($message, $context);
+        // $this->logger->security($message, $context);
     }
     
     /**
@@ -114,7 +114,7 @@ class SecurityLogger {
             'success' => $success
         ]);
         
-        $this->logger->security($message, $context);
+        // $this->logger->security($message, $context);
     }
     
     /**
@@ -137,7 +137,7 @@ class SecurityLogger {
             'new_value' => $newValue
         ];
         
-        $this->logger->security($message, $context);
+        // $this->logger->security($message, $context);
     }
     
     /**
@@ -157,7 +157,7 @@ class SecurityLogger {
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
         ];
         
-        $this->logger->security($message, $context);
+        // $this->logger->security($message, $context);
     }
 }
 

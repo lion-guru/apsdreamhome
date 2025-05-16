@@ -1,5 +1,5 @@
 <?php
-include('db_connection.php');
+include('src/Database/Database.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['opportunity_id'])) {
     $opportunity_id = intval($_POST['opportunity_id']);

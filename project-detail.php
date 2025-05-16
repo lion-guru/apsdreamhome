@@ -4,7 +4,7 @@ require_once __DIR__ . '/includes/functions/common-functions.php';
 $page_title = "Project Details - APS Dream Homes";
 $additional_css = '<link rel="stylesheet" href="' . get_asset_url('css/home.css') . '">';
 $additional_js = '';
-require_once __DIR__ . '/includes/templates/header.php';
+require_once __DIR__ . '/includes/templates/dynamic_header.php';
 
 // Fetch project details from DB
 $project = null;

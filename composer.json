@@ -1,10 +1,11 @@
 {
     "require": {
         "php": "^8.1",
-        "google/apiclient": "2.15.0",
+        "google/apiclient": "*",
         "phpmailer/phpmailer": "^6.8",
-        "ext-mysqli": "*",
-        "ext-json": "*"
+        "guzzlehttp/psr7": "*",
+        "phpseclib/phpseclib": "*",
+        "tecnickcom/tcpdf": "*"
     },
     "autoload": {
         "psr-4": {
@@ -15,5 +16,8 @@
         "platform": {
             "php": "8.1"
         }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*"
     }
 }

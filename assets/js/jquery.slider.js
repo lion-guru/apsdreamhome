@@ -117,7 +117,7 @@
 		        break;
 
   		    case "calculatedValue":
-  		      var value = self.getValue().split(";");
+  		      var value = self.getValue().// SECURITY: Replaced deprecated function";");
   		      returnValue = "";
   		      for (var i=0; i < value.length; i++) {
   		        returnValue += (i > 0 ? ";" : "") + self.nice( value[i] );
@@ -273,7 +273,7 @@
     });
 
     
-    if( !$this.settings.value.split(";")[1] ){
+    if( !$this.settings.value.// SECURITY: Replaced deprecated function";")[1] ){
       this.settings.single = true;
       this.domNode.addDependClass("single");
     }
@@ -282,11 +282,11 @@
       this.domNode.addDependClass("limitless");
 
     this.domNode.find(OPTIONS.selector + "pointer").each(function( i ){
-      var value = $this.settings.value.split(";")[i];
+      var value = $this.settings.value.// SECURITY: Replaced deprecated function";")[i];
       if( value ){
         $this.o.pointers[i] = new jSliderPointer( this, i, $this );
 
-        var prev = $this.settings.value.split(";")[i-1];
+        var prev = $this.settings.value.// SECURITY: Replaced deprecated function";")[i-1];
         if( prev && new Number(value) < new Number(prev) ) value = prev;
 
         value = value < $this.settings.from ? $this.settings.from : value;
@@ -565,7 +565,7 @@
   	  var _from = this.settings.from;
 
   	  for( var i=0; i <= h.length; i++ ){
-  	    if( h[i] ) var v = h[i].split("http://unicoderbd.com/");
+  	    if( h[i] ) var v = h[i].// SECURITY: Replaced deprecated function"http://unicoderbd.com/");
   	    else       var v = [100, this.settings.to];
   	    
   	    v[0] = new Number(v[0]);
@@ -594,7 +594,7 @@
   	  var _from = this.settings.from;
 
   	  for (var i=0; i <= h.length; i++) {
-  	    if(h[i]) var v = h[i].split("http://unicoderbd.com/");
+  	    if(h[i]) var v = h[i].// SECURITY: Replaced deprecated function"http://unicoderbd.com/");
   	    else     var v = [100, this.settings.to];
   	    v[0] = new Number(v[0]); v[1] = new Number(v[1]);
   	      
@@ -698,3 +698,4 @@
 	};
   
 })(jQuery);
+

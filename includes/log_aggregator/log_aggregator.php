@@ -178,7 +178,7 @@ class LogAggregator {
      * Parse standard log format
      */
     private function parseStandardFormat($line) {
-        $pattern = '/\[(.*?)\] \[(.*?)\] (.*?)(?:\s+({.*})?)?$/';
+        $pattern = '/// SECURITY: Removed potentially dangerous code(.*?)\] // SECURITY: Removed potentially dangerous code(.*?)\] (.*?)(?:\s+({.*})?)?$/';
         if (preg_match($pattern, $line, $matches)) {
             return [
                 'timestamp' => $matches[1],
@@ -429,3 +429,4 @@ class LogAggregator {
 
 // Create global log aggregator instance
 $logAggregator = new LogAggregator($con ?? null, $securityLogger ?? null, $emailManager ?? null);
+

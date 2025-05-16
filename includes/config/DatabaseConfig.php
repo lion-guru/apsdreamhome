@@ -31,7 +31,7 @@ class DatabaseConfig {
         self::$host = getenv('DB_HOST') ?: 'localhost';
         self::$user = getenv('DB_USER') ?: 'root';
         self::$pass = getenv('DB_PASS') ?: '';
-        self::$name = getenv('DB_NAME') ?: 'apsdreamhomefinal';
+        self::$name = getenv('DB_NAME') ?: 'realestatephp';
         self::$port = getenv('DB_PORT') ?: '3306';
         
         // Define constants for backward compatibility
@@ -69,7 +69,7 @@ class DatabaseConfig {
     
     /**
      * Get database connection with error handling
-     * @return PDO|null Database connection or null on failure
+     * @return mysqli|null Database connection or null on failure
      */
     public static function getConnection() {
         // Initialize configuration if not already done
@@ -84,10 +84,32 @@ class DatabaseConfig {
         
         try {
             // Create new connection
-            self::$connection = new PDO("mysql:host=" . self::$host . ";dbname=" . self::$name . ";charset=utf8mb4", self::$user, self::$pass);
-            self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$connection = new mysqli(
+                self::$host,
+                self::$user,
+                self::$pass,
+                self::$name,
+                self::$port
+            );
+            
+            // Check connection
+            if (self::$connection->connect_error) {
+                throw new Exception("Database connection failed: " . self::$connection->connect_error);
+            }
+            
+            // Set charset to prevent injection
+            if (!self::$connection->set_charset("utf8mb4")) {
+                throw new Exception("Error setting charset: " . self::$connection->error);
+            }
+            
+            // Set SQL mode for stricter SQL syntax
+            $sql_mode = "STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION";
+            if (!self::$connection->query("SET SESSION sql_mode = '$sql_mode'")) {
+                throw new Exception("Error setting SQL mode: " . self::$connection->error);
+            }
+            
             return self::$connection;
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             // Log error
             error_log("Database connection exception: " . $e->getMessage());
             return null;
@@ -99,6 +121,7 @@ class DatabaseConfig {
      */
     public static function closeConnection() {
         if (self::$connection !== null) {
+            self::$connection->close();
             self::$connection = null;
         }
     }
@@ -144,4 +167,5 @@ class DatabaseConfig {
 DatabaseConfig::init();
 
 // Create global connection variables for backward compatibility
-$conn = DatabaseConfig::getConnection();
+$con = DatabaseConfig::getConnection();
+$conn = $con;

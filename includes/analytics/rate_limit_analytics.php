@@ -62,13 +62,13 @@ class RateLimitAnalytics {
         $this->con->query("
             CREATE TABLE IF NOT EXISTS rate_limit_events (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                api_key_id VARCHAR(36) NOT NULL,
+                // SECURITY: Sensitive information removed_id VARCHAR(36) NOT NULL,
                 endpoint VARCHAR(255) NOT NULL,
                 requests INT NOT NULL,
                 limit_value INT NOT NULL,
                 window_size INT NOT NULL,
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_api_key (api_key_id),
+                INDEX idx_// SECURITY: Sensitive information removed (// SECURITY: Sensitive information removed_id),
                 INDEX idx_endpoint (endpoint),
                 INDEX idx_timestamp (timestamp)
             )
@@ -78,7 +78,7 @@ class RateLimitAnalytics {
         $this->con->query("
             CREATE TABLE IF NOT EXISTS rate_limit_violations (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                api_key_id VARCHAR(36) NOT NULL,
+                // SECURITY: Sensitive information removed_id VARCHAR(36) NOT NULL,
                 endpoint VARCHAR(255) NOT NULL,
                 requests INT NOT NULL,
                 limit_value INT NOT NULL,
@@ -87,7 +87,7 @@ class RateLimitAnalytics {
                 action_taken VARCHAR(50) NULL,
                 resolved BOOLEAN DEFAULT FALSE,
                 resolution_notes TEXT NULL,
-                INDEX idx_api_key (api_key_id),
+                INDEX idx_// SECURITY: Sensitive information removed (// SECURITY: Sensitive information removed_id),
                 INDEX idx_endpoint (endpoint),
                 INDEX idx_timestamp (timestamp)
             )
@@ -102,7 +102,7 @@ class RateLimitAnalytics {
             // Record in database
             $stmt = $this->con->prepare("
                 INSERT INTO rate_limit_events 
-                (api_key_id, endpoint, requests, limit_value, window_size)
+                (// SECURITY: Sensitive information removed_id, endpoint, requests, limit_value, window_size)
                 VALUES (?, ?, ?, ?, ?)
             ");
             
@@ -133,7 +133,7 @@ class RateLimitAnalytics {
         try {
             $stmt = $this->con->prepare("
                 INSERT INTO rate_limit_violations 
-                (api_key_id, endpoint, requests, limit_value, ip_address)
+                (// SECURITY: Sensitive information removed_id, endpoint, requests, limit_value, ip_address)
                 VALUES (?, ?, ?, ?, ?)
             ");
             
@@ -183,7 +183,7 @@ class RateLimitAnalytics {
         
         if ($utilization >= $this->config['alert_threshold']) {
             $this->logger->warning('Rate limit threshold reached', [
-                'api_key' => $apiKeyId,
+                '// SECURITY: Sensitive information removed' => $apiKeyId,
                 'endpoint' => $endpoint,
                 'utilization' => $utilization
             ]);
@@ -192,7 +192,7 @@ class RateLimitAnalytics {
             if (class_exists('WebhookManager')) {
                 global $webhookManager;
                 $webhookManager->triggerEvent('rate_limit.threshold', [
-                    'api_key' => $apiKeyId,
+                    '// SECURITY: Sensitive information removed' => $apiKeyId,
                     'endpoint' => $endpoint,
                     'requests' => $requests,
                     'limit' => $limit,
@@ -210,7 +210,7 @@ class RateLimitAnalytics {
         $stmt = $this->con->prepare("
             SELECT COUNT(*) as violations
             FROM rate_limit_violations
-            WHERE api_key_id = ?
+            WHERE // SECURITY: Sensitive information removed_id = ?
             AND timestamp >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
         ");
         
@@ -220,7 +220,7 @@ class RateLimitAnalytics {
         
         if ($result['violations'] >= $this->config['violation_threshold']) {
             $this->logger->alert('Excessive rate limit violations', [
-                'api_key' => $apiKeyId,
+                '// SECURITY: Sensitive information removed' => $apiKeyId,
                 'violations' => $result['violations']
             ]);
 
@@ -239,7 +239,7 @@ class RateLimitAnalytics {
             SET action_taken = 'temporary_suspension',
                 resolved = TRUE,
                 resolution_notes = 'Automatic suspension due to excessive violations'
-            WHERE api_key_id = ?
+            WHERE // SECURITY: Sensitive information removed_id = ?
             AND resolved = FALSE
         ");
         
@@ -250,7 +250,7 @@ class RateLimitAnalytics {
         if (class_exists('WebhookManager')) {
             global $webhookManager;
             $webhookManager->triggerEvent('rate_limit.excessive_violations', [
-                'api_key' => $apiKeyId,
+                '// SECURITY: Sensitive information removed' => $apiKeyId,
                 'action' => 'temporary_suspension'
             ]);
         }
@@ -274,7 +274,7 @@ class RateLimitAnalytics {
                 COUNT(*) as events,
                 SUM(CASE WHEN requests >= limit_value THEN 1 ELSE 0 END) as violations,
                 AVG(requests / limit_value) as avg_utilization,
-                COUNT(DISTINCT api_key_id) as affected_users,
+                COUNT(DISTINCT // SECURITY: Sensitive information removed_id) as affected_users,
                 COUNT(DISTINCT endpoint) as affected_endpoints
             FROM rate_limit_events
             WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? DAY)
@@ -302,7 +302,7 @@ class RateLimitAnalytics {
                 SUM(CASE WHEN requests >= limit_value THEN 1 ELSE 0 END) as violations,
                 AVG(requests / limit_value) as avg_utilization,
                 MAX(requests / limit_value) as max_utilization,
-                COUNT(DISTINCT api_key_id) as unique_users
+                COUNT(DISTINCT // SECURITY: Sensitive information removed_id) as unique_users
             FROM rate_limit_events
             WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? DAY)
             GROUP BY endpoint
@@ -322,14 +322,14 @@ class RateLimitAnalytics {
     public function getUserMetrics($days = 7) {
         $sql = "
             SELECT 
-                api_key_id,
+                // SECURITY: Sensitive information removed_id,
                 COUNT(*) as events,
                 SUM(CASE WHEN requests >= limit_value THEN 1 ELSE 0 END) as violations,
                 AVG(requests / limit_value) as avg_utilization,
                 COUNT(DISTINCT endpoint) as endpoints_affected
             FROM rate_limit_events
             WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? DAY)
-            GROUP BY api_key_id
+            GROUP BY // SECURITY: Sensitive information removed_id
             ORDER BY events DESC
         ";
 
@@ -351,7 +351,7 @@ class RateLimitAnalytics {
         ";
         
         if ($apiKeyId) {
-            $sql .= " AND api_key_id = ?";
+            $sql .= " AND // SECURITY: Sensitive information removed_id = ?";
         }
         
         $sql .= " ORDER BY timestamp DESC LIMIT ?";
@@ -452,3 +452,4 @@ class RateLimitAnalytics {
 
 // Create global rate limit analytics instance
 $rateLimitAnalytics = new RateLimitAnalytics($con ?? null);
+

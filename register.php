@@ -6,7 +6,7 @@ include(__DIR__ . '/includes/config-paths.php');
 include(__DIR__ . '/includes/functions.php');
 require_once(__DIR__ . '/includes/functions/role_helper.php');
 require_once __DIR__ . '/includes/log_admin_activity.php';
-require_once __DIR__ . '/includes/classes/Database.php';
+require_once __DIR__ . '/src/Database/Database.php';
 require_once __DIR__ . '/includes/classes/User.php';
 require_once __DIR__ . '/includes/classes/Associate.php';
 

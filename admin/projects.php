@@ -24,7 +24,7 @@ if ($conn && isset($_GET['delete_id'])) {
 // Fetch projects from the database
 $projects = [];
 if ($conn) {
-    $sql = "SELECT * FROM project_master ORDER BY city, name";
+    $sql = "SELECT * FROM projects ORDER BY location, name";
     $result = $conn->query($sql);
     if ($result) {
         while ($row = $result->fetch_assoc()) {
@@ -81,7 +81,13 @@ if ($conn) {
                             <?php foreach ($projects as $p): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($p['id']); ?></td>
-                                    <td><?php echo htmlspecialchars($p['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($p['name']); ?>
+                                        <?php if (!empty($p['brochure_drive_id'])): ?>
+                                            <a href="https://drive.google.com/file/d/<?php echo htmlspecialchars($p['brochure_drive_id']); ?>/view" target="_blank" title="View Brochure on Google Drive">
+                                                <i class="fab fa-google-drive text-success ms-2"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </td>
                                     <td><?php echo htmlspecialchars($p['city']); ?></td>
                                     <td><?php echo htmlspecialchars($p['location']); ?></td>
                                     <td><?php echo $p['status'] ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'; ?></td>

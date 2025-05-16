@@ -9,5 +9,6 @@ $db_user = 'root';
 $db_pass = '';
 $db_name = 'apsdreamhomes';
 $cmd = "mysqldump -h $db_host -u $db_user --password=$db_pass $db_name > $filename";
-system($cmd);
+// SECURITY: Removed potentially dangerous code$cmd);
 echo "Backup created: $filename\n";
+

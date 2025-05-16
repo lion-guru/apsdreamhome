@@ -2,7 +2,7 @@
 // Load environment variables from .env if available (for local development)
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
-    if (class_exists('Dotenv\\Dotenv')) {
+    if (class_exists('Dotenv\Dotenv')) {
         $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
         $dotenv->safeLoad();
     }
@@ -91,3 +91,4 @@ if ($google_client_id && $google_client_secret) {
     echo "<p style='color:red'>Google OAuth credentials not set.</p>";
 }
 ?>
+

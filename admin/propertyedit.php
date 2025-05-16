@@ -1,12 +1,10 @@
 <?php
-session_start();
-require("config.php");
-
-// Secure authentication check
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: login.php');
-    exit();
-}
+// Deprecated: This file is now handled by the unified property management module.
+// All logic has been migrated to the modern property-listings.php and related admin modules.
+// To restore the old version, see propertyedit.php.bak
+header('Location: property_inventory.php');
+exit();
+?>
 
 ////code
  
@@ -62,15 +60,141 @@ if(isset($_POST['add']))
 	$temp_name7 =$_FILES['fimage2']['tmp_name'];
 	
 	move_uploaded_file($temp_name,"property/$aimage");
+    if ($aimage) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$aimage", 'property', 'pid', $pid, 'pimage_drive_id');
+        $driveId = $conn->query("SELECT `pimage_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["pimage_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: pimage\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_image', $pid, 'property', $aimage, $driveId, $title, $slack_status, $telegram_status);
+    }
 	move_uploaded_file($temp_name1,"property/$aimage1");
+    if ($aimage1) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$aimage1", 'property', 'pid', $pid, 'pimage1_drive_id');
+        $driveId = $conn->query("SELECT `pimage1_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["pimage1_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: pimage1\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_image', $pid, 'property', $aimage1, $driveId, $title, $slack_status, $telegram_status);
+    }
 	move_uploaded_file($temp_name2,"property/$aimage2");
+    if ($aimage2) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$aimage2", 'property', 'pid', $pid, 'pimage2_drive_id');
+        $driveId = $conn->query("SELECT `pimage2_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["pimage2_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: pimage2\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_image', $pid, 'property', $aimage2, $driveId, $title, $slack_status, $telegram_status);
+    }
 	move_uploaded_file($temp_name3,"property/$aimage3");
+    if ($aimage3) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$aimage3", 'property', 'pid', $pid, 'pimage3_drive_id');
+        $driveId = $conn->query("SELECT `pimage3_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["pimage3_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: pimage3\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_image', $pid, 'property', $aimage3, $driveId, $title, $slack_status, $telegram_status);
+    }
 	move_uploaded_file($temp_name4,"property/$aimage4");
-	
+    if ($aimage4) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$aimage4", 'property', 'pid', $pid, 'pimage4_drive_id');
+        $driveId = $conn->query("SELECT `pimage4_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["pimage4_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: pimage4\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_image', $pid, 'property', $aimage4, $driveId, $title, $slack_status, $telegram_status);
+    }
 	move_uploaded_file($temp_name5,"property/$fimage");
+    if ($fimage) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$fimage", 'property', 'pid', $pid, 'mapimage_drive_id');
+        $driveId = $conn->query("SELECT `mapimage_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["mapimage_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: mapimage\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_floorplan', $pid, 'property', $fimage, $driveId, $title, $slack_status, $telegram_status);
+    }
 	move_uploaded_file($temp_name6,"property/$fimage1");
+    if ($fimage1) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$fimage1", 'property', 'pid', $pid, 'topmapimage_drive_id');
+        $driveId = $conn->query("SELECT `topmapimage_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["topmapimage_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: topmapimage\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_floorplan', $pid, 'property', $fimage1, $driveId, $title, $slack_status, $telegram_status);
+    }
 	move_uploaded_file($temp_name7,"property/$fimage2");
-	
+    if ($fimage2) {
+        require_once __DIR__ . '/includes/integration_helpers.php';
+        upload_to_google_drive_and_save_id("property/$fimage2", 'property', 'pid', $pid, 'groundmapimage_drive_id');
+        $driveId = $conn->query("SELECT `groundmapimage_drive_id` FROM property WHERE pid = $pid")->fetch_assoc()["groundmapimage_drive_id"];
+        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+        $slackMsg = "🏠 *New Property Image Uploaded*\n" .
+            "Property: $title (#$pid)\n" .
+            "Type: groundmapimage\n" .
+            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+        send_slack_notification($slackMsg);
+        send_telegram_notification($slackMsg);
+        require_once __DIR__ . '/includes/upload_audit_log.php';
+        $slack_status = 'sent';
+        $telegram_status = 'sent';
+        log_upload_event($conn, 'property_floorplan', $pid, 'property', $fimage2, $driveId, $title, $slack_status, $telegram_status);
+    }
 	
 	$sql = "UPDATE property SET title= '{$title}', pcontent= '{$content}', type='{$ptype}', bhk='{$bhk}', stype='{$stype}',
 	bedroom='{$bed}', bathroom='{$bath}', balcony='{$balc}', kitchen='{$kitc}', hall='{$hall}', floor='{$floor}', 

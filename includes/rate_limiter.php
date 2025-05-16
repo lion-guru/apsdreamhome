@@ -73,7 +73,7 @@ class RateLimiter {
      * Get unique identifier for rate limiting
      */
     private function getIdentifier($key) {
-        return $this->prefix . md5($key . '_' . $this->getClientIp());
+        return $this->prefix . $key . '_' . $this->getClientIp();
     }
 
     /**
@@ -163,3 +163,4 @@ class FileStorage {
 
 // Create global rate limiter instance
 $rateLimiter = new RateLimiter();
+

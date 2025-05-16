@@ -1,4 +1,0 @@
-[08-Oct-2024 20:33:46 Europe/Berlin] PHP Warning:  Undefined array key "gender" in C:\xampp\htdocs\apsdh\profile.php on line 117
-[08-Oct-2024 20:46:33 Europe/Berlin] PHP Warning:  Undefined array key "gender" in C:\xampp\htdocs\apsdh\profile.php on line 179
-[08-Oct-2024 21:01:51 Europe/Berlin] PHP Warning:  Undefined array key "gender" in C:\xampp\htdocs\apsdh\profile.php on line 100
-[08-Oct-2024 21:01:51 Europe/Berlin] PHP Warning:  Undefined array key "nominee" in C:\xampp\htdocs\apsdh\profile.php on line 109

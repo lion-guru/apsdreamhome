@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . '/../includes/functions/role_helper.php');
 enforceRole(['admin','superadmin']);
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 $db = new Database();
 $con = $db->getConnection();
 $sql = "SELECT id, name, email, phone, role, status FROM employees ORDER BY id DESC";

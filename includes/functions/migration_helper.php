@@ -6,7 +6,7 @@
  */
 
 // Include the database connection handler
-require_once 'db_connection.php';
+require_once 'src/Database/Database.php';
 
 /**
  * Check if a table exists in the database

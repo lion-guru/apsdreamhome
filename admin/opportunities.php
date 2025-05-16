@@ -1,6 +1,6 @@
 <?php
 include('header.php');
-include('db_connection.php');
+include('src/Database/Database.php');
 
 // Handle form submission for new opportunity
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_opportunity'])) {

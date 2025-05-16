@@ -4,7 +4,7 @@ session_cache_limiter(false);
 session_start();
 include("config.php");
 include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/common-functions.php');
+include(__DIR__ . '/includes/functions/common-functions.php');
 require_once(__DIR__ . '/includes/templates/dynamic_header.php');
 ?>
 <!DOCTYPE html>

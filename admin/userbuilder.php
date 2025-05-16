@@ -109,7 +109,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                                     <td><?php echo $row['3']; ?></td>
                                                     <td><?php echo $row['5']; ?></td>
 													<td><img src="user/<?php echo $row['6']; ?>" height="50px" width="50px"></td>
-                                                    <td><a href="userbuilderdelete.php?id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
+                                                    <td><a href="delete.php?type=userbuilder&id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
                                                 </tr>
                                                 <?php
 												$cnt=$cnt+1;

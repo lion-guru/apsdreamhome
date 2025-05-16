@@ -19,20 +19,20 @@ $client->addScope('email');
 $client->addScope('profile');
 
 if (isset($_GET['logout'])) {
-    unset($_SESSION['access_token']);
+    unset($_SESSION['// SECURITY: Sensitive information removed']);
     header('Location: google_login.php');
     exit;
 }
 
 if (isset($_GET['code'])) {
     $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
-    $_SESSION['access_token'] = $token;
+    $_SESSION['// SECURITY: Sensitive information removed'] = $token;
     header('Location: google_login.php');
     exit;
 }
 
-if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-    $client->setAccessToken($_SESSION['access_token']);
+if (isset($_SESSION['// SECURITY: Sensitive information removed']) && $_SESSION['// SECURITY: Sensitive information removed']) {
+    $client->setAccessToken($_SESSION['// SECURITY: Sensitive information removed']);
     $oauth2 = new Google_Service_Oauth2($client);
     $userInfo = $oauth2->userinfo->get();
 
@@ -59,3 +59,4 @@ if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
     echo '<a href="' . htmlspecialchars($auth_url) . '">Login with Google</a>';
 }
 ?>
+

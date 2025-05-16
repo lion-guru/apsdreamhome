@@ -95,8 +95,9 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                                     <th>Price</th>
                                                     <th>Location</th>
 													<th>Status</th>
-                                                   
-                                                    
+                                                    <th>Main Image (Drive)</th>
+                                                    <th>Images (Drive)</th>
+                                                    <th>Floorplans (Drive)</th>
                                                     <th>Added Date</th>
                                                     <th>Actions</th>
                                                     
@@ -125,11 +126,39 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 													
                                                    
                                                     <td><?php echo $row['24']; ?></td>
-													
-                                                    
+                                                    <td>
+                                                        <?php if (!empty($row['pimage_drive_id'])): ?>
+                                                            <a href="https://drive.google.com/file/d/<?php echo htmlspecialchars($row['pimage_drive_id']); ?>/view" target="_blank" title="View Main Image on Google Drive">
+                                                                <i class="fab fa-google-drive text-success ms-2"></i>
+                                                            </a>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php foreach ([1,2,3,4] as $i): $field = 'pimage'.$i.'_drive_id'; ?>
+                                                            <?php if (!empty($row[$field])): ?>
+                                                                <a href="https://drive.google.com/file/d/<?php echo htmlspecialchars($row[$field]); ?>/view" target="_blank" title="View Image <?php echo $i; ?> on Google Drive">
+                                                                    <i class="fab fa-google-drive text-primary ms-1"></i>
+                                                                </a>
+                                                            <?php endif; ?>
+                                                        <?php endforeach; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php foreach ([['mapimage_drive_id','Map'],['topmapimage_drive_id','Top'],['groundmapimage_drive_id','Ground']] as $fp): ?>
+                                                            <?php if (!empty($row[$fp[0]])): ?>
+                                                                <a href="https://drive.google.com/file/d/<?php echo htmlspecialchars($row[$fp[0]]); ?>/view" target="_blank" title="View <?php echo $fp[1]; ?> Floorplan on Google Drive">
+                                                                    <i class="fab fa-google-drive text-warning ms-1"></i>
+                                                                </a>
+                                                            <?php endif; ?>
+                                                        <?php endforeach; ?>
+                                                    </td>
                                                     <td><?php echo $row['29']; ?></td>
 													<td><a href="propertyedit.php?id=<?php echo $row['0'];?>"><button class="btn btn-info">Edit</button></a>
-                                                    <a href="propertydelete.php?id=<?php echo $row['0'];?>"><button class="btn btn-danger">Delete</button></a></td>
+                                                    <a href="delete.php?type=property&id=<?php echo $row['0'];?>"><button class="btn btn-danger">Delete</button></a>
+													<?php if ($row['24'] === 'pending'): ?>
+														<a href="property_approvals.php?approve=<?php echo $row['0']; ?>" class="btn btn-success">Approve</a>
+														<a href="property_approvals.php?reject=<?php echo $row['0']; ?>" class="btn btn-warning">Reject</a>
+													<?php endif; ?>
+													</td>
                                                 </tr>
                                                <?php
 												} 

@@ -52,7 +52,7 @@ include __DIR__ . '/../includes/templates/dynamic_header.php';
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-header">Sales Trend (Last 6 Months)</div>
-                <div class="card-body">
+                <div class="card-body" style="min-height:320px; min-width:100%;">
                     <canvas id="salesChart"></canvas>
                 </div>
             </div>
