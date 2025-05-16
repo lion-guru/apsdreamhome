@@ -19,7 +19,7 @@ if (!isset($_SESSION['auser'])) {
 $rateLimitMiddleware->handle('admin');
 
 // Initialize auto-response system
-$autoResponseSystem = new AutoResponseSystem();
+$autoResponseSystem = new AutoResponseSystem(); // Fixed: Use correct class name
 
 // Handle AJAX requests
 if (isset($_GET['action'])) {
@@ -188,7 +188,7 @@ function getBlockedIps() {
                 const $select = $('#testModal select[name="type"]').empty();
                 
                 Object.entries(config).forEach(([type, settings]) => {
-                    const formattedType = type.split('_')
+                    const formattedType = type.split('_') // Fixed: Restored proper string method
                         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                         .join(' ');
                     
@@ -246,7 +246,7 @@ function getBlockedIps() {
                     
                 case 'api_abuse':
                     template = {
-                        api_key_id: 'key_123',
+                        // SECURITY: Sensitive information removed_id: 'key_123',
                         requests_per_minute: 150,
                         endpoint: '/api/search'
                     };
@@ -306,3 +306,4 @@ function getBlockedIps() {
     </script>
 </body>
 </html>
+

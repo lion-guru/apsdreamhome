@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/includes/functions/role_helper.php');
+require_once(__DIR__ . '/../includes/functions/role_helper.php');
 enforceRole(['admin','superadmin']);
 $menu_config = include(__DIR__ . '/includes/config/menu_config.php');
 $current_role = getCurrentUserRole();

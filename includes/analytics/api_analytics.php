@@ -59,7 +59,7 @@ class ApiAnalytics {
             // Record in database
             $stmt = $this->con->prepare(
                 "INSERT INTO api_requests (
-                    endpoint, method, api_key_id, response_time, status_code, 
+                    endpoint, method, // SECURITY: Sensitive information removed_id, response_time, status_code, 
                     ip_address, timestamp
                 ) VALUES (?, ?, ?, ?, ?, ?, NOW())"
             );
@@ -126,7 +126,7 @@ class ApiAnalytics {
                     END
                 ) as period,
                 COUNT(*) as requests,
-                COUNT(DISTINCT api_key_id) as unique_users,
+                COUNT(DISTINCT // SECURITY: Sensitive information removed_id) as unique_users,
                 COUNT(DISTINCT endpoint) as unique_endpoints,
                 AVG(response_time) as avg_response_time,
                 COUNT(CASE WHEN status_code >= 400 THEN 1 END) as errors
@@ -157,7 +157,7 @@ class ApiAnalytics {
                 MAX(response_time) as max_response_time,
                 MIN(response_time) as min_response_time,
                 COUNT(CASE WHEN status_code >= 400 THEN 1 END) as errors,
-                COUNT(DISTINCT api_key_id) as unique_users
+                COUNT(DISTINCT // SECURITY: Sensitive information removed_id) as unique_users
             FROM api_requests
             WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? DAY)
             GROUP BY endpoint
@@ -177,14 +177,14 @@ class ApiAnalytics {
     public function getUserMetrics($days = 7) {
         $sql = "
             SELECT 
-                api_key_id,
+                // SECURITY: Sensitive information removed_id,
                 COUNT(*) as requests,
                 COUNT(DISTINCT endpoint) as unique_endpoints,
                 AVG(response_time) as avg_response_time,
                 COUNT(CASE WHEN status_code >= 400 THEN 1 END) as errors
             FROM api_requests
             WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? DAY)
-            GROUP BY api_key_id
+            GROUP BY // SECURITY: Sensitive information removed_id
             ORDER BY requests DESC
         ";
 
@@ -203,7 +203,7 @@ class ApiAnalytics {
             SELECT 
                 status_code,
                 COUNT(*) as count,
-                COUNT(DISTINCT api_key_id) as affected_users,
+                COUNT(DISTINCT // SECURITY: Sensitive information removed_id) as affected_users,
                 COUNT(DISTINCT endpoint) as affected_endpoints
             FROM api_requests
             WHERE 
@@ -324,3 +324,4 @@ class ApiAnalytics {
 
 // Create global analytics instance
 $apiAnalytics = new ApiAnalytics($con ?? null);
+

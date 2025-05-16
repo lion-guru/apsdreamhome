@@ -1,34 +1,15 @@
 <?php
-include("config.php");
-$id = intval($_GET['id']);
-
-// view code//
-$sql = "SELECT * FROM about where id=$id";
-$result = mysqli_query($con, $sql);
-while($row = mysqli_fetch_array($result))
-	{
-	  $img=$row["image"];
-	}
-@unlink('upload/'.$img);
-
-//end view code
-
-
-$msg="";
-$sql = "DELETE FROM about WHERE id = $id";
-$result = mysqli_query($con, $sql);
-if($result == true)
-{
-	$msg="<p class='alert alert-success'>About Deleted</p>";
-	header("Location:aboutview.php?msg=".urlencode($msg));
-	exit();
+session_start();
+require_once("config.php");
+if (!isset($_SESSION['auser'])) {
+    header("Location: index.php");
+    exit();
 }
-else
-{
-	$error = "<p class='alert alert-warning'>* Error: " . htmlspecialchars(mysqli_error($con)) . "</p>";
-	header("Location:aboutview.php?msg=".urlencode($error));
-	exit();
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $id = (int)$_GET['id'];
+    $stmt = $con->prepare("DELETE FROM about WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
 }
-
-mysqli_close($con);
-?>
+header("Location: aboutview.php?msg=Deleted");
+exit();

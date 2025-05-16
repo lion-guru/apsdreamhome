@@ -33,6 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!file_exists('uploads/brochures')) { mkdir('uploads/brochures', 0777, true); }
                 move_uploaded_file($_FILES['brochure']['tmp_name'], $brochure_path);
                 $conn->query("UPDATE projects SET brochure_path='$brochure_path' WHERE id=$project_id");
+                require_once __DIR__ . '/includes/integration_helpers.php';
+                upload_to_google_drive_and_save_id($brochure_path, 'projects', 'id', $project_id, 'brochure_drive_id');
+                // Slack notification for brochure
+                $driveId = $conn->query("SELECT brochure_drive_id FROM projects WHERE id = $project_id")->fetch_assoc()['brochure_drive_id'];
+                $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+                $slackMsg = "🏢 *New Project Brochure Uploaded*\n" .
+                    "Project: $name (#$project_id)\n" .
+                    ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+                send_slack_notification($slackMsg);
+                send_telegram_notification($slackMsg);
+                require_once __DIR__ . '/includes/upload_audit_log.php';
+                $slack_status = 'sent';
+                $telegram_status = 'sent';
+                log_upload_event($conn, 'project_brochure', $project_id, 'projects', $brochure_path, $driveId, $name, $slack_status, $telegram_status);
             }
             // Handle amenities upload
             if (!empty($_FILES['amenity_icons']['name'][0])) {
@@ -56,6 +70,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if (!file_exists('uploads/gallery')) { mkdir('uploads/gallery', 0777, true); }
                         move_uploaded_file($_FILES['gallery_images']['tmp_name'][$idx], $img_path);
                         $conn->query("INSERT INTO project_gallery (project_id, image_path) VALUES ($project_id, '$img_path')");
+                        require_once __DIR__ . '/includes/integration_helpers.php';
+                        // Save Drive file ID in project_gallery table
+                        $last_gallery_id = $conn->insert_id;
+                        upload_to_google_drive_and_save_id($img_path, 'project_gallery', 'id', $last_gallery_id, 'drive_file_id');
+                        // Slack notification for gallery image
+                        $driveId = $conn->query("SELECT drive_file_id FROM project_gallery WHERE id = $last_gallery_id")->fetch_assoc()['drive_file_id'];
+                        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+                        $slackMsg = "🖼️ *New Project Gallery Image Uploaded*\n" .
+                            "Project: $name (#$project_id)\n" .
+                            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+                        send_slack_notification($slackMsg);
+                        send_telegram_notification($slackMsg);
+                        require_once __DIR__ . '/includes/upload_audit_log.php';
+                        $slack_status = 'sent';
+                        $telegram_status = 'sent';
+                        log_upload_event($conn, 'project_gallery', $last_gallery_id, 'project_gallery', $img_path, $driveId, $name, $slack_status, $telegram_status);
                     }
                 }
             }

@@ -9,7 +9,7 @@
 session_start();
 include("config.php");
 // include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/common-functions.php');
+include(__DIR__ . '/includes/functions/common-functions.php');
 
 // Define the pages to update
 $pages_to_update = [
@@ -155,7 +155,7 @@ $additional_css = '<style>
 </style>';
 
 // Include the updated common header
-// include(__DIR__ . '/includes/updated-common-header.php');
+// include(__DIR__ . '/includes/templates/dynamic_header.php');
 ?>
 
 <!-- Page Banner Section -->

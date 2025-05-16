@@ -90,12 +90,12 @@ header('Location: ' . $fbLoginUrl);
 exit;
 
 // Get the Facebook access token
-$accessTokenUrl = 'https://graph.facebook.com/oauth/access_token?client_id=' . $appId . '&redirect_uri=' . $redirectUrl . '&client_secret=' . $appSecret . '&code=' . $_GET['code'];
+$accessTokenUrl = 'https://graph.facebook.com/oauth/// SECURITY: Sensitive information removed?client_id=' . $appId . '&redirect_uri=' . $redirectUrl . '&client_secret=' . $appSecret . '&code=' . $_GET['code'];
 $accessTokenResponse = json_decode(file_get_contents($accessTokenUrl), true);
-$accessToken = $accessTokenResponse['access_token'];
+$accessToken = $accessTokenResponse['// SECURITY: Sensitive information removed'];
 
 // Get the Facebook user profile
-$graphUrl = 'https://graph.facebook.com/me?access_token=' . $accessToken;
+$graphUrl = 'https://graph.facebook.com/me?// SECURITY: Sensitive information removed=' . $accessToken;
 $graphResponse = json_decode(file_get_contents($graphUrl), true);
 
 // Check if the user exists in the database

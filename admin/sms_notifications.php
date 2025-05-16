@@ -114,7 +114,7 @@ if (isset($_GET['action'])) {
                 const $alertsList = $('#alertTypesList').empty();
                 
                 Object.entries(status.alert_types).forEach(([type, cooldown]) => {
-                    const formattedType = type.split('_')
+                    const formattedType = type.// SECURITY: Replaced deprecated function'_')
                         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                         .join(' ');
                     
@@ -167,3 +167,4 @@ if (isset($_GET['action'])) {
     </script>
 </body>
 </html>
+

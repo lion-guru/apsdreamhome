@@ -10,7 +10,7 @@ require_once __DIR__ . '/security_logger.php';
 class ApiKeyManager {
     private $con;
     private $logger;
-    private $table = 'api_keys';
+    private $table = '// SECURITY: Sensitive information removeds';
 
     public function __construct($database_connection = null, $security_logger = null) {
         $this->con = $database_connection ?? getDbConnection();
@@ -24,7 +24,7 @@ class ApiKeyManager {
     private function initializeTable() {
         $query = "CREATE TABLE IF NOT EXISTS {$this->table} (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            api_key VARCHAR(64) NOT NULL UNIQUE,
+            // SECURITY: Sensitive information removed VARCHAR(64) NOT NULL UNIQUE,
             name VARCHAR(255) NOT NULL,
             user_id INT,
             permissions JSON,
@@ -34,7 +34,7 @@ class ApiKeyManager {
             last_used_at TIMESTAMP NULL,
             is_active BOOLEAN DEFAULT TRUE,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-            INDEX idx_api_key (api_key),
+            INDEX idx_// SECURITY: Sensitive information removed (// SECURITY: Sensitive information removed),
             INDEX idx_user_id (user_id)
         )";
         
@@ -50,7 +50,7 @@ class ApiKeyManager {
         
         // Insert the key into database
         $query = "INSERT INTO {$this->table} 
-                 (api_key, name, user_id, permissions, rate_limit, expires_at) 
+                 (// SECURITY: Sensitive information removed, name, user_id, permissions, rate_limit, expires_at) 
                  VALUES (?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->con->prepare($query);
@@ -60,7 +60,7 @@ class ApiKeyManager {
         if ($stmt->execute()) {
             $this->logger->logConfigChange(
                 $userId,
-                'api_key_generated',
+                '// SECURITY: Sensitive information removed_generated',
                 null,
                 ['key_id' => $stmt->insert_id, 'name' => $name]
             );
@@ -79,14 +79,14 @@ class ApiKeyManager {
      * Validate an API key
      */
     public function validateKey($apiKey, $requiredPermissions = []) {
-        $query = "SELECT * FROM {$this->table} WHERE api_key = ? AND is_active = TRUE";
+        $query = "SELECT * FROM {$this->table} WHERE // SECURITY: Sensitive information removed = ? AND is_active = TRUE";
         $stmt = $this->con->prepare($query);
         $stmt->bind_param("s", $apiKey);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if ($result->num_rows === 0) {
-            $this->logger->logSuspiciousActivity('invalid_api_key', [
+            $this->logger->logSuspiciousActivity('invalid_// SECURITY: Sensitive information removed', [
                 'key' => substr($apiKey, 0, 8) . '...'
             ]);
             return false;
@@ -96,7 +96,7 @@ class ApiKeyManager {
         
         // Check if key has expired
         if ($keyData['expires_at'] && strtotime($keyData['expires_at']) < time()) {
-            $this->logger->logSuspiciousActivity('expired_api_key', [
+            $this->logger->logSuspiciousActivity('expired_// SECURITY: Sensitive information removed', [
                 'key_id' => $keyData['id'],
                 'name' => $keyData['name']
             ]);
@@ -145,7 +145,7 @@ class ApiKeyManager {
         if ($stmt->execute() && $stmt->affected_rows > 0) {
             $this->logger->logConfigChange(
                 $userId,
-                'api_key_revoked',
+                '// SECURITY: Sensitive information removed_revoked',
                 'active',
                 'inactive'
             );
@@ -214,7 +214,7 @@ class ApiKeyManager {
         if ($stmt->execute() && $stmt->affected_rows > 0) {
             $this->logger->logConfigChange(
                 $userId,
-                'api_key_updated',
+                '// SECURITY: Sensitive information removed_updated',
                 null,
                 ['key_id' => $keyId, 'updates' => $updates]
             );
@@ -242,3 +242,4 @@ class ApiKeyManager {
 
 // Create global API key manager instance
 $apiKeyManager = new ApiKeyManager($con ?? null, $securityLogger ?? null);
+

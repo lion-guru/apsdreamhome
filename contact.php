@@ -5,7 +5,7 @@ require_once(__DIR__ . '/includes/templates/dynamic_header.php');
 require_once(__DIR__ . '/includes/log_admin_activity.php');
 include("config.php");
 include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/common-functions.php');
+include(__DIR__ . '/includes/functions/common-functions.php');
 
 // Process contact form submission
 $error = "";

@@ -50,7 +50,7 @@ $anomaly_export_recipient = $anomaly_cfg['anomaly_export_recipient'] ?? $admin_e
 $anomaly_export_frequency = $anomaly_cfg['anomaly_export_frequency'] ?? 'daily';
 
 // --- Analytics summary (feedback counts by type, top offenders) ---
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 $db = new Database();
 $con = $db->getConnection();
 

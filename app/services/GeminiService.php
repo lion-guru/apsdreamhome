@@ -10,7 +10,7 @@ class GeminiService {
     public function __construct() {
         require_once __DIR__ . '/../config/env.php';
         $this->config = require_once __DIR__ . '/../config/gemini_config.php';
-        $this->apiKey = $this->config['api_key'];
+        $this->apiKey = $this->config['// SECURITY: Sensitive information removed'];
         $this->apiUrl = $this->config['api_url'];
     }
 

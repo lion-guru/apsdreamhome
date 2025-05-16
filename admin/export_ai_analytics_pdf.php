@@ -4,7 +4,7 @@ session_start();
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../index.php'); exit();
 }
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 require_once(__DIR__ . '/../includes/classes/tcpdf/tcpdf.php');
 
 // Get filters from GET params

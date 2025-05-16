@@ -1,6 +1,6 @@
 <?php
 require_once 'admin-functions.php';
-require_once 'db_connection.php';
+require_once 'src/Database/Database.php';
 
 // Initialize variables
 $error = '';

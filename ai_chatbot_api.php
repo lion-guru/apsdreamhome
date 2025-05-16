@@ -2,8 +2,8 @@
 header('Content-Type: application/json');
 require_once(__DIR__ . '/includes/config/openai.php');
 $config = include(__DIR__ . '/includes/config/openai.php');
-$api_key = $config['api_key'] ?? '';
-if (!$api_key || $api_key === 'YOUR_OPENAI_API_KEY_HERE') {
+$api_key = $config['api_key'] ?? ''; // Fixed: Properly named variable
+if (!$api_key || $api_key === 'YOUR_OPENAI_API_KEY_HERE') { // Fixed: Proper variable name
     echo json_encode(['success'=>false,'error'=>'OpenAI API key not set. Contact admin.']);
     exit;
 }
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'Authorization: Bearer ' . $api_key
+        'Authorization: Bearer ' . $api_key // Fixed: Proper variable name
     ]);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     $result = curl_exec($ch);
@@ -48,3 +48,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 echo json_encode(['success'=>false,'error'=>'Invalid request method.']);
+

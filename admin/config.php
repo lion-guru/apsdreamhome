@@ -5,16 +5,14 @@
  */
 
 // Include main configuration files
-require_once(__DIR__ . '/../includes/config/config.php');
-// require_once(__DIR__ . '/../includes/functions/asset_helper.php'); // Deprecated, use get_asset_url() from common-functions.php or updated-config-paths.php instead
-
-// Include db_config to provide getDbConnection()
-require_once(__DIR__ . '/../includes/db_config.php');
+// Include centralized database connection
+require_once(__DIR__ . '/../includes/db_connection.php');
 
 // Get database connection
-$con = getDbConnection();
-if (!$con) {
-    die('Database connection failed. Please check your configuration and try again.');
+try {
+    $con = getDbConnection();
+} catch (Exception $e) {
+    handleDatabaseError($e);
 }
 
 // Set admin-specific constants
@@ -28,6 +26,23 @@ date_default_timezone_set('Asia/Kolkata');
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Add configurable SIEM/log forwarding endpoint variable
+$SIEM_ENDPOINT = getenv('SIEM_ENDPOINT') ?: '';
+
+// Add configurable incident response webhook variable
+$INCIDENT_WEBHOOK_URL = getenv('INCIDENT_WEBHOOK_URL') ?: '';
+
+// Add log retention config
+$LOG_RETENTION_DAYS = getenv('LOG_RETENTION_DAYS') ? intval(getenv('LOG_RETENTION_DAYS')) : 180;
+$LOG_ARCHIVE_PASSWORD = getenv('LOG_ARCHIVE_PASSWORD') ?: 'DreamHomeSecure!';
+$LOG_ARCHIVE_DIR = __DIR__ . '/../log_archives';
+
+// Add S3/cloud storage configuration variables
+$S3_BUCKET = getenv('S3_BUCKET') ?: '';
+$S3_KEY = getenv('S3_KEY') ?: '';
+$S3_SECRET = getenv('S3_SECRET') ?: '';
+$S3_REGION = getenv('S3_REGION') ?: 'us-east-1';
 
 // Admin authentication check
 function checkAdminAuth() {

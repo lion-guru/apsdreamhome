@@ -543,9 +543,9 @@
             Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
     }
 
-    var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
+    var formattingTokens = /(// SECURITY: Removed potentially dangerous code[^// SECURITY: Removed potentially dangerous code]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
 
-    var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
+    var localFormattingTokens = /(// SECURITY: Removed potentially dangerous code[^// SECURITY: Removed potentially dangerous code]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
 
     var formatFunctions = {};
 
@@ -578,8 +578,8 @@
     }
 
     function removeFormattingTokens(input) {
-        if (input.match(/\[[\s\S]/)) {
-            return input.replace(/^\[|\]$/g, '');
+        if (input.match(/// SECURITY: Removed potentially dangerous code[\s\S]/)) {
+            return input.replace(/^// SECURITY: Removed potentially dangerous code|\]$/g, '');
         }
         return input.replace(/\\/g, '');
     }
@@ -675,7 +675,7 @@
 
     // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
     function unescapeFormat(s) {
-        return regexEscape(s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+        return regexEscape(s.replace('\\', '').replace(/\\(// SECURITY: Removed potentially dangerous code)|\\(\])|// SECURITY: Removed potentially dangerous code([^\]// SECURITY: Removed potentially dangerous code]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
             return p1 || p2 || p3 || p4;
         }));
     }
@@ -924,8 +924,8 @@
 
     // LOCALES
 
-    var MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/;
-    var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
+    var MONTHS_IN_FORMAT = /D[oD]?(// SECURITY: Removed potentially dangerous code[^// SECURITY: Removed potentially dangerous code\]]*\]|\s)+MMMM?/;
+    var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.// SECURITY: Replaced deprecated function'_');
     function localeMonths (m, format) {
         if (!m) {
             return isArray(this._months) ? this._months :
@@ -935,7 +935,7 @@
             this._months[(this._months.isFormat || MONTHS_IN_FORMAT).test(format) ? 'format' : 'standalone'][m.month()];
     }
 
-    var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
+    var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.// SECURITY: Replaced deprecated function'_');
     function localeMonthsShort (m, format) {
         if (!m) {
             return isArray(this._monthsShort) ? this._monthsShort :
@@ -1386,7 +1386,7 @@
         return ws.slice(n, 7).concat(ws.slice(0, n));
     }
 
-    var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
+    var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.// SECURITY: Replaced deprecated function'_');
     function localeWeekdays (m, format) {
         var weekdays = isArray(this._weekdays) ? this._weekdays :
             this._weekdays[(m && m !== true && this._weekdays.isFormat.test(format)) ? 'format' : 'standalone'];
@@ -1394,13 +1394,13 @@
             : (m) ? weekdays[m.day()] : weekdays;
     }
 
-    var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
+    var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.// SECURITY: Replaced deprecated function'_');
     function localeWeekdaysShort (m) {
         return (m === true) ? shiftWeekdays(this._weekdaysShort, this._week.dow)
             : (m) ? this._weekdaysShort[m.day()] : this._weekdaysShort;
     }
 
-    var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
+    var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.// SECURITY: Replaced deprecated function'_');
     function localeWeekdaysMin (m) {
         return (m === true) ? shiftWeekdays(this._weekdaysMin, this._week.dow)
             : (m) ? this._weekdaysMin[m.day()] : this._weekdaysMin;
@@ -1822,10 +1822,10 @@
         var i = 0, j, next, locale, split;
 
         while (i < names.length) {
-            split = normalizeLocale(names[i]).split('-');
+            split = normalizeLocale(names[i]).// SECURITY: Replaced deprecated function'-');
             j = split.length;
             next = normalizeLocale(names[i + 1]);
-            next = next ? next.split('-') : null;
+            next = next ? next.// SECURITY: Replaced deprecated function'-') : null;
             while (j > 0) {
                 locale = loadLocale(split.slice(0, j).join('-'));
                 if (locale) {
@@ -4600,3 +4600,4 @@
     return hooks;
 
 })));
+

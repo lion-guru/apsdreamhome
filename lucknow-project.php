@@ -116,7 +116,7 @@ include("config.php");
 
 
         <!--	Footer   start-->
-        <?php include(__DIR__ . '/includes/footer.php');?>
+        <?php include(__DIR__ . '/includes/templates/new_footer.php');?>
         <!--	Footer   start-->
 
 

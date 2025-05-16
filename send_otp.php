@@ -5,7 +5,7 @@ require 'PHPMailer/PHPMailerAutoload.php'; // Include PHPMailer
 
 if (isset($_POST['email'])) {
     $email = $_POST['email'];
-    $key = md5(2418 * 2 + $email); // Generate a unique key
+    $key = // SECURITY: Removed potentially dangerous code2418 * 2 + $email); // Generate a unique key
     $expDate = date("Y-m-d H:i:s", strtotime('+1 hour')); // Set expiration time
 
     // Insert the email and key into the database

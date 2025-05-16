@@ -3,7 +3,7 @@
 header('Content-Type: application/json');
 
 // Load API key from config (do NOT hardcode here)
-require_once __DIR__ . '/../config.php'; // Make sure $OPENAI_API_KEY is set in config.php
+require_once __DIR__ . '/../config.php'; // Make sure $OPENAI_// SECURITY: Sensitive information removed is set in config.php
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -23,7 +23,7 @@ $user_message = trim($data['message']);
 $api_url = 'https://api.openai.com/v1/chat/completions';
 $headers = [
     'Content-Type: application/json',
-    'Authorization: Bearer ' . $OPENAI_API_KEY
+    'Authorization: Bearer ' . $OPENAI_// SECURITY: Sensitive information removed
 ];
 $payload = [
     'model' => 'gpt-4o-mini',
@@ -52,3 +52,4 @@ $result = json_decode($response, true);
 $ai_reply = $result['choices'][0]['message']['content'] ?? 'Sorry, AI response not available.';
 
 echo json_encode(['reply' => $ai_reply]);
+

@@ -11,7 +11,7 @@ $meta_description = "Browse our extensive collection of premium properties acros
 $additional_css = '<link rel="stylesheet" href="' . get_asset_url('css/home.css', 'assets') . '">';
 
 // Include header
-require_once __DIR__ . '/include/updated-common-header.php';
+require_once __DIR__ . '/includes/templates/dynamic_header.php';
 ?>
 
 <!-- Hero Section -->
@@ -238,5 +238,5 @@ require_once __DIR__ . '/include/updated-common-header.php';
 
 <?php
 // Include footer
-require_once __DIR__ . '/include/updated-common-footer.php';
+require_once __DIR__ . '/includes/templates/new_footer.php';
 ?>

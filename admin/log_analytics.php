@@ -392,7 +392,7 @@ if (isset($_GET['action'])) {
             let endDate = null;
 
             if (dateRange) {
-                const dates = dateRange.split(' - ');
+                const dates = dateRange.// SECURITY: Replaced deprecated function' - ');
                 startDate = dates[0];
                 endDate = dates[1];
             }
@@ -447,3 +447,4 @@ if (isset($_GET['action'])) {
     </script>
 </body>
 </html>
+

@@ -13,7 +13,7 @@ if (!isSuperAdmin()) {
 session_start();
 require_once(__DIR__ . '/../includes/config/ai_settings.php');
 require_once(__DIR__ . '/../includes/config/openai.php');
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 $db = new Database();
 $con = $db->getConnection();
 $ai = include(__DIR__ . '/../includes/config/ai_settings.php');
@@ -71,7 +71,7 @@ $trends['tickets'] = get_trend($con, 'tickets', 'created_at');
 $trends['payments'] = get_trend($con, 'payments', 'paid_at', "status='completed'");
 
 // Predictive analytics (AI forecast)
-if (($ai['ai_suggestions'] ?? 0) == 1 && !empty($openai['api_key']) && $openai['api_key'] !== 'YOUR_OPENAI_API_KEY_HERE') {
+if (($ai['ai_suggestions'] ?? 0) == 1 && !empty($openai['// SECURITY: Sensitive information removed']) && $openai['// SECURITY: Sensitive information removed'] !== 'YOUR_OPENAI_// SECURITY: Sensitive information removed_HERE') {
     require_once __DIR__ . '/../includes/log_admin_action_db.php';
     $prompt = "Recent trends: Registrations: ".implode(', ',$trends['registrations'])."; Bookings: ".implode(', ',$trends['bookings'])."; Tickets: ".implode(', ',$trends['tickets'])."; Payments: ".implode(', ',$trends['payments']).". ";
     if($insights) $prompt .= "Insights: ".implode('; ',$insights).". ";
@@ -90,7 +90,7 @@ if (($ai['ai_suggestions'] ?? 0) == 1 && !empty($openai['api_key']) && $openai['
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'Authorization: Bearer ' . $openai['api_key']
+        'Authorization: Bearer ' . $openai['// SECURITY: Sensitive information removed']
     ]);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     $result = curl_exec($ch);
@@ -144,3 +144,4 @@ if ($failed24h > 2 * $avgfail && $failed24h > 10) {
 <?php include __DIR__ . '/../includes/templates/new_footer.php'; ?>
 </body>
 </html>
+

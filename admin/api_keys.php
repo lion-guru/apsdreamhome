@@ -5,7 +5,7 @@
  */
 
 require_once __DIR__ . '/../includes/config/config.php';
-require_once __DIR__ . '/../includes/api_key_manager.php';
+require_once __DIR__ . '/../includes/// SECURITY: Sensitive information removed_manager.php';
 require_once __DIR__ . '/../includes/middleware/rate_limit_middleware.php';
 
 // Check admin authentication
@@ -270,7 +270,7 @@ $availablePermissions = [
 
         // Load API keys
         function loadKeys() {
-            $.get('api_keys.php', { action: 'list_keys' }, function(keys) {
+            $.get('// SECURITY: Sensitive information removeds.php', { action: 'list_keys' }, function(keys) {
                 const $keysList = $('#keysList').empty();
                 
                 if (keys.length === 0) {
@@ -327,7 +327,7 @@ $availablePermissions = [
                 expires_at: this.expires_at.value || null
             };
             
-            $.post('api_keys.php?action=generate_key', formData, function(result) {
+            $.post('// SECURITY: Sensitive information removeds.php?action=generate_key', formData, function(result) {
                 if (result.key) {
                     $('#newKeyDisplay').text(result.key);
                     newKeyModal.show();
@@ -371,7 +371,7 @@ $availablePermissions = [
                 expires_at: $form.find('[name="expires_at"]').val() || null
             };
             
-            $.post('api_keys.php?action=update_key', {
+            $.post('// SECURITY: Sensitive information removeds.php?action=update_key', {
                 key_id: $form.find('[name="key_id"]').val(),
                 updates: JSON.stringify(updates)
             }, function(result) {
@@ -391,7 +391,7 @@ $availablePermissions = [
             }
             
             const keyId = $(this).data('key-id');
-            $.post('api_keys.php?action=revoke_key', { key_id: keyId }, function(result) {
+            $.post('// SECURITY: Sensitive information removeds.php?action=revoke_key', { key_id: keyId }, function(result) {
                 if (result.success) {
                     loadKeys();
                 } else {
@@ -405,3 +405,4 @@ $availablePermissions = [
     </script>
 </body>
 </html>
+

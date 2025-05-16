@@ -1,20 +1,96 @@
 <?php
-session_start();
-require_once(__DIR__ . '/includes/config/ai_settings.php');
-require_once(__DIR__ . '/includes/config/openai.php');
-require_once(__DIR__ . '/includes/classes/Database.php');
-require_once(__DIR__ . '/aps_model/aps_rules_based_model.php');
-$db = new Database();
-$con = $db->getConnection();
-$ai = include(__DIR__ . '/includes/config/ai_settings.php');
-$openai = include(__DIR__ . '/includes/config/openai.php');
+// Enhanced Security: Strict Error Reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/logs/ai_suggestions_error.log');
 
-// Assume $_SESSION['user_id'] is set
-$user_id = $_SESSION['user_id'] ?? 0;
-if (!$user_id) {
-    echo json_encode(['success'=>false, 'error'=>'Not logged in']);
-    exit;
+// Secure Session Management
+session_start([
+    'cookie_httponly' => true,
+    'cookie_secure' => true,
+    'use_strict_mode' => true
+]);
+
+// Dependency Injection and Centralized Configuration
+require_once(__DIR__ . '/includes/env_loader.php');
+require_once(__DIR__ . '/includes/db_security_upgrade.php');
+require_once(__DIR__ . '/includes/classes/AIAssistant.php');
+
+// Enhanced Authentication Check
+if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
+    http_response_code(401);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false, 
+        'error' => 'Unauthorized Access',
+        'message' => 'Please log in to access AI suggestions.'
+    ]);
+    exit();
 }
+
+// Secure User ID Retrieval
+$user_id = filter_var($_SESSION['user_id'], FILTER_VALIDATE_INT);
+if (!$user_id) {
+    http_response_code(400);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'Invalid User ID',
+        'message' => 'Your session appears to be corrupted.'
+    ]);
+    exit();
+}
+
+// Validate and sanitize input context
+$context = [
+    'property_type' => $dbSecurity->sanitizeInput($_POST['property_type'] ?? ''),
+    'budget' => $dbSecurity->sanitizeInput($_POST['budget'] ?? ''),
+    'location' => $dbSecurity->sanitizeInput($_POST['location'] ?? '')
+];
+
+// Validate context completeness
+$missingFields = array_filter($context, function($value) { return empty($value); });
+if (!empty($missingFields)) {
+    http_response_code(400);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'Incomplete Context',
+        'message' => 'Missing required fields: ' . implode(', ', array_keys($missingFields))
+    ]);
+    exit();
+}
+
+// Initialize Secure Database and AI Components
+try {
+    $dbSecurity = new DatabaseSecurityUpgrade();
+    $aiAssistant = new AIAssistant($dbSecurity);
+    
+    // Generate AI Suggestions
+    $suggestions = $aiAssistant->generateSuggestions($user_id, $context);
+    
+    // Return Suggestions
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => true,
+        'suggestions' => $suggestions
+    ]);
+    exit();
+
+} catch (Exception $e) {
+    error_log('AI Suggestions Error: ' . $e->getMessage());
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'System Error',
+        'message' => 'Unable to process your request at this time.'
+    ]);
+    exit();
+}
+    exit;
+
 
 // Gather user info
 $user = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM users WHERE id=$user_id"));
@@ -69,8 +145,8 @@ if ($role === 'admin') {
 // Prefer OpenAI fine-tuned model if enabled and available
 if (
     ($ai['ai_suggestions'] ?? 0) == 1 &&
-    !empty($openai['api_key']) &&
-    $openai['api_key'] !== 'YOUR_OPENAI_API_KEY_HERE'
+    !empty($openai['// SECURITY: Sensitive information removed']) &&
+    $openai['// SECURITY: Sensitive information removed'] !== 'YOUR_OPENAI_// SECURITY: Sensitive information removed_HERE'
 ) {
     $prompt = "User role: $role\n";
     foreach ($context as $k=>$v) $prompt .= "$k: $v\n";
@@ -89,7 +165,7 @@ if (
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'Authorization: Bearer ' . $openai['api_key']
+        'Authorization: Bearer ' . $openai['// SECURITY: Sensitive information removed']
     ]);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     $result = curl_exec($ch);
@@ -136,3 +212,4 @@ echo json_encode([
     'suggestions'=>$suggestions,
     'status'=>$status
 ]);
+

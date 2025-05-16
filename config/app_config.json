@@ -1,0 +1,49 @@
+{
+    "app": {
+        "name": "APS Dream Homes",
+        "version": "1.0.0",
+        "environment": "production",
+        "debug": false
+    },
+    "database": {
+        "host": "localhost",
+        "user": "root",
+        "name": "apsdreamhomefinal",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_unicode_ci"
+    },
+    "security": {
+        "csrf_protection": true,
+        "password_hash_algo": "argon2id",
+        "password_hash_options": {
+            "memory_cost": 65536,
+            "time_cost": 4,
+            "threads": 3
+        }
+    },
+    "performance": {
+        "cache_enabled": true,
+        "cache_lifetime": 3600,
+        "opcache_enabled": true
+    },
+    "email": {
+        "smtp_host": "smtp.gmail.com",
+        "smtp_port": 587,
+        "smtp_secure": "tls",
+        "smtp_username": "your_email@gmail.com"
+    },
+    "logging": {
+        "log_level": "warning",
+        "log_channels": [
+            "error",
+            "security",
+            "performance"
+        ]
+    },
+    "features": {
+        "property_search": true,
+        "lead_management": true,
+        "visit_scheduling": true,
+        "notification_system": true
+    }
+}

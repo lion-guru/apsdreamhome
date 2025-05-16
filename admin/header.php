@@ -1,10 +1,5 @@
 <?php
-// Start the session only if it hasn't been started yet
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Include the configuration file
+// Configuration and session management is now handled in config.php
 require("config.php");
 
 // Check if the session user is set

@@ -75,16 +75,16 @@ class SessionManager {
         }
     }
 
-    public function requireAdmin(): void {
-        $type = $this->getUserType();
-        if (!$this->isLoggedIn() || ($type !== 'admin' && $type !== 'super_admin')) {
+    public function requireSuperAdmin(): void {
+        if (!$this->isLoggedIn() || $this->getUserType() !== 'super_admin') {
             header('Location: /march2025apssite/login.php');
             exit();
         }
     }
 
-    public function requireSuperAdmin(): void {
-        if (!$this->isLoggedIn() || $this->getUserType() !== 'super_admin') {
+    public function requireAdmin(): void {
+        $type = $this->getUserType();
+        if (!$this->isLoggedIn() || ($type !== 'admin' && $type !== 'super_admin')) {
             header('Location: /march2025apssite/login.php');
             exit();
         }

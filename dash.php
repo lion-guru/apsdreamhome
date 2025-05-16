@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Include necessary files
 include("config.php");
 include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/common-functions.php');
+include(__DIR__ . '/includes/functions/common-functions.php');
 // Check if user is logged in
 if (!isset($_SESSION['aid']) && !isset($_SESSION['uid'])) {
     header("Location: login.php");

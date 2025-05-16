@@ -147,9 +147,9 @@ if (empty($_SESSION['csrf_token'])) {
 						  <tr>
 							<td><?php  	echo $site_id; 
 										//$key = 'aps@123';
-										//$encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $site_id, MCRYPT_MODE_CBC, md5(md5($key))));
+										//$encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, // SECURITY: Removed potentially dangerous code$key), $site_id, MCRYPT_MODE_CBC, // SECURITY: Removed potentially dangerous code// SECURITY: Removed potentially dangerous code$key))));
 										$arg = base64_encode( json_encode($site_id) );
-										//$decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encrypted), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+										//$decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, // SECURITY: Removed potentially dangerous code$key), base64_decode($encrypted), MCRYPT_MODE_CBC, // SECURITY: Removed potentially dangerous code// SECURITY: Removed potentially dangerous code$key))), "\0");
 										//echo "this".$decrypted;
 										//$myData = json_decode( base64_decode($arg));
 										//echo $arg;
@@ -184,3 +184,4 @@ if (empty($_SESSION['csrf_token'])) {
 </body>
 
 </html>
+

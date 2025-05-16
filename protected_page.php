@@ -3,11 +3,12 @@ require_once __DIR__ . '/session_check.php';
 require_once __DIR__ . '/config.php';
 
 // Example: show logged-in user's info from DB
-$access_token = $_SESSION['access_token'];
+$user_id = $_SESSION['user_id'] ?? null; // Safely retrieve user ID
 
 // Get Google user ID from access token
 require_once __DIR__ . '/vendor/autoload.php';
 $client = new Google_Client();
+$access_token = $_SESSION['access_token'] ?? null;
 $client->setAccessToken($access_token);
 $oauth2 = new Google_Service_Oauth2($client);
 $userInfo = $oauth2->userinfo->get();
@@ -28,3 +29,4 @@ echo 'Email: ' . htmlspecialchars($email) . '<br>';
 echo '<img src="' . htmlspecialchars($picture) . '" alt="Profile Picture"><br>';
 echo '<a href="google_login.php?logout=1">Logout</a>';
 ?>
+

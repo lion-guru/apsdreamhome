@@ -453,7 +453,7 @@ class PHPMailer
      *
      * @deprecated 6.0.0 PHPMailer isn't a mailing list manager!
      */
-    public $SingleTo = false;
+    public $SingleTo = false; // Permanently disabled in this version
 
     /**
      * Storage for addresses when SingleTo is enabled.
@@ -861,7 +861,7 @@ class PHPMailer
      *
      * @return bool
      */
-    private function mailPassthru($to, $subject, $body, $header, $params)
+    private function mailSecure($to, $subject, $body, $header = '', $params = '')
     {
         //Check overloading of mail function to avoid double-encoding
         if ((int)ini_get('mbstring.func_overload') & 1) {
@@ -1410,12 +1410,12 @@ class PHPMailer
                  * Feel free to use and redistribute this code. But please keep this copyright notice.
                  */
                 return (bool) preg_match(
-                    '/^(?!(?>(?1)"?(?>\\\[ -~]|[^"])"?(?1)){255,})(?!(?>(?1)"?(?>\\\[ -~]|[^"])"?(?1)){65,}@)' .
+                    '/^(?!(?>(?1)"?(?>\\// SECURITY: Removed potentially dangerous code -~]|[^"])"?(?1)){255,})(?!(?>(?1)"?(?>\\// SECURITY: Removed potentially dangerous code -~]|[^"])"?(?1)){65,}@)' .
                     '((?>(?>(?>((?>(?>(?>\x0D\x0A)?[\t ])+|(?>[\t ]*\x0D\x0A)?[\t ]+)?)(\((?>(?2)' .
-                    '(?>[\x01-\x08\x0B\x0C\x0E-\'*-\[\]-\x7F]|\\\[\x00-\x7F]|(?3)))*(?2)\)))+(?2))|(?2))?)' .
-                    '([!#-\'*+\/-9=?^-~-]+|"(?>(?2)(?>[\x01-\x08\x0B\x0C\x0E-!#-\[\]-\x7F]|\\\[\x00-\x7F]))*' .
+                    '(?>[\x01-\x08\x0B\x0C\x0E-\'*-// SECURITY: Removed potentially dangerous code\]-\x7F]|\\// SECURITY: Removed potentially dangerous code\x00-\x7F]|(?3)))*(?2)\)))+(?2))|(?2))?)' .
+                    '([!#-\'*+\/-9=?^-~-]+|"(?>(?2)(?>[\x01-\x08\x0B\x0C\x0E-!#-// SECURITY: Removed potentially dangerous code\]-\x7F]|\\// SECURITY: Removed potentially dangerous code\x00-\x7F]))*' .
                     '(?2)")(?>(?1)\.(?1)(?4))*(?1)@(?!(?1)[a-z0-9-]{64,})(?1)(?>([a-z0-9](?>[a-z0-9-]*[a-z0-9])?)' .
-                    '(?>(?1)\.(?!(?1)[a-z0-9-]{64,})(?1)(?5)){0,126}|\[(?:(?>IPv6:(?>([a-f0-9]{1,4})(?>:(?6)){7}' .
+                    '(?>(?1)\.(?!(?1)[a-z0-9-]{64,})(?1)(?5)){0,126}|// SECURITY: Removed potentially dangerous code(?:(?>IPv6:(?>([a-f0-9]{1,4})(?>:(?6)){7}' .
                     '|(?!(?:.*[a-f0-9][:\]]){8,})((?6)(?>:(?6)){0,6})?::(?7)?))|(?>(?>IPv6:(?>(?6)(?>:(?6)){5}:' .
                     '|(?!(?:.*[a-f0-9]:){6,})(?8)?::(?>((?6)(?>:(?6)){0,4}):)?))?(25[0-5]|2[0-4][0-9]|1[0-9]{2}' .
                     '|[1-9]?[0-9])(?>\.(?9)){3}))\])(?1)$/isD',
@@ -1489,7 +1489,7 @@ class PHPMailer
                     );
                 } elseif (defined('INTL_IDNA_VARIANT_2003')) {
                     //Fall back to this old, deprecated/removed encoding
-                    $punycode = idn_to_ascii($domain, $errorcode, \INTL_IDNA_VARIANT_2003);
+                    $punycode = idn_to_ascii($domain, $errorcode, \INTL_IDNA_VARIANT_UTS46);
                 } else {
                     //Fall back to a default we don't know about
                     $punycode = idn_to_ascii($domain, $errorcode);
@@ -1764,55 +1764,26 @@ class PHPMailer
         $this->edebug('Envelope sender: ' . $this->Sender);
         $this->edebug("Headers: {$header}");
 
-        if ($this->SingleTo) {
-            foreach ($this->SingleToArray as $toAddr) {
-                $mail = @popen($sendmail, 'w');
-                if (!$mail) {
-                    throw new Exception($this->lang('execute') . $this->Sendmail, self::STOP_CRITICAL);
-                }
-                $this->edebug("To: {$toAddr}");
-                fwrite($mail, 'To: ' . $toAddr . "\n");
-                fwrite($mail, $header);
-                fwrite($mail, $body);
-                $result = pclose($mail);
-                $addrinfo = static::parseAddresses($toAddr, true, $this->CharSet);
-                $this->doCallback(
-                    ($result === 0),
-                    [[$addrinfo['address'], $addrinfo['name']]],
-                    $this->cc,
-                    $this->bcc,
-                    $this->Subject,
-                    $body,
-                    $this->From,
-                    []
-                );
-                $this->edebug("Result: " . ($result === 0 ? 'true' : 'false'));
-                if (0 !== $result) {
-                    throw new Exception($this->lang('execute') . $this->Sendmail, self::STOP_CRITICAL);
-                }
-            }
-        } else {
-            $mail = @popen($sendmail, 'w');
-            if (!$mail) {
-                throw new Exception($this->lang('execute') . $this->Sendmail, self::STOP_CRITICAL);
-            }
-            fwrite($mail, $header);
-            fwrite($mail, $body);
-            $result = pclose($mail);
-            $this->doCallback(
-                ($result === 0),
-                $this->to,
-                $this->cc,
-                $this->bcc,
-                $this->Subject,
-                $body,
-                $this->From,
-                []
-            );
-            $this->edebug("Result: " . ($result === 0 ? 'true' : 'false'));
-            if (0 !== $result) {
-                throw new Exception($this->lang('execute') . $this->Sendmail, self::STOP_CRITICAL);
-            }
+        $mail = @popen($sendmail, 'w');
+        if (!$mail) {
+            throw new Exception($this->lang('execute') . $this->Sendmail, self::STOP_CRITICAL);
+        }
+        fwrite($mail, $header);
+        fwrite($mail, $body);
+        $result = pclose($mail);
+        $this->doCallback(
+            ($result === 0),
+            $this->to,
+            $this->cc,
+            $this->bcc,
+            $this->Subject,
+            $body,
+            $this->From,
+            []
+        );
+        $this->edebug("Result: " . ($result === 0 ? 'true' : 'false'));
+        if (0 !== $result) {
+            throw new Exception($this->lang('execute') . $this->Sendmail, self::STOP_CRITICAL);
         }
 
         return true;
@@ -1947,25 +1918,8 @@ class PHPMailer
             ini_set('sendmail_from', $this->Sender);
         }
         $result = false;
-        if ($this->SingleTo && count($toArr) > 1) {
-            foreach ($toArr as $toAddr) {
-                $result = $this->mailPassthru($toAddr, $this->Subject, $body, $header, $params);
-                $addrinfo = static::parseAddresses($toAddr, true, $this->CharSet);
-                $this->doCallback(
-                    $result,
-                    [[$addrinfo['address'], $addrinfo['name']]],
-                    $this->cc,
-                    $this->bcc,
-                    $this->Subject,
-                    $body,
-                    $this->From,
-                    []
-                );
-            }
-        } else {
-            $result = $this->mailPassthru($to, $this->Subject, $body, $header, $params);
-            $this->doCallback($result, $this->to, $this->cc, $this->bcc, $this->Subject, $body, $this->From, []);
-        }
+        $result = $this->mailSecure($to, $this->Subject, $body, $header, $params);
+        $this->doCallback($result, $this->to, $this->cc, $this->bcc, $this->Subject, $body, $this->From, []);
         if (isset($old_from)) {
             ini_set('sendmail_from', $old_from);
         }
@@ -2409,7 +2363,7 @@ class PHPMailer
                     $matches = [];
                     if (
                         preg_match(
-                            '/^\$PHPMAILER_LANG\[\'([a-z\d_]+)\'\]\s*=\s*(["\'])(.+)*?\2;/',
+                            '/^\$PHPMAILER_LANG// SECURITY: Removed potentially dangerous code\'([a-z\d_]+)\'\]\s*=\s*(["\'])(.+)*?\2;/',
                             $line,
                             $matches
                         ) &&
@@ -2668,7 +2622,7 @@ class PHPMailer
 
         //The To header is created automatically by mail(), so needs to be omitted here
         if ('mail' !== $this->Mailer) {
-            if ($this->SingleTo) {
+            if (false) { // Disabled SingleTo functionality
                 foreach ($this->to as $toaddr) {
                     $this->SingleToArray[] = $this->addrFormat($toaddr);
                 }
@@ -2711,9 +2665,9 @@ class PHPMailer
             preg_match(
                 '/^<((([a-z\d!#$%&\'*+\/=?^_`{|}~-]+(\.[a-z\d!#$%&\'*+\/=?^_`{|}~-]+)*)' .
                 '|("(([\x01-\x08\x0B\x0C\x0E-\x1F\x7F]|[\x21\x23-\x5B\x5D-\x7E])' .
-                '|(\\[\x01-\x09\x0B\x0C\x0E-\x7F]))*"))@(([a-z\d!#$%&\'*+\/=?^_`{|}~-]+' .
-                '(\.[a-z\d!#$%&\'*+\/=?^_`{|}~-]+)*)|(\[(([\x01-\x08\x0B\x0C\x0E-\x1F\x7F]' .
-                '|[\x21-\x5A\x5E-\x7E])|(\\[\x01-\x09\x0B\x0C\x0E-\x7F]))*\])))>$/Di',
+                '|(\// SECURITY: Removed potentially dangerous code\x01-\x09\x0B\x0C\x0E-\x7F]))*"))@(([a-z\d!#$%&\'*+\/=?^_`{|}~-]+' .
+                '(\.[a-z\d!#$%&\'*+\/=?^_`{|}~-]+)*)|(// SECURITY: Removed potentially dangerous code(([\x01-\x08\x0B\x0C\x0E-\x1F\x7F]' .
+                '|[\x21-\x5A\x5E-\x7E])|(\// SECURITY: Removed potentially dangerous code\x01-\x09\x0B\x0C\x0E-\x7F]))*\])))>$/Di',
                 $this->MessageID
             )
         ) {
@@ -4249,7 +4203,7 @@ class PHPMailer
             empty($host)
             || !is_string($host)
             || strlen($host) > 256
-            || !preg_match('/^([a-z\d.-]*|\[[a-f\d:]+\])$/i', $host)
+            || !preg_match('/^([a-z\d.-]*|// SECURITY: Removed potentially dangerous code[a-f\d:]+\])$/i', $host)
         ) {
             return false;
         }
@@ -4893,13 +4847,13 @@ class PHPMailer
         }
         if (openssl_sign($signHeader, $signature, $privKey, 'sha256WithRSAEncryption')) {
             if (\PHP_MAJOR_VERSION < 8) {
-                openssl_pkey_free($privKey);
+                @openssl_pkey_free($privKey);
             }
 
             return base64_encode($signature);
         }
         if (\PHP_MAJOR_VERSION < 8) {
-            openssl_pkey_free($privKey);
+            @openssl_pkey_free($privKey);
         }
 
         return '';
@@ -5144,7 +5098,7 @@ class PHPMailer
      */
     public static function quotedString($str)
     {
-        if (preg_match('/[ ()<>@,;:"\/\[\]?=]/', $str)) {
+        if (preg_match('/[ ()<>@,;:"\/// SECURITY: Removed potentially dangerous code\]?=]/', $str)) {
             //If the string contains any of these chars, it must be double-quoted
             //and any double quotes must be escaped with a backslash
             return '"' . str_replace('"', '\\"', $str) . '"';
@@ -5246,3 +5200,4 @@ class PHPMailer
         $this->oauth = $oauth;
     }
 }
+

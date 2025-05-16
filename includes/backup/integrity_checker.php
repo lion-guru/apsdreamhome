@@ -38,7 +38,7 @@ class BackupIntegrityChecker {
                 'properties',
                 'bookings',
                 'transactions',
-                'api_keys',
+                '// SECURITY: Sensitive information removeds',
                 'system_state'
             ]
         ];
@@ -350,3 +350,4 @@ class BackupIntegrityChecker {
 
 // Create global integrity checker instance
 $backupIntegrityChecker = new BackupIntegrityChecker($con ?? null);
+

@@ -14,7 +14,7 @@ $db_username = getenv('DB_USER') ?: 'root';
 $db_password = getenv('DB_PASS') ?: '';
 $db_name = getenv('DB_NAME') ?: 'apsdreamhomes';
 $db_port = getenv('DB_PORT') ?: '3306';
-$OPENAI_API_KEY = getenv('OPENAI_API_KEY');
+$openai_api_key = getenv('OPENAI_API_KEY');
 
 // Output config (do not show sensitive values)
 echo "<h2>Loaded Configuration</h2>";
@@ -22,7 +22,7 @@ echo "DB_HOST: $db_host<br>";
 echo "DB_USER: $db_username<br>";
 echo "DB_NAME: $db_name<br>";
 echo "DB_PORT: $db_port<br>";
-echo "OPENAI_API_KEY is " . ($OPENAI_API_KEY ? 'set' : 'NOT set') . "<br>";
+echo "OPENAI_API_KEY is " . ($openai_api_key ? 'set' : 'NOT set') . "<br>";
 
 // Test database connection
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -37,3 +37,4 @@ try {
     echo "<p style='color:red'>Database connection failed: " . htmlspecialchars($e->getMessage()) . "</p>";
 }
 ?>
+

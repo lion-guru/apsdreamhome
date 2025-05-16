@@ -42,6 +42,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload'])) {
                 
                 if ($stmt->execute()) {
                     $success_message = "Image uploaded successfully!";
+                    // Google Drive upload and Slack notification
+                    require_once __DIR__ . '/includes/integration_helpers.php';
+                    $gallery_id = $stmt->insert_id;
+                    upload_to_google_drive_and_save_id($image_path, 'gallery', 'id', $gallery_id, 'drive_file_id');
+                    $driveId = $conn->query("SELECT drive_file_id FROM gallery WHERE id = $gallery_id")->fetch_assoc()['drive_file_id'];
+                    $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+                    $slackMsg = "🖼️ *New Gallery Image Uploaded*\n" .
+                        "Title: $title\n" .
+                        ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+                    send_slack_notification($slackMsg);
+                    send_telegram_notification($slackMsg);
+                    require_once __DIR__ . '/includes/upload_audit_log.php';
+                    $slack_status = 'sent';
+                    $telegram_status = 'sent';
+                    log_upload_event($conn, 'gallery_image', $gallery_id, 'gallery', $filename, $driveId, $title, $slack_status, $telegram_status);
                 } else {
                     $error_message = "Error saving to database.";
                 }
@@ -94,14 +109,12 @@ if ($result->num_rows > 0) {
             'id' => $row['id'],
             'title' => $row['title'],
             'description' => $row['description'],
-            'path' => $row['image_path']
+            'path' => $row['image_path'],
+            'drive_file_id' => isset($row['drive_file_id']) ? $row['drive_file_id'] : null
         ];
     }
 }
 $limit = 10; // Number of images per page
-$images = getGalleryImages();
-$start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
-$images = getGalleryImages();
 $start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
 ?>
 
@@ -112,6 +125,7 @@ $start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery Admin</title>
     <link rel="stylesheet" href="../css/gallery.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <h1>Gallery Admin Panel</h1>
@@ -127,7 +141,14 @@ $start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
         <?php foreach (array_slice($images, $start, $limit) as $image): ?>
             <li>
                 <img src="<?php echo $image['path']; ?>" alt="<?php echo $image['title']; ?>">
-                <h3><?php echo $image['title']; ?></h3>
+                <h3>
+                    <?php echo htmlspecialchars($image['title']); ?>
+                    <?php if (!empty($image['drive_file_id'])): ?>
+                        <a href="https://drive.google.com/file/d/<?php echo htmlspecialchars($image['drive_file_id']); ?>/view" target="_blank" title="View on Google Drive">
+                            <i class="fab fa-google-drive text-success ms-2"></i>
+                        </a>
+                    <?php endif; ?>
+                </h3>
                 <p><?php echo $image['description']; ?></p>
                 <a href="?delete=<?php echo $image['id']; ?>">Delete</a>
             </li>

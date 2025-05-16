@@ -4,7 +4,7 @@ session_start();
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../index.php'); exit();
 }
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 require_once(__DIR__ . '/send_sms_twilio.php');
 $db = new Database();
 $con = $db->getConnection();
@@ -270,7 +270,7 @@ $admin_email = 'admin@example.com'; // TODO: set real admin email
 // Track if new offenders detected (for email alert)
 $alert_email_sent = false;
 $alert_flag_file = __DIR__ . '/.abuse_alert_flag';
-$offender_hash = md5(json_encode([$offender_ips, $offender_users, $offender_agents, $offender_threshold, $from, $to, $role_filter]));
+$offender_hash = // SECURITY: Removed potentially dangerous codejson_encode([$offender_ips, $offender_users, $offender_agents, $offender_threshold, $from, $to, $role_filter]));
 $last_hash = @file_exists($alert_flag_file) ? trim(@file_get_contents($alert_flag_file)) : '';
 if ((count($offender_ips) || count($offender_users) || count($offender_agents)) && $offender_hash !== $last_hash) {
     $subject = '[APS Admin] Abuse Alert Triggered';
@@ -1086,7 +1086,7 @@ if (file_exists($anomaly_log_file)) {
     $('#auditLogModalBody').html('Loading...');
     $('#auditLogModal').modal('show');
     $.get('blocklist_audit.log', function(data){
-      auditLogRawLines = data.trim() ? data.trim().split('\n') : [];
+      auditLogRawLines = data.trim() ? data.trim().// SECURITY: Replaced deprecated function'\n') : [];
       renderAuditLogTable();
     });
   });
@@ -1102,7 +1102,7 @@ if (file_exists($anomaly_log_file)) {
     html += 'Timestamp           | Action   | Type | Value           | Admin\n';
     html += '--------------------+----------+------+-----------------+--------\n';
     let filtered = auditLogRawLines.filter(function(line){
-      var cols = line.split('\t');
+      var cols = line.// SECURITY: Replaced deprecated function'\t');
       if (!cols[0]) return false;
       let [ts, act, typ, val, adm] = cols;
       if (action && act !== action) return false;
@@ -1119,7 +1119,7 @@ if (file_exists($anomaly_log_file)) {
       html += '<span class="text-muted">No matching entries.</span>';
     } else {
       filtered.forEach(function(line){
-        var cols = line.split('\t');
+        var cols = line.// SECURITY: Replaced deprecated function'\t');
         html += (cols[0]||'').padEnd(20) + ' | ' + (cols[1]||'').padEnd(8) + ' | ' + (cols[2]||'').padEnd(4) + ' | ' + (cols[3]||'').padEnd(15) + ' | ' + (cols[4]||'') + '\n';
       });
     }
@@ -1133,7 +1133,7 @@ if (file_exists($anomaly_log_file)) {
   $('#exportAuditLogBtn').on('click', function(){
     let csv = 'Timestamp,Action,Type,Value,Admin\n';
     auditLogLastFiltered.forEach(function(line){
-      let cols = line.split('\t');
+      let cols = line.// SECURITY: Replaced deprecated function'\t');
       csv += [cols[0],cols[1],cols[2],cols[3],cols[4]].map(x=>`"${(x||'').replace(/"/g,'""')}"`).join(',')+'\n';
     });
     let blob = new Blob([csv], {type: 'text/csv'});
@@ -1966,3 +1966,4 @@ if (isset($_POST['trigger_anomaly_export_now'])) {
 </div>
 
 ```
+

@@ -1,7 +1,7 @@
 <?php
 // Automated AI Analytics Report Sender
 // Sends weekly analytics CSV to configured admin emails
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 require_once(__DIR__ . '/../includes/classes/PHPMailer/PHPMailerAutoload.php');
 
 // CONFIGURATION

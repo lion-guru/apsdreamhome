@@ -25,6 +25,9 @@ $stats = [
 ];
 ?>
 <div class="container py-5">
+    <div class="d-flex justify-content-end mb-3">
+        <a href="logout.php" class="btn btn-outline-danger btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
     <h1 class="mb-4 text-center text-primary"><i class="fas fa-user-shield me-2"></i>Welcome, <?php echo $superadmin_name; ?>!</h1>
     <!-- Stats Cards -->
     <div class="dashboard-stats d-flex flex-wrap gap-3 justify-content-center mb-4">
@@ -124,6 +127,104 @@ $stats = [
         </div>
     </div>
 </div>
+<!-- Super Admin Control Panel Section -->
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fa fa-user-shield"></i> Super Admin Control Panel</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <a href="manage_users.php" class="btn btn-outline-primary w-100 mb-2"><i class="fa fa-users"></i> Manage Users</a>
+                            <a href="fetch_permissions.php" class="btn btn-outline-info w-100 mb-2"><i class="fa fa-key"></i> Manage Permissions</a>
+                            <a href="fetch_settings.php" class="btn btn-outline-secondary w-100 mb-2"><i class="fa fa-cogs"></i> Site Settings</a>
+                            <a href="fetch_ai_settings.php" class="btn btn-outline-warning w-100 mb-2"><i class="fa fa-robot"></i> AI/Automation Settings</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="audit_access_log_view.php" class="btn btn-outline-danger w-100 mb-2"><i class="fa fa-clipboard-list"></i> Audit Logs</a>
+                            <a href="log_archive_view.php" class="btn btn-outline-dark w-100 mb-2"><i class="fa fa-archive"></i> Log Archives</a>
+                            <a href="backup_manager.php" class="btn btn-outline-success w-100 mb-2"><i class="fa fa-database"></i> Backups</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="admin_dashboard.php" class="btn btn-outline-primary w-100 mb-2"><i class="fa fa-gauge"></i> Admin Dashboard</a>
+                            <a href="employee_dashboard.php" class="btn btn-outline-secondary w-100 mb-2"><i class="fa fa-briefcase"></i> Employee Dashboard</a>
+                            <a href="index.php" class="btn btn-outline-info w-100 mb-2"><i class="fa fa-home"></i> Main Dashboard</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="userlist.php" class="btn btn-outline-primary w-100 mb-2"><i class="fa fa-list"></i> All Users List</a>
+                            <a href="adminedit.php" class="btn btn-outline-warning w-100 mb-2"><i class="fa fa-user-edit"></i> Edit Admins/Employees</a>
+                            <a href="dashboard.php" class="btn btn-outline-success w-100 mb-2"><i class="fa fa-tachometer-alt"></i> All Dashboards</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <strong>Tip:</strong> As Super Admin, you have access to all controls, analytics, user/role management, settings, backups, and audit logs. Use the above shortcuts for one-click access to all features.
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Visual Editor and Component Library -->
+<div class="wrapper">
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Super Admin Panel</h3>
+        </div>
+        <ul class="list-unstyled components">
+            <li class="active">
+                <a href="#contentSubmenu" data-toggle="collapse" aria-expanded="false">
+                    <i class="fas fa-edit"></i> Content Management
+                </a>
+                <ul class="collapse list-unstyled" id="contentSubmenu">
+                    <li><a href="#" data-section="pages">Pages</a></li>
+                    <li><a href="#" data-section="posts">Posts</a></li>
+                    <li><a href="#" data-section="media">Media</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#layoutSubmenu" data-toggle="collapse" aria-expanded="false">
+                    <i class="fas fa-layer-group"></i> Layout Management
+                </a>
+                <ul class="collapse list-unstyled" id="layoutSubmenu">
+                    <li><a href="#" data-section="templates">Templates</a></li>
+                    <li><a href="#" data-section="components">Components</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#settingsSubmenu" data-toggle="collapse" aria-expanded="false">
+                    <i class="fas fa-cogs"></i> Settings
+                </a>
+                <ul class="collapse list-unstyled" id="settingsSubmenu">
+                    <li><a href="#" data-section="general">General</a></li>
+                    <li><a href="#" data-section="security">Security</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="content">
+        <div class="visual-editor mb-4">
+            <h4>Visual Editor</h4>
+            <div class="preview-area" id="previewArea">
+                <!-- Drag and drop components here -->
+            </div>
+        </div>
+        <div class="component-library">
+            <h5>Component Library</h5>
+            <div class="draggable-component">Header</div>
+            <div class="draggable-component">Footer</div>
+            <div class="draggable-component">Contact Form</div>
+            <div class="draggable-component">Gallery</div>
+            <div class="draggable-component">Testimonial</div>
+        </div>
+    </div>
+</div>
 <style>
     .dashboard-stats .stat-box { border-radius: .5rem; padding: 1.5rem 2rem; min-width: 160px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); font-size: 1.1rem; }
     .ai-chatbot { background: #eaf4ff; border-left: 5px solid #007bff; padding: 1.5rem; border-radius: .5rem; margin-bottom: 2rem; }
@@ -173,6 +274,24 @@ $(function(){
             $('#aiSuggestionsPanel').html('<div class="text-danger">Could not load suggestions.</div>');
         }
     },'json');
+});
+</script>
+<script src="assets/plugins/sortable/Sortable.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Initialize drag and drop
+    const previewArea = document.getElementById('previewArea');
+    new Sortable(previewArea, {
+        group: {
+            name: 'shared',
+            pull: true,
+            put: true
+        },
+        animation: 150,
+        onEnd: function (evt) {
+            // Save layout order
+        }
+    });
 });
 </script>
 <?php include __DIR__ . '/../includes/templates/new_footer.php'; ?>

@@ -102,7 +102,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                                     <td><?php echo $row['2']; ?></td>
                                                     <td><img src="upload/<?php echo $row['3']; ?>" height="200px" width="200px"></td>
                                                     <td><a href="gallaryedit.php?id=<?php echo $row['0']; ?>"><button class="btn btn-info">Edit</button></a>
-                                                    <a href="gallarydelete.php?id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
+                                                    <a href="delete.php?type=gallery&id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
                                                 </tr>
                                             </tbody>
                                                 <?php

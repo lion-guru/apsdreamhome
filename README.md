@@ -1,61 +1,208 @@
-# APS Dream Homes Website
+# APS Dream Home Project
 
-## प्रोजेक्ट संरचना (Project Structure)
+## Project Overview
 
-इस प्रोजेक्ट को बेहतर तरीके से संगठित किया गया है ताकि कोड का प्रबंधन और रखरखाव आसान हो। निम्नलिखित फोल्डर संरचना का उपयोग किया गया है:
+APS Dream Home is an advanced real estate management platform that combines cutting-edge security, performance optimization, and user-centric design to revolutionize property management and customer engagement.
 
-### मुख्य फोल्डर्स (Main Folders)
+## Key Features
 
-- **assets/** - सभी स्टैटिक एसेट्स के लिए
-  - **css/** - मुख्य CSS फाइल्स
-  - **js/** - JavaScript फाइल्स
-  - **images/** - इमेज फाइल्स
-  - **fonts/** - फॉन्ट फाइल्स
+### 🔒 Advanced Security
+- Multi-layered security architecture
+- Input sanitization and XSS prevention
+- CSRF protection
+- Two-factor authentication
+- Comprehensive security logging
+- IP reputation tracking
+- Rate limiting
 
-- **includes/** - कॉमन PHP कंपोनेंट्स
-  - **templates/** - कॉमन टेम्पलेट्स जैसे हेडर और फुटर
-  - **config/** - कॉन्फिगरेशन फाइल्स
-  - **functions/** - हेल्पर फंक्शंस और यूटिलिटीज
-  
-- **database/** - डेटाबेस माइग्रेशन और सीड्स
+### 📧 Communication Management
+- Advanced email and SMS notification systems
+- Dynamic email and SMS template management
+- Multi-channel communication
+- Configurable user notification preferences
+- Email and SMS queueing with retry mechanisms
 
-### महत्वपूर्ण फाइल्स (Important Files)
+### 🚀 Performance Optimization
+- Dependency injection framework
+- Caching mechanisms (memory, file-based)
+- Performance profiling
+- OPcache configuration
+- Efficient database query management
 
-- **config.php** - मुख्य कॉन्फिगरेशन फाइल
-- **.env** - एनवायरनमेंट वेरिएबल्स (कमिट न करें)
-- **.env.example** - एनवायरनमेंट वेरिएबल्स के लिए टेम्पलेट
-- **.gitignore** - गिट इग्नोर रूल्स
+### 🔍 Key Modules
+- Property Management
+- Lead Tracking
+- Visit Scheduling
+- User Authentication
+- Notification System
+- Analytics & Reporting
 
-## एनवायरनमेंट सेटअप (Environment Setup)
+## Project Structure
 
-1. `.env.example` को `.env` में कॉपी करें:
+The project is organized in a modular way to ensure easy maintenance and scalability:
+
+### Main Directories
+
+- **admin/** - Admin panel interface
+  - Dashboard, property management, user management, analytics
+
+- **agent/** - Agent interface
+  - Dashboard, lead management, visit scheduling, property management
+
+- **api/** - API endpoints for mobile and third-party integrations
+
+- **assets/** - Static assets
+  - **css/** - CSS files and frameworks
+  - **js/** - JavaScript files
+  - **images/** - Image files
+  - **fonts/** - Font files
+
+- **database/** - Database migration and seed files
+  - SQL scripts for table creation and sample data
+
+- **includes/** - Common PHP components
+  - **templates/** - Common templates like headers and footers
+  - **config/** - Configuration files
+  - **functions/** - Helper functions and utilities
+  - **classes/** - Class definitions for core functionality
+
+- **logs/** - System logs for debugging and auditing
+
+### Important Files
+
+- **config.php** - Main configuration file
+- **.env** - Environment variables (do not commit)
+- **.env.example** - Template for environment variables
+- **.gitignore** - Git ignore rules
+- **PROJECT_STATUS.md** - Current project status and roadmap
+
+## Database Setup
+
+### 🗄️ Migration Order
+Run database migration scripts in the following order:
+1. `database/migrations/20250514_001_auth_tables.sql`
+2. `database/migrations/20250514_002_security_tables.sql`
+3. `database/migrations/20250514_003_email_queue.sql`
+4. `database/migrations/20250514_004_sms_queue.sql`
+
+### 🔐 Initial Configuration
+- Create an admin user
+- Configure email and SMS providers
+- Set up initial notification templates
+
+## Background Tasks
+
+### Recommended Cron Jobs
+```bash
+# Process email queue every 5 minutes
+*/5 * * * * php /path/to/project/scripts/process_email_queue.php
+
+# Process SMS queue every 5 minutes
+*/5 * * * * php /path/to/project/scripts/process_sms_queue.php
+
+# Clean up security logs and tokens
+0 1 * * * php /path/to/project/scripts/security_cleanup.php
+```
+
+## Installation Requirements
+
+### 🖥️ System Requirements
+- PHP 8.1+ (Recommended)
+- MySQL 8.0+ 
+- Apache 2.4+ / Nginx 1.18+
+- Composer
+- Twilio Account (for SMS)
+
+### 🔧 Dependencies
+- PHPMailer
+- Twilio PHP SDK
+- PHP-JWT
+- OPcache
+- PDO/MySQLi
+
+### 🛠️ Environment Setup
+1. Clone the repository
+2. Run `composer install`
+3. Configure `.env` file with database and service credentials
+4. Run database migrations
+5. Set up cron jobs for background tasks
+
+## Security Configuration
+
+### Environment Variables
+- `APP_SECRET_KEY`: Application encryption key
+- `DB_HOST`, `DB_USER`, `DB_PASS`: Database credentials
+- `EMAIL_USERNAME`, `EMAIL_PASSWORD`: SMTP credentials
+- `SMS_TWILIO_SID`, `SMS_TWILIO_TOKEN`: Twilio SMS credentials
+
+### Recommended Security Practices
+- Use strong, unique passwords
+- Enable two-factor authentication
+- Regularly update dependencies
+- Monitor security logs
+- Implement IP whitelisting
+- Use HTTPS
+
+## Database Connection
+
+The system uses a secure and optimized database connection management system:
+
+### Database Configuration
+
+- Default database credentials are stored in `includes/config/db_config.php`:
+  ```php
+  define('DB_HOST', 'localhost');
+  define('DB_USER', 'root');
+  define('DB_PASS', '');
+  define('DB_NAME', 'apsdreamhomefinal');
+  ```
+
+### Connection Management
+
+- The system uses a centralized connection management approach in `includes/db_connection.php`
+- Features include:
+  - Environment variable loading
+  - Parameter validation
+  - Comprehensive error logging
+  - Connection pooling
+  - SSL support for secure connections
+  - UTF-8 character set enforcement
+  - SQL injection prevention
+
+### Connection Usage
+
+To use the database connection in any file:
+
+```php
+// Include the database connection
+require_once __DIR__ . '/includes/db_connection.php';
+
+// Get connection
+$conn = getDbConnection();
+
+// Use prepared statements for all queries
+$stmt = $conn->prepare("SELECT * FROM properties WHERE id = ?");
+$stmt->bind_param("i", $property_id);
+$stmt->execute();
+$result = $stmt->get_result();
+```
+
+4. Import the database schema:
    ```bash
-   cp .env.example .env
+   mysql -u your_username -p apsdreamhomefinal < database/database_structure.sql
    ```
 
-2. `.env` फाइल को अपनी कॉन्फिगरेशन के साथ अपडेट करें:
-   ```env
-   # डेटाबेस कॉन्फिगरेशन
-   DB_HOST=localhost
-   DB_USER=your_username
-   DB_PASS=your_password
-   DB_NAME=realestatephp
-
-   # गूगल ओथ कॉन्फिगरेशन
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
-
-   # जेमिनी एआई कॉन्फिगरेशन
-   GEMINI_API_KEY="your-gemini-api-key"
-   ```
-
-3. डेटाबेस को इम्पोर्ट करें:
+5. Import sample data (optional):
    ```bash
-   mysql -u your_username -p realestatephp < database/realestatephp.sql
+   mysql -u your_username -p apsdreamhomefinal < database/insert_sample_data.sql
    ```
 
-- Use phpMyAdmin as an alternative for import if you prefer a graphical interface.
-- All demo logins will work immediately after import.
+6. Set up your web server (Apache/Nginx) to point to the project directory
+
+7. Access the application:
+   - Frontend: http://localhost/apsdreamhomefinal
+   - Admin Panel: http://localhost/apsdreamhomefinal/admin
+   - Agent Dashboard: http://localhost/apsdreamhomefinal/agent
 
 ## Demo Data & Test Logins
 
@@ -67,51 +214,51 @@ The platform comes pre-seeded with demo data for all user types and employees fo
 - Password for all demo employees: `Aps@128128`
 - See `database/create_employees_table.sql` for demo employee details
 
-## Dashboard Modernization (2025)
+## Admin Module Roles & Login
 
-- **All dashboards** (admin, associate, agent, builder, tenant, employee, superadmin, investor, customer, user) have been modernized:
-  - Bootstrap 5, FontAwesome, card-based UI
-  - AI chatbot panel and AI-powered suggestions
-  - Responsive, accessible layouts
-  - Export/share features
-  - Consistent backend logic and security
-- **All duplicate/legacy dashboard files have been removed** for maintainability (April 2025).
-- For new dashboard development, follow the patterns in any modernized dashboard file.
+- **Allowed Roles:**
+  - admin, super_admin, finance, it_head, hr, marketing, operations, legal, sales, support, manager, director, ceo, cto, cfo, coo, cm, office_admin, official_employee
+- **Admin Table:**
+  - All official admin users must have their `role` column set to one of the above roles (case-insensitive, recommended lowercase with underscores).
+  - The `status` column must be `active` for login to succeed.
+  - Password for all official admin users: `Aps@128128`
 
-## नए पेज बनाना (Creating New Pages)
+## New Automated Systems
 
-- Use Bootstrap 5 and FontAwesome for all new UI development.
-- Follow card-based, responsive, and accessible design patterns.
-- Use modular PHP and RBAC for all new features.
-- Document new pages and modules in both this README and the DEVELOPER_HANDBOOK.md.
+### 1. Property Recommendations
+- AI-Powered Suggestions for similar properties
+- Market Analysis with price comparisons
+- Personalized recommendations for logged-in users
 
-## Coding & Database Standards
+### 2. Automated Visit Scheduling
+- Smart Scheduling System with pre-defined time slots
+- Real-time availability checking
+- Automated notifications and visit reminders
 
-- Use prepared statements for all DB queries
-- Modularize new features (separate admin, API, customer, and DB logic)
-- Use RBAC and audit logging for all sensitive actions
-- Follow modern dashboard UI/UX standards for all user-facing modules
+### 3. Follow-up System
+- Automated Communications for visit reminders and follow-ups
+- AI Integration to track customer engagement
+- Email templates for different communication types
 
-## Operations & Maintenance
+### 4. Property Comparison
+- Detailed Analysis with side-by-side comparison
+- Scoring System for price, location, and amenities
+- Market trends and property ratings
 
-- Backups: Use `scripts/backup.sh` and `scripts/restore.sh`
-- CI/CD: `scripts/ci_cd.ps1` for linting, tests, and deployment
-- Health: `admin/health_check.php` for self-healing and monitoring
-- Duplicate Scan: Use `duplicate_files_report.csv` for codebase hygiene
-- Ongoing removal of duplicate and legacy files is enforced (user-approved)
+### 5. Cron Jobs
+- Automated Tasks for follow-ups, AI score updates, and reports
+- Monitoring with success/error logging
+- System health checks
 
-## Future Roadmap (2025+)
+## Modernization & Backups
 
-- Expand marketplace and AI/ML integrations
-- Add more onboarding and automation flows
-- Enhance analytics with real-time and predictive insights
-- Invite partners to build on the developer portal and app store
+- All dashboards have been modernized with Bootstrap 5, FontAwesome, and card-based UI
+- Legacy files are backed up with `.bak` extensions before modernization
+- Redirects are in place from legacy files to modern equivalents
+- All duplicate/legacy dashboard files have been removed for maintainability
 
-## Unique Features
+## Project Status
 
-- Covers A-Z for real estate: sales, marketing, analytics, compliance, automation, and more
-- Modular, future-proof, and highly extensible
+For a detailed breakdown of completed features, pending tasks, and future enhancements, please refer to the `PROJECT_STATUS.md` file.
 
----
-
-For more details, see `DEVELOPER_HANDBOOK.md`.
+*Last Updated: May 13, 2025*

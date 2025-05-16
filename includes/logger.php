@@ -1,191 +1,299 @@
 <?php
-/**
- * Logger Class
- * Handles logging of security events, errors, and debug information
- */
+// Advanced Logging System
 
 class Logger {
-    private $logPath;
-    private $logLevels = [
-        'EMERGENCY' => 0,
-        'ALERT'     => 1,
-        'CRITICAL'  => 2,
-        'ERROR'     => 3,
-        'WARNING'   => 4,
-        'NOTICE'    => 5,
-        'INFO'      => 6,
-        'DEBUG'     => 7
-    ];
-    private $currentLevel;
-    private $maxFileSize = 10485760; // 10MB
-    private $maxFiles = 5;
+    // Log levels
+    const EMERGENCY = 'emergency';
+    const ALERT     = 'alert';
+    const CRITICAL  = 'critical';
+    const ERROR     = 'error';
+    const WARNING   = 'warning';
+    const NOTICE    = 'notice';
+    const INFO      = 'info';
+    const DEBUG     = 'debug';
 
-    public function __construct($basePath = null) {
-        $this->logPath = $basePath ?? __DIR__ . '/../logs';
-        $this->currentLevel = getenv('APP_DEBUG') ?: 'INFO';
-        $this->initializeLogDirectory();
+    // Log channels
+    private $channels = [
+        'application',
+        'security',
+        'database',
+        'performance',
+        'email',
+        'system'
+    ];
+
+    // Log configuration
+    private $config = [
+        'log_dir' => '',
+        'max_log_files' => 10,
+        'max_log_size' => 5 * 1024 * 1024, // 5MB
+        'log_level' => self::INFO
+    ];
+
+    // Singleton instance
+    private static $instance = null;
+
+    private function __construct() {
+        // Set default log directory
+        $this->config['log_dir'] = __DIR__ . '/../logs';
+
+        // Ensure log directory exists
+        $this->createLogDirectory();
+    }
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     /**
-     * Initialize log directory with proper permissions
+     * Create log directory with proper permissions
      */
-    private function initializeLogDirectory() {
-        if (!is_dir($this->logPath)) {
-            mkdir($this->logPath, 0755, true);
+    private function createLogDirectory() {
+        if (!is_dir($this->config['log_dir'])) {
+            mkdir($this->config['log_dir'], 0755, true);
         }
 
-        // Create subdirectories for different log types
-        $dirs = ['security', 'error', 'debug', 'access'];
-        foreach ($dirs as $dir) {
-            $path = $this->logPath . '/' . $dir;
-            if (!is_dir($path)) {
-                mkdir($path, 0755, true);
+        // Create channel-specific log directories
+        foreach ($this->channels as $channel) {
+            $channel_dir = $this->config['log_dir'] . '/' . $channel;
+            if (!is_dir($channel_dir)) {
+                mkdir($channel_dir, 0755, true);
             }
         }
     }
 
     /**
-     * Log a security event
+     * Log a message
+     * @param string $message Log message
+     * @param string $level Log level
+     * @param string $channel Log channel
+     * @param array $context Additional context
      */
-    public function security($message, $context = []) {
-        $this->log('ALERT', $message, $context, 'security');
-    }
-
-    /**
-     * Log an error
-     */
-    public function error($message, $context = []) {
-        $this->log('ERROR', $message, $context, 'error');
-    }
-
-    /**
-     * Log debug information
-     */
-    public function debug($message, $context = []) {
-        if ($this->shouldLog('DEBUG')) {
-            $this->log('DEBUG', $message, $context, 'debug');
-        }
-    }
-
-    /**
-     * Log access information
-     */
-    public function access($message, $context = []) {
-        $this->log('INFO', $message, $context, 'access');
-    }
-
-    /**
-     * Main logging function
-     */
-    private function log($level, $message, array $context = [], $type = 'error') {
-        if (!$this->shouldLog($level)) {
-            return false;
+    public function log($message, $level = self::INFO, $channel = 'application', $context = []) {
+        // Check if logging is enabled for this level
+        if ($this->getLevelPriority($level) > $this->getLevelPriority($this->config['log_level'])) {
+            return;
         }
 
-        $logFile = $this->logPath . '/' . $type . '/' . date('Y-m-d') . '.log';
-        
-        // Rotate log if needed
-        $this->rotateLogIfNeeded($logFile);
+        // Validate channel
+        if (!in_array($channel, $this->channels)) {
+            $channel = 'application';
+        }
 
-        // Format the log entry
-        $entry = $this->formatLogEntry($level, $message, $context);
+        // Prepare log entry
+        $timestamp = date('Y-m-d H:i:s');
+        $ip_address = $_SERVER['REMOTE_ADDR'] ?? 'CLI';
+        $user_id = $_SESSION['user_id'] ?? 'guest';
+
+        // Format log message
+        $formatted_message = $this->formatLogMessage($message, $level, $context);
 
         // Write to log file
-        return file_put_contents(
-            $logFile,
-            $entry . PHP_EOL,
-            FILE_APPEND | LOCK_EX
-        );
+        $log_file = $this->getLogFilePath($channel);
+        $this->writeToLogFile($log_file, $formatted_message);
+
+        // Rotate logs if needed
+        $this->rotateLogs($channel);
     }
 
     /**
-     * Format a log entry
+     * Format log message
+     * @param string $message Original message
+     * @param string $level Log level
+     * @param array $context Additional context
+     * @return string Formatted log message
      */
-    private function formatLogEntry($level, $message, array $context = []) {
-        $timestamp = date('Y-m-d H:i:s.v P');
-        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-        $userId = $_SESSION['user_id'] ?? 'guest';
-        $requestId = $_SERVER['HTTP_X_REQUEST_ID'] ?? uniqid();
+    private function formatLogMessage($message, $level, $context = []) {
+        $timestamp = date('Y-m-d H:i:s');
+        $ip_address = $_SERVER['REMOTE_ADDR'] ?? 'CLI';
+        $user_id = $_SESSION['user_id'] ?? 'guest';
 
-        $contextStr = !empty($context) ? json_encode($context) : '-';
+        // Add context information
+        $context_str = $context ? ' | ' . json_encode($context) : '';
 
         return sprintf(
-            '[%s] [%s] [%s] [IP: %s] [User: %s] [ReqID: %s] %s %s',
+            "[%s] [%s] [%s] [%s] %s%s\n",
             $timestamp,
-            $level,
-            php_sapi_name(),
-            $ip,
-            $userId,
-            $requestId,
+            strtoupper($level),
+            $ip_address,
+            $user_id,
             $message,
-            $contextStr
+            $context_str
         );
     }
 
     /**
-     * Check if we should log this level
+     * Get log file path for a specific channel
+     * @param string $channel Log channel
+     * @return string Log file path
      */
-    private function shouldLog($level) {
-        return $this->logLevels[$level] <= $this->logLevels[$this->currentLevel];
+    private function getLogFilePath($channel) {
+        $date = date('Y-m-d');
+        return sprintf(
+            '%s/%s/%s.log',
+            $this->config['log_dir'],
+            $channel,
+            $date
+        );
     }
 
     /**
-     * Rotate log file if it exceeds max size
+     * Write message to log file
+     * @param string $log_file Log file path
+     * @param string $message Log message
      */
-    private function rotateLogIfNeeded($logFile) {
-        if (!file_exists($logFile)) {
-            return;
+    private function writeToLogFile($log_file, $message) {
+        // Ensure directory exists
+        $dir = dirname($log_file);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
         }
 
-        if (filesize($logFile) < $this->maxFileSize) {
-            return;
-        }
-
-        $info = pathinfo($logFile);
-        $prefix = $info['dirname'] . '/' . $info['filename'];
-
-        // Shift existing rotated logs
-        for ($i = $this->maxFiles - 1; $i >= 1; $i--) {
-            $old = sprintf('%s.%d.log', $prefix, $i);
-            $new = sprintf('%s.%d.log', $prefix, $i + 1);
-            if (file_exists($old)) {
-                rename($old, $new);
-            }
-        }
-
-        // Rotate current log
-        rename($logFile, sprintf('%s.1.log', $prefix));
+        // Append message to log file
+        file_put_contents($log_file, $message, FILE_APPEND | LOCK_EX);
     }
 
     /**
-     * Set the current log level
+     * Rotate log files to prevent them from growing too large
+     * @param string $channel Log channel
      */
-    public function setLevel($level) {
-        if (array_key_exists($level, $this->logLevels)) {
-            $this->currentLevel = $level;
+    private function rotateLogs($channel) {
+        $log_dir = $this->config['log_dir'] . '/' . $channel;
+        $log_files = glob($log_dir . '/*.log');
+
+        // Sort log files by modification time (oldest first)
+        usort($log_files, function($a, $b) {
+            return filemtime($a) - filemtime($b);
+        });
+
+        // Remove excess log files
+        while (count($log_files) > $this->config['max_log_files']) {
+            $oldest_log = array_shift($log_files);
+            unlink($oldest_log);
+        }
+
+        // Check and truncate large log files
+        foreach ($log_files as $log_file) {
+            if (filesize($log_file) > $this->config['max_log_size']) {
+                $this->truncateLogFile($log_file);
+            }
         }
     }
 
     /**
-     * Clean old log files
+     * Truncate log file to prevent it from growing too large
+     * @param string $log_file Log file path
      */
-    public function cleanOldLogs($days = 30) {
-        $dirs = ['security', 'error', 'debug', 'access'];
-        foreach ($dirs as $dir) {
-            $path = $this->logPath . '/' . $dir;
-            if (!is_dir($path)) {
-                continue;
-            }
+    private function truncateLogFile($log_file) {
+        $lines = file($log_file, FILE_IGNORE_NEW_LINES);
+        $lines = array_slice($lines, -1000); // Keep last 1000 lines
+        file_put_contents($log_file, implode("\n", $lines) . "\n");
+    }
 
-            $files = glob($path . '/*.log*');
-            foreach ($files as $file) {
-                if (filemtime($file) < time() - ($days * 86400)) {
-                    unlink($file);
-                }
-            }
+    /**
+     * Get numeric priority for log level
+     * @param string $level Log level
+     * @return int Priority value
+     */
+    private function getLevelPriority($level) {
+        $priorities = [
+            self::EMERGENCY => 0,
+            self::ALERT     => 1,
+            self::CRITICAL  => 2,
+            self::ERROR     => 3,
+            self::WARNING   => 4,
+            self::NOTICE    => 5,
+            self::INFO      => 6,
+            self::DEBUG     => 7
+        ];
+
+        return $priorities[$level] ?? $priorities[self::INFO];
+    }
+
+    /**
+     * Log an exception
+     * @param \Throwable $exception Exception to log
+     * @param string $channel Log channel
+     */
+    public function logException(\Throwable $exception, $channel = 'application') {
+        $message = sprintf(
+            "Exception: %s\nFile: %s\nLine: %d\nTrace: %s",
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine(),
+            $exception->getTraceAsString()
+        );
+
+        $this->log($message, self::ERROR, $channel);
+    }
+
+    /**
+     * Set log level
+     * @param string $level Log level
+     */
+    public function setLogLevel($level) {
+        if (defined('self::' . strtoupper($level))) {
+            $this->config['log_level'] = $level;
         }
     }
 }
 
-// Create global logger instance
-$logger = new Logger();
+// Global helper function
+function logger() {
+    return Logger::getInstance();
+}
+
+// Set global exception handler
+set_exception_handler(function($exception) {
+    logger()->logException($exception);
+    
+    // Display user-friendly error page in production
+    if (getenv('APP_ENV') === 'production') {
+        header('HTTP/1.1 500 Internal Server Error');
+        include __DIR__ . '/../error_pages/500.php';
+        exit;
+    }
+});
+
+// Set global error handler
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    // Only handle errors not suppressed by @
+    if (!(error_reporting() & $errno)) {
+        return false;
+    }
+
+    // Log the error
+    $error_type = match($errno) {
+        E_ERROR => 'Fatal Error',
+        E_WARNING => 'Warning',
+        E_PARSE => 'Parse Error',
+        E_NOTICE => 'Notice',
+        E_CORE_ERROR => 'Core Error',
+        E_CORE_WARNING => 'Core Warning',
+        E_COMPILE_ERROR => 'Compile Error',
+        E_COMPILE_WARNING => 'Compile Warning',
+        E_USER_ERROR => 'User Error',
+        E_USER_WARNING => 'User Warning',
+        E_USER_NOTICE => 'User Notice',
+        default => 'Unknown Error'
+    };
+
+    $message = sprintf(
+        "%s: %s in %s on line %d",
+        $error_type,
+        $errstr,
+        $errfile,
+        $errline
+    );
+
+    logger()->log($message, Logger::ERROR, 'system');
+
+    // Don't execute PHP's internal error handler
+    return true;
+}, E_ALL);
+
+// Return logger instance for dependency injection
+return logger();

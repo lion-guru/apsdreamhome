@@ -1,0 +1,148 @@
+/* Modern APS Dream Homes Enhancements */
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: #f7f8fa;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: #1a237e;
+    letter-spacing: 0.5px;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    color: #1a237e;
+    margin-bottom: 0.75em;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #1a237e 60%, #00bcd4 100%);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(26,35,126,0.09);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #00bcd4 0%, #1a237e 100%);
+    box-shadow: 0 4px 16px rgba(0,188,212,0.15);
+}
+
+.card, .service-card {
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(26,35,126,0.04);
+    border: none;
+    transition: box-shadow 0.3s;
+}
+.card:hover, .service-card:hover {
+    box-shadow: 0 8px 32px rgba(26,35,126,0.13);
+}
+
+.property-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 188, 212, 0.13);
+    background: #fff;
+    margin-bottom: 32px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.property-card:hover {
+    transform: translateY(-7px) scale(1.03);
+    box-shadow: 0 12px 32px rgba(26,35,126,0.18);
+}
+.property-card img {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    height: 220px;
+}
+.property-card .card-body {
+    padding: 22px 18px 18px 18px;
+}
+.property-card .price {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #00bcd4;
+}
+.property-card .location {
+    color: #607d8b;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+}
+.property-card .features {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+    color: #1a237e;
+}
+.property-card .btn-primary {
+    width: 100%;
+    margin-top: 18px;
+}
+
+/* Hero/slider section */
+.hero-slider, .swiper {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(26,35,126,0.10);
+    margin-bottom: 2.5rem;
+}
+
+/* Section backgrounds */
+.bg-light {
+    background: linear-gradient(120deg, #f7f8fa 60%, #e3f7fa 100%);
+}
+.bg-white {
+    background: #fff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .property-card img {
+        height: 150px;
+    }
+    .section-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Divider */
+.divider {
+    border-bottom: 2px solid #e3f7fa;
+    margin: 32px 0;
+}
+
+/* Testimonial styling */
+.testimonial {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(26,35,126,0.06);
+    padding: 32px 28px;
+    margin-bottom: 24px;
+}
+
+/* Team and agent cards */
+.team-card, .agent-card {
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(26,35,126,0.06);
+    transition: box-shadow 0.3s;
+}
+.team-card:hover, .agent-card:hover {
+    box-shadow: 0 8px 32px rgba(0,188,212,0.13);
+}
+
+/* Service cards */
+.service-card {
+    background: #f7f8fa;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(0,188,212,0.07);
+    padding: 28px 18px;
+    margin-bottom: 24px;
+}
+
+/* End Modern Enhancements */

@@ -147,7 +147,7 @@ if(isset($_POST['insert']))
                                                     <td><?php echo $cnt; ?></td>
                                                     <td><?php echo $row['1']; ?></td>
 													<td><a href="stateedit.php?id=<?php echo $row['0']; ?>"><button class="btn btn-info">Edit</button></a>
-                                                    <a href="statedelete.php?id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
+                                                    <a href="delete.php?type=state&id=<?php echo $row['0']; ?>"><button class="btn btn-danger">Delete</button></a></td>
                                                 </tr>
                                                 <?php $cnt=$cnt+1; } ?>
 

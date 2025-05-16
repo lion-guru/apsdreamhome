@@ -4,7 +4,7 @@ session_cache_limiter(false);
 session_start();
 include("config.php");
 // include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/common-functions.php');
+include(__DIR__ . '/includes/functions/common-functions.php');
 ///code
 								
 ?>  
@@ -61,7 +61,7 @@ include(__DIR__ . '/includes/common-functions.php');
 <div id="page-wrapper">
     <div class="row"> 
         <!--	Header start  -->
-		<?php include(__DIR__ . '/includes/header.php');?>
+		<?php include(__DIR__ . '/includes/templates/dynamic_header.php');?>
         <!--	Header end  -->
         
         <!--	Banner   --->
@@ -196,7 +196,7 @@ include(__DIR__ . '/includes/common-functions.php');
 
         
         <!--	Footer   start-->
-		<?php include(__DIR__ . '/includes/footer.php');?>
+		<?php include(__DIR__ . '/includes/templates/new_footer.php');?>
 		<!--	Footer   start-->
         
         <!-- Scroll to top --> 

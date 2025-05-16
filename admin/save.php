@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('db_connection.php');
+require_once('src/Database/Database.php');
 
 header('Content-Type: application/json');
 

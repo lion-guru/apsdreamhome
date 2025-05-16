@@ -23,16 +23,7 @@ if(!isset($_SESSION['auser'])) {
 }
 
 // Process delete operation
-if(isset($_GET['delid'])) {
-    $id = $_GET['delid'];
-    $sql = "DELETE FROM about WHERE id = $id";
-    $result = mysqli_query($con, $sql);
-    if($result) {
-        $msg = "<p class='alert alert-success'>About Content Deleted Successfully!</p>";
-    } else {
-        $error = "<p class='alert alert-warning'>About Content Not Deleted!</p>";
-    }
-}
+// Delete now handled by centralized delete.php
 ?>
 
 <?php include("../includes/templates/dynamic_header.php"); ?>
@@ -74,7 +65,7 @@ if(isset($_GET['delid'])) {
                                 </td>
                                 <td>
                                     <a href="aboutedit.php?id=<?php echo htmlspecialchars($row['id']); ?>" class="btn btn-info">Edit</a>
-                                    <a href="aboutview.php?delid=<?php echo htmlspecialchars($row['id']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
+                                    <a href="delete.php?type=about&id=<?php echo htmlspecialchars($row['id']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
                                 </td>
                             </tr>
                             <?php } ?>

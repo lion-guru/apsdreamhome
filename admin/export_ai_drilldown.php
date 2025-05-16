@@ -4,7 +4,7 @@ session_start();
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../index.php?msg='.urlencode('Access denied.')); exit();
 }
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 $db = new Database();
 $con = $db->getConnection();
 

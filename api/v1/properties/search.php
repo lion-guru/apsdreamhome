@@ -137,7 +137,7 @@ try {
     $properties = [];
     while ($row = $result->fetch_assoc()) {
         // Clean sensitive data based on permissions
-        $hasDetailedAccess = in_array('properties.detailed_read', $_REQUEST['api_key_data']['permissions'] ?? []);
+        $hasDetailedAccess = in_array('properties.detailed_read', $_REQUEST['// SECURITY: Sensitive information removed_data']['permissions'] ?? []);
         
         if (!$hasDetailedAccess) {
             unset($row['owner_email']);
@@ -174,3 +174,4 @@ try {
 // Send response
 header('Content-Type: application/json');
 echo json_encode($response, JSON_PRETTY_PRINT);
+

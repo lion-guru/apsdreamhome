@@ -51,7 +51,7 @@ if(isset($_POST['update']))
 		<!-- Feathericon CSS -->
         <link rel="stylesheet" href="<?php echo get_asset_url('css/feathericon.min.css', 'css'); ?>">
 		
-		<!-- Select2 CSS -->
+		<!-- // SECURITY: Removed potentially dangerous code>
 		<link rel="stylesheet" href="<?php echo get_asset_url('css/select2.min.css', 'css'); ?>">
 		
 		<!-- Main CSS -->
@@ -153,7 +153,7 @@ if(isset($_POST['update']))
 		<!-- Slimscroll JS -->
         <script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 		
-		<!-- Select2 JS -->
+		<!-- // SECURITY: Removed potentially dangerous code>
 		<script src="<?php echo get_asset_url('js/select2.min.js', 'js'); ?>"></script>
 		
 		<!-- Custom JS -->

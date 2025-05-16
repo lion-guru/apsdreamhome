@@ -1,14 +1,18 @@
 <?php
 function initAdminSession() {
+    $isLocalhost = in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1']);
+    $cookieSecure = $isLocalhost ? false : true;
+    $cookieSameSite = $isLocalhost ? 'Lax' : 'Strict';
+    $cookieParams = [
+        'cookie_lifetime' => 86400,
+        'cookie_secure' => $cookieSecure,
+        'cookie_httponly' => true,
+        'cookie_samesite' => $cookieSameSite,
+        'cookie_path' => '/', // Ensure session cookie is valid for all paths
+    ];
     if (session_status() === PHP_SESSION_NONE) {
-        session_start([
-            'cookie_lifetime' => 86400,
-            'cookie_secure' => true,
-            'cookie_httponly' => true,
-            'cookie_samesite' => 'Strict'
-        ]);
+        session_start($cookieParams);
     }
-    
     if (!isset($_SESSION['CREATED'])) {
         $_SESSION['CREATED'] = time();
     }

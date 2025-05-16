@@ -4,7 +4,7 @@
  * Handles API key validation and rate limiting for API requests
  */
 
-require_once __DIR__ . '/../api_key_manager.php';
+require_once __DIR__ . '/../// SECURITY: Sensitive information removed_manager.php';
 require_once __DIR__ . '/../security_logger.php';
 require_once __DIR__ . '/rate_limit_middleware.php';
 
@@ -78,7 +78,7 @@ class ApiAuthMiddleware {
         }
 
         // Store API key data in request
-        $_REQUEST['api_key_data'] = $keyData;
+        $_REQUEST['// SECURITY: Sensitive information removed_data'] = $keyData;
         
         return true;
     }
@@ -101,8 +101,8 @@ class ApiAuthMiddleware {
         }
 
         // Check query string
-        if (isset($_GET['api_key'])) {
-            return $_GET['api_key'];
+        if (isset($_GET['// SECURITY: Sensitive information removed'])) {
+            return $_GET['// SECURITY: Sensitive information removed'];
         }
 
         return null;
@@ -129,3 +129,4 @@ $apiAuthMiddleware = new ApiAuthMiddleware(
     $securityLogger ?? null,
     $rateLimitMiddleware ?? null
 );
+

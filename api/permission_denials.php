@@ -15,6 +15,6 @@ if ($admin_check->num_rows == 0) {
     exit;
 }
 $res = $conn->query("SELECT al.id, e.name as user, al.details, al.ip_address, al.created_at FROM audit_log al LEFT JOIN employees e ON al.user_id = e.id WHERE al.action='Permission Denied' ORDER BY al.id DESC LIMIT 100");
-denials = [];
+$denials = [];
 while($row = $res->fetch_assoc()) $denials[] = $row;
 echo json_encode(['permission_denials'=>$denials]);

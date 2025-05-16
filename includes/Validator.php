@@ -1,120 +1,278 @@
 <?php
+/**
+ * Comprehensive Validation and Sanitization Library
+ * Provides robust input validation, sanitization, and data integrity checks
+ */
+
+// require_once __DIR__ . '/logger.php';
+require_once __DIR__ . '/config_manager.php';
+
 class Validator {
     private $errors = [];
+    private $logger;
+    private $config; // lazy-loaded
 
-    public function validateEmail($email) {
-        if (empty($email)) {
-            $this->errors[] = 'Email is required';
-            return false;
+    // Helper to get config manager instance
+    protected function getConfig() {
+        if ($this->config === null) {
+            $this->config = \ConfigManager::getInstance();
         }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors[] = 'Invalid email format';
-            return false;
+        return $this->config;
+    }
+
+    // Predefined validation rules
+    private $rules = [
+        'required' => '/\S+/',
+        'email' => '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+        'phone' => '/^(\+\d{1,3}[- ]?)?\d{10}$/',
+        'url' => '/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
+        'alpha' => '/^[a-zA-Z]+$/',
+        'alphanumeric' => '/^[a-zA-Z0-9]+$/',
+        'numeric' => '/^[0-9]+$/',
+        'date' => '/^\d{4}-\d{2}-\d{2}$/',
+    ];
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->logger = null;
+        // Removed ConfigManager::getInstance() to break recursion
+    }
+
+    /**
+     * Validate input against multiple rules
+     * 
+     * @param mixed $input Input to validate
+     * @param array $validationRules Validation rules
+     * @return bool Whether input passes all validations
+     */
+    public function validate($input, $validationRules) {
+        // Reset errors
+        $this->errors = [];
+
+        // Handle array inputs
+        if (is_array($input)) {
+            $isValid = true;
+            foreach ($input as $key => $value) {
+                if (isset($validationRules[$key])) {
+                    $fieldValid = $this->validateField($key, $value, $validationRules[$key]);
+                    $isValid = $isValid && $fieldValid;
+                }
+            }
+            return $isValid;
         }
+
+        // Single value validation
+        return $this->validateField('input', $input, $validationRules);
+    }
+
+    /**
+     * Validate a single field
+     * 
+     * @param string $fieldName Field name
+     * @param mixed $value Field value
+     * @param array|string $rules Validation rules
+     * @return bool Whether field passes validation
+     */
+    private function validateField($fieldName, $value, $rules) {
+        // Normalize rules to array
+        $rules = is_string($rules) ? explode('|', $rules) : $rules;
+
+        foreach ($rules as $rule) {
+            // Parse rule with parameters
+            $parsedRule = $this->parseRule($rule);
+            $ruleName = $parsedRule['rule'];
+            $params = $parsedRule['params'];
+
+            // Skip validation for null values in non-required fields
+            if ($ruleName !== 'required' && ($value === null || $value === '')) {
+                continue;
+            }
+
+            // Validate based on rule type
+            $isValid = match($ruleName) {
+                'required' => $this->validateRequired($value),
+                'email' => $this->validateEmail($value),
+                'phone' => $this->validatePhone($value),
+                'url' => $this->validateUrl($value),
+                'alpha' => $this->validateAlpha($value),
+                'alphanumeric' => $this->validateAlphanumeric($value),
+                'numeric' => $this->validateNumeric($value),
+                'min' => $this->validateMin($value, $params[0]),
+                'max' => $this->validateMax($value, $params[0]),
+                'between' => $this->validateBetween($value, $params[0], $params[1]),
+                'regex' => $this->validateRegex($value, $params[0]),
+                'date' => $this->validateDate($value),
+                default => $this->validateCustomRule($ruleName, $value, $params)
+            };
+
+            // Add error if validation fails
+            if (!$isValid) {
+                $this->addError($fieldName, $ruleName, $params);
+                return false;
+            }
+        }
+
         return true;
     }
 
-    public function validatePassword($password, $minLength = 8) {
-        if (empty($password)) {
-            $this->errors[] = 'Password is required';
-            return false;
-        }
-        if (strlen($password) < $minLength) {
-            $this->errors[] = "Password must be at least {$minLength} characters long";
-            return false;
-        }
-        if (!preg_match('/[A-Z]/', $password)) {
-            $this->errors[] = 'Password must contain at least one uppercase letter';
-            return false;
-        }
-        if (!preg_match('/[a-z]/', $password)) {
-            $this->errors[] = 'Password must contain at least one lowercase letter';
-            return false;
-        }
-        if (!preg_match('/[0-9]/', $password)) {
-            $this->errors[] = 'Password must contain at least one number';
-            return false;
-        }
-        return true;
+    /**
+     * Parse validation rule with potential parameters
+     * 
+     * @param string $rule Rule to parse
+     * @return array Parsed rule details
+     */
+    private function parseRule($rule) {
+        $parts = explode(':', $rule, 2);
+        return [
+            'rule' => $parts[0],
+            'params' => isset($parts[1]) ? explode(',', $parts[1]) : []
+        ];
     }
 
-    public function validateMobile($mobile) {
-        if (empty($mobile)) {
-            $this->errors[] = 'Mobile number is required';
-            return false;
-        }
-        if (!preg_match('/^[0-9]{10}$/', $mobile)) {
-            $this->errors[] = 'Invalid mobile number format';
-            return false;
-        }
-        return true;
+    /**
+     * Add validation error
+     * 
+     * @param string $field Field name
+     * @param string $rule Validation rule
+     * @param array $params Rule parameters
+     */
+    private function addError($field, $rule, $params = []) {
+        $this->errors[] = [
+            'field' => $field,
+            'rule' => $rule,
+            'params' => $params
+        ];
+
+        // Log validation error
+        // $this->logger->warning('Validation Error', [...]);
     }
 
-    public function sanitizeInput($data) {
-        if (is_array($data)) {
-            return array_map([$this, 'sanitizeInput'], $data);
-        }
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-        return $data;
-    }
-
-    public function validateName($name) {
-        if (empty($name)) {
-            $this->errors[] = 'Name is required';
-            return false;
-        }
-        if (!preg_match('/^[a-zA-Z ]{2,50}$/', $name)) {
-            $this->errors[] = 'Name must contain only letters and spaces, and be between 2-50 characters';
-            return false;
-        }
-        return true;
-    }
-
-    public function validateUserType($type) {
-        $validTypes = ['user', 'admin', 'associate', 'builder'];
-        if (!in_array($type, $validTypes)) {
-            $this->errors[] = 'Invalid user type';
-            return false;
-        }
-        return true;
-    }
-
-    public function validateNumeric($value, $fieldName, $min = null, $max = null) {
-        if (!is_numeric($value)) {
-            $this->errors[] = "$fieldName must be a number";
-            return false;
-        }
-        if ($min !== null && $value < $min) {
-            $this->errors[] = "$fieldName must be greater than or equal to $min";
-            return false;
-        }
-        if ($max !== null && $value > $max) {
-            $this->errors[] = "$fieldName must be less than or equal to $max";
-            return false;
-        }
-        return true;
-    }
-
-    public function validateDate($date, $format = 'Y-m-d') {
-        $d = DateTime::createFromFormat($format, $date);
-        if (!$d || $d->format($format) !== $date) {
-            $this->errors[] = 'Invalid date format';
-            return false;
-        }
-        return true;
-    }
-
+    /**
+     * Get validation errors
+     * 
+     * @return array Validation errors
+     */
     public function getErrors() {
         return $this->errors;
     }
 
-    public function hasErrors() {
-        return !empty($this->errors);
+    /**
+     * Specific validation methods
+     */
+    private function validateRequired($value) {
+        return $value !== null && $value !== '';
     }
 
-    public function clearErrors() {
-        $this->errors = [];
+    private function validateEmail($value) {
+        return preg_match($this->rules['email'], $value) === 1;
+    }
+
+    private function validatePhone($value) {
+        return preg_match($this->rules['phone'], $value) === 1;
+    }
+
+    private function validateUrl($value) {
+        return preg_match($this->rules['url'], $value) === 1;
+    }
+
+    private function validateAlpha($value) {
+        return preg_match($this->rules['alpha'], $value) === 1;
+    }
+
+    private function validateAlphanumeric($value) {
+        return preg_match($this->rules['alphanumeric'], $value) === 1;
+    }
+
+    private function validateNumeric($value) {
+        return is_numeric($value);
+    }
+
+    private function validateMin($value, $min) {
+        return is_numeric($value) && $value >= $min;
+    }
+
+    private function validateMax($value, $max) {
+        return is_numeric($value) && $value <= $max;
+    }
+
+    private function validateBetween($value, $min, $max) {
+        return is_numeric($value) && $value >= $min && $value <= $max;
+    }
+
+    private function validateRegex($value, $pattern) {
+        return preg_match($pattern, $value) === 1;
+    }
+
+    private function validateDate($value) {
+        return preg_match($this->rules['date'], $value) === 1 && strtotime($value) !== false;
+    }
+
+    /**
+     * Custom rule validation (extensible)
+     * 
+     * @param string $ruleName Custom rule name
+     * @param mixed $value Value to validate
+     * @param array $params Rule parameters
+     * @return bool Validation result
+     */
+    private function validateCustomRule($ruleName, $value, $params) {
+        // Allow custom validation via callback or predefined rules
+        $customRules = $this->config->get('CUSTOM_VALIDATION_RULES', []);
+        
+        if (isset($customRules[$ruleName])) {
+            $callback = $customRules[$ruleName];
+            return $callback($value, ...$params);
+        }
+
+        // Log unknown validation rule
+        // $this->logger->warning('Unknown Validation Rule', [
+        //     'rule' => $ruleName
+        // ]);
+
+        return false;
+    }
+
+    /**
+     * Sanitization methods
+     */
+    public function sanitize($input, $type = 'string') {
+        return match($type) {
+            'email' => filter_var($input, FILTER_SANITIZE_EMAIL),
+            'url' => filter_var($input, FILTER_SANITIZE_URL),
+            'int' => filter_var($input, FILTER_SANITIZE_NUMBER_INT),
+            'float' => filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION),
+            'string' => htmlspecialchars(strip_tags(trim($input)), ENT_QUOTES, 'UTF-8'),
+            default => $input
+        };
+    }
+
+    /**
+     * Advanced data type conversion
+     * 
+     * @param mixed $value Value to convert
+     * @param string $type Target type
+     * @return mixed Converted value
+     */
+    public function convert($value, $type) {
+        return match($type) {
+            'int' => (int)$value,
+            'float' => (float)$value,
+            'bool' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
+            'string' => (string)$value,
+            'array' => (array)$value,
+            default => $value
+        };
     }
 }
+
+// Global validator function
+function validator() {
+    static $validatorInstance = null;
+    if ($validatorInstance === null) {
+        $validatorInstance = new Validator();
+    }
+    return $validatorInstance;
+}
+

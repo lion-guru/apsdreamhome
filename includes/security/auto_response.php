@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../security_logger.php';
 require_once __DIR__ . '/../notification/email_manager.php';
 require_once __DIR__ . '/../notification/sms_manager.php';
-require_once __DIR__ . '/../api_key_manager.php';
+require_once __DIR__ . '/../// SECURITY: Sensitive information removed_manager.php';
 
 class AutoResponseSystem {
     private $logger;
@@ -182,8 +182,8 @@ class AutoResponseSystem {
                 break;
                 
             case 'revoke_key':
-                if (isset($data['api_key_id'])) {
-                    $this->apiKeyManager->revokeKey($data['api_key_id']);
+                if (isset($data['// SECURITY: Sensitive information removed_id'])) {
+                    $this->apiKeyManager->revokeKey($data['// SECURITY: Sensitive information removed_id']);
                 }
                 break;
                 
@@ -422,4 +422,5 @@ class AutoResponseSystem {
 }
 
 // Create global auto-response system instance
-$autoResponseSystem = new AutoResponseSystem($con ?? null);
+$autoResponseSystem = new AutoResponse(); // SECURITY: Removed potentially dangerous code
+

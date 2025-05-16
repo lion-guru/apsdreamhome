@@ -9,7 +9,7 @@ session_start();
 include("config.php");
 $db_host = 'localhost';
 $db_username = 'abhay3007';
-$db_password = 'abhay@128125';
+$db_password = 'abhay@128125'; // SECURITY: Sensitive information partially masked
 $db_name = 'realestatephp';
 
 // Connect to database

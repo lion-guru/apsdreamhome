@@ -1,7 +1,7 @@
 <?php
 // Logs AI panel interactions and feedback for continual learning
 session_start();
-require_once(__DIR__ . '/../includes/classes/Database.php');
+require_once(__DIR__ . '/../src/Database/Database.php');
 $db = new Database();
 $con = $db->getConnection();
 

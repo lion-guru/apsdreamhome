@@ -125,7 +125,7 @@ class LogViewer {
      */
     private function parseLogEntry($line) {
         // Expected format: [timestamp] [level] [sapi] [IP: ip] [User: id] [ReqID: id] message context
-        $pattern = '/\[(.*?)\] \[(.*?)\] \[(.*?)\] \[IP: (.*?)\] \[User: (.*?)\] \[ReqID: (.*?)\] (.*?) ({.*})?/';
+        $pattern = '/// SECURITY: Removed potentially dangerous code(.*?)\] // SECURITY: Removed potentially dangerous code(.*?)\] // SECURITY: Removed potentially dangerous code(.*?)\] // SECURITY: Removed potentially dangerous codeIP: (.*?)\] // SECURITY: Removed potentially dangerous codeUser: (.*?)\] // SECURITY: Removed potentially dangerous codeReqID: (.*?)\] (.*?) ({.*})?/';
         
         if (preg_match($pattern, $line, $matches)) {
             return [
@@ -349,3 +349,4 @@ $entries_to_show = array_slice($filtered_entries, $start, $per_page);
 </div>
 </body>
 </html>
+
