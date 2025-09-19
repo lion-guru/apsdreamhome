@@ -3,6 +3,10 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASSWORD', ''); // Default XAMPP has no password
+// Compatibility: some parts of the code expect DB_PASS
+if (!defined('DB_PASS')) {
+    define('DB_PASS', DB_PASSWORD);
+}
 define('DB_NAME', 'apsdreamhomefinal');
 
 // Create database connection with error handling
@@ -22,6 +26,11 @@ try {
     // Set SQL mode to strict
     $con->query("SET SESSION sql_mode = 'STRICT_ALL_TABLES'");
     
+    // Compatibility: expose $conn alias used by various includes
+    if (!isset($conn)) {
+        $conn = $con;
+    }
+    
 } catch (Exception $e) {
     // Log error and show generic message
     error_log("Database connection error: " . $e->getMessage());
@@ -36,6 +45,7 @@ if (!function_exists('getDbConnection')) {
     }
 }
 
+if (!defined('DB_AUDIT_MODE')) {
 // Define base URL for the application
 if (!defined('BASE_URL')) {
     define('BASE_URL', 'http://localhost/apsdreamhomefinal/');
@@ -104,5 +114,12 @@ require_once __DIR__ . '/includes/db_config.php';
 // Initialize security configurations
 if (function_exists('initializeSecurity')) {
     initializeSecurity();
+}
+if (!defined('DB_PASS')) {
+    define('DB_PASS', DB_PASSWORD);
+}
+if (!isset($conn)) {
+    $conn = $con;
+}
 }
 ?>

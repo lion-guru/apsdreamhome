@@ -1,13 +1,10 @@
 <?php
-// Start session and include necessary files
-session_start();
-require_once(__DIR__ . '/includes/templates/dynamic_header.php');
+require_once(__DIR__ . '/includes/config.php');
+require_once(__DIR__ . '/includes/functions/common-functions.php');
 require_once(__DIR__ . '/includes/log_admin_activity.php');
-include("config.php");
-include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/functions/common-functions.php');
 
-// Process contact form submission
+$conn = DatabaseConfig::getConnection();
+
 $error = "";
 $msg = "";
 if(isset($_POST['send']))
@@ -20,135 +17,38 @@ if(isset($_POST['send']))
     
     if(!empty($name) && !empty($email) && !empty($phone) && !empty($subject) && !empty($message))
     {
-        $sql = "INSERT INTO contact (name, email, phone, subject, message) VALUES ('$name', '$email', '$phone', '$subject', '$message')";
-        $result = mysqli_query($con, $sql);
-        if($result){
-            $msg = "<p class='alert alert-success'>Message Sent Successfully</p>";
+        $sql = "INSERT INTO contact (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            $stmt->bind_param("sssss", $name, $email, $phone, $subject, $message);
+            if($stmt->execute()){
+                $msg = "<p class='alert alert-success'>Message Sent Successfully</p>";
+                log_admin_activity('submit_contact', 'Contact form submitted by: ' . $name . ', email: ' . $email);
+            } else {
+                $error = "<p class='alert alert-warning'>Message Not Sent Successfully. Error: " . htmlspecialchars($stmt->error) . "</p>";
+            }
+            $stmt->close();
+        } else {
+            $error = "<p class='alert alert-warning'>Failed to prepare the statement. Error: " . htmlspecialchars($conn->error) . "</p>";
         }
-        else{
-            $error = "<p class='alert alert-warning'>Message Not Sent Successfully</p>";
-        }
-        log_admin_activity('submit_contact', 'Contact form submitted by: ' . $name . ', email: ' . $email);
     }else{
         $error = "<p class='alert alert-warning'>Please Fill All the Fields</p>";
     }
 }
+
+require_once(__DIR__ . '/includes/templates/header.php');
 
 // Set page specific variables
 $page_title = "Contact Us - APS Dream Homes";
 $meta_description = "Get in touch with APS Dream Homes for all your real estate needs in Gorakhpur, Lucknow, and across Uttar Pradesh.";
 
 // Additional CSS for this page
-$additional_css = '<style>
-    /* Contact Page Specific Styles */
-    .contact-section {
-        padding: 80px 0;
-        background-color: #f8f9fa;
-    }
-    
-    .contact-form {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-    
-    .contact-info {
-        background-color: var(--primary-color);
-        padding: 30px;
-        border-radius: 10px;
-        color: #fff;
-        height: 100%;
-    }
-    
-    .contact-info h3 {
-        margin-bottom: 20px;
-        color: #fff;
-        position: relative;
-        padding-bottom: 15px;
-    }
-    
-    .contact-info h3:after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 50px;
-        height: 2px;
-        background-color: #fff;
-    }
-    
-    .contact-info-item {
-        margin-bottom: 20px;
-        display: flex;
-        align-items: flex-start;
-    }
-    
-    .contact-info-item i {
-        margin-right: 15px;
-        font-size: 20px;
-        color: #fff;
-    }
-    
-    .contact-info-item p {
-        margin-bottom: 0;
-        color: rgba(255, 255, 255, 0.9);
-    }
-    
-    .contact-form .form-control {
-        border-radius: 5px;
-        margin-bottom: 20px;
-        height: 50px;
-        border: 1px solid #ddd;
-    }
-    
-    .contact-form textarea.form-control {
-        height: 150px;
-    }
-    
-    .contact-form .btn-submit {
-        background-color: var(--primary-color);
-        color: #fff;
-        padding: 12px 30px;
-        border: none;
-        border-radius: 5px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .contact-form .btn-submit:hover {
-        background-color: var(--secondary-color);
-        transform: translateY(-3px);
-    }
-    
-    .map-section {
-        padding: 80px 0;
-    }
-    
-    .map-container {
-        height: 450px;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    .map-container iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-    
-    @media (max-width: 767px) {
-        .contact-info {
-            margin-bottom: 30px;
-        }
-    }
-</style>';
+$additional_css = '';
 
 // Page Banner Section
 ?>
 <!-- Page Banner Section -->
-<div class="page-banner" style="background-image: url('<?php echo get_asset_url("banner/contact-banner.jpg", "images"); ?>')">
+<div class="page-banner" style="background-image: url('<?php echo SITE_URL; ?>/assets/images/banner/contact-banner.jpg')">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -281,6 +181,5 @@ $additional_js = '<script>
     });
 </script>';
 
-require_once(__DIR__ . '/includes/templates/new_footer.php'); ?>
-</body>
-</html>
+require_once(__DIR__ . '/includes/templates/footer.php');
+?>

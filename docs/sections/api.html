@@ -1,0 +1,485 @@
+<div class="api-section">
+    <div class="alert alert-primary">
+        <i class="fas fa-info-circle"></i> This section provides comprehensive documentation for the APS Dream Home API, including authentication, endpoints, and integration guidelines.
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-key"></i> API Authentication
+        </div>
+        <div class="card-body">
+            <p>The APS Dream Home API uses API key authentication to secure endpoints. All API requests must include a valid API key in the request header.</p>
+            
+            <h5>Authentication Methods</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>HTTP Header</td>
+                            <td>Include the API key in the <code>X-API-Key</code> header</td>
+                            <td><code>X-API-Key: your_api_key_here</code></td>
+                        </tr>
+                        <tr>
+                            <td>Query Parameter</td>
+                            <td>Include the API key as a query parameter (less secure, not recommended for production)</td>
+                            <td><code>?api_key=your_api_key_here</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h5>API Key Management</h5>
+            <p>API keys can be managed through the <a href="../admin/api_key_manager.php">API Key Manager</a> in the admin dashboard. Administrators can:</p>
+            <ul>
+                <li>Generate new API keys</li>
+                <li>Assign permissions to API keys</li>
+                <li>Revoke existing API keys</li>
+                <li>Monitor API usage and rate limits</li>
+            </ul>
+            
+            <div class="alert alert-warning">
+                <strong>Security Note:</strong> API keys should be treated as sensitive credentials. Never expose API keys in client-side code or public repositories.
+            </div>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-shield-alt"></i> Security Features</h3>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">Rate Limiting</div>
+                <div class="card-body">
+                    <p>To prevent abuse, the API implements rate limiting based on the API key.</p>
+                    <ul>
+                        <li>Default: 100 requests per hour</li>
+                        <li>Premium: 1000 requests per hour</li>
+                        <li>Custom limits can be set per API key</li>
+                    </ul>
+                    <p>When a rate limit is exceeded, the API returns a <code>429 Too Many Requests</code> response.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">Permission System</div>
+                <div class="card-body">
+                    <p>API keys can be assigned specific permissions to control access to endpoints:</p>
+                    <ul>
+                        <li><code>properties:read</code> - View property listings</li>
+                        <li><code>properties:write</code> - Create/update properties</li>
+                        <li><code>leads:read</code> - View lead information</li>
+                        <li><code>leads:write</code> - Create/update leads</li>
+                        <li><code>visits:read</code> - View visit schedules</li>
+                        <li><code>visits:write</code> - Create/update visits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">Request Logging</div>
+                <div class="card-body">
+                    <p>All API requests are logged for security and debugging purposes:</p>
+                    <ul>
+                        <li>API key used</li>
+                        <li>Endpoint accessed</li>
+                        <li>IP address</li>
+                        <li>Timestamp</li>
+                        <li>Response status</li>
+                        <li>Request parameters (sanitized)</li>
+                    </ul>
+                    <p>Logs can be viewed in the admin dashboard.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-exchange-alt"></i> API Endpoints</h3>
+    
+    <!-- Properties API -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-home"></i> Properties API
+        </div>
+        <div class="card-body">
+            <h5>Search Properties</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td><strong>Endpoint</strong></td>
+                            <td><code>GET /api/properties/search.php</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Authentication</strong></td>
+                            <td>Optional</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description</strong></td>
+                            <td>Search for properties based on various criteria</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Parameters</strong></td>
+                            <td>
+                                <ul>
+                                    <li><code>min_price</code> - Minimum price (optional)</li>
+                                    <li><code>max_price</code> - Maximum price (optional)</li>
+                                    <li><code>bedrooms</code> - Number of bedrooms (optional)</li>
+                                    <li><code>bathrooms</code> - Number of bathrooms (optional)</li>
+                                    <li><code>property_type</code> - Type of property (optional)</li>
+                                    <li><code>status</code> - Property status (optional)</li>
+                                    <li><code>limit</code> - Number of results to return (default: 10)</li>
+                                    <li><code>offset</code> - Pagination offset (default: 0)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response Format</strong></td>
+                            <td>JSON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Example Request</strong></td>
+                            <td><code>GET /api/properties/search.php?min_price=100000&max_price=500000&bedrooms=3&property_type=house</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Example Response</strong></td>
+                            <td>
+<pre><code>{
+  "status": "success",
+  "count": 2,
+  "properties": [
+    {
+      "id": 123,
+      "title": "Beautiful 3-Bedroom House",
+      "description": "Spacious family home...",
+      "price": 350000,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "area": 1800,
+      "type": "house",
+      "status": "available",
+      "address": "123 Main St, Anytown"
+    },
+    {
+      "id": 124,
+      "title": "Modern 3-Bedroom Townhouse",
+      "description": "Contemporary design...",
+      "price": 425000,
+      "bedrooms": 3,
+      "bathrooms": 2.5,
+      "area": 2100,
+      "type": "house",
+      "status": "available",
+      "address": "456 Oak Ave, Anytown"
+    }
+  ]
+}</code></pre>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h5 class="mt-4">Get Property Details</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td><strong>Endpoint</strong></td>
+                            <td><code>GET /api/properties/view.php</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Authentication</strong></td>
+                            <td>Optional</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description</strong></td>
+                            <td>Get detailed information about a specific property</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Parameters</strong></td>
+                            <td>
+                                <ul>
+                                    <li><code>id</code> - Property ID (required)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response Format</strong></td>
+                            <td>JSON</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Leads API -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-user-plus"></i> Leads API
+        </div>
+        <div class="card-body">
+            <h5>Create Lead</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td><strong>Endpoint</strong></td>
+                            <td><code>POST /api/leads/create.php</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Authentication</strong></td>
+                            <td>Required</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description</strong></td>
+                            <td>Create a new lead in the system</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Request Body</strong></td>
+                            <td>
+                                <ul>
+                                    <li><code>customer_name</code> - Customer's full name (required)</li>
+                                    <li><code>customer_email</code> - Customer's email (required)</li>
+                                    <li><code>customer_phone</code> - Customer's phone number (required)</li>
+                                    <li><code>property_id</code> - ID of the property of interest (required)</li>
+                                    <li><code>source</code> - Lead source (optional, default: 'website')</li>
+                                    <li><code>notes</code> - Additional notes (optional)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response Format</strong></td>
+                            <td>JSON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Example Request</strong></td>
+                            <td>
+<pre><code>POST /api/leads/create.php
+Content-Type: application/json
+X-API-Key: your_api_key_here
+
+{
+  "customer_name": "John Smith",
+  "customer_email": "john.smith@example.com",
+  "customer_phone": "555-123-4567",
+  "property_id": 123,
+  "source": "partner_website",
+  "notes": "Customer is interested in scheduling a viewing"
+}</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Example Response</strong></td>
+                            <td>
+<pre><code>{
+  "status": "success",
+  "message": "Lead created successfully",
+  "lead_id": 456,
+  "customer_id": 789
+}</code></pre>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h5 class="mt-4">Get Lead Status</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td><strong>Endpoint</strong></td>
+                            <td><code>GET /api/leads/status.php</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Authentication</strong></td>
+                            <td>Required</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description</strong></td>
+                            <td>Check the status of an existing lead</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Parameters</strong></td>
+                            <td>
+                                <ul>
+                                    <li><code>id</code> - Lead ID (required)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response Format</strong></td>
+                            <td>JSON</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Visits API -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-calendar-alt"></i> Visits API
+        </div>
+        <div class="card-body">
+            <h5>Schedule Visit</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td><strong>Endpoint</strong></td>
+                            <td><code>POST /api/visits/schedule.php</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Authentication</strong></td>
+                            <td>Required</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description</strong></td>
+                            <td>Schedule a property visit</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Request Body</strong></td>
+                            <td>
+                                <ul>
+                                    <li><code>customer_id</code> - Customer ID (required)</li>
+                                    <li><code>property_id</code> - Property ID (required)</li>
+                                    <li><code>lead_id</code> - Lead ID (optional)</li>
+                                    <li><code>visit_date</code> - Date of visit (YYYY-MM-DD) (required)</li>
+                                    <li><code>visit_time</code> - Time of visit (HH:MM) (required)</li>
+                                    <li><code>notes</code> - Additional notes (optional)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response Format</strong></td>
+                            <td>JSON</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h5 class="mt-4">Check Availability</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td><strong>Endpoint</strong></td>
+                            <td><code>GET /api/visits/availability.php</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Authentication</strong></td>
+                            <td>Required</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Description</strong></td>
+                            <td>Check available time slots for property visits</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Parameters</strong></td>
+                            <td>
+                                <ul>
+                                    <li><code>property_id</code> - Property ID (required)</li>
+                                    <li><code>date</code> - Date to check (YYYY-MM-DD) (required)</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Response Format</strong></td>
+                            <td>JSON</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-code"></i> Integration Guidelines</h3>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5>Best Practices</h5>
+            <ol>
+                <li><strong>Use HTTPS</strong> - Always use secure connections for API requests</li>
+                <li><strong>Handle Rate Limits</strong> - Implement exponential backoff for rate limit errors</li>
+                <li><strong>Validate Input</strong> - Validate all input before sending to the API</li>
+                <li><strong>Error Handling</strong> - Implement proper error handling for API responses</li>
+                <li><strong>Keep API Keys Secure</strong> - Never expose API keys in client-side code</li>
+            </ol>
+            
+            <h5>Error Handling</h5>
+            <p>The API uses standard HTTP status codes and returns detailed error messages:</p>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Status Code</th>
+                            <th>Description</th>
+                            <th>Example Response</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>200 OK</td>
+                            <td>Request successful</td>
+                            <td><code>{"status": "success", ...}</code></td>
+                        </tr>
+                        <tr>
+                            <td>400 Bad Request</td>
+                            <td>Invalid request parameters</td>
+                            <td><code>{"status": "error", "message": "Invalid parameters", "errors": [...]}</code></td>
+                        </tr>
+                        <tr>
+                            <td>401 Unauthorized</td>
+                            <td>Missing or invalid API key</td>
+                            <td><code>{"status": "error", "message": "Invalid API key"}</code></td>
+                        </tr>
+                        <tr>
+                            <td>403 Forbidden</td>
+                            <td>API key lacks required permissions</td>
+                            <td><code>{"status": "error", "message": "Insufficient permissions"}</code></td>
+                        </tr>
+                        <tr>
+                            <td>404 Not Found</td>
+                            <td>Resource not found</td>
+                            <td><code>{"status": "error", "message": "Resource not found"}</code></td>
+                        </tr>
+                        <tr>
+                            <td>429 Too Many Requests</td>
+                            <td>Rate limit exceeded</td>
+                            <td><code>{"status": "error", "message": "Rate limit exceeded", "retry_after": 3600}</code></td>
+                        </tr>
+                        <tr>
+                            <td>500 Internal Server Error</td>
+                            <td>Server error</td>
+                            <td><code>{"status": "error", "message": "Internal server error"}</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-code-branch"></i> API Versioning</h3>
+    <div class="card mb-4">
+        <div class="card-body">
+            <p>The current API version is <strong>v1</strong>. Future versions will be announced with appropriate migration guides.</p>
+            
+            <p>When significant changes are made to the API, a new version will be released. Old versions will be supported for a minimum of 6 months after a new version is released.</p>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <h4><i class="fas fa-lightbulb"></i> Need Help?</h4>
+        <p>For additional assistance with API integration, please contact our support team or visit the <a href="../admin/api_key_manager.php">API Key Manager</a> in the admin dashboard.</p>
+    </div>
+</div>

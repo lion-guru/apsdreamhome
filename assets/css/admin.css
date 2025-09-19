@@ -195,3 +195,27 @@
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
 }
+
+/* Admin Dashboard Styles */
+:root {
+  --dashboard-gap: 1.5rem;
+  --card-padding: 1.5rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--dashboard-gap);
+  padding: var(--card-padding);
+}
+
+.analytics-widget {
+  background: white;
+  border-radius: 8px;
+  padding: var(--card-padding);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+#revenueChart {
+  max-height: 300px;
+}

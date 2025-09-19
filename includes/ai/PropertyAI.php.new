@@ -1,0 +1,389 @@
+<?php
+/**
+ * PropertyAI - AI-powered property search and recommendations
+ */
+class PropertyAI {
+    private $conn;
+    private $config;
+    private $openai_api_key;
+    
+    // Cache for property data
+    private $propertyCache = [];
+    private $conversationContexts = [];
+    
+    // Common property types and locations for better NLP
+    private $propertyTypes = [
+        'apartment', 'villa', 'house', 'plot', 'land', 'commercial', 
+        'office', 'shop', 'warehouse', 'flat', 'penthouse', 'duplex',
+        'bungalow', 'farmhouse', 'studio', 'villa', 'row house', 'townhouse'
+    ];
+    
+    private $locations = [
+        'mumbai', 'delhi', 'bangalore', 'hyderabad', 'chennai',
+        'kolkata', 'pune', 'ahmedabad', 'surat', 'jaipur',
+        'lucknow', 'kanpur', 'nagpur', 'indore', 'thane',
+        'bhopal', 'visakhapatnam', 'pimpri-chinchwad', 'patna', 'vadodara'
+    ];
+    
+    /**
+     * Constructor
+     * 
+     * @param mysqli $conn Database connection
+     * @param array $config Configuration options
+     */
+    public function __construct($conn, $config = []) {
+        $this->conn = $conn;
+        $this->config = array_merge([
+            'openai_api_key' => null,
+            'use_mock_data' => false,
+            'cache_ttl' => 3600, // 1 hour cache
+        ], $config);
+        
+        $this->openai_api_key = $this->config['openai_api_key'];
+    }
+    
+    /**
+     * Process chat messages and generate appropriate responses
+     * 
+     * @param array $data Message data including 'message', 'conversation_id', etc.
+     * @return array Response data including 'response' and 'conversation_id'
+     */
+    public function processChatMessage($data) {
+        // Implementation of processChatMessage
+        // ...
+        return [];
+    }
+    
+    /**
+     * Process natural language search query to extract property search parameters
+     * 
+     * @param string $query Natural language search query (e.g., "3 BHK apartment in Mumbai under 1.5 crore")
+     * @return array Structured search filters compatible with the property search
+     */
+    public function processNaturalLanguageQuery($query) {
+        try {
+            // Initialize default filters
+            $filters = [
+                'keywords' => [],
+                'type' => null,
+                'min_price' => null,
+                'max_price' => null,
+                'min_bedrooms' => null,
+                'max_bedrooms' => null,
+                'min_bathrooms' => null,
+                'location' => null,
+                'furnishing' => null,
+                'facing' => null,
+                'keywords_operator' => 'AND',
+                'sort_by' => 'relevance',
+                'sort_order' => 'desc',
+                'page' => 1,
+                'per_page' => 10
+            ];
+            
+            // Convert to lowercase for case-insensitive matching
+            $query = strtolower(trim($query));
+            
+            // Extract property types
+            $this->extractPropertyType($query, $filters);
+            
+            // Extract price range
+            $this->extractPriceRange($query, $filters);
+            
+            // Extract bedroom/bathroom requirements
+            $this->extractRoomRequirements($query, $filters);
+            
+            // Extract location
+            $this->extractLocation($query, $filters);
+            
+            // Extract property features
+            $this->extractFeatures($query, $filters);
+            
+            // Extract sort order if specified
+            $this->extractSortOrder($query, $filters);
+            
+            // Extract keywords (remaining words that weren't matched as other filters)
+            $this->extractKeywords($query, $filters);
+            
+            return $filters;
+            
+        } catch (Exception $e) {
+            error_log("Error in processNaturalLanguageQuery: " . $e->getMessage());
+            // Return a basic filter with just the keywords if processing fails
+            return [
+                'keywords' => array_filter(explode(' ', preg_replace('/[^a-z0-9\s]/', '', strtolower($query)))),
+                'keywords_operator' => 'AND'
+            ];
+        }
+    }
+    
+    /**
+     * Extract property type from query
+     */
+    private function extractPropertyType(&$query, &$filters) {
+        $propertyTypes = [
+            'apartment' => ['apartment', 'flat', 'apt'],
+            'villa' => ['villa', 'bungalow', 'house', 'home'],
+            'plot' => ['plot', 'land', 'empty land'],
+            'office' => ['office', 'commercial office', 'workspace'],
+            'shop' => ['shop', 'retail', 'store', 'showroom'],
+            'warehouse' => ['warehouse', 'godown', 'storage']
+        ];
+        
+        foreach ($propertyTypes as $type => $keywords) {
+            foreach ($keywords as $keyword) {
+                if (strpos($query, $keyword) !== false) {
+                    $filters['type'] = $type;
+                    $query = str_replace($keyword, '', $query);
+                    break 2;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Extract price range from query
+     */
+    private function extractPriceRange($query, &$filters) {
+        // Match prices in lakhs (e.g., "50 lakh", "1.5 crore")
+        if (preg_match('/(\d+(?:\.\d+)?)\s*(lakh|lac|cr|crore)/', $query, $matches)) {
+            $amount = (float)$matches[1];
+            $unit = $matches[2];
+            
+            // Convert to base amount (lakhs)
+            if (in_array($unit, ['cr', 'crore'])) {
+                $amount *= 100; // 1 crore = 100 lakhs
+            }
+            
+            // Check for price range indicators
+            if (strpos($query, 'under') !== false || strpos($query, 'below') !== false || strpos($query, 'less than') !== false) {
+                $filters['max_price'] = $amount * 100000; // Convert to actual amount
+            } elseif (strpos($query, 'above') !== false || strpos($query, 'over') !== false || strpos($query, 'more than') !== false) {
+                $filters['min_price'] = $amount * 100000;
+            } else {
+                // If no indicator, assume it's a maximum price
+                $filters['max_price'] = $amount * 100000;
+            }
+        }
+        
+        // Match price range (e.g., "50 to 80 lakh", "1 to 2 crore")
+        if (preg_match('/(\d+(?:\.\d+)?)\s*(?:to|-|and)\s*(\d+(?:\.\d+)?)\s*(lakh|lac|cr|crore)/i', $query, $matches)) {
+            $minAmount = (float)$matches[1];
+            $maxAmount = (float)$matches[2];
+            $unit = strtolower($matches[3]);
+            
+            // Convert to base amount (lakhs)
+            $multiplier = in_array($unit, ['cr', 'crore']) ? 100 : 1;
+            $filters['min_price'] = $minAmount * $multiplier * 100000;
+            $filters['max_price'] = $maxAmount * $multiplier * 100000;
+        }
+    }
+    
+    /**
+     * Extract bedroom and bathroom requirements
+     */
+    private function extractRoomRequirements($query, &$filters) {
+        // Match BHK pattern (e.g., "2 BHK", "3BHK")
+        if (preg_match('/(\d+)\s*(?:bhk|bedroom|bed|bed room|beds)/i', $query, $matches)) {
+            $filters['min_bedrooms'] = (int)$matches[1];
+            $filters['max_bedrooms'] = (int)$matches[1];
+        }
+        
+        // Match bathroom pattern
+        if (preg_match('/(\d+)\s*(?:bath|bathroom|bath room|baths)/i', $query, $matches)) {
+            $filters['min_bathrooms'] = (int)$matches[1];
+        }
+        
+        // Match studio/1RK
+        if (strpos($query, 'studio') !== false || strpos($query, '1 rk') !== false || strpos($query, '1rk') !== false) {
+            $filters['type'] = 'apartment';
+            $filters['min_bedrooms'] = 0;
+            $filters['max_bedrooms'] = 1;
+        }
+    }
+    
+    /**
+     * Extract location from query
+     */
+    private function extractLocation($query, &$filters) {
+        // This would ideally query a locations database
+        // For now, we'll just look for common location indicators
+        $locationIndicators = ['in ', 'at ', 'near ', 'around ', 'close to '];
+        $location = '';
+        
+        foreach ($locationIndicators as $indicator) {
+            if (($pos = strpos($query, $indicator)) !== false) {
+                $location = trim(substr($query, $pos + strlen($indicator)));
+                // Remove any trailing prepositions or other words
+                $location = preg_replace('/\s+(for|with|and|or|under|above|near|in|at|around|close to|that|have|has|having)\s+.*$/', '', $location);
+                $filters['location'] = trim($location);
+                break;
+            }
+        }
+        
+        // If no location indicator found, assume the last word might be a location
+        if (empty($filters['location'])) {
+            $words = array_filter(explode(' ', $query));
+            if (count($words) > 1) {
+                $potentialLocation = end($words);
+                // Simple check if it might be a location (not a number, not a common word)
+                if (!is_numeric($potentialLocation) && strlen($potentialLocation) > 2) {
+                    $filters['location'] = $potentialLocation;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Extract property features
+     */
+    private function extractFeatures($query, &$filters) {
+        // Check for furnished status
+        if (strpos($query, 'furnished') !== false) {
+            $filters['furnishing'] = 'furnished';
+        } elseif (strpos($query, 'semi-furnished') !== false || strpos($query, 'semi furnished') !== false) {
+            $filters['furnishing'] = 'semi-furnished';
+        } elseif (strpos($query, 'unfurnished') !== false) {
+            $filters['furnishing'] = 'unfurnished';
+        }
+        
+        // Check for direction facing
+        $directions = ['north', 'south', 'east', 'west', 'north-east', 'north east', 'north-west', 'north west', 
+                      'south-east', 'south east', 'south-west', 'south west'];
+        foreach ($directions as $dir) {
+            if (strpos($query, $dir) !== false) {
+                $filters['facing'] = str_replace(' ', '-', $dir);
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Extract sort order
+     */
+    private function extractSortOrder($query, &$filters) {
+        if (strpos($query, 'cheap') !== false || strpos($query, 'lowest') !== false || strpos($query, 'low price') !== false) {
+            $filters['sort_by'] = 'price';
+            $filters['sort_order'] = 'asc';
+        } elseif (strpos($query, 'expensive') !== false || strpos($query, 'highest') !== false || strpos($query, 'high price') !== false) {
+            $filters['sort_by'] = 'price';
+            $filters['sort_order'] = 'desc';
+        } elseif (strpos($query, 'newest') !== false || strpos($query, 'latest') !== false || strpos($query, 'recent') !== false) {
+            $filters['sort_by'] = 'created_at';
+            $filters['sort_order'] = 'desc';
+        } elseif (strpos($query, 'oldest') !== false) {
+            $filters['sort_by'] = 'created_at';
+            $filters['sort_order'] = 'asc';
+        }
+    }
+    
+    /**
+     * Extract remaining keywords
+     */
+    private function extractKeywords($query, &$filters) {
+        // Remove all the patterns we've already processed
+        $patterns = [
+            '/\b(?:apartment|flat|villa|house|plot|land|office|shop|warehouse|studio|1rk|1 rk)\b/i',
+            '/\b\d+\s*(?:bhk|bedroom|bed|bath|bathroom|bath room|beds|baths)\b/i',
+            '/\b(?:under|below|less than|above|over|more than)\s*\d+\s*(?:lakh|lac|cr|crore)\b/i',
+            '/\d+\s*(?:to|-|and)\s*\d+\s*(?:lakh|lac|cr|crore)/i',
+            '/\b(?:in|at|near|around|close to)\s+[\w\s]+/i',
+            '/\b(?:furnished|semi-furnished|semi furnished|unfurnished)\b/i',
+            '/\b(?:north|south|east|west|north[ -]east|north[ -]west|south[ -]east|south[ -]west)\b/i',
+            '/\b(?:cheap|expensive|lowest|highest|newest|latest|recent|oldest|price|created_at)\b/i'
+        ];
+        
+        $cleanQuery = preg_replace($patterns, '', $query);
+        $keywords = array_filter(array_map('trim', preg_split('/\s+/', $cleanQuery)));
+        
+        // Remove short words and common stop words
+        $stopWords = ['a', 'an', 'the', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 'for', 'to', 'of', 'with', 'that', 'this', 'i', 'me', 'my', 'we', 'our', 'you', 'your', 'yours'];
+        $keywords = array_filter($keywords, function($word) use ($stopWords) {
+            return strlen($word) > 2 && !in_array(strtolower($word), $stopWords);
+        });
+        
+        if (!empty($keywords)) {
+            $filters['keywords'] = array_values(array_unique($keywords));
+            
+            // If we have multiple keywords, use AND operator by default
+            if (count($filters['keywords']) > 1) {
+                $filters['keywords_operator'] = 'AND';
+            }
+        }
+    }
+    
+    /**
+     * Get user preferences for property recommendations
+     * 
+     * @param int $userId User ID to get preferences for
+     * @return array User preferences
+     */
+    private function getUserPreferences($userId) {
+        if (empty($userId)) {
+            return [
+                'preferred_property_types' => [],
+                'preferred_locations' => [],
+                'min_bedrooms' => null,
+                'max_price' => null,
+                'min_area' => null,
+                'amenities' => []
+            ];
+        }
+        
+        // Implementation to fetch user preferences from database
+        // ...
+        
+        return [
+            'preferred_property_types' => [],
+            'preferred_locations' => [],
+            'min_bedrooms' => null,
+            'max_price' => null,
+            'min_area' => null,
+            'amenities' => []
+        ];
+    }
+    
+    /**
+     * Get recommended properties based on user preferences and search criteria
+     * 
+     * @param int $userId User ID (optional)
+     * @param int $limit Number of properties to return
+     * @param array $filters Additional search filters
+     * @return array Recommended properties
+     */
+    public function getRecommendedProperties($userId = null, $limit = 5, $filters = []) {
+        // Implementation to fetch recommended properties
+        // ...
+        return [];
+    }
+    
+    /**
+     * Get similar properties to a given property
+     * 
+     * @param int $propertyId Property ID to find similar properties for
+     * @param int $limit Number of similar properties to return
+     * @return array Similar properties
+     */
+    public function getSimilarProperties($propertyId, $limit = 5) {
+        // Implementation to fetch similar properties
+        // ...
+        return [];
+    }
+    
+    /**
+     * Predict property price based on features
+     * 
+     * @param array $features Property features
+     * @return array Predicted price with confidence and factors
+     */
+    public function predictPrice($features) {
+        // Implementation to predict property price
+        // ...
+        return [
+            'predicted_price' => 0,
+            'confidence' => 0,
+            'factors' => []
+        ];
+    }
+}
+?>

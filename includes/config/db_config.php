@@ -4,27 +4,40 @@
  * Provides database connection settings and functions
  */
 
-// Database credentials
-if (!defined('DB_HOST')) define('DB_HOST', 'localhost');
-if (!defined('DB_USER')) define('DB_USER', 'root');
-if (!defined('DB_PASS')) define('DB_PASS', '');
-if (!defined('DB_NAME')) define('DB_NAME', 'apsdreamhomefinal');
+// Include the main database connection file
+require_once __DIR__ . '/../db_connection.php';
 
-/**
- * Get database connection
- * @return mysqli|null Database connection object or null on failure
- */
-function getDbConnection() {
-    try {
-        $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        if ($conn->connect_error) {
-            error_log("Database connection failed: " . $conn->connect_error);
+// Default database configuration
+$default_db_config = [
+    'DB_HOST' => 'localhost',
+    'DB_USER' => 'root',
+    'DB_PASS' => '',
+    'DB_NAME' => 'apsdreamhomefinal',
+    'DB_CHARSET' => 'utf8mb4'
+];
+
+// Set constants if not already defined
+foreach ($default_db_config as $key => $value) {
+    if (!defined($key)) {
+        define($key, $value);
+    }
+}
+
+// Error reporting for development
+if (!defined('ENVIRONMENT')) {
+    define('ENVIRONMENT', 'development');
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+}
+
+// Legacy function for backward compatibility
+if (!function_exists('getDbConnectionLegacy')) {
+    function getDbConnectionLegacy() {
+        try {
+            return getDbConnection();
+        } catch (Exception $e) {
+            error_log("Database connection error: " . $e->getMessage());
             return null;
         }
-        $conn->set_charset("utf8mb4");
-        return $conn;
-    } catch (Exception $e) {
-        error_log("Database connection error: " . $e->getMessage());
-        return null;
     }
 }

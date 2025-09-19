@@ -19,68 +19,104 @@ class DatabaseConfig {
     /**
      * Initialize database configuration from environment variables
      */
+    /**
+     * Initialize database configuration
+     * 
+     * @throws Exception If required configuration is missing
+     */
     public static function init() {
         if (self::$initialized) {
             return;
         }
-        
-        // Load environment variables if .env file exists
-        self::loadEnvFile();
-        
-        // Set database parameters from environment variables with fallbacks
-        self::$host = getenv('DB_HOST') ?: 'localhost';
-        self::$user = getenv('DB_USER') ?: 'root';
-        self::$pass = getenv('DB_PASS') ?: '';
-        self::$name = getenv('DB_NAME') ?: 'realestatephp';
-        self::$port = getenv('DB_PORT') ?: '3306';
-        
-        // Define constants for backward compatibility
-        if (!defined('DB_HOST')) define('DB_HOST', self::$host);
-        if (!defined('DB_USER')) define('DB_USER', self::$user);
-        if (!defined('DB_PASS')) define('DB_PASS', self::$pass);
-        if (!defined('DB_NAME')) define('DB_NAME', self::$name);
-        if (!defined('DB_PORT')) define('DB_PORT', self::$port);
-        
-        self::$initialized = true;
+
+        try {
+            // Try to load environment variables if .env file exists
+            self::loadEnvFile();
+            
+            // First try to get from environment variables (for backward compatibility)
+            self::$host = getenv('DB_HOST') ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
+            self::$user = getenv('DB_USER') ?: (defined('DB_USER') ? DB_USER : 'root');
+            self::$pass = getenv('DB_PASS') ?: (defined('DB_PASS') ? DB_PASS : '');
+            self::$name = getenv('DB_NAME') ?: (defined('DB_NAME') ? DB_NAME : 'apsdreamhomefinal');
+            self::$port = getenv('DB_PORT') ?: (defined('DB_PORT') ? DB_PORT : '3306');
+            
+            // Validate configuration
+            if (empty(self::$host) || empty(self::$user) || empty(self::$name)) {
+                throw new Exception('Database configuration is incomplete. Please check your configuration.');
+            }
+            
+            // Define constants for backward compatibility if not already defined
+            if (!defined('DB_HOST')) define('DB_HOST', self::$host);
+            if (!defined('DB_USER')) define('DB_USER', self::$user);
+            if (!defined('DB_PASS')) define('DB_PASS', self::$pass);
+            if (!defined('DB_NAME')) define('DB_NAME', self::$name);
+            if (!defined('DB_PORT')) define('DB_PORT', self::$port);
+            
+            self::$initialized = true;
+            
+        } catch (Exception $e) {
+            error_log('Database configuration error: ' . $e->getMessage());
+            throw new Exception('Failed to initialize database configuration. Please check your settings.');
+        }
     }
     
     /**
      * Load environment variables from .env file
      */
     private static function loadEnvFile() {
-        $envFile = dirname(__DIR__) . '/.env';
+        $envFile = dirname(dirname(__DIR__)) . '/.env';
         
-        if (file_exists($envFile)) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (!file_exists($envFile)) {
+            error_log('Warning: .env file not found at ' . $envFile);
+            return;
+        }
+        
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if ($lines === false) {
+            error_log('Warning: Failed to read .env file');
+            return;
+        }
+        
+        foreach ($lines as $line) {
+            // Skip comments
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
             
-            foreach ($lines as $line) {
-                if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
-                    list($key, $value) = explode('=', $line, 2);
-                    $key = trim($key);
-                    $value = trim($value);
-                    
-                    $_ENV[$key] = $value;
-                    $_SERVER[$key] = $value;
-                    putenv("$key=$value");
+            // Parse the line
+            if (strpos($line, '=') !== false) {
+                list($name, $value) = explode('=', $line, 2);
+                $name = trim($name);
+                $value = trim($value, " \t\n\r\0\x0B\"'");
+                
+                // Set the environment variable if not already set
+                if (!getenv($name)) {
+                    putenv("$name=$value");
+                    $_ENV[$name] = $value;
+                    $_SERVER[$name] = $value;
                 }
             }
         }
     }
     
     /**
-     * Get database connection with error handling
-     * @return mysqli|null Database connection or null on failure
+     * Get a database connection
+     * 
+     * @return mysqli
+     * @throws Exception If connection fails
+     */
+    /**
+     * Get a database connection
+     * 
+     * @return mysqli
+     * @throws Exception If connection fails
      */
     public static function getConnection() {
-        // Initialize configuration if not already done
-        if (!self::$initialized) {
-            self::init();
-        }
-        
-        // Return existing connection if available
         if (self::$connection !== null) {
             return self::$connection;
         }
+        
+        self::init();
         
         try {
             // Create new connection
@@ -89,7 +125,7 @@ class DatabaseConfig {
                 self::$user,
                 self::$pass,
                 self::$name,
-                self::$port
+                (int)self::$port
             );
             
             // Check connection
@@ -112,7 +148,7 @@ class DatabaseConfig {
         } catch (Exception $e) {
             // Log error
             error_log("Database connection exception: " . $e->getMessage());
-            return null;
+            throw $e; // Re-throw to allow calling code to handle the exception
         }
     }
     

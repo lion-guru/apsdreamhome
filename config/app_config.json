@@ -9,8 +9,31 @@
         "host": "localhost",
         "user": "root",
         "name": "apsdreamhomefinal",
+        "port": "3306",
         "charset": "utf8mb4",
         "collation": "utf8mb4_unicode_ci"
+    },
+    "auth": {
+        "jwt_secret": "default_jwt_secret",
+        "password_hash_algo": "argon2id",
+        "password_hash_options": {
+            "memory_cost": 65536,
+            "time_cost": 4,
+            "threads": 3
+        }
+    },
+    "google": {
+        "client_id": "",
+        "client_secret": "",
+        "oauth_scopes": [
+            "email",
+            "profile"
+        ],
+        "oauth_prompt": "select_account consent"
+    },
+    "ai": {
+        "gemini_api_key": "",
+        "openai_api_key": ""
     },
     "security": {
         "csrf_protection": true,

@@ -39,7 +39,7 @@ $top = $con->query("SELECT a.name, l.associate_id, SUM(l.commission_amount) as e
         <h6 class="mt-3">Top 5 Earners</h6>
         <ol>
             <?php while ($row = $top->fetch_assoc()): ?>
-                <li><?php echo htmlspecialchars($row['name']); ?> (ID: <?php echo $row['associate_id']; ?>): ₹<?php echo number_format($row['earned'], 2); ?></li>
+                <li><?php echo htmlspecialchars($row['name'] ?? 'Associate ' . $row['associate_id']); ?> (ID: <?php echo $row['associate_id']; ?>): ₹<?php echo number_format($row['earned'], 2); ?></li>
             <?php endwhile; ?>
         </ol>
         <a href="associate_commission_report.php" class="btn btn-primary btn-sm mt-2">View All Reports</a>

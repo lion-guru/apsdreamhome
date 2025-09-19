@@ -12,5 +12,17 @@
     "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
     "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
     "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
-    "markdown.validate.enabled": true
+    "markdown.validate.enabled": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "PostgreSQL",
+            "name": "aps",
+            "database": "apsdreamhomefinal",
+            "username": "root",
+            "password": ""
+        }
+    ]
 }

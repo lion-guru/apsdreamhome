@@ -1,11 +1,9 @@
 {
+    "name": "apsdreamhome/real-estate",
+    "description": "APS Dream Home - Real Estate Management System",
+    "type": "project",
     "require": {
-        "php": "^8.1",
-        "google/apiclient": "*",
-        "phpmailer/phpmailer": "^6.8",
-        "guzzlehttp/psr7": "*",
-        "phpseclib/phpseclib": "*",
-        "tecnickcom/tcpdf": "*"
+        "erusev/parsedown": "^1.7"
     },
     "autoload": {
         "psr-4": {
@@ -13,11 +11,10 @@
         }
     },
     "config": {
-        "platform": {
-            "php": "8.1"
-        }
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
     },
-    "require-dev": {
-        "squizlabs/php_codesniffer": "*"
-    }
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

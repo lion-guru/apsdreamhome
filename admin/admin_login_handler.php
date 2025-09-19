@@ -193,17 +193,19 @@ if ($needs_rehash) {
         // Set for index.php compatibility
         $_SESSION['admin_session']['is_authenticated'] = true;
         $_SESSION['admin_session']['username'] = $user['auser'];
-
+        // यह लाइन जोड़ें - dashboard.php के साथ संगतता के लिए
+        $_SESSION['admin_session']['role'] = $user['role'];
+    
         // Regenerate session ID for security
         session_regenerate_id(true);
-
+    
         // Log successful login
         logAdminAction([
             'action' => 'login_success',
             'username' => $user['auser'],
             'ip_address' => $_SERVER['REMOTE_ADDR']
         ]);
-
+    
         return [
             'status' => 'success',
             'message' => 'Logged in successfully',
@@ -468,6 +470,9 @@ if ($needs_rehash) {
     private static function updateSessionActivity() {
         $_SESSION['admin_session']['last_activity'] = time();
         $_SESSION['admin_session']['is_authenticated'] = true;
+        
+        // यह लाइन जोड़ें - dashboard.php के साथ संगतता के लिए
+        $_SESSION['admin_logged_in'] = true;
         
         // Regenerate session ID after successful login
         session_regenerate_id(true);

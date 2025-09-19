@@ -3,7 +3,7 @@
 $host = 'localhost';
 $user = 'root'; // Default XAMPP username
 $password = ''; // Default XAMPP password is empty
-$database = 'realestatephp';
+$database = 'apsdreamhomefinal';
 
 // Connect to the database
 $conn = new mysqli($host, $user, $password, $database);

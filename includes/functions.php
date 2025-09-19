@@ -144,3 +144,41 @@ function generate_csrf_token() {
 function validate_csrf_token($token) {
     return hash_equals($_SESSION['csrf_token'], $token);
 }
+
+// Get recent properties
+function get_recent_properties($limit = 6) {
+  global $conn;
+  $query = "
+    SELECT 
+      p.id,
+      p.title,
+      p.price,
+      p.bedrooms,
+      p.bathrooms,
+      p.area,
+      p.location,
+      p.description,
+      p.type,
+      p.status,
+      p.created_at,
+      p.updated_at,
+      pi.image_path AS main_image
+    FROM properties p
+    LEFT JOIN property_images pi ON p.id = pi.property_id
+    ORDER BY p.created_at DESC LIMIT ?
+  ";
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param('i', $limit);
+  $stmt->execute();
+  return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+// Get property availability status
+function get_property_availability_status($conn, $property_id) {
+    $stmt = $conn->prepare("SELECT status FROM properties WHERE id = ?");
+    $stmt->bind_param('i', $property_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc()['status'] ?? 'unknown';
+}
+?>
