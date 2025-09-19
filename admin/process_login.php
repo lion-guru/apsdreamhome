@@ -33,9 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo 'DEBUG: After AdminLoginHandler::login, status: ' . htmlspecialchars($result['status']) . '<br>';
 
     if ($result['status'] === 'success') {
-        echo 'DEBUG: Login success, redirecting to dashboard.php<br>';
-        // Redirect to dashboard
-        header('Location: dashboard.php');
+        echo 'DEBUG: Login success, redirecting to ' . htmlspecialchars($result['redirect'] ?? 'dashboard.php') . '<br>';
+        // Redirect to appropriate dashboard based on role
+        header('Location: ' . ($result['redirect'] ?? 'dashboard.php'));
         exit();
     } else {
         echo 'DEBUG: Login failed, redirecting to index.php<br>';

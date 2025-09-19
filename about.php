@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Include database settings and other necessary files
 require_once(__DIR__ . '/includes/db_settings.php');
-require_once(__DIR__ . '/includes/templates/dynamic_header.php');
+require_once(__DIR__ . '/includes/templates/header.php');
 require_once(__DIR__ . '/includes/functions/common-functions.php');
 
 // Get database connection
@@ -17,136 +17,7 @@ $page_title = "About Us - APS Dream Homes";
 $meta_description = "Learn about APS Dream Homes, a trusted real estate company in Uttar Pradesh offering premium residential and commercial properties.";
 
 // Additional CSS for this page (optional)
-$additional_css = '<style>
-    /* About Page Specific Styles */
-    .about-company {
-        padding: 80px 0;
-        background-color: #f8f9fa;
-    }
-    
-    .about-image {
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    .about-image img {
-        width: 100%;
-        height: auto;
-    }
-    
-    .company-info {
-        padding: 20px;
-    }
-    
-    .company-info h2 {
-        margin-bottom: 20px;
-        color: var(--primary-color);
-    }
-    
-    .company-info p {
-        margin-bottom: 15px;
-        line-height: 1.8;
-    }
-    
-    .team-section {
-        padding: 80px 0;
-        background-color: #fff;
-    }
-    
-    .team-card {
-        text-align: center;
-        margin-bottom: 30px;
-        transition: all 0.3s ease;
-    }
-    
-    .team-card:hover {
-        transform: translateY(-10px);
-    }
-    
-    .team-image {
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        overflow: hidden;
-        margin: 0 auto 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    .team-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
-    .team-info h4 {
-        margin-bottom: 5px;
-        color: var(--primary-color);
-    }
-    
-    .team-info p {
-        color: #777;
-        margin-bottom: 15px;
-    }
-    
-    .social-icons a {
-        display: inline-block;
-        width: 35px;
-        height: 35px;
-        background-color: var(--primary-color);
-        color: #fff;
-        border-radius: 50%;
-        line-height: 35px;
-        margin: 0 5px;
-        transition: all 0.3s ease;
-    }
-    
-    .social-icons a:hover {
-        background-color: var(--secondary-color);
-        transform: translateY(-3px);
-    }
-    
-    .mission-vision {
-        padding: 80px 0;
-        background-color: #f8f9fa;
-    }
-    
-    .mission-card, .vision-card {
-        background-color: #fff;
-        border-radius: 10px;
-        padding: 30px;
-        height: 100%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-    }
-    
-    .mission-card:hover, .vision-card:hover {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-    
-    .mission-card h3, .vision-card h3 {
-        margin-bottom: 20px;
-        color: var(--primary-color);
-        position: relative;
-        padding-bottom: 15px;
-    }
-    
-    .mission-card h3:after, .vision-card h3:after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 50px;
-        height: 2px;
-        background-color: var(--primary-color);
-    }
-    
-    @media (max-width: 767px) {
-        .about-image {
-            margin-bottom: 30px;
-        }
-    }
-</style>';
+$additional_css = ''; // Moved to style.css
 
 // Fetch about page content from database
 $about_content = [];
@@ -310,7 +181,7 @@ $team_members = json_decode($about_content['team_members'] ?? '', true) ?: [
             <div class="col-md-4">
                 <div class="team-card">
                     <div class="team-image">
-                        <img src="<?php echo get_asset_url('team/' . $member['image'], 'images'); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>">
+                        <img src="<?php echo SITE_URL; ?>/assets/images/team/<?php echo htmlspecialchars($member['image']); ?>" alt="<?php echo htmlspecialchars($member['name']); ?>">
                     </div>
                     <div class="team-info">
                         <h4><?php echo htmlspecialchars($member['name']); ?></h4>
@@ -337,7 +208,6 @@ $additional_js = '<script>
     });
 </script>';
 
-// Include the dynamic footer
-require_once(__DIR__ . '/includes/templates/dynamic_footer.php'); ?>
-</body>
-</html>
+// Include the footer
+require_once(__DIR__ . '/includes/templates/footer.php');
+?>

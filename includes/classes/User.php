@@ -3,19 +3,19 @@ class User {
     private $db;
     private $table = 'users';
 
-    public function __construct(Database $database) {
+    public function __construct(\Database\Database $database) { // Added namespace for Database
         $this->db = $database;
     }
 
     public function getById(string $uid): ?array {
-        return $this->db->fetchOne(
+        return $this->db->fetch( // Changed from fetchOne to fetch
             "SELECT * FROM {$this->table} WHERE uid = ?",
             [$uid]
         );
     }
 
     public function getByEmail(string $email): ?array {
-        return $this->db->fetchOne(
+        return $this->db->fetch( // Changed from fetchOne to fetch
             "SELECT * FROM {$this->table} WHERE email = ?",
             [$email]
         );
@@ -34,8 +34,8 @@ class User {
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
-            $this->db->insert($this->table, $data);
-            $userId = $this->db->lastInsertId();
+            $userId = $this->db->insert($this->table, $data); // Use return value of insert for user ID
+            // $userId = $this->db->lastInsertId(); // This line is removed
 
             $this->db->commit();
 
@@ -62,8 +62,8 @@ class User {
             $this->db->update(
                 $this->table,
                 $data,
-                'uid = ?',
-                [$uid]
+                'uid = ?', // This should be the WHERE clause string
+                [$uid]     // And these are the parameters for the WHERE clause
             );
 
             return [
@@ -80,7 +80,8 @@ class User {
 
     public function delete(string $uid): array {
         try {
-            $this->db->delete($this->table, 'uid = ?', [$uid]);
+            // The delete method in Database.php expects $where as a string
+            $this->db->delete($this->table, 'uid = ?', [$uid]); 
             return [
                 'success' => true,
                 'message' => 'User deleted successfully'

@@ -4,7 +4,8 @@
  */
 
 // Load environment variables securely
-require_once 'env_loader.php';
+require_once __DIR__ . '/env_loader.php';
+require_once __DIR__ . '/security_logger.php';
 
 class DatabaseSecurityUpgrade {
     private $conn;
@@ -20,13 +21,18 @@ class DatabaseSecurityUpgrade {
         $this->logger = new SecurityLogger('/logs/db_security.log');
     }
 
-    private function secureConnection() {
+        private function secureConnection()
+    {
+        // Include config.php to access database credentials if needed
+        define('DB_AUDIT_MODE', true);
+        require_once dirname(__DIR__) . '/config.php';
+
         try {
             // Use environment variables or secure configuration management
-            $host = getenv('DB_HOST') ?: 'localhost';
-            $user = getenv('DB_USER') ?: throw new Exception('Database user not configured');
-            $pass = getenv('DB_PASS') ?: throw new Exception('Database password not configured');
-            $name = getenv('DB_NAME') ?: throw new Exception('Database name not configured');
+            $host = getenv('DB_HOST') ?: DB_HOST;
+            $user = getenv('DB_USER') ?: DB_USER;
+            $pass = getenv('DB_PASS') ?: DB_PASSWORD;
+            $name = getenv('DB_NAME') ?: DB_NAME;
 
             $this->conn = new PDO(
                 "mysql:host={$host};dbname={$name};charset=utf8mb4", 
@@ -39,7 +45,7 @@ class DatabaseSecurityUpgrade {
                 ]
             );
         } catch (Exception $e) {
-            $this->logger->critical('Database Connection Failed', ['error' => $e->getMessage()]);
+            $this->logger->logSuspiciousActivity('Database Connection Failed', $e->getMessage());
             die('Database connection error');
         }
     }
@@ -50,10 +56,7 @@ class DatabaseSecurityUpgrade {
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
-            $this->logger->error('Query Execution Failed', [
-                'query' => $query,
-                'error' => $e->getMessage()
-            ]);
+            $this->logger->logSuspiciousActivity('Query Execution Failed', json_encode(['query' => $query, 'error' => $e->getMessage()]));
             return false;
         }
     }
@@ -76,7 +79,4 @@ class DatabaseSecurityUpgrade {
     }
 }
 
-// Example Usage
-$db = new DatabaseSecurityUpgrade();
-$sanitizedInput = $db->sanitizeInput($_POST['username']);
-$hashedPassword = $db->hashPassword($_POST['password']);
+

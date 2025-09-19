@@ -25,73 +25,38 @@ if (!isset($_SESSION['uid'])) {
 $_SESSION['last_activity'] = time();
 $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
 
-$error = "";
-$msg = "";
-
+$error_message = "";
+$success_message = "";
 $db = new Database();
 $userModel = new User($db);
 $associateModel = new Associate($db);
 
-if (isset($_REQUEST['reg'])) 
-{ 
+if (isset($_REQUEST['reg'])) {
     log_admin_activity('register', 'Registration submitted by: ' . $_REQUEST['name'] . ', email: ' . $_REQUEST['email']);
-    
     $name = trim($_REQUEST['name']);
     $email = trim($_REQUEST['email']);
     $phone = trim($_REQUEST['phone']);
     $pass = trim($_REQUEST['pass']);
     $utype = isset($_REQUEST['utype']) ? trim($_REQUEST['utype']) : 'user';
     $sponsor_id = isset($_REQUEST['sponser_id']) ? strtoupper(trim($_REQUEST['sponser_id'])) : '';
-    
-    // Validate name (3-50 characters, letters, spaces, dots, apostrophes)
     if (!preg_match("/^[A-Za-z\s.']{3,50}$/", $name)) {
-        $error = "<div class='alert alert-danger'>
-            <p><strong>Registration Failed!</strong></p>
-            <p>Name must be 3-50 characters long and can contain letters, spaces, dots, and apostrophes</p>
-        </div>";
-    }
-    // Validate email format
-    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "<div class='alert alert-danger'>
-            <p><strong>Registration Failed!</strong></p>
-            <p>Please enter a valid email address</p>
-        </div>";
-    }
-    // Validate phone number (10 digits)
-    else if (!preg_match("/^[0-9]{10}$/", $phone)) {
-        $error = "<div class='alert alert-danger'>
-            <p><strong>Registration Failed!</strong></p>
-            <p>Please enter a valid 10-digit phone number</p>
-        </div>";
-    }
-    // Validate password strength using model
-    else if (!$userModel->validatePassword($pass)) {
-        $error = "<div class='alert alert-danger'>
-            <p><strong>Registration Failed!</strong></p>
-            <p>Password must be at least 8 characters long and contain uppercase, lowercase, and number</p>
-        </div>";
-    }
-    // Validate sponsor ID for associates
-    else if ($utype == 'associate' && empty($sponsor_id)) {
-        $error = "<div class='alert alert-danger'>
-            <p><strong>Registration Failed!</strong></p>
-            <p>Sponsor ID is required for Associate registration</p>
-        </div>";
-    }
-    else if ($utype == 'associate' && !preg_match('/^APS\d{6}$/', $sponsor_id)) {
-        $error = "<div class='alert alert-danger'>
-            <p><strong>Registration Failed!</strong></p>
-            <p>Please enter a valid Sponsor ID (Format: APS followed by 6 digits)</p>
-        </div>";
-    }
-    else {
+        $error_message = "Name must be 3-50 characters long and can contain letters, spaces, dots, and apostrophes.";
+    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error_message = "Please enter a valid email address.";
+    } else if (!preg_match("/^[0-9]{10}$/", $phone)) {
+        $error_message = "Please enter a valid 10-digit phone number.";
+    } else if (!$userModel->validatePassword($pass)) {
+        $error_message = "Password must be at least 8 characters long and contain uppercase, lowercase, and number.";
+    } else if ($utype == 'associate' && empty($sponsor_id)) {
+        $error_message = "Sponsor ID is required for Associate registration.";
+    } else if ($utype == 'associate' && !preg_match('/^APS\d{6}$/', $sponsor_id)) {
+        $error_message = "Please enter a valid Sponsor ID (Format: APS followed by 6 digits).";
+    } else {
         try {
-            // Check for existing email/phone
             $existing = $userModel->getByEmail($email);
             if ($existing) {
                 throw new Exception("Email already exists");
             }
-            // Prepare user data
             $userData = [
                 'name' => $name,
                 'email' => $email,
@@ -105,12 +70,10 @@ if (isset($_REQUEST['reg']))
             }
             $user_id = $result['user_id'];
             if ($utype == 'associate') {
-                // Validate sponsor ID exists
                 $sponsor = $associateModel->getById($sponsor_id);
                 if (!$sponsor) {
                     throw new Exception("Invalid Sponsor ID. Please enter a valid Sponsor ID.");
                 }
-                // Prepare associate data
                 $associateData = [
                     'name' => $name,
                     'email' => $email,
@@ -122,40 +85,21 @@ if (isset($_REQUEST['reg']))
                 if (!$assocResult['success']) {
                     throw new Exception($assocResult['message']);
                 }
-                $msg = "<div class='alert alert-success'>
-                    <p><strong>Associate Registration Successful!</strong></p>
-                    <p>Your account has been created successfully.</p>
-                    <p>Login Credentials:</p>
-                    <ul>
-                        <li>Email: {$email}</li>
-                        <li>Associate ID: {$assocResult['uid']}</li>
-                        <li>Referral Code: {$assocResult['associate_id']}</li>
-                    </ul>
-                    <p><a href='<?php echo $base_url; ?>login.php' class='alert-link'>Click here to Login</a></p>
-                </div>";
+                $success_message = "Associate Registration Successful! Your account has been created successfully.";
             } else {
-                $msg = "<div class='alert alert-success'>
-                    <p><strong>Registration Successful!</strong></p>
-                    <p>Your account has been created successfully.</p>
-                    <p><a href='<?php echo $base_url; ?>login.php' class='alert-link'>Click here to Login</a></p>
-                </div>";
+                $success_message = "Registration Successful! Your account has been created successfully.";
             }
-            // Set session variables as per role
             if ($utype == 'associate') {
                 $_SESSION['aid'] = $assocResult['uid'];
                 $_SESSION['associate_id'] = $assocResult['associate_id'];
             } else {
                 $_SESSION['uid'] = $user_id;
             }
-            // After successful registration:
             if (isset($_SESSION['uid']) || isset($_SESSION['aid'])) {
                 redirectToDashboardByRole();
             }
         } catch (Exception $e) {
-            $error = "<div class='alert alert-danger'>
-                <p><strong>Registration Failed!</strong></p>
-                <p>{$e->getMessage()}</p>
-            </div>";
+            $error_message = $e->getMessage();
         }
     }
 }
@@ -163,137 +107,1510 @@ if (isset($_REQUEST['reg']))
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Registration - APS DREAM HOMES</title>
-    <link rel="shortcut icon" href="assets/<?php echo get_asset_url('favicon.ico', 'images'); ?>">
-    <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,500,600,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Comfortaa:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/bootstrap.min.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/bootstrap-slider.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/jquery-ui.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/layerslider.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/color.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/owl.carousel.min.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/font-awesome.min.css', 'css'); ?>">
-    <link rel="stylesheet" type="text/css" href="assets/fonts/flaticon/flaticon.css">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/style.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/login.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/home.css', 'css'); ?>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .gradient-bg {background: linear-gradient(135deg, #f6f8fa 0%, #e9eafc 100%); min-height: 100vh;}
-        .loginbox {display: flex; border-radius: 18px; overflow: hidden; background: #fff;}
-        .login-left {background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #fff; width: 360px; min-width: 300px;}
-        .login-left-wrap {padding: 48px 20px;}
-        .login-overlay h2 {font-size: 2.1rem; font-weight: 700;}
-        .login-overlay p {font-size: 1.2rem;}
-        .login-right {flex: 1; background: #fff;}
-        .login-right-wrap {max-width: 400px; margin: 0 auto; padding: 48px 0;}
-        .input-group-text {background: #fff; border-right: 0;}
-        .form-control {border-radius: 0 8px 8px 0; border-left: 0;}
-        .input-group .form-control:focus {box-shadow: 0 0 0 2px #1e3c7222; border-color: #1e3c72;}
-        .btn-google {background: #ea4335; color: #fff;}
-        .btn-google:hover {background: #c5221f; color: #fff;}
-        .login-footer a {color: #1e3c72;}
-        .login-footer a:hover {color: #2a5298;}
-        @media (max-width: 900px) {.loginbox {flex-direction: column;}.login-left {display:none!important;}.login-right {width: 100%; min-width: unset;}}
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="page-wrapper">
-        <!-- Header start -->
-        <?php include(__DIR__ . '/includes/dynamic_header.php'); ?>
-        <!-- Header end -->  
-
-        <section class="register-section section-padding bg-light">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="register-form shadow-lg p-5 bg-white rounded-4">
-                            <h2 class="fw-bold text-primary mb-4">Create Your Account</h2>
-                            <?php if($msg) echo $msg; if($error) echo $error; ?>
-                            <form method="post" autocomplete="off">
-                                <div class="mb-3">
-                                    <input type="text" name="name" class="form-control form-control-lg rounded-3" placeholder="Full Name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <input type="email" name="email" class="form-control form-control-lg rounded-3" placeholder="Email Address" required>
-                                </div>
-                                <div class="mb-3">
-                                    <input type="tel" name="phone" class="form-control form-control-lg rounded-3" placeholder="Phone Number" required>
-                                </div>
-                                <div class="mb-3">
-                                    <input type="password" name="pass" class="form-control form-control-lg rounded-3" placeholder="Password" required>
-                                </div>
-                                <div class="form-group user-type-group mb-3">
-                                    <label class="form-label">Select User Type</label>
-                                    <div class="user-type-options d-flex gap-3">
-                                        <div class="form-check">
-                                            <input type="radio" class="form-check-input" name="utype" value="user" id="user_radio" checked />
-                                            <label class="form-check-label" for="user_radio">User</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input type="radio" class="form-check-input" name="utype" value="associate" id="associate_radio" />
-                                            <label class="form-check-label" for="associate_radio">Associate</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group mb-3" id="sponser_id_field" style="display:none;">
-                                    <input type="text" name="sponser_id" class="form-control form-control-lg rounded-3" placeholder="Sponsor ID (Associates Only)">
-                                </div>
-                                <!-- Honeypot for spam protection -->
-                                <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
-                                <button type="submit" name="reg" class="btn btn-primary btn-lg rounded-pill px-5">Register</button>
-                            </form>
-                            <p class="mt-3 mb-0 text-secondary small">Already have an account? <a href="<?php echo $base_url; ?>login.php" class="text-primary">Login here</a>.</p>
-                        </div>
-                    </div>
-                </div>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
             </div>
-        </section>
-
-        <!-- Footer start -->
-        <?php include(__DIR__ . '/includes/dynamic_footer.php'); ?>
-        <!-- Footer end -->
-
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
     </div>
-
-    <!-- JavaScript Libraries -->
-    <script src="<?php echo get_asset_url('js/jquery-3.6.0.min.js', 'js'); ?>"></script>
-    <script src="<?php echo get_asset_url('js/bootstrap.bundle.min.js', 'js'); ?>"></script>
-    <script src="<?php echo get_asset_url('js/popper.min.js', 'js'); ?>"></script>
-    <script src="<?php echo get_asset_url('js/jquery.validate.min.js', 'js'); ?>"></script>
-    <script src="<?php echo get_asset_url('js/custom.js', 'js'); ?>"></script>
-    <script src="<?php echo get_asset_url('js/form-validation.js', 'js'); ?>"></script>
-
     <script>
-        // Show/hide sponsor ID field based on user type selection
-        document.addEventListener('DOMContentLoaded', function() {
-            const userTypeRadios = document.querySelectorAll('input[name="utype"]');
-            const sponserIdField = document.getElementById('sponser_id_field');
-            
-            userTypeRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    sponserIdField.style.display = this.value === 'associate' ? 'block' : 'none';
-                    if (this.value === 'associate') {
-                        document.getElementById('sponser_id').setAttribute('required', '');
-                    } else {
-                        document.getElementById('sponser_id').removeAttribute('required');
-                    }
-                });
-            });
-
-            // Initial check for sponsor field visibility
-            const checkedRadio = document.querySelector('input[name="utype"]:checked');
-            if (checkedRadio && checkedRadio.value === 'associate') {
-                sponserIdField.style.display = 'block';
-                document.getElementById('sponser_id').setAttribute('required', '');
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
             } else {
-                sponserIdField.style.display = 'none';
-                document.getElementById('sponser_id').removeAttribute('required');
+                sponsorGroup.style.display = 'none';
             }
         });
     </script>
 </body>
 </html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 420px;
+            color: #222;
+            position: relative;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2e8b57;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.2s;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #2e8b57;
+        }
+        .register-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .register-container input, .register-container select {
+            margin-bottom: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            outline: none;
+        }
+        .register-container input:focus, .register-container select:focus {
+            background: #e6f7ef;
+        }
+        .register-container button {
+            background: #2e8b57;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .register-container button:hover {
+            background: #246b43;
+        }
+        .register-container .login-link {
+            text-align: center;
+            margin-top: 16px;
+            color: #333;
+        }
+        .register-container .login-link a {
+            color: #2e8b57;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .register-container .login-link a:hover {
+            text-decoration: underline;
+        }
+        .register-container .form-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e8b57;
+        }
+        .register-container .input-group {
+            position: relative;
+        }
+        @media (max-width: 500px) {
+            .register-container {
+                padding: 24px 8px 16px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="brand">
+            <span class="logo"><i class="fa-solid fa-building"></i> APS Dream Homes</span>
+        </div>
+        <h2>Create Your Account</h2>
+        <?php if (!empty($error_message)) { echo '<div style="color:red;text-align:center;margin-bottom:10px;">'.$error_message.'</div>'; } ?>
+        <?php if (!empty($success_message)) { echo '<div style="color:green;text-align:center;margin-bottom:10px;">'.$success_message.'</div>'; } ?>
+        <form method="POST" action="">
+            <div class="input-group">
+                <i class="fa fa-user form-icon"></i>
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope form-icon"></i>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone form-icon"></i>
+                <input type="text" name="phone" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock form-icon"></i>
+                <input type="password" name="pass" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-users form-icon"></i>
+                <select name="utype" id="user_type" required>
+                    <option value="user">User</option>
+                    <option value="associate">Associate</option>
+                </select>
+            </div>
+            <div class="input-group" id="sponsor_id_group" style="display:none;">
+                <i class="fa fa-id-badge form-icon"></i>
+                <input type="text" name="sponser_id" placeholder="Sponsor ID (Associates Only)">
+            </div>
+            <button type="submit" name="reg">Register</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('user_type').addEventListener('change', function() {
+            var sponsorGroup = document.getElementById('sponsor_id_group');
+            if (this.value === 'associate') {
+                sponsorGroup.style.display = 'block';
+            } else {
+                sponsorGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | APS Dream Homes</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:7

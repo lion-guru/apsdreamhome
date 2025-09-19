@@ -7,12 +7,51 @@ class Database {
     }
 
     private function connect() {
-        require_once 'config.php';
-        global $conn;
-        $this->conn = $conn;
+        // Prefer root config.php which defines $con/$conn and constants
+        $rootConfig = dirname(__DIR__) . '/config.php';
+        if (file_exists($rootConfig)) {
+            require_once $rootConfig;
+        } else {
+            // Fallback to includes/config.php (AppConfig); may expose $db_connection
+            $includesConfig = __DIR__ . '/config.php';
+            if (file_exists($includesConfig)) {
+                require_once $includesConfig;
+            }
+        }
 
-        if ($this->conn->connect_error) {
-            throw new Exception('Database connection failed: ' . $this->conn->connect_error);
+        // Resolve connection from various sources
+        if (function_exists('getDbConnection')) {
+            $this->conn = getDbConnection();
+        }
+
+        if (!$this->conn && isset($conn) && $conn instanceof \mysqli) {
+            $this->conn = $conn;
+        }
+
+        if (!$this->conn && isset($con) && $con instanceof \mysqli) {
+            $this->conn = $con;
+        }
+
+        if (!$this->conn && isset($db_connection) && $db_connection instanceof \mysqli) {
+            $this->conn = $db_connection;
+        }
+
+        // Final fallback: build connection from constants if available
+        if (!$this->conn) {
+            $host = defined('DB_HOST') ? DB_HOST : 'localhost';
+            $user = defined('DB_USER') ? DB_USER : 'root';
+            $pass = defined('DB_PASS') ? DB_PASS : (defined('DB_PASSWORD') ? DB_PASSWORD : '');
+            $name = defined('DB_NAME') ? DB_NAME : 'apsdreamhomefinal';
+            $this->conn = new \mysqli($host, $user, $pass, $name);
+        }
+
+        if (!$this->conn || $this->conn->connect_error) {
+            throw new \Exception('Database connection failed: ' . ($this->conn ? $this->conn->connect_error : 'no connection'));
+        }
+
+        // Ensure charset
+        if (!$this->conn->set_charset('utf8mb4')) {
+            throw new \Exception('Failed to set charset: ' . $this->conn->error);
         }
     }
 

@@ -15,9 +15,20 @@ require_once __DIR__ . '/includes/csrf_protection.php';
 // Generate CSRF token
 $csrf_token = CSRFProtection::generateToken();
 
-// Check for login error
+// Check for login error and success messages
 $login_error = $_SESSION['login_error'] ?? '';
 unset($_SESSION['login_error']);
+
+$success_message = '';
+if (isset($_GET['password_changed']) && $_GET['password_changed'] == 1) {
+    $success_message = 'Your password has been changed successfully. Please log in with your new password.';
+}
+
+// Also check for success message in session (in case of redirect)
+if (isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'];
+    unset($_SESSION['success_message']);
+}
 
 // Generate simple CAPTCHA
 $num1 = rand(1, 10);
@@ -62,7 +73,14 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
     </style>
 </head>
 <body>
-<div class="login-container">
+    <div class="login-container">
+        <?php if (!empty($success_message)): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($success_message); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <?php endif; ?>
+        
         <div class="login-header" style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;margin-bottom:1.2rem;">
         <div class="panel-title" style="font-size:1.45rem;font-weight:700;color:#0d6efd;letter-spacing:1px;">APS Dream Homes</div>
         <div style="font-size:1.05rem;color:#444;font-weight:500;">Admin Panel Login</div>
@@ -85,12 +103,85 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             <input type="number" class="form-control" id="captcha_answer" name="captcha_answer" required>
         </div>
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-    </form>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+                <div class="text-center">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
+                </div>
+            </form>
     <div class="mt-3 text-center">
         <a href="../index.php">Back to Home</a>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Your Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgotPasswordForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="form-text">Enter the email address associated with your account.</div>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Handle forgot password form submission
+        $('#forgotPasswordForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const email = $('#email').val().trim();
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalBtnText = submitBtn.html();
+            
+            // Basic email validation
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...');
+            
+            // Send AJAX request
+            $.ajax({
+                url: 'reset_password.php',
+                type: 'POST',
+                data: { email: email },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#forgotPasswordModal').modal('hide');
+                    } else {
+                        alert(response.message || 'Error sending reset link');
+                    }
+                },
+                error: function() {
+                    alert('An error occurred. Please try again.');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).html(originalBtnText);
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

@@ -282,3 +282,31 @@ Context: {
     "error_message": "No connection could be made because the target machine actively refused it",
     "trace": "#0 C:\\xampp\\htdocs\\apsdreamhomefinal\\includes\\db_connection.php(108): mysqli->__construct('localhost', 'root', Object(SensitiveParameterValue), 'apsdreamhome')\n#1 C:\\xampp\\htdocs\\apsdreamhomefinal\\admin\\dashboard.php(258): getDbConnection()\n#2 {main}"
 }
+[2025-05-27 14:51:20] Database Connection Error
+Context: {
+    "error_message": "Access denied for user 'root'@'localhost' (using password: YES)",
+    "trace": "#0 C:\\xampp\\htdocs\\apsdreamhomefinal\\includes\\db_connection.php(108): mysqli->__construct('localhost', 'root', Object(SensitiveParameterValue), 'apsdreamhomefin...')\n#1 C:\\xampp\\htdocs\\apsdreamhomefinal\\admin\\test_admin.php(47): getDbConnection()\n#2 C:\\xampp\\htdocs\\apsdreamhomefinal\\admin\\test_admin.php(120): checkDatabase()\n#3 {main}"
+}
+[2025-05-27 14:52:22] Database Connection Error
+Context: {
+    "error_message": "Access denied for user 'root'@'localhost' (using password: YES)",
+    "trace": "#0 C:\\xampp\\htdocs\\apsdreamhomefinal\\includes\\db_connection.php(108): mysqli->__construct('localhost', 'root', Object(SensitiveParameterValue), 'apsdreamhomefin...')\n#1 C:\\xampp\\htdocs\\apsdreamhomefinal\\admin\\dashboard.php(83): getDbConnection()\n#2 {main}"
+}
+[2025-05-27 14:53:26] Failed to load environment configuration
+Context: {
+    "env_file_path": "C:\\xampp\\htdocs\\apsdreamhomefinal\\includes\/config\/.env"
+}
+[2025-05-27 14:53:26] Database Connection Error
+Context: {
+    "error_message": "Environment configuration failed",
+    "trace": "#0 C:\\xampp\\htdocs\\apsdreamhomefinal\\admin\\dashboard.php(83): getDbConnection()\n#1 {main}"
+}
+[2025-05-27 14:53:50] Failed to load environment configuration
+Context: {
+    "env_file_path": "C:\\xampp\\htdocs\\apsdreamhomefinal\\includes\/config\/.env"
+}
+[2025-05-27 14:53:50] Database Connection Error
+Context: {
+    "error_message": "Environment configuration failed",
+    "trace": "#0 C:\\xampp\\htdocs\\apsdreamhomefinal\\admin\\test_admin.php(47): getDbConnection()\n#1 C:\\xampp\\htdocs\\apsdreamhomefinal\\admin\\test_admin.php(120): checkDatabase()\n#2 {main}"
+}

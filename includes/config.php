@@ -1,9 +1,15 @@
 <?php
+// Session Configuration
+define('SESSION_NAME', 'APS_DREAM_HOMES_SESSION');
+define('MAINTENANCE_MODE', false);
+define('SITE_URL', 'http://localhost/apsdreamhomefinal');
+
 // Global Configuration Management
 
 class AppConfig {
     private static $instance = null;
     private $config = [];
+    private $db_connection = null;
 
     private function __construct() {
         // Default configuration
@@ -11,16 +17,36 @@ class AppConfig {
             'app' => [
                 'name' => 'APS Dream Homes',
                 'version' => '1.0.0',
-                'environment' => 'production',
-                'debug' => false,
+                'environment' => getenv('APP_ENV') ?: 'production',
+                'debug' => getenv('APP_DEBUG') === 'true',
             ],
             'database' => [
                 'host' => 'localhost',
-                'user' => 'secure_user',
-                'pass' => 'complex_password_here',
+                'user' => 'root',
+                'pass' => '',
                 'name' => 'apsdreamhomefinal',
+                'port' => getenv('DB_PORT') ?: '3306',
                 'charset' => 'utf8mb4',
                 'collation' => 'utf8mb4_unicode_ci',
+            ],
+            'auth' => [
+                'jwt_secret' => getenv('JWT_SECRET') ?: 'default_jwt_secret',
+                'password_hash_algo' => PASSWORD_ARGON2ID,
+                'password_hash_options' => [
+                    'memory_cost' => 1024 * 64,
+                    'time_cost' => 4,
+                    'threads' => 3
+                ],
+            ],
+            'google' => [
+                'client_id' => getenv('GOOGLE_CLIENT_ID') ?: '',
+                'client_secret' => getenv('GOOGLE_CLIENT_SECRET') ?: '',
+                'oauth_scopes' => getenv('GOOGLE_OAUTH_SCOPES') ? explode(' ', getenv('GOOGLE_OAUTH_SCOPES')) : ['email', 'profile'],
+                'oauth_prompt' => getenv('GOOGLE_OAUTH_PROMPT') ?: 'select_account consent',
+            ],
+            'ai' => [
+                'gemini_api_key' => getenv('GEMINI_API_KEY') ?: '',
+                'openai_api_key' => getenv('OPENAI_API_KEY') ?: '',
             ],
             'security' => [
                 'csrf_protection' => true,
@@ -146,6 +172,19 @@ class AppConfig {
 
         file_put_contents($path, json_encode($safe_config, JSON_PRETTY_PRINT));
     }
+
+    public function getDatabaseConnection() {
+        if ($this->db_connection === null) {
+            $db_config = $this->get('database');
+            $this->db_connection = new mysqli($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['name']);
+
+            if ($this->db_connection->connect_error) {
+                die("Connection failed: " . $this->db_connection->connect_error);
+            }
+        }
+
+        return $this->db_connection;
+    }
 }
 
 // Initialize and load configuration
@@ -162,5 +201,8 @@ if (!empty($config_errors)) {
 // Export configuration for reference
 $config->exportToFile();
 
-// Return the configuration instance for use in other files
-return $config;
+// Get the database connection
+$db_connection = $config->getDatabaseConnection();
+
+// Return the configuration instance and database connection for use in other files
+return [$config, $db_connection];

@@ -1595,3 +1595,155 @@
 [2025-05-17 01:05:47] Database Connection Established | connection_time_ms: 6.64 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
 [2025-05-17 01:05:47] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
 [2025-05-17 01:05:47] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 06:40:12] Database Connection Established | connection_time_ms: 13 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 06:40:13] Session Timeout | username: UNKNOWN | ip_address: ::1
+[2025-05-17 06:40:13] PHP Error | errno: 2 | errstr: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php:141) | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | errline: 903
+[2025-05-17 07:02:11] Database Connection Established | connection_time_ms: 11.86 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:02:11] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:02:11] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1219 | trace: #0 {main}
+[2025-05-17 07:06:10] Database Connection Established | connection_time_ms: 8.11 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:06:10] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:06:10] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1219 | trace: #0 {main}
+[2025-05-17 07:07:17] Database Connection Established | connection_time_ms: 7.99 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:07:17] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:07:17] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1218 | trace: #0 {main}
+[2025-05-17 07:18:48] Database Connection Established | connection_time_ms: 16 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:18:48] PHP Error | errno: 2 | errstr: session_regenerate_id(): Session ID cannot be regenerated after headers have already been sent | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | errline: 909
+[2025-05-17 07:18:48] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:18:48] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1218 | trace: #0 {main}
+[2025-05-17 07:20:32] Database Connection Established | connection_time_ms: 38.64 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:20:32] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:20:32] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1220 | trace: #0 {main}
+[2025-05-17 07:21:53] Database Connection Established | connection_time_ms: 15.28 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:21:53] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:21:53] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1220 | trace: #0 {main}
+[2025-05-17 07:26:22] Database Connection Established | connection_time_ms: 16.75 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:26:22] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:26:22] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1220 | trace: #0 {main}
+[2025-05-17 07:28:56] Database Connection Established | connection_time_ms: 1038.97 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:28:56] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:28:56] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1220 | trace: #0 {main}
+[2025-05-17 07:42:27] Database Connection Established | connection_time_ms: 5.69 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 07:42:27] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 07:42:27] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1220 | trace: #0 {main}
+[2025-05-17 08:57:04] Database Connection Established | connection_time_ms: 7.13 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 08:57:05] Session Timeout | username: UNKNOWN | ip_address: ::1
+[2025-05-17 08:57:06] PHP Error | errno: 2 | errstr: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php:127) | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | errline: 902
+[2025-05-17 08:57:21] Database Connection Established | connection_time_ms: 18.31 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 08:57:21] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 08:57:22] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 09:15:52] Database Connection Established | connection_time_ms: 6.1 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 09:15:52] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 09:15:52] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 09:19:25] Database Connection Established | connection_time_ms: 10.98 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 09:19:25] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 09:19:25] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 09:20:47] Database Connection Established | connection_time_ms: 14.39 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 09:20:47] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 09:20:47] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 09:22:50] Database Connection Established | connection_time_ms: 101.83 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 09:22:50] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 09:22:50] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 13:31:00] Database Connection Established | connection_time_ms: 4.55 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 13:31:01] Session Timeout | username: UNKNOWN | ip_address: ::1
+[2025-05-17 13:31:01] PHP Error | errno: 2 | errstr: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php:127) | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | errline: 902
+[2025-05-17 13:31:22] Database Connection Established | connection_time_ms: 12.49 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 13:31:22] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 13:31:23] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 13:37:04] Database Connection Established | connection_time_ms: 4.26 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 13:37:04] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 13:37:04] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 14:13:49] Database Connection Established | connection_time_ms: 4.6 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 14:13:49] Session Timeout | username: UNKNOWN | ip_address: ::1
+[2025-05-17 14:13:49] PHP Error | errno: 2 | errstr: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php:127) | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | errline: 902
+[2025-05-17 14:22:50] Database Connection Established | connection_time_ms: 11.59 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 14:22:50] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 14:22:51] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 14:25:17] Database Connection Established | connection_time_ms: 5.87 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 14:25:17] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 14:25:17] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 14:31:12] Database Connection Established | connection_time_ms: 3.92 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 14:31:12] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 14:31:12] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 14:47:35] Database Connection Established | connection_time_ms: 5.73 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 14:47:35] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 14:47:35] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1221 | trace: #0 {main}
+[2025-05-17 20:37:59] Database Connection Established | connection_time_ms: 5.32 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 20:37:59] Session Timeout | username: UNKNOWN | ip_address: ::1
+[2025-05-17 20:37:59] PHP Error | errno: 2 | errstr: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php:127) | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | errline: 902
+[2025-05-17 20:41:08] Database Connection Established | connection_time_ms: 9.97 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 20:41:08] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 20:41:08] PHP Error | errno: 8192 | errstr: htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard_commission_widget.php | errline: 42
+[2025-05-17 20:41:08] PHP Error | errno: 8192 | errstr: htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard_commission_widget.php | errline: 42
+[2025-05-17 20:41:08] PHP Error | errno: 8192 | errstr: htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated | errfile: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard_commission_widget.php | errline: 42
+[2025-05-17 20:41:08] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 21:20:37] Database Connection Established | connection_time_ms: 4.87 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 21:20:37] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 21:20:37] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 21:22:32] Database Connection Established | connection_time_ms: 7.42 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 21:22:32] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 21:22:32] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 21:50:16] Database Connection Established | connection_time_ms: 3.59 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 21:50:16] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 21:50:16] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 21:50:20] Database Connection Established | connection_time_ms: 7.91 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 21:50:20] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 21:50:20] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 21:50:26] Database Connection Established | connection_time_ms: 13.93 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 21:50:26] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 21:50:26] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 22:09:21] Database Connection Established | connection_time_ms: 4.62 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 22:09:22] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 22:09:22] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 22:09:54] Database Connection Established | connection_time_ms: 29.6 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 22:09:54] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 22:09:54] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 22:09:57] Database Connection Established | connection_time_ms: 4.3 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 22:09:57] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 22:09:57] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 22:09:58] Database Connection Established | connection_time_ms: 7.64 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 22:09:58] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 22:09:58] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 22:29:28] Database Connection Established | connection_time_ms: 6.64 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 22:29:29] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 22:29:29] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 22:37:20] Database Connection Established | connection_time_ms: 24.49 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 22:37:20] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 22:37:20] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 22:57:40] Database Connection Established | connection_time_ms: 19.65 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 22:57:41] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 22:57:41] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:00:45] Database Connection Established | connection_time_ms: 59.81 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:00:45] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:00:45] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:00:54] Database Connection Established | connection_time_ms: 8.98 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:00:54] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:00:54] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:01:35] Database Connection Established | connection_time_ms: 10.23 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:01:35] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:01:35] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:10:15] Database Connection Established | connection_time_ms: 10.33 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:10:15] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:10:15] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:14:05] Database Connection Established | connection_time_ms: 5.9 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:14:05] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:14:05] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:18:44] Database Connection Established | connection_time_ms: 5.64 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:18:44] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:18:44] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:24:47] Database Connection Established | connection_time_ms: 7.93 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:24:47] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:24:47] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-17 23:25:01] Database Connection Established | connection_time_ms: 11.2 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-17 23:25:01] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-17 23:25:01] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-18 16:38:22] Database Connection Established | connection_time_ms: 5.94 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-18 16:38:22] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-18 16:38:22] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-18 16:48:53] Database Connection Established | connection_time_ms: 12.43 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-18 16:48:53] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-18 16:48:53] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-18 16:49:24] Database Connection Established | connection_time_ms: 12.9 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP
+[2025-05-18 16:49:24] Dashboard Session Validation | is_logged_in: TRUE | username: admin | role: admin | ip_address: ::1 | user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+[2025-05-18 16:49:24] Uncaught Exception | message: Call to undefined function get_asset_url() | file: C:\xampp\htdocs\apsdreamhomefinal\admin\dashboard.php | line: 1225 | trace: #0 {main}
+[2025-05-22 07:02:58] Database Connection Established | connection_time_ms: 15.68 | server_info: 10.4.32-MariaDB | host: localhost via TCP/IP

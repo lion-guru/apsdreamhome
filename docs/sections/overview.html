@@ -1,0 +1,349 @@
+<div class="overview-section">
+    <div class="alert alert-primary">
+        <i class="fas fa-info-circle"></i> This documentation provides a comprehensive guide to the APS Dream Home real estate management system.
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-building"></i> System Introduction
+        </div>
+        <div class="card-body">
+            <p>APS Dream Home is a comprehensive real estate management system designed to streamline property listings, lead management, visit scheduling, and customer relationship management. The platform serves multiple user roles including administrators, agents, associates, and customers.</p>
+            
+            <p>The system is built with a modular architecture, featuring a robust backend database, intuitive admin interfaces, and public-facing property listings. It also includes an API layer for third-party integrations.</p>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-sitemap"></i> System Architecture</h3>
+    <p>APS Dream Home follows a traditional multi-tier architecture:</p>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">Presentation Layer</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> Public website for property listings</li>
+                        <li><i class="fas fa-check text-success"></i> Admin dashboard for system management</li>
+                        <li><i class="fas fa-check text-success"></i> Agent portal for property and lead management</li>
+                        <li><i class="fas fa-check text-success"></i> Responsive design for mobile compatibility</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">Application Layer</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> Business logic for property management</li>
+                        <li><i class="fas fa-check text-success"></i> Lead tracking and conversion</li>
+                        <li><i class="fas fa-check text-success"></i> Visit scheduling system</li>
+                        <li><i class="fas fa-check text-success"></i> Notification management</li>
+                        <li><i class="fas fa-check text-success"></i> API endpoints for integration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">Data Layer</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> MySQL database</li>
+                        <li><i class="fas fa-check text-success"></i> Data management tools</li>
+                        <li><i class="fas fa-check text-success"></i> Backup and restore functionality</li>
+                        <li><i class="fas fa-check text-success"></i> Data optimization utilities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-cubes"></i> Core Modules</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Description</th>
+                    <th>Key Features</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Property Management</strong></td>
+                    <td>Handles all property-related operations</td>
+                    <td>
+                        <ul>
+                            <li>Property listing creation and management</li>
+                            <li>Property search and filtering</li>
+                            <li>Property status tracking (available, sold, under contract)</li>
+                            <li>Property assignment to agents</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Lead Management</strong></td>
+                    <td>Manages potential customer inquiries and leads</td>
+                    <td>
+                        <ul>
+                            <li>Lead capture from multiple sources</li>
+                            <li>Lead assignment to agents</li>
+                            <li>Lead status tracking</li>
+                            <li>Conversion tracking</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Visit Scheduling</strong></td>
+                    <td>Handles property visit scheduling and management</td>
+                    <td>
+                        <ul>
+                            <li>Availability management</li>
+                            <li>Visit scheduling and confirmation</li>
+                            <li>Automated reminders</li>
+                            <li>Visit feedback collection</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Notification System</strong></td>
+                    <td>Manages all system notifications</td>
+                    <td>
+                        <ul>
+                            <li>Real-time notifications</li>
+                            <li>Email notifications</li>
+                            <li>Customizable notification templates</li>
+                            <li>Notification history tracking</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>User Management</strong></td>
+                    <td>Handles user accounts and permissions</td>
+                    <td>
+                        <ul>
+                            <li>User registration and authentication</li>
+                            <li>Role-based access control</li>
+                            <li>User profile management</li>
+                            <li>Permission management</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Analytics & Reporting</strong></td>
+                    <td>Provides insights and reports on system data</td>
+                    <td>
+                        <ul>
+                            <li>Sales and revenue reports</li>
+                            <li>Lead source analysis</li>
+                            <li>Agent performance metrics</li>
+                            <li>Property performance tracking</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3><i class="fas fa-users"></i> User Roles</h3>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">Administrator</div>
+                <div class="card-body">
+                    <p><strong>Access Level:</strong> Full system access</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul>
+                        <li>System configuration and management</li>
+                        <li>User account management</li>
+                        <li>Content management</li>
+                        <li>Data management and reporting</li>
+                        <li>API key management</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">Agent</div>
+                <div class="card-body">
+                    <p><strong>Access Level:</strong> Property and lead management</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul>
+                        <li>Property listing management</li>
+                        <li>Lead follow-up and conversion</li>
+                        <li>Visit scheduling and management</li>
+                        <li>Customer relationship management</li>
+                        <li>Sales reporting</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">Associate</div>
+                <div class="card-body">
+                    <p><strong>Access Level:</strong> Limited system access</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul>
+                        <li>View commission reports</li>
+                        <li>Track referrals</li>
+                        <li>View network performance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-secondary text-white">Customer</div>
+                <div class="card-body">
+                    <p><strong>Access Level:</strong> Public website access</p>
+                    <p><strong>Capabilities:</strong></p>
+                    <ul>
+                        <li>Browse property listings</li>
+                        <li>Submit inquiries</li>
+                        <li>Schedule property visits</li>
+                        <li>Provide feedback</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-tools"></i> System Tools</h3>
+    <p>APS Dream Home includes a comprehensive set of database management and system maintenance tools:</p>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tool</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Database Management Hub</td>
+                    <td>Central interface for accessing all database tools</td>
+                </tr>
+                <tr>
+                    <td>Dashboard Data Manager</td>
+                    <td>Tool for checking and refreshing widget data</td>
+                </tr>
+                <tr>
+                    <td>Dashboard Verification Report</td>
+                    <td>Comprehensive report on data status</td>
+                </tr>
+                <tr>
+                    <td>Database Optimizer</td>
+                    <td>Cleans and optimizes database tables</td>
+                </tr>
+                <tr>
+                    <td>Backup & Restore Tool</td>
+                    <td>Creates and manages database backups</td>
+                </tr>
+                <tr>
+                    <td>Date Refresher</td>
+                    <td>Updates date-based demo data to keep it current</td>
+                </tr>
+                <tr>
+                    <td>Structure-Based Seeder</td>
+                    <td>Intelligent data population for testing</td>
+                </tr>
+                <tr>
+                    <td>Migration Manager</td>
+                    <td>Manages database schema changes and versioning</td>
+                </tr>
+                <tr>
+                    <td>API Documentation Tool</td>
+                    <td>Generates documentation for API endpoints</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3><i class="fas fa-code"></i> Technology Stack</h3>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-header">Frontend</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fab fa-html5"></i> HTML5</li>
+                        <li><i class="fab fa-css3-alt"></i> CSS3</li>
+                        <li><i class="fab fa-js"></i> JavaScript</li>
+                        <li><i class="fab fa-bootstrap"></i> Bootstrap</li>
+                        <li><i class="fas fa-chart-line"></i> Chart.js</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-header">Backend</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fab fa-php"></i> PHP</li>
+                        <li><i class="fas fa-database"></i> MySQL</li>
+                        <li><i class="fas fa-server"></i> Apache</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-header">APIs & Integration</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-exchange-alt"></i> RESTful API</li>
+                        <li><i class="fas fa-key"></i> API Authentication</li>
+                        <li><i class="fas fa-file-code"></i> JSON Data Format</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-header">Development Tools</div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-code-branch"></i> Version Control</li>
+                        <li><i class="fas fa-database"></i> Database Migration</li>
+                        <li><i class="fas fa-bug"></i> Error Logging</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3><i class="fas fa-folder-open"></i> Directory Structure</h3>
+    <pre><code>apsdreamhomefinal/
+├── admin/                 # Admin panel files
+├── api/                   # API endpoints
+│   ├── auth/              # API authentication
+│   ├── properties/        # Property endpoints
+│   ├── leads/             # Lead management endpoints
+│   └── visits/            # Visit scheduling endpoints
+├── assets/                # Static assets (CSS, JS, images)
+├── database/              # Database management tools
+│   ├── migrations/        # Database migrations
+│   └── ...                # Other database tools
+├── docs/                  # Documentation files
+├── includes/              # Common includes
+│   ├── config/            # Configuration files
+│   ├── functions/         # Utility functions
+│   └── ...                # Other includes
+└── index.php              # Main entry point</code></pre>
+
+    <div class="alert alert-info mt-4">
+        <h4><i class="fas fa-lightbulb"></i> Getting Started</h4>
+        <p>To start using the APS Dream Home system:</p>
+        <ol>
+            <li>Access the <a href="../admin/dashboard.php">Admin Dashboard</a> for system management</li>
+            <li>Use the <a href="../database/index.php">Database Management Hub</a> for data maintenance</li>
+            <li>Explore the <a href="../api/documentation.php">API Documentation</a> for integration options</li>
+        </ol>
+    </div>
+</div>

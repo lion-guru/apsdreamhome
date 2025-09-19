@@ -1,39 +1,39 @@
 <?php
-// Simple script to test DB connection using .env settings
-function parseEnv($file) {
-    $vars = [];
-    foreach (file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-        if (strpos(trim($line), '#') === 0 || strpos($line, '=') === false) continue;
-        list($key, $val) = explode('=', $line, 2);
-        $vars[trim($key)] = trim(trim($val), '"\'');
-    }
-    return $vars;
-}
+// Simple script to test DB connection
+require 'includes/config.php';
 
-$envPath = __DIR__ . '/includes/config/.env';
-if (!file_exists($envPath)) die('No .env file found.');
-$env = parseEnv($envPath);
+// Get database config
+$config = AppConfig::getInstance()->get('database');
+$host = $config['host'];
+$user = $config['user'];
+$pass = $config['pass'];
+$db   = 'apsdreamhomefinal';
 
-$host = $env['DB_HOST'] ?? 'localhost';
-$user = $env['DB_USER'] ?? 'root';
-$pass = $env['DB_PASS'] ?? '';
-$db   = $env['DB_NAME'] ?? '';
+echo "Attempting to connect to database...\n";
+echo "Host: $host\n";
+echo "User: $user\n";
+echo "Database: $db\n\n";
 
-$conn = @new mysqli($host, $user, $pass, $db);
+// Test connection
+$conn = new mysqli($host, $user, $pass, $db);
+
 if ($conn->connect_error) {
-    echo '<b>Database connection failed:</b> ' . htmlspecialchars($conn->connect_error);
-} else {
-    echo '<b>Database connection successful!</b>';
-    $res = $conn->query('SHOW TABLES');
-    if ($res) {
-        echo '<br>Tables in database:<ul>';
-        while ($row = $res->fetch_array()) {
-            echo '<li>' . htmlspecialchars($row[0]) . '</li>';
-        }
-        echo '</ul>';
-    } else {
-        echo '<br>No tables found or error fetching tables.';
-    }
+    die("Connection failed: " . $conn->connect_error);
 }
+
+echo "✅ Successfully connected to database: $db\n";
+
+// Show tables to verify access
+$result = $conn->query("SHOW TABLES");
+if ($result) {
+    echo "\nTables in database:\n";
+    while ($row = $result->fetch_array()) {
+        echo "- " . $row[0] . "\n";
+    }
+    echo "\nTotal tables: " . $result->num_rows . "\n";
+} else {
+    echo "\nNo tables found or error: " . $conn->error . "\n";
+}
+
 $conn->close();
 ?>

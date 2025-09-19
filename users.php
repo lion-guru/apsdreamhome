@@ -4,7 +4,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
-define('DB_NAME', 'realestatephp');
+define('DB_NAME', 'apsdreamhomesfinal');
 define('DB_USER_TBL', 'user');
 
 class User {

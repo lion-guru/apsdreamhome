@@ -1,17 +1,37 @@
-# PHP Error Reporting
-php_flag display_startup_errors on
-php_flag display_errors on
-php_flag html_errors on
-
-# Error Reporting Level
-php_value error_reporting -1
+# PHP Error Reporting (disabled in production)
+php_flag display_startup_errors off
+php_flag display_errors off
+php_flag html_errors off
+ 
+# Error Reporting Level (keep server logs; do not display)
+php_value error_reporting E_ALL
 
 # Enable URL Rewriting
 RewriteEngine On
 
 # Protect Sensitive Files
-<FilesMatch "^(config\.php|\.htaccess)$">
+<FilesMatch "^(config\.php|\.htaccess|\.env|composer\.json|composer\.lock|PHPMailer\.php|SMTP\.php)$">
     Order Allow,Deny
+    Deny from all
+    Satisfy All
+</FilesMatch>
+
+# Block direct access to .env anywhere
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Block SQL dumps and backups
+<FilesMatch "\.(sql|bak|backup|old|swp)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Deny access to logs directory and common log files
+RewriteRule ^logs/ - [F]
+<FilesMatch "^(error_log|php_errors\.log|dashboard_error\.log)$">
+    Order allow,deny
     Deny from all
 </FilesMatch>
 

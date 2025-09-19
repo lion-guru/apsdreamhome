@@ -1,7 +1,9 @@
 <?php
-ini_set('session.cache_limiter','public');
-session_cache_limiter(false);
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cache_limiter','public');
+    session_cache_limiter(false);
+    session_start();
+}
 include("config.php");
 include(__DIR__ . '/includes/updated-config-paths.php');
 include(__DIR__ . '/includes/functions/common-functions.php');
@@ -17,7 +19,7 @@ include(__DIR__ . '/includes/functions/common-functions.php');
 
 <!-- Meta Tags -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="Real Estate PHP">
+<meta name="description" content="APS Dream Homes">
 <meta name="keywords" content="">
 <meta name="author" content="Unicoder">
 <link rel="shortcut icon" href="images/favicon.ico">
@@ -37,9 +39,10 @@ include(__DIR__ . '/includes/functions/common-functions.php');
 <link rel="stylesheet" href="<?php echo get_asset_url('css/font-awesome.min.css', 'css'); ?>">
 <link rel="stylesheet" type="text/css" href="fonts/flaticon/flaticon.css">
 <link rel="stylesheet" href="<?php echo get_asset_url('css/style.css', 'css'); ?>">
+<link rel="stylesheet" href="assets/css/modern-ui.css">
 
 <!-- Title -->
-<title>Real Estate PHP</title>
+<title>APS DReam Homes</title>
 </head>
 <body>
 
@@ -82,9 +85,16 @@ include(__DIR__ . '/includes/functions/common-functions.php');
        
         
      <div>
-    <object data="images/mapsuryoday.pdf" type="application/pdf" width="900" height="400">
-        alt : <a href="images/mapsuryoday.pdf">suryoday colony</a>
-    </object>
+    <div style="display: flex; flex-direction: column; align-items: center; margin: 40px 0;">
+      <div style="background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.12); border-radius: 16px; padding: 24px; max-width: 950px; width: 100%;">
+        <h2 style="font-family: 'Segoe UI', Arial, sans-serif; color: #222; margin-bottom: 16px; text-align: center;">Suryoday Colony Map</h2>
+        <object data="images/mapsuryoday.pdf" type="application/pdf" width="900" height="400" style="border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+          <div style="padding: 32px; text-align: center; color: #666;">
+            <p>Unable to display PDF. <a href="images/mapsuryoday.pdf" target="_blank" style="color: #1976d2; text-decoration: underline;">Click here to download or view in a new tab.</a></p>
+          </div>
+        </object>
+      </div>
+    </div>
 </div>
     
             

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page - APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; background-color: #f8f9fa; }
+        .card { margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        #response { 
+            margin-top: 20px; 
+            white-space: pre-wrap; 
+            max-height: 500px; 
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-left: 10px;
+        }
+        .api-key-input {
+            font-family: monospace;
+        }
+        .success { color: #198754; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">API Test Page</h1>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                Test API Authentication
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="apiKey" class="form-label fw-bold">API Key</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control api-key-input" id="apiKey" value="7f4b2a1e9d8c3b6a5f0e7d9c8b3a2f1" readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="copyBtn" data-bs-toggle="tooltip" title="Copy to clipboard">
+                            <i class="bi bi-clipboard">📋</i>
+                        </button>
+                    </div>
+                    <div class="form-text">Use this key to authenticate API requests</div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button id="testBtn" class="btn btn-primary">
+                        <i class="bi bi-lightning"></i> Test API Endpoint
+                    </button>
+                    <div id="loading" class="spinner-border text-primary d-none ms-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                API Response
+            </div>
+            <div class="card-body">
+                <pre id="response" class="bg-light p-3 rounded">Response will appear here...</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const testBtn = document.getElementById('testBtn');
+            const apiKeyInput = document.getElementById('apiKey');
+            const responseDiv = document.getElementById('response');
+            const loading = document.getElementById('loading');
+            const copyBtn = document.getElementById('copyBtn');
+            const apiUrl = '/apsdreamhomefinal/api/v1/test.php';
+
+            // Test API endpoint
+            testBtn.addEventListener('click', async () => {
+                const apiKey = apiKeyInput.value.trim();
+                
+                if (!apiKey) {
+                    showError('Please enter an API key');
+                    return;
+                }
+
+                try {
+                    setLoading(true);
+                    clearResponse();
+                    
+                    const response = await fetch(`${apiUrl}?api_key=${encodeURIComponent(apiKey)}`, {
+                        headers: {
+                            'X-API-Key': apiKey,
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    const data = await response.json().catch(() => ({}));
+                    
+                    if (!response.ok) {
+                        showError(data.error || 'API request failed');
+                        return;
+                    }
+                    
+                    showSuccess(JSON.stringify(data, null, 2));
+                } catch (error) {
+                    showError(`Error: ${error.message}`);
+                } finally {
+                    setLoading(false);
+                }
+            });
+
+            // Copy API key to clipboard
+            copyBtn.addEventListener('click', () => {
+                apiKeyInput.select();
+                document.execCommand('copy');
+                
+                // Show copied tooltip
+                const tooltip = new bootstrap.Tooltip(copyBtn, {
+                    title: 'Copied!',
+                    trigger: 'manual'
+                });
+                
+                tooltip.show();
+                setTimeout(() => tooltip.dispose(), 1000);
+            });
+
+            // Helper functions
+            function setLoading(isLoading) {
+                testBtn.disabled = isLoading;
+                loading.classList.toggle('d-none', !isLoading);
+            }
+
+            function showError(message) {
+                responseDiv.textContent = message;
+                responseDiv.className = 'error';
+            }
+
+            function showSuccess(message) {
+                responseDiv.textContent = message;
+                responseDiv.className = 'success';
+            }
+
+            function clearResponse() {
+                responseDiv.textContent = '';
+                responseDiv.className = '';
+            }
+        });
+    </script>
+    <!-- Add Bootstrap JS and Popper.js for tooltips -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

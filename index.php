@@ -1,372 +1,456 @@
 <?php
-// Performance and security configuration
-ini_set('display_errors', 0);
-error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+/**
+ * APS Dream Home - Main Index File
+ * 
+ * This is the main entry point for the APS Dream Home website.
+ * Combines the best features from all index versions with modern practices.
+ */
 
-// Output buffering for improved performance
+// Start output buffering
 ob_start();
 
-// Caching and security headers
-header('Cache-Control: public, max-age=3600, stale-while-revalidate=86400');
-header('Pragma: cache');
-header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 3600) . ' GMT');
-header('X-Frame-Options: SAMEORIGIN');
-header('X-XSS-Protection: 1; mode=block');
-header('X-Content-Type-Options: nosniff');
-header('Referrer-Policy: strict-origin-when-cross-origin');
-header('Permissions-Policy: geolocation=(self), camera=(), microphone=()');
-header('Content-Security-Policy: default-src \'self\'; 
-    script-src \'self\' https://cdn.jsdelivr.net https://unpkg.com https://www.googletagmanager.com; 
-    style-src \'self\' https://cdn.jsdelivr.net; 
-    img-src \'self\' data: https:; 
-    connect-src \'self\' https://www.google-analytics.com');
-
-// Performance tracking
+// Define application start time for performance measurement
 $start_time = microtime(true);
 
-// Include necessary files with error handling
+// Set error reporting based on environment
+if (getenv('ENVIRONMENT') === 'development') {
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+} else {
+    ini_set('display_errors', 0);
+    error_reporting(E_ALL & ~E_DEPRECATED);
+}
+
+// Define application paths
+define('APP_ROOT', __DIR__);
+define('INCLUDES_DIR', APP_ROOT . '/includes');
+
+// Load configuration and functions
+require_once INCLUDES_DIR . '/config/config.php';
+require_once INCLUDES_DIR . '/functions/common.php';
+require_once INCLUDES_DIR . '/functions/template.php';
+require_once INCLUDES_DIR . '/models/PropertyModel.php';
+
+// Start secure session
+start_secure_session(SESSION_NAME);
+
+// Set default timezone
+date_default_timezone_set('Asia/Kolkata');
+
+// Load database configuration first
+require_once INCLUDES_DIR . '/config/DatabaseConfig.php';
+
+// Initialize database connection
 try {
-    require_once(__DIR__ . '/includes/db_settings.php');
-    require_once(__DIR__ . '/includes/functions/common-functions.php');
+    // Initialize the database configuration
+    DatabaseConfig::init();
+    
+    // Get the database connection
+    $conn = DatabaseConfig::getConnection();
+    
+    if (!$conn) {
+        throw new Exception('Failed to establish database connection');
+    }
+    
+    // Set charset to ensure proper encoding
+    $conn->set_charset('utf8mb4');
+    
+    log_message('Database connection established successfully', 'info');
 } catch (Exception $e) {
-    error_log('Critical include error: ' . $e->getMessage());
-    die('System initialization error');
-}
-
-// Get database connection with error handling
-try {
-    $conn = get_db_connection();
-} catch (Exception $e) {
-    error_log('Database connection failed: ' . $e->getMessage());
-    die('Database connection error');
-}
-
-// Fetch featured properties with prepared statement
-$featured_properties = [];
-try {
-    // Validate and sanitize input parameters
-    $status = 'available';
-    $featured = 1;
-    $limit = 6;
-
-    // Prepared statement with parameterized query
-    $stmt = $conn->prepare("
-        SELECT 
-            p.id, 
-            p.title, 
-            p.description, 
-            p.price, 
-            p.bedrooms, 
-            p.bathrooms, 
-            p.area, 
-            p.location, 
-            p.image_url, 
-            p.type,
-            u.name AS agent_name,
-            u.phone AS agent_phone
-        FROM properties p
-        JOIN users u ON p.owner_id = u.id
-        WHERE p.status = ? AND p.featured = ?
-        ORDER BY p.created_at DESC
-        LIMIT ?
-    ");
-    
-    // Bind parameters with type specification
-    $stmt->bind_param('sii', $status, $featured, $limit);
-    
-    // Execute and handle potential errors
-    if (!$stmt->execute()) {
-        throw new Exception('Query execution failed: ' . $stmt->error);
-    }
-    
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 0) {
-        error_log('No featured properties found');
-    }
-    
-    while ($row = $result->fetch_assoc()) {
-        // Comprehensive data sanitization
-        $sanitized_row = [];
-        foreach ($row as $key => $value) {
-            switch ($key) {
-                case 'price':
-                    $sanitized_row[$key] = number_format(floatval($value), 2);
-                    break;
-                case 'bedrooms':
-                case 'bathrooms':
-                    $sanitized_row[$key] = intval($value);
-                    break;
-                default:
-                    $sanitized_row[$key] = htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
-            }
-        }
-        
-        // Add visit availability tracking
-        $visit_availability = get_property_visit_availability($conn, $sanitized_row['id']);
-        $sanitized_row['visit_availability'] = $visit_availability;
-        
-        $featured_properties[] = $sanitized_row;
-    }
-    
-    $stmt->close();
-} catch (Exception $e) {
-    // Enhanced error logging
-    error_log('Featured properties query error: ' . $e->getMessage());
-    error_log('Error details: ' . print_r([
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
-    ], true));
-    
-    // Fallback data
-    $featured_properties = [
-        [
-            'id' => 0,
-            'title' => 'No Properties Available',
-            'description' => 'We are currently updating our property listings.',
-            'price' => '0.00',
-            'bedrooms' => 0,
-            'bathrooms' => 0,
-            'area' => 0,
-            'location' => 'N/A',
-            'image_url' => '/assets/images/placeholder.jpg',
-            'agent_name' => 'APS Dream Homes',
-            'visit_availability' => []
-        ]
-    ];
-}
-
-// Function to get property visit availability
-function get_property_visit_availability($conn, $property_id) {
-    // Input validation
-    if (!is_numeric($property_id) || $property_id <= 0) {
-        error_log('Invalid property ID: ' . $property_id);
-        return [];
-    }
-
-    $availability = [];
-    try {
-        // Validate database connection
-        if (!$conn || $conn->connect_error) {
-            throw new Exception('Database connection is invalid');
-        }
-
-        // Prepared statement with additional security
-        $stmt = $conn->prepare("
-            SELECT 
-                day_of_week, 
-                start_time, 
-                end_time, 
-                max_visits_per_slot,
-                (SELECT COUNT(*) FROM property_visits 
-                 WHERE property_id = ? 
-                 AND visit_date = CURRENT_DATE 
-                 AND status = 'scheduled') AS current_visits
-            FROM visit_availability 
-            WHERE property_id = ?
-            AND (
-                day_of_week = DAYNAME(CURRENT_DATE) 
-                OR day_of_week IS NULL
-            )
-        ");
-
-        // Bind parameters twice for the two placeholders
-        $stmt->bind_param('ii', $property_id, $property_id);
-        
-        // Enhanced error handling for execution
-        if (!$stmt->execute()) {
-            throw new Exception('Failed to execute visit availability query: ' . $stmt->error);
-        }
-
-        $result = $stmt->get_result();
-        
-        // Check if any results were found
-        if ($result->num_rows === 0) {
-            error_log('No visit availability found for property ID: ' . $property_id);
-        }
-
-        while ($row = $result->fetch_assoc()) {
-            // Additional data transformation and validation
-            $sanitized_row = [
-                'day_of_week' => htmlspecialchars($row['day_of_week'] ?? 'Any Day'),
-                'start_time' => date('H:i', strtotime($row['start_time'])),
-                'end_time' => date('H:i', strtotime($row['end_time'])),
-                'max_visits_per_slot' => intval($row['max_visits_per_slot']),
-                'current_visits' => intval($row['current_visits']),
-                'slots_available' => max(0, intval($row['max_visits_per_slot']) - intval($row['current_visits']))
-            ];
-
-            $availability[] = $sanitized_row;
-        }
-
-        $stmt->close();
-    } catch (Exception $e) {
-        // Comprehensive error logging
-        error_log('Visit availability error for property ' . $property_id . ': ' . $e->getMessage());
-        error_log('Error details: ' . print_r([
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString()
-        ], true));
-    }
-
-    return $availability;
-}
-
-// Fetch testimonials with prepared statement
-$testimonials = [];
-try {
-    $stmt = $conn->prepare("
-        SELECT 
-            c.name, 
-            c.image_url, 
-            t.content, 
-            t.rating 
-        FROM testimonials t
-        JOIN customers c ON t.customer_id = c.id
-        WHERE t.status = 'approved'
-        LIMIT 4
-    ");
-    
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $testimonials[] = [
-                'name' => htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8'),
-                'image_url' => htmlspecialchars($row['image_url'], ENT_QUOTES, 'UTF-8'),
-                'content' => htmlspecialchars($row['content'], ENT_QUOTES, 'UTF-8'),
-                'rating' => intval($row['rating'])
-            ];
-        }
+    log_message('Database connection failed: ' . $e->getMessage(), 'error');
+    http_response_code(503);
+    // Try to include the error template, but don't fail if it doesn't exist
+    $error_template = INCLUDES_DIR . '/templates/errors/503.php';
+    if (file_exists($error_template)) {
+        include $error_template;
     } else {
-        // Default testimonial if none found
-        $testimonials = [
-            [
-                'name' => 'APS Dream Homes',
-                'image_url' => '/assets/images/default-avatar.png',
-                'content' => 'We are committed to helping you find your dream home.',
-                'rating' => 5
-            ]
-        ];
+        echo '<!DOCTYPE html><html><head><title>Service Unavailable</title></head><body><h1>Service Unavailable</h1><p>The server is temporarily unable to service your request. Please try again later.</p></body></html>';
     }
-    $stmt->close();
-} catch (Exception $e) {
-    error_log('Testimonials query failed: ' . $e->getMessage());
-    $testimonials = [
-        [
-            'name' => 'APS Dream Homes',
-            'image_url' => '/assets/images/default-avatar.png',
-            'content' => 'We are committed to helping you find your dream home.',
-            'rating' => 5
-        ]
-    ];
+    exit;
 }
 
-// Page performance logging
-$end_time = microtime(true);
-$page_load_time = round($end_time - $start_time, 4);
-error_log("Homepage load time: {$page_load_time} seconds");
+// Get property and agent counts with caching
+function get_property_counts($conn) {
+    $counts = [
+        'total_properties' => 0,
+        'sold_properties' => 0,
+        'rental_properties' => 0,
+        'total_agents' => 0
+    ];
 
-// Page metadata with enhanced SEO
-$page_title = 'APS Dream Homes - Premium Real Estate in Uttar Pradesh';
-$meta_description = 'Discover your dream property in Uttar Pradesh. APS Dream Homes offers premium residential and commercial properties with expert guidance and transparent services.';
-$canonical_url = 'https://www.apsdreamhomes.com/';
+    try {
+        // Get total properties
+        $query = "SELECT COUNT(*) as count FROM properties WHERE status = 'active'";
+        $result = $conn->query($query);
+        if ($result) {
+            $row = $result->fetch_assoc();
+            $counts['total_properties'] = (int)$row['count'];
+        }
 
-// Structured data for enhanced SEO
-$structured_data = json_encode([
-    '@context' => 'https://schema.org',
-    '@type' => 'RealEstateAgency',
-    'name' => 'APS Dream Homes',
-    'description' => $meta_description,
-    'url' => $canonical_url,
-    'logo' => $canonical_url . 'assets/images/logo.png',
-    'contactPoint' => [
-        '@type' => 'ContactPoint',
-        'telephone' => '+91-9876543210',
-        'contactType' => 'Customer Service'
-    ],
-    'potentialAction' => [
-        '@type' => 'SearchAction',
-        'target' => $canonical_url . 'search?q={search_term_string}',
-        'query-input' => 'required name=search_term_string'
-    ],
-    'offers' => [
-        '@type' => 'AggregateOffer',
-        'priceCurrency' => 'INR',
-        'lowPrice' => min(array_column($featured_properties, 'price')),
-        'highPrice' => max(array_column($featured_properties, 'price')),
-        'offerCount' => count($featured_properties),
-        'offers' => array_map(function($property) use ($canonical_url) {
-            return [
-                '@type' => 'Offer',
-                'url' => $canonical_url . 'property/' . $property['id'],
-                'price' => $property['price'],
-                'availability' => 'https://schema.org/InStock',
-                'priceCurrency' => 'INR'
-            ];
-        }, $featured_properties)
-    ],
-    'address' => [
-        '@type' => 'PostalAddress',
-        'streetAddress' => 'Gorakhpur',
-        'addressLocality' => 'Uttar Pradesh',
-        'addressCountry' => 'IN'
-    ]
-]);
+        // Get sold properties
+        $query = "SELECT COUNT(*) as count FROM properties WHERE status = 'sold' AND sale_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)";
+        $result = $conn->query($query);
+        if ($result) {
+            $row = $result->fetch_assoc();
+            $counts['sold_properties'] = (int)$row['count'];
+        }
+
+        // Get rental properties
+        $query = "SELECT COUNT(*) as count FROM properties WHERE property_type = 'rental' AND status = 'active'";
+        $result = $conn->query($query);
+        if ($result) {
+            $row = $result->fetch_assoc();
+            $counts['rental_properties'] = (int)$row['count'];
+        }
+
+        // Get total agents
+        $query = "SELECT COUNT(*) as count FROM users WHERE role = 'agent' AND status = 'active'";
+        $result = $conn->query($query);
+        if ($result) {
+            $row = $result->fetch_assoc();
+            $counts['total_agents'] = (int)$row['count'];
+        }
+    } catch (Exception $e) {
+        error_log('Error getting property counts: ' . $e->getMessage());
+    }
+
+    return $counts;
+}
+
+// Get counts
+$counts = get_property_counts($conn);
+
+// Get featured properties
+try {
+    $propertyModel = new PropertyModel($conn);
+    $featured_properties = $propertyModel->getFeaturedProperties(6);
+} catch (Exception $e) {
+    log_message('Error fetching featured properties: ' . $e->getMessage(), 'error');
+    $featured_properties = [];
+}
+
+// Start output buffering for the main content
+ob_start();
 ?>
 <!DOCTYPE html>
-<html lang="en" prefix="og: https://ogp.me/ns#">
+<html lang="en" class="no-js">
 <head>
+    <!-- Primary Meta Tags -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-    <meta name="description" content="<?php echo htmlspecialchars($meta_description); ?>">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="<?php echo htmlspecialchars($canonical_url); ?>" />
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Find your dream home with APS Dream Home. Browse our exclusive collection of properties for sale and rent in prime locations.">
+    <meta name="keywords" content="real estate, property, home for sale, rent, apartments, houses, APS Dream Home">
+    <meta name="author" content="APS Dream Home">
+    <meta name="robots" content="index, follow">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo htmlspecialchars($canonical_url); ?>">
-    <meta property="og:title" content="<?php echo htmlspecialchars($page_title); ?>">
-    <meta property="og:description" content="<?php echo htmlspecialchars($meta_description); ?>">
-    <meta property="og:image" content="<?php echo htmlspecialchars($canonical_url . 'assets/images/og-banner.jpg'); ?>">
+    <meta property="og:url" content="<?php echo SITE_URL; ?>/">
+    <meta property="og:title" content="APS Dream Home | Find Your Dream Property">
+    <meta property="og:description" content="Discover exclusive properties for sale and rent in prime locations. Your dream home is just a click away!">
+    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="<?php echo htmlspecialchars($canonical_url); ?>">
-    <meta name="twitter:title" content="<?php echo htmlspecialchars($page_title); ?>">
-    <meta name="twitter:description" content="<?php echo htmlspecialchars($meta_description); ?>">
-    <meta name="twitter:image" content="<?php echo htmlspecialchars($canonical_url . 'assets/images/twitter-banner.jpg'); ?>">
+    <meta name="twitter:url" content="<?php echo SITE_URL; ?>/">
+    <meta name="twitter:title" content="APS Dream Home | Find Your Dream Property">
+    <meta name="twitter:description" content="Discover exclusive properties for sale and rent in prime locations. Your dream home is just a click away!">
+    <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.jpg">
 
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    <?php echo $structured_data; ?>
-    </script>
+    <title>APS Dream Home | Find Your Dream Property</title>
 
-    <!-- Preload critical assets -->
-    <link rel="preload" href="/assets/css/main.css" as="style">
-    <link rel="preload" href="/assets/js/main.js" as="script">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?php echo SITE_URL; ?>/assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="<?php echo SITE_URL; ?>/assets/images/apple-touch-icon.png">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <!-- Preload Critical CSS -->
+    <link rel="preload" href="<?php echo SITE_URL; ?>/assets/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/bootstrap.min.css"></noscript>
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/plugins/font-awesome/css/all.min.css"
+          onerror="this.onerror=null; this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Critical CSS (inlined) -->
+    <style>
+        /* Critical CSS for above-the-fold content */
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #fd7e14;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('<?php echo SITE_URL; ?>/assets/images/hero/home-hero.jpg') no-repeat center center/cover;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            color: #fff;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Rest of the HTML remains the same as the previous version -->
-    <!-- Navigation, Hero Section, Featured Properties, Testimonials, CTA, Footer -->
-    <!-- ... (previous HTML content) ... -->
+    <!-- Navigation -->
+    <?php include INCLUDES_DIR . '/templates/header.php'; ?>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/js/main.js"></script>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="hero-title">Find Your Dream Home</h1>
+                    <p class="hero-subtitle">Discover the perfect property that matches your lifestyle and budget</p>
+                    
+                    <!-- Property Search Form -->
+                    <div class="search-container bg-white p-4 rounded shadow">
+                        <form action="properties.php" method="GET" class="row g-3">
+                            <div class="col-md-4">
+                                <select name="type" class="form-select">
+                                    <option value="">Property Type</option>
+                                    <option value="house">House</option>
+                                    <option value="apartment">Apartment</option>
+                                    <option value="villa">Villa</option>
+                                    <option value="plot">Plot</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select name="purpose" class="form-select">
+                                    <option value="sale">For Sale</option>
+                                    <option value="rent">For Rent</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-2"></i> Search Properties
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row g-4 text-center">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card p-4 bg-white rounded shadow-sm">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-home fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="stat-number"><?php echo number_format($counts['total_properties']); ?>+</h3>
+                        <p class="stat-label mb-0">Properties</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card p-4 bg-white rounded shadow-sm">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-key fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="stat-number"><?php echo number_format($counts['sold_properties']); ?>+</h3>
+                        <p class="stat-label mb-0">Recently Sold</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card p-4 bg-white rounded shadow-sm">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-building fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="stat-number"><?php echo number_format($counts['rental_properties']); ?>+</h3>
+                        <p class="stat-label mb-0">For Rent</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card p-4 bg-white rounded shadow-sm">
+                        <div class="stat-icon mb-3">
+                            <i class="fas fa-user-tie fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="stat-number"><?php echo number_format($counts['total_agents']); ?>+</h3>
+                        <p class="stat-label mb-0">Agents</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="py-5">
+        <div class="container">
+            <div class="section-title text-center mb-5">
+                <span class="subtitle text-primary">EXCLUSIVE PROPERTIES</span>
+                <h2 class="fw-bold">Featured Properties</h2>
+                <div class="title-line mx-auto"></div>
+                <p class="text-muted">Discover our handpicked selection of premium properties</p>
+            </div>
+
+            <div class="row g-4">
+                <?php if (empty($featured_properties)): ?>
+                    <div class="col-12 text-center py-5">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> No properties available at the moment. Please check back later.
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($featured_properties as $property): ?>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="property-card h-100">
+                                <div class="property-image">
+                                    <img src="<?php echo !empty($property['main_image']) ? htmlspecialchars($property['main_image']) : SITE_URL . '/assets/images/property-placeholder.jpg'; ?>" 
+                                         alt="<?php echo htmlspecialchars($property['title']); ?>" class="img-fluid">
+                                    <div class="property-badge">
+                                        <span class="badge bg-primary"><?php echo ucfirst($property['status']); ?></span>
+                                    </div>
+                                </div>
+                                <div class="property-details p-3">
+                                    <h3 class="h5">
+                                        <a href="property-details.php?id=<?php echo (int)$property['id']; ?>">
+                                            <?php echo htmlspecialchars($property['title']); ?>
+                                        </a>
+                                    </h3>
+                                    <p class="text-muted">
+                                        <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                        <?php echo htmlspecialchars($property['location']); ?>
+                                    </p>
+                                    <div class="property-features d-flex justify-content-between mb-3">
+                                        <span><i class="fas fa-bed me-1"></i> <?php echo (int)$property['bedrooms']; ?> Beds</span>
+                                        <span><i class="fas fa-bath me-1"></i> <?php echo (int)$property['bathrooms']; ?> Baths</span>
+                                        <span><i class="fas fa-vector-square me-1"></i> <?php echo number_format((float)$property['area']); ?> sq.ft</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h4 class="h5 mb-0 text-primary">
+                                            <?php echo !empty($property['price']) ? '₹' . number_format((float)$property['price']) : 'Contact for Price'; ?>
+                                        </h4>
+                                        <a href="property-details.php?id=<?php echo (int)$property['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <?php if (!empty($featured_properties)): ?>
+                <div class="text-center mt-5">
+                    <a href="properties.php" class="btn btn-primary btn-lg px-5">
+                        View All Properties <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="mb-4">Looking to Buy or Rent a Property?</h2>
+            <p class="lead mb-4">Our expert agents are ready to help you find your dream home.</p>
+            <a href="contact.php" class="btn btn-light btn-lg">Contact Us Today</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <?php include INCLUDES_DIR . '/templates/footer.php'; ?>
+
+    <!-- JavaScript Libraries -->
+    <script src="<?php echo SITE_URL; ?>/assets/js/jquery.min.js"
+            onerror="this.onerror=null; this.src='https://code.jquery.com/jquery-3.6.0.min.js'"></script>
+    <script src="<?php echo SITE_URL; ?>/assets/js/bootstrap.bundle.min.js"
+            onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'"></script>
+    
+    <!-- Custom JS -->
+    <script src="<?php echo SITE_URL; ?>/assets/js/main.js"></script>
+    
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Back to top button
+            var backToTopButton = document.getElementById('backToTop');
+            if (backToTopButton) {
+                window.addEventListener('scroll', function() {
+                    if (window.pageYOffset > 300) {
+                        backToTopButton.style.display = 'block';
+                    } else {
+                        backToTopButton.style.display = 'none';
+                    }
+                });
+                
+                backToTopButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                });
+            }
+        });
+    </script>
 </body>
 </html>
-<?php 
-// Flush output buffer
-ob_end_flush(); 
+<?php
+// Get the buffered content and clean the buffer
+$content = ob_get_clean();
+
+// Output the content
+echo $content;
+
+// Close database connection
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
+}
+
+// Log page generation time
+$end_time = microtime(true);
+$generation_time = round(($end_time - $start_time) * 1000, 2);
+log_message("Page generated in {$generation_time}ms", 'info');
 ?>

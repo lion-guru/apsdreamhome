@@ -52,14 +52,23 @@
     </style>
 </head>
 <body>
-
+<a href="#main-content" class="visually-hidden-focusable skip-link">Skip to main content</a>
 <?php
 require_once __DIR__ . '/../../includes/db_settings.php';
 
 // Default menu items if database settings are not available
 $default_menu = [
     ['url' => '/apsdreamhomefinal/', 'text' => 'Home', 'icon' => 'fa-home', 'aria_label' => 'Home Page'],
-    ['url' => '/apsdreamhomefinal/properties.php', 'text' => 'Properties', 'icon' => 'fa-building', 'aria_label' => 'View our properties'],
+    [
+        'text' => 'Projects',
+        'icon' => 'fa-building',
+        'aria_label' => 'Our Projects',
+        'submenu' => [
+            ['url' => '/apsdreamhomefinal/properties.php?location=Gorakhpur', 'text' => 'Gorakhpur Projects', 'icon' => 'fa-map-marker-alt'],
+            ['url' => '/apsdreamhomefinal/properties.php?location=Lucknow', 'text' => 'Lucknow Projects', 'icon' => 'fa-map-marker-alt']
+        ]
+    ],
+    ['url' => '/apsdreamhomefinal/properties.php', 'text' => 'All Properties', 'icon' => 'fa-building', 'aria_label' => 'View all properties'],
     ['url' => '/apsdreamhomefinal/about.php', 'text' => 'About', 'icon' => 'fa-info-circle', 'aria_label' => 'About Us'],
     ['url' => '/apsdreamhomefinal/contact.php', 'text' => 'Contact', 'icon' => 'fa-envelope', 'aria_label' => 'Contact Us'],
     ['url' => '/apsdreamhomefinal/login.php', 'text' => 'Login', 'icon' => 'fa-sign-in-alt', 'aria_label' => 'Login to Your Account']
@@ -216,9 +225,28 @@ $hoverColor = $header_styles['hover_color'];
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     }
+    .skip-link {
+        position: absolute;
+        left: -999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        z-index: 10000;
+        background: #007bff;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 4px;
+    }
+    .skip-link:focus {
+        left: 16px;
+        top: 16px;
+        width: auto;
+        height: auto;
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
 </style>
-
-<!-- Header Section -->
 <header class="site-header" role="banner">
     <div class="container">
         <div class="row align-items-center">
@@ -235,14 +263,37 @@ $hoverColor = $header_styles['hover_color'];
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-auto">
                             <?php foreach ($menu_items as $item): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo htmlspecialchars($item['url']); ?>" aria-label="<?php echo htmlspecialchars($item['aria_label'] ?? $item['text']); ?>">
-                                    <?php if (!empty($item['icon'])): ?>
-                                        <i class="fas <?php echo htmlspecialchars($item['icon']); ?>" aria-hidden="true"></i>
-                                    <?php endif; ?>
-                                    <span><?php echo htmlspecialchars($item['text']); ?></span>
-                                </a>
-                            </li>
+                                <?php if (isset($item['submenu'])): ?>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="<?php echo strtolower(str_replace(' ', '-', $item['text'])); ?>-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <?php if (!empty($item['icon'])): ?>
+                                                <i class="fas <?php echo htmlspecialchars($item['icon']); ?>" aria-hidden="true"></i>
+                                            <?php endif; ?>
+                                            <span><?php echo htmlspecialchars($item['text']); ?></span>
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="<?php echo strtolower(str_replace(' ', '-', $item['text'])); ?>-dropdown">
+                                            <?php foreach ($item['submenu'] as $subitem): ?>
+                                                <li>
+                                                    <a class="dropdown-item" href="<?php echo htmlspecialchars($subitem['url']); ?>" aria-label="<?php echo htmlspecialchars($subitem['aria_label'] ?? $subitem['text']); ?>">
+                                                        <?php if (!empty($subitem['icon'])): ?>
+                                                            <i class="fas <?php echo htmlspecialchars($subitem['icon']); ?> me-2" aria-hidden="true"></i>
+                                                        <?php endif; ?>
+                                                        <?php echo htmlspecialchars($subitem['text']); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </li>
+                                <?php else: ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="<?php echo htmlspecialchars($item['url']); ?>" aria-label="<?php echo htmlspecialchars($item['aria_label'] ?? $item['text']); ?>">
+                                            <?php if (!empty($item['icon'])): ?>
+                                                <i class="fas <?php echo htmlspecialchars($item['icon']); ?>" aria-hidden="true"></i>
+                                            <?php endif; ?>
+                                            <span><?php echo htmlspecialchars($item['text']); ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </ul>
                     </div>
@@ -251,6 +302,7 @@ $hoverColor = $header_styles['hover_color'];
         </div>
     </div>
 </header>
+<main id="main-content" tabindex="-1">
 
 <!-- Bootstrap JS Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

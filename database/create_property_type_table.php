@@ -5,7 +5,7 @@
 $host = 'localhost';
 $user = 'root';
 $password = '';
-$database = 'realestatephp';
+$database = 'apsdreamhomefinal';
 
 // Create connection
 $conn = new mysqli($host, $user, $password, $database);

@@ -1,8 +1,8 @@
 -- Create the database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS realestatephp;
+CREATE DATABASE IF NOT EXISTS apsdreamhomefinal;
 
 -- Use the database
-USE realestatephp;
+USE apsdreamhomefinal;
 
 -- Set root password for localhost
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';

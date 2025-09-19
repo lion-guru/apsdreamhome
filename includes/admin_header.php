@@ -31,6 +31,8 @@ if ($conn) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Admin CSS -->
     <link href="/apsdreamhomefinal/assets/css/admin.css" rel="stylesheet">
+    <!-- Add Flatpickr CSS -->
+    <link rel="stylesheet" href="/node_modules/flatpickr/dist/flatpickr.min.css">
     
     <?php if (isset($additional_css)) echo $additional_css; ?>
 </head>
@@ -154,6 +156,8 @@ if ($conn) {
     
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Add Flatpickr JS -->
+    <script src="/node_modules/flatpickr/dist/flatpickr.min.js"></script>
     <!-- Admin JS -->
     <script src="/apsdreamhomefinal/assets/js/admin.js"></script>
     
