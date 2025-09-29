@@ -7,9 +7,9 @@ class Database {
 
     private function __construct() {
         $host = $_ENV['DB_HOST'] ?? 'localhost';
-        $dbname = $_ENV['DB_NAME'] ?? 'march2025apssite';
-        $username = $_ENV['DB_USER'] ?? 'root';
-        $password = $_ENV['DB_PASS'] ?? '';
+        $dbname = $_ENV['DB_DATABASE'] ?? 'march2025apssite';
+        $username = $_ENV['DB_USERNAME'] ?? 'root';
+        $password = $_ENV['DB_PASSWORD'] ?? '';
 
         try {
             $this->connection = new \PDO(
