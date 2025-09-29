@@ -1,5 +1,7 @@
 # PHP
-/vendor/
+/vendor/*
+!/vendor/composer/
+!/vendor/autoload.php
 /node_modules/
 
 # Environment files
