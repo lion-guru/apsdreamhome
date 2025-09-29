@@ -4,10 +4,30 @@
 !/vendor/autoload.php
 /node_modules/
 
-# Environment files
-.env
-.env.*
-!.env.example
+# Environment files - DO NOT COMMIT
+/.env
+/.env.*
+!/.env.example
+
+# Sensitive files
+/config.php
+/config_*.php
+/config/*.php
+
+# API keys and credentials
+/keys/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.p7b
+*.p7c
+*.p12
+*.pem
+*.crt
+*.cer
+*.der
 
 # Logs
 /logs/
