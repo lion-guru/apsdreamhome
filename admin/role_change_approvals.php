@@ -7,7 +7,10 @@ if (isset($_POST['user_id'], $_POST['role_id'], $_POST['action'])) {
     $user_id = intval($_POST['user_id']);
     $role_id = intval($_POST['role_id']);
     $action = $_POST['action'];
-    $conn->query("INSERT INTO role_change_approvals (user_id, role_id, action, requested_by, status, requested_at) VALUES ($user_id, $role_id, '$action', {$_SESSION['auser']}, 'pending', NOW())");
+    $stmt = $conn->prepare("INSERT INTO role_change_approvals (user_id, role_id, action, requested_by, status, requested_at) VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("iissi", $user_id, $role_id, $action, $_SESSION['auser'], 'pending');
+    $stmt->execute();
+    $stmt->close();
 }
 // Approve/reject
 if (isset($_POST['approval_id'], $_POST['decision'])) {

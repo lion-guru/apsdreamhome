@@ -6,9 +6,9 @@ include 'config.php';
 
 $user = $_SESSION['auser'];
 $filter_date = isset($_GET['date']) ? $_GET['date'] : '';
-$where = "WHERE uploader = '" . $conn->real_escape_string($user) . "'";
+$where = "WHERE uploader = '" . $user. "'";
 if ($filter_date) {
-    $where .= " AND DATE(created_at) = '" . $conn->real_escape_string($filter_date) . "'";
+    $where .= " AND DATE(created_at) = '" . $filter_date. "'";
 }
 $sql = "SELECT * FROM upload_audit_log $where ORDER BY created_at DESC LIMIT 100";
 $logs = $conn->query($sql);

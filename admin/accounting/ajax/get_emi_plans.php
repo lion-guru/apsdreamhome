@@ -38,7 +38,9 @@ try {
     
     // Count total records
     $totalQuery = "SELECT COUNT(*) as count FROM emi_plans ep";
-    $totalRecords = $conn->query($totalQuery)->fetch_assoc()['count'];
+    $stmt = $conn->prepare($totalQuery);
+    $stmt->execute();
+    $totalRecords = $stmt->get_result()->fetch_assoc()['count'];
     
     // Count filtered records
     $filteredQuery = "SELECT COUNT(*) as count 
@@ -47,19 +49,32 @@ try {
                      LEFT JOIN properties p ON ep.property_id = p.id";
     if (!empty($searchCondition)) {
         $filteredQuery .= $searchCondition;
+    }
+
+    if (!empty($search)) {
         $stmt = $conn->prepare($filteredQuery);
         $searchParam = "%$search%";
         $stmt->bind_param("ssss", $searchParam, $searchParam, $searchParam, $searchParam);
         $stmt->execute();
         $filteredRecords = $stmt->get_result()->fetch_assoc()['count'];
+        $stmt->close();
     } else {
-        $filteredRecords = $totalRecords;
+        $stmt = $conn->prepare($filteredQuery);
+        $stmt->execute();
+        $filteredRecords = $stmt->get_result()->fetch_assoc()['count'];
+        $stmt->close();
     }
     
+    // Validate orderBy column to prevent SQL injection
+    $allowedColumns = ['c.name', 'p.title', 'ep.total_amount', 'ep.emi_amount', 'ep.tenure_months', 'ep.start_date', 'ep.status'];
+    if (!in_array($orderBy, $allowedColumns)) {
+        $orderBy = 'ep.id'; // Default to safe column
+    }
+
     // Get the actual data
     $query .= " ORDER BY $orderBy $orderDir LIMIT ?, ?";
     $stmt = $conn->prepare($query);
-    
+
     if (!empty($search)) {
         $searchParam = "%$search%";
         $stmt->bind_param("ssssii", $searchParam, $searchParam, $searchParam, $searchParam, $start, $length);

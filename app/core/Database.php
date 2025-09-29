@@ -13,7 +13,7 @@ class Database
     {
         try {
             $host = getenv('DB_HOST') ?: 'localhost';
-            $dbname = getenv('DB_NAME') ?: 'realestatephp';
+            $dbname = getenv('DB_NAME') ?: 'apsdreamhomefinal';
             $username = getenv('DB_USER') ?: 'root';
             $password = getenv('DB_PASS') ?: '';
 
@@ -71,11 +71,36 @@ class Database
         return false;
     }
 
-    public function query(string $sql, array $params = []): \PDOStatement
+    /**
+     * Execute a database query
+     * 
+     * @param string $sql The SQL query to execute
+     * @param mixed $params Parameters for the query (can be array, string, or int)
+     * @param int|null $fetchMode The PDO fetch mode
+     * @return \PDOStatement
+     * @throws \Exception If query execution fails
+     */
+    public function query(string $sql, $params = null, ?int $fetchMode = null): \PDOStatement
     {
         try {
             $stmt = $this->connection->prepare($sql);
-            $stmt->execute($params);
+            
+            // Execute with parameters if provided
+            if ($params !== null) {
+                if (is_array($params)) {
+                    $stmt->execute($params);
+                } else {
+                    $stmt->execute([$params]);
+                }
+            } else {
+                $stmt->execute();
+            }
+            
+            // Set fetch mode if provided
+            if ($fetchMode !== null) {
+                $stmt->setFetchMode($fetchMode);
+            }
+            
             return $stmt;
         } catch (\PDOException $e) {
             throw new \Exception("Query execution failed: " . $e->getMessage());

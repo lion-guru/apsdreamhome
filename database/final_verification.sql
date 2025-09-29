@@ -1,3 +1,4 @@
+-- Active: 1758300303350@@127.0.0.1@3306@apsdreamhomefinal
 -- Final verification script to check all tables and their data counts
 -- This helps ensure all dashboard widgets have data to display
 

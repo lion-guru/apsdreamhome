@@ -4,6 +4,9 @@
  * Uses AI and user behavior to suggest properties
  */
 
+// Unified bootstrap for autoloading, json helper, timezone, session, and base JSON header
+require_once __DIR__ . '/includes/bootstrap.php';
+
 require_once __DIR__ . '/../includes/config/config.php';
 require_once __DIR__ . '/../includes/middleware/rate_limit_middleware.php';
 require_once __DIR__ . '/../includes/input_validation.php';
@@ -15,7 +18,12 @@ $rateLimitMiddleware->handle('recommendations');
 $con = getDbConnection();
 if (!$con) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed']);
+    if (class_exists('App\\Common\\Transformers\\ResponseTransformer') && function_exists('json_response')) {
+        $out = \App\Common\Transformers\ResponseTransformer::error('Database connection failed', 'DB_CONNECTION_FAILED', 500);
+        json_response($out, 500);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Database connection failed', 'code' => 'DB_CONNECTION_FAILED']);
+    }
     exit;
 }
 
@@ -25,6 +33,18 @@ $validator = new InputValidator($con);
 // Validate input
 $property_id = $validator->validateInt($_GET['property_id'] ?? 0);
 $user_id = $validator->validateInt($_GET['user_id'] ?? 0);
+
+// Basic input validation
+if (!$property_id || $property_id <= 0) {
+    http_response_code(422);
+    if (class_exists('App\\Common\\Transformers\\ResponseTransformer') && function_exists('json_response')) {
+        $out = \App\Common\Transformers\ResponseTransformer::error('The property_id field is required and must be a positive integer', 'VALIDATION_ERROR', 422, ['property_id' => ['Property ID is required and must be a positive integer']]);
+        json_response($out, 422);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Invalid property_id', 'code' => 'VALIDATION_ERROR']);
+    }
+    exit;
+}
 
 try {
     // Get property details for similarity matching
@@ -126,15 +146,29 @@ try {
     $stmt->execute();
 
     // Return recommendations
-    header('Content-Type: application/json');
-    echo json_encode([
-        'status' => 'success',
-        'recommendations' => $recommendations
-    ]);
+    if (class_exists('App\\Common\\Transformers\\ResponseTransformer') && function_exists('json_response')) {
+        $out = \App\Common\Transformers\ResponseTransformer::success(
+            ['recommendations' => $recommendations],
+            null,
+            200
+        );
+        json_response($out, 200);
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'recommendations' => $recommendations
+        ]);
+    }
 
 } catch (Exception $e) {
     error_log("Property recommendations error: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Internal server error']);
+    if (class_exists('App\\Common\\Transformers\\ResponseTransformer') && function_exists('json_response')) {
+        $out = \App\Common\Transformers\ResponseTransformer::error('An error occurred while processing your request', 'INTERNAL_SERVER_ERROR', 500);
+        json_response($out, 500);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Internal server error', 'code' => 'INTERNAL_SERVER_ERROR']);
+    }
 }
 ?>

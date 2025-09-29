@@ -8,8 +8,8 @@ $pw = password_hash('Aps@123', PASSWORD_DEFAULT);
 
 // Seed admin table
 $conn->query("DELETE FROM admin");
-$conn->query("INSERT INTO admin (auser, apass, role, status, email, phone) VALUES
-    ('superadmin', '$pw', 'superadmin', 'active', 'superadmin@aps.com', '9999999999'),
+$result = $conn->query("INSERT INTO admin (auser, apass, role, status, email, phone) VALUES
+    ('admin', '$pw', 'admin', 'active', 'admin@aps.com', '9999999999'),
     ('admin1', '$pw', 'admin', 'active', 'admin1@aps.com', '8888888888'),
     ('finance1', '$pw', 'finance', 'active', 'finance1@aps.com', '7777777777'),
     ('associate1', '$pw', 'associate', 'active', 'associate1@aps.com', '6666666666')

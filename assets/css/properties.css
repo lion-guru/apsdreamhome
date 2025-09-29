@@ -2,6 +2,7 @@
 :root {
     /* Colors */
     --primary: #3a86ff;
+    --primary-light: #e6f0ff;
     --primary-dark: #2667cc;
     --secondary: #8338ec;
     --accent: #ff006e;
@@ -13,7 +14,8 @@
     --dark: #1a1a2e;
     --dark-gray: #4a4a68;
     --medium-gray: #8d8d9e;
-    --light-gray: #f0f0f7;
+    --light-gray: #f8f9fa;
+    --lighter-gray: #f1f3f5;
     --white: #ffffff;
     
     /* Typography */
@@ -30,19 +32,30 @@
     /* Border Radius */
     --radius-sm: 0.25rem;
     --radius-md: 0.5rem;
-    --radius-lg: 1rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
     --radius-full: 9999px;
     
     /* Shadows */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
     
     /* Transitions */
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Container */
-    --container-width: 1200px;
+    --container-width: 1320px;
+    
+    /* Z-index */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
 }
 
 /* Base Styles */

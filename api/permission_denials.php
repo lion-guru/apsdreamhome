@@ -9,7 +9,10 @@ if (!isset($_SESSION['auser'])) {
 }
 $user_id = $_SESSION['auser'];
 // Check if user is admin
-$admin_check = $conn->query("SELECT ur.user_id FROM user_roles ur JOIN roles r ON ur.role_id=r.id WHERE ur.user_id=$user_id AND r.name='Admin'");
+$admin_check = $conn->prepare("SELECT ur.user_id FROM user_roles ur JOIN roles r ON ur.role_id=r.id WHERE ur.user_id=? AND r.name='Admin'");
+$stmt->bind_param("s", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 if ($admin_check->num_rows == 0) {
     echo json_encode(['error'=>'Not authorized']);
     exit;

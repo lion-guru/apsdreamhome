@@ -19,39 +19,43 @@ if (isset($_GET['inquiry_id']) && is_numeric($_GET['inquiry_id'])) {
     $inquiry = $result->fetch_assoc();
 
     if ($inquiry) {
-        // Insert as lead
-        $stmt2 = $conn->prepare('INSERT INTO leads (name, email, phone, status, notes) VALUES (?, ?, ?, ?, ?)');
+        // Insert as lead using proper column names
+        $stmt2 = $conn->prepare('INSERT INTO leads (name, email, phone, status, notes, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
         $status = 'New';
         $notes = 'Imported from contact inquiry.';
-        $stmt2->bind_param('sssss', $inquiry['1'], $inquiry['2'], $inquiry['3'], $status, $notes);
+        $stmt2->bind_param('sssss', $inquiry['name'], $inquiry['email'], $inquiry['phone'], $status, $notes);
         if ($stmt2->execute()) {
             // --- Begin integration triggers ---
             require_once __DIR__ . '/includes/integration_helpers.php';
             $lead_data = [
-                'name' => $inquiry['1'],
-                'email' => $inquiry['2'],
-                'phone' => $inquiry['3'],
+                'name' => $inquiry['name'],
+                'email' => $inquiry['email'],
+                'phone' => $inquiry['phone'],
                 'status' => $status,
                 'notes' => $notes
             ];
             // WhatsApp (if phone present)
-            if (!empty($inquiry['3'])) send_whatsapp($inquiry['3'], 'A new lead has been created for you: ' . $inquiry['1']);
+            if (!empty($inquiry['phone'])) send_whatsapp($inquiry['phone'], 'A new lead has been created for you: ' . $inquiry['name']);
             // Email (if email present)
-            if (!empty($inquiry['2'])) send_email($inquiry['2'], 'You have a new lead!', 'Lead details: ' . print_r($lead_data, true));
+            if (!empty($inquiry['email'])) send_email($inquiry['email'], 'You have a new lead!', 'Lead details: ' . print_r($lead_data, true));
             // SMS (if phone present)
-            if (!empty($inquiry['3'])) send_sms($inquiry['3'], 'New lead: ' . $inquiry['1']);
+            if (!empty($inquiry['phone'])) send_sms($inquiry['phone'], 'New lead: ' . $inquiry['name']);
             // Google Sheets export (append this lead)
             export_to_google_sheets([$lead_data]);
             // CRM sync
             sync_with_crm($lead_data);
             // --- End integration triggers ---
-            // Optionally delete inquiry after conversion
-            //$conn->query('DELETE FROM contact WHERE id = ' . $inquiry_id);
+            // Optionally delete inquiry after conversion using prepared statement
+            $stmt3 = $conn->prepare('DELETE FROM contact WHERE id = ?');
+            $stmt3->bind_param('i', $inquiry_id);
+            $stmt3->execute();
+            $stmt3->close();
             header('Location: leads.php?msg=Lead+created+from+inquiry.');
             exit();
         } else {
             $error = 'Failed to convert inquiry: ' . htmlspecialchars($stmt2->error);
         }
+        $stmt2->close();
     } else {
         $error = 'Inquiry not found.';
     }

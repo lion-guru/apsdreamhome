@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - APS Dream Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.ai {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.ai .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .message.user .message-avatar {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            order: 2;
+        }
+
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            order: 1;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: fit-content;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .chat-input textarea:focus {
+            border-color: #667eea;
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .chat-input button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .chat-input button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-suggestions {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-chip {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+        }
+
+        .property-image {
+            width: 80px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .property-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .property-info p {
+            margin: 2px 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .property-price {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .chat-context {
+            background: #e3f2fd;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #1976d2;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .confidence-indicator {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .high-confidence { color: #28a745; }
+        .medium-confidence { color: #ffc107; }
+        .low-confidence { color: #dc3545; }
+
+        .scroll-to-bottom {
+            position: absolute;
+            bottom: 140px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .scroll-to-bottom.visible {
+            opacity: 1;
+        }
+
+        .ai-features {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .feature-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .feature-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .ai-status {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 AI Assistant</h1>
+            <p>Your intelligent real estate companion</p>
+            <div class="status-indicator"></div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="chat-context">AI Assistant Online</div>
+                    Hello! I'm your AI assistant for APS Dream Home. I can help you with:
+
+                    🏠 **Property Search** - Find properties based on your requirements
+                    💰 **Price Information** - Get pricing details and market insights
+                    📍 **Location Guide** - Learn about different areas and neighborhoods
+                    📈 **Investment Advice** - Get ROI calculations and investment tips
+                    ⚖️ **Legal Help** - Understand documentation and legal processes
+                    📊 **Market Trends** - Stay updated with latest market movements
+
+                    What would you like to know about real estate today?
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-features">
+            <div class="feature-tags">
+                <span class="feature-tag">Natural Language</span>
+                <span class="feature-tag">Property Matching</span>
+                <span class="feature-tag">Market Analysis</span>
+                <span class="feature-tag">24/7 Support</span>
+            </div>
+            <div class="ai-status">AI-powered responses • Real-time property data • Personalized recommendations</div>
+        </div>
+
+        <div class="quick-suggestions">
+            <div class="suggestion-chip" onclick="sendMessage('Find 2BHK apartments in Mumbai under 50 lakhs')">2BHK in Mumbai under ₹50L</div>
+            <div class="suggestion-chip" onclick="sendMessage('What are the current market trends in Bangalore?')">Bangalore market trends</div>
+            <div class="suggestion-chip" onclick="sendMessage('Show me luxury villas in Delhi')">Luxury villas in Delhi</div>
+            <div class="suggestion-chip" onclick="sendMessage('Investment advice for first-time buyers')">Investment advice</div>
+        </div>
+
+        <div class="chat-input">
+            <textarea id="messageInput" placeholder="Ask me anything about real estate..." rows="1"></textarea>
+            <button id="sendButton" onclick="sendMessage()">🚀</button>
+        </div>
+    </div>
+
+    <div class="scroll-to-bottom" id="scrollToBottom" onclick="scrollToBottom()">
+        <span>↓</span>
+    </div>
+
+    <script>
+        let conversationId = null;
+        let isTyping = false;
+
+        // Auto-resize textarea
+        document.getElementById('messageInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Enter key to send
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        async function sendMessage(message = null) {
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const chatMessages = document.getElementById('chatMessages');
+
+            const userMessage = message || input.value.trim();
+
+            if (!userMessage || isTyping) return;
+
+            // Clear input
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Disable send button
+            sendButton.disabled = true;
+            isTyping = true;
+
+            // Add user message
+            addMessage('user', userMessage);
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                // Send to API
+                const response = await fetch('/api/ai/chat.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        conversation_id: conversationId,
+                        context: 'general_inquiry'
+                    })
+                });
+
+                const data = await response.json();
+
+                // Remove typing indicator
+                removeTypingIndicator();
+
+                if (data.success) {
+                    conversationId = data.conversation_id;
+                    addAIMessage(data.response, data.confidence || 0, data.context);
+
+                    // If property data is returned, show property cards
+                    if (data.data && data.data.properties) {
+                        displayPropertyCards(data.data.properties);
+                    }
+                } else {
+                    addAIMessage('I apologize, but I encountered an error. Please try again.', 0, 'error');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                removeTypingIndicator();
+                addAIMessage('Sorry, I am unable to connect right now. Please try again later.', 0, 'error');
+            }
+
+            // Re-enable send button
+            sendButton.disabled = false;
+            isTyping = false;
+
+            // Scroll to bottom
+            scrollToBottom();
+        }
+
+        function addMessage(type, content) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const avatar = type === 'user' ? '😊' : '🤖';
+            const avatarClass = type === 'user' ? 'user' : 'ai';
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${avatarClass}">${avatar}</div>
+                <div class="message-content">${formatMessage(content)}</div>
+            `;
+
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addAIMessage(content, confidence, context) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+
+            let confidenceClass = 'low-confidence';
+            if (confidence >= 0.8) confidenceClass = 'high-confidence';
+            else if (confidence >= 0.5) confidenceClass = 'medium-confidence';
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar ai">🤖</div>
+                <div class="message-content">
+                    ${context !== 'general_inquiry' ? `<div class="chat-context">${formatContext(context)}</div>` : ''}
+                    ${formatMessage(content)}
+                    <div class="confidence-indicator ${confidenceClass}">
+                        Confidence: ${Math.round(confidence * 100)}%
+                    </div>
+                </div>
+            `;
+
+            chatMessages.appendChild(messageDiv);
+        }
+
+        function formatMessage(content) {
+            // Convert URLs to links
+            content = content.replace(
+                /(https?:\/\/[^\s]+)/g,
+                '<a href="$1" target="_blank" style="color: #667eea; text-decoration: none;">$1</a>'
+            );
+
+            // Convert line breaks
+            return content.replace(/\n/g, '<br>');
+        }
+
+        function formatContext(context) {
+            const contexts = {
+                'property_search': '🔍 Property Search',
+                'price_inquiry': '💰 Price Inquiry',
+                'location_info': '📍 Location Info',
+                'investment_advice': '📈 Investment Advice',
+                'legal_questions': '⚖️ Legal Questions',
+                'market_trends': '📊 Market Trends'
+            };
+
+            return contexts[context] || '💬 General Inquiry';
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar ai">🤖</div>
+                <div class="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function displayPropertyCards(properties) {
+            const chatMessages = document.getElementById('chatMessages');
+
+            properties.forEach(property => {
+                const propertyDiv = document.createElement('div');
+                propertyDiv.className = 'property-card';
+                propertyDiv.innerHTML = `
+                    <img src="${property.main_image || '/assets/img/default-property.jpg'}"
+                         alt="${property.title || 'Property'}"
+                         class="property-image"
+                         onerror="this.src='/assets/img/default-property.jpg'">
+                    <div class="property-info">
+                        <h4>${property.title || 'Property Title'}</h4>
+                        <p>📍 ${property.location || 'Location'}, ${property.city || 'City'}</p>
+                        <p>🏠 ${property.property_type_name || 'Property Type'}</p>
+                        <p>💰 <span class="property-price">₹${formatPrice(property.price)}</span></p>
+                        ${property.bedrooms ? `<p>🛏️ ${property.bedrooms} Bedrooms</p>` : ''}
+                    </div>
+                `;
+
+                // Wrap in message div for proper styling
+                const messageWrapper = document.createElement('div');
+                messageWrapper.className = 'message ai';
+                messageWrapper.appendChild(propertyDiv);
+
+                chatMessages.appendChild(messageWrapper);
+            });
+        }
+
+        function formatPrice(price) {
+            if (price >= 10000000) { // 1 crore
+                return (price / 10000000).toFixed(1) + 'Cr';
+            } else if (price >= 100000) { // 1 lakh
+                return (price / 100000).toFixed(0) + 'L';
+            }
+            return price.toLocaleString();
+        }
+
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show/hide scroll to bottom button
+        document.getElementById('chatMessages').addEventListener('scroll', function() {
+            const scrollToBottom = document.getElementById('scrollToBottom');
+            const isNearBottom = this.scrollHeight - this.scrollTop - this.clientHeight < 100;
+
+            if (isNearBottom) {
+                scrollToBottom.classList.remove('visible');
+            } else {
+                scrollToBottom.classList.add('visible');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            scrollToBottom();
+        });
+
+        // Add some demo messages after 2 seconds
+        setTimeout(() => {
+            if (document.querySelectorAll('.message').length === 1) {
+                addMessage('user', 'Show me some properties in Mumbai');
+                setTimeout(() => {
+                    addAIMessage('I found several great properties in Mumbai that match your criteria. Here are the top recommendations:', 0.95, 'property_search');
+                    displayPropertyCards([
+                        {
+                            title: 'Luxury 3BHK Apartment',
+                            location: 'Andheri West',
+                            city: 'Mumbai',
+                            property_type_name: 'Apartment',
+                            price: 12500000,
+                            bedrooms: 3,
+                            main_image: '/assets/img/property1.jpg'
+                        },
+                        {
+                            title: 'Modern 2BHK Flat',
+                            location: 'Bandra East',
+                            city: 'Mumbai',
+                            property_type_name: 'Flat',
+                            price: 8500000,
+                            bedrooms: 2,
+                            main_image: '/assets/img/property2.jpg'
+                        }
+                    ]);
+                }, 1000);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

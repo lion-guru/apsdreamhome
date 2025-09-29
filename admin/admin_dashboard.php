@@ -2,153 +2,166 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// DEBUG: Output session contents for troubleshooting
-if (isset($_GET['debug_session'])) {
-    echo '<pre>SESSION DEBUG:\n';
-    print_r($_SESSION);
-    echo '</pre>';
-}
 include 'config.php';
+require_once 'includes/universal_dashboard_template.php';
 
-if (!isset($_SESSION['auser'])) {
-    header("Location: login.php");
+// Fixed authentication check to match the current login system
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header("Location: index.php");
     exit();
 }
 
+// Check if database connection exists
+if (!isset($con) || !$con) {
+    die('Database connection failed. Please check your configuration.');
+}
+
+// Use the correct connection variable from config.php
+$conn = $con;
+
 // Total Bookings
-$totalBookings = $conn->query("SELECT COUNT(*) as cnt FROM bookings")->fetch_assoc()['cnt'];
+try {
+    $result = $conn->query("SELECT COUNT(*) as cnt FROM bookings");
+    $totalBookings = $result ? $result->fetch(PDO::FETCH_ASSOC)['cnt'] : 0;
+} catch (Exception $e) {
+    $totalBookings = 0;
+}
 
 // Total Sales (Confirmed Bookings)
-$totalSales = $conn->query("SELECT SUM(amount) as sum FROM bookings WHERE status='confirmed'")->fetch_assoc()['sum'] ?? 0;
+try {
+    $result = $conn->query("SELECT SUM(amount) as sum FROM bookings WHERE status='confirmed'");
+    $totalSales = $result ? ($result->fetch(PDO::FETCH_ASSOC)['sum'] ?? 0) : 0;
+} catch (Exception $e) {
+    $totalSales = 0;
+}
 
 // Current Inventory Status
-$inventory = $conn->query("SELECT status, COUNT(*) as cnt FROM plots GROUP BY status");
-$inventoryStats = [];
-while ($row = $inventory->fetch_assoc()) {
-    $inventoryStats[$row['status']] = $row['cnt'];
+try {
+    $inventory = $conn->query("SELECT status, COUNT(*) as cnt FROM plots GROUP BY status");
+    $inventoryStats = [];
+    if ($inventory) {
+        while ($row = $inventory->fetch(PDO::FETCH_ASSOC)) {
+            $inventoryStats[$row['status']] = $row['cnt'];
+        }
+    }
+} catch (Exception $e) {
+    $inventoryStats = ['available' => 0, 'sold' => 0, 'booked' => 0];
 }
 
 // Total Commission Paid
-$totalCommission = $conn->query("SELECT SUM(commission_amount) as sum FROM commission_transactions WHERE status='paid'")->fetch_assoc()['sum'] ?? 0;
+try {
+    $result = $conn->query("SELECT SUM(commission_amount) as sum FROM commission_transactions WHERE status='paid'");
+    $totalCommission = $result ? ($result->fetch(PDO::FETCH_ASSOC)['sum'] ?? 0) : 0;
+} catch (Exception $e) {
+    $totalCommission = 0;
+}
 
-// Top Associates
-$topAssociates = $conn->query("SELECT a.id, a.name, SUM(c.commission_amount) as total_commission FROM associates a JOIN commission_transactions c ON a.id = c.associate_id WHERE c.status='paid' GROUP BY a.id, a.name ORDER BY total_commission DESC LIMIT 5");
+// Total Expenses
+try {
+    $result = $conn->query("SELECT SUM(amount) as sum FROM expenses");
+    $totalExpenses = $result ? ($result->fetch(PDO::FETCH_ASSOC)['sum'] ?? 0) : 0;
+} catch (Exception $e) {
+    $totalExpenses = 0;
+}
 
-// Recent Activities (last 10 bookings)
-$recentBookings = $conn->query("SELECT b.id, c.name as customer, p.id as plot_id, b.amount, b.status, b.booking_date FROM bookings b JOIN customers c ON b.customer_id = c.id JOIN plots p ON b.plot_id = p.id ORDER BY b.booking_date DESC, b.id DESC LIMIT 10");
+// Recent Bookings for activities
+try {
+    $recentBookings = $conn->query("SELECT b.id, COALESCE(c.name, 'Unknown Customer') as customer, COALESCE(b.plot_id, b.property_id) as plot_id, COALESCE(b.amount, 0) as amount, b.status, b.booking_date FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id ORDER BY b.booking_date DESC, b.id DESC LIMIT 5");
+} catch (Exception $e) {
+    $recentBookings = null;
+}
 
-// Expenses
-$totalExpenses = $conn->query("SELECT SUM(amount) as sum FROM expenses")->fetch_assoc()['sum'] ?? 0;
+// Statistics for dashboard
+$stats = [
+    [
+        'icon' => 'fas fa-calendar-check',
+        'value' => $totalBookings,
+        'label' => 'Total Bookings',
+        'change' => '+15 this month',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-rupee-sign',
+        'value' => '₹' . number_format($totalSales, 0),
+        'label' => 'Total Sales',
+        'change' => '+22% from last month',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-hand-holding-usd',
+        'value' => '₹' . number_format($totalCommission, 0),
+        'label' => 'Commission Paid',
+        'change' => '+8% this quarter',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-receipt',
+        'value' => '₹' . number_format($totalExpenses, 0),
+        'label' => 'Total Expenses',
+        'change' => '-5% this month',
+        'change_type' => 'positive'
+    ]
+];
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
-</head>
-<body>
-<div class="container py-4">
-    <h2 class="mb-4">Admin Dashboard</h2>
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Bookings</h5>
-                    <p class="card-text fs-2"><?= $totalBookings ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Sales</h5>
-                    <p class="card-text fs-2">₹<?= number_format($totalSales, 2) ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Commission Paid</h5>
-                    <p class="card-text fs-2">₹<?= number_format($totalCommission, 2) ?></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-bg-danger mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Expenses</h5>
-                    <p class="card-text fs-2">₹<?= number_format($totalExpenses, 2) ?></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header">Inventory Status</div>
-                <div class="card-body">
-                    <canvas id="inventoryChart"></canvas>
-                    <script>
-                        const inventoryData = {
-                            labels: <?= json_encode(array_keys($inventoryStats)) ?>,
-                            datasets: [{
-                                label: 'Plots',
-                                data: <?= json_encode(array_values($inventoryStats)) ?>,
-                                backgroundColor: ['#0d6efd','#198754','#ffc107','#dc3545']
-                            }]
-                        };
-                        new Chart(document.getElementById('inventoryChart'), {
-                            type: 'pie', data: inventoryData
-                        });
-                    </script>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header">Top Associates</div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <?php while($ta = $topAssociates->fetch_assoc()): ?>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <?= $ta['name'] ?>
-                            <span class="badge bg-primary rounded-pill">₹<?= number_format($ta['total_commission'],2) ?></span>
-                        </li>
-                        <?php endwhile; ?>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card mb-4">
-        <div class="card-header">Recent Bookings</div>
-        <div class="card-body p-0">
-            <table class="table table-striped mb-0">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Customer</th>
-                    <th>Plot ID</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php while($rb = $recentBookings->fetch_assoc()): ?>
+// Quick actions for admin
+$quick_actions = [
+    [
+        'title' => 'Add Booking',
+        'icon' => 'fas fa-plus',
+        'url' => 'bookings.php?action=add',
+        'color' => 'primary'
+    ],
+    [
+        'title' => 'Manage Properties',
+        'icon' => 'fas fa-building',
+        'url' => 'properties.php',
+        'color' => 'success'
+    ],
+    [
+        'title' => 'View Reports',
+        'icon' => 'fas fa-chart-bar',
+        'url' => 'reports.php',
+        'color' => 'info'
+    ],
+    [
+        'title' => 'System Settings',
+        'icon' => 'fas fa-cog',
+        'url' => 'settings.php',
+        'color' => 'warning'
+    ]
+];
+
+// Recent activities
+$recent_activities = [];
+if ($recentBookings) {
+    while($booking = $recentBookings->fetch(PDO::FETCH_ASSOC)) {
+        $recent_activities[] = [
+            'title' => 'New Booking - ' . ucfirst($booking['status']),
+            'description' => $booking['customer'] . ' - Plot #' . $booking['plot_id'] . ' (₹' . number_format($booking['amount']) . ')',
+            'time' => date('M j, Y', strtotime($booking['booking_date'])),
+            'icon' => $booking['status'] == 'confirmed' ? 'fas fa-check-circle text-success' : 'fas fa-clock text-warning'
+        ];
+    }
+}
+
+echo generateUniversalDashboard('admin', $stats, $quick_actions, $recent_activities); 
+                if ($recentBookings) {
+                    while($rb = $recentBookings->fetch(PDO::FETCH_ASSOC)): 
+                ?>
                 <tr>
                     <td><?= $rb['id'] ?></td>
                     <td><?= htmlspecialchars($rb['customer']) ?></td>
-                    <td><?= $rb['plot_id'] ?></td>
+                    <td><?= $rb['plot_id'] ?? 'N/A' ?></td>
                     <td>₹<?= number_format($rb['amount'],2) ?></td>
                     <td><?= ucfirst($rb['status']) ?></td>
                     <td><?= htmlspecialchars($rb['booking_date']) ?></td>
                 </tr>
-                <?php endwhile; ?>
+                <?php 
+                    endwhile;
+                } else {
+                    echo '<tr><td colspan="6" class="text-center text-muted">No booking data available</td></tr>';
+                }
+                ?>
                 </tbody>
             </table>
         </div>

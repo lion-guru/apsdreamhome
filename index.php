@@ -1,1963 +1,944 @@
 <?php
-// Start session and include configuration
+/**
+ * APS Dream Home - Modern Homepage
+ * Enhanced with modern UI/UX design
+ */
 
-require_once 'includes/db_connection.php'; // बेहतर डेटाबेस कनेक्शन फाइल का उपयोग करें
-require_once 'includes/helpers/file_helpers.php';
+// Define security constant for database connection
+define('INCLUDED_FROM_MAIN', true);
 
-// Get database connection with improved error handling
-try {
-    $conn = getDbConnection();
-    
-    // Start session if not already started
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
-    
-    // Set default timezone
-    date_default_timezone_set('Asia/Kolkata');
-    
-    // Define base URL
-    $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . basename(dirname(__FILE__));
-    define('BASE_URL', rtrim($base_url, '/'));
-} catch (Exception $e) {
-    // Log the error and display a user-friendly message
-    error_log("Database connection error: " . $e->getMessage());
-    echo "<div style='color:red;'>Sorry, we're experiencing technical difficulties. Please try again later.</div>";
-    // Optionally, you can redirect to an error page
-    // header("Location: error.php");
-    // exit;
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
+// Include the enhanced universal template system
+require_once 'includes/enhanced_universal_template.php';
 
-// Fetch featured properties
+// Create template instance
+$template = new EnhancedUniversalTemplate();
+
+// Set page metadata
+$template->setTitle('APS Dream Home - Find Your Perfect Property');
+$template->setDescription('APS Dream Home - Premium real estate platform for buying, selling, and renting properties in Gorakhpur and across India');
+// Add modern CSS
+$template->addCSS('assets/css/modern-style.css');
+$template->addCSS('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+$template->addCSS('assets/css/custom-styles.css');
+
+// Add modern JavaScript
+$template->addJS('https://unpkg.com/aos@2.3.1/dist/aos.js');
+$template->addJS('https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js');
+$template->addJS('assets/js/custom.js');
+
+// Include database connection
+require_once 'includes/db_connection.php';
+
+// Initialize variables
 $featured_properties = [];
-try {
-    $query = "
-        SELECT p.*, 
-               u.first_name, 
-               u.last_name,
-               pt.name as property_type,
-               (SELECT pi.image_url FROM property_images pi WHERE pi.property_id = p.id ORDER BY pi.is_primary DESC, pi.id ASC LIMIT 1) as main_image
-        FROM properties p
-        LEFT JOIN users u ON p.agent_id = u.id
-        LEFT JOIN property_types pt ON p.property_type_id = pt.id
-        WHERE p.status = 'available'
-        ORDER BY p.featured DESC, p.created_at DESC 
-        LIMIT 9
-    ";
-    $result = $conn->query($query);
-    
-    if ($result) {
-        $featured_properties = $result->fetch_all(MYSQLI_ASSOC);
-    }
-} catch (Exception $e) {
-    error_log('Error fetching properties: ' . $e->getMessage());
-}
-
-// Get property counts
-$counts = [
-    'total' => 0,
-    'sale' => 0,
-    'rent' => 0,
-    'agents' => 0
+$stats = [
+    'properties' => 0, 
+    'customers' => 0, 
+    'agents' => 0, 
+    'revenue' => 0
 ];
 
+// Get database connection and fetch data
 try {
-    // Get counts
-    $result = $conn->query("SELECT COUNT(*) as count FROM properties WHERE status = 'available'");
-    $counts['total'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
-    
-    // Properties for sale
-    $result = $conn->query("SELECT COUNT(*) as count FROM properties p 
-                           INNER JOIN property_types pt ON p.property_type_id = pt.id 
-                           WHERE pt.purpose = 'sale' AND p.status = 'available'");
-    $counts['sale'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
-    
-    // Properties for rent
-    $result = $conn->query("SELECT COUNT(*) as count FROM properties p 
-                           INNER JOIN property_types pt ON p.property_type_id = pt.id 
-                           WHERE pt.purpose = 'rent' AND p.status = 'available'");
-    $counts['rent'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
-    
-    // Total agents
-    $result = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = 'agent' AND status = 'active'");
-    $counts['agents'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
+    if (isset($pdo) && $pdo) {
+        // Set default timezone
+        date_default_timezone_set('Asia/Kolkata');
+
+        // Define base URL
+        $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . basename(dirname(__FILE__));
+        define('BASE_URL', rtrim($base_url, '/'));
+
+        // Fetch featured properties with improved query
+        $query = "
+            SELECT p.id, p.title, p.address, p.price, p.bedrooms, p.bathrooms, p.area_sqft, 
+                   p.status, p.description, p.created_at, p.city, p.state,
+                   u.name as agent_name, u.phone as agent_phone, u.email as agent_email,
+                   pt.name as property_type,
+                   (SELECT pi.image_path FROM property_images pi 
+                    WHERE pi.property_id = p.id 
+                    ORDER BY pi.is_primary DESC, pi.sort_order ASC LIMIT 1) as main_image
+            FROM properties p
+            LEFT JOIN users u ON p.created_by = u.id
+            LEFT JOIN property_types pt ON p.property_type_id = pt.id
+            WHERE p.status = 'available' AND p.featured = 1
+            ORDER BY p.created_at DESC
+            LIMIT 6
+        ";
+        $result = $pdo->query($query);
+        if ($result) {
+            $featured_properties = $result->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        // Fetch distinct locations for search dropdown
+        $location_query = "SELECT DISTINCT city, state FROM properties 
+                          WHERE city IS NOT NULL AND city != '' 
+                          ORDER BY state, city";
+        $location_result = $pdo->query($location_query);
+        $locations = [];
+        if ($location_result) {
+            $locations = $location_result->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        // Get statistics
+        $stats_query = "
+            SELECT 
+                (SELECT COUNT(*) FROM properties WHERE status = 'available') as properties,
+                (SELECT COUNT(*) FROM customers) as customers,
+                (SELECT COUNT(*) FROM users WHERE type = 'agent' AND status = 'active') as agents,
+                (SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE status = 'completed') as revenue
+        ";
+        $stats_result = $pdo->query($stats_query);
+        if ($stats_result) {
+            $stats = $stats_result->fetch(PDO::FETCH_ASSOC);
+        }
+    }
 } catch (Exception $e) {
-    error_log('Error fetching counts: ' . $e->getMessage());
+    error_log("Database error: " . $e->getMessage());
 }
+
+// Start output buffering for content
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Find your dream home with APS Dream Home. Browse our exclusive collection of properties for sale and rent in prime locations.">
-    <meta name="keywords" content="real estate, property, dream home, house for sale, apartments, villas, real estate agent">
-    <meta name="author" content="APS Dream Home">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?= rtrim(BASE_URL, '/') . $_SERVER['REQUEST_URI'] ?>">
-    <meta property="og:title" content="APS Dream Home - Find Your Perfect Property">
-    <meta property="og:description" content="Discover your dream home with our exclusive collection of properties for sale and rent.">
-    <meta property="og:image" content="<?= BASE_URL ?>/assets/images/og-image.jpg">
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="APS Dream Home - Find Your Perfect Property">
-    <meta name="twitter:description" content="Discover your dream home with our exclusive collection of properties for sale and rent.">
-    <meta name="twitter:image" content="<?= BASE_URL ?>/assets/images/og-image.jpg">
-    
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>/assets/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>/assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="<?= BASE_URL ?>/assets/favicon/site.webmanifest">
-    <link rel="mask-icon" href="<?= BASE_URL ?>/assets/favicon/safari-pinned-tab.svg" color="#1a237e">
-    <meta name="msapplication-TileColor" content="#1a237e">
-    <meta name="theme-color" content="#1a237e">
-    
-    <title>APS Dream Home - Find Your Perfect Property</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- AOS Animation Library -->
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
-    
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/modern-styles.css">
-    <link rel="stylesheet" href="assets/css/modern-homepage-enhancements.css">
-    <link rel="stylesheet" href="assets/css/property-cards.css">
-    
-    <style>
-        /* Critical CSS - Inlined for above-the-fold content */
-        :root {
-            --primary-color: #2c3e50; /* Darker blue */
-            --primary-dark: #1a2530; 
-            --primary-light: #4a6b8a;
-            --secondary-color: #e74c3c; /* Vibrant red accent */
-            --secondary-dark: #c0392b;
-            --secondary-light: #f5b7b1;
-            --accent-color: #f39c12; /* Warm orange */
-            --success-color: #27ae60;
-            --warning-color: #f1c40f;
-            --danger-color: #e74c3c;
-            --light-bg: #f8f9fa;
-            --dark-bg: #121212;
-            --text-color: #333;
-            --text-light: #f8f9fa;
-            --text-muted: #6c757d;
-            --border-radius-sm: 0.25rem;
-            --border-radius: 0.5rem;
-            --border-radius-lg: 1rem;
-            --transition-fast: all 0.2s ease;
-            --transition-base: all 0.3s ease;
-            --transition-slow: all 0.5s ease;
-            --font-main: 'Inter', sans-serif;
-            --font-heading: 'Poppins', sans-serif;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
-            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
-        }
-        
-        /* Modern Minimalist Design Elements */
-        .minimalist-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
-        
-        /* Video Tour Section Styling */
-        .video-container {
-            border-radius: var(--border-radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
 
-        .video-play-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            transition: var(--transition-base);
-            text-decoration: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
+<!-- JavaScript functionality has been moved to assets/js/custom.js -->
 
-        .video-play-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-        
-        /* Sustainability Badges */
-        .property-badges {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            display: flex;
-            gap: 8px;
-            z-index: 2;
-        }
-
-        .eco-badge, .energy-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .eco-badge {
-            background: rgba(76, 175, 80, 0.9);
-            color: white;
-        }
-
-        .energy-badge {
-            background: rgba(255, 193, 7, 0.9);
-            color: #333;
-        }
-
-        .minimalist-card:hover {
-            transform: translateY(-10px) rotateY(3deg);
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 3D Elements */
-        .property-card {
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        .property-card:hover .property-content {
-            transform: translateZ(10px);
-        }
-
-        .property-content {
-            transition: transform 0.4s ease;
-            transform: translateZ(0);
-        }
-
-        .service-icon {
-            transform-style: preserve-3d;
-            transition: transform 0.6s ease;
-        }
-
-        .service-box:hover .service-icon {
-            transform: rotateY(180deg) translateZ(20px);
-        }
-        
-        /* Print styles */
-        @media print {
-            .no-print, nav, footer, .back-to-top {
-                display: none !important;
-            }
-            body {
-                font-size: 12pt;
-                line-height: 1.5;
-                color: #000;
-                background: #fff;
-            }
-            a[href^="http"]::after {
-                content: " (" attr(href) ")";
-                font-size: 0.8em;
-                font-weight: normal;
-            }
-            .container {
-                width: 100%;
-                max-width: 100%;
-            }
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            color: var(--text-color);
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        /* Modern Hero Section */
-        .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('assets/images/hero/luxury-home-1.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: white;
-            padding: 180px 0 120px;
-            margin-bottom: 80px;
-            position: relative;
-            height: 80vh;
-            min-height: 600px;
-        }
-        
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 150px;
-            background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-title {
-            font-size: 4rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-        }
-        
-        .hero-subtitle {
-            font-size: 1.8rem;
-            margin-bottom: 2.5rem;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-        }
-        
-        /* Modern Search Box */
-        .search-box {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            transition: all 0.4s ease;
-            transform: translateY(0);
-        }
-        
-        .search-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-        }
-        
-        .search-box .form-select,
-        .search-box .form-control {
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(0,0,0,0.08);
-            font-size: 1rem;
-            box-shadow: none;
-            transition: all 0.3s ease;
-        }
-        
-        .search-box .form-select:focus,
-        .search-box .form-control:focus {
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
-        }
-        
-        .search-box .btn-primary {
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
-            border: none;
-            transition: all 0.3s ease;
-        }
-        
-        .search-box .btn-primary:hover {
-            background: linear-gradient(45deg, var(--primary-light), var(--primary-color));
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
-        }
-        
-        /* Modern Property Cards */
-        .property-card {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            background: white;
-            border: none;
-            margin-bottom: 30px;
-        }
-        
-        .property-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-        
-        .property-image-container {
-            height: 280px;
-            position: relative;
-        }
-        
-        .property-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        
-        .property-card:hover .property-img {
-            transform: scale(1.1);
-        }
-        
-        .property-badge {
-            position: absolute;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-        
-        /* Sustainability Badges */
-        .property-badges {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            display: flex;
-            gap: 8px;
-            z-index: 2;
-        }
-
-        .eco-badge, .energy-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .eco-badge {
-            background: rgba(76, 175, 80, 0.9);
-            color: white;
-        }
-
-        .energy-badge {
-            background: rgba(255, 193, 7, 0.9);
-            color: #333;
-        }
-        
-        .property-type {
-            top: 15px;
-            left: 15px;
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .property-price {
-            top: 15px;
-            right: 15px;
-            background: white;
-            color: var(--primary-dark);
-        }
-        
-        .favorite-btn {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            z-index: 2;
-        }
-        
-        .favorite-btn:hover {
-            transform: scale(1.1);
-        }
-        
-        .property-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .property-card:hover .property-overlay {
-            opacity: 1;
-        }
-        
-        .property-content {
-            padding: 25px;
-        }
-        
-        .property-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .property-title a {
-            color: var(--primary-dark);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .property-title a:hover {
-            color: var(--primary-color);
-        }
-        
-        .property-location {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        
-        .property-location i {
-            color: var(--primary-color);
-            margin-right: 5px;
-        }
-        
-        .property-features {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-        }
-        
-        .property-features span {
-            display: flex;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        
-        .property-features i {
-            color: var(--primary-color);
-            margin-right: 5px;
-            font-size: 1rem;
-        }
-        
-        .property-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .agent-info {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-        
-        .agent-info i {
-            font-size: 1.2rem;
-            margin-right: 5px;
-        }
-        
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .status-badge.available {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-        
-        .status-badge.unavailable {
-            background: rgba(108, 117, 125, 0.1);
-            color: #6c757d;
-        }
-        
-        /* Stats Section */
-        .stats-section {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
-            color: white;
-            padding: 80px 0;
-            margin: 80px 0;
-            border-radius: 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stats-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('assets/images/bg-image/pattern/pattern.png');
-            opacity: 0.1;
-            z-index: 1;
-        }
-        
-        .stats-section .container {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .stat-box {
-            text-align: center;
-            padding: 30px 20px;
-            transition: all 0.3s ease;
-            border-radius: 16px;
-        }
-        
-        .stat-box:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-5px);
-        }
-        
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-            display: block;
-        }
-        
-        .stat-box p {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 0;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        /* Services Section */
-        .service-box {
-            padding: 40px 30px;
-            text-align: center;
-            border-radius: 16px;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            transition: all 0.4s ease;
-            height: 100%;
-            border: 1px solid rgba(0,0,0,0.03);
-        }
-        
-        .service-box:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border-color: var(--secondary-light);
-        }
-        
-        .service-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: white;
-            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
-            border-radius: 50%;
-            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .service-box:hover .service-icon {
-            transform: rotateY(180deg);
-            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
-        }
-        
-        .service-box h4 {
-            margin-bottom: 15px;
-            font-weight: 600;
-            color: var(--primary-dark);
-        }
-        
-        /* Why Choose Us Section */
-        .feature-box {
-            transition: all 0.3s ease;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-        }
-        
-        .feature-box:hover {
-            background-color: rgba(26, 35, 126, 0.03);
-            transform: translateX(5px);
-        }
-        
-        .feature-icon {
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.1);
-        }
-        
-        .feature-box:hover .feature-icon {
-            background-color: var(--primary-color) !important;
-            transform: rotateY(180deg);
-        }
-        
-        .feature-box:hover .feature-icon i {
-            color: white !important;
-        }
-        
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 99;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .back-to-top:hover {
-            background: var(--secondary-color);
-            color: white;
-            transform: translateY(-5px);
-        }
-        
-        .back-to-top.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* Navbar Styling */
-        .navbar {
-            padding: 15px 0;
-            transition: all 0.3s ease;
-            background: rgba(26, 35, 126, 0.95) !important;
-            backdrop-filter: blur(10px);
-        }
-        
-        .navbar.scrolled {
-            padding: 10px 0;
-            background: var(--primary-dark) !important;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .navbar-brand h3 {
-            font-weight: 700;
-            margin: 0;
-            font-size: 1.75rem;
-        }
-        
-        .navbar-brand span {
-            color: var(--secondary-color) !important;
-        }
-        
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.85) !important;
-            font-weight: 500;
-            padding: 10px 15px !important;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-link.active {
-            color: white !important;
-        }
-        
-        .navbar-nav .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--secondary-color);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-        
-        .navbar-nav .nav-link:hover::after,
-        .navbar-nav .nav-link.active::after {
-            width: 30px;
-        }
-        
-        .navbar .btn-primary {
-            background: var(--secondary-color);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .navbar .btn-primary:hover {
-            background: white;
-            color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Responsive Adjustments */
-        @media (max-width: 991px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-section {
-                padding: 150px 0 100px;
-            }
-            
-            .navbar-collapse {
-                background: var(--primary-dark);
-                padding: 20px;
-                border-radius: 10px;
-                margin-top: 15px;
-            }
-            
-            .navbar-nav .nav-link::after {
-                bottom: 0;
-            }
-            
-            /* Improved Mobile Navigation */
-            .navbar-toggler {
-                border: none;
-                padding: 0.5rem;
-                border-radius: 8px;
-                background-color: rgba(255,255,255,0.1);
-            }
-            
-            .navbar-toggler:focus {
-                box-shadow: none;
-                outline: none;
-            }
-            
-            /* Better touch targets for mobile */
-            .property-features span {
-                padding: 8px 0;
-            }
-            
-            .search-box .form-select,
-            .search-box .form-control {
-                padding: 15px 20px;
-                margin-bottom: 10px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-section {
-                padding: 120px 0 80px;
-            }
-            
-            .search-box {
-                margin: 0 15px;
-                padding: 20px;
-            }
-            
-            .stat-box {
-                margin-bottom: 30px;
-            }
-            
-            .service-box {
-                margin-bottom: 30px;
-            }
-            
-            /* Improved Mobile Layout */
-            .property-image-container {
-                height: 200px;
-            }
-            
-            .property-features {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-            
-            .property-footer {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-            
-            .status-badge {
-                align-self: flex-start;
-            }
-        }
-        
-        /* Small Mobile Devices */
-        @media (max-width: 576px) {
-            .hero-title {
-                font-size: 1.75rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-            
-            .section-title h2 {
-                font-size: 1.75rem;
-            }
-            
-            .property-card {
-                margin-left: 10px;
-                margin-right: 10px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <h3 class="m-0">APS <span class="text-primary">Dream Home</span></h3>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="properties.php">Properties</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.php">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.php">Contact</a>
-                    </li>
-                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
-                        <a href="login.php" class="btn btn-primary px-4">Login</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section position-relative">
-        <!-- Hero Slider -->
-        <div class="hero-slider swiper-container">
+<!-- Hero Section with Background Slider -->
+<section class="hero-section">
+    <!-- Background Slider -->
+    <div class="hero-bg">
+        <div class="hero-slider swiper">
             <div class="swiper-wrapper">
-                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban1.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban2.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban3.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban5.jpg');"></div>
-                <div class="swiper-slide" style="background-image: url('assets/images/banner/diwaliban.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/images/hero-1.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/images/hero-2.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/images/hero-3.jpg');"></div>
             </div>
             <div class="swiper-pagination"></div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
         </div>
-        
         <div class="hero-overlay"></div>
-        
-        <div class="container position-relative z-index-1">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h1 class="hero-title animate__animated animate__fadeInDown">Find Your Dream Home</h1>
-                    <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">Discover the perfect property that matches your lifestyle and budget</p>
+    </div>
+    
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="hero-content" data-aos="fade-right">
+                    <span class="badge bg-primary bg-opacity-20 text-white mb-3 px-4 py-2 rounded-pill d-inline-flex align-items-center" data-aos="fade-up" data-aos-delay="100">
+                        <i class="fas fa-star me-2"></i>Trusted by 10,000+ Clients
+                    </span>
+                    
+                    <h1 class="hero-title text-white mb-4" data-aos="fade-up" data-aos-delay="150">
+                        Your Dream Home <span class="text-primary">Awaits</span> in Gorakhpur
+                    </h1>
+                    
+                    <p class="hero-subtitle text-white-75 mb-5" data-aos="fade-up" data-aos-delay="200">
+                        Discover exclusive properties with the most trusted real estate platform in Gorakhpur. 
+                        From luxury apartments to prime commercial spaces, we have it all.
+                    </p>
+
+                    <!-- Quick Actions -->
+                    <div class="d-flex flex-wrap gap-3 mb-5" data-aos="fade-up" data-aos-delay="250">
+                        <a href="#featured-properties" class="btn btn-primary btn-lg px-4 py-3 d-flex align-items-center">
+                            <i class="fas fa-home me-2"></i>Explore Properties
+                        </a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg px-4 py-3 d-flex align-items-center">
+                            <i class="fas fa-phone-alt me-2"></i>Contact Agent
+                        </a>
+                    </div>
+
+                    <!-- Trust Indicators -->
+                    <div class="trust-indicators" data-aos="fade-up" data-aos-delay="300">
+                        <div class="d-flex align-items-center flex-wrap gap-4">
+                            <div class="d-flex align-items-center">
+                                <div class="trust-avatar-group me-2">
+                                    <img src="https://randomuser.me/api/portraits/women/32.jpg" class="trust-avatar" alt="Client">
+                                    <img src="https://randomuser.me/api/portraits/men/44.jpg" class="trust-avatar" alt="Client">
+                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="trust-avatar" alt="Client">
+                                </div>
+                                <div class="trust-text">
+                                    <div class="text-white fw-bold">5,000+</div>
+                                    <small class="text-white-50">Happy Clients</small>
+                                </div>
+                            </div>
+                            <div class="vr text-white-50 d-none d-md-block"></div>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">
+                                    <div class="text-warning">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <div class="text-white-50 small">4.8/5 (2,500+ Reviews)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="search-box animate__animated animate__fadeInUp animate__delay-2s">
-                        <form action="properties.php" method="get">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <select class="form-select" name="type">
-                                        <option value="">Property Type</option>
-                                        <option value="apartment">Apartment</option>
-                                        <option value="villa">Villa</option>
-                                        <option value="house">House</option>
-                                        <option value="office">Office</option>
-                                        <option value="resellplot">resell plot</option>
-                                        <option value="plot">plot</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <select class="form-select" name="purpose">
-                                        <option value="">Buy/Rent</option>
-                                        <option value="sale">Buy</option>
-                                        <option value="rent">Rent</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <select class="form-select" name="bedrooms">
-                                        <option value="">Bedrooms</option>
-                                        <option value="1">1 Bedroom</option>
-                                        <option value="2">2 Bedrooms</option>
-                                        <option value="3">3 Bedrooms</option>
-                                        <option value="4">4+ Bedrooms</option>
-                                    </select>
-                                </div>
-                                <div class="col-12">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="location" placeholder="Enter location...">
-                                        <button class="btn btn-primary px-4" type="submit">
-                                            <i class="fas fa-search me-2"></i> Search
-                                        </button>
+
+            <!-- Search Card -->
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="search-card">
+                    <div class="search-header text-center mb-4">
+                        <h3 class="search-title mb-2">
+                            <i class="fas fa-search-location text-primary me-2"></i>
+                            Find Your Dream Home
+                        </h3>
+                        <p class="search-subtitle text-muted">Search from our premium collection of properties</p>
+                    </div>
+
+                    <form action="properties.php" method="GET" class="modern-search-form">
+                        <div class="search-grid">
+                            <!-- Property Type -->
+                            <div class="search-group">
+                                <label class="form-label fw-medium mb-2">
+                                    <i class="fas fa-building me-2 text-primary"></i>Property Type
+                                </label>
+                                <select class="form-select" name="type">
+                                    <option value="">All Types</option>
+                                    <option value="apartment">Apartment</option>
+                                    <option value="villa">Villa</option>
+                                    <option value="house">Independent House</option>
+                                    <option value="plot">Plot/Land</option>
+                                    <option value="commercial">Commercial</option>
+                                </select>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="search-group">
+                                <label class="form-label fw-medium mb-2">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>Location
+                                </label>
+                                <select class="form-select" name="location" id="location-select">
+                                    <option value="">All Locations</option>
+                                    <?php 
+                                    $current_state = '';
+                                    foreach ($locations as $location): 
+                                        if ($location['state'] !== $current_state) {
+                                            if ($current_state !== '') echo '</optgroup>';
+                                            echo '<optgroup label="' . htmlspecialchars($location['state']) . '">';
+                                            $current_state = $location['state'];
+                                        }
+                                    ?>
+                                        <option value="<?php echo htmlspecialchars($location['city']); ?>">
+                                            <?php echo htmlspecialchars($location['city']); ?>
+                                        </option>
+                                    <?php 
+                                    endforeach; 
+                                    if ($current_state !== '') echo '</optgroup>';
+                                    ?>
+                                </select>
+                            </div>
+
+                            <!-- Price Range -->
+                            <div class="search-group">
+                                <label class="form-label fw-medium mb-2">
+                                    <i class="fas fa-indian-rupee-sign me-2 text-primary"></i>Price Range
+                                </label>
+                                <div class="price-range-slider mb-3">
+                                    <div id="price-slider" class="mb-3"></div>
+                                    <div class="d-flex justify-content-between">
+                                        <input type="text" id="min-price" name="min_price" class="form-control form-control-sm w-45" placeholder="Min Price" readonly>
+                                        <span class="mx-2 my-auto">-</span>
+                                        <input type="text" id="max-price" name="max_price" class="form-control form-control-sm w-45" placeholder="Max Price" readonly>
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+
+                            <div class="search-group">
+                                <label class="search-label">
+                                    <i class="fas fa-bed me-2"></i>Bedrooms
+                                </label>
+                                <select class="form-select modern-select" name="bedrooms">
+                                    <option value="">🛏️ Any</option>
+                                    <option value="1">1 BHK</option>
+                                    <option value="2">2 BHK</option>
+                                    <option value="3">3 BHK</option>
+                                    <option value="4">4+ BHK</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-search w-100">
+                            <i class="fas fa-search me-2"></i>🔍 Search Properties
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Video Tour Section -->
-    <section class="video-tour-section py-5">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <div class="section-title mb-4">
-                        <span class="subtitle text-primary">VIRTUAL EXPERIENCE</span>
-                        <h2 class="fw-bold">Take a Virtual Tour</h2>
-                        <div class="title-line"></div>
-                        <p class="text-muted mt-3">Experience our properties from the comfort of your home with our immersive virtual tours.</p>
-                    </div>
-                    <div class="features-list">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="feature-icon-sm bg-primary text-white rounded-circle p-2 me-3">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <p class="mb-0">Explore every corner of the property</p>
+<!-- Featured Properties Section -->
+<section id="properties" class="featured-properties-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title" data-aos="fade-up">
+                <i class="fas fa-home me-3"></i>Featured Properties
+            </h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                Handpicked premium properties for discerning buyers
+            </p>
+        </div>
+
+        <?php if (empty($featured_properties)): ?>
+            <div class="row">
+                <div class="col-12">
+                    <div class="empty-state text-center py-5">
+                        <div class="empty-icon mb-4">
+                            <i class="fas fa-home fa-4x text-muted"></i>
                         </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="feature-icon-sm bg-primary text-white rounded-circle p-2 me-3">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <p class="mb-0">High-definition video quality</p>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="feature-icon-sm bg-primary text-white rounded-circle p-2 me-3">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <p class="mb-0">Available for all premium properties</p>
-                        </div>
-                    </div>
-                    <a href="virtual-tours.php" class="btn btn-primary mt-4">View All Virtual Tours</a>
-                </div>
-                <div class="col-lg-6">
-                    <div class="video-container position-relative rounded-3 overflow-hidden shadow-lg">
-                        <img src="assets/images/property-video-thumbnail.jpg" alt="Property Video Tour" class="img-fluid w-100">
-                        <a href="#videoModal" data-bs-toggle="modal" class="video-play-btn">
-                            <i class="fas fa-play"></i>
+                        <h4 class="text-muted">No featured properties available</h4>
+                        <p class="text-muted mb-4">Please check back later for new property listings.</p>
+                        <a href="properties_template.php" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>View All Properties
                         </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Video Modal -->
-    <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="ratio ratio-16x9">
-                        <iframe src="" allowfullscreen id="videoFrame"></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Featured Properties -->
-<section class="container my-5 py-5">
-        <div class="section-title text-center mb-5">
-            <span class="subtitle text-primary">EXCLUSIVE PROPERTIES</span>
-            <h2 class="fw-bold">Featured Properties</h2>
-            <div class="title-line mx-auto"></div>
-            <p class="text-muted mt-3">Discover our handpicked selection of premium properties</p>
-        </div>
-    
-    <!-- Property Cards -->
-    <div class="row g-4">
-        <?php if (empty($featured_properties)): ?>
-            <div class="col-12 text-center py-5">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i> No properties available at the moment. Please check back later.
-                </div>
-            </div>
         <?php else: ?>
-            <?php foreach ($featured_properties as $property): 
-                // Sanitize and format property data
-                $property_id = (int)($property['id'] ?? 0);
-                $price = !empty($property['price']) ? '₹' . number_format((float)$property['price']) : 'Contact for Price';
-                $image_url = !empty($property['main_image']) ? 
-                    htmlspecialchars(trim($property['main_image']), ENT_QUOTES, 'UTF-8') : 
-                    'assets/images/property-placeholder.jpg';
-                
-                $bathrooms = isset($property['bathrooms']) ? (int)$property['bathrooms'] : 0;
-                $bedrooms = isset($property['bedrooms']) ? (int)$property['bedrooms'] : 0;
-                $area = !empty($property['area']) ? number_format((int)$property['area']) . ' sq.ft.' : 'N/A';
-                
-                $title = !empty($property['title']) ? 
-                    htmlspecialchars(trim($property['title']), ENT_QUOTES, 'UTF-8') : 
-                    'Untitled Property';
-                    
-                $address = !empty($property['address']) ? 
-                    htmlspecialchars(trim($property['address']), ENT_QUOTES, 'UTF-8') : 
-                    'Location not specified';
-                    
-                $property_type = !empty($property['type']) ? 
-                    ucfirst(htmlspecialchars(trim($property['type']), ENT_QUOTES, 'UTF-8')) : 
-                    'Property';
-                    
-                $agent_name = (!empty($property['first_name']) || !empty($property['last_name'])) ? 
-                    htmlspecialchars(trim($property['first_name'] . ' ' . ($property['last_name'] ?? '')), ENT_QUOTES, 'UTF-8') : 
-                    'Our Agent';
-                
-                $image_alt = htmlspecialchars(
-                    $title . ' - ' . $address,
-                    ENT_QUOTES,
-                    'UTF-8'
-                );
-            ?>
-                <div class="col-12 col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                    <div class="property-card h-100">
-                        <div class="position-relative overflow-hidden property-image-container">
-                            <!-- Property Image -->
-                            <a href="property-details.php?id=<?= $property_id ?>" class="d-block">
-                                <img src="<?= $image_url ?>" 
-                                     alt="<?= $image_alt ?>" 
-                                     class="property-img"
-                                     loading="lazy"
-                                     width="400"
-                                     height="300"
-                                     onerror="this.onerror=null; this.src='assets/images/property-placeholder.jpg'">
-                            </a>
-                            
-                            <!-- Property Type Badge -->
-                            <div class="property-badge property-type">
-                                <span><?= $property_type ?></span>
-                            </div>
-                            
-                            <!-- Price Tag -->
-                            <div class="property-badge property-price">
-                                <span><?= $price ?></span>
-                            </div>
-                            
-                            <!-- Sustainability Badges -->
-                            <div class="property-badges">
-                                <?php if (!empty($property['eco_friendly']) && $property['eco_friendly'] == 1): ?>
-                                <span class="eco-badge" data-bs-toggle="tooltip" title="Eco-Friendly Property">
-                                    <i class="fas fa-leaf"></i>
-                                </span>
-                                <?php endif; ?>
-                                
-                                <?php if (!empty($property['energy_rating']) && $property['energy_rating'] >= 'B'): ?>
-                                <span class="energy-badge" data-bs-toggle="tooltip" title="Energy Rating: <?= $property['energy_rating'] ?>">
-                                    <i class="fas fa-bolt"></i> <?= $property['energy_rating'] ?>
-                                </span>
-                                <?php endif; ?>
-                            </div>
-                            
-                            <!-- Favorite Button -->
-                            <button type="button" class="favorite-btn add-to-favorites"
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="Add to favorites"
-                                    aria-label="Add to favorites"
-                                    data-property-id="<?= $property_id ?>">
-                                <span class="visually-hidden">Add to favorites</span>
-                                <i class="far fa-heart"></i>
-                            </button>
-                            
-                            <!-- Quick View Overlay -->
-                            <div class="property-overlay">
-                                <a href="property-details.php?id=<?= $property_id ?>" class="btn btn-sm btn-light rounded-pill">
-                                    <i class="fas fa-eye me-1"></i> Quick View
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Property Details -->
-                        <div class="property-content">
-                            <!-- Title and Location -->
-                            <h3 class="property-title">
-                                <a href="property-details.php?id=<?= $property_id ?>">
-                                    <?= $title ?>
-                                </a>
-                            </h3>
-                            <p class="property-location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <?= $address ?>
-                            </p>
-                            
-                            <!-- Property Features -->
-                            <div class="property-features">
-                                <span><i class="fas fa-bed"></i> <?= $bedrooms ?> Beds</span>
-                                <span><i class="fas fa-bath"></i> <?= $bathrooms ?> Baths</span>
-                                <span><i class="fas fa-ruler-combined"></i> <?= $area ?></span>
-                            </div>
-                            
-                            <!-- Agent and Status -->
-                            <div class="property-footer">
-                                <div class="agent-info">
-                                    <i class="fas fa-user-circle"></i>
-                                    <span><?= $agent_name ?></span>
+            <div class="properties-grid">
+                <?php foreach ($featured_properties as $property): 
+                    $status_class = ($property['status'] ?? '') === 'available' ? 'success' : 'secondary';
+                    $status_text = ucfirst($property['status'] ?? 'Unknown');
+                    $price = isset($property['price']) ? '₹' . number_format($property['price']) : 'Price on Request';
+                ?>
+                    <div class="property-card" data-aos="fade-up">
+                        <div class="property-card-inner">
+                            <div class="property-image-container">
+                                <div class="property-badges">
+                                    <span class="badge bg-<?php echo $status_class; ?> status-badge"><?php echo $status_text; ?></span>
+                                    <span class="badge bg-primary type-badge"><?php echo htmlspecialchars($property['property_type'] ?? 'Property'); ?></span>
                                 </div>
-                                <?php if ($property['status'] === 'available'): ?>
-                                    <span class="status-badge available">Available</span>
-                                <?php else: ?>
-                                    <span class="status-badge unavailable">Unavailable</span>
-                                <?php endif; ?>
+                                <img src="<?php echo htmlspecialchars($property['main_image'] ?? 'https://via.placeholder.com/800x600/667eea/ffffff?text=Property+Image'); ?>"
+                                     alt="<?php echo htmlspecialchars($property['title'] ?? 'Property'); ?>"
+                                     class="property-image">
+                                <div class="property-overlay">
+                                    <div class="property-actions">
+                                        <button class="btn btn-action" onclick="toggleFavorite(<?php echo $property['id'] ?? 0; ?>)" title="Add to favorites">
+                                            <i class="far fa-heart"></i>
+                                        </button>
+                                        <a href="property_details.php?id=<?php echo $property['id'] ?? 0; ?>" class="btn btn-action" title="Quick View">
+                                            <i class="fas fa-expand"></i>
+                                        </a>
+                                        <button class="btn btn-action" onclick="shareProperty(<?php echo $property['id'] ?? 0; ?>)" title="Share">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="property-content">
+                                <div class="property-header">
+                                    <h3 class="property-title">
+                                        <a href="property_details.php?id=<?php echo $property['id'] ?? 0; ?>">
+                                            <?php echo htmlspecialchars($property['title'] ?? 'Untitled Property'); ?>
+                                        </a>
+                                    </h3>
+                                    <div class="property-price"><?php echo $price; ?></div>
+                                </div>
+
+                                <div class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span><?php echo htmlspecialchars($property['address'] ?? 'Location not specified'); ?></span>
+                                </div>
+
+                                <div class="property-features">
+                                    <div class="feature-item">
+                                        <i class="fas fa-bed"></i>
+                                        <span><?php echo $property['bedrooms'] ?? 0; ?> <small>Beds</small></span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-bath"></i>
+                                        <span><?php echo $property['bathrooms'] ?? 0; ?> <small>Baths</small></span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-ruler-combined"></i>
+                                        <span><?php echo number_format($property['area_sqft'] ?? 0); ?> <small>sq.ft</small></span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-layer-group"></i>
+                                        <span><?php echo $property['floors'] ?? 1; ?> <small>Floors</small></span>
+                                    </div>
+                                </div>
+
+                                <div class="property-footer">
+                                    <div class="property-agent">
+                                        <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($property['agent_name'] ?? 'Agent'); ?>" 
+                                             alt="Agent" class="agent-avatar">
+                                        <div class="agent-info">
+                                            <div class="agent-name"><?php echo htmlspecialchars($property['agent_name'] ?? 'Agent'); ?></div>
+                                            <div class="agent-company">APS Dream Home</div>
+                                        </div>
+                                    </div>
+                                    <a href="property_details.php?id=<?php echo $property['id'] ?? 0; ?>" class="btn btn-view-details">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="properties_template.php" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-arrow-right me-2"></i> View All Properties
+                </a>
+            </div>
         <?php endif; ?>
     </div>
-        
-        <?php if (!empty($featured_properties)): ?>
-        <div class="text-center mt-5">
-            <a href="properties.php" class="btn btn-primary btn-lg px-5">
-                View All Properties
-                <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-        <?php endif; ?>
-    </section>
+</section>
 
-    <!-- Stats Section -->
-    <section class="stats-section bg-light py-7 position-relative overflow-hidden">
-        <div class="container position-relative z-1">
-            <div class="section-title text-center mb-5" data-aos="fade-up">
-                <span class="subtitle text-primary d-block mb-2">OUR ACHIEVEMENTS</span>
-                <h2 class="fw-bold mb-3">We're Proud of Our Numbers</h2>
-                <p class="lead text-muted mx-auto" style="max-width: 700px;">
-                    Helping people find their dream homes with exceptional service and expertise
-                </p>
-                <div class="title-line mx-auto bg-primary"></div>
-            </div>
-            
-            <div class="row g-4 justify-content-center">
-                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
-                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
-                        <div class="stat-icon mx-auto mb-3">
-                            <i class="fas fa-home fa-2x text-primary"></i>
-                        </div>
-                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['total'] ?>">0</h3>
-                        <p class="text-muted mb-0">Total Properties</p>
-                    </div>
-                </div>
-                
-                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
-                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
-                        <div class="stat-icon mx-auto mb-3">
-                            <i class="fas fa-tag fa-2x text-primary"></i>
-                        </div>
-                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['sale'] ?>">0</h3>
-                        <p class="text-muted mb-0">Properties for Sale</p>
-                    </div>
-                </div>
-                
-                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
-                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
-                        <div class="stat-icon mx-auto mb-3">
-                            <i class="fas fa-key fa-2x text-primary"></i>
-                        </div>
-                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['rent'] ?>">0</h3>
-                        <p class="text-muted mb-0">Properties for Rent</p>
-                    </div>
-                </div>
-                
-                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="400">
-                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
-                        <div class="stat-icon mx-auto mb-3">
-                            <i class="fas fa-user-tie fa-2x text-primary"></i>
-                        </div>
-                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['agents'] ?>">0</h3>
-                        <p class="text-muted mb-0">Professional Agents</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-5" data-aos="fade-up">
-                <a href="contact.php" class="btn btn-outline-primary btn-lg px-4 me-2">
-                    <i class="fas fa-phone-alt me-2"></i> Contact Us
-                </a>
-                <a href="about.php" class="btn btn-light btn-lg px-4">
-                    <i class="fas fa-info-circle me-2"></i> Learn More
-                </a>
-            </div>
-        </div>
-        
-        <!-- Animated Background Elements -->
-        <div class="position-absolute top-0 start-0 w-100 h-100">
-            <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-5"></div>
-            <div class="position-absolute top-0 end-0 w-50 h-50 bg-primary bg-opacity-10 rounded-circle" style="filter: blur(80px); transform: translate(25%, -25%);"></div>
-            <div class="position-absolute bottom-0 start-0 w-50 h-50 bg-secondary bg-opacity-10 rounded-circle" style="filter: blur(80px); transform: translate(-25%, 25%);"></div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="container my-5 py-5">
-        <div class="section-title text-center mb-5">
-            <h2 class="fw-bold">Our Services</h2>
-            <p class="text-muted">Comprehensive real estate services for all your needs</p>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-lg-4 col-md-6">
-                <div class="service-box">
-                    <div class="service-icon">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <h4>Property Sales</h4>
-                    <p class="text-muted">Find your dream home from our extensive collection of properties listed for sale.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-box">
-                    <div class="service-icon">
-                        <i class="fas fa-key"></i>
-                    </div>
-                    <h4>Property Rental</h4>
-                    <p class="text-muted">Browse through our selection of rental properties to find your perfect temporary home.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-box">
-                    <div class="service-icon">
-                        <i class="fas fa-search-dollar"></i>
-                    </div>
-                    <h4>Property Valuation</h4>
-                    <p class="text-muted">Get an accurate estimate of your property's market value with our professional valuation service.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-box">
-                    <div class="service-icon">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                    <h4>Legal Services</h4>
-                    <p class="text-muted">Our legal experts will guide you through all the paperwork and legal formalities.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-box">
-                    <div class="service-icon">
-                        <i class="fas fa-hand-holding-usd"></i>
-                    </div>
-                    <h4>Mortgage Services</h4>
-                    <p class="text-muted">Get the best mortgage deals from our trusted financial partners.</p>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6">
-                <div class="service-box">
-                    <div class="service-icon">
-                        <i class="fas fa-hard-hat"></i>
-                    </div>
-                    <h4>Property Management</h4>
-                    <p class="text-muted">Let us take care of your property with our comprehensive management services.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-<section class="testimonials-section py-7 bg-light">
+<!-- Statistics Section -->
+<section class="statistics-section py-5">
     <div class="container">
-        <div class="section-title text-center mb-5" data-aos="fade-up">
-            <span class="subtitle text-secondary fw-bold">WHAT CLIENTS SAY</span>
-            <h2 class="fw-bold">Testimonials</h2>
-            <div class="title-line mx-auto"></div>
-            <p class="text-muted mt-4 lead">Hear from our satisfied clients about their experience</p>
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title" data-aos="fade-up">
+                <i class="fas fa-chart-bar me-3"></i>Our Achievements
+            </h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                Trusted by thousands of customers across India
+            </p>
         </div>
-        
-        <div class="testimonial-slider swiper-container" data-aos="fade-up">
-            <div class="swiper-wrapper">
-                <!-- Testimonial 1 -->
-                <div class="swiper-slide">
-                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm">
-                        <div class="testimonial-content mb-4">
-                            <div class="rating mb-3">
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                            </div>
-                            <p class="mb-0 fst-italic">"APS Dream Home helped me find the perfect property for my family. Their team was professional and understood exactly what we were looking for."</p>
-                        </div>
-                        <div class="testimonial-author d-flex align-items-center">
-                            <div class="author-image me-3">
-                                <img src="assets/images/user/default-avatar.jpg" alt="Client" class="rounded-circle" width="60" height="60">
-                            </div>
-                            <div class="author-info">
-                                <h5 class="mb-1">Rajesh Kumar</h5>
-                                <p class="text-muted mb-0">Homeowner</p>
-                            </div>
-                        </div>
-                    </div>
+
+        <div class="stats-grid-enhanced">
+            <div class="stat-card-enhanced" data-aos="fade-up">
+                <div class="stat-icon-container">
+                    <i class="fas fa-home fa-3x"></i>
                 </div>
-                
-                <!-- Testimonial 2 -->
-                <div class="swiper-slide">
-                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm">
-                        <div class="testimonial-content mb-4">
-                            <div class="rating mb-3">
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star-half-alt text-warning"></i>
-                            </div>
-                            <p class="mb-0 fst-italic">"The process of buying my first home was made so easy with APS Dream Home. Their guidance throughout was invaluable."</p>
-                        </div>
-                        <div class="testimonial-author d-flex align-items-center">
-                            <div class="author-image me-3">
-                                <img src="assets/images/user/default-avatar.jpg" alt="Client" class="rounded-circle" width="60" height="60">
-                            </div>
-                            <div class="author-info">
-                                <h5 class="mb-1">Priya Sharma</h5>
-                                <p class="text-muted mb-0">First-time Buyer</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Testimonial 3 -->
-                <div class="swiper-slide">
-                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm">
-                        <div class="testimonial-content mb-4">
-                            <div class="rating mb-3">
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                                <i class="fas fa-star text-warning"></i>
-                            </div>
-                            <p class="mb-0 fst-italic">"I've invested in multiple properties through APS Dream Home. Their market knowledge and property selection is outstanding."</p>
-                        </div>
-                        <div class="testimonial-author d-flex align-items-center">
-                            <div class="author-image me-3">
-                                <img src="assets/images/user/default-avatar.jpg" alt="Client" class="rounded-circle" width="60" height="60">
-                            </div>
-                            <div class="author-info">
-                                <h5 class="mb-1">Amit Patel</h5>
-                                <p class="text-muted mb-0">Property Investor</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-info">
+                    <div class="stat-number counter" data-count="<?php echo $stats['properties']; ?>">0</div>
+                    <div class="stat-label">Total Properties</div>
                 </div>
             </div>
-            <div class="swiper-pagination mt-5"></div>
+
+            <div class="stat-card-enhanced" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon-container">
+                    <i class="fas fa-shopping-cart fa-3x"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number counter" data-count="<?php echo $stats['revenue'] > 0 ? floor($stats['revenue'] / 1000000) : 0; ?>">0</div>
+                    <div class="stat-label">Properties Sold</div>
+                </div>
+            </div>
+
+            <div class="stat-card-enhanced" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon-container">
+                    <i class="fas fa-users fa-3x"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number counter" data-count="<?php echo $stats['customers']; ?>">0</div>
+                    <div class="stat-label">Happy Customers</div>
+                </div>
+            </div>
+
+            <div class="stat-card-enhanced" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-icon-container">
+                    <i class="fas fa-user-tie fa-3x"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number counter" data-count="<?php echo $stats['agents']; ?>">0</div>
+                    <div class="stat-label">Expert Agents</div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
-                                    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-                    <a href="index.php" class="footer-logo">APS Dream Home</a>
-                    <p class="text-muted mb-4">Your trusted partner in finding the perfect property. We connect buyers, sellers, and renters with their dream homes.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                
-                <div class="col-lg-2 col-md-6 mb-5 mb-md-0">
-                    <div class="footer-links">
-                        <h5>Quick Links</h5>
-                        <ul>
-                            <li><a href="index.php">Home</a></li>
-                            <li><a href="properties.php">Properties</a></li>
-                            <li><a href="about.php">About Us</a></li>
-                            <li><a href="contact.php">Contact</a></li>
-                            <li><a href="login.php">Login</a></li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
-                    <div class="footer-links">
-                        <h5>Property Types</h5>
-                        <ul>
-                            <li><a href="properties.php?type=apartment">Apartments</a></li>
-                            <li><a href="properties.php?type=villa">Villas</a></li>
-                            <li><a href="properties.php?type=house">Houses</a></li>
-                            <li><a href="properties.php?type=office">Offices</a></li>
-                            <li><a href="properties.php?type=land">Lands</a></li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-links">
-                        <h5>Contact Info</h5>
-                        <ul class="contact-info">
-                            <li><i class="fas fa-map-marker-alt me-2"></i> 123 Dream Street, City, Country</li>
-                            <li><i class="fas fa-phone-alt me-2"></i> +1 234 567 8900</li>
-                            <li><i class="fas fa-envelope me-2"></i> info@apsdreamhome.com</li>
-                            <li><i class="fas fa-clock me-2"></i> Mon - Sat: 9:00 - 18:00</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <div class="row align-items-center">
-                    <div class="col-md-6 text-center text-md-start">
-                        <p class="mb-0">&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
-                    </div>
-                    <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-                        <div class="footer-payments">
-                            <img src="assets/images/payment-methods.png" alt="Payment Methods" class="img-fluid" style="max-height: 30px;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
 
-    <!-- Back to Top Button -->
-    <a href="#" class="back-to-top" id="backToTop">
-        <i class="fas fa-arrow-up"></i>
-    </a>
-
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    
-    <!-- Custom JavaScript -->
-    <script src="assets/js/property-cards.js"></script>
-    
-    <!-- Main JavaScript -->
-    <script>
-    // Initialize Hero Slider
-    const heroSlider = new Swiper('.hero-slider', {
-        slidesPerView: 1,
-        effect: 'fade',
-        speed: 1000,
-        autoplay: {
-            delay: 5000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.hero-slider .swiper-pagination',
-            clickable: true,
-        },
-        navigation: {
-            nextEl: '.hero-slider .swiper-button-next',
-            prevEl: '.hero-slider .swiper-button-prev',
-        },
-    });
-    
-    // Initialize Testimonial Slider
-    const testimonialSlider = new Swiper('.testimonial-slider', {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        autoplay: {
-            delay: 4000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.testimonial-slider .swiper-pagination',
-            clickable: true,
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 1,
-            },
-            768: {
-                slidesPerView: 2,
-            },
-            1024: {
-                slidesPerView: 3,
-            },
-        },
-    });
-</script>
-    <script>
-    'use strict';
-    
-    // Initialize when DOM is fully loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize AOS
-        if (typeof AOS !== 'undefined') {
-            AOS.init({
-                duration: 800,
-                easing: 'ease-in-out',
-                once: true,
-                mirror: false
-            });
-        }
-        
-        // Initialize Swiper for hero slider
-        const heroSwiper = new Swiper('.hero-slider', {
-            effect: 'fade',
-            speed: 1000,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false,
-            },
-            loop: true,
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-        });
-        
-        // Navbar scroll effect
-        const navbar = document.querySelector('.navbar');
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-        
-        // Enable tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.forEach(tooltipTriggerEl => {
-            return new bootstrap.Tooltip(tooltipTriggerEl, {
-                trigger: 'hover focus'
-            });
-        });
-        
-        // Back to top button
-        const backToTop = document.getElementById('backToTop');
-        if (backToTop) {
-            const scrollTrigger = 100; // px
-            
-            const toggleBackToTop = () => {
-                if (window.pageYOffset > scrollTrigger) {
-                    backToTop.classList.add('show');
-                } else {
-                    backToTop.classList.remove('show');
-                }
-            };
-            
-            window.addEventListener('scroll', toggleBackToTop);
-            toggleBackToTop();
-            
-            backToTop.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-        }
-        
-        // Animate stats counter
-        const counters = document.querySelectorAll('.counter');
-        const options = {
-            threshold: 0.5
-        };
-        
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const counter = entry.target;
-                    const target = parseInt(counter.getAttribute('data-count'));
-                    let count = 0;
-                    const updateCounter = () => {
-                        if (count < target) {
-                            count += Math.ceil(target / 50);
-                            if (count > target) count = target;
-                            counter.innerText = count;
-                            setTimeout(updateCounter, 30);
-                        }
-                    };
-                    updateCounter();
-                    observer.unobserve(counter);
-                }
-            });
-        }, options);
-        
-        counters.forEach(counter => {
-            observer.observe(counter);
-        });
-        
-        // Lazy load images when they come into view
-        if ('IntersectionObserver' in window) {
-            const lazyImages = document.querySelectorAll('img[data-src]');
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        if (img.dataset.srcset) img.srcset = img.dataset.srcset;
-                        img.removeAttribute('data-src');
-                        img.removeAttribute('data-srcset');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-            
-            lazyImages.forEach(img => imageObserver.observe(img));
-        }
-        
-        // Add loading state to buttons with loading class
-        document.querySelectorAll('.btn-loading').forEach(button => {
-            button.addEventListener('click', function() {
-                this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Loading...';
-                this.disabled = true;
-            });
-        });
-        
-        // Add to favorites functionality
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.add-to-favorites')) {
-                e.preventDefault();
-                const button = e.target.closest('.add-to-favorites');
-                const propertyId = button.dataset.propertyId;
-                const icon = button.querySelector('i');
-                
-                // Toggle icon
-                if (icon.classList.contains('far')) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas', 'text-danger');
-                    showToast('Added to favorites!', 'success');
-                } else {
-                    icon.classList.remove('fas', 'text-danger');
-                    icon.classList.add('far');
-                    showToast('Removed from favorites', 'info');
-                }
-                
-                // Here you would typically make an AJAX call to update favorites
-                // updateFavorites(propertyId);
-            }
-        });
-        
-        // Show toast notification
-        function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toast-container');
-            if (!toastContainer) return;
-            
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-white bg-${type} border-0`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-            
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            `;
-            
-            toastContainer.appendChild(toast);
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-            
-            // Remove toast after it's hidden
-            toast.addEventListener('hidden.bs.toast', function() {
-                toast.remove();
-            });
-        }
-    });
-    
-    // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }, function(err) {
-                console.error('ServiceWorker registration failed: ', err);
-            });
-        });
-    }
-    
-    // Error handling for images
-    document.addEventListener('error', function(e) {
-        if (e.target.tagName.toLowerCase() === 'img') {
-            e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22300%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%23f8f9fa%22%2F%3E%3Ctext%20x%3D%22150%22%20y%3D%22100%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20fill%3D%22%236c757d%22%3EImage%20not%20found%3C%2Ftext%3E%3C%2Fsvg%3E';
-            e.target.alt = 'Image not available';
-        }
-    }, true);
-    </script>
-    
-    <!-- Toast Container -->
-    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100"></div>
-    
-    <!-- Schedule Visit Modal -->
-    <div class="modal fade" id="scheduleVisitModal" tabindex="-1" aria-labelledby="scheduleVisitModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="scheduleVisitModalLabel">Schedule a Visit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="visitForm">
-                        <input type="hidden" name="property_id" value="">
-                        <div class="mb-3">
-                            <label for="visitDate" class="form-label">Visit Date</label>
-                            <input type="date" class="form-control" id="visitDate" name="visit_date" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="visitTime" class="form-label">Visit Time</label>
-                            <select class="form-select" id="visitTime" name="visit_time" required>
-                                <option value="">Select a time</option>
-                                <option value="09:00">9:00 AM</option>
-                                <option value="10:00">10:00 AM</option>
-                                <option value="11:00">11:00 AM</option>
-                                <option value="13:00">1:00 PM</option>
-                                <option value="14:00">2:00 PM</option>
-                                <option value="15:00">3:00 PM</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="visitorName" class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="visitorName" name="visitor_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="visitorEmail" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="visitorEmail" name="visitor_email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="visitorPhone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="visitorPhone" name="visitor_phone" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="visitNotes" class="form-label">Additional Notes (Optional)</label>
-                            <textarea class="form-control" id="visitNotes" name="visit_notes" rows="3"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submitVisit">Schedule Visit</button>
-                </div>
+<!-- CTA Section -->
+<section class="cta-section py-5" id="contact">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title" data-aos="fade-up">
+                <i class="fas fa-rocket me-3"></i>Ready to Find Your Dream Home?
+            </h2>
+            <p class="cta-subtitle" data-aos="fade-up" data-aos-delay="100">
+                Get started today with our expert team
+            </p>
+            <div class="cta-actions" data-aos="fade-up" data-aos-delay="200">
+                <a href="properties_template.php" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-search me-2"></i>Browse Properties
+                </a>
+                <a href="contact_template.php" class="btn btn-outline-light btn-lg me-3">
+                    <i class="fas fa-phone me-2"></i>Contact Us
+                </a>
+                <a href="about_template.php" class="btn btn-success btn-lg">
+                    <i class="fas fa-info-circle me-2"></i>Learn More
+                </a>
             </div>
         </div>
     </div>
-    
-    <script>
-    // Schedule Visit Modal Handler
-    document.addEventListener('DOMContentLoaded', function() {
-        const scheduleVisitModal = document.getElementById('scheduleVisitModal');
-        if (scheduleVisitModal) {
-            scheduleVisitModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const propertyId = button.getAttribute('data-property-id');
-                const propertyTitle = button.getAttribute('data-property-title');
-                const modalTitle = scheduleVisitModal.querySelector('.modal-title');
-                const propertyIdInput = scheduleVisitModal.querySelector('input[name="property_id"]');
-                
-                if (modalTitle) modalTitle.textContent = `Schedule Visit - ${propertyTitle}`;
-                if (propertyIdInput) propertyIdInput.value = propertyId;
-                
-                // Set minimum date to tomorrow
-                const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const minDate = tomorrow.toISOString().split('T')[0];
-                const dateInput = scheduleVisitModal.querySelector('#visitDate');
-                if (dateInput) {
-                    dateInput.min = minDate;
-                    dateInput.value = minDate;
-                }
-            });
-            
-            // Handle form submission
-            const submitButton = document.getElementById('submitVisit');
-            if (submitButton) {
-                submitButton.addEventListener('click', function() {
-                    const form = document.getElementById('visitForm');
-                    if (form.checkValidity()) {
-                        // Here you would typically make an AJAX call to submit the form
-                        const formData = new FormData(form);
-                        
-                        // Simulate form submission
-                        console.log('Form submitted:', Object.fromEntries(formData));
-                        
-                        // Show success message
-                        showToast('Visit scheduled successfully!', 'success');
-                        
-                        // Hide the modal
-                        const modal = bootstrap.Modal.getInstance(scheduleVisitModal);
-                        modal.hide();
-                        
-                        // Reset the form
-                        form.reset();
-                    } else {
-                        form.reportValidity();
-                    }
-                });
-            }
-        }
-    });
-    </script>
-    
-    <!-- Add any additional scripts or content here -->
-    
-</body>
-</html>
+</section>
+
 <?php
-// Close any open PHP operations if needed
+// End output buffering and get content
+$content = ob_get_clean();
+
+// Add JavaScript
+$template->addJS("// All JavaScript functionality is in assets/js/custom.js");
+
+// Add custom CSS file
+$template->addCSS('assets/css/custom-styles.css');
+
+// Render the page using universal template
+page($content, 'APS Dream Home - Your Dream Home Awaits');
+?>
+    margin-bottom: 2rem !important;
+    opacity: 0.95 !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+}
+
+.stats-grid {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 3rem !important;
+    margin-top: 3rem !important;
+    flex-wrap: wrap !important;
+}
+
+.stat-item {
+    text-align: center !important;
+}
+
+.stat-icon {
+    width: 60px !important;
+    height: 60px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto 1rem !important;
+    color: #ffc107 !important;
+    font-size: 1.5rem !important;
+}
+
+.stat-number {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: #ffc107 !important;
+    display: block !important;
+    line-height: 1 !important;
+}
+
+.stat-label {
+    font-size: 0.9rem !important;
+    opacity: 0.8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+.hero-actions {
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    margin-top: 2rem !important;
+}
+
+.search-card {
+    background: white !important;
+    padding: 30px !important;
+    border-radius: 15px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.search-title {
+    color: #1a237e !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.search-subtitle {
+    color: #666 !important;
+    margin-bottom: 2rem !important;
+}
+
+.search-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.search-group {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.search-label {
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    color: #333 !important;
+    font-size: 0.9rem !important;
+}
+
+.modern-select,
+.form-control {
+    padding: 12px 16px !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.modern-select:focus,
+.form-control:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    outline: none !important;
+}
+
+.price-inputs {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.price-separator {
+    color: #666 !important;
+    font-weight: 600 !important;
+}
+
+.btn-search {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 15px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-search:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+.featured-properties-section {
+    padding: 80px 0 !important;
+    background: #f8f9fa !important;
+}
+
+.section-title {
+    font-size: 2rem !important;
+    font-weight: 600 !important;
+    color: #1a237e !important;
+    margin-bottom: 2rem !important;
+    text-align: center !important;
+}
+
+.section-subtitle {
+    font-size: 1.1rem !important;
+    color: #666 !important;
+    margin-bottom: 3rem !important;
+    text-align: center !important;
+}
+
+.properties-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
+    gap: 2rem !important;
+    margin-bottom: 3rem !important;
+}
+
+.property-card-enhanced {
+    background: white !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.4s ease !important;
+}
+
+.property-card-enhanced:hover {
+    transform: translateY(-10px) scale(1.02) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.property-image-container {
+    position: relative !important;
+    height: 250px !important;
+    overflow: hidden !important;
+}
+
+.property-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    transition: transform 0.6s ease !important;
+}
+
+.property-card-enhanced:hover .property-image {
+    transform: scale(1.1) !important;
+}
+
+.property-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0,0,0,0.3) !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    padding: 1rem !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.property-card-enhanced:hover .property-overlay {
+    opacity: 1 !important;
+}
+
+.property-badges {
+    display: flex !important;
+    gap: 0.5rem !important;
+    flex-wrap: wrap !important;
+}
+
+.badge {
+    padding: 0.5rem 1rem !important;
+    border-radius: 25px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.badge-primary {
+    background: #667eea !important;
+    color: white !important;
+}
+
+.badge-success {
+    background: #28a745 !important;
+    color: white !important;
+}
+
+.btn-favorite {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-favorite:hover {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+.property-content {
+    padding: 25px !important;
+}
+
+.property-title {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px !important;
+}
+
+.property-link {
+    color: #1a237e !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.property-link:hover {
+    color: #667eea !important;
+}
+
+.property-location {
+    color: #666 !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 15px !important;
+}
+
+.property-features {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 15px 0 !important;
+    border-top: 1px solid rgba(0,0,0,0.05) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+    margin-bottom: 15px !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+.feature-item {
+    display: flex !important;
+    align-items: center !important;
+    color: #666 !important;
+    font-size: 0.9rem !important;
+}
+
+.feature-item i {
+    color: #667eea !important;
+    margin-right: 5px !important;
+    font-size: 1rem !important;
+}
+
+.property-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 15px !important;
+}
+
+.property-agent {
+    color: #666 !important;
+    font-size: 0.9rem !important;
+}
+
+.badge-status {
+    padding: 5px 10px !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+.property-actions {
+    display: flex !important;
+    gap: 0.5rem !important;
+}
+
+.property-actions .btn {
+    flex: 1 !important;
+    font-size: 0.85rem !important;
+    padding: 0.5rem 0.75rem !important;
+}
+
+.statistics-section {
+    padding: 80px 0 !important;
+    background: white !important;
+}
+
+.stats-grid-enhanced {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    gap: 2rem !important;
+    margin-bottom: 3rem !important;
+}
+
+.stat-card-enhanced {
+    background: white !important;
+    padding: 30px !important;
+    border-radius: 15px !important;
+    text-align: center !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+}
+
+.stat-card-enhanced:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.stat-icon-container {
+    width: 80px !important;
+    height: 80px !important;
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    flex-shrink: 0 !important;
+}
+
+.stat-info {
+    flex: 1 !important;
+    text-align: left !important;
+}
+
+.stat-number {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: #667eea !important;
+    line-height: 1 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.stat-label {
+    font-size: 1rem !important;
+    color: #666 !important;
+    font-weight: 600 !important;
+}
+
+.cta-section {
+    background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%) !important;
+    color: white !important;
+    padding: 80px 0 !important;
+    text-align: center !important;
+}
+
+.cta-title {
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1rem !important;
+}
+
+.cta-subtitle {
+    font-size: 1.2rem !important;
+    margin-bottom: 2rem !important;
+    opacity: 0.9 !important;
+}
+
+.cta-actions {
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+@media (max-width: 768px) {
+    .search-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .properties-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stats-grid {
+        gap: 2rem !important;
+    }
+
+    .hero-actions,
+    .cta-actions {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .stat-card-enhanced {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+
+    .stat-info {
+        text-align: center !important;
+// Render the page using universal template
+page($content, 'APS Dream Home - Your Dream Home Awaits');
 ?>

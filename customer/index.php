@@ -10,12 +10,26 @@ if (!isset($_SESSION['customer_id'])) {
 
 $customer_id = $_SESSION['customer_id'];
 
-// Fetch bookings
-$bookings = $conn->query("SELECT * FROM bookings WHERE customer_id=$customer_id ORDER BY created_at DESC");
-// Fetch documents
-$docs = $conn->query("SELECT * FROM customer_documents WHERE customer_id=$customer_id ORDER BY uploaded_at DESC");
-// Fetch payments
-$payments = $conn->query("SELECT * FROM payments WHERE customer_id=$customer_id ORDER BY paid_at DESC");
+// Fetch bookings using prepared statement
+$stmt = $conn->prepare("SELECT * FROM bookings WHERE customer_id=? ORDER BY created_at DESC");
+$stmt->bind_param("i", $customer_id);
+$stmt->execute();
+$bookings = $stmt->get_result();
+$stmt->close();
+
+// Fetch documents using prepared statement
+$stmt = $conn->prepare("SELECT * FROM customer_documents WHERE customer_id=? ORDER BY uploaded_at DESC");
+$stmt->bind_param("i", $customer_id);
+$stmt->execute();
+$docs = $stmt->get_result();
+$stmt->close();
+
+// Fetch payments using prepared statement
+$stmt = $conn->prepare("SELECT * FROM payments WHERE customer_id=? ORDER BY paid_at DESC");
+$stmt->bind_param("i", $customer_id);
+$stmt->execute();
+$payments = $stmt->get_result();
+$stmt->close();
 
 // Prepare content
 ob_start();

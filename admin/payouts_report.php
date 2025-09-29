@@ -6,37 +6,67 @@ if (!isset($_SESSION['admin_logged_in'])) { header('Location: login.php'); exit;
 
 require_permission('view_payout_report');
 
-// Handle payout status update
+// Handle payout status update using prepared statements
 if (isset($_GET['approve']) && is_numeric($_GET['approve'])) {
     $id = intval($_GET['approve']);
-    $conn->query("UPDATE payouts SET status='approved' WHERE id=$id");
+    $stmt = $conn->prepare("UPDATE payouts SET status='approved' WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
     require_once __DIR__ . '/../includes/functions/notification_util.php';
     addNotification($conn, 'Payout', 'Payout report generated or approved.', $_SESSION['auser'] ?? null);
 }
 if (isset($_GET['pay']) && is_numeric($_GET['pay'])) {
     $id = intval($_GET['pay']);
-    $conn->query("UPDATE payouts SET status='paid' WHERE id=$id");
+    $stmt = $conn->prepare("UPDATE payouts SET status='paid' WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
     require_once __DIR__ . '/../includes/functions/notification_util.php';
     addNotification($conn, 'Payout', 'Payout report generated or approved.', $_SESSION['auser'] ?? null);
 }
 
-// Filters
-$where = "1=1";
+// Filters using prepared statements
+$where_conditions = [];
+$params = [];
+$types = "";
+
 if (!empty($_GET['status'])) {
-    $status = $conn->real_escape_string($_GET['status']);
-    $where .= " AND p.status='$status'";
+    $status = $_GET['status'];
+    $where_conditions[] = "p.status=?";
+    $params[] = $status;
+    $types .= "s";
 }
 if (!empty($_GET['associate_id'])) {
     $aid = intval($_GET['associate_id']);
-    $where .= " AND p.associate_id=$aid";
+    $where_conditions[] = "p.associate_id=?";
+    $params[] = $aid;
+    $types .= "i";
 }
 if (!empty($_GET['period'])) {
-    $period = $conn->real_escape_string($_GET['period']);
-    $where .= " AND p.period='$period'";
+    $period = $_GET['period'];
+    $where_conditions[] = "p.period=?";
+    $params[] = $period;
+    $types .= "s";
 }
 
-$payouts = $conn->query("SELECT p.*, a.name AS associate_name, s.amount AS sale_amount FROM payouts p JOIN associates a ON p.associate_id=a.id JOIN sales s ON p.sale_id=s.id WHERE $where ORDER BY p.generated_on DESC");
-$associates = $conn->query("SELECT id, name FROM associates ORDER BY name");
+$where_clause = empty($where_conditions) ? "1=1" : implode(" AND ", $where_conditions);
+
+// Fetch payouts using prepared statement
+$query = "SELECT p.*, a.name AS associate_name, s.amount AS sale_amount FROM payouts p JOIN associates a ON p.associate_id=a.id JOIN sales s ON p.sale_id=s.id WHERE $where_clause ORDER BY p.generated_on DESC";
+$stmt = $conn->prepare($query);
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$payouts = $stmt->get_result();
+$stmt->close();
+
+// Fetch associates using prepared statement
+$stmt = $conn->prepare("SELECT id, name FROM associates ORDER BY name");
+$stmt->execute();
+$associates = $stmt->get_result();
+$stmt->close();
 ?>
 <?php include '../includes/templates/dynamic_header.php'; ?>
 <!DOCTYPE html>
@@ -112,7 +142,11 @@ $associates = $conn->query("SELECT id, name FROM associates ORDER BY name");
                       <tbody>
                       <?php
                         $saleId = intval($row['sale_id']);
-                        $breakdown = $conn->query("SELECT p.*, a.name AS associate_name FROM payouts p JOIN associates a ON p.associate_id=a.id WHERE p.sale_id=$saleId ORDER BY p.payout_percent DESC");
+                        $breakdown_stmt = $conn->prepare("SELECT p.*, a.name AS associate_name FROM payouts p JOIN associates a ON p.associate_id=a.id WHERE p.sale_id=? ORDER BY p.payout_percent DESC");
+                        $breakdown_stmt->bind_param("i", $saleId);
+                        $breakdown_stmt->execute();
+                        $breakdown = $breakdown_stmt->get_result();
+                        $breakdown_stmt->close();
                         while($b = $breakdown->fetch_assoc()):
                       ?>
                         <tr>

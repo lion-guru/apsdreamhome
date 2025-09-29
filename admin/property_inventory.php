@@ -9,12 +9,17 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 require_permission('manage_inventory');
 $conn = getDbConnection();
 $error = $msg = '';
-// Fetch property types
+// Fetch property types using prepared statement
 $propertyTypes = [];
 if ($conn) {
-    $result = $conn->query("SELECT * FROM property_types ORDER BY id DESC");
-    while ($row = $result && $result->fetch_assoc()) $propertyTypes[] = $row;
-    $conn->close();
+    $stmt = $conn->prepare("SELECT * FROM property_types ORDER BY id DESC");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $propertyTypes[] = $row;
+    }
+    $stmt->close();
+    // Keep connection open for notifications
 }
 ?>
 <!DOCTYPE html>
@@ -72,9 +77,12 @@ if ($conn) {
     </div>
 </div>
 <?php 
-// After inventory transfer or update
-require_once __DIR__ . '/../includes/functions/notification_util.php';
-addNotification($conn, 'Inventory', 'Inventory transferred or updated.', $_SESSION['auser'] ?? null);
+// After inventory transfer or update - use existing connection
+if (isset($conn) && $conn) {
+    require_once __DIR__ . '/../includes/functions/notification_util.php';
+    addNotification($conn, 'Inventory', 'Inventory transferred or updated.', $_SESSION['auser'] ?? null);
+    $conn->close();
+}
 ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -1,8 +1,5 @@
-<?php
-$page_title = 'Home';
-$additional_css = ['home.css'];
-$additional_js = ['home.js'];
 
+<?php
 // Get featured properties
 $featured_properties_query = "SELECT * FROM properties WHERE featured = 1 LIMIT 6";
 $featured_properties = $conn->query($featured_properties_query);
@@ -10,16 +7,15 @@ $featured_properties = $conn->query($featured_properties_query);
 // Get latest properties
 $latest_properties_query = "SELECT * FROM properties ORDER BY created_at DESC LIMIT 6";
 $latest_properties = $conn->query($latest_properties_query);
-
-// Content for the layout
-ob_start();
 ?>
+
+<?php include '../app/views/includes/header.php'; ?>
 
 <section class="hero-section">
     <div class="hero-content">
         <h1>Find Your Dream Property</h1>
         <p>Discover the perfect property that matches your lifestyle and dreams</p>
-        <form class="search-form" action="/march2025apssite/properties" method="GET">
+        <form class="search-form" action="/properties" method="GET">
             <div class="search-group">
                 <input type="text" name="location" placeholder="Location">
                 <select name="type">
@@ -43,7 +39,7 @@ ob_start();
             <?php while ($property = $featured_properties->fetch_assoc()): ?>
                 <div class="property-card">
                     <div class="property-image">
-                        <img src="/march2025apssite/uploads/properties/<?php echo $property['image']; ?>" alt="<?php echo $property['title']; ?>">
+                        <img src="/uploads/properties/<?php echo $property['image']; ?>" alt="<?php echo $property['title']; ?>">
                         <?php if ($property['featured']): ?>
                             <span class="featured-badge">Featured</span>
                         <?php endif; ?>
@@ -57,7 +53,7 @@ ob_start();
                             <span><?php echo $property['bathrooms']; ?> Baths</span>
                             <span><?php echo $property['area']; ?> sq.ft</span>
                         </div>
-                        <a href="/march2025apssite/property/<?php echo $property['id']; ?>" class="view-details">View Details</a>
+                        <a href="/property/<?php echo $property['id']; ?>" class="view-details">View Details</a>
                     </div>
                 </div>
             <?php endwhile; ?>
@@ -74,7 +70,7 @@ ob_start();
             <?php while ($property = $latest_properties->fetch_assoc()): ?>
                 <div class="property-card">
                     <div class="property-image">
-                        <img src="/march2025apssite/uploads/properties/<?php echo $property['image']; ?>" alt="<?php echo $property['title']; ?>">
+                        <img src="/uploads/properties/<?php echo $property['image']; ?>" alt="<?php echo $property['title']; ?>">
                     </div>
                     <div class="property-details">
                         <h3><?php echo $property['title']; ?></h3>
@@ -85,7 +81,7 @@ ob_start();
                             <span><?php echo $property['bathrooms']; ?> Baths</span>
                             <span><?php echo $property['area']; ?> sq.ft</span>
                         </div>
-                        <a href="/march2025apssite/property/<?php echo $property['id']; ?>" class="view-details">View Details</a>
+                        <a href="/property/<?php echo $property['id']; ?>" class="view-details">View Details</a>
                     </div>
                 </div>
             <?php endwhile; ?>
@@ -95,7 +91,4 @@ ob_start();
     </div>
 </section>
 
-<?php
-$content = ob_get_clean();
-require APP_ROOT . '/app/views/layouts/base.php';
-?>
+<?php include '../app/views/includes/footer.php'; ?>

@@ -1,61 +1,123 @@
 <?php
+/**
+ * Modern Manager Dashboard - APS Dream Home
+ * Mobile-First, Responsive Design with Modern UI/UX
+ */
+
 session_start();
 
-// Ensure only managers can access this page
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_role'] !== 'manager') {
-    $_SESSION['login_error'] = 'Unauthorized access';
-    header('Location: login.php');
+// Security check
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true || $_SESSION['admin_role'] !== 'manager') {
+    header('Location: index.php?error=unauthorized');
     exit();
 }
 
+// Include universal dashboard template
+require_once 'includes/universal_dashboard_template.php';
 require_once __DIR__ . '/../includes/db_connection.php';
-$con = getDbConnection();
 
-// Fetch manager-specific analytics
-$totalProperties = $con->query("SELECT COUNT(*) as count FROM properties")->fetch_assoc()['count'];
-$totalBookings = $con->query("SELECT COUNT(*) as count FROM bookings")->fetch_assoc()['count'];
+$conn = getDbConnection();
+
+// Fetch manager-specific data
+$totalProperties = $conn->query("SELECT COUNT(*) as count FROM properties")->fetch_assoc()['count'] ?? 0;
+$totalBookings = $conn->query("SELECT COUNT(*) as count FROM bookings")->fetch_assoc()['count'] ?? 0;
+$activeLeads = $conn->query("SELECT COUNT(*) as count FROM leads WHERE status IN ('new', 'contacted')")->fetch_assoc()['count'] ?? 0;
+$teamMembers = $conn->query("SELECT COUNT(*) as count FROM employees WHERE manager_id = " . ($_SESSION['admin_id'] ?? 0))->fetch_assoc()['count'] ?? 0;
+
+// Manager specific statistics
+$stats = [
+    [
+        'icon' => 'fas fa-building',
+        'value' => number_format($totalProperties),
+        'label' => 'Total Properties',
+        'change' => '+5 this week',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-calendar-check',
+        'value' => number_format($totalBookings),
+        'label' => 'Total Bookings',
+        'change' => '+12 this month',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-user-tie',
+        'value' => number_format($activeLeads),
+        'label' => 'Active Leads',
+        'change' => 'Follow up required',
+        'change_type' => 'neutral'
+    ],
+    [
+        'icon' => 'fas fa-users',
+        'value' => number_format($teamMembers),
+        'label' => 'Team Members',
+        'change' => 'Under management',
+        'change_type' => 'neutral'
+    ]
+];
+
+// Manager quick actions
+$quick_actions = [
+    [
+        'title' => 'Manage Properties',
+        'description' => 'Add, edit, and manage properties',
+        'icon' => 'fas fa-building',
+        'url' => 'properties.php'
+    ],
+    [
+        'title' => 'Review Bookings',
+        'description' => 'View and approve bookings',
+        'icon' => 'fas fa-calendar-check',
+        'url' => 'bookings.php'
+    ],
+    [
+        'title' => 'Lead Management',
+        'description' => 'Manage and convert leads',
+        'icon' => 'fas fa-user-tie',
+        'url' => 'leads.php'
+    ],
+    [
+        'title' => 'Team Reports',
+        'description' => 'View team performance reports',
+        'icon' => 'fas fa-chart-bar',
+        'url' => 'reports.php'
+    ],
+    [
+        'title' => 'Task Assignment',
+        'description' => 'Assign tasks to team members',
+        'icon' => 'fas fa-tasks',
+        'url' => 'tasks.php'
+    ],
+    [
+        'title' => 'Analytics',
+        'description' => 'View detailed analytics',
+        'icon' => 'fas fa-analytics',
+        'url' => 'analytics_dashboard.php'
+    ]
+];
+
+// Recent manager activities
+$recent_activities = [
+    [
+        'icon' => 'fas fa-check-circle',
+        'title' => 'Booking Approved',
+        'description' => 'Approved booking #BK001 for Villa in Sector 15',
+        'time' => '10 mins ago'
+    ],
+    [
+        'icon' => 'fas fa-user-plus',
+        'title' => 'New Lead Assignment',
+        'description' => 'Assigned lead to Sales Executive John',
+        'time' => '25 mins ago'
+    ],
+    [
+        'icon' => 'fas fa-building',
+        'title' => 'Property Updated',
+        'description' => 'Updated property details for Project ABC',
+        'time' => '1 hour ago'
+    ]
+];
+
+// Generate and display the dashboard
+echo generateUniversalDashboard('manager', $stats, $quick_actions, $recent_activities);
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Manager Dashboard</title>
-    <?php include __DIR__ . '/../includes/templates/header.php'; ?>
-</head>
-<body>
-    <?php include 'admin_header.php'; ?>
-    
-    <div class="container-fluid">
-        <div class="row">
-            <?php include 'admin_sidebar.php'; ?>
-            
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Manager Dashboard</h1>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Properties</h5>
-                                <p class="card-text"><?php echo $totalProperties; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Bookings</h5>
-                                <p class="card-text"><?php echo $totalBookings; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-    
-    <?php include __DIR__ . '/../includes/templates/footer.php'; ?>
-</body>
-</html>

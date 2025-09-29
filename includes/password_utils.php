@@ -1,87 +1,101 @@
 <?php
 /**
- * Password Utility Functions
- * Provides secure password hashing and verification
+ * Password Utilities
+ * Provides secure password hashing and verification functions
  */
 
-class PasswordUtils {
-    // Password hashing configuration
-    private const HASH_ALGO = PASSWORD_ARGON2ID;
-    private const HASH_OPTIONS = [
-        'memory_cost' => 1024 * 16,  // 16 MB
-        'time_cost' => 4,
-        'threads' => 3
-    ];
-
-    /**
-     * Hash a password securely
-     * @param string $password Plain text password
-     * @return string Hashed password
-     */
-    public static function hashPassword(string $password): string {
-        // Validate password strength
-        if (strlen($password) < 12) {
-            throw new InvalidArgumentException('Password must be at least 12 characters long');
-        }
-
-        return password_hash($password, self::HASH_ALGO, self::HASH_OPTIONS);
+/**
+ * Hash a password using bcrypt algorithm
+ * @param string $password The plain text password to hash
+ * @return string|false The hashed password or false on failure
+ */
+if (!function_exists('hash_password')) {
+    function hash_password($password) {
+        return password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
     }
+}
 
-    /**
-     * Verify a password against its hash
-     * @param string $password Plain text password
-     * @param string $hash Stored password hash
-     * @return bool True if password is correct, false otherwise
-     */
-    public static function verifyPassword(string $password, string $hash): bool {
+/**
+ * Verify a password against a hash
+ * @param string $password The plain text password to verify
+ * @param string $hash The hash to verify against
+ * @return bool True if password matches hash, false otherwise
+ */
+if (!function_exists('verify_password')) {
+    function verify_password($password, $hash) {
         return password_verify($password, $hash);
     }
+}
 
-    /**
-     * Check if password needs rehashing
-     * @param string $hash Current password hash
-     * @return bool True if rehash is needed
-     */
-    public static function needsRehash(string $hash): bool {
-        return password_needs_rehash($hash, self::HASH_ALGO, self::HASH_OPTIONS);
+/**
+ * Check if a password needs rehashing with custom cost (wrapper for built-in function)
+ * @param string $hash The hash to check
+ * @return bool True if password needs rehashing, false otherwise
+ */
+if (!function_exists('check_password_rehash_needed')) {
+    function check_password_rehash_needed($hash) {
+        return password_needs_rehash($hash, PASSWORD_BCRYPT, ['cost' => 12]);
     }
+}
 
-    /**
-     * Generate a secure random password
-     * @param int $length Password length
-     * @return string Generated password
-     */
-    public static function generateRandomPassword(int $length = 16): string {
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+-=[]{}|;:,.<>?';
+/**
+ * Generate a random password
+ * @param int $length Length of the password (default: 12)
+ * @return string The generated password
+ */
+if (!function_exists('generate_random_password')) {
+    function generate_random_password($length = 12) {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
         $password = '';
-        $max = strlen($characters) - 1;
+        $charLength = strlen($chars);
         
         for ($i = 0; $i < $length; $i++) {
-            $password .= $characters[random_int(0, $max)];
+            $password .= $chars[random_int(0, $charLength - 1)];
         }
         
         return $password;
     }
 }
 
-// Optional: Add a function to reset admin password
-function resetAdminPassword(string $username, string $newPassword) {
-    require_once __DIR__ . '/db_config.php';
-    
-    $con = getDbConnection();
-    if (!$con) {
-        throw new Exception('Database connection failed');
+/**
+ * Validate password strength
+ * @param string $password The password to validate
+ * @return array Validation result with 'valid' boolean and 'message' string
+ */
+if (!function_exists('validate_password_strength')) {
+    function validate_password_strength($password) {
+        $errors = [];
+        
+        if (strlen($password) < 8) {
+            $errors[] = 'Password must be at least 8 characters long';
+        }
+        
+        if (!preg_match('/[A-Z]/', $password)) {
+            $errors[] = 'Password must contain at least one uppercase letter';
+        }
+        
+        if (!preg_match('/[a-z]/', $password)) {
+            $errors[] = 'Password must contain at least one lowercase letter';
+        }
+        
+        if (!preg_match('/[0-9]/', $password)) {
+            $errors[] = 'Password must contain at least one number';
+        }
+        
+        if (!preg_match('/[^A-Za-z0-9]/', $password)) {
+            $errors[] = 'Password must contain at least one special character';
+        }
+        
+        if (empty($errors)) {
+            return ['valid' => true, 'message' => 'Password is strong'];
+        } else {
+            return ['valid' => false, 'message' => implode(', ', $errors)];
+        }
     }
-
-    $hashedPassword = PasswordUtils::hashPassword($newPassword);
-    
-    $stmt = $con->prepare("UPDATE admin SET apass = ? WHERE auser = ?");
-    $stmt->bind_param("ss", $hashedPassword, $username);
-    
-    $result = $stmt->execute();
-    
-    $stmt->close();
-    $con->close();
-    
-    return $result;
 }
+
+// Make sure these functions are available
+if (!function_exists('password_hash')) {
+    throw new Exception('password_hash function is not available. Please use PHP 5.5+');
+}
+?>

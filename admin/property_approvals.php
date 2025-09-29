@@ -16,22 +16,33 @@ $msg = $error = '';
 // Handle approve/reject actions
 if (isset($_GET['approve']) && is_numeric($_GET['approve'])) {
     $id = intval($_GET['approve']);
-    $conn->query("UPDATE properties SET status='approved' WHERE id=$id");
+    $stmt = $conn->prepare("UPDATE properties SET status='approved' WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
     addNotification($conn, 'Property', 'Property approved.', $_SESSION['auser'] ?? null);
     $msg = 'Property approved successfully!';
 }
 if (isset($_GET['reject']) && is_numeric($_GET['reject'])) {
     $id = intval($_GET['reject']);
-    $conn->query("UPDATE properties SET status='rejected' WHERE id=$id");
+    $stmt = $conn->prepare("UPDATE properties SET status='rejected' WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
     addNotification($conn, 'Property', 'Property rejected.', $_SESSION['auser'] ?? null);
     $msg = 'Property rejected.';
 }
 
-// Fetch pending properties
+// Fetch pending properties using prepared statement
 $pending = [];
 if ($conn) {
-    $result = $conn->query("SELECT * FROM properties WHERE status='pending' ORDER BY created_at DESC");
-    while ($row = $result && $result->fetch_assoc()) $pending[] = $row;
+    $stmt = $conn->prepare("SELECT * FROM properties WHERE status='pending' ORDER BY created_at DESC");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $pending[] = $row;
+    }
+    $stmt->close();
     $conn->close();
 }
 ?>

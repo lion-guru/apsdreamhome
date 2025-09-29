@@ -45,8 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload'])) {
                     // Google Drive upload and Slack notification
                     require_once __DIR__ . '/includes/integration_helpers.php';
                     $gallery_id = $stmt->insert_id;
-                    upload_to_google_drive_and_save_id($image_path, 'gallery', 'id', $gallery_id, 'drive_file_id');
-                    $driveId = $conn->query("SELECT drive_file_id FROM gallery WHERE id = $gallery_id")->fetch_assoc()['drive_file_id'];
+
+                    // Get drive file ID using prepared statement
+                    $stmt2 = $conn->prepare("SELECT drive_file_id FROM gallery WHERE id = ?");
+                    $stmt2->bind_param("i", $gallery_id);
+                    $stmt2->execute();
+                    $result = $stmt2->get_result();
+                    $driveId = $result->fetch_assoc()['drive_file_id'];
+                    $stmt2->close();
+
                     $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
                     $slackMsg = "🖼️ *New Gallery Image Uploaded*\n" .
                         "Title: $title\n" .
@@ -99,10 +106,11 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// Fetch all images
+// Fetch all images using prepared statement
 $images = [];
-$sql = "SELECT * FROM gallery ORDER BY created_at DESC";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM gallery ORDER BY created_at DESC");
+$stmt->execute();
+$result = $stmt->get_result();
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $images[] = [
@@ -114,6 +122,7 @@ if ($result->num_rows > 0) {
         ];
     }
 }
+$stmt->close();
 $limit = 10; // Number of images per page
 $start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
 ?>

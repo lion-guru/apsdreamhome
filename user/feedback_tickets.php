@@ -5,10 +5,16 @@ if (!isset($_SESSION['auser'])) { header('Location: ../login.php'); exit(); }
 $user_id = $_SESSION['auser'];
 // Submit feedback/ticket
 if (isset($_POST['message']) && trim($_POST['message']) != '') {
-    $msg = $conn->real_escape_string($_POST['message']);
-    $conn->query("INSERT INTO feedback_tickets (user_id, message, status, created_at) VALUES ($user_id, '$msg', 'open', NOW())");
+    $msg = $_POST['message'];
+    $stmt = $conn->prepare("INSERT INTO feedback_tickets (user_id, message, status, created_at) VALUES (?, ?, 'open', NOW())");
+    $stmt->bind_param("ss", $user_id, $msg);
+    $stmt->execute();
+    $stmt->close();
 }
-$tickets = $conn->query("SELECT * FROM feedback_tickets WHERE user_id=$user_id ORDER BY created_at DESC");
+$stmt = $conn->prepare("SELECT * FROM feedback_tickets WHERE user_id=? ORDER BY created_at DESC");
+$stmt->bind_param("s", $user_id);
+$stmt->execute();
+$tickets = $stmt->get_result();
 ?><!DOCTYPE html>
 <html lang='en'>
 <head><meta charset='UTF-8'><title>Feedback & Support Tickets</title><link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css'></head>

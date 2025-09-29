@@ -179,27 +179,27 @@ function seedSampleData($conn) {
     try {
         // Insert property types
         foreach ($propertyTypes as $type) {
-            $name = $conn->real_escape_string($type['name']);
-            $icon = $conn->real_escape_string($type['icon']);
+            $name = $type['name'];
+            $icon = $type['icon'];
             $sql = "INSERT INTO property_types (name, icon) VALUES ('$name', '$icon')";
             $conn->query($sql);
         }
         
         // Insert property features
         foreach ($propertyFeatures as $feature) {
-            $name = $conn->real_escape_string($feature['name']);
-            $icon = $conn->real_escape_string($feature['icon']);
+            $name = $feature['name'];
+            $icon = $feature['icon'];
             $sql = "INSERT INTO property_features (name, icon) VALUES ('$name', '$icon')";
             $conn->query($sql);
         }
         
         // Insert properties
         foreach ($properties as $property) {
-            $title = $conn->real_escape_string($property['title']);
+            $title = $property['title'];
             $slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $property['title']));
             $description = $conn->real_escape_string("Beautiful property located in " . $property['city']);
-            $city = $conn->real_escape_string($property['city']);
-            $status = $conn->real_escape_string($property['status']);
+            $city = $property['city'];
+            $status = $property['status'];
             
             $sql = "INSERT INTO properties 
                     (title, slug, description, property_type_id, price, area_sqft, bedrooms, bathrooms, city, status, created_by) 

@@ -50,8 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-// Fetch associates for listing
-$associates = $conn->query("SELECT a.*, p.name AS parent_name FROM associates a LEFT JOIN associates p ON a.parent_id = p.associate_id");
+// Fetch associates for listing using prepared statement
+$stmt = $conn->prepare("SELECT a.*, p.name AS parent_name FROM associates a LEFT JOIN associates p ON a.parent_id = p.associate_id");
+$stmt->execute();
+$associates = $stmt->get_result();
+$stmt->close();
+
+// Fetch all associates for parent selection using prepared statement
+$stmt = $conn->prepare("SELECT associate_id, name FROM associates");
+$stmt->execute();
+$all = $stmt->get_result();
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,7 +107,7 @@ $associates = $conn->query("SELECT a.*, p.name AS parent_name FROM associates a 
             <div class="mb-2"><label>Post</label><input type="text" name="post" class="form-control" required></div>
             <div class="mb-2"><label>Parent (Upline)</label><select name="parent_id" class="form-control">
               <option value="">--None--</option>
-              <?php $all = $conn->query("SELECT associate_id, name FROM associates"); while($p = $all->fetch_assoc()): ?>
+              <?php while($p = $all->fetch_assoc()): ?>
                 <option value="<?= $p['associate_id'] ?>"><?= htmlspecialchars($p['name']) ?></option>
               <?php endwhile; ?>
             </select></div>

@@ -55,15 +55,25 @@ if ($conn->connect_error) {
     ];
     
     foreach ($core_tables as $table) {
+        // Check if table exists using prepared statement
+        $table = $conn->real_escape_string($table);
         $result = $conn->query("SHOW TABLES LIKE '$table'");
+        
         if ($result && $result->num_rows > 0) {
-            // Table exists, check record count
-            $count_result = $conn->query("SELECT COUNT(*) as count FROM $table");
-            if ($count_result) {
-                $row = $count_result->fetch_assoc();
-                $count = $row['count'];
-                
-                if ($count > 0) {
+            // Table exists, check record count using prepared statement
+            $count = 0;
+            $count_query = $conn->prepare("SELECT COUNT(*) as count FROM `$table`");
+            if ($count_query) {
+                $count_query->execute();
+                $count_result = $count_query->get_result();
+                if ($count_result) {
+                    $row = $count_result->fetch_assoc();
+                    $count = (int)$row['count'];
+                }
+                $count_query->close();
+            }
+            
+            if ($count > 0) {
                     $results['database'][] = [
                         'test' => "Table: $table",
                         'status' => 'success',
@@ -78,7 +88,6 @@ if ($conn->connect_error) {
                         'recommendation' => "Run the Dashboard Data Manager to populate the $table table."
                     ];
                 }
-            }
         } else {
             $results['database'][] = [
                 'test' => "Table: $table",
@@ -89,11 +98,15 @@ if ($conn->connect_error) {
         }
     }
     
-    // Check database size
-    $size_result = $conn->query("SELECT 
+    // Check database size using prepared statement
+    $size_mb = 0;
+    $size_query = $conn->prepare("SELECT 
         SUM(data_length + index_length) / 1024 / 1024 AS size_mb 
         FROM information_schema.TABLES 
-        WHERE table_schema = '$dbname'");
+        WHERE table_schema = ?");
+    $size_query->bind_param("s", $dbname);
+    $size_query->execute();
+    $size_result = $size_query->get_result();
     
     if ($size_result) {
         $row = $size_result->fetch_assoc();
@@ -115,6 +128,12 @@ if ($conn->connect_error) {
             ];
         }
     }
+    $stmt->close();
+}
+
+// Close connection if it's still open
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
 }
 
 // Check file permissions

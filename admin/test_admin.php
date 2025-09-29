@@ -46,12 +46,16 @@ function checkDatabase() {
     try {
         $conn = getDbConnection();
         
-        // Check each required table
+        // Check each required table using prepared statement
         foreach ($tables as $table) {
-            $result = $conn->query("SHOW TABLES LIKE '$table'");
+            $stmt = $conn->prepare("SHOW TABLES LIKE ?");
+            $stmt->bind_param('s', $table);
+            $stmt->execute();
+            $result = $stmt->get_result();
             if ($result->num_rows === 0) {
                 $missingTables[] = $table;
             }
+            $stmt->close();
         }
         
         $conn->close();

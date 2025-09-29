@@ -9,26 +9,38 @@ if (!isset($_SESSION['auser'])) {
 
 $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 
-// Monthly Sales
-$sales = $conn->query("SELECT MONTH(booking_date) as month, SUM(amount) as total FROM bookings WHERE status='confirmed' AND YEAR(booking_date)=$year GROUP BY MONTH(booking_date)");
+// Monthly Sales using prepared statement
 $salesData = array_fill(1, 12, 0);
+$stmt = $conn->prepare("SELECT MONTH(booking_date) as month, SUM(amount) as total FROM bookings WHERE status='confirmed' AND YEAR(booking_date)=? GROUP BY MONTH(booking_date)");
+$stmt->bind_param("i", $year);
+$stmt->execute();
+$sales = $stmt->get_result();
 while ($row = $sales->fetch_assoc()) {
     $salesData[intval($row['month'])] = floatval($row['total']);
 }
+$stmt->close();
 
-// Monthly Expenses
-$expenses = $conn->query("SELECT MONTH(expense_date) as month, SUM(amount) as total FROM expenses WHERE YEAR(expense_date)=$year GROUP BY MONTH(expense_date)");
+// Monthly Expenses using prepared statement
 $expenseData = array_fill(1, 12, 0);
+$stmt = $conn->prepare("SELECT MONTH(expense_date) as month, SUM(amount) as total FROM expenses WHERE YEAR(expense_date)=? GROUP BY MONTH(expense_date)");
+$stmt->bind_param("i", $year);
+$stmt->execute();
+$expenses = $stmt->get_result();
 while ($row = $expenses->fetch_assoc()) {
     $expenseData[intval($row['month'])] = floatval($row['total']);
 }
+$stmt->close();
 
-// Monthly Commissions
-$commissions = $conn->query("SELECT MONTH(created_at) as month, SUM(commission_amount) as total FROM commission_transactions WHERE status='paid' AND YEAR(created_at)=$year GROUP BY MONTH(created_at)");
+// Monthly Commissions using prepared statement
 $commissionData = array_fill(1, 12, 0);
+$stmt = $conn->prepare("SELECT MONTH(created_at) as month, SUM(commission_amount) as total FROM commission_transactions WHERE status='paid' AND YEAR(created_at)=? GROUP BY MONTH(created_at)");
+$stmt->bind_param("i", $year);
+$stmt->execute();
+$commissions = $stmt->get_result();
 while ($row = $commissions->fetch_assoc()) {
     $commissionData[intval($row['month'])] = floatval($row['total']);
 }
+$stmt->close();
 
 $months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 ?>
