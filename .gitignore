@@ -1,20 +1,31 @@
-# PHP
+# ============================================
+# PHP & Dependencies
+# ============================================
 /vendor/*
 !/vendor/composer/
 !/vendor/autoload.php
 /node_modules/
+/composer.lock
+/composer.phar
 
-# Environment files - DO NOT COMMIT
+# ============================================
+# Environment & Configuration
+# ============================================
+# Environment files
 /.env
 /.env.*
 !/.env.example
 
-# Sensitive files
+# Configuration files
 /config.php
 /config_*.php
 /config/*.php
+/config/*.json
 
-# API keys and credentials
+# ============================================
+# Sensitive Data & Credentials
+# ============================================
+# API Keys and Certificates
 /keys/
 *.pem
 *.key
@@ -23,31 +34,108 @@
 *.pfx
 *.p7b
 *.p7c
-*.p12
-*.pem
-*.crt
 *.cer
 *.der
+*.pfx
+*.p7s
+*.p7m
+*.p7r
+*.p8
+*.p10
+*.pkipath
+*.pko
 
-# Logs
+# ============================================
+# Logs & Debugging
+# ============================================
 /logs/
 *.log
 error_log
-admin/error_log
+*.log.*
 
-# Database
+# Application specific logs
+/admin/error_log
+/storage/logs/
+/debug.log
+/trace.log
+
+# ============================================
+# Database & Backups
+# ============================================
 /db_backups/
 /backup_*/
 *.sql
 *.sqlite
+*.db
+*.dump
+*.bak
+*.backup
+*.sql.gz
+*.sql.zip
 
-# IDE specific files
+# ============================================
+# IDE & Editor Files
+# ============================================
 .idea/
 .vscode/
 *.sublime-*
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.project
+.settings/
+.buildpath
 
-# OS generated files
+# ============================================
+# OS Generated Files
+# ============================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ============================================
+# Build & Deployment
+# ============================================
+/build/
+/dist/
+*.min.js
+*.min.css
+*.map
+
+# ============================================
+# Temporary Files
+# ============================================
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+.temp/
+tmp/
+temp/
+
+# ============================================
+# Project Specific
+# ============================================
+# Uploads directory
+/uploads/
+
+# Cache directories
+/cache/
+/var/cache/
+
+# Session files
+/sessions/
+
+# Composer vendor directory (already excluded)
+# /vendor/
+
+# Node modules (already excluded)
+# /node_modules/
 .DS_Store?
 ._*
 .Spotlight-V100
