@@ -50,26 +50,39 @@ if ($conn->connect_error) {
     die("<div class='error'>Connection failed: " . $conn->connect_error . "</div></body></html>");
 }
 
-// Function to check table count
+// Function to check table count using prepared statement
 function checkTableCount($conn, $table) {
-    $result = $conn->query("SELECT COUNT(*) as count FROM $table");
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM `$table`");
+    $stmt->execute();
+    $result = $stmt->get_result();
     if ($result) {
         $row = $result->fetch_assoc();
+        $stmt->close();
         return $row['count'];
     }
     return 0;
 }
 
-// Function to check if table exists
+// Function to check if table exists using prepared statement
 function tableExists($conn, $table) {
-    $result = $conn->query("SHOW TABLES LIKE '$table'");
-    return ($result && $result->num_rows > 0);
+    $stmt = $conn->prepare("SHOW TABLES LIKE ?");
+    $stmt->bind_param("s", $table);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $exists = ($result && $result->num_rows > 0);
+    $stmt->close();
+    return $exists;
 }
 
-// Function to check column in table
+// Function to check column in table using prepared statement
 function columnExists($conn, $table, $column) {
-    $result = $conn->query("SHOW COLUMNS FROM `$table` LIKE '$column'");
-    return ($result && $result->num_rows > 0);
+    $stmt = $conn->prepare("SHOW COLUMNS FROM `$table` LIKE ?");
+    $stmt->bind_param("s", $column);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $exists = ($result && $result->num_rows > 0);
+    $stmt->close();
+    return $exists;
 }
 
 // Check core dashboard widgets
@@ -144,13 +157,16 @@ foreach ($recentWidgets as $widget => $table) {
     
     // Check if date column exists in the table
     if (columnExists($conn, $table, $dateColumn)) {
-        $result = $conn->query("SELECT COUNT(*) as count FROM $table WHERE $dateColumn >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM `$table` WHERE `$dateColumn` >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+        $stmt->execute();
+        $result = $stmt->get_result();
         if ($result) {
             $row = $result->fetch_assoc();
             $count = $row['count'];
         } else {
             $count = 0;
         }
+        $stmt->close();
     } else {
         $count = 0;
     }
@@ -226,13 +242,16 @@ echo "<div class='section'>
             <th>Details</th>
         </tr>";
 
-// Check for orphaned records in leads
+// Check for orphaned records in leads using prepared statement
 $orphanedLeads = 0;
 if (tableExists($conn, 'leads') && columnExists($conn, 'leads', 'customer_id')) {
-    $result = $conn->query("SELECT COUNT(*) as count FROM leads l LEFT JOIN customers c ON l.customer_id = c.id WHERE l.customer_id IS NOT NULL AND c.id IS NULL");
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM leads l LEFT JOIN customers c ON l.customer_id = c.id WHERE l.customer_id IS NOT NULL AND c.id IS NULL");
+    $stmt->execute();
+    $result = $stmt->get_result();
     if ($result) {
         $row = $result->fetch_assoc();
         $orphanedLeads = $row['count'];
+        $stmt->close();
     }
 }
 
@@ -242,13 +261,16 @@ echo "<tr>
     <td>" . ($orphanedLeads > 0 ? "$orphanedLeads leads with missing customer references" : "All leads have valid customer references") . "</td>
 </tr>";
 
-// Check for orphaned bookings
+// Check for orphaned bookings using prepared statement
 $orphanedBookings = 0;
 if (tableExists($conn, 'bookings') && columnExists($conn, 'bookings', 'property_id')) {
-    $result = $conn->query("SELECT COUNT(*) as count FROM bookings b LEFT JOIN properties p ON b.property_id = p.id WHERE b.property_id IS NOT NULL AND p.id IS NULL");
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM bookings b LEFT JOIN properties p ON b.property_id = p.id WHERE b.property_id IS NOT NULL AND p.id IS NULL");
+    $stmt->execute();
+    $result = $stmt->get_result();
     if ($result) {
         $row = $result->fetch_assoc();
         $orphanedBookings = $row['count'];
+        $stmt->close();
     }
 }
 

@@ -6,12 +6,33 @@ require_once __DIR__ . '/config.php';
 
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$where = [];
-if ($filter && in_array($filter, ['admin_user','action','ip_address'])) {
-    $where[] = "$filter LIKE '%" . $conn->real_escape_string($search) . "%'";
+
+// Build WHERE conditions using prepared statements
+$where_conditions = [];
+$params = [];
+$types = "";
+
+if ($filter && in_array($filter, ['admin_user','action','ip_address']) && !empty($search)) {
+    $where_conditions[] = "$filter LIKE ?";
+    $params[] = "%$search%";
+    $types .= "s";
 }
-$where_sql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
-$logs = $conn->query("SELECT * FROM audit_access_log $where_sql ORDER BY accessed_at DESC LIMIT 200");
+
+$where_clause = empty($where_conditions) ? "" : "WHERE " . implode(" AND ", $where_conditions);
+
+// Fetch logs using prepared statement
+$query = "SELECT * FROM audit_access_log $where_clause ORDER BY accessed_at DESC LIMIT 200";
+if (!empty($params)) {
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $logs = $stmt->get_result();
+} else {
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+    $logs = $stmt->get_result();
+}
+$stmt->close();
 
 $pdf = new FPDF();
 $pdf->AddPage();

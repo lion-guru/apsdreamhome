@@ -79,6 +79,21 @@ class EmailService {
         }
     }
 
+    public function send($to_email, $subject, $message) {
+        try {
+            $this->mailer->setFrom($this->from_email, $this->from_name);
+            $this->mailer->addAddress($to_email);
+            $this->mailer->isHTML(false); // Send as plain text for generic emails
+
+            $this->mailer->Subject = $subject;
+            $this->mailer->Body = $message;
+
+            return $this->mailer->send();
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to send email: ' . $e->getMessage());
+        }
+    }
+
     private function getPasswordResetTemplate($user_name, $reset_link) {
         return <<<HTML
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

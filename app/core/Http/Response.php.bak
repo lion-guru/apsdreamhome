@@ -1,0 +1,1554 @@
+<?php
+
+namespace App\Core\Http;
+
+use JsonSerializable;
+use InvalidArgumentException;
+use RuntimeException;
+use SplFileInfo;
+use SplFileObject;
+
+class Response implements JsonSerializable {
+    /**
+     * @var mixed The response content
+     */
+    protected mixed $content = '';
+    
+    /**
+     * @var callable|null A callback for streaming the response
+     */
+    protected $streamedCallback = null;
+    
+    /**
+     * @var string The response content type
+     */
+    protected string $contentType = 'text/html';
+    
+    /**
+     * @var bool Whether the response has been sent
+     */
+    protected bool $sent = false;
+    
+    /**
+     * @var array Default MIME types
+     */
+    protected static array $mimeTypes = [
+        'txt'  => 'text/plain',
+        'html' => 'text/html',
+        'css'  => 'text/css',
+        'js'   => 'application/javascript',
+        'json' => 'application/json',
+        'xml'  => 'application/xml',
+        'rss'  => 'application/rss+xml',
+        'atom' => 'application/atom+xml',
+        'pdf'  => 'application/pdf',
+        'zip'  => 'application/zip',
+        'gif'  => 'image/gif',
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png'  => 'image/png',
+        'svg'  => 'image/svg+xml',
+        'webp' => 'image/webp',
+        'ico'  => 'image/x-icon',
+        'csv'  => 'text/csv',
+    ];
+    
+    /**
+     * @var array Default CORS settings
+     */
+    protected static array $defaultCorsSettings = [
+        'allowedOrigins' => ['*'],
+        'allowedMethods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        'allowedHeaders' => ['Content-Type', 'Authorization', 'X-Requested-With'],
+        'exposedHeaders' => [],
+        'maxAge' => 0,
+        'supportsCredentials' => false,
+        'allowedOriginsPatterns' => [],
+    ];
+    
+    /**
+     * @var array Supported compression encodings
+     */
+    protected static array $supportedEncodings = ['gzip', 'deflate'];
+    
+    /**
+     * @var bool Whether response compression is enabled
+     */
+    protected bool $compressionEnabled = true;
+    
+    /**
+     * @var int Compression level (0-9)
+     */
+    protected int $compressionLevel = 6;
+    
+    /**
+     * @var int Minimum content length to compress (in bytes)
+     */
+    protected int $minCompressionSize = 1024;
+    
+    /**
+     * @var array HTTP response headers
+     */
+    protected array $headers = [];
+    
+    /**
+     * Check if the response content should be compressed
+     *
+     * @param string $content The content to check
+     * @return bool
+     */
+    protected function shouldCompress(string $content): bool {
+        // Don't compress if compression is disabled
+        if (!$this->compressionEnabled) {
+            return false;
+        }
+        
+        // Don't compress if content is too small
+        if (strlen($content) < $this->minCompressionSize) {
+            return false;
+        }
+        
+        // Check if client accepts compressed content
+        if (!isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
+            return false;
+        }
+        
+        // Check if any of the supported encodings are accepted
+        foreach (self::$supportedEncodings as $encoding) {
+            if (stripos($_SERVER['HTTP_ACCEPT_ENCODING'], $encoding) !== false) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Compress the response content
+     *
+     * @param string &$content The content to compress (passed by reference)
+     * @return bool Whether compression was successful
+     */
+    protected function compressContent(string &$content): bool {
+        // Determine which encoding to use
+        $encoding = '';
+        foreach (self::$supportedEncodings as $enc) {
+            if (stripos($_SERVER['HTTP_ACCEPT_ENCODING'], $enc) !== false) {
+                $encoding = $enc;
+                break;
+            }
+        }
+        
+        if (empty($encoding)) {
+            return false;
+        }
+        
+        // Set the appropriate Content-Encoding header
+        $this->setHeader('Content-Encoding', $encoding);
+        
+        // Compress the content
+        $compressed = false;
+        switch (strtolower($encoding)) {
+            case 'gzip':
+                $compressed = gzencode($content, $this->compressionLevel);
+                break;
+                
+            case 'deflate':
+                $compressed = gzdeflate($content, $this->compressionLevel);
+                break;
+        }
+        
+        if ($compressed !== false) {
+            // Update the content with compressed data
+            $content = $compressed;
+            
+            // Update the Content-Length header
+            $this->setHeader('Content-Length', (string) strlen($content));
+            
+            // Add Vary header to ensure caches handle the content correctly
+            if ($this->hasHeader('Vary')) {
+                $vary = $this->getHeader('Vary');
+                if (stripos($vary, 'Accept-Encoding') === false) {
+                    $this->setHeader('Vary', $vary . ', Accept-Encoding');
+                }
+            } else {
+                $this->setHeader('Vary', 'Accept-Encoding');
+            }
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Configure response compression
+     *
+     * @param bool $enabled Whether compression is enabled
+     * @param int $level Compression level (0-9)
+     * @param int $minSize Minimum content length to compress (in bytes)
+     * @return $this
+     */
+    public function setCompression(bool $enabled, int $level = 6, int $minSize = 1024): self {
+        $this->compressionEnabled = $enabled;
+        $this->compressionLevel = max(0, min(9, $level));
+        $this->minCompressionSize = max(0, $minSize);
+        return $this;
+    }
+    
+    /**
+     * Enable response compression
+     *
+     * @param int $level Compression level (0-9)
+     * @param int $minSize Minimum content length to compress (in bytes)
+     * @return $this
+     */
+    public function enableCompression(int $level = 6, int $minSize = 1024): self {
+        return $this->setCompression(true, $level, $minSize);
+    }
+    
+    /**
+     * Disable response compression
+     *
+     * @return $this
+     */
+    public function disableCompression(): self {
+        $this->compressionEnabled = false;
+        return $this;
+    }
+    
+    /**
+     * @var string The response charset
+     */
+    protected string $charset = 'UTF-8';
+    
+    /**
+     * @var int The HTTP status code
+     */
+    protected int $statusCode;
+    
+    /**
+     * @var string The HTTP status text
+     */
+    protected string $statusText;
+    
+    /**
+     * @var array Default CSP directives
+     */
+    protected static array $defaultCspDirectives = [
+        'default-src' => ["'self'"],
+        'script-src' => ["'self'"],
+        'style-src' => ["'self'"],
+        'img-src' => ["'self'"],
+        'font-src' => ["'self'"],
+        'connect-src' => ["'self'"],
+        'media-src' => ["'self'"],
+        'object-src' => ["'none'"],
+        'child-src' => ["'self'"],
+        'frame-ancestors' => ["'self'"],
+        'form-action' => ["'self'"],
+        'base-uri' => ["'self'"],
+        'frame-src' => ["'self'"],
+        'worker-src' => ["'self'"],
+        'manifest-src' => ["'self'"],
+        'upgrade-insecure-requests' => [],
+        'block-all-mixed-content' => [],
+    ];
+    
+    /**
+     * @var array HTTP status codes and their corresponding text
+     */
+    public static $statusTexts = [
+        100 => 'Continue',
+        101 => 'Switching Protocols',
+        102 => 'Processing',
+        200 => 'OK',
+        201 => 'Created',
+        202 => 'Accepted',
+        203 => 'Non-Authoritative Information',
+        204 => 'No Content',
+        205 => 'Reset Content',
+        206 => 'Partial Content',
+        207 => 'Multi-Status',
+        208 => 'Already Reported',
+        226 => 'IM Used',
+        300 => 'Multiple Choices',
+        301 => 'Moved Permanently',
+        302 => 'Found',
+        303 => 'See Other',
+        304 => 'Not Modified',
+        305 => 'Use Proxy',
+        306 => 'Reserved',
+        307 => 'Temporary Redirect',
+        308 => 'Permanent Redirect',
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        402 => 'Payment Required',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+        406 => 'Not Acceptable',
+        407 => 'Proxy Authentication Required',
+        408 => 'Request Timeout',
+        409 => 'Conflict',
+        410 => 'Gone',
+        411 => 'Length Required',
+        412 => 'Precondition Failed',
+        413 => 'Payload Too Large',
+        414 => 'URI Too Long',
+        415 => 'Unsupported Media Type',
+        416 => 'Range Not Satisfiable',
+        417 => 'Expectation Failed',
+        418 => 'I\'m a teapot',
+        421 => 'Misdirected Request',
+        422 => 'Unprocessable Entity',
+        423 => 'Locked',
+        424 => 'Failed Dependency',
+        425 => 'Too Early',
+        426 => 'Upgrade Required',
+        428 => 'Precondition Required',
+        429 => 'Too Many Requests',
+        431 => 'Request Header Fields Too Large',
+        451 => 'Unavailable For Legal Reasons',
+        500 => 'Internal Server Error',
+        501 => 'Not Implemented',
+        502 => 'Bad Gateway',
+        503 => 'Service Unavailable',
+        504 => 'Gateway Timeout',
+        505 => 'HTTP Version Not Supported',
+        506 => 'Variant Also Negotiates',
+        507 => 'Insufficient Storage',
+        508 => 'Loop Detected',
+        510 => 'Not Extended',
+        511 => 'Network Authentication Required',
+    ];
+    
+    /**
+     * Create a new Response instance
+     *
+     * @param mixed $content The response content
+     * @param int $status The HTTP status code
+     * @param array $headers An array of response headers
+     */
+    public function __construct(mixed $content = '', int $status = 200, array $headers = []) {
+        $this->setContent($content);
+        $this->setStatusCode($status);
+        
+        // Set default headers
+        $this->headers = array_merge([
+            'Content-Type' => ['text/html; charset=' . $this->charset],
+            'X-Powered-By' => ['PHP/' . PHP_VERSION],
+            'X-Content-Type-Options' => ['nosniff'],
+            'X-Frame-Options' => ['SAMEORIGIN'],
+            'X-XSS-Protection' => ['1; mode=block'],
+            'Referrer-Policy' => ['strict-origin-when-cross-origin'],
+        ], $headers);
+        
+        // Set default CSP header if not already set
+        if (!isset($this->headers['Content-Security-Policy'])) {
+            $headerValue = [];
+            
+            foreach (self::$defaultCspDirectives as $directive => $sources) {
+                if (empty($sources) && $sources !== []) {
+                    // Handle directives without values (like 'block-all-mixed-content')
+                    $headerValue[] = $directive;
+                } else {
+                    $headerValue[] = $directive . ' ' . (is_array($sources) ? implode(' ', $sources) : $sources);
+                }
+            }
+            
+            $this->headers['Content-Security-Policy'] = [implode('; ', $headerValue)];
+        }
+    }
+    
+    /**
+     * Create a new JSON response
+     *
+     * @param mixed $data The data to encode as JSON
+     * @param int $status The HTTP status code
+     * @param array $headers Additional headers to set
+     * @param int $options JSON encoding options
+     * @param int $depth Maximum depth for JSON encoding
+     * @return static
+     * @throws \RuntimeException If JSON encoding fails
+     */
+    public static function json(
+        mixed $data, 
+        int $status = 200, 
+        array $headers = [], 
+        int $options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT,
+        int $depth = 512
+    ): static {
+        $json = json_encode($data, $options, $depth);
+        
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \RuntimeException(
+                'Failed to encode JSON data: ' . json_last_error_msg(),
+                json_last_error()
+            );
+        }
+        
+        $headers['Content-Type'] = 'application/json; charset=utf-8';
+        return new static($json, $status, $headers);
+    }
+    
+    /**
+     * Create a new redirect response
+     *
+     * @param string $url The URL to redirect to
+     * @param int $status The HTTP status code (default: 302)
+     * @param array $headers Additional headers to set
+     * @return static
+     */
+    public static function redirect($url, $status = 302, array $headers = []) {
+        $headers['Location'] = $url;
+        return new static('', $status, $headers);
+    }
+    
+    /**
+     * Create a new error response
+     *
+     * @param string $message The error message
+     * @param int $status The HTTP status code (default: 500)
+     * @param array $headers Additional headers to set
+     * @return static
+     */
+    public static function error($message, $status = 500, array $headers = []) {
+        return new static($message, $status, $headers);
+    }
+    
+    /**
+     * Create a new not found response
+     *
+     * @param string $message The error message
+     * @param array $headers Additional headers to set
+     * @return static
+     */
+    public static function notFound($message = 'Not Found', array $headers = []) {
+        return new static($message, 404, $headers);
+    }
+    
+    /**
+     * Create a new forbidden response
+     *
+     * @param string $message The error message
+     * @param array $headers Additional headers to set
+     * @return static
+     */
+    public static function forbidden($message = 'Forbidden', array $headers = []) {
+        return new static($message, 403, $headers);
+    }
+    
+    /**
+     * Create a new unauthorized response
+     *
+     * @param string $message The error message
+     * @param array $headers Additional headers to set
+     * @return static
+     */
+    public static function unauthorized($message = 'Unauthorized', array $headers = []) {
+        return new static($message, 401, $headers);
+    }
+    
+    /**
+     * Set the response content
+     *
+     * @param mixed $content The response content (string, array, object, or callable for streaming)
+     * @return $this
+     */
+    public function setContent(mixed $content): static {
+        if (is_callable($content)) {
+            $this->streamedCallback = $content;
+            $this->content = '';
+        } else {
+            $this->content = $content;
+            $this->streamedCallback = null;
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Set the response content type
+     *
+     * @param string $contentType The content type
+     * @param string|null $charset The charset (null to keep current)
+     * @return $this
+     */
+    public function setContentType(string $contentType, ?string $charset = null): static {
+        $this->contentType = $contentType;
+        
+        if ($charset !== null) {
+            $this->charset = $charset;
+        }
+        
+        $this->setHeader('Content-Type', $contentType . '; charset=' . $this->charset);
+        return $this;
+    }
+    
+    /**
+     * Get the response content type
+     *
+     * @return string
+     */
+    public function getContentType(): string {
+        return $this->contentType;
+    }
+    
+    /**
+     * Specify data which should be serialized to JSON
+     * 
+     * @return mixed Data which can be serialized by json_encode()
+     */
+    public function jsonSerialize(): mixed {
+        return $this->content;
+    }
+    
+    /**
+     * Create a file download response
+     *
+     * @param string|SplFileInfo $file The path to the file or SplFileInfo instance
+     * @param string|null $name The file name shown to the user (null to use the original name)
+     * @param array $headers Additional headers to set
+     * @param string $disposition The disposition type (attachment/inline)
+     * @param bool $autoEtag Whether to automatically generate an ETag
+     * @param bool $autoLastModified Whether to automatically set the Last-Modified header
+     * @return static
+     * @throws \RuntimeException If the file does not exist or is not readable
+     */
+    /**
+     * Create a file download response with support for resumable downloads
+     *
+     * @param string|SplFileInfo $file The file path or SplFileInfo object
+     * @param string|null $name The file name to use for the download
+     * @param array $headers Additional headers to set
+     * @param string $disposition The content disposition (attachment or inline)
+     * @param bool $autoEtag Whether to automatically generate an ETag
+     * @param bool $autoLastModified Whether to automatically set the Last-Modified header
+     * @param bool $resumable Whether to enable resumable downloads (supports Range header)
+     * @return static
+     * @throws \RuntimeException If the file does not exist or is not readable
+     */
+    public static function file(
+        $file,
+        ?string $name = null,
+        array $headers = [],
+        string $disposition = 'attachment',
+        bool $autoEtag = true,
+        bool $autoLastModified = true,
+        bool $resumable = true
+    ): static {
+        if (!$file instanceof SplFileInfo) {
+            $file = new SplFileInfo($file);
+        }
+        
+        if (!$file->isReadable()) {
+            throw new RuntimeException(sprintf('The file "%s" is not readable.', $file->getPathname()));
+        }
+        
+        $name = $name ?? $file->getBasename();
+        $contentType = self::getMimeType($file->getExtension()) ?? 'application/octet-stream';
+        $fileSize = $file->getSize();
+        $lastModified = $file->getMTime();
+        
+        $response = new static(null, 200, $headers);
+        
+        // Set basic headers
+        $response->setHeader('Content-Type', $contentType);
+        $response->setHeader('Content-Length', (string)$fileSize);
+        $response->setHeader('Accept-Ranges', 'bytes');
+        
+        // Create content disposition header
+        $filename = $response->isAscii($name) ? $name : $name . '.bin';
+        $response->setHeader('Content-Disposition', sprintf(
+            '%s; filename="%s"',
+            $disposition,
+            str_replace('"', '\\"', $filename)
+        ));
+        
+        // Set cache headers if enabled
+        if ($autoEtag || $autoLastModified) {
+            $cacheOptions = [
+                'max_age' => 31536000, // 1 year
+                'public' => true,
+            ];
+            
+            if ($autoEtag) {
+                $etag = sprintf('"%s-%s"', $lastModified, $fileSize);
+                $cacheOptions['etag'] = $etag;
+                $response->setHeader('ETag', $etag);
+            }
+            
+            if ($autoLastModified) {
+                $response->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+                $cacheOptions['last_modified'] = $lastModified;
+            }
+            
+            $response->setCache($cacheOptions);
+        }
+        
+        // Handle range requests for resumable downloads
+        $range = null;
+        if ($resumable && isset($_SERVER['HTTP_RANGE'])) {
+            $range = $response->parseRangeHeader($_SERVER['HTTP_RANGE'], $fileSize);
+            
+            if ($range) {
+                $response->setStatusCode(206); // Partial Content
+                $response->setHeader('Content-Range', sprintf(
+                    'bytes %d-%d/%d',
+                    $range['start'],
+                    $range['end'],
+                    $fileSize
+                ));
+                $response->setHeader('Content-Length', (string)($range['end'] - $range['start'] + 1));
+            } else {
+                $response->setStatusCode(416); // Requested Range Not Satisfiable
+                $response->setHeader('Content-Range', sprintf('bytes */%d', $fileSize));
+                return $response;
+            }
+        }
+        
+        // Set the content to stream the file in chunks
+        $response->setContent(function () use ($file, $range, $fileSize) {
+            $handle = $file->openFile('rb');
+            $chunkSize = 8 * 1024; // 8KB chunks
+            
+            if ($range) {
+                // Seek to the start of the range
+                $handle->fseek($range['start']);
+                $bytesToSend = $range['end'] - $range['start'] + 1;
+            } else {
+                $bytesToSend = $fileSize;
+            }
+            
+            $bytesSent = 0;
+            
+            while (!$handle->eof() && $bytesSent < $bytesToSend) {
+                $chunk = min($chunkSize, $bytesToSend - $bytesSent);
+                
+                if ($chunk <= 0) {
+                    break;
+                }
+                
+                echo $handle->fread($chunk);
+                $bytesSent += $chunk;
+                
+                // Flush the output buffer to send data immediately
+                if (ob_get_level() > 0) {
+                    ob_flush();
+                }
+                flush();
+                
+                // Prevent timeouts for large files
+                if (connection_aborted()) {
+                    break;
+                }
+            }
+            
+            $handle = null; // Close the file handle
+        });
+        
+        return $response;
+    }
+    
+    /**
+     * Parse the Range header for resumable downloads
+     * 
+     * @param string $rangeHeader The Range header value
+     * @param int $fileSize The size of the file in bytes
+     * @return array|null Array with 'start' and 'end' keys, or null if range is invalid
+     */
+    protected function parseRangeHeader(string $rangeHeader, int $fileSize): ?array
+    {
+        if (!preg_match('/^bytes=(\d*)-(\d*)$/', $rangeHeader, $matches)) {
+            return null;
+        }
+        
+        $start = $matches[1] !== '' ? (int)$matches[1] : null;
+        $end = $matches[2] !== '' ? (int)$matches[2] : null;
+        
+        // Handle different range formats
+        if ($start !== null && $end === null) {
+            // bytes=start-
+            $end = $fileSize - 1;
+        } elseif ($start === null && $end !== null) {
+            // bytes=-suffix
+            $start = $fileSize - $end;
+            $end = $fileSize - 1;
+        }
+        
+        // Validate the range
+        if ($start === null || $end === null || $start > $end || $end >= $fileSize) {
+            return null;
+        }
+        
+        return [
+            'start' => $start,
+            'end' => $end,
+        ];
+    }
+            
+    /**
+     * Create a JSONP response
+     *
+     * @param string $callback The JSONP callback function name
+     * @param mixed $data The data to encode as JSONP
+     * @param int $status The HTTP status code
+     * @param array $headers Additional headers to set
+     * @param int $options JSON encoding options
+     * @return static
+     */
+    public static function jsonp(
+        string $callback,
+        mixed $data,
+        int $status = 200,
+        array $headers = [],
+        int $options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    ): static {
+        $json = json_encode($data, $options);
+        
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \RuntimeException(
+                'Failed to encode JSON data: ' . json_last_error_msg(),
+                json_last_error()
+            );
+        }
+        
+        $content = sprintf('/**/%s(%s);', $callback, $json);
+        $headers['Content-Type'] = 'application/javascript; charset=utf-8';
+        
+        return new static($content, $status, $headers);
+    }
+    
+    /**
+     * Set the response charset
+     *
+     * @param string $charset The charset to set
+     * @return $this
+     */
+    public function setCharset(string $charset): static {
+        $this->charset = $charset;
+        return $this;
+    }
+    
+    /**
+     * Get the response charset
+     *
+     * @return string
+     */
+    public function getCharset(): string {
+        return $this->charset;
+    }
+    
+    /**
+     * Set the Content Security Policy for the response
+     * 
+     * @param array $directives An associative array of CSP directives
+     * @param bool $reportOnly Whether to use Content-Security-Policy-Report-Only header
+     * @return $this
+     */
+    public function setContentSecurityPolicy(array $directives, bool $reportOnly = false)
+    {
+        $headerValue = [];
+        
+        foreach ($directives as $directive => $sources) {
+            if (empty($sources) && $sources !== []) {
+                // Handle directives without values (like 'block-all-mixed-content')
+                $headerValue[] = $directive;
+            } else {
+                $headerValue[] = $directive . ' ' . (is_array($sources) ? implode(' ', $sources) : $sources);
+            }
+        }
+        
+        $headerName = $reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+        $this->headers[$headerName] = [implode('; ', $headerValue)];
+        
+        return $this;
+    }
+    
+    /**
+     * Add a Content Security Policy directive
+     * 
+     * @param string $directive The CSP directive name
+     * @param string|array $sources The allowed sources
+     * @param bool $replace Whether to replace existing sources for this directive
+     * @param bool $reportOnly Whether to use Content-Security-Policy-Report-Only header
+     * @return $this
+     */
+    public function addContentSecurityPolicyDirective(
+        string $directive, 
+        $sources, 
+        bool $replace = false,
+        bool $reportOnly = false
+    ) {
+        $headerName = $reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+        $currentPolicy = $this->headers[$headerName][0] ?? '';
+        
+        // Parse existing policy
+        $directives = [];
+        foreach (explode(';', $currentPolicy) as $part) {
+            $part = trim($part);
+            if (empty($part)) continue;
+            
+            $parts = explode(' ', $part, 2);
+            if (count($parts) === 2) {
+                $directives[trim($parts[0])] = $parts[1];
+            } else {
+                $directives[$parts[0]] = '';
+            }
+        }
+        
+        // Add or update the directive
+        $sources = is_array($sources) ? implode(' ', $sources) : $sources;
+        
+        if ($replace || !isset($directives[$directive])) {
+            $directives[$directive] = $sources;
+        } else {
+            $directives[$directive] .= ' ' . $sources;
+        }
+        
+        // Rebuild the header
+        $headerValue = [];
+        foreach ($directives as $dir => $src) {
+            $headerValue[] = trim($dir . ' ' . $src);
+        }
+        
+        $this->headers[$headerName] = [implode('; ', $headerValue)];
+        
+        return $this;
+    }
+    
+    /**
+     * Remove a Content Security Policy directive
+     * 
+     * @param string $directive The CSP directive to remove
+     * @param bool $reportOnly Whether to modify the Report-Only header
+     * @return $this
+     */
+    public function removeContentSecurityPolicyDirective(string $directive, bool $reportOnly = false)
+    {
+        $headerName = $reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+        
+        if (isset($this->headers[$headerName])) {
+            $directives = [];
+            foreach (explode(';', $this->headers[$headerName][0]) as $part) {
+                $part = trim($part);
+                if (empty($part)) continue;
+                
+                $parts = explode(' ', $part, 2);
+                if (count($parts) === 2 && $parts[0] !== $directive) {
+                    $directives[$parts[0]] = $parts[1];
+                } elseif (count($parts) === 1 && $parts[0] !== $directive) {
+                    $directives[$parts[0]] = '';
+                }
+            }
+            
+            $headerValue = [];
+            foreach ($directives as $dir => $src) {
+                $headerValue[] = trim($dir . ' ' . $src);
+            }
+            
+            if (empty($headerValue)) {
+                unset($this->headers[$headerName]);
+            } else {
+                $this->headers[$headerName] = [implode('; ', $headerValue)];
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Enable CORS (Cross-Origin Resource Sharing) for the response
+     *
+     * @param array $options CORS options
+     *   - allowedOrigins: array List of allowed origins (e.g., ['https://example.com', 'http://localhost:3000'])
+     *   - allowedMethods: array List of allowed HTTP methods (e.g., ['GET', 'POST', 'OPTIONS'])
+     *   - allowedHeaders: array List of allowed headers (e.g., ['Content-Type', 'Authorization'])
+     *   - exposedHeaders: array List of headers to expose to the browser
+     *   - maxAge: int Maximum age (in seconds) of the CORS preflight request
+     *   - supportsCredentials: bool Whether to allow credentials (cookies, HTTP authentication)
+     *   - allowedOriginsPatterns: array List of regex patterns for allowed origins
+     * @return $this
+     */
+    public function enableCors(array $options = []): self
+    {
+        $options = array_merge(self::$defaultCorsSettings, $options);
+        
+        // Handle allowed origins
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? null;
+        
+        if ($origin) {
+            $allowed = false;
+            
+            // Check against allowed origins
+            if (in_array('*', $options['allowedOrigins'], true)) {
+                $allowed = true;
+            } elseif (in_array($origin, $options['allowedOrigins'], true)) {
+                $allowed = true;
+            } else {
+                // Check against allowed origin patterns
+                foreach ($options['allowedOriginsPatterns'] as $pattern) {
+                    if (preg_match($pattern, $origin)) {
+                        $allowed = true;
+                        break;
+                    }
+                }
+            }
+            
+            if ($allowed) {
+                $this->headers['Access-Control-Allow-Origin'] = [$origin];
+                
+                if ($options['supportsCredentials']) {
+                    $this->headers['Access-Control-Allow-Credentials'] = ['true'];
+                }
+                
+                // Handle preflight requests
+                if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+                    $this->setStatusCode(204); // No Content
+                    
+                    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+                        $this->headers['Access-Control-Allow-Methods'] = [
+                            implode(', ', $options['allowedMethods'])
+                        ];
+                    }
+                    
+                    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+                        $this->headers['Access-Control-Allow-Headers'] = [
+                            implode(', ', $options['allowedHeaders'])
+                        ];
+                    }
+                    
+                    if ($options['maxAge'] > 0) {
+                        $this->headers['Access-Control-Max-Age'] = [$options['maxAge']];
+                    }
+                    
+                    if (!empty($options['exposedHeaders'])) {
+                        $this->headers['Access-Control-Expose-Headers'] = [
+                            implode(', ', $options['exposedHeaders'])
+                        ];
+                    }
+                    
+                    // Prevent any output for OPTIONS requests
+                    $this->setContent('');
+                }
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Set default CORS settings that will be used for all responses
+     * 
+     * @param array $settings CORS settings
+     * @return void
+     */
+    public static function setDefaultCorsSettings(array $settings): void
+    {
+        self::$defaultCorsSettings = array_merge(self::$defaultCorsSettings, $settings);
+    }
+    
+    /**
+     * Set cache headers for the response
+     *
+     * @param array $options Cache options
+     *   - etag: string|null The ETag value
+     *   - last_modified: int|\DateTimeInterface|null The last modified timestamp or DateTime
+     *   - max_age: int Maximum cache age in seconds (default: 3600)
+     *   - s_maxage: int Shared cache max age in seconds
+     *   - public: bool Whether the response is public (default: true)
+     *   - must_revalidate: bool Whether to require revalidation (default: false)
+     *   - proxy_revalidate: bool Whether to require proxy revalidation (default: false)
+     *   - no_cache: bool Whether to disable caching (default: false)
+     *   - no_store: bool Whether to prevent storage (default: false)
+     *   - no_transform: bool Whether to prevent transformations (default: false)
+     * @return $this
+     */
+    public function setCache(array $options = []): static {
+        $options = array_merge([
+            'etag' => null,
+            'last_modified' => null,
+            'max_age' => 3600,
+            's_maxage' => null,
+            'public' => true,
+            'must_revalidate' => false,
+            'proxy_revalidate' => false,
+            'no_cache' => false,
+            'no_store' => false,
+            'no_transform' => false,
+        ], $options);
+        
+        $directives = [];
+        
+        if ($options['no_cache']) {
+            $directives[] = 'no-cache';
+        }
+        
+        if ($options['no_store']) {
+            $directives[] = 'no-store';
+        }
+        
+        if ($options['no_transform']) {
+            $directives[] = 'no-transform';
+        }
+        
+        if ($options['must_revalidate']) {
+            $directives[] = 'must-revalidate';
+        }
+        
+        if ($options['proxy_revalidate']) {
+            $directives[] = 'proxy-revalidate';
+        }
+        
+        if ($options['public']) {
+            $directives[] = 'public';
+        } else {
+            $directives[] = 'private';
+        }
+        
+        if (null !== $options['max_age']) {
+            $directives[] = 'max-age=' . $options['max_age'];
+        }
+        
+        if (null !== $options['s_maxage']) {
+            $directives[] = 's-maxage=' . $options['s_maxage'];
+        }
+        
+        $this->setHeader('Cache-Control', implode(', ', $directives));
+        
+        if (null !== $options['etag']) {
+            $this->setEtag($options['etag']);
+        }
+        
+        if (null !== $options['last_modified']) {
+            $this->setLastModified($options['last_modified']);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Set the ETag for the response
+     *
+     * @param string $etag The ETag value
+     * @param bool $weak Whether to use a weak validator
+     * @return $this
+     */
+    public function setEtag(string $etag, bool $weak = false): static {
+        $this->setHeader('ETag', ($weak ? 'W/' : '') . '"' . $etag . '"');
+        return $this;
+    }
+    
+    /**
+     * Set the Last-Modified header
+     *
+     * @param int|\DateTimeInterface|null $date A timestamp, DateTime instance, or null to unset
+     * @return $this
+     */
+    public function setLastModified($date): static {
+        if ($date === null) {
+            $this->removeHeader('Last-Modified');
+            return $this;
+        }
+        
+        if ($date instanceof \DateTimeInterface) {
+            $date = $date->getTimestamp();
+        } elseif (!is_numeric($date)) {
+            throw new InvalidArgumentException('The date must be a timestamp or DateTime object');
+        }
+        
+        $this->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $date) . ' GMT');
+        return $this;
+    }
+    
+    /**
+     * Make the response expire immediately
+     *
+     * @return $this
+     */
+    public function expire(): static {
+        $this->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+        $this->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0');
+        $this->setHeader('Pragma', 'no-cache');
+        
+        return $this;
+    }
+    
+    /**
+     * Set no-cache headers for the response
+     *
+     * @return $this
+     */
+    public function setNoCache(): static {
+        return $this->setCache([
+            'no_cache' => true,
+            'no_store' => true,
+            'must_revalidate' => true,
+            'max_age' => 0,
+        ]);
+    }
+    
+    /**
+     * Get the response content
+     *
+     * @return string
+     */
+    public function getContent() {
+        return $this->content;
+    }
+    
+    /**
+     * Set the HTTP status code
+     *
+     * @param int $code The HTTP status code
+     * @param string|null $text The HTTP status text
+     * @return $this
+     * @throws \InvalidArgumentException When the HTTP status code is not valid
+     */
+    public function setStatusCode($code, $text = null) {
+        $this->statusCode = (int) $code;
+        
+        if ($this->isInvalid()) {
+            throw new \InvalidArgumentException(sprintf('The HTTP status code "%s" is not valid.', $code));
+        }
+        
+        if (null === $text) {
+            $this->statusText = isset(self::$statusTexts[$code]) ? self::$statusTexts[$code] : 'unknown status';
+        } else {
+            $this->statusText = $text;
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Get the HTTP status code
+     *
+     * @return int
+     */
+    public function getStatusCode() {
+        return $this->statusCode;
+    }
+    
+    /**
+     * Get the HTTP status text
+     *
+     * @return string
+     */
+    public function getStatusText() {
+        return $this->statusText;
+    }
+    
+    /**
+     * Set a header
+     *
+     * @param string $key The header name
+     * @param string|array $values The header value(s)
+     * @param bool $replace Whether to replace a previously set header
+     * @return $this
+     */
+    public function setHeader($key, $values, $replace = true) {
+        $key = str_replace('_', '-', strtolower($key));
+        
+        if (is_array($values)) {
+            $values = array_values($values);
+            
+            if (true === $replace || !isset($this->headers[$key])) {
+                $this->headers[$key] = $values;
+            } else {
+                $this->headers[$key] = array_merge($this->headers[$key], $values);
+            }
+        } else {
+            if (true === $replace || !isset($this->headers[$key])) {
+                $this->headers[$key] = [$values];
+            } else {
+                $this->headers[$key][] = $values;
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Get a header by name
+     *
+     * @param string $key The header name
+     * @param mixed $default The default value if the header does not exist
+     * @return string|array|null
+     */
+    public function getHeader($key, $default = null) {
+        $key = str_replace('_', '-', strtolower($key));
+        
+        if (isset($this->headers[$key])) {
+            return $this->headers[$key];
+        }
+        
+        return $default;
+    }
+    
+    /**
+     * Check if a header exists
+     *
+     * @param string $key The header name
+     * @return bool
+     */
+    public function hasHeader($key) {
+        $key = str_replace('_', '-', strtolower($key));
+        return isset($this->headers[$key]);
+    }
+    
+    /**
+     * Remove a header
+     *
+     * @param string $key The header name
+     * @return $this
+     */
+    public function removeHeader($key) {
+        $key = str_replace('_', '-', strtolower($key));
+        unset($this->headers[$key]);
+        return $this;
+    }
+    
+    /**
+     * Get all headers
+     *
+     * @return array
+     */
+    public function getHeaders() {
+        return $this->headers;
+    }
+    
+    
+    /**
+     * Check if the response is invalid
+     *
+     * @return bool
+     */
+    public function isInvalid() {
+        return $this->statusCode < 100 || $this->statusCode >= 600;
+    }
+    
+    /**
+     * Check if the response is successful
+     *
+     * @return bool
+     */
+    public function isSuccessful() {
+        return $this->statusCode >= 200 && $this->statusCode < 300;
+    }
+    
+    /**
+     * Check if the response is a redirection
+     *
+     * @return bool
+     */
+    public function isRedirection() {
+        return $this->statusCode >= 300 && $this->statusCode < 400;
+    }
+    
+    /**
+     * Check if the response is a client error
+     *
+     * @return bool
+     */
+    public function isClientError() {
+        return $this->statusCode >= 400 && $this->statusCode < 500;
+    }
+    
+    /**
+     * Check if the response is a server error
+     *
+     * @return bool
+     */
+    public function isServerError() {
+        return $this->statusCode >= 500 && $this->statusCode < 600;
+    }
+    
+    /**
+     * Check if the response is OK (status code 200)
+     *
+     * @return bool
+     */
+    public function isOk() {
+        return 200 === $this->statusCode;
+    }
+    
+    /**
+     * Check if the response is a 404 Not Found
+     *
+     * @return bool
+     */
+    public function isNotFound() {
+        return 404 === $this->statusCode;
+    }
+    
+    /**
+     * Check if the response is a 403 Forbidden
+     *
+     * @return bool
+     */
+    public function isForbidden() {
+        return 403 === $this->statusCode;
+    }
+    
+    /**
+     * Check if the response is a 401 Unauthorized
+     *
+     * @return bool
+     */
+    public function isUnauthorized() {
+        return 401 === $this->statusCode;
+    }
+    
+    /**
+     * Send HTTP headers and content
+     *
+     * @return $this
+     */
+    public function send() {
+        $this->sendHeaders();
+        $this->sendContent();
+        
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } elseif (!in_array(PHP_SAPI, ['cli', 'phpdbg'], true)) {
+            static::closeOutputBuffers(0, true);
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * Send the response content
+     *
+     * @return $this
+     */
+    public function sendContent() {
+        // Send headers
+        $this->sendHeaders();
+        
+        // Handle streamed content
+        if (is_callable($this->content)) {
+            call_user_func($this->content);
+            return $this;
+        }
+        
+        // Get the content
+        $content = (string) $this->content;
+        
+        // Apply compression if enabled and supported
+        if ($this->shouldCompress($content)) {
+            $this->compressContent($content);
+        }
+        
+        // Output the content
+        echo $content;
+        
+        return $this;
+    }
+    
+    /**
+     * Send HTTP headers
+     *
+     * @return $this
+     */
+    public function sendHeaders() {
+        // Headers have already been sent by the developer
+        if (headers_sent()) {
+            return $this;
+        }
+        
+        // Status line
+        header(sprintf('HTTP/1.1 %s %s', $this->statusCode, $this->statusText), true, $this->statusCode);
+        
+        // Headers
+        foreach ($this->headers as $name => $values) {
+            $replace = 0 === strcasecmp($name, 'Content-Type');
+            
+            foreach ($values as $value) {
+                header($name . ': ' . $value, $replace, $this->statusCode);
+            }
+        }
+        
+        // Cookies
+        if (isset($this->headers['Set-Cookie'])) {
+            foreach ($this->headers['Set-Cookie'] as $cookie) {
+                header('Set-Cookie: ' . $cookie, false, $this->statusCode);
+            }
+        }
+        
+        // Content
+        if (is_callable($this->content)) {
+            call_user_func($this->content);
+            return $this;
+        }
+        
+        // Get the content
+        $content = (string) $this->content;
+        
+        // Apply compression if enabled and supported
+        if ($this->shouldCompress($content)) {
+            $this->compressContent($content);
+        }
+        
+        // Output the content
+        echo $content;
+        
+        return $this;
+    }
+    
+    /**
+     * Stream a file or other streamable resource
+     *
+     * @param string|resource $stream The file path or stream resource
+     * @param int $status The HTTP status code
+     * @param array $headers Additional headers
+     * @param string|null $contentType The content type (null to guess)
+     * @return static
+     */
+    public static function stream($stream, int $status = 200, array $headers = [], ?string $contentType = null): static {
+        if (is_string($stream)) {
+            if (!is_readable($stream)) {
+                throw new RuntimeException(sprintf('The file "%s" is not readable.', $stream));
+            }
+            
+            $stream = fopen($stream, 'rb');
+            if (false === $stream) {
+                throw new RuntimeException(sprintf('Could not open file "%s" for reading.', $stream));
+            }
+            
+            if (null === $contentType) {
+                $filePath = is_string($stream) ? $stream : stream_get_meta_data($stream)['uri'];
+                $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                $contentType = self::getMimeType($extension) ?? 'application/octet-stream';
+            }
+        }
+        
+        if (!is_resource($stream) || 'stream' !== get_resource_type($stream)) {
+            throw new InvalidArgumentException('Invalid stream provided.');
+        }
+        
+        $response = new static(null, $status, $headers);
+        $response->setContent(function () use ($stream) {
+            while (!feof($stream)) {
+                echo fread($stream, 8192);
+                flush();
+                if (connection_status() != CONNECTION_NORMAL) {
+                    break;
+                }
+            }
+            fclose($stream);
+        });
+        
+        if ($contentType) {
+            $response->setContentType($contentType);
+        }
+        
+        return $response;
+    }
+    
+    /**
+     * Create a response that forces a file to be downloaded
+     *
+     * @param string|SplFileInfo $file The file path or SplFileInfo instance
+     * @param string|null $name The file name (null to use the original)
+     * @param array $headers Additional headers
+     * @return static
+     */
+    public static function download($file, ?string $name = null, array $headers = []): static {
+        return static::file($file, $name, $headers, 'attachment');
+    }
+    
+    /**
+     * Create a response that displays a file inline
+     *
+     * @param string|SplFileInfo $file The file path or SplFileInfo instance
+     * @param string|null $name The file name (null to use the original)
+     * @param array $headers Additional headers
+     * @return static
+     */
+    public static function inline($file, ?string $name = null, array $headers = []): static {
+        return static::file($file, $name, $headers, 'inline');
+    }
+    
+    /**
+     * Create a response with no content (status 204)
+     *
+     * @param array $headers Additional headers
+     * @return static
+     */
+    public static function noContent(array $headers = []): static {
+        return new static(null, 204, $headers);
+    }
+    
+    /**
+     * Get the MIME type for a file extension
+     *
+     * @param string $extension The file extension
+     * @return string|null The MIME type or null if not found
+     */
+    public static function getMimeType(string $extension): ?string {
+        return self::$mimeTypes[strtolower($extension)] ?? null;
+    }
+    
+    /**
+     * Add a MIME type to the known types
+     *
+     * @param string $extension The file extension
+     * @param string $mimeType The MIME type
+     * @return void
+     */
+    public static function addMimeType(string $extension, string $mimeType): void {
+        self::$mimeTypes[strtolower($extension)] = $mimeType;
+    }
+    
+    /**
+     * Check if a string is ASCII
+     *
+     * @param string $string The string to check
+     * @return bool
+     */
+    protected static function isAscii(string $string): bool {
+        return !preg_match('/[^\x00-\x7F]/', $string);
+    }
+    
+    /**
+     * Mark the response as sent
+     *
+     * @return $this
+     */
+    public function markAsSent(): static {
+        $this->sent = true;
+        return $this;
+    }
+    
+    /**
+     * Check if the response has been sent
+     *
+     * @return bool
+     */
+    public function isSent(): bool {
+        return $this->sent;
+    }
+    
+    /**
+     * Cleans or flushes output buffers up to target level.
+     *
+     * @param int $targetLevel The target output buffering level
+     * @param bool $flush Whether to flush or clean the buffers
+     */
+    public static function closeOutputBuffers($targetLevel, $flush) {
+        $status = ob_get_status(true);
+        $level = count($status);
+        $flags = PHP_OUTPUT_HANDLER_REMOVABLE | ($flush ? PHP_OUTPUT_HANDLER_FLUSHABLE : PHP_OUTPUT_HANDLER_CLEANABLE);
+        
+        while ($level-- > $targetLevel && ($s = $status[$level]) && (!isset($s['del']) ? !isset($s['flags']) || ($s['flags'] & $flags) === $flags : $s['del'])) {
+            if ($flush) {
+                ob_end_flush();
+            } else {
+                ob_end_clean();
+            }
+        }
+    }
+}

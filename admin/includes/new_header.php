@@ -25,6 +25,12 @@ if (!isset($_SESSION['admin_session']) || $_SESSION['admin_session']['is_authent
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
+    <!-- Modern UI CSS -->
+    <link href="css/modern-ui.css" rel="stylesheet">
+    
+    <!-- Admin Enhancements CSS -->
+    <link href="css/admin-enhancements.css" rel="stylesheet">
+    
     <!-- Custom CSS -->
     <link href="../assets/css/admin-style.css" rel="stylesheet">
     

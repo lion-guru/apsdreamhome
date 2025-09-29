@@ -7,9 +7,9 @@ $conn = getDbConnection();
 $sql = "SELECT * FROM leads WHERE status = 'Qualified' AND created_at < (NOW() - INTERVAL 10 DAY)";
 $result = $conn->query($sql);
 
-while ($lead = $result && $result->fetch_assoc()) {
-    $stmt = $conn->prepare("UPDATE leads SET status = 'Converted', notes = CONCAT(IFNULL(notes, ''), '\n[Auto] Converted after 10 days') WHERE lead_id = ?");
-    $stmt->bind_param('i', $lead['lead_id']);
+while ($result && ($lead = $result->fetch_assoc())) {
+    $stmt = $conn->prepare("UPDATE leads SET status = 'Converted', notes = CONCAT(IFNULL(notes, ''), '\n[Auto] Converted after 10 days') WHERE id = ?");
+    $stmt->bind_param('i', $lead['id']);
     $stmt->execute();
 }
 ?>

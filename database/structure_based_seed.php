@@ -18,30 +18,35 @@ if ($conn->connect_error) {
 
 echo "Connected successfully to database\n";
 
-// Get all tables in the database
+// Get all tables in the database using prepared statement
 $tables = array();
-$result = $conn->query("SHOW TABLES");
-if ($result) {
-    while ($row = $result->fetch_row()) {
+$result = $conn->prepare("SHOW TABLES");
+$result->execute();
+$table_result = $result->get_result();
+if ($table_result) {
+    while ($row = $table_result->fetch_row()) {
         $tables[] = $row[0];
     }
+    $result->close();
     echo "Found " . count($tables) . " tables in database\n";
 } else {
     echo "Error getting tables: " . $conn->error . "\n";
 }
 
-// Function to get detailed table structure
+// Function to get detailed table structure using prepared statement
 function getTableStructure($conn, $tableName) {
     $structure = array();
-    $sql = "DESCRIBE $tableName";
-    $result = $conn->query($sql);
-    
+    $stmt = $conn->prepare("DESCRIBE `$tableName`");
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     if ($result && $result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
             $structure[] = $row;
         }
     }
-    
+    $stmt->close();
+
     return $structure;
 }
 
@@ -67,7 +72,7 @@ foreach ($tables as $table) {
     }
     
     // Check if table already has data
-    $result = $conn->query("SELECT COUNT(*) as count FROM $table");
+    $result = $conn->query("SELECT COUNT(*) as count FROM `$table`");
     $row = $result->fetch_assoc();
     $count = $row['count'];
     

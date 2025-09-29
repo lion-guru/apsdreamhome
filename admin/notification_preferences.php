@@ -4,7 +4,13 @@ require_once '../includes/db_settings.php';
 require_once '../includes/classes/SmsNotifier.php';
 
 $conn = get_db_connection();
-$systems_result = $conn->query("SELECT DISTINCT system FROM notification_settings");
+
+// Get systems using prepared statement
+$systems_stmt = $conn->prepare("SELECT DISTINCT system FROM system_alerts ORDER BY system");
+$systems_stmt->execute();
+$systems_result = $systems_stmt->get_result();
+$systems_stmt->close();
+
 $subscriptions = [];
 
 if (isset($_POST['subscriptions'])) {
@@ -60,25 +66,21 @@ if (isset($_POST['subscriptions'])) {
                         $stmt->bind_param('sii', $phone, $sms_enabled, $user_id);
                         $stmt->execute();
 
-                        // Update alert subscriptions
-                        $conn->query("DELETE FROM alert_subscriptions WHERE user_id = $user_id");
+                        // Update alert subscriptions using prepared statement
+                        $delete_stmt = $conn->prepare("DELETE FROM alert_subscriptions WHERE user_id = ?");
+                        $delete_stmt->bind_param("i", $user_id);
+                        $delete_stmt->execute();
+                        $delete_stmt->close();
 
                         if (!empty($_POST['subscriptions'])) {
-                            $values = [];
+                            $insert_stmt = $conn->prepare("INSERT INTO alert_subscriptions (user_id, system, level, email_enabled) VALUES (?, ?, ?, 1)");
                             foreach ($_POST['subscriptions'] as $system => $levels) {
                                 foreach ($levels as $level) {
-                                    $values[] = "($user_id, '" . 
-                                              $conn->real_escape_string($system) . "', '" . 
-                                              $conn->real_escape_string($level) . "', 1)";
+                                    $insert_stmt->bind_param("iss", $user_id, $system, $level);
+                                    $insert_stmt->execute();
                                 }
                             }
-
-                            if (!empty($values)) {
-                                $query = "INSERT INTO alert_subscriptions 
-                                         (user_id, system, level, email_enabled)
-                                         VALUES " . implode(',', $values);
-                                $conn->query($query);
-                            }
+                            $insert_stmt->close();
                         }
 
                         $success_message = 'Preferences updated successfully';
@@ -88,23 +90,31 @@ if (isset($_POST['subscriptions'])) {
                     }
                 }
 
-                // Get current preferences
+                // Get current preferences using prepared statement
                 $conn = get_db_connection();
-                $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
+                $user_stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+                $user_stmt->bind_param("i", $user_id);
+                $user_stmt->execute();
+                $user_result = $user_stmt->get_result();
+                $user = $user_result->fetch_assoc();
+                $user_stmt->close();
                 
-                $subscriptions_result = $conn->query(
-                    "SELECT system, level FROM alert_subscriptions WHERE user_id = $user_id"
-                );
-                
+                $subscriptions_stmt = $conn->prepare("SELECT system, level FROM alert_subscriptions WHERE user_id = ?");
+                $subscriptions_stmt->bind_param("i", $user_id);
+                $subscriptions_stmt->execute();
+                $subscriptions_result = $subscriptions_stmt->get_result();
+                $subscriptions_stmt->close();
+
                 $subscriptions = [];
                 while ($row = $subscriptions_result->fetch_assoc()) {
                     $subscriptions[$row['system']][] = $row['level'];
                 }
 
-                // Get available systems
-                $systems_result = $conn->query(
-                    "SELECT DISTINCT system FROM system_alerts ORDER BY system"
-                );
+                // Get available systems using prepared statement
+                $systems_query_stmt = $conn->prepare("SELECT DISTINCT system FROM system_alerts ORDER BY system");
+                $systems_query_stmt->execute();
+                $systems_result = $systems_query_stmt->get_result();
+                $systems_query_stmt->close();
                 ?>
 
                 <?php if ($success_message): ?>

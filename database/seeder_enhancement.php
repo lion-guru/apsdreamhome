@@ -145,7 +145,7 @@ foreach ($dashboardTables as $table) {
     $tableExists = $conn->query("SHOW TABLES LIKE '$table'");
     if ($tableExists && $tableExists->num_rows > 0) {
         // Check record count
-        $result = $conn->query("SELECT COUNT(*) as count FROM $table");
+        $result = $conn->query("SELECT COUNT(*) as count FROM `$table`");
         $row = $result->fetch_assoc();
         $count = $row['count'];
         
@@ -188,7 +188,7 @@ foreach ($dashboardTables as $table) {
             unlink("temp_seed_$table.php");
             
             // Verify the results
-            $result = $conn->query("SELECT COUNT(*) as count FROM $table");
+            $result = $conn->query("SELECT COUNT(*) as count FROM `$table`");
             $row = $result->fetch_assoc();
             $newCount = $row['count'];
             

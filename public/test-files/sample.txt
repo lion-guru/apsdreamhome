@@ -1,0 +1,7 @@
+This is a sample text file for testing file downloads.
+
+File download functionality should handle text files correctly with proper MIME type and content disposition.
+
+Test content line 1
+Test content line 2
+Test content line 3

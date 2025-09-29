@@ -12,97 +12,185 @@ abstract class Controller
 
     public function __construct()
     {
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $this->auth = new AuthService();
+        // Ensure CSRF token is initialized
+        $this->getCsrfToken();
     }
 
-    protected function view(string $view, array $data = []): void
+    /**
+     * Set flash message
+     */
+    protected function setFlash(string $type, string $message): void
     {
-        $this->data = array_merge($this->data, $data);
-        $viewPath = __DIR__ . "/../views/{$view}.php";
-
-        if (!file_exists($viewPath)) {
-            throw new \Exception("View {$view} not found");
-        }
-
-        extract($this->data);
-
-        ob_start();
-        require $viewPath;
-        $content = ob_get_clean();
-
-        if ($this->layout) {
-            $layoutPath = __DIR__ . "/../views/layouts/{$this->layout}.php";
-            if (!file_exists($layoutPath)) {
-                throw new \Exception("Layout {$this->layout} not found");
-            }
-            require $layoutPath;
-        } else {
-            echo $content;
-        }
+        $_SESSION[$type] = $message;
     }
 
-    protected function json(array $data, int $status = 200): void
+    /**
+     * Get flash message
+     */
+    protected function getFlash(string $type): ?string
     {
-        http_response_code($status);
+        if (isset($_SESSION[$type])) {
+            $message = $_SESSION[$type];
+            unset($_SESSION[$type]);
+            return $message;
+        }
+        return null;
+    }
+
+    protected function json(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
     }
 
-    protected function redirect(string $url): void
+    /**
+     * Send a 404 Not Found response
+     */
+    protected function notFound(): void
     {
-        header("Location: {$url}");
+        http_response_code(404);
+        if ($this->isAjaxRequest()) {
+            $this->json(['error' => 'Not Found'], 404);
+        } else {
+            $this->view('errors/404', [], 404);
+        }
         exit;
     }
 
-    protected function back(): void
+    /**
+     * Require user to be logged in
+     */
+    protected function requireLogin(): void
     {
-        $referer = $_SERVER['HTTP_REFERER'] ?? '/';
-        $this->redirect($referer);
-    }
-
-    protected function getRequestMethod(): string
-    {
-        return strtoupper($_SERVER['REQUEST_METHOD']);
-    }
-
-    protected function isPost(): bool
-    {
-        return $this->getRequestMethod() === 'POST';
-    }
-
-    protected function isGet(): bool
-    {
-        return $this->getRequestMethod() === 'GET';
-    }
-
-    protected function input(string $key, $default = null)
-    {
-        return $_REQUEST[$key] ?? $default;
-    }
-
-    protected function validate(array $rules): array
-    {
-        $errors = [];
-        foreach ($rules as $field => $rule) {
-            $value = $this->input($field);
-            if (strpos($rule, 'required') !== false && empty($value)) {
-                $errors[$field][] = ucfirst($field) . ' is required';
-                continue;
-            }
-
-            if (strpos($rule, 'email') !== false && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                $errors[$field][] = 'Invalid email format';
-            }
-
-            if (preg_match('/min:([0-9]+)/', $rule, $matches)) {
-                $min = (int) $matches[1];
-                if (strlen($value) < $min) {
-                    $errors[$field][] = ucfirst($field) . " must be at least {$min} characters";
-                }
+        if (!$this->auth->isLoggedIn()) {
+            if ($this->isAjaxRequest()) {
+                $this->json(['error' => 'Authentication required'], 401);
+            } else {
+                $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+                header('Location: /login');
+                exit;
             }
         }
+    }
 
-        return $errors;
+    /**
+     * Check if user is logged in
+     */
+    protected function isLoggedIn(): bool
+    {
+        return $this->auth->isLoggedIn();
+    }
+
+    /**
+     * Check if current user is admin
+     */
+    protected function isAdmin(): bool
+    {
+        return $this->auth->isAdmin();
+    }
+
+    /**
+     * Require user to be an admin
+     */
+    protected function requireAdmin(): void
+    {
+        if (!$this->isAdmin()) {
+            if ($this->isAjaxRequest()) {
+                $this->json(['error' => 'Admin access required'], 403);
+            } else {
+                $this->forbidden();
+            }
+        }
+    }
+
+    /**
+     * Send a 403 Forbidden response
+     */
+    protected function forbidden(): void
+    {
+        http_response_code(403);
+        if ($this->isAjaxRequest()) {
+            $this->json(['error' => 'Forbidden'], 403);
+        } else {
+            $this->view('errors/403', [], 403);
+        }
+        exit;
+    }
+
+    /**
+     * Check if request is AJAX
+     */
+    protected function isAjaxRequest(): bool
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+
+    /**
+     * Redirect to a URL
+     */
+    protected function redirect(string $url): void
+    {
+        header("Location: {$url}");
+        exit();
+    }
+
+    /**
+     * Render a view template
+     */
+    protected function view(string $view, array $data = [], int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+
+        // Extract data for use in view
+        extract($data);
+
+        // Determine layout based on view path
+        $layout = $this->layout;
+        if (strpos($view, 'admin/') === 0) {
+            $layout = 'admin';
+        }
+
+        // Build view path
+        $viewPath = __DIR__ . '/../views/' . str_replace('.', '/', $view) . '.php';
+
+        if (!file_exists($viewPath)) {
+            throw new \Exception("View file not found: {$viewPath}");
+        }
+
+        // Include layout if not already included
+        if (!isset($content)) {
+            $layoutPath = __DIR__ . '/../views/layouts/' . $layout . '.php';
+            if (file_exists($layoutPath)) {
+                require_once $layoutPath;
+            } else {
+                // Fallback to direct view rendering
+                require_once $viewPath;
+            }
+        }
+    }
+
+    /**
+     * CSRF token utilities
+     */
+    protected function getCsrfToken(): string
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    protected function verifyCsrfToken(?string $token): bool
+    {
+        return isset($_SESSION['csrf_token']) && is_string($token) && hash_equals($_SESSION['csrf_token'], $token);
     }
 }

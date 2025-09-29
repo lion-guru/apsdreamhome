@@ -64,7 +64,7 @@ output("Connected successfully to database");
 
 // Function to check table count
 function checkTableCount($conn, $table) {
-    $result = $conn->query("SELECT COUNT(*) as count FROM $table");
+    $result = $conn->query("SELECT COUNT(*) as count FROM `$table`");
     if ($result) {
         $row = $result->fetch_assoc();
         return $row['count'];
@@ -123,9 +123,7 @@ foreach ($coreTables as $table => $widget) {
         switch ($table) {
             case 'users':
                 $conn->query("INSERT IGNORE INTO users (name, email, password, phone, type, status) VALUES
-                    ('Admin User', 'admin@apsdreamhome.com', '$2y$10$abcdefghijklmnopqrstuuWzAC6OdQrAUOL1CjRrYP5g/jVrFvXe', '9000000001', 'admin', 'active'),
-                    ('Agent Smith', 'agent@apsdreamhome.com', '$2y$10$abcdefghijklmnopqrstuuWzAC6OdQrAUOL1CjRrYP5g/jVrFvXe', '9000000002', 'agent', 'active'),
-                    ('John Doe', 'john@example.com', '$2y$10$abcdefghijklmnopqrstuuWzAC6OdQrAUOL1CjRrYP5g/jVrFvXe', '9000000003', 'user', 'active')");
+                    ('Admin User', 'admin@apsdreamhome.com', '\$2y\$10\$abcdefghijklmnopqrstuuWzAC6OdQrAUOL1CjRrYP5g/jVrFvXe', '9000000001', 'admin', 'active')");
                 break;
                 
             case 'properties':

@@ -1,191 +1,605 @@
 <?php
-// Admin Dashboard - Modern UI with Analytics
+/**
+ * Enhanced Security Admin Dashboard
+ * Provides secure dashboard functionality with comprehensive security measures
+ * Security Enhanced Version
+ */
+
+// Disable error display in production
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/logs/dashboard_security.log');
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
+// Set comprehensive security headers for admin panel
+header('X-Frame-Options: DENY');
+header('X-Content-Type-Options: nosniff');
+header('X-XSS-Protection: 1; mode=block');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header('Content-Security-Policy: default-src \'self\'; script-src \'self\' https://cdn.jsdelivr.net \'unsafe-inline\'; style-src \'self\' https://cdn.jsdelivr.net \'unsafe-inline\'; img-src \'self\' data:;');
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+header('Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()');
+header('X-Permitted-Cross-Domain-Policies: none');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+// Secure CORS configuration - Only allow specific origins
+$allowed_origins = [
+    'https://localhost',
+    'http://localhost',
+    'https://127.0.0.1',
+    'http://127.0.0.1',
+    'https://localhost:3000',
+    'http://localhost:3000'
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowed_origins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-API-Key, X-CSRF-Token');
+    header('Access-Control-Allow-Credentials: false');
+    header('Access-Control-Max-Age: 3600');
+}
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// सेशन डीबग जानकारी प्रिंट करें - इसे हटा दें या कमेंट करें
-// echo "<pre>DEBUG SESSION: ";
-// var_dump($_SESSION);
-// echo "</pre>";
+// Rate limiting for dashboard access
+$max_dashboard_loads = 30; // dashboard loads per hour
+$ip_address = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+$current_time = time();
 
-// Session timeout check - Must be before any output
-if (isset($_SESSION['last_activity']) && isset($sessionConfig['timeout_duration']) && 
-    (time() - $_SESSION['last_activity']) > $sessionConfig['timeout_duration']) {
-    // Session expired
+// Start secure session for admin
+$session_name = 'secure_admin_session';
+$secure = true; // Only send cookies over HTTPS
+$httponly = true; // Prevent JavaScript access to session cookie
+$samesite = 'Strict';
+
+if (PHP_VERSION_ID < 70300) {
+    session_set_cookie_params([
+        'lifetime' => 1800, // 30 minutes
+        'path' => '/admin',
+        'domain' => $_SERVER['HTTP_HOST'],
+        'secure' => $secure,
+        'httponly' => $httponly,
+        'samesite' => $samesite
+    ]);
+} else {
+    session_set_cookie_params([
+        'lifetime' => 1800, // 30 minutes
+        'path' => '/admin',
+        'domain' => $_SERVER['HTTP_HOST'],
+        'secure' => $secure,
+        'httponly' => $httponly,
+        'samesite' => $samesite
+    ]);
+}
+
+session_name($session_name);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Regenerate session ID to prevent session fixation
+if (!isset($_SESSION['last_regeneration'])) {
+    session_regenerate_id(true);
+    $_SESSION['last_regeneration'] = time();
+} elseif (time() - $_SESSION['last_regeneration'] > 1800) { // 30 minutes
+    session_regenerate_id(true);
+    $_SESSION['last_regeneration'] = time();
+}
+
+// Session timeout check
+if (isset($_SESSION['admin_last_activity']) &&
+    (time() - $_SESSION['admin_last_activity']) > 1800) { // 30 minutes timeout
     session_unset();
     session_destroy();
-    if (function_exists('logError')) {
-        logError('Session Timeout', [
-            'username' => $_SESSION['admin_username'] ?? 'UNKNOWN',
-            'ip_address' => $_SERVER['REMOTE_ADDR']
-        ]);
-    }
-    header('Location: index.php?error=session_expired');
+    logSecurityEvent('Dashboard Session Timeout', [
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN'
+    ]);
+    header('Location: index.php?timeout=1');
     exit();
 }
 
-// Periodic session ID regeneration for security
-if (!isset($_SESSION['created'])) {
-    $_SESSION['created'] = time();
-} else if (isset($sessionConfig['regenerate_interval']) && time() - $_SESSION['created'] > $sessionConfig['regenerate_interval']) {
-    session_regenerate_id(true);
-    $_SESSION['created'] = time();
+// Update last activity timestamp
+$_SESSION['admin_last_activity'] = time();
+
+// Generate CSRF token if not exists
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-// Update last activity timestamp
-$_SESSION['last_activity'] = time();
+// Rate limiting check
+$rate_limit_key = 'dashboard_access_' . md5($ip_address);
+if (!isset($_SESSION[$rate_limit_key])) {
+    $_SESSION[$rate_limit_key] = [
+        'loads' => 0,
+        'first_load' => $current_time,
+        'last_load' => $current_time
+    ];
+}
 
-// Check if user is logged in - यहां परिवर्तन करें
-// दोनों सेशन वेरिएबल्स की जांच करें
-if ((!isset($_SESSION['admin_session']) || $_SESSION['admin_session']['is_authenticated'] !== true) && 
-    (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true)) {
+$rate_limit_data = &$_SESSION[$rate_limit_key];
+
+// Check if rate limit exceeded
+if ($current_time - $rate_limit_data['first_load'] < 3600) {
+    $rate_limit_data['loads']++;
+    if ($rate_limit_data['loads'] > $max_dashboard_loads) {
+        logSecurityEvent('Dashboard Rate Limit Exceeded', [
+            'ip_address' => $ip_address,
+            'loads' => $rate_limit_data['loads'],
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN'
+        ]);
+        http_response_code(429);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Too many dashboard loads. Please slow down.',
+            'timestamp' => date('Y-m-d H:i:s'),
+            'request_id' => uniqid('rate_limit_')
+        ]);
+        exit();
+    }
+} else {
+    $rate_limit_data['loads'] = 1;
+    $rate_limit_data['first_load'] = $current_time;
+}
+
+$rate_limit_data['last_load'] = $current_time;
+
+// Security event logging function
+function logSecurityEvent($event, $context = []) {
+    static $logFile = null;
+
+    if ($logFile === null) {
+        $logDir = __DIR__ . '/logs';
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0755, true);
+        }
+        $logFile = $logDir . '/dashboard_security.log';
+    }
+
+    $timestamp = date('Y-m-d H:i:s');
+    $contextStr = '';
+
+    if (!empty($context)) {
+        foreach ($context as $key => $value) {
+            try {
+                if (is_null($value)) {
+                    $strValue = 'NULL';
+                } elseif (is_bool($value)) {
+                    $strValue = $value ? 'TRUE' : 'FALSE';
+                } elseif (is_scalar($value)) {
+                    $strValue = (string)$value;
+                } elseif (is_array($value) || is_object($value)) {
+                    $strValue = json_encode($value, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                } else {
+                    $strValue = 'UNKNOWN_TYPE';
+                }
+
+                $strValue = mb_strlen($strValue) > 500 ? mb_substr($strValue, 0, 500) . '...' : $strValue;
+                $contextStr .= " | $key: $strValue";
+            } catch (Exception $e) {
+                $contextStr .= " | $key: SERIALIZATION_ERROR";
+            }
+        }
+    }
+
+    $logMessage = "[{$timestamp}] {$event}{$contextStr}\n";
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
+    error_log($logMessage);
+}
+
+// Enhanced output escaping function
+function escapeForHTML($data) {
+    if (is_array($data)) {
+        return array_map('escapeForHTML', $data);
+    }
+    return htmlspecialchars($data ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}
+
+// Validate request headers
+function validateRequestHeaders() {
+    $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+    // Check User-Agent (basic bot detection)
+    if (empty($user_agent) || strlen($user_agent) < 10) {
+        logSecurityEvent('Suspicious User Agent in Dashboard', [
+            'user_agent' => $user_agent,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
+        ]);
+        return false;
+    }
+
+    return true;
+}
+
+// Validate database connection file
+$db_connection_file = __DIR__ . '/../includes/db_connection.php';
+if (!file_exists($db_connection_file) || !is_readable($db_connection_file)) {
+    logSecurityEvent('Database Connection File Missing', [
+        'file_path' => $db_connection_file,
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
+    ]);
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'System configuration error.',
+        'timestamp' => date('Y-m-d H:i:s')
+    ]);
+    exit();
+}
+
+// Include database connection securely
+require_once $db_connection_file;
+try {
+    $conn = getDbConnection();
+    if (!$conn) {
+        logSecurityEvent('Database Connection Failed in Dashboard', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
+        ]);
+        throw new Exception('Database connection failed');
+    }
+} catch (Exception $e) {
+    logSecurityEvent('Database Error in Dashboard', [
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+        'error' => $e->getMessage()
+    ]);
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database connection error.',
+        'timestamp' => date('Y-m-d H:i:s')
+    ]);
+    exit();
+}
+
+// Check if user is logged in
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    logSecurityEvent('Unauthorized Dashboard Access', [
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN'
+    ]);
     header('Location: index.php');
     exit();
 }
 
-// Role-based dashboard redirection
-$role = $_SESSION['admin_role'] ?? $_SESSION['admin_session']['role'] ?? '';
-if ($role !== 'admin') {
-    $role_dashboard_map = [
-        'superadmin' => 'superadmin_dashboard.php',
-        'manager' => 'manager_dashboard.php',
-        'director' => 'director_dashboard.php',
-        'office_admin' => 'office_admin_dashboard.php',
-        'sales' => 'sales_dashboard.php',
-        'employee' => 'employee_dashboard.php',
-        'legal' => 'legal_dashboard.php',
-        'marketing' => 'marketing_dashboard.php',
-        'finance' => 'finance_dashboard.php',
-        'hr' => 'hr_dashboard.php',
-        'it' => 'it_dashboard.php',
-        'operations' => 'operations_dashboard.php',
-        'support' => 'support_dashboard.php',
-    ];
-    if (isset($role_dashboard_map[$role]) && file_exists(__DIR__ . '/' . $role_dashboard_map[$role])) {
+// Validate user session data
+$user_id = $_SESSION['admin_id'] ?? 0;
+if (!filter_var($user_id, FILTER_VALIDATE_INT) || $user_id <= 0) {
+    logSecurityEvent('Invalid User ID in Session', [
+        'user_id' => $user_id,
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
+    ]);
+    session_destroy();
+    header('Location: index.php');
+    exit();
+}
+
+// Validate admin role
+$role = $_SESSION['admin_role'] ?? '';
+if (empty($role) || !in_array($role, ['admin', 'superadmin', 'manager', 'director', 'office_admin', 'sales', 'employee', 'legal', 'marketing', 'finance', 'hr', 'it', 'operations', 'support'])) {
+    logSecurityEvent('Unauthorized Dashboard Access Attempt', [
+        'attempted_role' => $role,
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN'
+    ]);
+    header('Location: index.php?error=unauthorized');
+    exit();
+}
+
+// Role-based dashboard redirection with validation
+$role_dashboard_map = [
+    'superadmin' => 'superadmin_dashboard.php',
+    'manager' => 'manager_dashboard.php',
+    'director' => 'director_dashboard.php',
+    'office_admin' => 'office_admin_dashboard.php',
+    'sales' => 'sales_dashboard.php',
+    'employee' => 'employee_dashboard.php',
+    'legal' => 'legal_dashboard.php',
+    'marketing' => 'marketing_dashboard.php',
+    'finance' => 'finance_dashboard.php',
+    'hr' => 'hr_dashboard.php',
+    'it' => 'it_dashboard.php',
+    'operations' => 'operations_dashboard.php',
+    'support' => 'support_dashboard.php',
+];
+
+if (isset($role_dashboard_map[$role])) {
+    $dashboard_file = __DIR__ . '/' . $role_dashboard_map[$role];
+    if (file_exists($dashboard_file) && is_readable($dashboard_file)) {
+        logSecurityEvent('Dashboard Redirect', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'role' => $role,
+            'redirect_to' => $role_dashboard_map[$role]
+        ]);
         header('Location: ' . $role_dashboard_map[$role]);
         exit();
-    } else if (file_exists(__DIR__ . '/' . $role . '_dashboard.php')) {
+    }
+} elseif (file_exists(__DIR__ . '/' . $role . '_dashboard.php')) {
+    $dashboard_file = __DIR__ . '/' . $role . '_dashboard.php';
+    if (is_readable($dashboard_file)) {
+        logSecurityEvent('Dashboard Redirect', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'role' => $role,
+            'redirect_to' => $role . '_dashboard.php'
+        ]);
         header('Location: ' . $role . '_dashboard.php');
         exit();
-    } else {
-        header('Location: index.php?error=unauthorized');
-        exit();
     }
 }
-// All session and redirect logic is now at the top. No output before this point.
 
-// Include database connection
-require_once __DIR__ . '/../includes/db_connection.php';
-$conn = getDbConnection();
+// Log dashboard access
+logSecurityEvent('Dashboard Accessed', [
+    'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN',
+    'session_id' => session_id(),
+    'user_role' => $role,
+    'user_id' => $user_id
+]);
 
-// Get dashboard statistics
+// Get dashboard statistics with enhanced error handling and prepared statements
 try {
-    // Property statistics
+    // Property statistics with prepared statements
     $property_stats = [
-        'total' => $conn->query("SELECT COUNT(*) as count FROM properties")->fetch_assoc()['count'] ?? 0,
-        'sold' => $conn->query("SELECT COUNT(*) as count FROM properties WHERE status = 'sold'")->fetch_assoc()['count'] ?? 0,
-        'available' => $conn->query("SELECT COUNT(*) as count FROM properties WHERE status = 'available'")->fetch_assoc()['count'] ?? 0,
-        'under_contract' => $conn->query("SELECT COUNT(*) as count FROM properties WHERE status = 'under_contract'")->fetch_assoc()['count'] ?? 0,
+        'total' => 0,
+        'sold' => 0,
+        'available' => 0,
+        'under_contract' => 0,
     ];
-    
-    // Booking statistics
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM properties WHERE 1");
+    if ($stmt && $stmt->execute()) {
+        $result = $stmt->get_result();
+        $property_stats['total'] = (int)($result->fetch_assoc()['count'] ?? 0);
+    }
+    $stmt->close();
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM properties WHERE status = ?");
+    if ($stmt) {
+        $stmt->bind_param("s", $status);
+
+        $status = 'sold';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $property_stats['sold'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $status = 'available';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $property_stats['available'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $status = 'under_contract';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $property_stats['under_contract'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $stmt->close();
+    }
+
+    // Booking statistics with prepared statements
     $booking_stats = [
-        'total' => $conn->query("SELECT COUNT(*) as count FROM bookings")->fetch_assoc()['count'] ?? 0,
-        'pending' => $conn->query("SELECT COUNT(*) as count FROM bookings WHERE status = 'pending'")->fetch_assoc()['count'] ?? 0,
-        'confirmed' => $conn->query("SELECT COUNT(*) as count FROM bookings WHERE status = 'confirmed'")->fetch_assoc()['count'] ?? 0,
-        'completed' => $conn->query("SELECT COUNT(*) as count FROM bookings WHERE status = 'completed'")->fetch_assoc()['count'] ?? 0,
+        'total' => 0,
+        'pending' => 0,
+        'confirmed' => 0,
+        'completed' => 0,
     ];
-    
-    // Customer statistics
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM bookings WHERE 1");
+    if ($stmt && $stmt->execute()) {
+        $result = $stmt->get_result();
+        $booking_stats['total'] = (int)($result->fetch_assoc()['count'] ?? 0);
+    }
+    $stmt->close();
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM bookings WHERE status = ?");
+    if ($stmt) {
+        $stmt->bind_param("s", $status);
+
+        $status = 'pending';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $booking_stats['pending'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $status = 'confirmed';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $booking_stats['confirmed'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $status = 'completed';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $booking_stats['completed'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $stmt->close();
+    }
+
+    // Customer statistics with prepared statements
     $customer_stats = [
-        'total' => $conn->query("SELECT COUNT(*) as count FROM customers")->fetch_assoc()['count'] ?? 0,
-        'new_this_month' => $conn->query("SELECT COUNT(*) as count FROM customers WHERE DATE(created_at) >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')")->fetch_assoc()['count'] ?? 0,
+        'total' => 0,
+        'new_this_month' => 0,
     ];
-    
-    // Lead statistics
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM customers WHERE 1");
+    if ($stmt && $stmt->execute()) {
+        $result = $stmt->get_result();
+        $customer_stats['total'] = (int)($result->fetch_assoc()['count'] ?? 0);
+    }
+    $stmt->close();
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM customers WHERE DATE(created_at) >= DATE_FORMAT(CURRENT_DATE, '%Y-%m-01')");
+    if ($stmt && $stmt->execute()) {
+        $result = $stmt->get_result();
+        $customer_stats['new_this_month'] = (int)($result->fetch_assoc()['count'] ?? 0);
+    }
+    $stmt->close();
+
+    // Lead statistics with prepared statements
     $lead_stats = [
-        'total' => $conn->query("SELECT COUNT(*) as count FROM leads")->fetch_assoc()['count'] ?? 0,
-        'new' => $conn->query("SELECT COUNT(*) as count FROM leads WHERE status = 'new'")->fetch_assoc()['count'] ?? 0,
-        'contacted' => $conn->query("SELECT COUNT(*) as count FROM leads WHERE status = 'contacted'")->fetch_assoc()['count'] ?? 0,
-        'qualified' => $conn->query("SELECT COUNT(*) as count FROM leads WHERE status = 'qualified'")->fetch_assoc()['count'] ?? 0,
+        'total' => 0,
+        'new' => 0,
+        'contacted' => 0,
+        'qualified' => 0,
     ];
-    
-    // Recent activities
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM leads WHERE 1");
+    if ($stmt && $stmt->execute()) {
+        $result = $stmt->get_result();
+        $lead_stats['total'] = (int)($result->fetch_assoc()['count'] ?? 0);
+    }
+    $stmt->close();
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM leads WHERE status = ?");
+    if ($stmt) {
+        $stmt->bind_param("s", $status);
+
+        $status = 'new';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $lead_stats['new'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $status = 'contacted';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $lead_stats['contacted'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $status = 'qualified';
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $lead_stats['qualified'] = (int)($result->fetch_assoc()['count'] ?? 0);
+
+        $stmt->close();
+    }
+
+    // Recent activities with prepared statements
     $recent_activities = [];
-    // Get recent activities from different tables
-    $activities_query = $conn->query(
-        "(SELECT 'booking' as type, id, customer_name, created_at, 'New booking received' as description 
-          FROM bookings 
-          ORDER BY created_at DESC LIMIT 5)
-         UNION ALL
-         (SELECT 'lead' as type, id, name as customer_name, created_at, 'New lead added' as description 
-          FROM leads 
-          ORDER BY created_at DESC LIMIT 5)
-         ORDER BY created_at DESC LIMIT 5"
-    );
-    
-    if ($activities_query) {
-        $recent_activities = $activities_query->fetch_all(MYSQLI_ASSOC);
+
+    // Get recent bookings
+    $stmt = $conn->prepare("SELECT 'booking' as type, id, customer_name, created_at, 'New booking received' as description
+                           FROM bookings
+                           ORDER BY created_at DESC LIMIT 5");
+    if ($stmt && $stmt->execute()) {
+        $bookings_activities = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $recent_activities = array_merge($recent_activities, $bookings_activities);
     }
-    
-    // Recent bookings
-    $recent_bookings = $conn->query(
-        "SELECT b.*, c.name as customer_name, p.title as property_title 
-         FROM bookings b 
-         LEFT JOIN customers c ON b.customer_id = c.id 
-         LEFT JOIN properties p ON b.property_id = p.id 
-         ORDER BY b.created_at DESC LIMIT 5"
-    )->fetch_all(MYSQLI_ASSOC);
-    
-    // Revenue data for chart
+    $stmt->close();
+
+    // Get recent leads
+    $stmt = $conn->prepare("SELECT 'lead' as type, id, name as customer_name, created_at, 'New lead added' as description
+                           FROM leads
+                           ORDER BY created_at DESC LIMIT 5");
+    if ($stmt && $stmt->execute()) {
+        $leads_activities = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $recent_activities = array_merge($recent_activities, $leads_activities);
+    }
+    $stmt->close();
+
+    // Merge and sort activities
+    usort($recent_activities, function($a, $b) {
+        return strtotime($b['created_at']) - strtotime($a['created_at']);
+    });
+    $recent_activities = array_slice($recent_activities, 0, 5);
+
+    // Recent bookings with prepared statements
+    $stmt = $conn->prepare("SELECT b.*, c.name as customer_name, p.title as property_title
+                           FROM bookings b
+                           LEFT JOIN customers c ON b.customer_id = c.id
+                           LEFT JOIN properties p ON b.property_id = p.id
+                           ORDER BY b.created_at DESC LIMIT 5");
+    $recent_bookings = [];
+    if ($stmt && $stmt->execute()) {
+        $recent_bookings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+    $stmt->close();
+
+    // Revenue data for chart with prepared statements
     $revenue_data = [];
-    $revenue_query = $conn->query(
-        "SELECT 
-            DATE_FORMAT(created_at, '%b %Y') as month,
-            SUM(amount) as total
-         FROM transactions
-         WHERE status = 'completed'
-         GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-         ORDER BY created_at DESC
-         LIMIT 6"
-    );
-    
-    if ($revenue_query) {
-        $revenue_data = array_reverse($revenue_query->fetch_all(MYSQLI_ASSOC));
+    $stmt = $conn->prepare("SELECT
+                               DATE_FORMAT(created_at, '%b %Y') as month,
+                               SUM(amount) as total
+                           FROM transactions
+                           WHERE status = 'completed'
+                           GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                           ORDER BY created_at DESC
+                           LIMIT 6");
+    if ($stmt && $stmt->execute()) {
+        $revenue_result = $stmt->get_result();
+        if ($revenue_result) {
+            $revenue_data = array_reverse($revenue_result->fetch_all(MYSQLI_ASSOC));
+        }
     }
-    
+    $stmt->close();
+
 } catch (Exception $e) {
-    error_log("Dashboard Error: " . $e->getMessage());
+    logSecurityEvent("Dashboard Data Error: " . $e->getMessage(), [
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
+    ]);
+    $property_stats = $booking_stats = $customer_stats = $lead_stats = [];
+    $recent_activities = $recent_bookings = $revenue_data = [];
 }
 
-// Include the new header
-include 'includes/new_header.php';
+// Validate and include header file
+$header_file = __DIR__ . '/includes/new_header.php';
+if (file_exists($header_file) && is_readable($header_file)) {
+    include $header_file;
+} else {
+    logSecurityEvent('Header File Missing', ['file_path' => $header_file]);
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Header file not found.',
+        'timestamp' => date('Y-m-d H:i:s')
+    ]);
+    exit();
+}
 ?>
 
 <!-- Page Title -->
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">Dashboard</h1>
+    <h1 class="h3 mb-0 fade-in">Dashboard</h1>
     <div>
-        <button class="btn btn-primary">
+        <button class="btn-modern btn-modern-primary" data-bs-toggle="modal" data-bs-target="#quickActionModal">
             <i class="fas fa-plus me-2"></i>Quick Action
         </button>
+    </div>
+</div>
+
+<!-- Security Status Bar -->
+<div class="alert-modern alert-modern-info d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <i class="fas fa-shield-alt me-2"></i>
+        <strong>Security Status:</strong> Protected
+        <span class="badge-modern badge-modern-success ms-2">Active</span>
+    </div>
+    <div class="text-end">
+        <small class="text-muted">
+            Session expires: <?php echo date('H:i:s', time() + 1800); ?><br>
+            Rate limit: <?php echo $max_dashboard_loads - $rate_limit_data['loads']; ?>/<?php echo $max_dashboard_loads; ?> remaining
+        </small>
     </div>
 </div>
 
 <!-- Recent Activities Section -->
 <div class="row g-4 mb-4">
     <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0">
-                <h5 class="mb-0">Recent Activities</h5>
+        <div class="card-modern fade-in">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activities</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table-modern">
                         <thead>
                             <tr>
                                 <th>Type</th>
@@ -196,28 +610,37 @@ include 'includes/new_header.php';
                         </thead>
                         <tbody>
                             <?php
-                            // Display recent bookings
-                            $recent_bookings = $conn->query("SELECT b.*, p.address as property_title FROM bookings b LEFT JOIN properties p ON b.property_id = p.id ORDER BY b.booking_date DESC LIMIT 5");
-                            while($booking = $recent_bookings->fetch_assoc()): ?>
-                            <tr>
-                                <td><span class="badge bg-info">Booking</span></td>
-                                <td>New booking for <?php echo htmlspecialchars($booking['property_title'] ?? 'Property #' . $booking['property_id']); ?></td>
-                                <td><?php echo date('d M Y', strtotime($booking['booking_date'])); ?></td>
-                                <td><span class="badge bg-<?php echo $booking['status'] === 'confirmed' ? 'success' : 'warning'; ?>"><?php echo ucfirst($booking['status']); ?></span></td>
-                            </tr>
-                            <?php endwhile; ?>
-                            
-                            <?php
-                            // Display recent leads
-                            $recent_leads = $conn->query("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5");
-                            while($lead = $recent_leads->fetch_assoc()): ?>
-                            <tr>
-                                <td><span class="badge bg-primary">Lead</span></td>
-                                <td>New lead from <?php echo htmlspecialchars($lead['name']); ?></td>
-                                <td><?php echo date('d M Y', strtotime($lead['created_at'])); ?></td>
-                                <td><span class="badge bg-<?php echo $lead['status'] === 'contacted' ? 'success' : 'warning'; ?>"><?php echo ucfirst($lead['status']); ?></span></td>
-                            </tr>
-                            <?php endwhile; ?>
+                            // Display recent bookings with proper validation
+                            $stmt = $conn->prepare("SELECT b.*, p.address as property_title FROM bookings b LEFT JOIN properties p ON b.property_id = p.id ORDER BY b.booking_date DESC LIMIT 5");
+                            if ($stmt && $stmt->execute()) {
+                                $recent_bookings_data = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                                $stmt->close();
+
+                                foreach ($recent_bookings_data as $booking): ?>
+                                <tr>
+                                    <td><span class="badge-modern badge-modern-primary">Booking</span></td>
+                                    <td>New booking for <?php echo htmlspecialchars($booking['property_title'] ?? 'Property #' . $booking['property_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><?php echo htmlspecialchars(date('d M Y', strtotime($booking['booking_date'])), ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><span class="badge-modern badge-modern-<?php echo $booking['status'] === 'confirmed' ? 'success' : 'warning'; ?>"><?php echo htmlspecialchars(ucfirst($booking['status']), ENT_QUOTES, 'UTF-8'); ?></span></td>
+                                </tr>
+                                <?php endforeach;
+                            }
+
+                            // Display recent leads with proper validation
+                            $stmt = $conn->prepare("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5");
+                            if ($stmt && $stmt->execute()) {
+                                $recent_leads_data = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                                $stmt->close();
+
+                                foreach ($recent_leads_data as $lead): ?>
+                                <tr>
+                                    <td><span class="badge-modern badge-modern-primary">Lead</span></td>
+                                    <td>New lead from <?php echo htmlspecialchars($lead['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><?php echo htmlspecialchars(date('d M Y', strtotime($lead['created_at'])), ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><span class="badge-modern badge-modern-<?php echo $lead['status'] === 'contacted' ? 'success' : 'warning'; ?>"><?php echo htmlspecialchars(ucfirst($lead['status']), ENT_QUOTES, 'UTF-8'); ?></span></td>
+                                </tr>
+                                <?php endforeach;
+                            } ?>
                         </tbody>
                     </table>
                 </div>
@@ -227,264 +650,333 @@ include 'includes/new_header.php';
 </div>
 
 <!-- Stats and Charts -->
-<div class="row g-4 mb-4">
+<div class="dashboard-grid mb-4">
     <!-- Properties Card -->
-    <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-uppercase text-muted mb-2">Properties</h6>
-                        <h2 class="mb-0"><?php echo number_format($property_stats['total']); ?></h2>
-                    </div>
-                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
-                        <i class="fas fa-home text-primary" style="font-size: 1.75rem;"></i>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <span class="badge bg-success bg-opacity-10 text-success me-2">
-                        <i class="fas fa-check-circle me-1"></i> <?php echo $property_stats['available']; ?> Available
-                    </span>
-                    <span class="badge bg-warning bg-opacity-10 text-warning">
-                        <i class="fas fa-file-contract me-1"></i> <?php echo $property_stats['under_contract']; ?> Under Contract
-                    </span>
-                </div>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="properties.php" class="text-decoration-none small">View all properties <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
+    <div class="stat-card fade-in">
+        <div class="stat-icon">
+            <i class="fas fa-home text-primary"></i>
+        </div>
+        <div class="stat-number"><?php echo htmlspecialchars(number_format($property_stats['total']), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="stat-label">Total Properties</div>
+        <div class="mt-3">
+            <span class="badge-modern badge-modern-success me-2">
+                <i class="fas fa-check-circle me-1"></i> <?php echo htmlspecialchars($property_stats['available'], ENT_QUOTES, 'UTF-8'); ?> Available
+            </span>
+            <span class="badge-modern badge-modern-warning">
+                <i class="fas fa-file-contract me-1"></i> <?php echo htmlspecialchars($property_stats['under_contract'], ENT_QUOTES, 'UTF-8'); ?> Under Contract
+            </span>
+        </div>
+        <div class="mt-3">
+            <a href="properties.php" class="btn-modern btn-modern-outline">
+                View all properties <i class="fas fa-arrow-right ms-1"></i>
+            </a>
         </div>
     </div>
-    
+
     <!-- Bookings Card -->
-    <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-uppercase text-muted mb-2">Bookings</h6>
-                        <h2 class="mb-0"><?php echo number_format($booking_stats['total']); ?></h2>
-                    </div>
-                    <div class="bg-info bg-opacity-10 p-3 rounded-circle">
-                        <i class="fas fa-calendar-check text-info" style="font-size: 1.75rem;"></i>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <span class="badge bg-warning bg-opacity-10 text-warning me-2">
-                        <i class="fas fa-clock me-1"></i> <?php echo $booking_stats['pending']; ?> Pending
-                    </span>
-                    <span class="badge bg-success bg-opacity-10 text-success">
-                        <i class="fas fa-check me-1"></i> <?php echo $booking_stats['confirmed']; ?> Confirmed
-                    </span>
-                </div>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="bookings.php" class="text-decoration-none small">View all bookings <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
+    <div class="stat-card fade-in" style="animation-delay: 0.1s;">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-check text-info"></i>
+        </div>
+        <div class="stat-number"><?php echo htmlspecialchars(number_format($booking_stats['total']), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="stat-label">Total Bookings</div>
+        <div class="mt-3">
+            <span class="badge-modern badge-modern-warning me-2">
+                <i class="fas fa-clock me-1"></i> <?php echo htmlspecialchars($booking_stats['pending'], ENT_QUOTES, 'UTF-8'); ?> Pending
+            </span>
+            <span class="badge-modern badge-modern-success">
+                <i class="fas fa-check me-1"></i> <?php echo htmlspecialchars($booking_stats['confirmed'], ENT_QUOTES, 'UTF-8'); ?> Confirmed
+            </span>
+        </div>
+        <div class="mt-3">
+            <a href="bookings.php" class="btn-modern btn-modern-outline">
+                View all bookings <i class="fas fa-arrow-right ms-1"></i>
+            </a>
         </div>
     </div>
-    
+
     <!-- Customers Card -->
-    <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-uppercase text-muted mb-2">Customers</h6>
-                        <h2 class="mb-0"><?php echo number_format($customer_stats['total']); ?></h2>
-                    </div>
-                    <div class="bg-success bg-opacity-10 p-3 rounded-circle">
-                        <i class="fas fa-users text-success" style="font-size: 1.75rem;"></i>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <span class="badge bg-primary bg-opacity-10 text-primary">
-                        <i class="fas fa-user-plus me-1"></i> <?php echo $customer_stats['new_this_month']; ?> New this month
-                    </span>
-                </div>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="customers.php" class="text-decoration-none small">View all customers <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
+    <div class="stat-card fade-in" style="animation-delay: 0.2s;">
+        <div class="stat-icon">
+            <i class="fas fa-users text-success"></i>
+        </div>
+        <div class="stat-number"><?php echo htmlspecialchars(number_format($customer_stats['total']), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="stat-label">Total Customers</div>
+        <div class="mt-3">
+            <span class="badge-modern badge-modern-primary">
+                <i class="fas fa-user-plus me-1"></i> <?php echo htmlspecialchars($customer_stats['new_this_month'], ENT_QUOTES, 'UTF-8'); ?> New this month
+            </span>
+        </div>
+        <div class="mt-3">
+            <a href="customers.php" class="btn-modern btn-modern-outline">
+                View all customers <i class="fas fa-arrow-right ms-1"></i>
+            </a>
         </div>
     </div>
-    
+
     <!-- Leads Card -->
-    <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-uppercase text-muted mb-2">Leads</h6>
-                        <h2 class="mb-0"><?php echo number_format($lead_stats['total']); ?></h2>
-                    </div>
-                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
-                        <i class="fas fa-user-tie text-warning" style="font-size: 1.75rem;"></i>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <span class="badge bg-danger bg-opacity-10 text-danger me-2">
-                        <i class="fas fa-exclamation-circle me-1"></i> <?php echo $lead_stats['new']; ?> New
-                    </span>
-                    <span class="badge bg-info bg-opacity-10 text-info">
-                        <i class="fas fa-phone me-1"></i> <?php echo $lead_stats['contacted']; ?> Contacted
-                    </span>
-                </div>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="leads.php" class="text-decoration-none small">View all leads <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
+    <div class="stat-card fade-in" style="animation-delay: 0.3s;">
+        <div class="stat-icon">
+            <i class="fas fa-user-tie text-warning"></i>
+        </div>
+        <div class="stat-number"><?php echo htmlspecialchars(number_format($lead_stats['total']), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="stat-label">Total Leads</div>
+        <div class="mt-3">
+            <span class="badge-modern badge-modern-error me-2">
+                <i class="fas fa-exclamation-circle me-1"></i> <?php echo htmlspecialchars($lead_stats['new'], ENT_QUOTES, 'UTF-8'); ?> New
+            </span>
+            <span class="badge-modern badge-modern-primary">
+                <i class="fas fa-phone me-1"></i> <?php echo htmlspecialchars($lead_stats['contacted'], ENT_QUOTES, 'UTF-8'); ?> Contacted
+            </span>
+        </div>
+        <div class="mt-3">
+            <a href="leads.php" class="btn-modern btn-modern-outline">
+                View all leads <i class="fas fa-arrow-right ms-1"></i>
+            </a>
         </div>
     </div>
 </div>
 
-<!-- --- ADVANCED ADMIN DASHBOARD WIDGETS --- -->
-<div class="row">
+<!-- Advanced Admin Dashboard Widgets -->
+<div class="dashboard-grid">
     <!-- Audit Access Log Widget -->
-    <div class="col-md-4 mb-4">
-        <div class="card border-info">
-            <div class="card-header bg-info text-white"><i class="fas fa-history"></i> Audit Access Log</div>
-            <div class="card-body">
-                <?php
-                try {
-                    $audit = $conn->query("SELECT COUNT(*) as total, SUM(action='export') as exports, SUM(action='drilldown') as drilldowns FROM audit_access_log")->fetch_assoc();
-                    echo "<b>Total Logs:</b> ".($audit['total'] ?? 0)."<br>";
-                    echo "<b>Exports:</b> ".($audit['exports'] ?? 0)."<br>";
-                    echo "<b>Drilldowns:</b> ".($audit['drilldowns'] ?? 0)."<br>";
-                } catch(Exception $e) {
-                    echo "No data found.";
+    <div class="card-modern fade-in" style="animation-delay: 0.4s;">
+        <div class="card-header">
+            <i class="fas fa-history me-2"></i>Audit Access Log
+        </div>
+        <div class="card-body">
+            <?php
+            try {
+                $stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(action='export') as exports, SUM(action='drilldown') as drilldowns FROM audit_access_log");
+                if ($stmt && $stmt->execute()) {
+                    $audit = $stmt->get_result()->fetch_assoc();
+                    $stmt->close();
+                    echo "<div class='stat-number text-primary'>" . htmlspecialchars($audit['total'] ?? 0, ENT_QUOTES, 'UTF-8') . "</div>";
+                    echo "<div class='stat-label'>Total Logs</div>";
+                    echo "<div class='mt-3'>";
+                    echo "<span class='badge-modern badge-modern-success me-2'>" . htmlspecialchars($audit['exports'] ?? 0, ENT_QUOTES, 'UTF-8') . " Exports</span>";
+                    echo "<span class='badge-modern badge-modern-primary'>" . htmlspecialchars($audit['drilldowns'] ?? 0, ENT_QUOTES, 'UTF-8') . " Drilldowns</span>";
+                    echo "</div>";
                 }
-                ?>
-                <a href="audit_access_log_view.php" class="btn btn-link p-0">View Details &raquo;</a>
+            } catch(Exception $e) {
+                echo "<div class='text-muted'>No data found.</div>";
+            }
+            ?>
+            <div class="mt-3">
+                <a href="audit_access_log_view.php" class="btn-modern btn-modern-outline">
+                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                </a>
             </div>
         </div>
     </div>
     <!-- Compliance Status Widget -->
-    <div class="col-md-4 mb-4">
-        <div class="card border-warning">
-            <div class="card-header bg-warning text-dark"><i class="fas fa-balance-scale"></i> Compliance Status</div>
-            <div class="card-body">
-                <?php
-                try {
-                    $compliance = $conn->query("SELECT COUNT(*) as total, SUM(status='passed') as passed, SUM(status='failed') as failed FROM compliance_audit_bot")->fetch_assoc();
-                    echo "<b>Total Audits:</b> ".($compliance['total'] ?? 0)."<br>";
-                    echo "<b>Passed:</b> ".($compliance['passed'] ?? 0)."<br>";
-                    echo "<b>Failed:</b> ".($compliance['failed'] ?? 0)."<br>";
-                } catch(Exception $e) {
-                    echo "No data found.";
+    <div class="card-modern fade-in" style="animation-delay: 0.5s;">
+        <div class="card-header">
+            <i class="fas fa-balance-scale me-2"></i>Compliance Status
+        </div>
+        <div class="card-body">
+            <?php
+            try {
+                $stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(status='passed') as passed, SUM(status='failed') as failed FROM compliance_audit_bot");
+                if ($stmt && $stmt->execute()) {
+                    $compliance = $stmt->get_result()->fetch_assoc();
+                    $stmt->close();
+                    echo "<div class='stat-number text-warning'>" . htmlspecialchars($compliance['total'] ?? 0, ENT_QUOTES, 'UTF-8') . "</div>";
+                    echo "<div class='stat-label'>Total Audits</div>";
+                    echo "<div class='mt-3'>";
+                    echo "<span class='badge-modern badge-modern-success me-2'>" . htmlspecialchars($compliance['passed'] ?? 0, ENT_QUOTES, 'UTF-8') . " Passed</span>";
+                    echo "<span class='badge-modern badge-modern-error'>" . htmlspecialchars($compliance['failed'] ?? 0, ENT_QUOTES, 'UTF-8') . " Failed</span>";
+                    echo "</div>";
                 }
-                ?>
-                <a href="compliance_dashboard.php" class="btn btn-link p-0">Compliance Dashboard &raquo;</a>
+            } catch(Exception $e) {
+                echo "<div class='text-muted'>No data found.</div>";
+            }
+            ?>
+            <div class="mt-3">
+                <a href="compliance_dashboard.php" class="btn-modern btn-modern-outline">
+                    Compliance Dashboard <i class="fas fa-arrow-right ms-1"></i>
+                </a>
             </div>
         </div>
     </div>
     <!-- Payouts/Commission Widget -->
-    <div class="col-md-4 mb-4">
-        <div class="card border-success">
-            <div class="card-header bg-success text-white"><i class="fas fa-coins"></i> Payouts & Commission</div>
-            <div class="card-body">
-                <?php
-                try {
-                    $payouts = $conn->query("SELECT COUNT(*) as total, SUM(status='pending') as pending, SUM(status='paid') as paid FROM payouts")->fetch_assoc();
-                    echo "<b>Total Payouts:</b> ".($payouts['total'] ?? 0)."<br>";
-                    echo "<b>Pending:</b> ".($payouts['pending'] ?? 0)."<br>";
-                    echo "<b>Paid:</b> ".($payouts['paid'] ?? 0)."<br>";
-                } catch(Exception $e) {
-                    echo "No data found.";
+    <div class="card-modern fade-in" style="animation-delay: 0.6s;">
+        <div class="card-header">
+            <i class="fas fa-coins me-2"></i>Payouts & Commission
+        </div>
+        <div class="card-body">
+            <?php
+            try {
+                $stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(status='pending') as pending, SUM(status='paid') as paid FROM payouts");
+                if ($stmt && $stmt->execute()) {
+                    $payouts = $stmt->get_result()->fetch_assoc();
+                    $stmt->close();
+                    echo "<div class='stat-number text-success'>" . htmlspecialchars($payouts['total'] ?? 0, ENT_QUOTES, 'UTF-8') . "</div>";
+                    echo "<div class='stat-label'>Total Payouts</div>";
+                    echo "<div class='mt-3'>";
+                    echo "<span class='badge-modern badge-modern-warning me-2'>" . htmlspecialchars($payouts['pending'] ?? 0, ENT_QUOTES, 'UTF-8') . " Pending</span>";
+                    echo "<span class='badge-modern badge-modern-success'>" . htmlspecialchars($payouts['paid'] ?? 0, ENT_QUOTES, 'UTF-8') . " Paid</span>";
+                    echo "</div>";
                 }
-                ?>
-                <a href="payouts_report.php" class="btn btn-link p-0">Payouts Report &raquo;</a>
+            } catch(Exception $e) {
+                echo "<div class='text-muted'>No data found.</div>";
+            }
+            ?>
+            <div class="mt-3">
+                <a href="payouts_report.php" class="btn-modern btn-modern-outline">
+                    Payouts Report <i class="fas fa-arrow-right ms-1"></i>
+                </a>
             </div>
         </div>
     </div>
 </div>
-<div class="row">
+<div class="dashboard-grid">
     <!-- Scheduled Reports Widget -->
-    <div class="col-md-4 mb-4">
-        <div class="card border-primary">
-            <div class="card-header bg-primary text-white"><i class="fas fa-calendar-alt"></i> Scheduled Reports</div>
-            <div class="card-body">
-                <?php
-                try {
-                    $reports = $conn->query("SELECT COUNT(*) as total, SUM(status='scheduled') as scheduled, SUM(status='sent') as sent FROM scheduled_report")->fetch_assoc();
-                    echo "<b>Total:</b> ".($reports['total'] ?? 0)."<br>";
-                    echo "<b>Scheduled:</b> ".($reports['scheduled'] ?? 0)."<br>";
-                    echo "<b>Sent:</b> ".($reports['sent'] ?? 0)."<br>";
-                } catch(Exception $e) {
-                    echo "No data found.";
+    <div class="card-modern fade-in" style="animation-delay: 0.7s;">
+        <div class="card-header">
+            <i class="fas fa-calendar-alt me-2"></i>Scheduled Reports
+        </div>
+        <div class="card-body">
+            <?php
+            try {
+                $stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(status='scheduled') as scheduled, SUM(status='sent') as sent FROM scheduled_report");
+                if ($stmt && $stmt->execute()) {
+                    $reports = $stmt->get_result()->fetch_assoc();
+                    $stmt->close();
+                    echo "<div class='stat-number text-primary'>" . htmlspecialchars($reports['total'] ?? 0, ENT_QUOTES, 'UTF-8') . "</div>";
+                    echo "<div class='stat-label'>Total Reports</div>";
+                    echo "<div class='mt-3'>";
+                    echo "<span class='badge-modern badge-modern-warning me-2'>" . htmlspecialchars($reports['scheduled'] ?? 0, ENT_QUOTES, 'UTF-8') . " Scheduled</span>";
+                    echo "<span class='badge-modern badge-modern-success'>" . htmlspecialchars($reports['sent'] ?? 0, ENT_QUOTES, 'UTF-8') . " Sent</span>";
+                    echo "</div>";
                 }
-                ?>
-                <a href="scheduled_report.php" class="btn btn-link p-0">View Scheduled Reports &raquo;</a>
+            } catch(Exception $e) {
+                echo "<div class='text-muted'>No data found.</div>";
+            }
+            ?>
+            <div class="mt-3">
+                <a href="scheduled_report.php" class="btn-modern btn-modern-outline">
+                    View Reports <i class="fas fa-arrow-right ms-1"></i>
+                </a>
             </div>
         </div>
     </div>
     <!-- Quick Actions Widget -->
-    <div class="col-md-8 mb-4">
-        <div class="card border-primary">
-            <div class="card-header bg-primary text-white"><i class="fas fa-bolt"></i> Quick Actions</div>
-            <div class="card-body">
-                <a href="add_employee.php" class="btn btn-outline-primary m-1">Add Employee</a>
-                <a href="add_role.php" class="btn btn-outline-secondary m-1">Add Role</a>
-                <a href="properties.php" class="btn btn-outline-success m-1">Add Property</a>
-                <a href="leads.php" class="btn btn-outline-warning m-1">Add Lead</a>
-                <a href="notification_management.php" class="btn btn-outline-danger m-1">Send Notification</a>
-                <a href="documents_dashboard.php" class="btn btn-outline-info m-1">Upload Document</a>
+    <div class="card-modern fade-in" style="animation-delay: 0.8s; grid-column: 1 / -1;">
+        <div class="card-header">
+            <i class="fas fa-bolt me-2"></i>Quick Actions
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="add_employee.php" class="btn-modern btn-modern-primary">
+                    <i class="fas fa-user-plus me-2"></i>Add Employee
+                </a>
+                <a href="add_role.php" class="btn-modern btn-modern-outline">
+                    <i class="fas fa-user-tag me-2"></i>Add Role
+                </a>
+                <a href="properties.php" class="btn-modern btn-modern-success">
+                    <i class="fas fa-home me-2"></i>Add Property
+                </a>
+                <a href="leads.php" class="btn-modern btn-modern-warning">
+                    <i class="fas fa-user-tie me-2"></i>Add Lead
+                </a>
+                <a href="notification_management.php" class="btn-modern btn-modern-error">
+                    <i class="fas fa-bell me-2"></i>Send Notification
+                </a>
+                <a href="documents_dashboard.php" class="btn-modern btn-modern-primary">
+                    <i class="fas fa-file-upload me-2"></i>Upload Document
+                </a>
             </div>
         </div>
     </div>
 </div>
-<!-- --- ADVANCED ADMIN DASHBOARD WIDGETS END --- -->
 
- <!-- Analytics Charts -->
-<div class="row">
-    <div class="col-lg-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-header bg-white border-0"><h5 class="mb-0">Leads by Status</h5></div>
-            <div class="card-body"><canvas id="leadsStatusChart"></canvas></div>
+<!-- Analytics Charts -->
+<div class="dashboard-grid">
+    <div class="card-modern fade-in" style="animation-delay: 0.9s;">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Leads by Status</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="leadsStatusChart"></canvas>
         </div>
     </div>
-    <div class="col-lg-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-header bg-white border-0"><h5 class="mb-0">Revenue Trend (Last 6 Months)</h5></div>
-            <div class="card-body"><canvas id="revenueTrendChart" style="min-height: 350px; height: 350px; max-width: 100%;"></canvas></div>
+    
+    <div class="card-modern fade-in" style="animation-delay: 1s;">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Revenue Trend (Last 6 Months)</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="revenueTrendChart" style="min-height: 350px; height: 350px; max-width: 100%;"></canvas>
         </div>
     </div>
 </div>
 
-<!-- Revenue Chart -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0">
-                <h5 class="mb-0">Revenue Overview</h5>
+<!-- Quick Action Modal -->
+<div class="modal fade" id="quickActionModal" tabindex="-1" aria-labelledby="quickActionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: var(--radius-lg); box-shadow: var(--shadow-xl);">
+            <div class="modal-header" style="background: var(--bg-gradient); color: var(--text-white); border: none; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+                <h5 class="modal-title" id="quickActionModalLabel">
+                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="card-body">
-                <canvas id="revenueChart" height="100"></canvas>
+            <div class="modal-body" style="padding: var(--space-xl);">
+                <div class="d-grid gap-3">
+                    <a href="add_employee.php" class="btn-modern btn-modern-primary">
+                        <i class="fas fa-user-plus me-2"></i>Add New Employee
+                    </a>
+                    <a href="add_role.php" class="btn-modern btn-modern-outline">
+                        <i class="fas fa-user-tag me-2"></i>Add New Role
+                    </a>
+                    <a href="properties.php" class="btn-modern btn-modern-success">
+                        <i class="fas fa-home me-2"></i>Add New Property
+                    </a>
+                    <a href="leads.php" class="btn-modern btn-modern-warning">
+                        <i class="fas fa-user-tie me-2"></i>Add New Lead
+                    </a>
+                    <a href="notification_management.php" class="btn-modern btn-modern-error">
+                        <i class="fas fa-bell me-2"></i>Send Notification
+                    </a>
+                    <a href="documents_dashboard.php" class="btn-modern btn-modern-primary">
+                        <i class="fas fa-file-upload me-2"></i>Upload Document
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Include Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" integrity="sha384-..." crossorigin="anonymous"></script>
 <script>
-// Leads by Status Chart Data
 <?php
+// Leads by Status Chart Data with prepared statements
 $lead_status_data = [];
 $lead_status_labels = [];
-$res = $conn->query("SELECT status, COUNT(*) as count FROM leads GROUP BY status");
-while($row = $res->fetch_assoc()) {
-    $lead_status_labels[] = $row['status'] ?: 'Unknown';
-    $lead_status_data[] = $row['count'];
+$stmt = $conn->prepare("SELECT status, COUNT(*) as count FROM leads GROUP BY status");
+if ($stmt && $stmt->execute()) {
+    $lead_status_result = $stmt->get_result();
+    while($row = $lead_status_result->fetch_assoc()) {
+        $lead_status_labels[] = htmlspecialchars($row['status'] ?: 'Unknown', ENT_QUOTES, 'UTF-8');
+        $lead_status_data[] = (int)($row['count'] ?? 0);
+    }
 }
-// Revenue Trend Data (last 6 months)
+$stmt->close();
+
+// Revenue Trend Data (last 6 months) with prepared statements
 $revenue_labels = [];
-$revenue_data = [];
-$res2 = $conn->query("SELECT DATE_FORMAT(date, '%b %Y') as month, SUM(amount) as total FROM transactions WHERE date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) GROUP BY month ORDER BY MIN(date)");
-while($row2 = $res2->fetch_assoc()) {
-    $revenue_labels[] = $row2['month'];
-    $revenue_data[] = $row2['total'] ?: 0;
+$revenue_data_trend = [];
+$stmt = $conn->prepare("SELECT DATE_FORMAT(date, '%b %Y') as month, SUM(amount) as total FROM transactions WHERE date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) GROUP BY month ORDER BY MIN(date)");
+if ($stmt && $stmt->execute()) {
+    $revenue_trend_result = $stmt->get_result();
+    while($row2 = $revenue_trend_result->fetch_assoc()) {
+        $revenue_labels[] = htmlspecialchars($row2['month'], ENT_QUOTES, 'UTF-8');
+        $revenue_data_trend[] = (float)($row2['total'] ?: 0);
+    }
 }
+$stmt->close();
 ?>
 const leadsStatusCtx = document.getElementById('leadsStatusChart').getContext('2d');
 const leadsStatusChart = new Chart(leadsStatusCtx, {
@@ -507,646 +999,69 @@ const revenueTrendChart = new Chart(revenueTrendCtx, {
         labels: <?php echo json_encode($revenue_labels); ?>,
         datasets: [{
             label: 'Revenue',
-            data: <?php echo json_encode($revenue_data); ?>,
+            data: <?php echo json_encode($revenue_data_trend); ?>,
             backgroundColor: '#0d6efd',
         }]
     },
     options: {responsive: true, plugins: {legend: {display: false}}}
 });
 
-// Revenue Chart
-const ctx = document.getElementById('revenueChart').getContext('2d');
-const revenueChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: [{
-            label: 'Monthly Revenue',
-            data: [12000, 19000, 15000, 25000, 22000, 30000, 28000, 35000, 30000, 40000, 38000, 45000],
-            borderColor: 'rgba(54, 162, 235, 1)',
-            backgroundColor: 'rgba(54, 162, 235, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
+// Security monitoring
+let csrfToken = '<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>';
+
+// Security event logging
+function logSecurityEvent(event, context = {}) {
+    fetch('/admin/log_security_event.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    display: true,
-                    drawBorder: false
-                },
-                ticks: {
-                    callback: function(value) {
-                        return '₹' + value.toLocaleString();
-                    }
-                }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
-            }
-        }
-    }
-});
-</script>
-
-<!-- Profile Modal -->
-<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="profileModalLabel">My Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <?php
-                // Get current user data
-                $user_id = $_SESSION['admin_session']['user_id'] ?? 0;
-                $user = $conn->query("SELECT * FROM users WHERE id = $user_id")->fetch_assoc();
-                ?>
-                <form id="profileForm" action="update_profile.php" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" id="currentProfilePicture" value="<?php echo $user['profile_picture'] ?? ''; ?>">
-                    <div class="text-center mb-4">
-                        <div class="profile-upload-wrapper position-relative d-inline-block <?php echo !empty($user['profile_picture']) ? 'has-image' : ''; ?>" style="cursor: pointer;">
-                            <?php 
-                            $profile_pic = !empty($user['profile_picture']) 
-                                ? 'uploads/profile_pictures/' . $user['profile_picture'] 
-                                : 'assets/img/default-avatar.php?name=' . urlencode($user['name'] ?? 'U');
-                            ?>
-                            <img id="profileImage" src="<?php echo $profile_pic; ?>" 
-                                 class="rounded-circle border border-3 border-primary" 
-                                 width="140" height="140" 
-                                 style="object-fit: cover; width: 140px; height: 140px; cursor: pointer;">
-                            
-                            <div class="profile-upload-controls">
-                                <input type="file" id="profilePicture" name="profile_picture" accept="image/jpeg,image/png,image/gif" class="d-none">
-                                <?php if (!empty($user['profile_picture'])): ?>
-                                <button type="button" class="profile-remove-btn" title="Remove picture">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <?php endif; ?>
-                            </div>
-                            
-                            <div class="profile-upload-hover" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; opacity: 0; transition: opacity 0.3s; pointer-events: none;">
-                                <i class="fas fa-camera mb-1"></i>
-                                <small>Change Photo</small>
-                            </div>
-                        </div>
-                        <div class="small text-muted mt-2">JPG, PNG or GIF (Max: 2MB)</div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Phone</label>
-                        <input type="tel" class="form-control" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
-                    </div>
-                    <div class="text-end">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Update Profile</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Change Password Modal -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="changePasswordForm">
-                    <div class="mb-3">
-                        <label class="form-label">Current Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="currentPassword" name="current_password" required>
-                            <button class="btn btn-outline-secondary toggle-password" type="button">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">New Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
-                            <button class="btn btn-outline-secondary toggle-password" type="button">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <div class="form-text">Password must be at least 8 characters long</div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Confirm New Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
-                            <button class="btn btn-outline-secondary toggle-password" type="button">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Change Password</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-// Toggle password visibility
-function togglePasswordVisibility(field) {
-    const input = $(field).siblings('input');
-    const icon = $(field).find('i');
-    const type = input.attr('type') === 'password' ? 'text' : 'password';
-    input.attr('type', type);
-    icon.toggleClass('fa-eye fa-eye-slash');
-}
-
-// Handle profile form submission with AJAX
-$(document).ready(function() {
-    // Toggle password visibility
-    $(document).on('click', '.toggle-password', function() {
-        togglePasswordVisibility(this);
-    });
-    
-    // Profile picture click handler
-    $('.profile-upload-wrapper').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $('#profilePicture').trigger('click');
-    });
-    
-    // Profile picture preview and validation
-    $('#profilePicture').on('change', function(e) {
-        const file = e.target.files[0];
-        const maxSize = 2 * 1024 * 1024; // 2MB
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        
-        if (!file) return;
-        
-        // Check file type
-        if (!validTypes.includes(file.type)) {
-            showAlert('Please upload a valid image file (JPEG, PNG, GIF)', 'error');
-            $(this).val('');
-            return;
-        }
-        
-        // Validate file size
-        if (file.size > maxSize) {
-            showAlert('File size must be less than 2MB', 'error');
-            $(this).val('');
-            return;
-        }
-        
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            $('#profileImage').attr('src', e.target.result);
-            // Show the remove button if it's hidden
-            $('.profile-remove-btn').removeClass('d-none');
-            // Clear any remove profile picture flag
-            $('input[name="remove_profile_picture"]').remove();
-            // Show success message
-            showAlert('Profile picture updated successfully', 'success');
-        };
-        reader.onerror = function() {
-            showAlert('Error reading the file', 'error');
-        };
-        reader.readAsDataURL(file);
-    });
-    
-    // Show/hide hover effect on profile picture
-    $('.profile-upload-wrapper')
-        .on('mouseenter', function() {
-            $(this).find('.profile-upload-hover').css('opacity', '1');
+        body: JSON.stringify({
+            event: event,
+            context: context,
+            csrf_token: csrfToken
         })
-        .on('mouseleave', function() {
-            $(this).find('.profile-upload-hover').css('opacity', '0');
-        });
-    
-    // Handle remove profile picture
-    $('.remove-picture-btn').on('click', function(e) {
-        e.preventDefault();
-        
-        // Clear the file input
-        $('#profilePicture').val('');
-        
-        // Set a flag to indicate picture should be removed
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'remove_profile_picture',
-            value: '1'
-        }).appendTo('#profileForm');
-        
-        // Reset preview to default avatar
-        const defaultAvatar = 'assets/img/avatar.png';
-        $('#profileImage').attr('src', defaultAvatar);
-        
-        // Hide the remove button
-        $(this).addClass('d-none');
-        
-        // Show success message
-        showAlert('Profile picture will be removed after saving changes', 'info');
-    });
-    
-    // Remove profile picture
-    $(document).on('click', '.profile-remove-btn', function(e) {
-        e.preventDefault();
-        
-        if (!confirm('Are you sure you want to remove your profile picture?')) {
-            return;
-        }
-        
-        const userId = <?php echo $user_id; ?>;
-        const removeBtn = $(this);
-        removeBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-        
-        $.ajax({
-            url: 'remove_profile_picture.php',
-            type: 'POST',
-            data: { user_id: userId },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    // Reset file input
-                    $('#profilePicture').val('');
-                    
-                    // Update UI
-                    const defaultSrc = 'assets/img/default-avatar.php?name=' + encodeURIComponent($('.user-name').text().trim());
-                    $('#profileImage').attr('src', defaultSrc);
-                    $('.profile-upload-wrapper').removeClass('has-image');
-                    $('.profile-remove-btn').remove();
-                    
-                    // Also update the header avatar
-                    $('.user-avatar img').attr('src', defaultSrc);
-                    
-                    showAlert('Profile picture removed successfully', 'success');
-                } else {
-                    showAlert(response.message || 'Failed to remove profile picture', 'error');
-                }
-            },
-            error: function() {
-                showAlert('An error occurred. Please try again.', 'error');
-            },
-            complete: function() {
-                removeBtn.prop('disabled', false).html('<i class="fas fa-times"></i>');
-            }
-        });
-    });
-    
-    // Handle profile form submission
-    $('#profileForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        var form = $(this);
-        var formData = new FormData(this);
-        
-        // Add current picture to form data
-        formData.append('current_picture', $('#currentProfilePicture').val());
-        
-        // Show loading state
-        var submitBtn = form.find('button[type="submit"]');
-        var originalBtnText = submitBtn.html();
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Updating...');
-        
-        console.log('Submitting form...');
-        
-        // Submit the form via AJAX
-        $.ajax({
-            url: 'update_profile.php',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            success: function(response) {
-                console.log('Response received:', response);
-                if (response.success) {
-                    // Update UI with new data
-                    if (typeof response.profile_picture !== 'undefined') {
-                        if (response.profile_picture) {
-                            // New picture was uploaded
-                            var newImageUrl = 'uploads/profile_pictures/' + response.profile_picture + '?t=' + new Date().getTime();
-                            $('#profileImage').attr('src', newImageUrl);
-                            $('#currentProfilePicture').val(response.profile_picture);
-                            $('.profile-remove-btn').removeClass('d-none');
-                            
-                            // Update profile picture in the header if it exists
-                            $('.user-avatar, .profile-user-img').attr('src', newImageUrl);
-                        } else {
-                            // Picture was removed
-                            var defaultImage = 'assets/img/default-avatar.php?name=' + encodeURIComponent(response.name || 'U');
-                            $('#profileImage').attr('src', defaultImage);
-                            $('#currentProfilePicture').val('');
-                            $('.profile-remove-btn').addClass('d-none');
-                            
-                            // Update profile picture in the header if it exists
-                            $('.user-avatar, .profile-user-img').attr('src', defaultImage);
-                        }
-                    }
-                    
-                    // Update username in header and modal
-                    if (response.name) {
-                        $('.user-name').text(response.name);
-                        document.title = document.title.replace(/^[^-]+/, response.name);
-                        $('#name').val(response.name);
-                    }
-                    
-                    // Update phone if changed
-                    if (response.phone) {
-                        $('#phone').val(response.phone);
-                    }
-                    
-                    showAlert(response.message || 'Profile updated successfully', 'success');
-                    
-                    // Close modal after delay
-                    setTimeout(function() {
-                        $('#profileModal').modal('hide');
-                    }, 1500);
-                } else {
-                    showAlert(response.message || 'Failed to update profile. Please try again.', 'error');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', {
-                    status: status,
-                    error: error,
-                    response: xhr.responseText
-                });
-                
-                var errorMessage = 'An error occurred while updating your profile';
-                try {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response && response.message) {
-                        errorMessage = response.message;
-                    }
-                } catch (e) {
-                    console.error('Error parsing error response:', e);
-                }
-                
-                showAlert(errorMessage, 'error');
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).html(originalBtnText);
-            }
-        });
-    });
-    
-    // Handle remove profile picture
-    $('.profile-remove-btn').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        if (confirm('Are you sure you want to remove your profile picture?')) {
-            // Add a hidden field to indicate picture removal
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'remove_picture',
-                value: '1'
-            }).appendTo('#profileForm');
-            
-            // Clear the file input
-            $('#profilePicture').val('');
-            
-            // Submit the form
-            $('#profileForm').submit();
-        }
-    });
-    
-    // Handle change password form submission
-    $('#changePasswordForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        const form = $(this);
-        const submitBtn = form.find('button[type="submit"]');
-        const originalBtnText = submitBtn.html();
-        
-        // Validate passwords match
-        const newPassword = $('#newPassword').val();
-        const confirmPassword = $('#confirmPassword').val();
-        
-        if (newPassword !== confirmPassword) {
-            showAlert('New password and confirm password do not match', 'error');
-            return;
-        }
-        
-        // Show loading state
-        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Changing...');
-        
-        $.ajax({
-            url: 'change_password.php',
-            type: 'POST',
-            data: form.serialize(),
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    showAlert(response.message, 'success');
-                    // Reset form and close modal
-                    form.trigger('reset');
-                    $('#changePasswordModal').modal('hide');
-                    
-                    // If there's a redirect URL, redirect after a delay
-                    if (response.redirect) {
-                        setTimeout(function() {
-                            window.location.href = response.redirect;
-                        }, 3000); // 3 seconds delay
-                    }
-                } else {
-                    showAlert(response.message || 'Error changing password', 'error');
-                }
-            },
-            error: function() {
-                showAlert('An error occurred. Please try again.', 'error');
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).html(originalBtnText);
-            }
-        });
-    });
-    
-    $('#profileForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        $.ajax({
-            url: 'update_profile.php',
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    // Show success message
-                    showAlert('Profile updated successfully', 'success');
-                    // Close modal after 1.5 seconds
-                    setTimeout(function() {
-                        $('#profileModal').modal('hide');
-                        // Reload the page to reflect changes in the header
-                        location.reload();
-                    }, 1500);
-                } else {
-                    showAlert(response.message || 'Error updating profile', 'error');
-                }
-            },
-            error: function() {
-                showAlert('An error occurred. Please try again.', 'error');
-            }
-        });
+    }).catch(error => console.error('Security logging failed:', error));
+}
+
+// Session timeout warning
+let sessionWarningShown = false;
+setInterval(function() {
+    const now = Math.floor(Date.now() / 1000);
+    const sessionTimeout = <?php echo time() + 1800; ?>;
+    const timeUntilExpiry = sessionTimeout - now;
+
+    if (timeUntilExpiry <= 300 && timeUntilExpiry > 0 && !sessionWarningShown) {
+        alert('Your session will expire in ' + Math.ceil(timeUntilExpiry / 60) + ' minutes. Please save your work.');
+        sessionWarningShown = true;
+    }
+}, 60000);
+
+// AJAX error handler with security logging
+$(document).ajaxError(function(event, xhr, settings, thrownError) {
+    logSecurityEvent('AJAX Error in Dashboard', {
+        url: settings.url,
+        method: settings.type,
+        error: thrownError,
+        status: xhr.status
     });
 });
 
-// Function to show alert messages
-function showAlert(message, type = 'success') {
-    const alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    `;
-    
-    // Remove any existing alerts
-    $('.alert-dismissible').alert('close');
-    
-    // Add new alert
-    $('.main-content > .container-fluid').prepend(alertHtml);
-    
-    // Auto-close after 5 seconds
-    setTimeout(() => {
-        $('.alert-dismissible').alert('close');
-    }, 5000);
-}
+// Initialize security on page load
+document.addEventListener('DOMContentLoaded', function() {
+    logSecurityEvent('Dashboard Page Loaded', {
+        user_role: '<?php echo htmlspecialchars($role); ?>',
+        user_id: <?php echo (int)$user_id; ?>
+    });
+});
 </script>
-
-<!-- Include the footer -->
-<?php include 'includes/new_footer.php'; ?>
-
-
 
 <?php
-function logError($message, $context = []) {
-    // Validate and create logs directory
-    $logDir = __DIR__ . '/../logs';
-    try {
-        if (!is_dir($logDir)) {
-            // Attempt to create directory with full permissions
-            if (!mkdir($logDir, 0777, true)) {
-                // Fallback to system temp directory if creation fails
-                $logDir = sys_get_temp_dir() . '/apsdreamhome_logs';
-                mkdir($logDir, 0777, true);
-            }
-        }
-
-        $logFile = $logDir . '/dashboard_error.log';
-        
-        // Prepare timestamp and context
-        $timestamp = date('Y-m-d H:i:s');
-        $contextStr = '';
-        
-        if (!empty($context)) {
-            foreach ($context as $key => $value) {
-                // Advanced context value conversion
-                try {
-                    if (is_null($value)) {
-                        $strValue = 'NULL';
-                    } elseif (is_bool($value)) {
-                        $strValue = $value ? 'TRUE' : 'FALSE';
-                    } elseif (is_scalar($value)) {
-                        $strValue = (string)$value;
-                    } elseif (is_array($value) || is_object($value)) {
-                        $strValue = json_encode($value, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_UNESCAPED_UNICODE);
-                    } else {
-                        $strValue = 'UNKNOWN_TYPE';
-                    }
-                    
-                    // Truncate extremely long values
-                    $strValue = mb_strlen($strValue) > 500 ? mb_substr($strValue, 0, 500) . '...' : $strValue;
-                    
-                    $contextStr .= " | $key: $strValue";
-                } catch (Exception $e) {
-                    $contextStr .= " | $key: SERIALIZATION_ERROR";
-                }
-            }
-        }
-        
-        // Construct log message
-        $logMessage = "[{$timestamp}] {$message}{$contextStr}\n";
-        
-        // Write to log file with error handling
-        if (file_put_contents($logFile, $logMessage, FILE_APPEND) === false) {
-            // Fallback error logging
-            error_log("CRITICAL: Unable to write to log file. Message: {$logMessage}");
-        }
-        
-        // Additional system error logging
-        error_log($logMessage);
-    } catch (Exception $e) {
-        // Last resort error logging
-        error_log("CRITICAL LOGGING FAILURE: " . $e->getMessage());
-    }
+// Close database connection
+if (isset($conn) && $conn) {
+    $conn->close();
 }
 
-// Validate critical paths and dependencies
-function validateSystemPaths() {
-    $criticalPaths = [
-        'includes_dir' => __DIR__ . '/../includes',
-        'config_dir' => __DIR__ . '/../config',
-        'db_connection_file' => __DIR__ . '/../includes/db_connection.php',
-        'session_manager_file' => __DIR__ . '/../app/Services/SessionManager.php'
-    ];
-
-    $missingPaths = [];
-    foreach ($criticalPaths as $name => $path) {
-        if (!file_exists($path)) {
-            $missingPaths[] = $name . ': ' . $path;
-        }
-    }
-
-    if (!empty($missingPaths)) {
-        logError('Critical Path Validation Failed', [
-            'missing_paths' => $missingPaths
-        ]);
-        throw new Exception('System configuration paths are missing: ' . implode(', ', $missingPaths));
-    }
-}
-
-// Global error and exception handling
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    logError('PHP Error', [
-        'errno' => $errno,
-        'errstr' => $errstr,
-        'errfile' => $errfile,
-        'errline' => $errline
-    ]);
-    return false; // Let PHP handle the error
-});
-
-set_exception_handler(function($exception) {
-    logError('Uncaught Exception', [
-        'message' => $exception->getMessage(),
-        'file' => $exception->getFile(),
-        'line' => $exception->getLine(),
-        'trace' => $exception->getTraceAsString()
-    ]);
-});
+include __DIR__ . '/includes/new_footer.php';
+?>

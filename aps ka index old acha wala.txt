@@ -1,0 +1,1963 @@
+<?php
+// Start session and include configuration
+
+require_once 'includes/db_connection.php'; // बेहतर डेटाबेस कनेक्शन फाइल का उपयोग करें
+require_once 'includes/helpers/file_helpers.php';
+
+// Get database connection with improved error handling
+try {
+    $conn = getDbConnection();
+    
+    // Start session if not already started
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    // Set default timezone
+    date_default_timezone_set('Asia/Kolkata');
+    
+    // Define base URL
+    $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . basename(dirname(__FILE__));
+    define('BASE_URL', rtrim($base_url, '/'));
+} catch (Exception $e) {
+    // Log the error and display a user-friendly message
+    error_log("Database connection error: " . $e->getMessage());
+    echo "<div style='color:red;'>Sorry, we're experiencing technical difficulties. Please try again later.</div>";
+    // Optionally, you can redirect to an error page
+    // header("Location: error.php");
+    // exit;
+}
+
+
+// Fetch featured properties
+$featured_properties = [];
+try {
+    $query = "
+        SELECT p.*, 
+               u.first_name, 
+               u.last_name,
+               pt.name as property_type,
+               (SELECT pi.image_url FROM property_images pi WHERE pi.property_id = p.id ORDER BY pi.is_primary DESC, pi.id ASC LIMIT 1) as main_image
+        FROM properties p
+        LEFT JOIN users u ON p.agent_id = u.id
+        LEFT JOIN property_types pt ON p.property_type_id = pt.id
+        WHERE p.status = 'available'
+        ORDER BY p.featured DESC, p.created_at DESC 
+        LIMIT 9
+    ";
+    $result = $conn->query($query);
+    
+    if ($result) {
+        $featured_properties = $result->fetch_all(MYSQLI_ASSOC);
+    }
+} catch (Exception $e) {
+    error_log('Error fetching properties: ' . $e->getMessage());
+}
+
+// Get property counts
+$counts = [
+    'total' => 0,
+    'sale' => 0,
+    'rent' => 0,
+    'agents' => 0
+];
+
+try {
+    // Get counts
+    $result = $conn->query("SELECT COUNT(*) as count FROM properties WHERE status = 'available'");
+    $counts['total'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
+    
+    // Properties for sale
+    $result = $conn->query("SELECT COUNT(*) as count FROM properties p 
+                           INNER JOIN property_types pt ON p.property_type_id = pt.id 
+                           WHERE pt.purpose = 'sale' AND p.status = 'available'");
+    $counts['sale'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
+    
+    // Properties for rent
+    $result = $conn->query("SELECT COUNT(*) as count FROM properties p 
+                           INNER JOIN property_types pt ON p.property_type_id = pt.id 
+                           WHERE pt.purpose = 'rent' AND p.status = 'available'");
+    $counts['rent'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
+    
+    // Total agents
+    $result = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = 'agent' AND status = 'active'");
+    $counts['agents'] = $result ? (int)$result->fetch_assoc()['count'] : 0;
+} catch (Exception $e) {
+    error_log('Error fetching counts: ' . $e->getMessage());
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find your dream home with APS Dream Home. Browse our exclusive collection of properties for sale and rent in prime locations.">
+    <meta name="keywords" content="real estate, property, dream home, house for sale, apartments, villas, real estate agent">
+    <meta name="author" content="APS Dream Home">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= rtrim(BASE_URL, '/') . $_SERVER['REQUEST_URI'] ?>">
+    <meta property="og:title" content="APS Dream Home - Find Your Perfect Property">
+    <meta property="og:description" content="Discover your dream home with our exclusive collection of properties for sale and rent.">
+    <meta property="og:image" content="<?= BASE_URL ?>/assets/images/og-image.jpg">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="APS Dream Home - Find Your Perfect Property">
+    <meta name="twitter:description" content="Discover your dream home with our exclusive collection of properties for sale and rent.">
+    <meta name="twitter:image" content="<?= BASE_URL ?>/assets/images/og-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= BASE_URL ?>/assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>/assets/favicon/favicon-16x16.png">
+    <link rel="manifest" href="<?= BASE_URL ?>/assets/favicon/site.webmanifest">
+    <link rel="mask-icon" href="<?= BASE_URL ?>/assets/favicon/safari-pinned-tab.svg" color="#1a237e">
+    <meta name="msapplication-TileColor" content="#1a237e">
+    <meta name="theme-color" content="#1a237e">
+    
+    <title>APS Dream Home - Find Your Perfect Property</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/modern-styles.css">
+    <link rel="stylesheet" href="assets/css/modern-homepage-enhancements.css">
+    <link rel="stylesheet" href="assets/css/property-cards.css">
+    
+    <style>
+        /* Critical CSS - Inlined for above-the-fold content */
+        :root {
+            --primary-color: #2c3e50; /* Darker blue */
+            --primary-dark: #1a2530; 
+            --primary-light: #4a6b8a;
+            --secondary-color: #e74c3c; /* Vibrant red accent */
+            --secondary-dark: #c0392b;
+            --secondary-light: #f5b7b1;
+            --accent-color: #f39c12; /* Warm orange */
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #121212;
+            --text-color: #333;
+            --text-light: #f8f9fa;
+            --text-muted: #6c757d;
+            --border-radius-sm: 0.25rem;
+            --border-radius: 0.5rem;
+            --border-radius-lg: 1rem;
+            --transition-fast: all 0.2s ease;
+            --transition-base: all 0.3s ease;
+            --transition-slow: all 0.5s ease;
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Poppins', sans-serif;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+        }
+        
+        /* Modern Minimalist Design Elements */
+        .minimalist-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        
+        /* Video Tour Section Styling */
+        .video-container {
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .video-play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            transition: var(--transition-base);
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .video-play-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        /* Sustainability Badges */
+        .property-badges {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .eco-badge, .energy-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .eco-badge {
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+
+        .energy-badge {
+            background: rgba(255, 193, 7, 0.9);
+            color: #333;
+        }
+
+        .minimalist-card:hover {
+            transform: translateY(-10px) rotateY(3deg);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 3D Elements */
+        .property-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .property-card:hover .property-content {
+            transform: translateZ(10px);
+        }
+
+        .property-content {
+            transition: transform 0.4s ease;
+            transform: translateZ(0);
+        }
+
+        .service-icon {
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .service-box:hover .service-icon {
+            transform: rotateY(180deg) translateZ(20px);
+        }
+        
+        /* Print styles */
+        @media print {
+            .no-print, nav, footer, .back-to-top {
+                display: none !important;
+            }
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+                color: #000;
+                background: #fff;
+            }
+            a[href^="http"]::after {
+                content: " (" attr(href) ")";
+                font-size: 0.8em;
+                font-weight: normal;
+            }
+            .container {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            color: var(--text-color);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Modern Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('assets/images/hero/luxury-home-1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            padding: 180px 0 120px;
+            margin-bottom: 80px;
+            position: relative;
+            height: 80vh;
+            min-height: 600px;
+        }
+        
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+        
+        /* Modern Search Box */
+        .search-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            transform: translateY(0);
+        }
+        
+        .search-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+        
+        .search-box .form-select,
+        .search-box .form-control {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            font-size: 1rem;
+            box-shadow: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box .form-select:focus,
+        .search-box .form-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+        
+        .search-box .btn-primary {
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box .btn-primary:hover {
+            background: linear-gradient(45deg, var(--primary-light), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
+        }
+        
+        /* Modern Property Cards */
+        .property-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            background: white;
+            border: none;
+            margin-bottom: 30px;
+        }
+        
+        .property-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .property-image-container {
+            height: 280px;
+            position: relative;
+        }
+        
+        .property-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        .property-card:hover .property-img {
+            transform: scale(1.1);
+        }
+        
+        .property-badge {
+            position: absolute;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+        
+        /* Sustainability Badges */
+        .property-badges {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .eco-badge, .energy-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .eco-badge {
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+
+        .energy-badge {
+            background: rgba(255, 193, 7, 0.9);
+            color: #333;
+        }
+        
+        .property-type {
+            top: 15px;
+            left: 15px;
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .property-price {
+            top: 15px;
+            right: 15px;
+            background: white;
+            color: var(--primary-dark);
+        }
+        
+        .favorite-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+        
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .property-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .property-card:hover .property-overlay {
+            opacity: 1;
+        }
+        
+        .property-content {
+            padding: 25px;
+        }
+        
+        .property-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .property-title a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .property-title a:hover {
+            color: var(--primary-color);
+        }
+        
+        .property-location {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .property-location i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+        
+        .property-features {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        
+        .property-features span {
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .property-features i {
+            color: var(--primary-color);
+            margin-right: 5px;
+            font-size: 1rem;
+        }
+        
+        .property-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .agent-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .agent-info i {
+            font-size: 1.2rem;
+            margin-right: 5px;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.available {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        
+        .status-badge.unavailable {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            color: white;
+            padding: 80px 0;
+            margin: 80px 0;
+            border-radius: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('assets/images/bg-image/pattern/pattern.png');
+            opacity: 0.1;
+            z-index: 1;
+        }
+        
+        .stats-section .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 30px 20px;
+            transition: all 0.3s ease;
+            border-radius: 16px;
+        }
+        
+        .stat-box:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .stat-box p {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Services Section */
+        .service-box {
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            height: 100%;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        
+        .service-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: var(--secondary-light);
+        }
+        
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .service-box:hover .service-icon {
+            transform: rotateY(180deg);
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+        }
+        
+        .service-box h4 {
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        /* Why Choose Us Section */
+        .feature-box {
+            transition: all 0.3s ease;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .feature-box:hover {
+            background-color: rgba(26, 35, 126, 0.03);
+            transform: translateX(5px);
+        }
+        
+        .feature-icon {
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.1);
+        }
+        
+        .feature-box:hover .feature-icon {
+            background-color: var(--primary-color) !important;
+            transform: rotateY(180deg);
+        }
+        
+        .feature-box:hover .feature-icon i {
+            color: white !important;
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-top:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-5px);
+        }
+        
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Navbar Styling */
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.3s ease;
+            background: rgba(26, 35, 126, 0.95) !important;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar.scrolled {
+            padding: 10px 0;
+            background: var(--primary-dark) !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand h3 {
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.75rem;
+        }
+        
+        .navbar-brand span {
+            color: var(--secondary-color) !important;
+        }
+        
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            padding: 10px 15px !important;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: white !important;
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--secondary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .navbar-nav .nav-link:hover::after,
+        .navbar-nav .nav-link.active::after {
+            width: 30px;
+        }
+        
+        .navbar .btn-primary {
+            background: var(--secondary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar .btn-primary:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 991px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-section {
+                padding: 150px 0 100px;
+            }
+            
+            .navbar-collapse {
+                background: var(--primary-dark);
+                padding: 20px;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+            
+            .navbar-nav .nav-link::after {
+                bottom: 0;
+            }
+            
+            /* Improved Mobile Navigation */
+            .navbar-toggler {
+                border: none;
+                padding: 0.5rem;
+                border-radius: 8px;
+                background-color: rgba(255,255,255,0.1);
+            }
+            
+            .navbar-toggler:focus {
+                box-shadow: none;
+                outline: none;
+            }
+            
+            /* Better touch targets for mobile */
+            .property-features span {
+                padding: 8px 0;
+            }
+            
+            .search-box .form-select,
+            .search-box .form-control {
+                padding: 15px 20px;
+                margin-bottom: 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-section {
+                padding: 120px 0 80px;
+            }
+            
+            .search-box {
+                margin: 0 15px;
+                padding: 20px;
+            }
+            
+            .stat-box {
+                margin-bottom: 30px;
+            }
+            
+            .service-box {
+                margin-bottom: 30px;
+            }
+            
+            /* Improved Mobile Layout */
+            .property-image-container {
+                height: 200px;
+            }
+            
+            .property-features {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .property-footer {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .status-badge {
+                align-self: flex-start;
+            }
+        }
+        
+        /* Small Mobile Devices */
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.75rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.75rem;
+            }
+            
+            .property-card {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.php">
+                <h3 class="m-0">APS <span class="text-primary">Dream Home</span></h3>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="properties.php">Properties</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.php">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.php">Contact</a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                        <a href="login.php" class="btn btn-primary px-4">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section position-relative">
+        <!-- Hero Slider -->
+        <div class="hero-slider swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban1.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban2.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban3.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/images/banner/ban5.jpg');"></div>
+                <div class="swiper-slide" style="background-image: url('assets/images/banner/diwaliban.jpg');"></div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+        
+        <div class="hero-overlay"></div>
+        
+        <div class="container position-relative z-index-1">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h1 class="hero-title animate__animated animate__fadeInDown">Find Your Dream Home</h1>
+                    <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">Discover the perfect property that matches your lifestyle and budget</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="search-box animate__animated animate__fadeInUp animate__delay-2s">
+                        <form action="properties.php" method="get">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <select class="form-select" name="type">
+                                        <option value="">Property Type</option>
+                                        <option value="apartment">Apartment</option>
+                                        <option value="villa">Villa</option>
+                                        <option value="house">House</option>
+                                        <option value="office">Office</option>
+                                        <option value="resellplot">resell plot</option>
+                                        <option value="plot">plot</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" name="purpose">
+                                        <option value="">Buy/Rent</option>
+                                        <option value="sale">Buy</option>
+                                        <option value="rent">Rent</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" name="bedrooms">
+                                        <option value="">Bedrooms</option>
+                                        <option value="1">1 Bedroom</option>
+                                        <option value="2">2 Bedrooms</option>
+                                        <option value="3">3 Bedrooms</option>
+                                        <option value="4">4+ Bedrooms</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="location" placeholder="Enter location...">
+                                        <button class="btn btn-primary px-4" type="submit">
+                                            <i class="fas fa-search me-2"></i> Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Tour Section -->
+    <section class="video-tour-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="section-title mb-4">
+                        <span class="subtitle text-primary">VIRTUAL EXPERIENCE</span>
+                        <h2 class="fw-bold">Take a Virtual Tour</h2>
+                        <div class="title-line"></div>
+                        <p class="text-muted mt-3">Experience our properties from the comfort of your home with our immersive virtual tours.</p>
+                    </div>
+                    <div class="features-list">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon-sm bg-primary text-white rounded-circle p-2 me-3">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <p class="mb-0">Explore every corner of the property</p>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon-sm bg-primary text-white rounded-circle p-2 me-3">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <p class="mb-0">High-definition video quality</p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon-sm bg-primary text-white rounded-circle p-2 me-3">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <p class="mb-0">Available for all premium properties</p>
+                        </div>
+                    </div>
+                    <a href="virtual-tours.php" class="btn btn-primary mt-4">View All Virtual Tours</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="video-container position-relative rounded-3 overflow-hidden shadow-lg">
+                        <img src="assets/images/property-video-thumbnail.jpg" alt="Property Video Tour" class="img-fluid w-100">
+                        <a href="#videoModal" data-bs-toggle="modal" class="video-play-btn">
+                            <i class="fas fa-play"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Modal -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="" allowfullscreen id="videoFrame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Properties -->
+<section class="container my-5 py-5">
+        <div class="section-title text-center mb-5">
+            <span class="subtitle text-primary">EXCLUSIVE PROPERTIES</span>
+            <h2 class="fw-bold">Featured Properties</h2>
+            <div class="title-line mx-auto"></div>
+            <p class="text-muted mt-3">Discover our handpicked selection of premium properties</p>
+        </div>
+    
+    <!-- Property Cards -->
+    <div class="row g-4">
+        <?php if (empty($featured_properties)): ?>
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> No properties available at the moment. Please check back later.
+                </div>
+            </div>
+        <?php else: ?>
+            <?php foreach ($featured_properties as $property): 
+                // Sanitize and format property data
+                $property_id = (int)($property['id'] ?? 0);
+                $price = !empty($property['price']) ? '₹' . number_format((float)$property['price']) : 'Contact for Price';
+                $image_url = !empty($property['main_image']) ? 
+                    htmlspecialchars(trim($property['main_image']), ENT_QUOTES, 'UTF-8') : 
+                    'assets/images/property-placeholder.jpg';
+                
+                $bathrooms = isset($property['bathrooms']) ? (int)$property['bathrooms'] : 0;
+                $bedrooms = isset($property['bedrooms']) ? (int)$property['bedrooms'] : 0;
+                $area = !empty($property['area']) ? number_format((int)$property['area']) . ' sq.ft.' : 'N/A';
+                
+                $title = !empty($property['title']) ? 
+                    htmlspecialchars(trim($property['title']), ENT_QUOTES, 'UTF-8') : 
+                    'Untitled Property';
+                    
+                $address = !empty($property['address']) ? 
+                    htmlspecialchars(trim($property['address']), ENT_QUOTES, 'UTF-8') : 
+                    'Location not specified';
+                    
+                $property_type = !empty($property['type']) ? 
+                    ucfirst(htmlspecialchars(trim($property['type']), ENT_QUOTES, 'UTF-8')) : 
+                    'Property';
+                    
+                $agent_name = (!empty($property['first_name']) || !empty($property['last_name'])) ? 
+                    htmlspecialchars(trim($property['first_name'] . ' ' . ($property['last_name'] ?? '')), ENT_QUOTES, 'UTF-8') : 
+                    'Our Agent';
+                
+                $image_alt = htmlspecialchars(
+                    $title . ' - ' . $address,
+                    ENT_QUOTES,
+                    'UTF-8'
+                );
+            ?>
+                <div class="col-12 col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
+                    <div class="property-card h-100">
+                        <div class="position-relative overflow-hidden property-image-container">
+                            <!-- Property Image -->
+                            <a href="property-details.php?id=<?= $property_id ?>" class="d-block">
+                                <img src="<?= $image_url ?>" 
+                                     alt="<?= $image_alt ?>" 
+                                     class="property-img"
+                                     loading="lazy"
+                                     width="400"
+                                     height="300"
+                                     onerror="this.onerror=null; this.src='assets/images/property-placeholder.jpg'">
+                            </a>
+                            
+                            <!-- Property Type Badge -->
+                            <div class="property-badge property-type">
+                                <span><?= $property_type ?></span>
+                            </div>
+                            
+                            <!-- Price Tag -->
+                            <div class="property-badge property-price">
+                                <span><?= $price ?></span>
+                            </div>
+                            
+                            <!-- Sustainability Badges -->
+                            <div class="property-badges">
+                                <?php if (!empty($property['eco_friendly']) && $property['eco_friendly'] == 1): ?>
+                                <span class="eco-badge" data-bs-toggle="tooltip" title="Eco-Friendly Property">
+                                    <i class="fas fa-leaf"></i>
+                                </span>
+                                <?php endif; ?>
+                                
+                                <?php if (!empty($property['energy_rating']) && $property['energy_rating'] >= 'B'): ?>
+                                <span class="energy-badge" data-bs-toggle="tooltip" title="Energy Rating: <?= $property['energy_rating'] ?>">
+                                    <i class="fas fa-bolt"></i> <?= $property['energy_rating'] ?>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <!-- Favorite Button -->
+                            <button type="button" class="favorite-btn add-to-favorites"
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Add to favorites"
+                                    aria-label="Add to favorites"
+                                    data-property-id="<?= $property_id ?>">
+                                <span class="visually-hidden">Add to favorites</span>
+                                <i class="far fa-heart"></i>
+                            </button>
+                            
+                            <!-- Quick View Overlay -->
+                            <div class="property-overlay">
+                                <a href="property-details.php?id=<?= $property_id ?>" class="btn btn-sm btn-light rounded-pill">
+                                    <i class="fas fa-eye me-1"></i> Quick View
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Property Details -->
+                        <div class="property-content">
+                            <!-- Title and Location -->
+                            <h3 class="property-title">
+                                <a href="property-details.php?id=<?= $property_id ?>">
+                                    <?= $title ?>
+                                </a>
+                            </h3>
+                            <p class="property-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <?= $address ?>
+                            </p>
+                            
+                            <!-- Property Features -->
+                            <div class="property-features">
+                                <span><i class="fas fa-bed"></i> <?= $bedrooms ?> Beds</span>
+                                <span><i class="fas fa-bath"></i> <?= $bathrooms ?> Baths</span>
+                                <span><i class="fas fa-ruler-combined"></i> <?= $area ?></span>
+                            </div>
+                            
+                            <!-- Agent and Status -->
+                            <div class="property-footer">
+                                <div class="agent-info">
+                                    <i class="fas fa-user-circle"></i>
+                                    <span><?= $agent_name ?></span>
+                                </div>
+                                <?php if ($property['status'] === 'available'): ?>
+                                    <span class="status-badge available">Available</span>
+                                <?php else: ?>
+                                    <span class="status-badge unavailable">Unavailable</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+        
+        <?php if (!empty($featured_properties)): ?>
+        <div class="text-center mt-5">
+            <a href="properties.php" class="btn btn-primary btn-lg px-5">
+                View All Properties
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        <?php endif; ?>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section bg-light py-7 position-relative overflow-hidden">
+        <div class="container position-relative z-1">
+            <div class="section-title text-center mb-5" data-aos="fade-up">
+                <span class="subtitle text-primary d-block mb-2">OUR ACHIEVEMENTS</span>
+                <h2 class="fw-bold mb-3">We're Proud of Our Numbers</h2>
+                <p class="lead text-muted mx-auto" style="max-width: 700px;">
+                    Helping people find their dream homes with exceptional service and expertise
+                </p>
+                <div class="title-line mx-auto bg-primary"></div>
+            </div>
+            
+            <div class="row g-4 justify-content-center">
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                        <div class="stat-icon mx-auto mb-3">
+                            <i class="fas fa-home fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['total'] ?>">0</h3>
+                        <p class="text-muted mb-0">Total Properties</p>
+                    </div>
+                </div>
+                
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                        <div class="stat-icon mx-auto mb-3">
+                            <i class="fas fa-tag fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['sale'] ?>">0</h3>
+                        <p class="text-muted mb-0">Properties for Sale</p>
+                    </div>
+                </div>
+                
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                        <div class="stat-icon mx-auto mb-3">
+                            <i class="fas fa-key fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['rent'] ?>">0</h3>
+                        <p class="text-muted mb-0">Properties for Rent</p>
+                    </div>
+                </div>
+                
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stat-card text-center p-4 bg-white rounded-3 shadow-sm h-100">
+                        <div class="stat-icon mx-auto mb-3">
+                            <i class="fas fa-user-tie fa-2x text-primary"></i>
+                        </div>
+                        <h3 class="display-5 fw-bold text-primary mb-2 counter" data-count="<?= $counts['agents'] ?>">0</h3>
+                        <p class="text-muted mb-0">Professional Agents</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="contact.php" class="btn btn-outline-primary btn-lg px-4 me-2">
+                    <i class="fas fa-phone-alt me-2"></i> Contact Us
+                </a>
+                <a href="about.php" class="btn btn-light btn-lg px-4">
+                    <i class="fas fa-info-circle me-2"></i> Learn More
+                </a>
+            </div>
+        </div>
+        
+        <!-- Animated Background Elements -->
+        <div class="position-absolute top-0 start-0 w-100 h-100">
+            <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-5"></div>
+            <div class="position-absolute top-0 end-0 w-50 h-50 bg-primary bg-opacity-10 rounded-circle" style="filter: blur(80px); transform: translate(25%, -25%);"></div>
+            <div class="position-absolute bottom-0 start-0 w-50 h-50 bg-secondary bg-opacity-10 rounded-circle" style="filter: blur(80px); transform: translate(-25%, 25%);"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="container my-5 py-5">
+        <div class="section-title text-center mb-5">
+            <h2 class="fw-bold">Our Services</h2>
+            <p class="text-muted">Comprehensive real estate services for all your needs</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="service-box">
+                    <div class="service-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h4>Property Sales</h4>
+                    <p class="text-muted">Find your dream home from our extensive collection of properties listed for sale.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="service-box">
+                    <div class="service-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h4>Property Rental</h4>
+                    <p class="text-muted">Browse through our selection of rental properties to find your perfect temporary home.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="service-box">
+                    <div class="service-icon">
+                        <i class="fas fa-search-dollar"></i>
+                    </div>
+                    <h4>Property Valuation</h4>
+                    <p class="text-muted">Get an accurate estimate of your property's market value with our professional valuation service.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="service-box">
+                    <div class="service-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h4>Legal Services</h4>
+                    <p class="text-muted">Our legal experts will guide you through all the paperwork and legal formalities.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="service-box">
+                    <div class="service-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h4>Mortgage Services</h4>
+                    <p class="text-muted">Get the best mortgage deals from our trusted financial partners.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="service-box">
+                    <div class="service-icon">
+                        <i class="fas fa-hard-hat"></i>
+                    </div>
+                    <h4>Property Management</h4>
+                    <p class="text-muted">Let us take care of your property with our comprehensive management services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+<section class="testimonials-section py-7 bg-light">
+    <div class="container">
+        <div class="section-title text-center mb-5" data-aos="fade-up">
+            <span class="subtitle text-secondary fw-bold">WHAT CLIENTS SAY</span>
+            <h2 class="fw-bold">Testimonials</h2>
+            <div class="title-line mx-auto"></div>
+            <p class="text-muted mt-4 lead">Hear from our satisfied clients about their experience</p>
+        </div>
+        
+        <div class="testimonial-slider swiper-container" data-aos="fade-up">
+            <div class="swiper-wrapper">
+                <!-- Testimonial 1 -->
+                <div class="swiper-slide">
+                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm">
+                        <div class="testimonial-content mb-4">
+                            <div class="rating mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="mb-0 fst-italic">"APS Dream Home helped me find the perfect property for my family. Their team was professional and understood exactly what we were looking for."</p>
+                        </div>
+                        <div class="testimonial-author d-flex align-items-center">
+                            <div class="author-image me-3">
+                                <img src="assets/images/user/default-avatar.jpg" alt="Client" class="rounded-circle" width="60" height="60">
+                            </div>
+                            <div class="author-info">
+                                <h5 class="mb-1">Rajesh Kumar</h5>
+                                <p class="text-muted mb-0">Homeowner</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="swiper-slide">
+                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm">
+                        <div class="testimonial-content mb-4">
+                            <div class="rating mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                            </div>
+                            <p class="mb-0 fst-italic">"The process of buying my first home was made so easy with APS Dream Home. Their guidance throughout was invaluable."</p>
+                        </div>
+                        <div class="testimonial-author d-flex align-items-center">
+                            <div class="author-image me-3">
+                                <img src="assets/images/user/default-avatar.jpg" alt="Client" class="rounded-circle" width="60" height="60">
+                            </div>
+                            <div class="author-info">
+                                <h5 class="mb-1">Priya Sharma</h5>
+                                <p class="text-muted mb-0">First-time Buyer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="swiper-slide">
+                    <div class="testimonial-card bg-white p-4 rounded-4 shadow-sm">
+                        <div class="testimonial-content mb-4">
+                            <div class="rating mb-3">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                            </div>
+                            <p class="mb-0 fst-italic">"I've invested in multiple properties through APS Dream Home. Their market knowledge and property selection is outstanding."</p>
+                        </div>
+                        <div class="testimonial-author d-flex align-items-center">
+                            <div class="author-image me-3">
+                                <img src="assets/images/user/default-avatar.jpg" alt="Client" class="rounded-circle" width="60" height="60">
+                            </div>
+                            <div class="author-info">
+                                <h5 class="mb-1">Amit Patel</h5>
+                                <p class="text-muted mb-0">Property Investor</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination mt-5"></div>
+        </div>
+    </div>
+</section>
+                                    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
+                    <a href="index.php" class="footer-logo">APS Dream Home</a>
+                    <p class="text-muted mb-4">Your trusted partner in finding the perfect property. We connect buyers, sellers, and renters with their dream homes.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6 mb-5 mb-md-0">
+                    <div class="footer-links">
+                        <h5>Quick Links</h5>
+                        <ul>
+                            <li><a href="index.php">Home</a></li>
+                            <li><a href="properties.php">Properties</a></li>
+                            <li><a href="about.php">About Us</a></li>
+                            <li><a href="contact.php">Contact</a></li>
+                            <li><a href="login.php">Login</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+                    <div class="footer-links">
+                        <h5>Property Types</h5>
+                        <ul>
+                            <li><a href="properties.php?type=apartment">Apartments</a></li>
+                            <li><a href="properties.php?type=villa">Villas</a></li>
+                            <li><a href="properties.php?type=house">Houses</a></li>
+                            <li><a href="properties.php?type=office">Offices</a></li>
+                            <li><a href="properties.php?type=land">Lands</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-links">
+                        <h5>Contact Info</h5>
+                        <ul class="contact-info">
+                            <li><i class="fas fa-map-marker-alt me-2"></i> 123 Dream Street, City, Country</li>
+                            <li><i class="fas fa-phone-alt me-2"></i> +1 234 567 8900</li>
+                            <li><i class="fas fa-envelope me-2"></i> info@apsdreamhome.com</li>
+                            <li><i class="fas fa-clock me-2"></i> Mon - Sat: 9:00 - 18:00</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="mb-0">&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+                        <div class="footer-payments">
+                            <img src="assets/images/payment-methods.png" alt="Payment Methods" class="img-fluid" style="max-height: 30px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="assets/js/property-cards.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+    // Initialize Hero Slider
+    const heroSlider = new Swiper('.hero-slider', {
+        slidesPerView: 1,
+        effect: 'fade',
+        speed: 1000,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.hero-slider .swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.hero-slider .swiper-button-next',
+            prevEl: '.hero-slider .swiper-button-prev',
+        },
+    });
+    
+    // Initialize Testimonial Slider
+    const testimonialSlider = new Swiper('.testimonial-slider', {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.testimonial-slider .swiper-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 1,
+            },
+            768: {
+                slidesPerView: 2,
+            },
+            1024: {
+                slidesPerView: 3,
+            },
+        },
+    });
+</script>
+    <script>
+    'use strict';
+    
+    // Initialize when DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize AOS
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                mirror: false
+            });
+        }
+        
+        // Initialize Swiper for hero slider
+        const heroSwiper = new Swiper('.hero-slider', {
+            effect: 'fade',
+            speed: 1000,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+        
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Enable tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(tooltipTriggerEl => {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                trigger: 'hover focus'
+            });
+        });
+        
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        if (backToTop) {
+            const scrollTrigger = 100; // px
+            
+            const toggleBackToTop = () => {
+                if (window.pageYOffset > scrollTrigger) {
+                    backToTop.classList.add('show');
+                } else {
+                    backToTop.classList.remove('show');
+                }
+            };
+            
+            window.addEventListener('scroll', toggleBackToTop);
+            toggleBackToTop();
+            
+            backToTop.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+        
+        // Animate stats counter
+        const counters = document.querySelectorAll('.counter');
+        const options = {
+            threshold: 0.5
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.getAttribute('data-count'));
+                    let count = 0;
+                    const updateCounter = () => {
+                        if (count < target) {
+                            count += Math.ceil(target / 50);
+                            if (count > target) count = target;
+                            counter.innerText = count;
+                            setTimeout(updateCounter, 30);
+                        }
+                    };
+                    updateCounter();
+                    observer.unobserve(counter);
+                }
+            });
+        }, options);
+        
+        counters.forEach(counter => {
+            observer.observe(counter);
+        });
+        
+        // Lazy load images when they come into view
+        if ('IntersectionObserver' in window) {
+            const lazyImages = document.querySelectorAll('img[data-src]');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+                        img.removeAttribute('data-src');
+                        img.removeAttribute('data-srcset');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            
+            lazyImages.forEach(img => imageObserver.observe(img));
+        }
+        
+        // Add loading state to buttons with loading class
+        document.querySelectorAll('.btn-loading').forEach(button => {
+            button.addEventListener('click', function() {
+                this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Loading...';
+                this.disabled = true;
+            });
+        });
+        
+        // Add to favorites functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.add-to-favorites')) {
+                e.preventDefault();
+                const button = e.target.closest('.add-to-favorites');
+                const propertyId = button.dataset.propertyId;
+                const icon = button.querySelector('i');
+                
+                // Toggle icon
+                if (icon.classList.contains('far')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas', 'text-danger');
+                    showToast('Added to favorites!', 'success');
+                } else {
+                    icon.classList.remove('fas', 'text-danger');
+                    icon.classList.add('far');
+                    showToast('Removed from favorites', 'info');
+                }
+                
+                // Here you would typically make an AJAX call to update favorites
+                // updateFavorites(propertyId);
+            }
+        });
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+        }
+    });
+    
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+                console.error('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+    
+    // Error handling for images
+    document.addEventListener('error', function(e) {
+        if (e.target.tagName.toLowerCase() === 'img') {
+            e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22300%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%23f8f9fa%22%2F%3E%3Ctext%20x%3D%22150%22%20y%3D%22100%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2214%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20fill%3D%22%236c757d%22%3EImage%20not%20found%3C%2Ftext%3E%3C%2Fsvg%3E';
+            e.target.alt = 'Image not available';
+        }
+    }, true);
+    </script>
+    
+    <!-- Toast Container -->
+    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100"></div>
+    
+    <!-- Schedule Visit Modal -->
+    <div class="modal fade" id="scheduleVisitModal" tabindex="-1" aria-labelledby="scheduleVisitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scheduleVisitModalLabel">Schedule a Visit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="visitForm">
+                        <input type="hidden" name="property_id" value="">
+                        <div class="mb-3">
+                            <label for="visitDate" class="form-label">Visit Date</label>
+                            <input type="date" class="form-control" id="visitDate" name="visit_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="visitTime" class="form-label">Visit Time</label>
+                            <select class="form-select" id="visitTime" name="visit_time" required>
+                                <option value="">Select a time</option>
+                                <option value="09:00">9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="visitorName" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="visitorName" name="visitor_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="visitorEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="visitorEmail" name="visitor_email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="visitorPhone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="visitorPhone" name="visitor_phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="visitNotes" class="form-label">Additional Notes (Optional)</label>
+                            <textarea class="form-control" id="visitNotes" name="visit_notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitVisit">Schedule Visit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // Schedule Visit Modal Handler
+    document.addEventListener('DOMContentLoaded', function() {
+        const scheduleVisitModal = document.getElementById('scheduleVisitModal');
+        if (scheduleVisitModal) {
+            scheduleVisitModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const propertyId = button.getAttribute('data-property-id');
+                const propertyTitle = button.getAttribute('data-property-title');
+                const modalTitle = scheduleVisitModal.querySelector('.modal-title');
+                const propertyIdInput = scheduleVisitModal.querySelector('input[name="property_id"]');
+                
+                if (modalTitle) modalTitle.textContent = `Schedule Visit - ${propertyTitle}`;
+                if (propertyIdInput) propertyIdInput.value = propertyId;
+                
+                // Set minimum date to tomorrow
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const minDate = tomorrow.toISOString().split('T')[0];
+                const dateInput = scheduleVisitModal.querySelector('#visitDate');
+                if (dateInput) {
+                    dateInput.min = minDate;
+                    dateInput.value = minDate;
+                }
+            });
+            
+            // Handle form submission
+            const submitButton = document.getElementById('submitVisit');
+            if (submitButton) {
+                submitButton.addEventListener('click', function() {
+                    const form = document.getElementById('visitForm');
+                    if (form.checkValidity()) {
+                        // Here you would typically make an AJAX call to submit the form
+                        const formData = new FormData(form);
+                        
+                        // Simulate form submission
+                        console.log('Form submitted:', Object.fromEntries(formData));
+                        
+                        // Show success message
+                        showToast('Visit scheduled successfully!', 'success');
+                        
+                        // Hide the modal
+                        const modal = bootstrap.Modal.getInstance(scheduleVisitModal);
+                        modal.hide();
+                        
+                        // Reset the form
+                        form.reset();
+                    } else {
+                        form.reportValidity();
+                    }
+                });
+            }
+        }
+    });
+    </script>
+    
+    <!-- Add any additional scripts or content here -->
+    
+</body>
+</html>
+<?php
+// Close any open PHP operations if needed
+?>

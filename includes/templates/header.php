@@ -1,132 +1,144 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="theme-color" content="#0d6efd"> <!-- Update with your primary color -->
-    <meta name="author" content="APS Dream Home">
-    <meta name="robots" content="index, follow">
-    
-    <title><?php echo e($page_data['title'] ?? 'APS Dream Home'); ?></title>
-    <meta name="description" content="<?php echo e($page_data['description'] ?? 'Find your dream home with APS Dream Home.'); ?>">
-    <meta name="keywords" content="<?php echo e($page_data['keywords'] ?? 'real estate, property, home, buy, rent'); ?>">
-    
-    <!-- Canonical URL -->
-    <?php if (!empty($page_data['canonical_url'])): ?>
-    <link rel="canonical" href="<?php echo e($page_data['canonical_url']); ?>">
-    <?php endif; ?>
-    
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo SITE_URL; ?>/assets/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo SITE_URL; ?>/assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo SITE_URL; ?>/assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="<?php echo SITE_URL; ?>/assets/favicon/site.webmanifest">
-    <link rel="mask-icon" href="<?php echo SITE_URL; ?>/assets/favicon/safari-pinned-tab.svg" color="#0d6efd"> <!-- Update color -->
-    <meta name="msapplication-TileColor" content="#0d6efd"> <!-- Update color -->
-    <meta name="theme-color" content="#ffffff"> <!-- Or your main background color -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="APS Dream Homes Pvt Ltd - Leading real estate developer in Gorakhpur with 8+ years of excellence">
+    <meta name="keywords" content="real estate, property, Gorakhpur, apartments, villas, plots, commercial, APS Dream Homes Pvt Ltd">
+    <meta name="author" content="APS Dream Homes Pvt Ltd">
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo e($page_data['canonical_url'] ?? SITE_URL); ?>">
-    <meta property="og:title" content="<?php echo e($page_data['title'] ?? 'APS Dream Home'); ?>">
-    <meta property="og:description" content="<?php echo e($page_data['description'] ?? 'Find your dream home.'); ?>">
-    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.jpg"> <!-- Create and replace this image -->
-    <meta property="og:site_name" content="APS Dream Home">
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="<?php echo e($page_data['canonical_url'] ?? SITE_URL); ?>">
-    <meta name="twitter:title" content="<?php echo e($page_data['title'] ?? 'APS Dream Home'); ?>">
-    <meta name="twitter:description" content="<?php echo e($page_data['description'] ?? 'Find your dream home.'); ?>">
-    <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/twitter-card.jpg"> <!-- Create and replace this image -->
+    <title>APS Dream Homes Pvt Ltd</title>
 
-    <!-- Preload critical resources -->
-    <!-- Bootstrap 5.3.0 CSS -->
-    <link href="<?php echo SITE_URL; ?>/assets/css/bootstrap.min.css" rel="stylesheet" 
-          onerror="this.onerror=null; this.href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
-    
-    <!-- Font Awesome 6.4.0 -->
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/plugins/font-awesome/css/all.min.css"
-          onerror="this.onerror=null; this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <!-- Critical CSS (inlined) -->
     <style>
-        <?php 
-        $critical_css_path = INCLUDES_DIR . '/inline/critical.css';
-        if (file_exists($critical_css_path)) {
-            echo file_get_contents($critical_css_path);
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
         }
-        ?>
-    </style>
-    
-    <!-- Defer non-critical CSS -->
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css"></noscript>
 
-    <!-- No-JS fallback and JS enhancement class -->
-    <script>
-        document.documentElement.classList.remove('no-js');
-        document.documentElement.classList.add('js');
-        window.siteUrl = '<?php echo SITE_URL; ?>'; // Make base URL available to JS
-    </script>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 50px 0;
+            margin-top: 50px;
+        }
+    </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
-    <header id="main-header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="<?php echo SITE_URL; ?>">
-                    <img src="<?php echo SITE_URL; ?>/assets/images/logo.png" alt="APS Dream Home Logo" height="50"> <!-- Replace with your logo -->
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo (current_path() === '/') ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo (current_path() === '/properties.php') ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/properties.php">Properties</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo (current_path() === '/about.php') ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/about.php">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo (current_path() === '/services.php') ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/services.php">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo (current_path() === '/contact.php') ? 'active' : ''; ?>" href="<?php echo SITE_URL; ?>/contact.php">Contact</a>
-                        </li>
-                        <?php if (isset($_SESSION['user_id'])):
-                            $user_name = $_SESSION['user_name'] ?? ($_SESSION['first_name'] ?? 'Account'); // Fallback for user_name
-                        ?>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user-circle me-1"></i> <?php echo e($user_name); ?>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/dashboard.php">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/profile.php">Profile</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/logout.php">Logout</a></li>
-                                </ul>
-                            </li>
-                        <?php else: ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo SITE_URL; ?>/login.php">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-primary ms-lg-2" href="<?php echo SITE_URL; ?>/register.php">Register</a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.php">
+                <i class="fas fa-home me-2"></i>APS Dream Homes
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Projects
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
+                            <li><a class="dropdown-item" href="projects.php">All Projects</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">By Location</h6></li>
+                            <li><a class="dropdown-item" href="projects.php?location=Gorakhpur">Gorakhpur</a></li>
+                            <li><a class="dropdown-item" href="projects.php?location=Lucknow">Lucknow</a></li>
+                            <li><a class="dropdown-item" href="projects.php?location=Varanasi">Varanasi</a></li>
+                            <li><a class="dropdown-item" href="projects.php?location=Allahabad">Allahabad</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">By Status</h6></li>
+                            <li><a class="dropdown-item" href="projects.php?status=upcoming">Upcoming Projects</a></li>
+                            <li><a class="dropdown-item" href="projects.php?status=ongoing">Ongoing Projects</a></li>
+                            <li><a class="dropdown-item" href="projects.php?status=completed">Completed Projects</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about_template.php">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact_template.php">Contact</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="tel:+917007444842" class="btn btn-outline-success me-2">
+                        <i class="fas fa-phone me-1"></i>+91-7007444842
+                    </a>
+                    <a href="login.php" class="btn btn-outline-light me-2">Login</a>
+                    <a href="registration.php" class="btn btn-success">Register</a>
                 </div>
             </div>
-        </nav>
-    </header>
-    <main id="main-content" class="flex-grow-1">
-    <!-- Main page content will be injected here by index.new.php -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" style="margin-top: 80px;">

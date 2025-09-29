@@ -42,6 +42,7 @@ try {
     $startDate = new DateTime($_POST['start_date']);
     $endDate = clone $startDate;
     $endDate->modify("+$tenure months");
+    $endDateFormatted = $endDate->format('Y-m-d');
     
     // Insert EMI plan
     $query = "INSERT INTO emi_plans (
@@ -59,7 +60,7 @@ try {
               
     $stmt = $conn->prepare($query);
     $stmt->bind_param(
-        "iiddiddsssi",
+        "iiddiddssi",
         $_POST['customer_id'],
         $_POST['property_id'],
         $_POST['total_amount'],
@@ -68,7 +69,7 @@ try {
         $emiAmount,
         $_POST['down_payment'],
         $_POST['start_date'],
-        $endDate->format('Y-m-d'),
+        $endDateFormatted,
         $_SESSION['admin_id']
     );
     $stmt->execute();
@@ -82,6 +83,7 @@ try {
         $interestComponent = $remainingPrincipal * $rate;
         $principalComponent = $emiAmount - $interestComponent;
         $remainingPrincipal -= $principalComponent;
+        $installmentDateFormatted = $installmentDate->format('Y-m-d');
         
         $query = "INSERT INTO emi_installments (
                     emi_plan_id,
@@ -97,7 +99,7 @@ try {
             "iisddd",
             $emiPlanId,
             $i,
-            $installmentDate->format('Y-m-d'),
+            $installmentDateFormatted,
             $emiAmount,
             $principalComponent,
             $interestComponent

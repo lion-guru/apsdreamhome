@@ -42,6 +42,13 @@ abstract class Model {
         return $result ? new static($result) : null;
     }
 
+    public static function first(): ?static {
+        $db = Database::getInstance();
+        $stmt = $db->query("SELECT * FROM " . static::$table . " LIMIT 1");
+        $result = $stmt->fetch();
+        return $result ? new static($result) : null;
+    }
+
     public static function all(): array {
         $db = Database::getInstance();
         $stmt = $db->query("SELECT * FROM " . static::$table);

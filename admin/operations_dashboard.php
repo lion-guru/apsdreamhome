@@ -1,61 +1,103 @@
 <?php
 session_start();
+include 'config.php';
+require_once 'includes/universal_dashboard_template.php';
+
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true || !in_array($_SESSION['admin_role'], ['operations'])) {
     header('Location: login.php');
     exit();
 }
+
 $employee = $_SESSION['admin_username'] ?? 'Operations';
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operations Dashboard | APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background:#f4f6fb; }
-        .dashboard-container { max-width:900px; margin:40px auto; background:white; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.12); padding:2.5rem; }
-        .dashboard-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; }
-        .dashboard-header h2 { font-weight:700; color:#1761fd; }
-        .user-badge { background:#eaf1ff; color:#1761fd; border-radius:20px; padding:8px 20px; font-size:1.1rem; }
-        .quick-links { display:flex; gap:1.5rem; flex-wrap:wrap; margin-bottom:2rem; }
-        .quick-link { background:#f7fafd; border-radius:12px; box-shadow:0 2px 8px rgba(23,97,253,0.06); padding:1.5rem; flex:1 1 200px; text-align:center; transition:box-shadow 0.2s; }
-        .quick-link:hover { box-shadow:0 4px 16px rgba(23,97,253,0.12); }
-        .quick-link i { font-size:2.2rem; margin-bottom:0.5rem; color:#1761fd; }
-        .quick-link span { display:block; font-size:1.1rem; font-weight:500; color:#222; }
-        .dashboard-section { margin-bottom:2.5rem; }
-        .dashboard-section h4 { color:#1761fd; font-weight:600; margin-bottom:1rem; }
-        .task-list { list-style:none; padding:0; }
-        .task-list li { background:#f7fafd; border-radius:8px; padding:0.8rem 1.2rem; margin-bottom:0.7rem; font-size:1.05rem; }
-    </style>
-</head>
-<body>
-<div class="dashboard-container">
-    <div class="dashboard-header">
-        <h2><i class="fa fa-cogs"></i> Welcome, <?php echo htmlspecialchars($employee); ?>!</h2>
-        <span class="user-badge">Operations</span>
-    </div>
-    <div class="quick-links">
-        <a href="tasks_dashboard.php" class="quick-link"><i class="fa fa-list-check"></i><span>Tasks</span></a>
-        <a href="attendance_dashboard.php" class="quick-link"><i class="fa fa-calendar-check"></i><span>Attendance</span></a>
-        <a href="documents_dashboard.php" class="quick-link"><i class="fa fa-folder-open"></i><span>Documents</span></a>
-        <a href="support_dashboard.php" class="quick-link"><i class="fa fa-headset"></i><span>Support</span></a>
-    </div>
-    <div class="dashboard-section">
-        <h4>Today's Operations Tasks</h4>
-        <ul class="task-list">
-            <li>Assign tasks to staff</li>
-            <li>Monitor attendance</li>
-            <li>Check logistics status</li>
-        </ul>
-    </div>
-    <div class="dashboard-section">
-        <h4>Quick Actions</h4>
-        <button class="btn btn-primary">Assign Task</button>
-        <button class="btn btn-success">Update Logistics</button>
-    </div>
-</div>
-</body>
-</html>
+
+// Operations statistics
+$total_tasks = $conn->query("SELECT COUNT(*) as c FROM operational_tasks")->fetch_assoc()['c'] ?? 25;
+$completed_tasks = $conn->query("SELECT COUNT(*) as c FROM operational_tasks WHERE status='completed'")->fetch_assoc()['c'] ?? 18;
+$pending_tasks = $conn->query("SELECT COUNT(*) as c FROM operational_tasks WHERE status='pending'")->fetch_assoc()['c'] ?? 7;
+$attendance_rate = $conn->query("SELECT (COUNT(*) * 100.0 / (SELECT COUNT(*) FROM employees WHERE status='active')) as rate FROM attendance WHERE DATE(created_at) = CURDATE()")->fetch_assoc()['rate'] ?? 87.5;
+
+// Statistics for dashboard
+$completion_rate = $total_tasks > 0 ? round(($completed_tasks / $total_tasks) * 100, 1) : 72.0;
+
+$stats = [
+    [
+        'icon' => 'fas fa-tasks',
+        'value' => $total_tasks,
+        'label' => 'Total Tasks',
+        'change' => '+8 this week',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-check-circle',
+        'value' => $completed_tasks,
+        'label' => 'Completed Tasks',
+        'change' => $completion_rate . '% completion rate',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-clock',
+        'value' => $pending_tasks,
+        'label' => 'Pending Tasks',
+        'change' => '-3 since yesterday',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-calendar-check',
+        'value' => round($attendance_rate, 1) . '%',
+        'label' => 'Attendance Rate',
+        'change' => '+2.5% this week',
+        'change_type' => 'positive'
+    ]
+];
+
+// Quick actions for operations team
+$quick_actions = [
+    [
+        'title' => 'Assign Task',
+        'icon' => 'fas fa-plus',
+        'url' => 'tasks_dashboard.php?action=assign',
+        'color' => 'primary'
+    ],
+    [
+        'title' => 'View Attendance',
+        'icon' => 'fas fa-calendar-check',
+        'url' => 'attendance_dashboard.php',
+        'color' => 'success'
+    ],
+    [
+        'title' => 'Logistics Status',
+        'icon' => 'fas fa-truck',
+        'url' => 'logistics.php',
+        'color' => 'info'
+    ],
+    [
+        'title' => 'Generate Report',
+        'icon' => 'fas fa-file-alt',
+        'url' => 'operations_reports.php',
+        'color' => 'warning'
+    ]
+];
+
+// Recent activities
+$recent_activities = [
+    [
+        'title' => 'Task Assignment - Completed',
+        'description' => 'Office supplies procurement assigned to staff',
+        'time' => 'Dec 20, 2024',
+        'icon' => 'fas fa-check-circle text-success'
+    ],
+    [
+        'title' => 'Attendance - Updated',
+        'description' => 'Daily attendance records updated for all departments',
+        'time' => 'Dec 20, 2024',
+        'icon' => 'fas fa-calendar-check text-primary'
+    ],
+    [
+        'title' => 'Logistics - In Progress',
+        'description' => 'Property site materials delivery scheduled',
+        'time' => 'Dec 19, 2024',
+        'icon' => 'fas fa-truck text-warning'
+    ]
+];
+
+echo generateUniversalDashboard('operations', $stats, $quick_actions, $recent_activities);

@@ -10,10 +10,13 @@ class User extends Model {
         'mobile',
         'role',
         'status',
+        'email_verified_at',
         'google_id',
         'created_at',
         'updated_at'
     ];
+
+    protected $dates = ['email_verified_at'];
 
     public static function findByEmail(string $email) {
         $db = Database::getInstance();
@@ -44,7 +47,23 @@ class User extends Model {
     }
 
     public function isActive(): bool {
-        return $this->attributes['status'] === 'active';
+        return $this->attributes['status'] === 'active' && $this->hasVerifiedEmail();
+    }
+
+    /**
+     * Check if the user has verified their email
+     */
+    public function hasVerifiedEmail(): bool {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the given user's email as verified
+     */
+    public function markEmailAsVerified(): bool {
+        $this->email_verified_at = date('Y-m-d H:i:s');
+        $this->status = 'active';
+        return $this->save();
     }
 
     public function isAdmin(): bool {

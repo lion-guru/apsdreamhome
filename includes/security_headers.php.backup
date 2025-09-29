@@ -1,0 +1,781 @@
+<?php
+/**
+ * Security Headers and Functions for APS Dream Home
+ * Centralized security configuration and functions
+ */
+
+// Prevent direct access to this file
+if (!defined('BASE_PATH')) {
+    header('HTTP/1.1 403 Forbidden');
+    exit('Direct access not permitted');
+}
+
+/**
+ * Set security headers
+ */
+function setSecurityHeaders() {
+    // Remove X-Powered-By header if not already removed
+    if (function_exists('header_remove')) {
+        header_remove('X-Powered-By');
+    } else {
+        @ini_set('expose_php', 'off');
+    }
+    
+    // Set security headers
+    $headers = [
+        // Prevent MIME type sniffing
+        'X-Content-Type-Options' => 'nosniff',
+        
+        // Prevent clickjacking
+        'X-Frame-Options' => 'SAMEORIGIN',
+        
+        // Enable XSS protection
+        'X-XSS-Protection' => '1; mode=block',
+        
+        // Content Security Policy
+        'Content-Security-Policy' => "default-src 'self'; " .
+                                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " .
+                                   "style-src 'self' 'unsafe-inline' https:; " .
+                                   "img-src 'self' data: https:; " .
+                                   "font-src 'self' https: data:; " .
+                                   "connect-src 'self' https:;",
+        
+        // Referrer Policy
+        'Referrer-Policy' => 'strict-origin-when-cross-origin',
+        
+        // Feature Policy (now Permissions-Policy)
+        'Permissions-Policy' => 'camera=(), microphone=(), geolocation=(), payment=()',
+        
+        // HTTP Strict Transport Security
+        'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains; preload',
+        
+        // X-Content-Type-Options is already set above
+    ];
+    
+    // Set each header
+    foreach ($headers as $header => $value) {
+        header("$header: $value");
+    }
+}
+
+
+/**
+ * Generate CSRF token
+ */
+function generateCsrfToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+/**
+ * Verify CSRF token
+ */
+function verifyCsrfToken($token) {
+    if (empty($_SESSION['csrf_token']) || empty($token)) {
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+/**
+ * Sanitize input data
+ */
+function sanitizeInput($data) {
+    if (is_array($data)) {
+        return array_map('sanitizeInput', $data);
+    }
+    
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    
+    return $data;
+}
+
+/**
+ * Validate email address
+ */
+function validateEmail($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+/**
+ * Log security events
+ */
+function logSecurityEvent($event, $details = []) {
+    $logFile = __DIR__ . '/../logs/security.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+    $requestUri = $_SERVER['REQUEST_URI'] ?? 'unknown';
+    
+    $logData = [
+        'timestamp' => $timestamp,
+        'event' => $event,
+        'ip' => $ip,
+        'user_agent' => $userAgent,
+        'request_uri' => $requestUri,
+        'details' => $details
+    ];
+    
+    $logLine = json_encode($logData) . PHP_EOL;
+    
+    // Ensure log directory exists
+    $logDir = dirname($logFile);
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    
+    // Write to log file
+    file_put_contents($logFile, $logLine, FILE_APPEND | LOCK_EX);
+}
+
+/**
+ * Rate limiting function
+ */
+function checkRateLimit($key, $limit = 5, $timeout = 60) {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $cacheKey = "rate_limit_{$key}_{$ip}";
+    
+    // Initialize the cache if it doesn't exist
+    if (!isset($_SESSION['rate_limits'])) {
+        $_SESSION['rate_limits'] = [];
+    }
+    
+    $now = time();
+    $window = floor($now / $timeout);
+    $cacheKey .= "_$window";
+    
+    // Get current count
+    $count = $_SESSION['rate_limits'][$cacheKey] ?? 0;
+    
+    // Check if limit is exceeded
+    if ($count >= $limit) {
+        logSecurityEvent('rate_limit_exceeded', [
+            'key' => $key,
+            'ip' => $ip,
+            'count' => $count,
+            'limit' => $limit
+        ]);
+        
+        http_response_code(429);
+        header('Retry-After: ' . $timeout);
+        exit('Too many requests. Please try again later.');
+    }
+    
+    // Increment count
+    $_SESSION['rate_limits'][$cacheKey] = $count + 1;
+    
+    // Clean up old rate limits (older than 1 hour)
+    $oldestAllowed = $now - 3600;
+    foreach ($_SESSION['rate_limits'] as $key => $timestamp) {
+        if ($timestamp < $oldestAllowed) {
+            unset($_SESSION['rate_limits'][$key]);
+        }
+    }
+    
+    return true;
+}
+
+// Initialize security features
+setSecurityHeaders();
+secureSession();
+
+// Generate CSRF token for forms
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = generateCsrfToken();
+}
+
+// Security headers for API responses
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+
+// Prevent MIME type sniffing
+header('X-Content-Type-Options: nosniff');
+
+// Set secure flag for session cookie
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    ini_set('session.cookie_secure', '1');
+}
+
+// Set HttpOnly flag for session cookie
+ini_set('session.cookie_httponly', '1');
+
+// Set SameSite attribute for session cookie (PHP 7.3+)
+if (PHP_VERSION_ID >= 70300) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'] ?? '',
+        'secure' => isset($_SERVER['HTTPS']),
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+}
+
+// Start the session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Function to check if the request is AJAX
+function isAjaxRequest() {
+    return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+}
+
+// Function to check if the request is a POST request
+function isPostRequest() {
+    return $_SERVER['REQUEST_METHOD'] === 'POST';
+}
+
+// Function to check if the request is a GET request
+function isGetRequest() {
+    return $_SERVER['REQUEST_METHOD'] === 'GET';
+}
+
+// Function to redirect to a URL
+function redirect($url, $statusCode = 303) {
+    header('Location: ' . $url, true, $statusCode);
+    exit();
+}
+
+// Function to get the current URL
+function getCurrentUrl() {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    return $protocol . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+}
+
+// Function to get the base URL
+function getBaseUrl() {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    return $protocol . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
+}
+
+// Function to get the client's IP address
+function getClientIp() {
+    $ip = '';
+    
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    }
+    
+    return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : 'invalid';
+}
+
+// Function to generate a random string
+function generateRandomString($length = 32) {
+    return bin2hex(random_bytes($length));
+}
+
+// Function to hash a password
+function hashPassword($password) {
+    return password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+}
+
+// Function to verify a password
+function verifyPassword($password, $hash) {
+    return password_verify($password, $hash);
+}
+
+// Function to validate a CSRF token
+function validateCsrfToken($token) {
+    if (empty($_SESSION['csrf_token']) || empty($token)) {
+        return false;
+    }
+    return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+// Function to get a CSRF token for forms
+function getCsrfToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = generateRandomString(32);
+    }
+    return $_SESSION['csrf_token'];
+}
+
+// Function to generate a CSRF token field for forms
+function csrfField() {
+    return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(getCsrfToken()) . '">';
+}
+
+// Function to validate a CSRF token from a form
+function validateCsrfTokenFromForm() {
+    $token = $_POST['csrf_token'] ?? '';
+    return validateCsrfToken($token);
+}
+
+// Function to require a valid CSRF token
+function requireValidCsrfToken() {
+    if (!validateCsrfTokenFromForm()) {
+        http_response_code(403);
+        exit('Invalid CSRF token');
+    }
+}
+
+// Function to prevent XSS attacks
+function xssafe($data, $encoding = 'UTF-8') {
+    return htmlspecialchars($data, ENT_QUOTES | ENT_HTML5, $encoding);
+}
+
+// Function to prevent XSS attacks and echo the result
+function xecho($data) {
+    echo xssafe($data);
+}
+
+// Function to prevent SQL injection
+function sqlSafe($data, $connection) {
+    if (is_array($data)) {
+        return array_map(function($item) use ($connection) {
+            return sqlSafe($item, $connection);
+        }, $data);
+    }
+    
+    if (is_string($data)) {
+        return $connection->real_escape_string($data);
+    }
+    
+    return $data;
+}
+
+/**
+ * Rate limiting implementation
+ * 
+ * @param string $key Unique identifier for the rate limit (e.g., 'login_attempts')
+ * @param int $max_attempts Maximum number of attempts allowed in the time window
+ * @param int $time_window Time window in seconds (default: 60 seconds)
+ * @return bool True if rate limit is not exceeded, false otherwise
+ */
+function checkRateLimit($key, $max_attempts = 5, $time_window = 60) {
+    $rate_limits = $_SESSION['rate_limits'] ?? [];
+    $now = time();
+    
+    // Initialize rate limit data if not exists
+    if (!isset($rate_limits[$key])) {
+        $rate_limits[$key] = [
+            'attempts' => 0,
+            'first_attempt' => $now,
+            'last_attempt' => 0,
+            'blocked_until' => 0
+        ];
+    }
+    
+    $rate_limit = &$rate_limits[$key];
+    
+    // Check if blocked
+    if ($now < $rate_limit['blocked_until']) {
+        return false;
+    }
+    
+    // Reset attempts if time window has passed
+    if (($now - $rate_limit['first_attempt']) > $time_window) {
+        $rate_limit = [
+            'attempts' => 0,
+            'first_attempt' => $now,
+            'last_attempt' => 0,
+            'blocked_until' => 0
+        ];
+    }
+    
+    // Increment attempts
+    $rate_limit['attempts']++;
+    $rate_limit['last_attempt'] = $now;
+    
+    // Block if too many attempts
+    if ($rate_limit['attempts'] > $max_attempts) {
+        $block_time = min(3600, $time_window * 2); // Exponential backoff, max 1 hour
+        $rate_limit['blocked_until'] = $now + $block_time;
+        logSecurityEvent('rate_limit_exceeded', [
+            'key' => $key,
+            'ip' => $_SERVER['REMOTE_ADDR'],
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+            'blocked_until' => date('Y-m-d H:i:s', $rate_limit['blocked_until'])
+        ]);
+        return false;
+    }
+    
+    $_SESSION['rate_limits'] = $rate_limits;
+    return true;
+}
+
+/**
+ * Secure session management
+ */
+function secureSession() {
+    // Set secure session parameters
+    $session_name = 'secure_session';
+    $secure = true; // Only send cookies over HTTPS
+    $httponly = true; // Prevent JavaScript access to session cookie
+    $samesite = 'Strict'; // Strict same-site policy
+    
+    // Force the session to only use cookies, not URL parameters
+    ini_set('session.use_only_cookies', 1);
+    
+    // Get current cookie parameters
+    $cookieParams = session_get_cookie_params();
+    
+    // Set session cookie parameters
+    session_set_cookie_params([
+        'lifetime' => $cookieParams['lifetime'],
+        'path' => '/',
+        'domain' => $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'],
+        'secure' => $secure,
+        'httponly' => $httponly,
+        'samesite' => $samesite
+    ]);
+    
+    // Set the session name
+    session_name($session_name);
+    
+    // Start the session
+    session_start();
+    
+    // Regenerate session ID to prevent session fixation
+    if (empty($_SESSION['last_regeneration'])) {
+        session_regenerate_id(true);
+        $_SESSION['last_regeneration'] = time();
+    } else if (time() - $_SESSION['last_regeneration'] > 1800) { // Regenerate every 30 minutes
+        $old_session_data = $_SESSION;
+        session_destroy();
+        session_start();
+        session_regenerate_id(true);
+        $_SESSION = $old_session_data;
+        $_SESSION['last_regeneration'] = time();
+    }
+    
+    // Validate the session
+    if (!isset($_SESSION['ip_address'])) {
+        $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
+        $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    } else if ($_SESSION['ip_address'] !== $_SERVER['REMOTE_ADDR'] || 
+              (isset($_SERVER['HTTP_USER_AGENT']) && $_SESSION['user_agent'] !== $_SERVER['HTTP_USER_AGENT'])) {
+        // Possible session hijacking attempt
+        logSecurityEvent('session_hijack_attempt', [
+            'session_id' => session_id(),
+            'expected_ip' => $_SESSION['ip_address'],
+            'actual_ip' => $_SERVER['REMOTE_ADDR'],
+            'expected_ua' => $_SESSION['user_agent'],
+            'actual_ua' => $_SERVER['HTTP_USER_AGENT'] ?? ''
+        ]);
+        
+        // Destroy the session and start a new one
+        session_destroy();
+        session_start();
+        session_regenerate_id(true);
+        $_SESSION = [];
+        $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
+        $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    }
+    
+    // Set CSRF token if not exists
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+}
+
+/**
+ * Function to prevent directory traversal
+ * 
+ * @param string $path The path to sanitize
+ * @return string Sanitized path
+ */
+function safePath($path) {
+    // Remove directory traversal patterns
+    $path = str_replace(['../', '..\\', '..'], '', $path);
+    // Remove leading slashes or backslashes
+    return preg_replace('#^[\\/]+#', '', $path);
+}
+
+// Function to check if a file is an image
+function isImage($file) {
+    $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $file);
+    finfo_close($finfo);
+    return in_array($mime, $allowed);
+}
+
+// Function to upload a file securely
+function uploadFile($file, $targetDir, $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf']) {
+    $targetDir = rtrim($targetDir, '/') . '/';
+    
+    // Check if directory exists and is writable
+    if (!is_dir($targetDir) || !is_writable($targetDir)) {
+        throw new Exception('Target directory does not exist or is not writable');
+    }
+    
+    // Check for upload errors
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        throw new Exception('File upload error: ' . $file['error']);
+    }
+    
+    // Check file size (max 5MB)
+    $maxFileSize = 5 * 1024 * 1024; // 5MB
+    if ($file['size'] > $maxFileSize) {
+        throw new Exception('File is too large. Maximum size is 5MB');
+    }
+    
+    // Check file type
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+    
+    if (!in_array($mime, $allowedTypes)) {
+        throw new Exception('Invalid file type. Allowed types: ' . implode(', ', $allowedTypes));
+    }
+    
+    // Generate a unique filename
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = uniqid() . '.' . $extension;
+    $targetPath = $targetDir . $filename;
+    
+    // Move the uploaded file
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        throw new Exception('Failed to move uploaded file');
+    }
+    
+    // Set proper permissions
+    chmod($targetPath, 0644);
+    
+    return [
+        'filename' => $filename,
+        'path' => $targetPath,
+        'mime' => $mime,
+        'size' => $file['size']
+    ];
+}
+
+// Function to send a secure cookie
+function setSecureCookie($name, $value, $expire = 0, $path = '/', $domain = '', $secure = true, $httponly = true, $samesite = 'Lax') {
+    if (PHP_VERSION_ID < 70300) {
+        $header = sprintf(
+            '%s=%s',
+            rawurlencode($name),
+            rawurlencode($value)
+        );
+        
+        if ($expire > 0) {
+            $header .= '; expires=' . gmdate('D, d-M-Y H:i:s T', $expire);
+        }
+        
+        if ($path) {
+            $header .= '; path=' . $path;
+        }
+        
+        if ($domain) {
+            $header .= '; domain=' . $domain;
+        }
+        
+        if ($secure) {
+            $header .= '; secure';
+        }
+        
+        if ($httponly) {
+            $header .= '; httponly';
+        }
+        
+        if ($samesite) {
+            $header .= '; samesite=' . $samesite;
+        }
+        
+        header('Set-Cookie: ' . $header, false);
+    } else {
+        $options = [
+            'expires' => $expire,
+            'path' => $path,
+            'domain' => $domain,
+            'secure' => $secure,
+            'httponly' => $httponly,
+            'samesite' => $samesite
+        ];
+        
+        setcookie($name, $value, $options);
+    }
+}
+
+// Function to delete a cookie
+function deleteCookie($name, $path = '/', $domain = '') {
+    setSecureCookie($name, '', time() - 3600, $path, $domain);
+    unset($_COOKIE[$name]);
+}
+
+// Function to prevent session fixation
+function regenerateSessionId() {
+    session_regenerate_id(true);
+    $_SESSION['last_regeneration'] = time();
+}
+
+// Function to check if the user is logged in
+function isLoggedIn() {
+    return isset($_SESSION['user_id']);
+}
+
+// Function to require login
+function requireLogin() {
+    if (!isLoggedIn()) {
+        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+        header('Location: /login.php');
+        exit();
+    }
+}
+
+// Function to require admin access
+function requireAdmin() {
+    requireLogin();
+    
+    if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+        http_response_code(403);
+        exit('Access denied. Administrator privileges required.');
+    }
+}
+
+// Function to log out the user
+function logout() {
+    // Unset all session variables
+    $_SESSION = [];
+    
+    // Delete the session cookie
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(
+            session_name(),
+            '',
+            time() - 42000,
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
+    }
+    
+    // Destroy the session
+    session_destroy();
+    
+    // Redirect to home page
+    header('Location: /');
+    exit();
+}
+
+// Function to generate a secure password reset token
+function generatePasswordResetToken() {
+    return bin2hex(random_bytes(32));
+}
+
+// Function to send a password reset email
+function sendPasswordResetEmail($email, $token) {
+    // In a real application, you would send an email with a link to reset the password
+    // This is just a placeholder implementation
+    $resetLink = getBaseUrl() . "/reset-password.php?token=" . urlencode($token);
+    $message = "Click the following link to reset your password: $resetLink";
+    $headers = "From: no-reply@" . $_SERVER['HTTP_HOST'] . "\r\n";
+    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    
+    return mail($email, 'Password Reset Request', $message, $headers);
+}
+
+// Function to validate a password reset token
+function validatePasswordResetToken($token) {
+    // In a real application, you would check the token against the database
+    // and ensure it hasn't expired
+    return !empty($token);
+}
+
+
+// Function to log user activity
+function logActivity($activity, $details = []) {
+    $logFile = __DIR__ . '/../logs/activity.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $userId = $_SESSION['user_id'] ?? 'guest';
+    
+    $logData = [
+        'timestamp' => $timestamp,
+        'user_id' => $userId,
+        'ip' => $ip,
+        'activity' => $activity,
+        'details' => $details
+    ];
+    
+    $logLine = json_encode($logData) . PHP_EOL;
+    
+    // Ensure log directory exists
+    $logDir = dirname($logFile);
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    
+    // Write to log file
+    file_put_contents($logFile, $logLine, FILE_APPEND | LOCK_EX);
+}
+
+// Function to log errors
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../logs/error.log');
+
+// Function to handle PHP errors
+function handleError($errno, $errstr, $errfile, $errline) {
+    $error = "Error [$errno] $errstr in $errfile on line $errline";
+    error_log($error);
+    
+    if (defined('ENVIRONMENT') && ENVIRONMENT === 'development') {
+        echo "<pre>$error</pre>";
+    } else {
+        // In production, show a generic error message
+        if (!headers_sent()) {
+            header('HTTP/1.1 500 Internal Server Error');
+        }
+        echo 'An error occurred. Please try again later.';
+    }
+    
+    // Don't execute PHP internal error handler
+    return true;
+}
+
+// Function to handle exceptions
+function handleException($exception) {
+    $error = "Uncaught exception: " . $exception->getMessage();
+    $error .= " in " . $exception->getFile() . " on line " . $exception->getLine();
+    error_log($error);
+    
+    if (defined('ENVIRONMENT') && ENVIRONMENT === 'development') {
+        echo "<pre>$error</pre>";
+    } else {
+        // In production, show a generic error message
+        if (!headers_sent()) {
+            header('HTTP/1.1 500 Internal Server Error');
+        }
+        echo 'An error occurred. Please try again later.';
+    }
+}
+
+// Set error and exception handlers
+set_error_handler('handleError');
+set_exception_handler('handleException');
+
+// Register shutdown function to catch fatal errors
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== null && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR])) {
+        $errorMessage = "Fatal error: {$error['message']} in {$error['file']} on line {$error['line']}";
+        error_log($errorMessage);
+        
+        if (!headers_sent()) {
+            header('HTTP/1.1 500 Internal Server Error');
+        }
+        
+        if (defined('ENVIRONMENT') && ENVIRONMENT === 'development') {
+            echo "<pre>$errorMessage</pre>";
+        } else {
+            echo 'A fatal error occurred. Please try again later.';
+        }
+    }
+});

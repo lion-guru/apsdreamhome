@@ -28,7 +28,7 @@ try {
         throw new Exception('Invalid JSON data');
     }
 
-    $table = $conn->real_escape_string($data['table']);
+    $table = $data['table'];
     $fields = $data['fields'];
 
     // Prepare column names and values
@@ -38,7 +38,7 @@ try {
     $params = [];
 
     foreach ($fields as $key => $value) {
-        $columns[] = $conn->real_escape_string($key);
+        $columns[] = $key;
         $values[] = '?';
         $types .= is_int($value) ? 'i' : (is_float($value) ? 'd' : 's');
         $params[] = $value;

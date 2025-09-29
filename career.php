@@ -1,334 +1,373 @@
 <?php
-ini_set('session.cache_limiter','public');
-session_cache_limiter(false);
+/**
+ * Career Page - APS Dream Homes
+ * Job opportunities and career information
+ */
+
 session_start();
-include("config.php");
-include(__DIR__ . '/includes/updated-config-paths.php');
-include(__DIR__ . '/includes/functions/common-functions.php');
-require_once(__DIR__ . '/includes/templates/dynamic_header.php');
+require_once 'includes/config.php';
+
+$config = AppConfig::getInstance();
+$conn = $config->getDatabaseConnection();
+
+// Get active job openings
+$jobs_query = "SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC";
+$jobs_result = $conn->query($jobs_query);
+$jobs = $jobs_result->fetch_all(MYSQLI_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Meta Tags -->
-    <link rel="shortcut icon" href="images/favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,500,600,700&amp;display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Comfortaa:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/bootstrap.min.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/bootstrap-slider.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/jquery-ui.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/layerslider.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/color.css', 'css'); ?>" id="color-change">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/owl.carousel.min.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/font-awesome.min.css', 'css'); ?>">
-    <link rel="stylesheet" type="text/css" href="fonts/flaticon/flaticon.css">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/style.css', 'css'); ?>">
-    <link rel="stylesheet" href="<?php echo get_asset_url('css/career.css', 'css'); ?>">
-
-    <title>APS Dream Homes</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers - APS Dream Homes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 100px 0 60px;
+            text-align: center;
+        }
+        .section-padding {
+            padding: 80px 0;
+        }
+        .job-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .value-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        .value-card:hover {
+            transform: translateY(-5px);
+        }
+        .apply-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin: 0 auto 20px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.php">
+                <i class="fas fa-home me-2"></i>APS Dream Homes
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.php">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="career.php">Careers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="blog.php">Blog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.php">Contact</a>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="customer_login.php" class="btn btn-outline-light btn-sm">Login</a>
+                    <a href="customer_registration.php" class="btn btn-success btn-sm">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<div id="page-wrapper">
-    <div class="row">
-        <!-- Header -->
-        
-        <div class="full-row">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h2 class="text-secondary double-down-line text-center mb-5">Career</h2>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">Join Our Team</h1>
+                    <p class="lead mb-4">Build your career with India's premier real estate network</p>
+                    <p class="mb-0">We're always looking for talented individuals who are passionate about real estate and technology. Join us in transforming the way India buys and sells properties.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Join Us -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Why Join APS Dream Homes?</h2>
+                    <p class="lead text-muted">Discover what makes us a great place to work</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h5>Growth Opportunities</h5>
+                        <p>Fast-track your career with our rapid growth and learning programs</p>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="clearfix"></div>
-
-                    <section>
-                        <div class="header-inner two">
-                            <div class="inner text-center">
-                                <h4 class="title text-white uppercase">WORK WITH US</h4>
-                            </div>
-                            <div class="overlay bg-opacity-5"></div>
-                            <img src="assets/<?php echo get_asset_url('career.jpg', 'images'); ?>" alt="" class="img-responsive"/>
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-balance-scale"></i>
                         </div>
-                    </section>
-                    
-                    <div class="clearfix"></div><br><br>
-
-                    <section class="section-light section-side-image clearfix">
-                        <div class="img-holder col-md-6 col-sm-3 pull-left">
-                            <div class="background-imgholder" style="background:url(<?php echo get_asset_url('work.jpg', 'images'); ?>);">
-                                <img class="nodisplay-image" src="assets/<?php echo get_asset_url('work.jpg', 'images'); ?>" alt=""/>
-                            </div>
-                        </div>
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-7 col-md-offset-5 col-sm-8 col-sm-offset-4 text-inner clearfix align-left">
-                                    <div class="text-box white padding-7">
-                                        <div class="col-xs-12 text-left" style="padding:0px; margin:0px;">
-                                            <h4>WORKING CULTURE</h4>
-                                            <div class="title-line-4"></div>
-                                        </div>
-                                        <p>We take pride in our HR policies, which is one of the best in the industry. Our world-class creation is a reflection of our workforce, both high up on standards and sincerity. We have a young and vibrant work culture. The spirit of teamwork has been so deeply imbibed in every employee that a sense to grow together becomes the agenda of every employee.</p>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="sec-padding">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-sm-6" style="padding-top:40px; padding-left:50px;">
-                                    <h4>WORKING CULTURE</h4>
-                                    <p><b>Sales executive, Senior Sales Executive</b><br>
-                                    Candidate having experience for 0 to 3 years in the financial sector, telecom sector, retail & real estate sector. <br><br>
-                                    <b>Roles & Responsibility</b><br>
-                                    1. Key responsibility would be to generate sales & market penetration.<br>
-                                    2. Qualification: Bachelor degree in any discipline preferably MBA in sales/marketing.<br>
-                                    3. Location: Gorakhpur, Lucknow & Eastern U.P, Bihar<br>
-                                    <p>You can also mail your resume to: <a href="mailto:apsdreamhomes44@gmail.com">apsdreamhomes44@gmail.com</a></p>
-                                </div>
-                                <div class="col-sm-6" style="padding:0px; margin:0px;">
-                                    <img src="assets/<?php echo get_asset_url('open.jpg', 'images'); ?>" class="img-responsive">
-                                </div>
-                                <div class="clearfix"></div>
-                                <div class="col-sm-6" style="padding-top:25px; padding-left:0px;">
-                                    <img src="assets/<?php echo get_asset_url('apply.jpg', 'images'); ?>" class="img-responsive">
-                                </div>
-                                <div class="col-sm-6" style="padding-top:40px; padding-right:50px;">
-                                   
-                                    <h4>APPLY ONLINE</h4>
-
-                                        <!-- Process form data -->
-                                    <?php
-                                    
-                                    
-// Define constants for allowed file types and maximum file size
-const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-const MAX_FILE_SIZE = 1024 * 1024 * 5; // 5MB
-
-// Initialize an array to hold error messages
-$errors = [];
-$thankYouMessage = '';
-
-// Process form data
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = htmlspecialchars(trim($_POST['name']));
-    $phone = htmlspecialchars(trim($_POST['phone']));
-    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $file = $_FILES['file'];
-    $msg = htmlspecialchars(trim($_POST['msg']));
-
-    // Validate the form data
-    if (empty($name) || empty($phone) || empty($email) || empty($file['name']) || empty($msg)) {
-        $errors[] = "Please fill in all the fields.";
-    }
-
-  // Validate name (only alphabetic characters)
-if (empty($name)) {
-    $errors['name'] = "Please fill out this field for Name.";
-} elseif (!preg_match("/^[A-Za-z\s]+$/", $name)) {
-    $errors['name'] = "Please enter only alphabetic characters in the Name field.";
-}
-
-   // Validate phone (only 10 digits)
-if (empty($phone)) {
-    $errors['phone'] = "Please fill out this field for Mobile Number.";
-} elseif (!preg_match("/^\d{10}$/", $phone)) {
-    $errors['phone'] = "Please enter a valid 10-digit Mobile Number.";
-}
-
-    // Validate the file type
-    if (!in_array($file['type'], ALLOWED_FILE_TYPES)) {
-        $errors[] = "Invalid file type. Please upload a PDF, DOC, or DOCX file.";
-    }
-
-    // Check if the file was uploaded successfully
-    if ($file['error'] != 0) {
-        $errors[] = "Error uploading file.";
-    }
-
-    // If there are no errors, proceed with database insertion
-    if (empty($errors)) {
-        // Sanitize file name
-        $file_name = htmlspecialchars($file['name']);
-
-        // Save data to database
-        $sql = "INSERT INTO career_applications (name, phone, email, file_name, file_type, file_size, comments) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        if ($stmt) {
-            $stmt->bind_param("sssssss", $name, $phone, $email, $file_name, $file['type'], $file['size'], $msg);
-            if ($stmt->execute()) {
-                $thankYouMessage = "Thank you for applying!";
-            } else {
-                $errors[] = "Error executing query.";
-            }
-        } else {
-            $errors[] = "Error preparing statement.";
-        }
-    }
-    // Close database connection
-        $conn->close();
-}
- 
-?>
-
-<!-- HTML Form -->
-<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="smart-form" name="smart-form" enctype="multipart/form-data">
-    <label for="name">Name:</label>
-<input type="text" name="name" value="<?php echo isset($name) ? htmlspecialchars($name) : ''; ?>" required>
-<div id="name-error" style="color: red;">
-    <?php echo isset($errors['name']) ? htmlspecialchars($errors['name']) : ''; ?>
-</div><br>
-
-    <label for="phone">Phone:</label>
-<input type="tel" name="phone" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>" required>
-<div id="phone-error" style="color: red;">
-    <?php echo isset($errors['phone']) ? htmlspecialchars($errors['phone']) : ''; ?>
-</div><br>
-
-    <label for="email">Email:</label>
-    <input type="email" name="email" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>" required>
-    <div id="email-error" style="color: red;">
-        <?php echo isset($errors['email']) ? htmlspecialchars($errors['email']) : ''; ?>
-    </div><br>
-
-    <label for="file">Resume:</label>
-    <input type="file" name="file" required>
-    <div id="file-error" style="color: red;">
-        <?php echo isset($errors['file']) ? htmlspecialchars($errors['file']) : ''; ?>
-    </div><br>
-
-    <label for="msg">Comments:</label>
-    <textarea name="msg" required><?php echo isset($msg) ? htmlspecialchars($msg) : ''; ?></textarea>
-    <div id="msg-error" style="color: red;">
-               <?php echo isset($errors['msg']) ? htmlspecialchars($errors['msg']) : ''; ?>
-    </div><br>
-
-    <input type="submit" value="Submit" class="btn btn-primary">
-</form>
-
-<!-- Error Messages -->
-<?php if (!empty($errors)): ?>
-    <div class="alert alert-danger">
-        <ul>
-            <?php foreach ($errors as $error): ?>
-                <li><?php echo htmlspecialchars($error); ?></li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-<?php endif; ?>
-
-<!-- Thank You Message Modal -->
-<?php if ($thankYouMessage): ?>
-    <div id="thankYouModal" class="modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                        <h5>Work-Life Balance</h5>
+                        <p>Flexible working hours and supportive environment for personal growth</p>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <h2>Thank You!</h2>
-                    <p>We will contact you as soon as possible.</p>
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5>Great Team</h5>
+                        <p>Work with passionate, talented people who share your vision</p>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5>Competitive Pay</h5>
+                        <p>Industry-leading compensation with performance incentives</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#thankYouModal").modal("show");
-        });
-    </script>
-<?php endif; ?>
-                                  
-                                    <?php if (isset($thankYouMessage)) {
-                                        echo '<script type="text/javascript">
-                                                $(document).ready(function() {
-                                                    $("#thankYouModal").modal("show");
-                                                });
-                                                
-                                               // Show the modal when the form is submitted
-document.getElementById("yourFormId").onsubmit = function() {
-    // Prevent form submission for demonstration
-    event.preventDefault();
-    
-    // Show the modal
-    document.getElementById("thankYouModal").style.display = "block";
-    // Add the animation class
-    setTimeout(() => {
-        document.getElementById("thankYouModal").classList.add("show");
-    }, 10);
-};
-document.getElementById("smart-form").onsubmit = function(event) {
-    let name = document.forms["smart-form"]["name"].value;
-    let namePattern = /^[A-Za-z\s]+$/; // Only allows letters and spaces
-    
-    if (!namePattern.test(name)) {
-        document.getElementById("name-error").innerHTML = "Please enter only alphabetic characters in the Name field.";
-        event.preventDefault(); // Prevent form submission
-    }
-};
-document.getElementById("smart-form").onsubmit = function(event) {
-    let phone = document.forms["smart-form"]["phone"].value;
-    let phonePattern = /^\d{10}$/; // Only allows 10 digits
-    
-    if (!phonePattern.test(phone)) {
-        document.getElementById("phone-error").innerHTML = "Please enter a valid 10-digit phone number.";
-        event.preventDefault(); // Prevent form submission
-    }
-};
- 
-                                                
-                                              </script>';
-                                    } ?>
+    </section>
+
+    <!-- Current Openings -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Current Openings</h2>
+                    <p class="lead text-muted">Find your dream job with us</p>
+                </div>
+            </div>
+
+            <?php if (empty($jobs)): ?>
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No job openings available at the moment. Please check back later or send us your resume for future opportunities.
+                    </div>
+                </div>
+            </div>
+            <?php else: ?>
+            <div class="row">
+                <?php foreach ($jobs as $job): ?>
+                <div class="col-lg-6 mb-4">
+                    <div class="card job-card shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title fw-bold"><?php echo htmlspecialchars($job['title']); ?></h5>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        <?php echo htmlspecialchars($job['location']); ?>
+                                    </p>
                                 </div>
+                                <span class="badge bg-<?php echo $job['type'] === 'full_time' ? 'success' : 'primary'; ?>">
+                                    <?php echo ucfirst(str_replace('_', ' ', $job['type'])); ?>
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="text-primary fw-bold">₹<?php echo number_format($job['salary_min']); ?> - ₹<?php echo number_format($job['salary_max']); ?></span>
+                                <small class="text-muted"> per month</small>
+                            </div>
+
+                            <p class="card-text mb-3"><?php echo htmlspecialchars(substr($job['description'], 0, 150)) . '...'; ?></p>
+
+                            <div class="mb-3">
+                                <h6 class="mb-2">Requirements:</h6>
+                                <small class="text-muted"><?php echo htmlspecialchars($job['requirements']); ?></small>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Posted: <?php echo date('M d, Y', strtotime($job['created_at'])); ?>
+                                </small>
+                                <a href="apply-job.php?id=<?php echo $job['id']; ?>" class="apply-btn">
+                                    <i class="fas fa-paper-plane me-1"></i>Apply Now
+                                </a>
                             </div>
                         </div>
-                    </section>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+
+            <!-- General Application CTA -->
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <div class="bg-light p-4 rounded">
+                        <h4 class="mb-3">Don't see a suitable opening?</h4>
+                        <p class="mb-3">Send us your resume and we'll keep you in mind for future opportunities</p>
+                        <a href="mailto:careers@apsdreamhomes.com?subject=General Application" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>Email Your Resume
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-<!-- Modal styles are now in assets/css/career.css -->
-        
-        <!-- Footer -->
-        
-        <?php require_once(__DIR__ . '/includes/dynamic_footer.php'); ?>
+    </section>
 
-        <!-- Scroll to top -->
-        <a href="#" class="bg-secondary text-white hover-text-secondary" id="scroll"><i class="fas fa-angle-up"></i></a>
-    </div>
-</div>
+    <!-- Company Culture -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Our Culture</h2>
+                    <p class="lead text-muted">What it's like to work at APS Dream Homes</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="text-center">
+                        <i class="fas fa-lightbulb fa-3x text-warning mb-3"></i>
+                        <h5>Innovation First</h5>
+                        <p>We encourage creative thinking and embrace new technologies to solve real estate challenges.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="text-center">
+                        <i class="fas fa-users fa-3x text-info mb-3"></i>
+                        <h5>Collaborative Environment</h5>
+                        <p>Teamwork is at our core. We believe the best solutions come from diverse perspectives working together.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="text-center">
+                        <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                        <h5>Customer Obsessed</h5>
+                        <p>Every decision we make is guided by how it improves the experience for our customers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- Benefits -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Employee Benefits</h2>
+                    <p class="lead text-muted">We care about our team's well-being</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="text-center p-3">
+                        <i class="fas fa-briefcase fa-2x text-primary mb-3"></i>
+                        <h6>Health Insurance</h6>
+                        <small class="text-muted">Comprehensive medical coverage for you and your family</small>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="text-center p-3">
+                        <i class="fas fa-graduation-cap fa-2x text-success mb-3"></i>
+                        <h6>Learning Budget</h6>
+                        <small class="text-muted">Annual budget for courses, conferences, and certifications</small>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="text-center p-3">
+                        <i class="fas fa-home fa-2x text-info mb-3"></i>
+                        <h6>Remote Work</h6>
+                        <small class="text-muted">Flexible work arrangements to suit your lifestyle</small>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="text-center p-3">
+                        <i class="fas fa-gift fa-2x text-warning mb-3"></i>
+                        <h6>Performance Bonus</h6>
+                        <small class="text-muted">Quarterly bonuses based on individual and team performance</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!--	Js Link
-============================================================-->
-<script src="<?php echo get_asset_url('js/jquery.min.js', 'js'); ?>"></script>
-<!--jQuery Layer Slider -->
-<script src="<?php echo get_asset_url('js/greensock.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/layerslider.transitions.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/layerslider.kreaturamedia.jquery.js', 'js'); ?>"></script>
-<!--jQuery Layer Slider -->
-<script src="<?php echo get_asset_url('js/popper.min.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/bootstrap.min.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/owl.carousel.min.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/tmpl.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/jquery.dependClass-0.1.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/draggable-0.1.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/jquery.slider.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/wow.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/jquery.cookie.js', 'js'); ?>"></script>
-<script src="<?php echo get_asset_url('js/custom.js', 'js'); ?>"></script>
+    <!-- Contact CTA -->
+    <section class="section-padding bg-primary text-white">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold mb-4">Ready to Join Us?</h2>
+                    <p class="lead mb-4">Take the first step towards an exciting career in real estate technology</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="mailto:careers@apsdreamhomes.com" class="btn btn-light btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Email Resume
+                        </a>
+                        <a href="contact.php" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-phone me-2"></i>Contact HR
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <?php include 'includes/templates/dynamic_footer.php'; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

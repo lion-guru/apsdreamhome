@@ -174,7 +174,7 @@ foreach ($tables as $i => $table) {
                         if ($row[$column] === null) {
                             $conditions[] = "`$column` IS NULL";
                         } else {
-                            $conditions[] = "`$column` = '" . $conn->real_escape_string($row[$column]) . "'";
+                            $conditions[] = "`$column` = '" . $row[$column]. "'";
                         }
                     }
                     
@@ -314,7 +314,7 @@ echo "\n=== Optimizing tables ===\n";
 
 foreach ($tables as $i => $table) {
     echo "Optimizing $table...\n";
-    $result = $conn->query("OPTIMIZE TABLE `$table`");
+    $result = $conn->query("OPTIMIZE TABLE `$" . $table . "`");
     if ($result) {
         $row = $result->fetch_assoc();
         echo "Result: " . $row['Msg_text'] . "\n";
@@ -353,7 +353,7 @@ foreach ($tables as $table) {
                 }
             } else {
                 echo "Removing temporary table $table...\n";
-                $result = $conn->query("DROP TABLE `$table`");
+                $result = $conn->query("DROP TABLE `$" . $table . "`");
                 if ($result) {
                     $tempTablesRemoved++;
                 } else {
@@ -389,7 +389,7 @@ if ($result) {
 // Get table counts
 echo "\nTable record counts:\n";
 foreach ($tables as $table) {
-    $result = $conn->query("SELECT COUNT(*) as count FROM `$table`");
+    $result = $conn->query("SELECT COUNT(*) as count FROM `$" . $table . "`");
     if ($result) {
         $row = $result->fetch_assoc();
         echo "$table: " . $row['count'] . " records\n";

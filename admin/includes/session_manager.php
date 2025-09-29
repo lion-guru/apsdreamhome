@@ -17,6 +17,11 @@ function initAdminSession() {
         $_SESSION['CREATED'] = time();
     }
     $_SESSION['LAST_ACTIVITY'] = time();
+
+    // Generate CSRF token if not exists
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
 }
 
 function validateAdminSession() {

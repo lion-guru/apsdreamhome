@@ -6,32 +6,247 @@ function db_connect($retry_attempts = 3) {
         try {
             // Use persistent connection for better performance
             $conn = mysqli_connect('p:' . DB_HOST, DB_USER, DB_PASS, DB_NAME);
-            
+
             if (!$conn) {
                 throw new Exception("Connection failed: " . mysqli_connect_error());
             }
-            
+
             // Set connection parameters for security and performance
             mysqli_set_charset($conn, 'utf8mb4');
-            
+
             // Enable strict mode to catch more potential errors
             mysqli_query($conn, "SET sql_mode = 'STRICT_ALL_TABLES'");
-            
+
             return $conn;
         } catch (Exception $e) {
             error_log('Database connection attempt ' . ($attempt + 1) . ' failed: ' . $e->getMessage());
             $attempt++;
-            
+
             // Exponential backoff
             if ($attempt < $retry_attempts) {
                 usleep(pow(2, $attempt) * 100000); // Increases wait time between attempts
             }
         }
     }
-    
-    // Log critical error and terminate
-    error_log('CRITICAL: Unable to establish database connection after ' . $retry_attempts . ' attempts');
-    die('System is temporarily unavailable. Please try again later.');
+}
+
+// Helper function to format file sizes
+function formatFileSize($bytes) {
+    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+    for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+        $bytes /= 1024;
+    }
+
+    return round($bytes, 2) . ' ' . $units[$i];
+}
+
+// Helper function to get log level colors
+function getLogLevelColor($level) {
+    $colors = [
+        'ERROR' => 'danger',
+        'WARNING' => 'warning',
+        'INFO' => 'info',
+        'DEBUG' => 'secondary',
+        'CRITICAL' => 'dark'
+    ];
+
+    return $colors[strtoupper($level)] ?? 'secondary';
+}
+
+// Helper function to get role colors
+function getRoleColor($role) {
+    $colors = [
+        'admin' => 'danger',
+        'agent' => 'primary',
+        'customer' => 'success',
+        'manager' => 'warning'
+    ];
+
+    return $colors[strtolower($role)] ?? 'secondary';
+}
+
+// Helper function to sanitize input
+function sanitize_input($data) {
+    if (is_array($data)) {
+        return array_map('sanitize_input', $data);
+    }
+
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+    return $data;
+}
+
+// Helper function to generate CSRF token
+function csrf_token() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+// Helper function to validate CSRF token
+function validate_csrf_token($token) {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
+// Helper function to get user role name
+function getRoleName($role) {
+    $roles = [
+        'admin' => 'Administrator',
+        'agent' => 'Real Estate Agent',
+        'customer' => 'Customer',
+        'manager' => 'Manager'
+    ];
+
+    return $roles[$role] ?? ucfirst($role);
+}
+
+// Helper function to get status color
+function getStatusColor($status) {
+    $colors = [
+        'active' => 'success',
+        'inactive' => 'secondary',
+        'pending' => 'warning',
+        'suspended' => 'danger',
+        'available' => 'success',
+        'sold' => 'primary',
+        'rented' => 'info'
+    ];
+
+    return $colors[strtolower($status)] ?? 'secondary';
+}
+
+// Helper function to format currency
+function formatCurrency($amount, $currency = '₹') {
+    return $currency . number_format($amount, 0, '.', ',');
+}
+
+// Helper function to get time ago
+function timeAgo($datetime) {
+    $now = new DateTime();
+    $ago = new DateTime($datetime);
+    $diff = $now->diff($ago);
+
+    if ($diff->days > 0) {
+        return $diff->days . ' days ago';
+    } elseif ($diff->h > 0) {
+        return $diff->h . ' hours ago';
+    } elseif ($diff->i > 0) {
+        return $diff->i . ' minutes ago';
+    } else {
+        return 'Just now';
+    }
+}
+
+// Helper function to truncate text
+function truncateText($text, $length = 100) {
+    if (strlen($text) <= $length) {
+        return $text;
+    }
+
+    return substr($text, 0, $length) . '...';
+}
+
+// Helper function to generate slug
+function createSlug($text) {
+    $text = strtolower($text);
+    $text = preg_replace('/[^a-z0-9\-]/', '-', $text);
+    $text = preg_replace('/-+/', '-', $text);
+    return trim($text, '-');
+}
+
+// Helper function to validate email
+function isValidEmail($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+// Helper function to validate phone number
+function isValidPhone($phone) {
+    return preg_match('/^[0-9]{10,15}$/', $phone);
+}
+
+// Helper function to generate random password
+function generatePassword($length = 12) {
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    $password = '';
+
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $chars[rand(0, strlen($chars) - 1)];
+    }
+
+    return $password;
+}
+
+// Helper function to hash password
+function hashPassword($password) {
+    return password_hash($password, PASSWORD_DEFAULT);
+}
+
+// Helper function to verify password
+function verifyPassword($password, $hash) {
+    return password_verify($password, $hash);
+}
+
+// Helper function to get user avatar
+function getUserAvatar($name, $size = 40) {
+    return "https://ui-avatars.com/api/?name=" . urlencode($name) . "&size={$size}";
+}
+
+// Helper function to get property type icon
+function getPropertyTypeIcon($type) {
+    $icons = [
+        'apartment' => 'fas fa-building',
+        'villa' => 'fas fa-home',
+        'house' => 'fas fa-house',
+        'commercial' => 'fas fa-store',
+        'plot' => 'fas fa-map'
+    ];
+
+    return $icons[$type] ?? 'fas fa-home';
+}
+
+// Helper function to get lead source color
+function getLeadSourceColor($source) {
+    $colors = [
+        'website' => 'primary',
+        'phone' => 'success',
+        'email' => 'info',
+        'referral' => 'warning',
+        'walk-in' => 'secondary'
+    ];
+
+    return $colors[strtolower($source)] ?? 'secondary';
+}
+
+// Helper function to get booking status color
+function getBookingStatusColor($status) {
+    $colors = [
+        'pending' => 'warning',
+        'confirmed' => 'success',
+        'cancelled' => 'danger',
+        'completed' => 'info'
+    ];
+
+    return $colors[strtolower($status)] ?? 'secondary';
+}
+
+// Helper function to format date
+function formatDate($date, $format = 'M d, Y') {
+    return date($format, strtotime($date));
+}
+
+// Helper function to get initials from name
+function getInitials($name) {
+    $parts = explode(' ', $name);
+    $initials = '';
+
+    foreach ($parts as $part) {
+        $initials .= strtoupper(substr($part, 0, 1));
+    }
+
+    return substr($initials, 0, 2);
 }
 
 // Advanced input sanitization and validation
@@ -138,11 +353,6 @@ function generate_csrf_token() {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     return $_SESSION['csrf_token'];
-}
-
-// Validate CSRF token
-function validate_csrf_token($token) {
-    return hash_equals($_SESSION['csrf_token'], $token);
 }
 
 // Get recent properties

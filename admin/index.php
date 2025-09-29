@@ -1,4 +1,10 @@
 <?php
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', dirname(__FILE__) . '/admin_error.log');
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -9,8 +15,17 @@ header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
 
 // Include necessary files
-require_once __DIR__ . '/../includes/config/db_config.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/db_connection.php';
 require_once __DIR__ . '/includes/csrf_protection.php';
+
+// Debug: Check if database connection is working
+try {
+    $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASSWORD);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 // Generate CSRF token
 $csrf_token = CSRFProtection::generateToken();
@@ -50,68 +65,162 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - APS Dream Homes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="login.css" rel="stylesheet">
+    <link href="css/modern-ui.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 400px; 
-            margin: 50px auto; 
-            padding: 20px; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-family);
         }
-        input { 
-            width: 100%; 
-            padding: 10px; 
-            margin: 10px 0; 
-            box-sizing: border-box; 
+        .login-container {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            padding: var(--space-2xl);
+            width: 100%;
+            max-width: 450px;
+            border: none;
+            margin: 0;
         }
-        .error { 
-            color: red; 
-            margin-bottom: 10px; 
+        .login-container .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            font-size: var(--font-size-base);
+            transition: var(--transition-fast);
+        }
+        .login-container .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+        .btn-primary {
+            background: var(--bg-gradient);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            font-weight: 600;
+            transition: var(--transition-normal);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .error {
+            color: var(--error-color);
+            background: rgba(244, 67, 54, 0.1);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--error-color);
+            margin-bottom: var(--space-lg);
+        }
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            border: none;
+            border-left: 4px solid var(--success-color);
+            color: var(--success-color);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+        .panel-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            background: var(--bg-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-sm);
+        }
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="login-container fade-in">
         <?php if (!empty($success_message)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
             <?php echo htmlspecialchars($success_message); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         <?php endif; ?>
         
-        <div class="login-header" style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;margin-bottom:1.2rem;">
-        <div class="panel-title" style="font-size:1.45rem;font-weight:700;color:#0d6efd;letter-spacing:1px;">APS Dream Homes</div>
-        <div style="font-size:1.05rem;color:#444;font-weight:500;">Admin Panel Login</div>
-        <div class="panel-desc" style="font-size:0.98rem;color:#666;">Welcome! Only authorized personnel may proceed.</div>
+        <div class="login-header">
+            <div class="panel-title">APS Dream Homes</div>
+            <div style="font-size: var(--font-size-lg); color: var(--text-secondary); font-weight: 500; margin-bottom: var(--space-xs);">Admin Panel Login</div>
+            <div class="panel-desc" style="font-size: var(--font-size-base); color: var(--text-muted);">
+                🔒 Admin Access Only<br>
+                <small class="text-warning">⚠️ Admin login is restricted from the main website</small>
+            </div>
+            <div class="mt-3">
+                <i class="fas fa-shield-alt text-primary" style="font-size: var(--font-size-2xl);"></i>
+            </div>
+        </div>
+        
+        <?php if (!empty($login_error)): ?>
+        <div class="error">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <?php echo htmlspecialchars($login_error); ?>
+        </div>
+        <?php endif; ?>
+        <form action="process_login.php" method="post" autocomplete="off" novalidate class="form-modern">
+            <div class="form-group-modern">
+                <input type="text" class="form-control-modern" id="username" name="username" required autofocus autocomplete="username" placeholder=" ">
+                <label for="username" class="form-label-modern">
+                    <i class="fas fa-user me-2"></i>Username
+                </label>
+            </div>
+            
+            <div class="form-group-modern">
+                <input type="password" class="form-control-modern" id="password" name="password" required autocomplete="current-password" placeholder=" ">
+                <label for="password" class="form-label-modern">
+                    <i class="fas fa-lock me-2"></i>Password
+                </label>
+            </div>
+            
+            <div class="form-group-modern">
+                <input type="number" class="form-control-modern" id="captcha_answer" name="captcha_answer" required placeholder=" ">
+                <label for="captcha_answer" class="form-label-modern">
+                    <i class="fas fa-calculator me-2"></i>Security: <?php echo $captcha_question; ?>
+                </label>
+            </div>
+            
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+            
+            <button type="submit" class="btn-modern btn-modern-primary w-100 mb-3">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                Login to Dashboard
+            </button>
+            
+            <div class="text-center">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                    <i class="fas fa-key me-1"></i>Forgot Password?
+                </a>
+            </div>
+        </form>
+        <div class="mt-4 text-center">
+            <a href="../index.php" class="btn btn-outline-secondary">
+                <i class="fas fa-home me-2"></i>Back to Home
+            </a>
+        </div>
     </div>
-    <?php if (!empty($login_error)): ?>
-    <div class="error"><?php echo htmlspecialchars($login_error); ?></div>
-    <?php endif; ?>
-    <form action="process_login.php" method="post" autocomplete="off" novalidate>
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="username">
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
-        </div>
-        <div class="mb-3">
-            <label for="captcha_answer" class="form-label">Security Question: <?php echo $captcha_question; ?></label>
-            <input type="number" class="form-control" id="captcha_answer" name="captcha_answer" required>
-        </div>
-        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
-        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
-                <div class="text-center">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
-                </div>
-            </form>
-    <div class="mt-3 text-center">
-        <a href="../index.php">Back to Home</a>
-    </div>
-</div>
     <!-- Forgot Password Modal -->
     <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

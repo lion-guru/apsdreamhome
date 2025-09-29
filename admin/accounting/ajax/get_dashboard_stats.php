@@ -30,7 +30,9 @@ try {
     
     // Get Pending Payments Count
     $pendingQuery = "SELECT COUNT(*) as total FROM payments WHERE status = 'pending'";
-    $pendingPayments = $conn->query($pendingQuery)->fetch_assoc()['total'];
+    $stmt = $conn->prepare($pendingQuery);
+    $stmt->execute();
+    $pendingPayments = $stmt->get_result()->fetch_assoc()['total'];
     
     // Calculate Monthly Profit
     $monthlyProfit = $revenue - $expenses;

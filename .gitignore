@@ -1,12 +1,63 @@
-node_modules
+# PHP
+/vendor/
+/node_modules/
+
+# Environment files
 .env
-.env.local
-logs/
+.env.*
+!.env.example
+
+# Logs
+/logs/
 *.log
 error_log
 admin/error_log
-db_backups/
-backup_*/
+
+# Database
+/db_backups/
+/backup_*/
+*.sql
+*.sqlite
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Local development
+/config.php
+/config_*.php
+
+# Uploads
+/uploads/
+
+# Cache
+/cache/
+/storage/framework/views/
+
+# Composer
+/composer.lock
+/composer.phar
+
+# Testing
+/phpunit.xml
+/phpunit.xml.dist
+
+# Build
+dist/
+build/
+
+# Local development server
+.phpunit.result.cache
 
 # Temporary database files created by Cascade
 _live_schema.sql

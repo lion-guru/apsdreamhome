@@ -6,17 +6,27 @@ require_once __DIR__ . '/../includes/db_config.php';
 
 function getAllTables($conn) {
     $tables = [];
-    $result = $conn->query("SHOW TABLES");
+    $stmt = $conn->prepare("SHOW TABLES");
+    $stmt->execute();
+    $result = $stmt->get_result();
     while ($row = $result->fetch_array()) {
         $tables[] = $row[0];
     }
+    $stmt->close();
     return $tables;
 }
 
 function checkAndRepairTable($conn, $table) {
     $report = [];
+    // Validate table name to prevent injection
+    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+        $report[] = "ERROR: Invalid table name format: $table";
+        return $report;
+    }
+
     // Check table integrity
     $check = $conn->query("CHECK TABLE `$table`");
+
     if ($check) {
         while ($row = $check->fetch_assoc()) {
             $report[] = "CHECK: {$row['Msg_type']} - {$row['Msg_text']}";
@@ -34,20 +44,32 @@ function checkAndRepairTable($conn, $table) {
 
 function checkDuplicates($conn, $table) {
     $report = [];
+    // Validate table name
+    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $table)) {
+        $report[] = "ERROR: Invalid table name format: $table";
+        return $report;
+    }
+
     // Try to find primary key
-    $pkResult = $conn->query("SHOW KEYS FROM `$table` WHERE Key_name = 'PRIMARY'");
+    $stmt = $conn->prepare("SHOW KEYS FROM `$table` WHERE Key_name = 'PRIMARY'");
+    $stmt->execute();
+    $pkResult = $stmt->get_result();
     if ($pkResult && $pkResult->num_rows > 0) {
         // Handle reserved keywords by wrapping column in backticks
         $pk = $pkResult->fetch_assoc();
         $pkCol = $pk['Column_name'];
-        $dupResult = $conn->query("SELECT `" . $pkCol . "`, COUNT(*) as cnt FROM `$table` GROUP BY `" . $pkCol . "` HAVING cnt > 1");
+        $stmt = $conn->prepare("SELECT `$pkCol`, COUNT(*) as cnt FROM `$table` GROUP BY `$pkCol` HAVING cnt > 1");
+        $stmt->execute();
+        $dupResult = $stmt->get_result();
         if ($dupResult && $dupResult->num_rows > 0) {
             $report[] = "DUPLICATES FOUND in $table on $pkCol:";
             while ($row = $dupResult->fetch_assoc()) {
                 $report[] = "  Value: {$row[$pkCol]} appears {$row['cnt']} times";
             }
         }
+        $stmt->close();
     }
+    $stmt->close();
     return $report;
 }
 

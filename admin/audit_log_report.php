@@ -8,7 +8,7 @@ $filter_user = isset($_GET['user_id']) ? intval($_GET['user_id']) : 0;
 $filter_action = isset($_GET['action']) ? $_GET['action'] : '';
 $where = [];
 if ($filter_user) $where[] = "al.user_id = $filter_user";
-if ($filter_action) $where[] = "al.action = '" . $conn->real_escape_string($filter_action) . "'";
+if ($filter_action) $where[] = "al.action = '" . $filter_action. "'";
 $where_sql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 $sql = "SELECT al.*, e.name as user FROM audit_log al LEFT JOIN employees e ON al.user_id = e.id $where_sql ORDER BY al.id DESC LIMIT 200";
 $audit_logs = $conn->query($sql);

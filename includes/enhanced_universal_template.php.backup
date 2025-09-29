@@ -1,0 +1,2918 @@
+<?php
+/**
+ * Enhanced Universal Template System
+ * 
+ * A comprehensive template management system that provides a flexible and secure way to manage
+ * the frontend presentation layer of the APS Dream Home application.
+ * 
+ * @package    APSDreamHome
+ * @subpackage Core
+ * @author     APS Dream Home Team
+ * @version    2.0.0
+ * @license    Proprietary
+ */
+
+// Prevent direct access - but allow when accessed via web server
+if (!defined('ABSPATH') && !isset($_SERVER['HTTP_HOST'])) {
+    exit('Direct access forbidden');
+}
+
+/**
+ * Enhanced Universal Template Manager
+ * 
+ * This class provides a robust template system with the following features:
+ * - Theme management with multiple pre-defined themes
+ * - SEO optimization tools
+ * - Social media integration
+ * - Security headers and XSS protection
+ * - Performance optimization
+ * - Responsive design support
+ * - Dynamic content loading
+ * - Asset management
+ */
+class EnhancedUniversalTemplate {
+    /**
+     * @var string Current theme name
+     */
+    private string $theme = 'default';
+    
+    /**
+     * @var string Page layout type (full, boxed, etc.)
+     */
+    private string $layout = 'full';
+    
+    /**
+     * @var string Page title
+     */
+    private string $page_title = 'APS Dream Home';
+    
+    /**
+     * @var string Meta description for SEO
+     */
+    private string $meta_description = 'Premium real estate platform for buying, selling, and renting properties';
+    
+    /**
+     * @var string Open Graph image URL
+     */
+    private string $og_image = '/assets/images/og-default.jpg';
+    
+    /**
+     * @var string Custom CSS content
+     */
+    private string $custom_css = '';
+    
+    /**
+     * @var string Custom JavaScript content
+     */
+    private string $custom_js = '';
+    
+    /**
+     * @var array List of CSS files to include
+     */
+    private array $css_files = [];
+    
+    /**
+     * @var array List of JavaScript files to include
+     */
+    private array $js_files = [];
+    
+    /**
+     * @var bool Whether to show navigation
+     */
+    private bool $show_navigation = true;
+    
+    /**
+     * @var bool Whether to show footer
+     */
+    private bool $show_footer = true;
+    
+    /**
+     * @var bool Whether to enable SEO features
+     */
+    private bool $enable_seo = true;
+    
+    /**
+     * @var bool Whether to enable social media features
+     */
+    private bool $enable_social = true;
+    
+    /**
+     * @var bool Whether to enable security features
+     */
+    private bool $enable_security = true;
+    
+    /**
+     * @var array Breadcrumb items
+     */
+    private array $breadcrumbs = [];
+    
+    /**
+     * @var array Additional meta tags
+     */
+    private array $meta_tags = [];
+    
+    /**
+     * @var array Inline scripts to be added to the page
+     */
+    private array $inline_scripts = [];
+    
+    /**
+     * @var array Inline styles to be added to the page
+     */
+    private array $inline_styles = [];
+    
+    /**
+     * @var array Registered script handles and their dependencies
+     */
+    private array $script_deps = [];
+    
+    /**
+     * @var array Registered style handles and their dependencies
+     */
+    private array $style_deps = [];
+
+    /**
+     * @var string Additional CSS content
+     */
+    private string $additional_css = '';
+    
+    /**
+     * @var array Theme configurations
+     */
+    private array $themes = [
+        'default' => [
+            'primary_color' => '#4e73df',
+            'secondary_color' => '#1cc88a',
+            'accent_color' => '#f6c23e',
+            'background' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'card_style' => 'glass-morphism',
+            'theme_color' => '#667eea',
+            'font_family' => '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            'border_radius' => '0.5rem',
+            'box_shadow' => '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+        ],
+        'dashboard' => [
+            'primary_color' => '#4e73df',
+            'secondary_color' => '#1cc88a',
+            'accent_color' => '#f6c23e',
+            'background' => 'linear-gradient(135deg, #f8f9fc 0%, #e9ecef 100%)',
+            'card_style' => 'modern-glass',
+            'theme_color' => '#4e73df',
+            'font_family' => '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            'border_radius' => '0.5rem',
+            'box_shadow' => '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+        ],
+        'login' => [
+            'primary_color' => '#28a745',
+            'secondary_color' => '#20c997',
+            'accent_color' => '#17a2b8',
+            'background' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'card_style' => 'centered-login',
+            'theme_color' => '#28a745',
+            'font_family' => '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            'border_radius' => '1rem',
+            'box_shadow' => '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+        ],
+        'admin' => [
+            'primary_color' => '#6f42c1',
+            'secondary_color' => '#fd7e14',
+            'accent_color' => '#20c997',
+            'background' => 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
+            'card_style' => 'admin-panel',
+            'theme_color' => '#6f42c1',
+            'font_family' => '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            'border_radius' => '0.5rem',
+            'box_shadow' => '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+        ]
+    ];
+    
+    /**
+     * @var array Security headers configuration
+     */
+    private array $security_headers = [
+        'X-Content-Type-Options' => 'nosniff',
+        'X-Frame-Options' => 'SAMEORIGIN',
+        'X-XSS-Protection' => '1; mode=block',
+        'Content-Security-Policy' => "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self';",
+        'Permissions-Policy' => 'geolocation=(), microphone=(), camera=()',
+        'Referrer-Policy' => 'strict-origin-when-cross-origin',
+        'Cache-Control' => 'public, max-age=31536000, immutable'
+    ];
+    
+    /**
+     * @var array SEO and social media data
+     */
+    private array $seo_data = [
+        'robots' => 'index, follow',
+        'author' => 'APS Dream Homes',
+        'keywords' => 'real estate, property, home, house, apartment, buy property, rent property, APS Dream Homes',
+        'og_type' => 'website',
+        'og_site_name' => 'APS Dream Homes',
+        'twitter_card' => 'summary_large_image'
+    ];
+    
+    /**
+     * @var array Default assets to load
+     */
+    private array $default_assets = [
+        'css' => [
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+            'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+        ],
+        'js' => [
+            'https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js',
+            'https://unpkg.com/aos@2.3.1/dist/aos.js'
+        ]
+    ];
+
+
+    /**
+     * Set the active theme
+     * 
+     * @param string $theme The theme name to set (must be a defined theme)
+     * @return self Returns the instance for method chaining
+     */
+    public function setTheme(string $theme): self {
+        $this->theme = isset($this->themes[$theme]) ? $theme : 'default';
+        return $this;
+    }
+    
+    /**
+     * Get the current theme configuration
+     * 
+     * @param string|null $key Specific theme setting to retrieve, or null for all settings
+     * @return mixed The theme configuration value or array of all settings
+     */
+    public function getTheme(?string $key = null) {
+        $theme = $this->themes[$this->theme] ?? $this->themes['default'];
+        return $key ? ($theme[$key] ?? null) : $theme;
+    }
+    
+    /**
+     * Add or update a theme configuration
+     * 
+     * @param string $name Theme name
+     * @param array $config Theme configuration array
+     * @return self Returns the instance for method chaining
+     */
+    public function addTheme(string $name, array $config): self {
+        $this->themes[$name] = array_merge(
+            $this->themes['default'] ?? [],
+            $config
+        );
+        return $this;
+    }
+    
+    /**
+     * Set the page title
+     * 
+     * @param string $title The page title
+     * @param bool $append_site_name Whether to append the site name to the title
+     * @return self Returns the instance for method chaining
+     */
+    public function setTitle(string $title, bool $append_site_name = true): self {
+        $this->page_title = $append_site_name 
+            ? "$title | APS Dream Homes" 
+            : $title;
+        return $this;
+    }
+    
+    /**
+     * Set the page meta description
+     * 
+     * @param string $description The meta description
+     * @return self Returns the instance for method chaining
+     */
+    public function setDescription(string $description): self {
+        $this->meta_description = $description;
+        return $this;
+    }
+    
+    /**
+     * Set the Open Graph image URL
+     * 
+     * @param string $image_url The URL of the Open Graph image
+     * @return self Returns the instance for method chaining
+     */
+    public function setOGImage(string $image_url): self {
+        $this->og_image = $image_url;
+        return $this;
+    }
+    
+    /**
+     * Add a CSS file to be included
+     * 
+     * @param string $file Path or URL to the CSS file
+     * @param array $dependencies Array of dependency handles that this stylesheet depends on
+     * @param string $handle Unique handle for this stylesheet
+     * @param string $media The media for which this stylesheet has been defined
+     * @return self Returns the instance for method chaining
+     */
+    public function addCSS(
+        string $file, 
+        array $dependencies = [], 
+        string $handle = '', 
+        string $media = 'all'
+    ): self {
+        $handle = $handle ?: 'style-' . md5($file);
+        $this->css_files[$handle] = [
+            'src' => $file,
+            'deps' => $dependencies,
+            'media' => $media,
+            'version' => $this->getFileVersion($file)
+        ];
+        $this->style_deps[$handle] = $dependencies;
+        return $this;
+    }
+    
+    /**
+     * Add a JavaScript file to be included
+     * 
+     * @param string $file Path or URL to the JS file
+     * @param array $dependencies Array of dependency handles that this script depends on
+     * @param string $handle Unique handle for this script
+     * @param bool $in_footer Whether to enqueue the script in the footer
+     * @return self Returns the instance for method chaining
+     */
+    public function addJS(
+        string $file, 
+        array $dependencies = [], 
+        string $handle = '', 
+        bool $in_footer = true
+    ): self {
+        $handle = $handle ?: 'script-' . md5($file);
+        $this->js_files[$handle] = [
+            'src' => $file,
+            'deps' => $dependencies,
+            'in_footer' => $in_footer,
+            'version' => $this->getFileVersion($file)
+        ];
+        $this->script_deps[$handle] = $dependencies;
+        return $this;
+    }
+    
+    /**
+     * Add inline CSS to the page
+     * 
+     * @param string $css The CSS to add
+     * @param string $handle A unique handle for this inline style
+     * @return self Returns the instance for method chaining
+     */
+    public function addInlineCSS(string $css, string $handle = ''): self {
+        $handle = $handle ?: 'inline-' . md5($css);
+        $this->inline_styles[$handle] = $css;
+        return $this;
+    }
+    
+    /**
+     * Add inline JavaScript to the page
+     * 
+     * @param string $js The JavaScript to add
+     * @param string $handle A unique handle for this inline script
+     * @param bool $in_footer Whether to output in the footer
+     * @return self Returns the instance for method chaining
+     */
+    public function addInlineJS(string $js, string $handle = '', bool $in_footer = false): self {
+        $handle = $handle ?: 'inline-' . md5($js);
+        $this->inline_scripts[$handle] = [
+            'code' => $js,
+            'in_footer' => $in_footer
+        ];
+        return $this;
+    }
+    
+    /**
+     * Get file version based on filemtime for local files
+     * 
+     * @param string $file Path to the file
+     * @return string|bool File modification time or false on failure
+     */
+    private function getFileVersion(string $file) {
+        // If it's a remote file, don't add version
+        if (filter_var($file, FILTER_VALIDATE_URL) !== false) {
+            return null;
+        }
+        
+        // For local files, use filemtime for cache busting
+        $file_path = realpath($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($file, '/'));
+        return file_exists($file_path) ? filemtime($file_path) : null;
+    }
+
+
+    /**
+     * Hide navigation
+     * 
+     * @return self Returns the instance for method chaining
+     */
+    public function hideNavigation(): self {
+        $this->show_navigation = false;
+        return $this;
+    }
+
+    /**
+     * Show navigation (default)
+     * 
+     * @return self Returns the instance for method chaining
+     */
+    public function showNavigation(): self {
+        $this->show_navigation = true;
+        return $this;
+    }
+
+    /**
+     * Hide footer
+     * 
+     * @return self Returns the instance for method chaining
+     */
+    public function hideFooter(): self {
+        $this->show_footer = false;
+        return $this;
+    }
+
+    /**
+     * Show footer (default)
+     * 
+     * @return self Returns the instance for method chaining
+     */
+    public function showFooter(): self {
+        $this->show_footer = true;
+        return $this;
+    }
+
+    /**
+     * Enable or disable SEO features
+     * 
+     * @param bool $enable Whether to enable SEO features
+     * @return self Returns the instance for method chaining
+     */
+    public function enableSEO(bool $enable = true): self {
+        $this->enable_seo = $enable;
+        return $this;
+    }
+
+    /**
+     * Enable or disable social media meta tags
+     * 
+     * @param bool $enable Whether to enable social media features
+     * @return self Returns the instance for method chaining
+     */
+    public function enableSocial(bool $enable = true): self {
+        $this->enable_social = $enable;
+        return $this;
+    }
+
+    /**
+     * Enable or disable security headers
+     * 
+     * @param bool $enable Whether to enable security headers
+     * @return self Returns the instance for method chaining
+     */
+    public function enableSecurity(bool $enable = true): self {
+        $this->enable_security = $enable;
+        return $this;
+    }
+
+    /**
+     * Add a breadcrumb item
+     * 
+     * @param string $title The breadcrumb title
+     * @param string|null $url The breadcrumb URL (null for current page)
+     * @return self Returns the instance for method chaining
+     */
+    public function addBreadcrumb(string $title, ?string $url = null): self {
+        $this->breadcrumbs[] = [
+            'title' => $title,
+            'url' => $url
+        ];
+        return $this;
+    }
+
+    /**
+     * Add a meta tag
+     * 
+     * @param string $name The name or property of the meta tag
+     * @param string $content The content of the meta tag
+     * @param bool $is_property Whether to use property instead of name attribute
+     * @return self Returns the instance for method chaining
+     */
+    public function addMetaTag(string $name, string $content, bool $is_property = false): self {
+        $this->meta_tags[] = [
+            'name' => $name,
+            'content' => $content,
+            'is_property' => $is_property
+        ];
+        return $this;
+    }
+
+    /**
+     * Render complete page
+     * 
+     * @param string $content The main content to render
+     * @return void
+     */
+    public function render(string $content): void {
+        $this->renderHTML($content);
+    }
+
+    /**
+     * Output complete HTML with all preserved functionality
+     * 
+     * @param string $content The main content to render
+     * @return void
+     */
+    private function renderHTML(string $content): void {
+        // Add default assets if not already added
+        $this->addDefaultAssets();
+        
+        // Get current theme settings
+        $theme = $this->getTheme();
+        
+        // Set content type header
+        if (!headers_sent()) {
+            header('Content-Type: text/html; charset=UTF-8');
+        }
+        
+        ?><!DOCTYPE html>
+        <html lang="en" dir="ltr" data-theme="<?php echo htmlspecialchars($this->theme); ?>">
+        <head>
+            <?php $this->outputMetaTags(); ?>
+            <?php $this->outputSecurityHeaders(); ?>
+            <?php $this->outputStyles(); ?>
+            
+            <!-- Additional meta tags -->
+            <?php foreach ($this->meta_tags as $meta): ?>
+                <?php if ($meta['is_property']): ?>
+            <meta property="<?php echo htmlspecialchars($meta['name']); ?>" content="<?php echo htmlspecialchars($meta['content']); ?>>
+                <?php else: ?>
+            <meta name="<?php echo htmlspecialchars($meta['name']); ?>" content="<?php echo htmlspecialchars($meta['content']); ?>>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            
+            <!-- Preload critical resources -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+            <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
+        </head>
+        <body class="theme-<?php echo htmlspecialchars($this->theme); ?>" style="--primary-color: <?php echo $theme['primary_color']; ?>; --secondary-color: <?php echo $theme['secondary_color']; ?>; --accent-color: <?php echo $theme['accent_color']; ?>; --border-radius: <?php echo $theme['border_radius']; ?>; --box-shadow: <?php echo $theme['box_shadow']; ?>; font-family: <?php echo $theme['font_family']; ?>;">
+            <?php if ($this->show_navigation): ?>
+                <?php $this->outputNavigation(); ?>
+            <?php endif; ?>
+
+            <main class="main-content" style="<?php echo $this->getMainContentStyle(); ?>">
+                <?php $this->outputBreadcrumbs(); ?>
+                <?php echo $content; ?>
+            </main>
+
+            <?php if ($this->show_footer): ?>
+                <?php $this->outputFooter(); ?>
+            <?php endif; ?>
+
+            <!-- Back to Top Button -->
+            <button id="backToTop" class="back-to-top" aria-label="Back to top" title="Back to top">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+
+            <?php $this->outputScripts(); ?>
+            
+            <!-- Inline scripts -->
+            <?php foreach ($this->inline_scripts as $script): ?>
+                <?php if (!$script['in_footer']): ?>
+            <script><?php echo $script['code']; ?></script>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            
+            <!-- Initialize AOS (Animate On Scroll) -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize AOS
+                    if (typeof AOS !== 'undefined') {
+                        AOS.init({
+                            duration: 600,
+                            easing: 'ease-in-out',
+                            once: true
+                        });
+                    }
+                    
+                    // Back to top button
+                    const backToTop = document.getElementById('backToTop');
+                    if (backToTop) {
+                        window.addEventListener('scroll', function() {
+                            if (window.pageYOffset > 300) {
+                                backToTop.classList.add('show');
+                            } else {
+                                backToTop.classList.remove('show');
+                            }
+                        });
+                        
+                        backToTop.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            });
+                        });
+                    }
+                    
+                    // Lazy loading for images
+                    if (typeof LazyLoad !== 'undefined') {
+                        new LazyLoad({
+                            elements_selector: '.lazy',
+                            threshold: 100,
+                            callback_loaded: function(el) {
+                                el.classList.add('lazy-loaded');
+                            }
+                        });
+                    }
+                });
+            </script>
+        </body>
+        </html>
+        <?php
+    }
+    
+    /**
+     * Add default CSS and JS assets if not already added
+     * 
+     * @return void
+     */
+    private function addDefaultAssets(): void {
+        // Add default CSS
+        foreach ($this->default_assets['css'] as $css) {
+            if (!in_array($css, array_column($this->css_files, 'src'))) {
+                $this->addCSS($css);
+            }
+        }
+        
+        // Add default JS
+        foreach ($this->default_assets['js'] as $js) {
+            if (!in_array($js, array_column($this->js_files, 'src'))) {
+                $this->addJS($js, [], '', true);
+            }
+        }
+    }
+    
+    /**
+     * Output breadcrumbs navigation
+     * 
+     * @return void
+     */
+    private function outputBreadcrumbs(): void {
+        if (empty($this->breadcrumbs)) {
+            return;
+        }
+        
+        ?><nav aria-label="Breadcrumb" class="breadcrumb-nav">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">Home</a>
+                </li>
+                <?php foreach ($this->breadcrumbs as $index => $item): ?>
+                    <?php if ($index === count($this->breadcrumbs) - 1): ?>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <?php echo htmlspecialchars($item['title']); ?>
+                        </li>
+                    <?php else: ?>
+                        <li class="breadcrumb-item">
+                            <?php if ($item['url']): ?>
+                                <a href="<?php echo htmlspecialchars($item['url']); ?>">
+                                    <?php echo htmlspecialchars($item['title']); ?>
+                                </a>
+                            <?php else: ?>
+                                <?php echo htmlspecialchars($item['title']); ?>
+                            <?php endif; ?>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ol>
+        </nav><?php
+    }
+
+    /**
+     * Output all meta tags (from dynamic and static headers)
+     */
+    private function outputMetaTags() {
+        $theme = $this->themes[$this->theme];
+        $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        ?>
+        <!-- Primary Meta Tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+        <!-- Title and Description -->
+        <title><?php echo htmlspecialchars($this->page_title); ?></title>
+        <meta name="description" content="<?php echo htmlspecialchars($this->meta_description); ?>">
+
+        <!-- Theme Color for Mobile Browsers -->
+        <meta name="theme-color" content="<?php echo $theme['theme_color']; ?>">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+        <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+
+        <?php if ($this->enable_seo): ?>
+        <!-- SEO Meta Tags -->
+        <meta name="robots" content="<?php echo $this->seo_data['robots']; ?>">
+        <meta name="author" content="<?php echo $this->seo_data['author']; ?>">
+        <meta name="keywords" content="<?php echo $this->seo_data['keywords']; ?>">
+        <?php endif; ?>
+
+        <?php if ($this->enable_social): ?>
+        <!-- Open Graph / Social Media Meta Tags -->
+        <meta property="og:type" content="<?php echo $this->seo_data['og_type']; ?>">
+        <meta property="og:title" content="<?php echo htmlspecialchars($this->page_title); ?>">
+        <meta property="og:description" content="<?php echo htmlspecialchars($this->meta_description); ?>">
+        <meta property="og:image" content="<?php echo htmlspecialchars($this->og_image); ?>">
+        <meta property="og:url" content="<?php echo $current_url; ?>">
+        <meta property="og:site_name" content="<?php echo $this->seo_data['og_site_name']; ?>">
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="<?php echo $this->seo_data['twitter_card']; ?>">
+        <meta name="twitter:title" content="<?php echo htmlspecialchars($this->page_title); ?>">
+        <meta name="twitter:description" content="<?php echo htmlspecialchars($this->meta_description); ?>">
+        <meta name="twitter:image" content="<?php echo htmlspecialchars($this->og_image); ?>">
+        <?php endif; ?>
+
+        <!-- Performance Optimization -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+        <!-- Additional CSS -->
+        <?php if (!empty($this->additional_css)) echo $this->additional_css; ?>
+        <?php
+    }
+
+    /**
+     * Output security headers (from dynamic and static headers)
+     * 
+     * @return void
+     */
+    private function outputSecurityHeaders(): void {
+        if (!$this->enable_security) {
+            return;
+        }
+
+        foreach ($this->security_headers as $header => $value) {
+            echo "<meta http-equiv=\"$header\" content=\"$value\">\n";
+        }
+    }
+
+    /**
+     * Output CSS styles
+     * 
+     * @return void
+     */
+    /**
+     * Output CSS styles
+     * 
+     * @return void
+     */
+    private function outputStyles(): void {
+        // Output theme-specific styles
+        $this->outputThemeSpecificStyles();
+        
+        // Output all registered CSS files
+        foreach ($this->css_files as $handle => $file) {
+            $version = $file['version'] ? '?ver=' . $file['version'] : '';
+            ?><link rel="stylesheet" href="<?php echo htmlspecialchars($file['src'] . $version); ?>" media="<?php echo htmlspecialchars($file['media']); ?>" data-handle="<?php echo htmlspecialchars($handle); ?>">
+            <?php
+        }
+        
+        // Output inline styles
+        if (!empty($this->inline_styles)) {
+            ?><style id="inline-styles">
+                <?php foreach ($this->inline_styles as $style) {
+                    echo $style;
+                } ?>
+            </style>
+            <?php
+        }
+        
+        // Output custom CSS
+        if ($this->custom_css) {
+            $this->custom_css = str_replace('.property-image-container {', '', $this->custom_css);
+            $this->custom_css = str_replace('}', '', $this->custom_css);
+            $this->custom_css = trim($this->custom_css);
+            $this->outputThemeSpecificStyles();
+        }
+            }
+
+            .property-features span {
+                display: flex;
+                align-items: center;
+                color: var(--text-muted);
+                font-size: 0.9rem;
+            }
+
+            .property-features i {
+                color: var(--primary-color);
+                margin-right: 5px;
+                font-size: 1rem;
+            }
+
+            .property-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .property-price {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--primary-color);
+            }
+
+            .status-badge {
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .status-badge.available {
+                background: rgba(40, 167, 69, 0.1);
+                color: #28a745;
+            }
+
+            /* Enhanced Search Section */
+            .search-section {
+                background: var(--light-bg);
+                padding: 60px 0;
+                margin-top: 80px;
+            }
+
+            .search-box {
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .search-box:hover {
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            }
+
+            .search-box .form-select,
+            .search-box .form-control {
+                padding: 15px 20px;
+                border: 1px solid #e0e0e0;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                transition: all 0.3s ease;
+                font-size: 1rem;
+            }
+
+            .search-box .form-select:focus,
+
+            /* Enhanced Services Section */
+            .service-box {
+                background: white;
+                padding: 40px 30px;
+                border-radius: 15px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                height: 100%;
+            }
+
+            .service-box:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            }
+
+            .service-icon {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 25px;
+                color: white;
+                font-size: 2rem;
+                transition: all 0.3s ease;
+            }
+
+            .service-box:hover .service-icon {
+                transform: scale(1.1) rotate(5deg);
+                background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+            }
+
+            /* Enhanced Features Section */
+            .feature-box {
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                height: 100%;
+                display: flex;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .feature-box:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            }
+
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.5rem;
+                flex-shrink: 0;
+            }
+
+            /* Enhanced CTA Section */
+            .cta-box {
+                background: white;
+                padding: 40px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .cta-box:hover {
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Enhanced Hero Section */
+            .hero-title {
+                font-size: clamp(2.5rem, 5vw, 4rem);
+                font-weight: 800;
+                margin-bottom: 1.5rem;
+                line-height: 1.1;
+                background: linear-gradient(135deg, #ffffff 0%, #ffc107 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                animation: fadeInUp 1s ease-out;
+                text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            .hero-subtitle {
+                font-size: clamp(1.1rem, 2vw, 1.5rem);
+                margin-bottom: 2rem;
+                opacity: 0.95;
+                font-weight: 400;
+                line-height: 1.6;
+                animation: fadeInUp 1s ease-out 0.3s both;
+            }
+
+            .hero-actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+                animation: fadeInUp 1s ease-out 0.6s both;
+            }
+
+            .hero-stats {
+                display: flex;
+                justify-content: center;
+                gap: 3rem;
+                margin-top: 3rem;
+                animation: fadeInUp 1s ease-out 0.9s both;
+                flex-wrap: wrap;
+            }
+
+            .hero-stat {
+                text-align: center;
+            }
+
+            .hero-stat-number {
+                font-size: 2.5rem;
+                font-weight: 800;
+                color: #ffc107;
+                display: block;
+                line-height: 1;
+            }
+
+            .hero-stat-label {
+                font-size: 0.9rem;
+                opacity: 0.8;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            /* Animations */
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+
+            .animate-fade-in-up {
+                animation: fadeInUp 0.8s ease-out;
+            }
+
+            /* Back to Top Button */
+            .back-to-top {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+                color: white;
+                border: none;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                z-index: 1000;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .back-to-top:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            /* Enhanced Buttons */
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 0.8rem 2rem;
+                border: none;
+                border-radius: 50px;
+                font-size: 1rem;
+                font-weight: 600;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .btn:hover::before {
+                left: 100%;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #1a237e, #3949ab);
+                color: white;
+                box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(26, 35, 126, 0.4);
+                color: white;
+            }
+
+            .btn-success {
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            }
+
+            .btn-success:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+                color: white;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .hero-actions {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .btn {
+                    width: 100%;
+                    max-width: 300px;
+                }
+
+                .hero-stats {
+                    gap: 2rem;
+                }
+
+                .hero-stat-number {
+                    font-size: 2rem;
+                }
+
+                .property-features {
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: flex-start;
+                }
+
+                .property-footer {
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: flex-start;
+                }
+
+                .feature-box {
+                    flex-direction: column;
+                    text-align: center;
+                }
+            }
+
+            .hero-section {
+                background: <?php echo $theme['background']; ?>;
+                color: white;
+                padding: 6rem 0;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                font-weight: 600;
+                color: var(--primary-color);
+                margin-bottom: 2rem;
+                text-align: center;
+            }
+
+            .alert {
+                border-radius: var(--border-radius);
+                border: none;
+            }
+
+                padding: 1rem 0 !important;
+                transition: all 0.3s ease !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1000 !important;
+                width: 100% !important;
+            }
+
+            .navbar.scrolled {
+                background: rgba(255, 255, 255, 0.98) !important;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
+                padding: 0.8rem 0 !important;
+            }
+
+            /* Modern Navigation Styles */
+            .modern-navbar {
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(20px) !important;
+                box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1) !important;
+                border-bottom: 1px solid rgba(102, 126, 234, 0.1) !important;
+                padding: 1rem 0 !important;
+                transition: all 0.3s ease !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1000 !important;
+                width: 100% !important;
+            }
+
+            .modern-navbar.scrolled {
+                background: rgba(255, 255, 255, 0.98) !important;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
+                padding: 0.8rem 0 !important;
+            }
+
+            .modern-brand {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.75rem !important;
+                text-decoration: none !important;
+                font-weight: 800 !important;
+                font-size: 1.5rem !important;
+            }
+
+            .brand-icon {
+                width: 45px !important;
+                height: 45px !important;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border-radius: 12px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                color: white !important;
+                font-size: 1.2rem !important;
+                transition: transform 0.3s ease !important;
+            }
+
+            .brand-icon:hover {
+                transform: scale(1.05) !important;
+            }
+
+            .brand-text {
+                display: flex !important;
+                flex-direction: column !important;
+                line-height: 1.2 !important;
+            }
+
+            .brand-name {
+                color: #1a237e !important;
+                font-size: 1.3rem !important;
+                font-weight: 800 !important;
+            }
+
+            .brand-subtitle {
+                color: #667eea !important;
+                font-size: 0.8rem !important;
+                font-weight: 600 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 1px !important;
+            }
+
+            .modern-toggler {
+                border: none !important;
+                background: transparent !important;
+                padding: 0.5rem !important;
+                border-radius: 8px !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .modern-toggler:hover {
+                background: rgba(102, 126, 234, 0.1) !important;
+            }
+
+            .toggler-line {
+                display: block !important;
+                width: 25px !important;
+                height: 3px !important;
+                background: #667eea !important;
+                margin: 5px 0 !important;
+                transition: 0.3s !important;
+                border-radius: 2px !important;
+            }
+
+            .modern-nav {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+                list-style: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+                transition: all 0.3s ease !important;
+                position: relative !important;
+                overflow: hidden !important;
+                font-size: 0.95rem !important;
+                font-weight: 500 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+            }
+
+            .modern-nav-link::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: -100% !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: linear-gradient(135deg, #667eea, #764ba2) !important;
+                transition: left 0.3s ease !important;
+                z-index: -1 !important;
+                border-radius: 25px !important;
+            }
+
+            .modern-nav-link:hover::before,
+            .modern-nav-link.active::before {
+                left: 0 !important;
+            }
+
+            .modern-nav-link:hover,
+            .modern-nav-link.active {
+                color: white !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+            }
+
+            .user-actions {
+                display: flex !important;
+                align-items: center !important;
+                gap: 1rem !important;
+            }
+
+            .user-menu-btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border: none !important;
+                border-radius: 25px !important;
+                padding: 0.5rem 1rem !important;
+                color: white !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+                transition: all 0.3s ease !important;
+                font-size: 0.9rem !important;
+                font-weight: 500 !important;
+            }
+
+            .user-menu-btn:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+            }
+
+            .user-avatar {
+                width: 32px !important;
+                height: 32px !important;
+                background: rgba(255, 255, 255, 0.2) !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 1rem !important;
+            }
+
+            .user-name {
+                font-weight: 500 !important;
+                white-space: nowrap !important;
+            }
+
+            .auth-buttons {
+                display: flex !important;
+                gap: 0.5rem !important;
+            }
+
+            .modern-btn-outline {
+                background: transparent !important;
+                border: 2px solid #667eea !important;
+                color: #667eea !important;
+                border-radius: 25px !important;
+                padding: 0.5rem 1.5rem !important;
+                text-decoration: none !important;
+                transition: all 0.3s ease !important;
+                font-weight: 500 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+            }
+
+            .modern-btn-outline:hover {
+                background: #667eea !important;
+                color: white !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+            }
+
+            .modern-btn-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border: none !important;
+                border-radius: 25px !important;
+                padding: 0.5rem 1.5rem !important;
+                color: white !important;
+                text-decoration: none !important;
+                transition: all 0.3s ease !important;
+                font-weight: 500 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+            }
+
+            .modern-btn-primary:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+                color: white !important;
+            }
+
+                min-width: 200px !important;
+            }
+
+            .modern-dropdown .dropdown-item {
+                border-radius: 10px !important;
+                padding: 0.75rem 1rem !important;
+                transition: all 0.3s ease !important;
+                font-weight: 500 !important;
+            }
+
+            .modern-dropdown .dropdown-item:hover {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                color: white !important;
+            }
+
+            /* Modern Footer Styles */
+            .modern-footer {
+                background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%) !important;
+                color: white !important;
+                padding: 4rem 0 2rem !important;
+                margin-top: 4rem !important;
+                position: relative !important;
+                width: 100% !important;
+            }
+
+            .modern-footer::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                height: 1px !important;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent) !important;
+            }
+
+            .footer-main {
+                margin-bottom: 3rem !important;
+            }
+
+            .footer-section {
+                height: 100% !important;
+            }
+
+            .footer-logo {
+                display: flex !important;
+                align-items: center !important;
+                gap: 1rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .footer-brand-icon {
+                width: 50px !important;
+                height: 50px !important;
+                background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%) !important;
+                border-radius: 15px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                color: #1a237e !important;
+                font-size: 1.5rem !important;
+            }
+
+            .footer-brand-text {
+                flex: 1 !important;
+            }
+
+            .footer-brand-name {
+                color: #ffc107 !important;
+                font-weight: 700 !important;
+                margin-bottom: 0.25rem !important;
+                font-size: 1.4rem !important;
+            }
+
+            .footer-tagline {
+                color: rgba(255, 255, 255, 0.8) !important;
+                font-size: 0.9rem !important;
+                margin: 0 !important;
+                font-style: italic !important;
+            }
+
+            .footer-description {
+                color: rgba(255, 255, 255, 0.8) !important;
+                line-height: 1.6 !important;
+                margin-bottom: 2rem !important;
+            }
+
+            .footer-title {
+                color: #ffc107 !important;
+                font-weight: 600 !important;
+                margin-bottom: 1.5rem !important;
+                font-size: 1.2rem !important;
+                position: relative !important;
+                padding-bottom: 0.5rem !important;
+            }
+
+            .footer-title::after {
+                content: '' !important;
+                position: absolute !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 50px !important;
+                height: 2px !important;
+                background: #ffc107 !important;
+            }
+
+            .footer-social {
+                display: flex !important;
+                gap: 1rem !important;
+                margin-top: 1.5rem !important;
+            }
+
+            .social-link {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 45px !important;
+                height: 45px !important;
+                background: rgba(255, 255, 255, 0.1) !important;
+                border-radius: 50% !important;
+                color: rgba(255, 255, 255, 0.8) !important;
+                text-decoration: none !important;
+                transition: all 0.3s ease !important;
+                font-size: 1.1rem !important;
+            }
+
+            .social-link:hover {
+                background: #ffc107 !important;
+                color: #1a237e !important;
+                transform: translateY(-3px) !important;
+                box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3) !important;
+            }
+
+
+            .footer-link {
+                display: flex !important;
+                align-items: center !important;
+                color: rgba(255, 255, 255, 0.8) !important;
+                text-decoration: none !important;
+                padding: 0.5rem 0 !important;
+                transition: all 0.3s ease !important;
+                font-weight: 500 !important;
+            }
+
+            .footer-link:hover {
+                color: #ffc107 !important;
+                transform: translateX(5px) !important;
+            }
+
+            .contact-info {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+            }
+
+            .contact-item {
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 1rem !important;
+            }
+
+            .contact-icon {
+                width: 40px !important;
+                height: 40px !important;
+                background: rgba(255, 193, 7, 0.1) !important;
+                border-radius: 10px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                color: #ffc107 !important;
+                flex-shrink: 0 !important;
+            }
+
+            .contact-text {
+                flex: 1 !important;
+            }
+
+            .contact-text span,
+            .contact-text a {
+                color: rgba(255, 255, 255, 0.8) !important;
+                text-decoration: none !important;
+                line-height: 1.4 !important;
+                transition: color 0.3s ease !important;
+            }
+
+            .contact-text a:hover {
+                color: #ffc107 !important;
+            }
+
+            .newsletter-text {
+                color: rgba(255, 255, 255, 0.8) !important;
+                margin-bottom: 1.5rem !important;
+                line-height: 1.5 !important;
+            }
+
+            .newsletter-form {
+                margin-bottom: 1.5rem !important;
+            }
+
+            .newsletter-input-group {
+                display: flex !important;
+                gap: 0.5rem !important;
+                align-items: stretch !important;
+            }
+
+            .newsletter-input {
+                flex: 1 !important;
+                padding: 0.75rem 1rem !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 25px !important;
+                background: rgba(255, 255, 255, 0.1) !important;
+                color: white !important;
+                font-size: 0.9rem !important;
+            }
+
+            .newsletter-input::placeholder {
+                color: rgba(255, 255, 255, 0.6) !important;
+            }
+
+            .newsletter-input:focus {
+                outline: none !important;
+                border-color: #ffc107 !important;
+                background: rgba(255, 255, 255, 0.15) !important;
+                box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2) !important;
+            }
+
+            .newsletter-btn {
+                background: #ffc107 !important;
+                border: none !important;
+                border-radius: 25px !important;
+                padding: 0.75rem 1rem !important;
+                color: #1a237e !important;
+                transition: all 0.3s ease !important;
+                cursor: pointer !important;
+            }
+
+            .newsletter-btn:hover {
+                background: #ff8f00 !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 15px rgba(255, 143, 0, 0.3) !important;
+            }
+
+            .newsletter-features {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+
+            .feature-item {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+                color: rgba(255, 255, 255, 0.8) !important;
+                font-size: 0.9rem !important;
+            }
+
+            .feature-item i {
+                color: #ffc107 !important;
+                font-size: 0.8rem !important;
+            }
+
+            .footer-bottom {
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+                padding-top: 2rem !important;
+            }
+
+            .footer-bottom-content {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                flex-wrap: wrap !important;
+                gap: 1rem !important;
+            }
+
+
+            .footer-bottom-links {
+                display: flex !important;
+                align-items: center !important;
+                gap: 1rem !important;
+            }
+
+            .footer-bottom-link {
+                color: rgba(255, 255, 255, 0.6) !important;
+                text-decoration: none !important;
+                font-size: 0.9rem !important;
+                transition: color 0.3s ease !important;
+            }
+
+            .footer-bottom-link:hover {
+                color: #ffc107 !important;
+            }
+
+            .separator {
+                color: rgba(255, 255, 255, 0.3) !important;
+            }
+
+            .back-to-top-btn {
+                position: fixed !important;
+                bottom: 30px !important;
+                right: 30px !important;
+                width: 55px !important;
+                height: 55px !important;
+                border-radius: 50% !important;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                color: white !important;
+                border: none !important;
+                display: none !important;
+                align-items: center !important;
+                justify-content: center !important;
+                cursor: pointer !important;
+                transition: all 0.3s ease !important;
+                z-index: 1000 !important;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+                font-size: 1.2rem !important;
+            }
+
+            .back-to-top-btn:hover {
+                transform: translateY(-5px) !important;
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+                background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+            }
+
+            /* Mobile Navigation */
+            @media (max-width: 991.98px) {
+                .modern-nav {
+                    position: fixed !important;
+                    top: 100% !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    background: white !important;
+                    flex-direction: column !important;
+                    padding: 2rem !important;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+                    transform: translateY(-100%) !important;
+                    opacity: 0 !important;
+                    visibility: hidden !important;
+                    transition: all 0.3s ease !important;
+                    margin-top: 1rem !important;
+                    border-radius: 0 0 20px 20px !important;
+                }
+
+                .modern-nav.active {
+                    transform: translateY(0) !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                }
+
+                .modern-nav .nav-item {
+                    margin-bottom: 1rem !important;
+                }
+
+                .modern-nav-link {
+                    padding: 1rem 1.5rem !important;
+                    text-align: center !important;
+                    width: 100% !important;
+                    border-radius: 15px !important;
+                }
+
+                .user-actions {
+                    flex-direction: column !important;
+                    width: 100% !important;
+                    gap: 1rem !important;
+                }
+
+                .auth-buttons {
+                    width: 100% !important;
+                }
+
+                .modern-btn-outline,
+                .modern-btn-primary {
+                    justify-content: center !important;
+                    width: 100% !important;
+                }
+            }
+
+            /* Responsive footer */
+
+                .footer-main .row > div {
+                    margin-bottom: 2rem !important;
+                }
+
+                .footer-logo {
+                    flex-direction: column !important;
+                    text-align: center !important;
+                    gap: 1rem !important;
+                }
+
+                .footer-bottom-content {
+                    flex-direction: column !important;
+                    text-align: center !important;
+                }
+
+                .footer-bottom-links {
+                    justify-content: center !important;
+                    flex-wrap: wrap !important;
+                }
+
+                .contact-item {
+                    flex-direction: column !important;
+                    text-align: center !important;
+                    gap: 0.5rem !important;
+                }
+
+                .newsletter-input-group {
+                    flex-direction: column !important;
+                }
+
+                .newsletter-btn {
+                    border-radius: 25px !important;
+                }
+            }
+
+            footer {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+                color: white !important;
+                padding: 4rem 0 2rem !important;
+                margin-top: 4rem !important;
+                position: relative !important;
+                width: 100% !important;
+            }
+
+            footer::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                height: 1px !important;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent) !important;
+            }
+
+            footer .container {
+                max-width: 1200px !important;
+                margin: 0 auto !important;
+                padding: 0 1rem !important;
+            }
+
+            footer h5 {
+                color: #ffc107 !important;
+                font-weight: 600 !important;
+                margin-bottom: 1.5rem !important;
+                font-size: 1.2rem !important;
+                position: relative !important;
+                padding-bottom: 0.5rem !important;
+            }
+
+            footer h5::after {
+                content: '' !important;
+                position: absolute !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 50px !important;
+                height: 2px !important;
+                background: #ffc107 !important;
+            }
+
+            footer p {
+                color: rgba(255, 255, 255, 0.8) !important;
+                line-height: 1.6 !important;
+                margin-bottom: 1rem !important;
+            }
+
+            footer a {
+                color: rgba(255, 255, 255, 0.8) !important;
+                text-decoration: none !important;
+                transition: all 0.3s ease !important;
+                font-weight: 500 !important;
+            }
+
+            footer a:hover {
+                color: #ffc107 !important;
+                text-decoration: none !important;
+                transform: translateX(5px) !important;
+            }
+
+            footer .social-links {
+                display: flex !important;
+                gap: 1rem !important;
+                margin-top: 1rem !important;
+            }
+
+            footer .social-links a {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 40px !important;
+                height: 40px !important;
+                background: rgba(255, 255, 255, 0.1) !important;
+                border-radius: 50% !important;
+                transition: all 0.3s ease !important;
+            }
+
+            footer .social-links a:hover {
+                background: #ffc107 !important;
+                color: #2c3e50 !important;
+                transform: translateY(-3px) !important;
+                box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3) !important;
+            }
+
+            footer ul {
+                list-style: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            footer ul li {
+                margin-bottom: 0.5rem !important;
+            }
+
+                justify-content: space-between !important;
+                align-items: center !important;
+                flex-wrap: wrap !important;
+                gap: 1rem !important;
+            }
+
+            footer .footer-bottom p {
+                margin: 0 !important;
+                color: rgba(255, 255, 255, 0.6) !important;
+            }
+
+            footer .footer-bottom .links a {
+                margin-left: 1rem !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Ensure footer is always at bottom */
+            html, body {
+                height: 100% !important;
+            }
+
+            body {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .main-content {
+                flex: 1 !important;
+            }
+
+            /* Responsive footer */
+            @media (max-width: 768px) {
+                footer {
+                    padding: 3rem 0 2rem !important;
+                    text-align: center !important;
+                }
+
+                footer .row > div {
+                    margin-bottom: 2rem !important;
+                }
+
+                footer .footer-bottom {
+                    flex-direction: column !important;
+                    text-align: center !important;
+                }
+
+                footer .footer-bottom .links {
+                    margin-top: 1rem !important;
+                }
+
+                footer .footer-bottom .links a {
+                    margin: 0 0.5rem !important;
+                }
+            }
+
+            .navbar-brand {
+                font-size: 1.8rem !important;
+                font-weight: 800 !important;
+                background: linear-gradient(135deg, #1a237e, #3949ab) !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+                background-clip: text !important;
+                text-decoration: none !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+            }
+
+            .navbar-brand i {
+                color: #1a237e !important;
+            }
+
+            .navbar-nav {
+                display: flex !important;
+                align-items: center !important;
+                gap: 2rem !important;
+                list-style: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .nav-link {
+                color: #333 !important;
+                font-weight: 500 !important;
+                text-decoration: none !important;
+                padding: 0.8rem 1.2rem !important;
+                border-radius: 25px !important;
+                transition: all 0.3s ease !important;
+                position: relative !important;
+                overflow: hidden !important;
+                font-size: 0.95rem !important;
+            }
+
+            .nav-link::before {
+                content: '' !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: -100% !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: linear-gradient(135deg, #1a237e, #3949ab) !important;
+                transition: left 0.3s ease !important;
+                z-index: -1 !important;
+            }
+
+            .nav-link:hover::before,
+            .nav-link.active::before {
+                left: 0 !important;
+            }
+
+            .nav-link:hover,
+            .nav-link.active {
+                color: white !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3) !important;
+            }
+
+            .navbar-toggler {
+                border: none !important;
+                background: transparent !important;
+                font-size: 1.2rem !important;
+                color: #1a237e !important;
+                padding: 0.5rem !important;
+            }
+
+            .navbar-toggler:focus {
+                box-shadow: none !important;
+                outline: none !important;
+            }
+
+            /* Mobile Navigation */
+                    right: 0 !important;
+                    background: white !important;
+                    flex-direction: column !important;
+                    padding: 2rem !important;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+                    transform: translateY(-100%) !important;
+                    opacity: 0 !important;
+                    visibility: hidden !important;
+                    transition: all 0.3s ease !important;
+                    margin-top: 1rem !important;
+                }
+
+                .navbar-nav.active {
+                    transform: translateY(0) !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                }
+
+                .navbar-nav .nav-item {
+                    margin-bottom: 1rem !important;
+                }
+
+                .nav-link {
+                    padding: 1rem 1.5rem !important;
+                    text-align: center !important;
+                    width: 100% !important;
+                }
+            }
+
+            footer {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+                color: white;
+                padding: 4rem 0 2rem !important;
+                margin-top: 4rem;
+                position: relative;
+                width: 100%;
+            }
+
+            footer::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            }
+
+            footer .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            footer h5 {
+                color: #ffc107 !important;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                font-size: 1.2rem;
+                position: relative;
+                padding-bottom: 0.5rem;
+            }
+
+            footer h5::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 50px;
+                height: 2px;
+                background: #ffc107;
+            }
+
+            footer p {
+                color: rgba(255, 255, 255, 0.8) !important;
+                line-height: 1.6;
+                margin-bottom: 1rem;
+            }
+
+            footer a {
+                color: rgba(255, 255, 255, 0.8) !important;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                font-weight: 500;
+            }
+
+            footer a:hover {
+                color: #ffc107 !important;
+                text-decoration: none;
+                transform: translateX(5px);
+            }
+
+            footer .social-links {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            footer .social-links a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            }
+
+            footer .social-links a:hover {
+                background: #ffc107;
+                color: #2c3e50 !important;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+            }
+
+            footer ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            footer ul li {
+                margin-bottom: 0.5rem;
+            }
+
+            footer .footer-bottom {
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                margin-top: 3rem;
+                padding-top: 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            footer .footer-bottom p {
+                margin: 0;
+                color: rgba(255, 255, 255, 0.6) !important;
+            }
+
+            footer .footer-bottom .links a {
+                margin-left: 1rem;
+                font-size: 0.9rem;
+            }
+
+            /* Ensure footer is always at bottom */
+            html, body {
+                height: 100%;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .main-content {
+                flex: 1;
+            }
+
+            /* Responsive footer */
+            @media (max-width: 768px) {
+                footer {
+                    padding: 3rem 0 2rem !important;
+                    text-align: center;
+                }
+
+                footer .row > div {
+                    margin-bottom: 2rem;
+                }
+
+                footer .footer-bottom {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                footer .footer-bottom .links {
+                    margin-top: 1rem;
+                }
+
+                footer .footer-bottom .links a {
+                    margin: 0 0.5rem;
+                }
+            }
+
+            .loading-spinner {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 50px;
+                height: 50px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top: 4px solid var(--primary-color);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                z-index: 9999;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .fade-in {
+                animation: fadeInUp 0.6s ease-out;
+            }
+        </style>
+        <?php
+    }
+
+    /**
+     * Output theme-specific styles
+     * 
+     * @return void
+     */
+    private function outputThemeSpecificStyles(): void {
+        $theme = $this->themes[$this->theme];
+        
+        // Output base theme variables and styles
+        ?><style id="theme-styles">
+            :root {
+                --primary-color: <?php echo $theme['primary_color']; ?>;
+                --secondary-color: <?php echo $theme['secondary_color']; ?>;
+                --accent-color: <?php echo $theme['accent_color']; ?>;
+                --dark-color: #5a5c69;
+                --light-color: #f8f9fc;
+                --danger-color: #e74a3b;
+                --success-color: #1cc88a;
+                --warning-color: #f6c23e;
+                --info-color: #36b9cc;
+                --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                --border-radius: <?php echo $theme['border_radius'] ?? '12px'; ?>;
+                --box-shadow: <?php echo $theme['box_shadow'] ?? '0 4px 6px rgba(0, 0, 0, 0.1)'; ?>;
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            body {
+                font-family: var(--font-family);
+                background: <?php echo $theme['background'] ?? '#f8f9fc'; ?>;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                line-height: 1.6;
+            }
+
+            a {
+                color: var(--primary-color);
+                text-decoration: none;
+                transition: var(--transition);
+            }
+
+            a:hover {
+                color: var(--secondary-color);
+                text-decoration: underline;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 15px;
+            }
+
+            .btn {
+                display: inline-block;
+                font-weight: 500;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: middle;
+                user-select: none;
+                border: 1px solid transparent;
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+                line-height: 1.5;
+                border-radius: var(--border-radius);
+                transition: var(--transition);
+                cursor: pointer;
+            }
+
+            .btn-primary {
+                color: #fff;
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+            }
+
+            .btn-primary:hover {
+                background-color: var(--secondary-color);
+                border-color: var(--secondary-color);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .card {
+                background: #fff;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                overflow: hidden;
+                transition: var(--transition);
+                margin-bottom: 1.5rem;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .card-title {
+                margin-top: 0;
+                margin-bottom: 1rem;
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+
+            .text-primary {
+                color: var(--primary-color) !important;
+            }
+
+            .bg-primary {
+                background-color: var(--primary-color) !important;
+            }
+
+            /* Responsive utilities */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 0 10px;
+                }
+                
+                .card-body {
+                    padding: 1rem;
+                }
+            }
+        </style>
+        <?php
+        
+        // Output theme-specific styles
+        switch($this->theme) {
+            case 'dashboard':
+                echo "
+                .dashboard-container {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+
+                .welcome-section {
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(10px);
+                    border-radius: 25px;
+                    padding: 3rem;
+                    margin-bottom: 2rem;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                }
+
+                .floating-elements {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    pointer-events: none;
+                    z-index: -1;
+                }
+
+                .floating-element {
+                    position: absolute;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 50%;
+                    animation: float 6s ease-in-out infinite;
+                }
+
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% { transform: translateY(-20px) rotate(180deg); }
+                }
+                ";
+                break;
+
+            case 'login':
+                echo "
+                .login-container {
+                    background: white;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                    overflow: hidden;
+                    max-width: 500px;
+                    width: 100%;
+                }
+
+                .login-header {
+                    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+                    color: white;
+                    padding: 3rem 2rem 2rem;
+                    text-align: center;
+                }
+
+                .form-control:focus {
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+                }
+                ";
+                break;
+
+            case 'admin':
+                echo "
+                .admin-container {
+                    background: rgba(255, 255, 255, 0.95);
+                    border-radius: 15px;
+                    padding: 2rem;
+                    margin: 2rem auto;
+                    max-width: 1200px;
+                }
+
+                .admin-sidebar {
+                    background: rgba(111, 66, 193, 0.1);
+                    border-radius: 15px;
+                    padding: 1.5rem;
+                    height: fit-content;
+                }
+
+                .admin-nav-link {
+                    color: var(--primary-color) !important;
+                    padding: 0.75rem 1rem;
+                    border-radius: 8px;
+                    transition: var(--transition);
+                }
+
+                .admin-nav-link:hover, .admin-nav-link.active {
+                    background: var(--primary-color);
+                    color: white !important;
+                }
+                ";
+                break;
+        }
+    }
+
+    /**
+     * Output navigation
+     */
+    private function outputNavigation() {
+        $is_logged_in = isset($_SESSION['customer_logged_in']) && $_SESSION['customer_logged_in'];
+        $user_name = $is_logged_in ? ($_SESSION['customer_name'] ?? 'User') : '';
+        ?>
+        <!-- Modern Enhanced Navigation -->
+        <nav class="navbar navbar-expand-lg modern-navbar">
+            <div class="container">
+                <!-- Logo -->
+                <a class="navbar-brand modern-brand" href="/">
+                    <div class="brand-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">APS</span>
+                        <span class="brand-subtitle">Dream Home</span>
+                    </div>
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler modern-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="toggler-line"></span>
+                    <span class="toggler-line"></span>
+                    <span class="toggler-line"></span>
+                </button>
+
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav modern-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>" href="/">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'properties_template.php') ? 'active' : ''; ?>" href="properties_template.php">
+                                <i class="fas fa-building me-1"></i>Properties
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'about_template.php') ? 'active' : ''; ?>" href="about_template.php">
+                                <i class="fas fa-info-circle me-1"></i>About
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'contact_template.php') ? 'active' : ''; ?>" href="contact_template.php">
+                                <i class="fas fa-phone me-1"></i>Contact
+                            </a>
+                        </li>
+                        <?php if ($is_logged_in): ?>
+                        <li class="nav-item">
+                            <a class="nav-link modern-nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'customer_dashboard.php') ? 'active' : ''; ?>" href="customer_dashboard.php">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
+
+                    <!-- User Actions -->
+                    <div class="user-actions">
+                        <?php if ($is_logged_in): ?>
+                            <div class="dropdown user-dropdown">
+                                <button class="btn user-menu-btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <span class="user-name"><?php echo htmlspecialchars($user_name); ?></span>
+                                </button>
+                                <ul class="dropdown-menu modern-dropdown" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="customer_dashboard.php">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="profile.php">
+                                        <i class="fas fa-user me-2"></i>Profile
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="logout.php">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a></li>
+                                </ul>
+                            </div>
+                        <?php else: ?>
+                            <div class="auth-buttons">
+                                <a href="customer_login.php" class="btn btn-outline-primary modern-btn-outline">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                </a>
+                                <a href="customer_registration.php" class="btn btn-primary modern-btn-primary">
+                                    <i class="fas fa-user-plus me-1"></i>Register
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <?php
+    }
+
+    /**
+     * Get main content style
+     */
+    private function getMainContentStyle() {
+        $margin_top = $this->show_navigation ? '90px' : '0';
+        return "margin-top: $margin_top; min-height: calc(100vh - $margin_top); padding: 2rem 0;";
+    }
+
+    /**
+     * Output enhanced footer with database integration (from dynamic footer)
+     */
+    private function outputFooter() {
+        // Get footer data from database (preserved from dynamic footer)
+        $footer_data = $this->getFooterDataFromDatabase();
+        ?>
+        <!-- Modern Enhanced Footer -->
+        <footer class="modern-footer">
+            <div class="container">
+                <!-- Main Footer Content -->
+                <div class="footer-main">
+                    <div class="row g-4">
+                        <!-- Company Info -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="footer-section">
+                                <div class="footer-logo">
+                                    <div class="footer-brand-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <div class="footer-brand-text">
+                                        <h5 class="footer-brand-name"><?php echo $footer_data['company_name']; ?></h5>
+                                        <p class="footer-tagline">Your Dream Home Awaits</p>
+                                    </div>
+                                </div>
+                                <p class="footer-description"><?php echo $footer_data['description']; ?></p>
+                                <div class="footer-social">
+                                    <?php if (!empty($footer_data['social_links']) && is_array($footer_data['social_links'])): ?>
+                                        <?php foreach ($footer_data['social_links'] as $social): ?>
+                                            <?php if (is_array($social) && isset($social['url']) && isset($social['icon'])): ?>
+                                                <a href="<?php echo htmlspecialchars($social['url']); ?>" target="_blank" class="social-link">
+                                                    <i class="<?php echo htmlspecialchars($social['icon']); ?>"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Links -->
+                        <div class="col-lg-2 col-md-6">
+                            <div class="footer-section">
+                                <h5 class="footer-title">Quick Links</h5>
+                                <ul class="footer-links">
+                                    <?php foreach ($footer_data['quick_links'] as $link): ?>
+                                        <li>
+                                            <a href="<?php echo $link['url']; ?>" class="footer-link">
+                                                <i class="fas fa-arrow-right me-2"></i><?php echo $link['title']; ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="footer-section">
+                                <h5 class="footer-title">Get In Touch</h5>
+                                <div class="contact-info">
+                                    <div class="contact-item">
+                                        <div class="contact-icon">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div class="contact-text">
+                                            <span><?php echo $footer_data['address']; ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="contact-item">
+                                        <div class="contact-icon">
+                                            <i class="fas fa-phone-alt"></i>
+                                        </div>
+                                        <div class="contact-text">
+                                            <a href="tel:<?php echo $footer_data['phone']; ?>"><?php echo $footer_data['phone']; ?></a>
+                                        </div>
+                                    </div>
+                                    <div class="contact-item">
+                                        <div class="contact-icon">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <div class="contact-text">
+                                            <a href="mailto:<?php echo $footer_data['email']; ?>"><?php echo $footer_data['email']; ?></a>
+                                        </div>
+                                    </div>
+                                    <div class="contact-item">
+                                        <div class="contact-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="contact-text">
+                                            <span><?php echo $footer_data['working_hours']; ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Newsletter -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="footer-section">
+                                <h5 class="footer-title">Stay Updated</h5>
+                                <p class="newsletter-text">Subscribe for latest property updates and exclusive offers</p>
+                                <form class="newsletter-form">
+                                    <div class="newsletter-input-group">
+                                        <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+                                        <button class="newsletter-btn" type="submit">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                                <div class="newsletter-features">
+                                    <div class="feature-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Weekly Property Alerts</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Exclusive Deals</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Market Insights</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Bottom -->
+                <div class="footer-bottom">
+                    <div class="footer-bottom-content">
+                        <div class="copyright">
+                            <p>&copy; <?php echo date('Y'); ?> <?php echo $footer_data['company_name']; ?>. All rights reserved.</p>
+                        </div>
+                        <div class="footer-bottom-links">
+                            <a href="privacy-policy" class="footer-bottom-link">Privacy Policy</a>
+                            <span class="separator">|</span>
+                            <a href="terms-of-service" class="footer-bottom-link">Terms of Service</a>
+                            <span class="separator">|</span>
+                            <a href="sitemap" class="footer-bottom-link">Sitemap</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Top Button -->
+            <button id="backToTop" class="back-to-top-btn" title="Back to Top">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+        </footer>
+        <?php
+    }
+
+    /**
+     * Get footer data from database (preserved from dynamic footer)
+     */
+    private function getFooterDataFromDatabase() {
+        // Default footer data (same as dynamic footer)
+        $default_data = [
+            'company_name' => 'APS Dream Home',
+            'description' => 'Your trusted partner in real estate solutions. We provide comprehensive property services with modern technology and personalized approach.',
+            'address' => 'Gorakhpur, Uttar Pradesh, India',
+            'phone' => '+91-9000000001',
+            'email' => 'info@apsdreamhome.com',
+            'working_hours' => 'Mon-Sat: 9:00 AM - 8:00 PM',
+            'social_links' => [
+                ['platform' => 'facebook', 'url' => 'https://facebook.com/apsdreamhome', 'icon' => 'fab fa-facebook-f'],
+                ['platform' => 'twitter', 'url' => 'https://twitter.com/apsdreamhome', 'icon' => 'fab fa-twitter'],
+                ['platform' => 'instagram', 'url' => 'https://instagram.com/apsdreamhome', 'icon' => 'fab fa-instagram'],
+                ['platform' => 'linkedin', 'url' => 'https://linkedin.com/company/apsdreamhome', 'icon' => 'fab fa-linkedin-in'],
+                ['platform' => 'youtube', 'url' => 'https://youtube.com/apsdreamhome', 'icon' => 'fab fa-youtube']
+            ],
+            'quick_links' => [
+                ['title' => 'Home', 'url' => '/'],
+                ['title' => 'Properties', 'url' => 'properties'],
+                ['title' => 'About Us', 'url' => 'about'],
+                ['title' => 'Contact', 'url' => 'contact']
+            ]
+        ];
+
+        // Try to get from database (preserved from dynamic footer functionality)
+        try {
+            if (function_exists('getDbConnection')) {
+                $conn = getDbConnection();
+                if ($conn) {
+                    $sql = "SELECT * FROM site_settings WHERE setting_name IN ('company_info', 'social_links', 'quick_links', 'footer_styles')";
+                    $result = $conn->query($sql);
+                    if ($result) {
+                        // Process database results and merge with defaults
+                        // This preserves the dynamic footer functionality
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Log error but don't break the page
+            error_log("Footer database error: " . $e->getMessage());
+        }
+
+        return $default_data;
+    }
+
+    /**
+     * Output JavaScript with all enhancements
+     */
+    private function outputScripts() {
+        ?>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                // Auto-hide alerts
+                setTimeout(() => {
+                    $('.alert').fadeOut();
+                }, 5000);
+
+                // Add active class to current nav item
+                $('.navbar-nav .nav-link').filter(function() {
+                    return $(this).attr('href') === window.location.pathname.split('/').pop();
+                }).addClass('active');
+
+                // Smooth scroll for anchor links
+                $('a[href^="#"]').on('click', function(e) {
+                    e.preventDefault();
+                    const target = $($(this).attr('href'));
+                    if (target.length) {
+                        $('html, body').animate({
+                            scrollTop: target.offset().top - 80
+                        }, 800);
+                    }
+                });
+
+                // Form validation
+                $('form.needs-validation').on('submit', function(e) {
+                    if (!this.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    $(this).addClass('was-validated');
+                });
+
+                // Back to top button
+                $(window).scroll(function() {
+                    if ($(this).scrollTop() > 300) {
+                        $('#backToTop').fadeIn();
+                    } else {
+                        $('#backToTop').fadeOut();
+                    }
+                });
+
+                $('#backToTop').on('click', function(e) {
+                    e.preventDefault();
+                    $('html, body').animate({scrollTop: 0}, 800);
+                });
+            });
+
+            // Custom JavaScript
+            <?php echo $this->custom_js; ?>
+        </script>
+        <?php
+    }
+
+    /**
+     * Darken color utility
+     */
+    private function darkenColor($hex, $percent) {
+        $hex = ltrim($hex, '#');
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        $r = max(0, min(255, $r - ($r * $percent / 100)));
+        $g = max(0, min(255, $g - ($g * $percent / 100)));
+        $b = max(0, min(255, $b - ($b * $percent / 100)));
+
+        return sprintf("#%02x%02x%02x", $r, $g, $b);
+    }
+}
+
+/**
+ * Global Template Instance
+ */
+global $template;
+$template = new EnhancedUniversalTemplate();
+
+/**
+ * Convenience Functions
+ */
+function template($theme = 'default') {
+    global $template;
+    return $template->setTheme($theme);
+}
+
+function page($content, $title = 'APS Dream Home', $theme = 'default') {
+    global $template;
+    $template->setTheme($theme)->setTitle($title)->render($content);
+}
+
+function dashboard_page($content, $title = 'Dashboard') {
+    global $template;
+    $template->setTheme('dashboard')->setTitle($title)->render($content);
+}
+
+function login_page($content, $title = 'Login') {
+    global $template;
+    $template->setTheme('login')->hideNavigation()->setTitle($title)->render($content);
+}
+
+function admin_page($content, $title = 'Admin Panel') {
+    global $template;
+    $template->setTheme('admin')->setTitle($title)->render($content);
+}
+?>

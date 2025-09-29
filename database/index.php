@@ -1,341 +1,318 @@
-<?php
-/**
- * APS Dream Home Database Management Hub
- * 
- * This script provides a central interface to access all database management tools
- * for the APS Dream Home system.
- */
-
-// Set header for browser output
-header('Content-Type: text/html; charset=utf-8');
-?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>APS Dream Home Database Management Hub</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Management - APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
+        .dashboard-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
-        header {
-            background-color: #2c3e50;
+        .header-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px 0;
-            margin-bottom: 30px;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
-        h1 {
-            margin: 0;
-            padding: 0 20px;
-            font-size: 28px;
+        .action-card {
+            border: 2px solid #e0e6ed;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            background: white;
         }
-        h2 {
-            color: #3498db;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 30px;
+        .action-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
         }
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: calc(33.333% - 20px);
-            min-width: 300px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-        }
-        .card h3 {
-            color: #2c3e50;
-            margin-top: 0;
-        }
-        .card p {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #3498db;
+        .btn-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
             color: white;
-            padding: 10px 15px;
-            border-radius: 4px;
+            font-weight: 500;
             text-decoration: none;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
         }
-        .btn:hover {
-            background-color: #2980b9;
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            color: white;
         }
-        .btn-secondary {
-            background-color: #95a5a6;
+        .btn-danger-custom {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
         }
-        .btn-secondary:hover {
-            background-color: #7f8c8d;
+        .btn-success-custom {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
         }
-        .btn-success {
-            background-color: #2ecc71;
-        }
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        .btn-warning {
-            background-color: #f39c12;
-        }
-        .btn-warning:hover {
-            background-color: #e67e22;
-        }
-        .stats {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f8f9fa;
-        }
-        .success { color: #2ecc71; }
-        .warning { color: #f39c12; }
-        .error { color: #e74c3c; }
-        footer {
-            margin-top: 50px;
-            text-align: center;
-            color: #7f8c8d;
-            font-size: 14px;
-            padding: 20px;
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
         }
     </style>
 </head>
 <body>
-    <header>
+    <div class="dashboard-container">
         <div class="container">
-            <h1>APS Dream Home Database Management Hub</h1>
-        </div>
-    </header>
-    
-    <div class="container">
-        <div class="stats">
-            <h2>Database Status</h2>
-            <?php
-            // Connect to database
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "apsdreamhomefinal";
-            
-            // Create connection
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            
-            // Check connection
-            if ($conn->connect_error) {
-                echo "<p class='error'>Connection failed: " . $conn->connect_error . "</p>";
-            } else {
-                echo "<p class='success'>Database connection successful</p>";
-                
-                // Get table counts
-                $tables = [
-                    'properties' => 'Properties',
-                    'customers' => 'Customers',
-                    'leads' => 'Leads/Inquiries',
-                    'bookings' => 'Bookings',
-                    'transactions' => 'Transactions',
-                    'users' => 'Users'
-                ];
-                
-                echo "<table>
-                    <tr>
-                        <th>Table</th>
-                        <th>Record Count</th>
-                        <th>Status</th>
-                    </tr>";
-                
-                foreach ($tables as $table => $label) {
-                    $result = $conn->query("SELECT COUNT(*) as count FROM $table");
-                    if ($result) {
-                        $row = $result->fetch_assoc();
-                        $count = $row['count'];
-                        $status = $count > 0 ? 'OK' : 'Empty';
-                        $statusClass = $count > 0 ? 'success' : 'error';
-                        
-                        echo "<tr>
-                            <td>$label</td>
-                            <td>$count</td>
-                            <td class='$statusClass'>$status</td>
-                        </tr>";
-                    } else {
-                        echo "<tr>
-                            <td>$label</td>
-                            <td>-</td>
-                            <td class='error'>Error</td>
-                        </tr>";
-                    }
-                }
-                
-                echo "</table>";
-            }
-            ?>
-        </div>
-        
-        <h2>Database Management Tools</h2>
-        <div class="card-container">
-            <div class="card">
-                <h3>Dashboard Data Manager</h3>
-                <p>Check and refresh demo data for all dashboard widgets.</p>
-                <a href="dashboard_data_manager.php" class="btn">Open Tool</a>
-            </div>
-            
-            <div class="card">
-                <h3>Dashboard Verification Report</h3>
-                <p>Generate a comprehensive report on dashboard data status.</p>
-                <a href="dashboard_verification_report.php" class="btn">View Report</a>
-            </div>
-            
-            <div class="card">
-                <h3>Final Dashboard Check</h3>
-                <p>Verify and fix all dashboard widgets to ensure they display data.</p>
-                <a href="final_dashboard_check.php" class="btn btn-success">Run Check</a>
-            </div>
-            
-            <div class="card">
-                <h3>Structure-Based Seed</h3>
-                <p>Analyze table structures and seed appropriate demo data.</p>
-                <a href="structure_based_seed.php" class="btn btn-warning">Run Seeder</a>
-                <a href="seeder_enhancement.php" class="btn btn-success mt-2">Enhanced Seeder</a>
-            </div>
-            
-            <div class="card">
-                <h3>Database Optimizer</h3>
-                <p>Clean and optimize database tables for better performance.</p>
-                <a href="optimize_database.php" class="btn">Optimize Database</a>
-            </div>
-            
-            <div class="card">
-                <h3>Backup & Restore</h3>
-                <p>Create and manage database backups.</p>
-                <a href="backup_demo_data.php" class="btn">Manage Backups</a>
-            </div>
-            
-            <div class="card">
-                <h3>Date Refresher</h3>
-                <p>Update date-based demo data to keep it current.</p>
-                <a href="refresh_demo_dates.php" class="btn">Refresh Dates</a>
-            </div>
-            
-            <div class="card">
-                <h3>Documentation</h3>
-                <p>View documentation about the demo data structure.</p>
-                <a href="README_DEMO_DATA.md" class="btn btn-secondary">Demo Data Docs</a>
-                <a href="DATABASE_TOOLS_GUIDE.md" class="btn btn-secondary mt-2">Tools Guide</a>
-                <a href="UPDATE_LOG.md" class="btn btn-secondary mt-2">Update Log</a>
-            </div>
-            
-            <div class="card">
-                <h3>Admin Dashboard</h3>
-                <p>Go to the admin dashboard to see the demo data in action.</p>
-                <a href="../admin/dashboard.php" class="btn">Open Dashboard</a>
-            </div>
-        </div>
-        
-        <h2>Quick Actions</h2>
-        <div class="card-container">
-            <div class="card">
-                <h3>API Documentation</h3>
-                <p>Auto-generate comprehensive documentation for all system APIs and endpoints.</p>
-                <a href="api_documentation.php" class="btn btn-primary">View API Docs</a>
+            <!-- Header -->
+            <div class="header-card text-center">
+                <h1><i class="fas fa-database me-3"></i>Database Management Panel</h1>
+                <p class="mb-0">APS Dream Home - Enhanced Database Management</p>
+                <small>Manage your database updates, backups, and new features</small>
             </div>
 
-            <div class="card">
-                <h3>Database Migration Manager</h3>
-                <p>Manage database schema changes and versioning for smooth system updates.</p>
-                <a href="migration_manager.php" class="btn btn-primary">Manage Migrations</a>
+            <!-- Main Actions -->
+            <div class="row">
+                <!-- Update Database -->
+                <div class="col-md-6">
+                    <div class="action-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3>Update Database</h3>
+                        <p>Add new tables and features for Land Management, Builder Management, MLM system, and enhanced Customer portal.</p>
+                        <div class="mb-3">
+                            <strong>New Features:</strong>
+                            <ul class="text-start mt-2">
+                                <li>🌾 Farmer/Kissan Management</li>
+                                <li>🏗️ Builder Management</li>
+                                <li>👥 Enhanced MLM System</li>
+                                <li>👤 Customer Support System</li>
+                                <li>📊 Enhanced Analytics</li>
+                            </ul>
+                        </div>
+                        <a href="update_database_for_new_features.php" class="btn btn-custom" target="_blank">
+                            <i class="fas fa-play me-1"></i>Run Database Update
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Backup Database -->
+                <div class="col-md-6">
+                    <div class="action-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h3>Backup Database</h3>
+                        <p>Create a complete backup of your current database including all data and structure for safe keeping.</p>
+                        <div class="mb-3">
+                            <strong>Backup includes:</strong>
+                            <ul class="text-start mt-2">
+                                <li>🗃️ Complete database structure</li>
+                                <li>📊 All existing data</li>
+                                <li>🔧 Table relationships</li>
+                                <li>📋 Indexes and constraints</li>
+                                <li>📅 Timestamped filename</li>
+                            </ul>
+                        </div>
+                        <a href="backup_database.php" class="btn btn-success-custom" target="_blank">
+                            <i class="fas fa-shield-alt me-1"></i>Create Backup
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="card">
-                <h3>Data Export & Reporting</h3>
-                <p>Generate business reports and export data in various formats for analysis.</p>
-                <a href="data_export_tool.php" class="btn btn-primary">Open Reporting Tool</a>
+            <!-- Additional Tools -->
+            <div class="dashboard-card p-4">
+                <h2 class="mb-4"><i class="fas fa-tools me-2"></i>Database Tools & Information</h2>
+                
+                <div class="row">
+                    <!-- Database Structure -->
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-sitemap fa-2x text-primary mb-3"></i>
+                                <h5>Database Structure</h5>
+                                <p>View the complete enhanced database structure with all new tables.</p>
+                                <a href="enhanced_database_structure.sql" class="btn btn-outline-primary" download>
+                                    <i class="fas fa-file-code me-1"></i>Download Schema
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Access -->
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-shield fa-2x text-success mb-3"></i>
+                                <h5>Admin Panel</h5>
+                                <p>Access the admin panel to test all new features and functionality.</p>
+                                <a href="../admin/login.php" class="btn btn-outline-success">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Admin Login
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Portal -->
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-2x text-info mb-3"></i>
+                                <h5>Customer Portal</h5>
+                                <p>Test the enhanced customer public dashboard with new features.</p>
+                                <a href="../customer_public_dashboard.php" class="btn btn-outline-info">
+                                    <i class="fas fa-external-link-alt me-1"></i>Customer Portal
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="card">
-                <h3>System Health Check</h3>
-                <p>Run a comprehensive health check of your entire APS Dream Home system.</p>
-                <a href="system_health_check.php" class="btn btn-primary">Run Health Check</a>
+
+            <!-- Feature Dashboards -->
+            <div class="dashboard-card p-4">
+                <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>New Feature Dashboards</h2>
+                
+                <div class="row">
+                    <!-- Land Manager -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-seedling fa-2x text-success mb-3"></i>
+                                <h6>Land Manager</h6>
+                                <p>Complete farmer to plot sales management</p>
+                                <a href="../admin/land_manager_dashboard.php" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-leaf me-1"></i>Access
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Builder Management -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-hard-hat fa-2x text-warning mb-3"></i>
+                                <h6>Builder Management</h6>
+                                <p>Construction project management</p>
+                                <a href="../admin/builder_management_dashboard.php" class="btn btn-sm btn-outline-warning">
+                                    <i class="fas fa-hammer me-1"></i>Access
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MLM Dashboard -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-network-wired fa-2x text-primary mb-3"></i>
+                                <h6>MLM System</h6>
+                                <p>Agent network & commission management</p>
+                                <a href="../admin/agent_mlm_dashboard.php" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-users me-1"></i>Access
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Owner -->
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-crown fa-2x text-danger mb-3"></i>
+                                <h6>Company Owner</h6>
+                                <p>Ultimate system access</p>
+                                <a href="../admin/company_owner_dashboard.php" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-crown me-1"></i>Access
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card">
-                <h3>Verify All Tables</h3>
-                <p>Check all tables in the database for proper structure and data.</p>
-                <a href="dashboard_verification_report.php" class="btn">Run Verification</a>
+
+            <!-- Instructions -->
+            <div class="dashboard-card p-4">
+                <h2 class="mb-4"><i class="fas fa-info-circle me-2"></i>Setup Instructions</h2>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-lightbulb me-2"></i>Recommended Setup Order:</h5>
+                    <ol>
+                        <li><strong>Backup First:</strong> Create a backup of your current database</li>
+                        <li><strong>Update Database:</strong> Run the database update to add new features</li>
+                        <li><strong>Test Admin Panel:</strong> Login and test all new dashboards</li>
+                        <li><strong>Test Customer Portal:</strong> Verify customer functionality</li>
+                        <li><strong>Add Sample Data:</strong> Use the dashboards to add test data</li>
+                    </ol>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Important Notes:</h5>
+                    <ul>
+                        <li>Always backup your database before making changes</li>
+                        <li>Make sure XAMPP/Apache and MySQL are running</li>
+                        <li>Default Company Owner login: abhay@apsdreamhome.com</li>
+                        <li>All new tables use utf8mb4 character set for full Unicode support</li>
+                        <li>Foreign key constraints ensure data integrity</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <h5><i class="fas fa-check-circle me-2"></i>Features Ready:</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                <li>✅ Land Management System</li>
+                                <li>✅ Farmer/Kissan Registration</li>
+                                <li>✅ Land Purchase Recording</li>
+                                <li>✅ Plot Development Tracking</li>
+                                <li>✅ Builder Management</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                <li>✅ Construction Project Management</li>
+                                <li>✅ Enhanced MLM System</li>
+                                <li>✅ Customer Support Portal</li>
+                                <li>✅ Document Management</li>
+                                <li>✅ Role-based Access Control</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="card">
-                <h3>Refresh Demo Data</h3>
-                <p>Refresh all demo data in the database for optimal dashboard display.</p>
-                <a href="dashboard_data_manager.php?refresh=1" class="btn btn-warning">Refresh Data</a>
-            </div>
-            
-            <div class="card">
-                <h3>Fix MLM Commission Tables</h3>
-                <p>Fix inconsistencies in MLM commission tables and ensure proper data.</p>
-                <a href="fix_mlm_commission_tables.php" class="btn btn-danger">Fix Commission Tables</a>
-            </div>
-            
-            <div class="card">
-                <h3>Fix Leads Data</h3>
-                <p>Fix missing or incomplete data in the leads table for dashboard widgets.</p>
-                <a href="fix_leads_data.php" class="btn btn-danger">Fix Leads Data</a>
-            </div>
-            
-            <div class="card">
-                <h3>Create Backup</h3>
-                <p>Create a backup of your current database state.</p>
-                <a href="backup_demo_data.php?action=backup" class="btn btn-success">Create Backup</a>
-            </div>
-            
-            <div class="card">
-                <h3>Update Dates</h3>
-                <p>Update all date-based demo data to keep it current.</p>
-                <a href="refresh_demo_dates.php?refresh=1" class="btn">Update Dates</a>
-            </div>
-            
-            <div class="card">
-                <h3>View Database Structure</h3>
-                <p>Explore the database structure and relationships.</p>
-                <a href="http://localhost/phpmyadmin/index.php?route=/database/structure&db=apsdreamhomefinal" target="_blank" class="btn btn-secondary">Open phpMyAdmin</a>
+
+            <!-- Footer -->
+            <div class="text-center text-white">
+                <p>&copy; 2025 APS Dream Home - Enhanced Database Management System</p>
+                <small>Developed for Abhay Singh - Company Owner</small>
             </div>
         </div>
     </div>
-    
-    <footer>
-        <div class="container">
-            <p>APS Dream Home Database Management Hub &copy; <?php echo date('Y'); ?></p>
-        </div>
-    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

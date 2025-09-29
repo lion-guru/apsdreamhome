@@ -9,34 +9,39 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 $conn = getDbConnection();
 // Handle image upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload'])) {
-    $title = $_POST['title'];
-    $description = $_POST['description'];
-    $category = $_POST['category'];
-    $target_dir = "../uploads/gallery/";
-    if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
-    }
-    $imageFileType = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
-    $filename = uniqid() . '.' . $imageFileType;
-    $target_file = $target_dir . $filename;
-    if (isset($_FILES["image"])) {
-        $check = getimagesize($_FILES["image"]["tmp_name"]);
-        if ($check !== false) {
-            if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                $sql = "INSERT INTO gallery (title, description, category, image_path, created_at) VALUES (?, ?, ?, ?, NOW())";
-                $stmt = $conn->prepare($sql);
-                $image_path = "uploads/gallery/" . $filename;
-                $stmt->bind_param("ssss", $title, $description, $category, $image_path);
-                if ($stmt->execute()) {
-                    $success_message = "Image uploaded successfully!";
+    // CSRF Protection
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $error_message = "Invalid request token";
+    } else {
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $category = $_POST['category'];
+        $target_dir = "../uploads/gallery/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        $imageFileType = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+        $filename = uniqid() . '.' . $imageFileType;
+        $target_file = $target_dir . $filename;
+        if (isset($_FILES["image"])) {
+            $check = getimagesize($_FILES["image"]["tmp_name"]);
+            if ($check !== false) {
+                if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                    $sql = "INSERT INTO gallery (title, description, category, image_path, created_at) VALUES (?, ?, ?, ?, NOW())";
+                    $stmt = $conn->prepare($sql);
+                    $image_path = "uploads/gallery/" . $filename;
+                    $stmt->bind_param("ssss", $title, $description, $category, $image_path);
+                    if ($stmt->execute()) {
+                        $success_message = "Image uploaded successfully!";
+                    } else {
+                        $error_message = "Error saving to database.";
+                    }
                 } else {
-                    $error_message = "Error saving to database.";
+                    $error_message = "Sorry, there was an error uploading your file.";
                 }
             } else {
-                $error_message = "Sorry, there was an error uploading your file.";
+                $error_message = "File is not an image.";
             }
-        } else {
-            $error_message = "File is not an image.";
         }
     }
 }
@@ -64,8 +69,15 @@ if (isset($_GET['delete'])) {
 }
 // Fetch gallery images
 $images = [];
-$result = $conn->query("SELECT * FROM gallery ORDER BY created_at DESC");
-while ($row = $result && $result->fetch_assoc()) $images[] = $row;
+$stmt = $conn->prepare("SELECT * FROM gallery ORDER BY created_at DESC");
+if ($stmt->execute()) {
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $images[] = $row;
+    }
+    $result->close();
+}
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -151,6 +163,7 @@ while ($row = $result && $result->fetch_assoc()) $images[] = $row;
                             <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                         </div>
                         <input type="hidden" name="upload" value="1">
+                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

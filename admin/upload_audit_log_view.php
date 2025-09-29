@@ -11,40 +11,95 @@ if ((isset($_GET['export']) || isset($_GET['drilldown'])) && !$is_superadmin) {
     exit('Access denied: Only superadmins can export or drilldown.');
 }
 
-$audit = $conn->query("SELECT * FROM upload_audit_log ORDER BY created_at DESC LIMIT 200");
-// Filtering logic
-$filter = isset($_GET['filter']) ? $_GET['filter'] : '';
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$date_from = isset($_GET['date_from']) ? $_GET['date_from'] : '';
-$date_to = isset($_GET['date_to']) ? $_GET['date_to'] : '';
-$drilldown = isset($_GET['drilldown']) ? $_GET['drilldown'] : '';
-$drill_val = isset($_GET['val']) ? $_GET['val'] : '';
-$where = [];
-if ($filter && in_array($filter, ['event_type','uploader','slack_status','telegram_status','entity_table'])) {
-    $where[] = "$filter LIKE '%" . $conn->real_escape_string($search) . "%'";
+$audit = $conn->prepare("SELECT * FROM upload_audit_log ORDER BY created_at DESC LIMIT 200");
+$audit->execute();
+$audit = $audit->get_result();
+
+// Build WHERE conditions using prepared statements
+$where_conditions = [];
+$params = [];
+$types = "";
+
+// Filtering logic with proper escaping
+if ($filter && in_array($filter, ['event_type','uploader','slack_status','telegram_status','entity_table']) && !empty($search)) {
+    $where_conditions[] = "$filter LIKE ?";
+    $params[] = "%$search%";
+    $types .= "s";
 }
 if ($date_from && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_from)) {
-    $where[] = "created_at >= '" . $conn->real_escape_string($date_from) . " 00:00:00'";
+    $where_conditions[] = "created_at >= ?";
+    $params[] = $date_from . " 00:00:00";
+    $types .= "s";
 }
 if ($date_to && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_to)) {
-    $where[] = "created_at <= '" . $conn->real_escape_string($date_to) . " 23:59:59'";
+    $where_conditions[] = "created_at <= ?";
+    $params[] = $date_to . " 23:59:59";
+    $types .= "s";
 }
-if ($drilldown && $drill_val) {
-    if (in_array($drilldown, ['uploader','event_type','entity_table','entity_id'])) {
-        $where[] = "$drilldown = '" . $conn->real_escape_string($drill_val) . "'";
-    }
+if ($drilldown && $drill_val && in_array($drilldown, ['uploader','event_type','entity_table','entity_id'])) {
+    $where_conditions[] = "$drilldown = ?";
+    $params[] = $drill_val;
+    $types .= "s";
 }
-$where_sql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
-$audit = $conn->query("SELECT * FROM upload_audit_log $where_sql ORDER BY created_at DESC LIMIT 200");
 
-// Analytics queries
-$summary = $conn->query("SELECT COUNT(*) as total, COUNT(DISTINCT uploader) as users, SUM(slack_status='sent') as slack_ok, SUM(telegram_status='sent') as telegram_ok FROM upload_audit_log $where_sql")->fetch_assoc();
+$where_clause = empty($where_conditions) ? "" : "WHERE " . implode(" AND ", $where_conditions);
+
+// Fetch audit logs using prepared statement
+$audit_query = "SELECT * FROM upload_audit_log $where_clause ORDER BY created_at DESC LIMIT 200";
+if (!empty($params)) {
+    $stmt = $conn->prepare($audit_query);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $audit = $stmt->get_result();
+} else {
+    $stmt = $conn->prepare($audit_query);
+    $stmt->execute();
+    $audit = $stmt->get_result();
+}
+$stmt->close();
+
+// Analytics queries using prepared statements
+$summary_query = "SELECT COUNT(*) as total, COUNT(DISTINCT uploader) as users, SUM(slack_status='sent') as slack_ok, SUM(telegram_status='sent') as telegram_ok FROM upload_audit_log $where_clause";
+if (!empty($params)) {
+    $stmt = $conn->prepare($summary_query);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $summary = $stmt->get_result()->fetch_assoc();
+} else {
+    $stmt = $conn->prepare($summary_query);
+    $stmt->execute();
+    $summary = $stmt->get_result()->fetch_assoc();
+}
+$stmt->close();
+
 $by_type = [];
-$res = $conn->query("SELECT event_type, COUNT(*) as c FROM upload_audit_log $where_sql GROUP BY event_type");
+$by_type_query = "SELECT event_type, COUNT(*) as c FROM upload_audit_log $where_clause GROUP BY event_type";
+if (!empty($params)) {
+    $stmt = $conn->prepare($by_type_query);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $res = $stmt->get_result();
+} else {
+    $stmt = $conn->prepare($by_type_query);
+    $stmt->execute();
+    $res = $stmt->get_result();
+}
 while($row = $res->fetch_assoc()) { $by_type[$row['event_type']] = $row['c']; }
+$stmt->close();
 $by_day = [];
-$res = $conn->query("SELECT DATE(created_at) as day, COUNT(*) as c FROM upload_audit_log $where_sql GROUP BY day ORDER BY day");
+$by_day_query = "SELECT DATE(created_at) as day, COUNT(*) as c FROM upload_audit_log $where_clause GROUP BY day ORDER BY day";
+if (!empty($params)) {
+    $stmt = $conn->prepare($by_day_query);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $res = $stmt->get_result();
+} else {
+    $stmt = $conn->prepare($by_day_query);
+    $stmt->execute();
+    $res = $stmt->get_result();
+}
 while($row = $res->fetch_assoc()) { $by_day[$row['day']] = $row['c']; }
+$stmt->close();
 
 // Log access to audit log views/exports for compliance
 function log_audit_access($conn, $user, $action, $details) {
@@ -115,7 +170,7 @@ log_audit_access($conn, $admin_user, 'view', json_encode($_GET));
 // Suspicious access alerting (simple: >5 exports or drilldowns by same user in a day)
 function check_and_alert_suspicious_access($conn, $user) {
     $today = date('Y-m-d');
-    $res = $conn->query("SELECT SUM(action='export') as exports, SUM(action='drilldown') as drilldowns FROM audit_access_log WHERE admin_user='".$conn->real_escape_string($user)."' AND accessed_at >= '$today 00:00:00'");
+    $res = $conn->query("SELECT SUM(action='export') as exports, SUM(action='drilldown') as drilldowns FROM audit_access_log WHERE admin_user='".$user."' AND accessed_at >= '$today 00:00:00'");
     $row = $res ? $res->fetch_assoc() : ['exports'=>0,'drilldowns'=>0];
     if (($row['exports'] ?? 0) > 5 || ($row['drilldowns'] ?? 0) > 5) {
         require_once __DIR__ . '/mail.php';
@@ -150,7 +205,7 @@ check_and_alert_suspicious_access($conn, $admin_user);
 // Anomaly detection: Alert on unfamiliar IP address for audit log access
 function alert_on_unfamiliar_ip($conn, $user) {
     $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-    $res = $conn->query("SELECT DISTINCT ip_address FROM audit_access_log WHERE admin_user='".$conn->real_escape_string($user)."' ORDER BY accessed_at DESC LIMIT 10");
+    $res = $conn->query("SELECT DISTINCT ip_address FROM audit_access_log WHERE admin_user='".$user."' ORDER BY accessed_at DESC LIMIT 10");
     $known_ips = [];
     while ($row = $res && $res->num_rows ? $res->fetch_assoc() : false) { $known_ips[] = $row['ip_address']; }
     if ($ip && $user && !in_array($ip, $known_ips) && count($known_ips) > 0) {
@@ -307,7 +362,46 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
     header('Content-Disposition: attachment; filename="upload_audit_log.csv"');
     $out = fopen('php://output', 'w');
     fputcsv($out, ['ID','Event Type','Entity Table','Entity ID','File Name','Drive File','Uploader','Slack','Telegram','Date']);
-    $audit_export = $conn->query("SELECT * FROM upload_audit_log $where_sql ORDER BY created_at DESC");
+
+    // Build WHERE conditions for export
+    $export_where_conditions = [];
+    $export_params = [];
+    $export_types = "";
+
+    // Apply same filters as main query
+    if (isset($filter) && in_array($filter, ['event_type','uploader','slack_status','telegram_status','entity_table']) && !empty($search)) {
+        $export_where_conditions[] = "$filter LIKE ?";
+        $export_params[] = "%$search%";
+        $export_types .= "s";
+    }
+    if (isset($date_from) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_from)) {
+        $export_where_conditions[] = "created_at >= ?";
+        $export_params[] = $date_from . " 00:00:00";
+        $export_types .= "s";
+    }
+    if (isset($date_to) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_to)) {
+        $export_where_conditions[] = "created_at <= ?";
+        $export_params[] = $date_to . " 23:59:59";
+        $export_types .= "s";
+    }
+    if (isset($drilldown) && isset($drill_val) && in_array($drilldown, ['uploader','event_type','entity_table','entity_id'])) {
+        $export_where_conditions[] = "$drilldown = ?";
+        $export_params[] = $drill_val;
+        $export_types .= "s";
+    }
+
+    $export_where_clause = empty($export_where_conditions) ? "" : "WHERE " . implode(" AND ", $export_where_conditions);
+    $export_query = "SELECT * FROM upload_audit_log $export_where_clause ORDER BY created_at DESC";
+
+    if (!empty($export_params)) {
+        $stmt = $conn->prepare($export_query);
+        $stmt->bind_param($export_types, ...$export_params);
+        $stmt->execute();
+        $audit_export = $stmt->get_result();
+    } else {
+        $audit_export = $conn->query($export_query);
+    }
+
     while ($row = $audit_export->fetch_assoc()) {
         fputcsv($out, [
             $row['id'],

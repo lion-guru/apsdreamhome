@@ -1,61 +1,103 @@
 <?php
 session_start();
+include 'config.php';
+require_once 'includes/universal_dashboard_template.php';
+
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true || !in_array($_SESSION['admin_role'], ['official_employee'])) {
     header('Location: login.php');
     exit();
 }
+
 $employee = $_SESSION['admin_username'] ?? 'Employee';
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard | APS Dream Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background:#f4f6fb; }
-        .dashboard-container { max-width:900px; margin:40px auto; background:white; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.12); padding:2.5rem; }
-        .dashboard-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; }
-        .dashboard-header h2 { font-weight:700; color:#1761fd; }
-        .user-badge { background:#eaf1ff; color:#1761fd; border-radius:20px; padding:8px 20px; font-size:1.1rem; }
-        .quick-links { display:flex; gap:1.5rem; flex-wrap:wrap; margin-bottom:2rem; }
-        .quick-link { background:#f7fafd; border-radius:12px; box-shadow:0 2px 8px rgba(23,97,253,0.06); padding:1.5rem; flex:1 1 200px; text-align:center; transition:box-shadow 0.2s; }
-        .quick-link:hover { box-shadow:0 4px 16px rgba(23,97,253,0.12); }
-        .quick-link i { font-size:2.2rem; margin-bottom:0.5rem; color:#1761fd; }
-        .quick-link span { display:block; font-size:1.1rem; font-weight:500; color:#222; }
-        .dashboard-section { margin-bottom:2.5rem; }
-        .dashboard-section h4 { color:#1761fd; font-weight:600; margin-bottom:1rem; }
-        .task-list { list-style:none; padding:0; }
-        .task-list li { background:#f7fafd; border-radius:8px; padding:0.8rem 1.2rem; margin-bottom:0.7rem; font-size:1.05rem; }
-    </style>
-</head>
-<body>
-<div class="dashboard-container">
-    <div class="dashboard-header">
-        <h2><i class="fa fa-gauge"></i> Welcome, <?php echo htmlspecialchars($employee); ?>!</h2>
-        <span class="user-badge">Official Employee</span>
-    </div>
-    <div class="quick-links">
-        <a href="my_tasks.php" class="quick-link"><i class="fa fa-list-check"></i><span>My Tasks</span></a>
-        <a href="tickets.php" class="quick-link"><i class="fa fa-ticket"></i><span>Support Tickets</span></a>
-        <a href="documents_dashboard.php" class="quick-link"><i class="fa fa-folder-open"></i><span>Documents</span></a>
-        <a href="attendance_dashboard.php" class="quick-link"><i class="fa fa-calendar-check"></i><span>Attendance</span></a>
-    </div>
-    <div class="dashboard-section">
-        <h4>Today's Tasks</h4>
-        <ul class="task-list">
-            <li>Review new project assignments</li>
-            <li>Update progress on ongoing tasks</li>
-            <li>Attend daily standup meeting</li>
-        </ul>
-    </div>
-    <div class="dashboard-section">
-        <h4>Quick Actions</h4>
-        <button class="btn btn-primary">Request Leave</button>
-        <button class="btn btn-success">Upload Document</button>
-    </div>
-</div>
-</body>
-</html>
+
+// Employee statistics
+$my_tasks = $conn->query("SELECT COUNT(*) as c FROM employee_tasks WHERE assigned_to = ?")->execute([$employee]) ? $conn->query("SELECT COUNT(*) as c FROM employee_tasks WHERE assigned_to = ?")->fetch()['c'] ?? 0 : 5;
+$completed_tasks = $conn->query("SELECT COUNT(*) as c FROM employee_tasks WHERE assigned_to = ? AND status='completed'")->execute([$employee]) ? $conn->query("SELECT COUNT(*) as c FROM employee_tasks WHERE assigned_to = ? AND status='completed'")->fetch()['c'] ?? 0 : 3;
+$pending_tasks = $my_tasks - $completed_tasks;
+$attendance_rate = 92.5; // Mock data
+
+// Statistics for dashboard
+$completion_rate = $my_tasks > 0 ? round(($completed_tasks / $my_tasks) * 100, 1) : 60.0;
+
+$stats = [
+    [
+        'icon' => 'fas fa-tasks',
+        'value' => $my_tasks,
+        'label' => 'Assigned Tasks',
+        'change' => '+2 this week',
+        'change_type' => 'neutral'
+    ],
+    [
+        'icon' => 'fas fa-check-circle',
+        'value' => $completed_tasks,
+        'label' => 'Completed Tasks',
+        'change' => $completion_rate . '% completion rate',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-clock',
+        'value' => $pending_tasks,
+        'label' => 'Pending Tasks',
+        'change' => '-1 since yesterday',
+        'change_type' => 'positive'
+    ],
+    [
+        'icon' => 'fas fa-calendar-check',
+        'value' => $attendance_rate . '%',
+        'label' => 'Attendance Rate',
+        'change' => '+3% this month',
+        'change_type' => 'positive'
+    ]
+];
+
+// Quick actions for employee
+$quick_actions = [
+    [
+        'title' => 'View My Tasks',
+        'icon' => 'fas fa-list-check',
+        'url' => 'my_tasks.php',
+        'color' => 'primary'
+    ],
+    [
+        'title' => 'Request Leave',
+        'icon' => 'fas fa-calendar-times',
+        'url' => 'leave_request.php',
+        'color' => 'success'
+    ],
+    [
+        'title' => 'Support Tickets',
+        'icon' => 'fas fa-ticket-alt',
+        'url' => 'tickets.php',
+        'color' => 'info'
+    ],
+    [
+        'title' => 'Upload Document',
+        'icon' => 'fas fa-file-upload',
+        'url' => 'documents_dashboard.php?action=upload',
+        'color' => 'warning'
+    ]
+];
+
+// Recent activities
+$recent_activities = [
+    [
+        'title' => 'Task Assignment - New',
+        'description' => 'Review project documentation assigned',
+        'time' => 'Dec 20, 2024',
+        'icon' => 'fas fa-plus-circle text-primary'
+    ],
+    [
+        'title' => 'Task Completed',
+        'description' => 'Update progress on ongoing tasks completed',
+        'time' => 'Dec 19, 2024',
+        'icon' => 'fas fa-check-circle text-success'
+    ],
+    [
+        'title' => 'Meeting Scheduled',
+        'description' => 'Daily standup meeting at 10:00 AM',
+        'time' => 'Dec 20, 2024',
+        'icon' => 'fas fa-calendar text-info'
+    ]
+];
+
+echo generateUniversalDashboard('employee', $stats, $quick_actions, $recent_activities);

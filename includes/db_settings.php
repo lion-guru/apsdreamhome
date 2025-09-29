@@ -1,66 +1,123 @@
 <?php
-// Enhanced database security configuration
+/**
+ * Database Settings
+ * Central configuration for database connections
+ */
 
-// Logging function
-function log_db_event($message, $level = 'info') {
-    $log_dir = __DIR__ . '/../logs';
-    if (!is_dir($log_dir)) {
-        mkdir($log_dir, 0755, true);
-    }
-    $log_file = $log_dir . '/database_' . date('Y-m-d') . '.log';
-    $timestamp = date('Y-m-d H:i:s');
-    $log_message = "[{$timestamp}] [{$level}] {$message}\n";
-    file_put_contents($log_file, $log_message, FILE_APPEND);
-}
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASSWORD', '');
+define('DB_NAME', 'aps_dream_home');
 
-// Secure database configuration
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') ?: '');
-define('DB_NAME', getenv('DB_NAME') ?: 'apsdreamhomefinal');
-
-// Create a secure connection function
-if (!function_exists('get_db_connection')) {
-    function get_db_connection() {
-        static $conn = null;
-        if ($conn === null) {
-            try {
-                $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-                if ($conn->connect_error) {
-                    throw new Exception("Connection failed: " . $conn->connect_error);
-                }
-                $conn->set_charset("utf8mb4");
-                // Enable SSL if possible
-                if (defined('MYSQLI_OPT_SSL_VERIFY_SERVER_CERT')) {
-                    $conn->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
-                }
-                log_db_event("Database connection established successfully");
-            } catch (Exception $e) {
-                log_db_event("Database connection error: " . $e->getMessage(), 'error');
-                die("A system error occurred. Our team has been notified.");
-            }
-        }
-        return $conn;
-    }
-}
-
-// Connection health check
-function check_db_connection() {
+// Database connection function
+function get_db_connection() {
     try {
-        $conn = get_db_connection();
-        $result = $conn->query("SELECT 1");
-        if ($result) {
-            log_db_event("Database health check passed");
-            return true;
-        } else {
-            log_db_event("Database health check failed", 'warning');
-            return false;
+        $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
+        if ($conn->connect_error) {
+            throw new Exception("Database connection failed: " . $conn->connect_error);
         }
+
+        $conn->set_charset("utf8");
+        return $conn;
     } catch (Exception $e) {
-        log_db_event("Database health check error: " . $e->getMessage(), 'error');
+        error_log("Database connection error: " . $e->getMessage());
         return false;
     }
 }
 
-// Automatic connection validation
-register_shutdown_function('check_db_connection');
+// Database query function with error handling
+function db_query($sql, $params = []) {
+    $conn = get_db_connection();
+    if (!$conn) {
+        return false;
+    }
+
+    try {
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+
+        if (!empty($params)) {
+            $types = '';
+            foreach ($params as $param) {
+                if (is_int($param)) {
+                    $types .= 'i';
+                } elseif (is_float($param)) {
+                    $types .= 'd';
+                } else {
+                    $types .= 's';
+                }
+            }
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $stmt->close();
+        $conn->close();
+
+        return $result;
+    } catch (Exception $e) {
+        error_log("Database query error: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Database insert/update function
+function db_execute($sql, $params = []) {
+    $conn = get_db_connection();
+    if (!$conn) {
+        return false;
+    }
+
+    try {
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+
+        if (!empty($params)) {
+            $types = '';
+            foreach ($params as $param) {
+                if (is_int($param)) {
+                    $types .= 'i';
+                } elseif (is_float($param)) {
+                    $types .= 'd';
+                } else {
+                    $types .= 's';
+                }
+            }
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $result = $stmt->execute();
+
+        if ($result && strpos(strtoupper($sql), 'INSERT') === 0) {
+            $insert_id = $conn->insert_id;
+        } else {
+            $insert_id = null;
+        }
+
+        $stmt->close();
+        $conn->close();
+
+        return $result ? ($insert_id ?? true) : false;
+    } catch (Exception $e) {
+        error_log("Database execute error: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Get database table prefix
+function get_table_prefix() {
+    return 'aps_';
+}
+
+// Get full table name with prefix
+function get_table_name($table_name) {
+    return get_table_prefix() . $table_name;
+}
+?>

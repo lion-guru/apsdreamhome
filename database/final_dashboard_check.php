@@ -18,11 +18,14 @@ if ($conn->connect_error) {
 
 echo "Connected successfully to database\n";
 
-// Function to check table count
+// Function to check table count using prepared statement
 function checkTableCount($conn, $table) {
-    $result = $conn->query("SELECT COUNT(*) as count FROM $table");
+    $stmt = $conn->prepare("SELECT COUNT(*) as count FROM `$table`");
+    $stmt->execute();
+    $result = $stmt->get_result();
     if ($result) {
         $row = $result->fetch_assoc();
+        $stmt->close();
         return $row['count'];
     }
     return 0;
@@ -44,8 +47,10 @@ foreach ($coreWidgets as $widget => $table) {
     if ($count < 5) {
         echo "Adding more data to $table...\n";
         
-        // Add minimal data
-        $conn->query("INSERT IGNORE INTO $table (id) VALUES (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)");
+        // Add minimal data using prepared statement
+        $stmt = $conn->prepare("INSERT IGNORE INTO `$table` (id) VALUES (1), (2), (3), (4), (5), (6), (7), (8), (9), (10)");
+        $stmt->execute();
+        $stmt->close();
         
         $newCount = checkTableCount($conn, $table);
         echo "Updated $widget: $newCount records\n";
@@ -60,22 +65,28 @@ echo "Bookings: $bookingsCount records\n";
 if ($bookingsCount < 5) {
     echo "Adding more booking data...\n";
     
-    // Try to get property and customer IDs
+    // Try to get property and customer IDs using prepared statements
     $propertyIds = [];
-    $result = $conn->query("SELECT id FROM properties LIMIT 5");
+    $stmt = $conn->prepare("SELECT id FROM properties LIMIT 5");
+    $stmt->execute();
+    $result = $stmt->get_result();
     if ($result) {
         while ($row = $result->fetch_assoc()) {
             $propertyIds[] = $row['id'];
         }
     }
+    $stmt->close();
     
     $customerIds = [];
-    $result = $conn->query("SELECT id FROM customers LIMIT 5");
+    $stmt = $conn->prepare("SELECT id FROM customers LIMIT 5");
+    $stmt->execute();
+    $result = $stmt->get_result();
     if ($result) {
         while ($row = $result->fetch_assoc()) {
             $customerIds[] = $row['id'];
         }
     }
+    $stmt->close();
     
     // Add booking data with proper references if possible
     if (!empty($propertyIds) && !empty($customerIds)) {
@@ -84,8 +95,10 @@ if ($bookingsCount < 5) {
             $customerId = $customerIds[$i % count($customerIds)];
             $date = date('Y-m-d', strtotime("-$i days"));
             
-            $conn->query("INSERT IGNORE INTO bookings (property_id, customer_id, booking_date, amount, status) 
-                VALUES ($propertyId, $customerId, '$date', " . (1000000 + $i * 500000) . ", 'confirmed')");
+            $stmt = $conn->prepare("INSERT IGNORE INTO bookings (property_id, customer_id, booking_date, amount, status) VALUES (?, ?, ?, ?, 'confirmed')");
+            $stmt->bind_param("iisdi", $propertyId, $customerId, $date, $amount);
+            $stmt->execute();
+            $stmt->close();
         }
     } else {
         // Fallback to minimal data

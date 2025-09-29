@@ -1,770 +1,1274 @@
 <?php
 /**
- * Properties Listing Page
- * 
- * @package APS Dream Homes
- * @since 1.0.0
+ * APS Dream Homes Pvt Ltd - Enhanced with Market Insights
+ * Incorporating successful strategies from competitors like Anantjit Infra and Royal Sight Infra
  */
 
-// Set page metadata
-$page_title = "Properties - APS Dream Homes";
-$meta_description = "Browse our exclusive collection of premium properties across Uttar Pradesh. Find your dream home with APS Dream Homes.";
-$current_page = 'properties';
+// Define constant to allow database connection
+define('INCLUDED_FROM_MAIN', true);
 
-// Include necessary files
-require_once 'includes/config/config.php';
-require_once 'includes/config/database.php';
-require_once 'includes/helpers/format_helpers.php';
+// Include database connection
+require_once 'includes/db_connection.php';
 
-// Start secure session
-start_secure_session('aps_dream_home');
-
-// Generate CSRF token if not exists
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-
-// Process search/filter parameters
-$search_params = [
-    'location' => isset($_GET['location']) ? htmlspecialchars($_GET['location'], ENT_QUOTES, 'UTF-8') : '',
-    'type' => isset($_GET['type']) ? htmlspecialchars($_GET['type'], ENT_QUOTES, 'UTF-8') : '',
-    'min_price' => isset($_GET['min_price']) ? filter_var($_GET['min_price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0,
-    'max_price' => isset($_GET['max_price']) ? filter_var($_GET['max_price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : PHP_FLOAT_MAX,
-    'bedrooms' => filter_input(INPUT_GET, 'bedrooms', FILTER_VALIDATE_INT) ?? 0,
-    'bathrooms' => filter_input(INPUT_GET, 'bathrooms', FILTER_VALIDATE_INT) ?? 0,
-    'page' => max(1, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?? 1),
-    'per_page' => 12 // Items per page
-];
-
-// Get sort parameters
-$sort = isset($_GET['sort']) ? htmlspecialchars($_GET['sort'], ENT_QUOTES, 'UTF-8') : 'featured';
-$order = isset($_GET['order']) ? htmlspecialchars($_GET['order'], ENT_QUOTES, 'UTF-8') : 'DESC';
-
-// Include header template
-require_once __DIR__ . '/includes/templates/header.php';
-
-// Database connection and property fetching
 try {
-    $db = DatabaseConfig::getConnection();
+    global $pdo;
+    $conn = $pdo;
     
-    // Get property types for filter
-    $type_query = "SELECT id, name, slug FROM property_types WHERE status = 'active' ORDER BY name ASC";
-    $type_stmt = $db->prepare($type_query);
-    $type_stmt->execute();
-    $type_result = $type_stmt->get_result();
-    $property_types = $type_result->fetch_all(MYSQLI_ASSOC);
-    
-    // Get locations for filter
-    $loc_query = "SELECT DISTINCT location FROM properties WHERE status = 'active' AND location IS NOT NULL AND location != '' ORDER BY location ASC";
-    $loc_stmt = $db->prepare($loc_query);
-    $loc_stmt->execute();
-    $loc_result = $loc_stmt->get_result();
-    $locations = $loc_result->fetch_all(MYSQLI_ASSOC);
-    
-    // Build base query with parameter placeholders
-    $query = "SELECT SQL_CALC_FOUND_ROWS
-                p.id, p.title, p.location, p.price, p.bedrooms, p.bathrooms,
-                p.area, p.area_unit, p.featured_image, p.listing_status, p.is_featured,
-                p.created_at, p.updated_at, p.description,
-                pt.name as property_type, pt.slug as type_slug,
-                GROUP_CONCAT(DISTINCT pa.amenity_name) as amenities
-              FROM properties p
-              LEFT JOIN property_types pt ON p.property_type_id = pt.id
-              LEFT JOIN property_amenities pa ON p.id = pa.property_id
-              WHERE p.status = 'active'";
-    
-    // Add search conditions based on parameters
-    $conditions = [];
-    $params = [];
-    $types = '';
-    
-    if (!empty($search_params['location'])) {
-        $conditions[] = "(p.location LIKE ? OR p.city LIKE ? OR p.state LIKE ?)";
-        $location_param = "%" . $search_params['location'] . "%";
-        $params[] = $location_param;
-        $params[] = $location_param;
-        $params[] = $location_param;
-        $types .= 'sss';
+    if (!$conn) {
+        throw new PDOException('Database connection failed');
     }
-    
-    if (!empty($search_params['type'])) {
-        $conditions[] = "pt.slug = ?";
-        $params[] = $search_params['type'];
-        $types .= 's';
-    }
-    
-    if ($search_params['bedrooms'] > 0) {
-        $conditions[] = "p.bedrooms >= ?";
-        $params[] = $search_params['bedrooms'];
-        $types .= 'i';
-    }
-    
-    if ($search_params['bathrooms'] > 0) {
-        $conditions[] = "p.bathrooms >= ?";
-        $params[] = $search_params['bathrooms'];
-        $types .= 'i';
-    }
-    
-    // Add price range conditions
-    if ($search_params['min_price'] > 0 || $search_params['max_price'] < PHP_FLOAT_MAX) {
-        $conditions[] = "p.price BETWEEN ? AND ?";
-        $params[] = $search_params['min_price'];
-        $params[] = $search_params['max_price'];
-        $types .= 'dd';
-    }
-    
-    // Add conditions to query if any exist
-    if (!empty($conditions)) {
-        $query .= " AND " . implode(" AND ", $conditions);
-    }
-    
-    // Group by and order
-    $query .= " GROUP BY p.id";
-    
-    // Add sorting
-    $sort_options = [
-        'price' => 'p.price',
-        'date' => 'p.created_at',
-        'featured' => 'p.is_featured',
-        'name' => 'p.title'
-    ];
-    
-    $sort_column = $sort_options[$sort] ?? 'p.is_featured';
-    $order = in_array(strtoupper($order), ['ASC', 'DESC']) ? strtoupper($order) : 'DESC';
-    
-    $query .= " ORDER BY {$sort_column} {$order}, p.created_at DESC";
-    
-    // Add pagination
-    $offset = ($search_params['page'] - 1) * $search_params['per_page'];
-    $query .= " LIMIT ? OFFSET ?";
-    $params[] = $search_params['per_page'];
-    $params[] = $offset;
-    $types .= 'ii';
-    
-    // Prepare and execute the query
-    $stmt = $db->prepare($query);
-    
-    // Bind parameters if any exist
-    if (!empty($params)) {
-        $stmt->bind_param($types, ...$params);
-    }
-    
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $properties = $result->fetch_all(MYSQLI_ASSOC);
-    
-    // Get total count for pagination
-    $total_result = $db->query("SELECT FOUND_ROWS() as total");
-    $total_rows = $total_result->fetch_assoc()['total'];
-    $total_pages = ceil($total_rows / $search_params['per_page']);
-    
-    // Format properties data
-    $formatted_properties = [];
-    foreach ($properties as $property) {
-        $formatted_properties[] = [
-            'id' => $property['id'],
-            'title' => htmlspecialchars($property['title']),
-            'location' => htmlspecialchars($property['location']),
-            'price' => format_currency($property['price']),
-            'price_raw' => (float)$property['price'],
-            'bedrooms' => $property['bedrooms'] ?? 0,
-            'bathrooms' => $property['bathrooms'] ?? 0,
-            'area' => number_format($property['area']) . ' ' . ($property['area_unit'] ?? 'sq.ft'),
-            'image' => !empty($property['featured_image']) ? 
-                      htmlspecialchars($property['featured_image']) : 
-                      SITE_URL . '/assets/images/properties/default.jpg',
-            'type' => htmlspecialchars($property['property_type'] ?? 'Property'),
-            'type_slug' => $property['type_slug'] ?? 'property',
-            'status' => ucfirst($property['listing_status'] ?? 'Available'),
-            'is_featured' => (bool)($property['is_featured'] ?? false),
-            'amenities' => !empty($property['amenities']) ? 
-                          array_map('htmlspecialchars', explode(',', $property['amenities'])) : [],
-            'created_at' => $property['created_at'] ?? '',
-            'description' => htmlspecialchars($property['description'] ?? '')
-        ];
-    }
-    
-    $properties = $formatted_properties;
-    
-} catch (Exception $e) {
-    // Log error and show user-friendly message
-    error_log('Database error in properties.php: ' . $e->getMessage());
-    $error_message = 'Unable to load properties at this time. Please try again later.';
-    $properties = [];
-    $total_pages = 0;
-    $total_rows = 0;
+
+    // Get company settings from database
+    $settings_sql = "SELECT setting_name, setting_value FROM site_settings WHERE setting_name IN ('company_name', 'company_description', 'mission_statement', 'vision_statement', 'about_company', 'established_year', 'company_type', 'services_offered')";
+    $settings_stmt = $conn->prepare($settings_sql);
+    $settings_stmt->execute();
+    $settings = $settings_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+} catch (PDOException $e) {
+    $settings = [];
+    $error_message = "Unable to load company information.";
 }
 ?>
 
-<!-- Hero Section with Search -->
-<section class="hero-section bg-primary text-white py-5">
-    <div class="container py-5">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-5 fw-bold mb-3">Find Your Dream Home</h1>
-                <p class="lead mb-4">Discover the perfect property that matches your lifestyle and budget</p>
-                
-                <!-- Search Form -->
-                <form action="" method="GET" class="search-form bg-white p-4 rounded-3 shadow">
-                    <input type="hidden" name="page" value="1">
-                    <div class="row g-3">
-                        <div class="col-md-5">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-map-marker-alt text-muted"></i></span>
-                                <select class="form-select" name="location" id="location">
-                                    <option value="">Any Location</option>
-                                    <?php foreach ($locations as $loc): ?>
-                                        <option value="<?php echo htmlspecialchars($loc['location']); ?>" <?php echo ($search_params['location'] === $loc['location']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($loc['location']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0"><i class="fas fa-home text-muted"></i></span>
-                                <select class="form-select" name="type" id="propertyType">
-                                    <option value="">Any Type</option>
-                                    <?php foreach ($property_types as $type): ?>
-                                        <option value="<?php echo htmlspecialchars($type['slug']); ?>" <?php echo ($search_params['type'] === $type['slug']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($type['name']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-search me-2"></i> Search
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Advanced Filters Toggle -->
-                    <div class="text-center mt-3">
-                        <a href="#advanced-filters" class="text-decoration-none small" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="advanced-filters">
-                            <i class="fas fa-sliders-h me-1"></i> Advanced Filters
-                        </a>
-                    </div>
-                    
-                    <!-- Advanced Filters -->
-                    <div class="collapse mt-3" id="advanced-filters">
-                        <div class="row g-3 pt-3 border-top">
-                            <div class="col-md-4">
-                                <label for="minPrice" class="form-label small text-muted mb-1">Min Price</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" id="minPrice" name="min_price" min="0" step="100000" value="<?php echo $search_params['min_price'] > 0 ? $search_params['min_price'] : ''; ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="maxPrice" class="form-label small text-muted mb-1">Max Price</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" id="maxPrice" name="max_price" min="0" step="100000" value="<?php echo $search_params['max_price'] < PHP_FLOAT_MAX ? $search_params['max_price'] : ''; ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="bedrooms" class="form-label small text-muted mb-1">Beds</label>
-                                <select class="form-select" id="bedrooms" name="bedrooms">
-                                    <option value="0">Any</option>
-                                    <?php for ($i = 1; $i <= 6; $i++): ?>
-                                        <option value="<?php echo $i; ?>" <?php echo ($search_params['bedrooms'] == $i) ? 'selected' : ''; ?>>
-                                            <?php echo $i; ?>+ <?php echo ($i === 1) ? 'Bed' : 'Beds'; ?>
-                                        </option>
-                                    <?php endfor; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="bathrooms" class="form-label small text-muted mb-1">Baths</label>
-                                <select class="form-select" id="bathrooms" name="bathrooms">
-                                    <option value="0">Any</option>
-                                    <?php for ($i = 1; $i <= 6; $i++): ?>
-                                        <option value="<?php echo $i; ?>" <?php echo ($search_params['bathrooms'] == $i) ? 'selected' : ''; ?>>
-                                            <?php echo $i; ?>+ <?php echo ($i === 1) ? 'Bath' : 'Baths'; ?>
-                                        </option>
-                                    <?php endfor; ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties - APS Dream Homes Pvt Ltd - Premium Real Estate in Gorakhpur</title>
+    <meta name="description" content="APS Dream Homes Pvt Ltd - Leading real estate developer in Gorakhpur offering premium residential plots, apartments, villas, and commercial properties. 8+ years of excellence in property development.">
 
-<!-- Main Content -->
-<main class="py-5">
-    <div class="container">
-        <!-- Results Header -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
-            <div class="mb-3 mb-md-0">
-                <h2 class="h4 mb-1"><?php echo $total_rows; ?> Properties Found</h2>
-                <p class="text-muted small mb-0">Showing <?php echo count($properties); ?> of <?php echo $total_rows; ?> results</p>
-            </div>
-            
-            <!-- Sort Options -->
-            <div class="d-flex align-items-center">
-                <div class="me-3 d-none d-md-block">
-                    <span class="small text-muted">Sort by:</span>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <?php 
-                        $sort_labels = [
-                            'featured' => 'Featured',
-                            'price-asc' => 'Price: Low to High',
-                            'price-desc' => 'Price: High to Low',
-                            'date' => 'Newest First',
-                            'name' => 'Name (A-Z)'
-                        ];
-                        $current_sort = (isset($_GET['sort']) ? $_GET['sort'] : 'featured') . (isset($_GET['order']) && $_GET['order'] === 'asc' ? '-asc' : '-desc');
-                        ?>
-                        <?php echo $sort_labels[explode('-', $current_sort)[0]] ?? 'Featured'; ?>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
-                        <li><h6 class="dropdown-header">Sort Options</h6></li>
-                        <li><a class="dropdown-item <?php echo ($current_sort === 'featured-desc') ? 'active' : ''; ?>" href="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'featured', 'order' => 'desc', 'page' => 1])); ?>">Featured</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item <?php echo ($current_sort === 'price-asc') ? 'active' : ''; ?>" href="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'price', 'order' => 'asc', 'page' => 1])); ?>">Price: Low to High</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_sort === 'price-desc') ? 'active' : ''; ?>" href="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'price', 'order' => 'desc', 'page' => 1])); ?>">Price: High to Low</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item <?php echo ($current_sort === 'date-desc') ? 'active' : ''; ?>" href="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'date', 'order' => 'desc', 'page' => 1])); ?>">Newest First</a></li>
-                        <li><a class="dropdown-item <?php echo ($current_sort === 'name-asc') ? 'active' : ''; ?>" href="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'name', 'order' => 'asc', 'page' => 1])); ?>">Name (A-Z)</a></li>
-                    </ul>
-                </div>
-                
-                <!-- View Toggle -->
-                <div class="btn-group ms-3 d-none d-md-flex" role="group" aria-label="View options">
-                    <input type="radio" class="btn-check" name="view-options" id="grid-view" autocomplete="off" checked>
-                    <label class="btn btn-outline-secondary" for="grid-view" title="Grid View">
-                        <i class="fas fa-th-large"></i>
-                    </label>
-                    
-                    <input type="radio" class="btn-check" name="view-options" id="list-view" autocomplete="off">
-                    <label class="btn btn-outline-secondary" for="list-view" title="List View">
-                        <i class="fas fa-list"></i>
-                    </label>
-                </div>
-            </div>
-        </div>
-        
-        <?php if (!empty($error_message)): ?>
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle me-2"></i> <?php echo htmlspecialchars($error_message); ?>
-            </div>
-        <?php endif; ?>
-        
-        <!-- Properties Grid -->
-        <div class="row g-4 mb-5" id="properties-container">
-            <?php if (!empty($properties)): ?>
-                <?php foreach ($properties as $property): ?>
-                    <div class="col-12 col-md-6 col-lg-4 col-xxl-3">
-                        <div class="property-card card h-100 border-0 shadow-sm">
-                            <!-- Property Image -->
-                            <div class="position-relative">
-                                <a href="property-details.php?id=<?php echo $property['id']; ?>" class="text-decoration-none">
-                                    <img src="<?php echo $property['image']; ?>" class="card-img-top property-image" alt="<?php echo $property['title']; ?>" loading="lazy">
-                                </a>
-                                
-                                <!-- Status Badge -->
-                                <div class="position-absolute top-2 start-2">
-                                    <span class="badge bg-<?php echo strtolower($property['status']) === 'for sale' ? 'success' : 'primary'; ?> bg-opacity-90">
-                                        <?php echo $property['status']; ?>
-                                    </span>
-                                </div>
-                                
-                                <!-- Featured Badge -->
-                                <?php if ($property['is_featured']): ?>
-                                    <div class="position-absolute top-2 end-2">
-                                        <span class="badge bg-warning text-dark">
-                                            <i class="fas fa-star me-1"></i> Featured
-                                        </span>
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <!-- Quick Actions -->
-                                <div class="position-absolute bottom-0 end-0 p-2">
-                                    <button type="button" class="btn btn-light btn-sm rounded-circle shadow-sm me-1" data-bs-toggle="tooltip" title="Add to favorites">
-                                        <i class="far fa-heart"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="tooltip" title="Share">
-                                        <i class="fas fa-share-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Property Details -->
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <span class="badge bg-light text-dark mb-2"><?php echo $property['type']; ?></span>
-                                        <h3 class="h5 card-title mb-1">
-                                            <a href="property-details.php?id=<?php echo $property['id']; ?>" class="text-decoration-none text-dark">
-                                                <?php echo $property['title']; ?>
-                                            </a>
-                                        </h3>
-                                        <p class="text-muted small mb-2">
-                                            <i class="fas fa-map-marker-alt text-primary me-1"></i>
-                                            <?php echo $property['location']; ?>
-                                        </p>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="h5 text-primary mb-0"><?php echo $property['price']; ?></div>
-                                        <small class="text-muted"><?php echo $property['area']; ?></small>
-                                    </div>
-                                </div>
-                                
-                                <!-- Property Features -->
-                                <div class="property-features d-flex justify-content-between text-center border-top border-bottom py-2 my-3">
-                                    <div>
-                                        <div class="text-muted small">Bedrooms</div>
-                                        <div class="fw-bold"><?php echo $property['bedrooms']; ?></div>
-                                    </div>
-                                    <div class="border-start border-end px-3 mx-3">
-                                        <div class="text-muted small">Bathrooms</div>
-                                        <div class="fw-bold"><?php echo $property['bathrooms']; ?></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-muted small">Area</div>
-                                        <div class="fw-bold"><?php echo $property['area']; ?></div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Amenities -->
-                                <?php if (!empty($property['amenities'])): ?>
-                                    <div class="amenities mb-3">
-                                        <div class="d-flex flex-wrap gap-1">
-                                            <?php foreach (array_slice($property['amenities'], 0, 3) as $amenity): ?>
-                                                <span class="badge bg-light text-dark border small" data-bs-toggle="tooltip" title="<?php echo htmlspecialchars($amenity); ?>">
-                                                    <i class="fas fa-check-circle text-success me-1"></i>
-                                                    <?php echo $amenity; ?>
-                                                </span>
-                                            <?php endforeach; ?>
-                                            <?php if (count($property['amenities']) > 3): ?>
-                                                <span class="badge bg-light text-muted small" data-bs-toggle="tooltip" title="<?php echo htmlspecialchars(implode(', ', array_slice($property['amenities'], 3))); ?>">
-                                                    +<?php echo count($property['amenities']) - 3; ?> more
-                                                </span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <!-- Action Buttons -->
-                                <div class="d-grid gap-2">
-                                    <a href="property-details.php?id=<?php echo $property['id']; ?>" class="btn btn-primary">
-                                        <i class="far fa-eye me-2"></i> View Details
-                                    </a>
-                                    <button type="button" class="btn btn-outline-primary schedule-visit-btn" 
-                                            data-property-id="<?php echo $property['id']; ?>"
-                                            data-bs-toggle="modal" data-bs-target="#scheduleVisitModal">
-                                        <i class="far fa-calendar-alt me-2"></i> Schedule Visit
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="col-12 text-center py-5">
-                    <div class="empty-state">
-                        <i class="fas fa-search fa-3x text-muted mb-4"></i>
-                        <h3>No Properties Found</h3>
-                        <p class="text-muted mb-4">We couldn't find any properties matching your criteria.</p>
-                        <a href="?" class="btn btn-primary">
-                            <i class="fas fa-sync-alt me-2"></i> Reset Filters
-                        </a>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-        
-        <!-- Pagination -->
-        <?php if ($total_pages > 1): ?>
-            <nav aria-label="Property pagination" class="mt-5">
-                <ul class="pagination justify-content-center">
-                    <!-- Previous Page Link -->
-                    <li class="page-item <?php echo $search_params['page'] <= 1 ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $search_params['page'] - 1])); ?>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .property-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .property-image {
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .property-card:hover .property-image {
+            transform: scale(1.05);
+        }
+
+        .price-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .property-type-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 60px 0;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .search-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .location-badge {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .property-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.php">
+                <i class="fas fa-home me-2"></i>APS Dream Homes Pvt Ltd
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
                     </li>
-                    
-                    <!-- Page Numbers -->
-                    <?php 
-                    $start_page = max(1, $search_params['page'] - 2);
-                    $end_page = min($total_pages, $start_page + 4);
-                    $start_page = max(1, $end_page - 4);
-                    
-                    if ($start_page > 1): ?>
-                        <li class="page-item"><a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">1</a></li>
-                        <?php if ($start_page > 2): ?>
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                    
-                    <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-                        <li class="page-item <?php echo $i == $search_params['page'] ? 'active' : ''; ?>">
-                            <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>">
-                                <?php echo $i; ?>
-                            </a>
-                        </li>
-                    <?php endfor; ?>
-                    
-                    <?php if ($end_page < $total_pages): ?>
-                        <?php if ($end_page < $total_pages - 1): ?>
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
-                        <?php endif; ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>">
-                                <?php echo $total_pages; ?>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    
-                    <!-- Next Page Link -->
-                    <li class="page-item <?php echo $search_params['page'] >= $total_pages ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $search_params['page'] + 1])); ?>" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="properties.php">Properties</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.php">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.php">Contact</a>
                     </li>
                 </ul>
-            </nav>
-        <?php endif; ?>
-    </div>
-</main>
-
-<!-- Schedule Visit Modal -->
-<div class="modal fade" id="scheduleVisitModal" tabindex="-1" aria-labelledby="scheduleVisitModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="scheduleVisitModalLabel">Schedule a Visit</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="d-flex">
+                    <a href="tel:+919554000001" class="btn btn-outline-success me-2">
+                        <i class="fas fa-phone me-1"></i>+91-9554000001
+                    </a>
+                    <a href="customer_login.php" class="btn btn-outline-light me-2">Login</a>
+                    <a href="customer_registration.php" class="btn btn-success">Register</a>
+                </div>
             </div>
-            <form id="scheduleVisitForm" method="POST" action="process_visit.php">
-                <input type="hidden" name="property_id" id="schedulePropertyId" value="">
-                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="visitDate" class="form-label">Preferred Date</label>
-                        <input type="date" class="form-control" id="visitDate" name="visit_date" required 
-                               min="<?php echo date('Y-m-d'); ?>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="visitTime" class="form-label">Preferred Time</label>
-                        <select class="form-select" id="visitTime" name="visit_time" required>
-                            <option value="">Select a time</option>
-                            <option value="09:00">09:00 AM</option>
-                            <option value="10:00">10:00 AM</option>
-                            <option value="11:00">11:00 AM</option>
-                            <option value="12:00">12:00 PM</option>
-                            <option value="13:00">01:00 PM</option>
-                            <option value="14:00">02:00 PM</option>
-                            <option value="15:00">03:00 PM</option>
-                            <option value="16:00">04:00 PM</option>
-                            <option value="17:00">05:00 PM</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="visitorName" class="form-label">Your Name</label>
-                        <input type="text" class="form-control" id="visitorName" name="visitor_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="visitorEmail" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="visitorEmail" name="visitor_email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="visitorPhone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="visitorPhone" name="visitor_phone" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="visitNotes" class="form-label">Additional Notes (Optional)</label>
-                        <textarea class="form-control" id="visitNotes" name="visit_notes" rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Schedule Visit</button>
-                </div>
-            </form>
         </div>
-    </div>
-</div>
+    </nav>
 
-<!-- Share Modal -->
-<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="shareModalLabel">Share Property</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h1 class="section-title">🏠 Premium Properties in Gorakhpur</h1>
+                    <p class="lead mb-4">
+                        Discover exceptional real estate opportunities with APS Dream Homes Pvt Ltd.<br>
+                        Your trusted partner for residential and commercial properties in Eastern UP.
+                    </p>
+
+                    <!-- Search and Filter Section -->
+                    <div class="search-section">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <select class="form-select" id="propertyTypeFilter">
+                                    <option value="">All Types</option>
+                                    <option value="apartment">Apartments</option>
+                                    <option value="villa">Villas</option>
+                                    <option value="plot">Plots</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="house">Houses</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="locationFilter">
+                                    <option value="">All Locations</option>
+                                    <option value="Gorakhpur">Gorakhpur</option>
+                                    <option value="Lucknow">Lucknow</option>
+                                    <option value="Varanasi">Varanasi</option>
+                                    <option value="Allahabad">Allahabad</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="priceFilter">
+                                    <option value="">All Prices</option>
+                                    <option value="0-3000000">Under ₹30L</option>
+                                    <option value="3000000-5000000">₹30L - ₹50L</option>
+                                    <option value="5000000-10000000">₹50L - ₹1Cr</option>
+                                    <option value="10000000-20000000">₹1Cr - ₹2Cr</option>
+                                    <option value="20000000">Above ₹2Cr</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-light w-100" id="searchBtn">
+                                    <i class="fas fa-search me-2"></i>Search Properties
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="shareLink" class="form-label">Property Link</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="shareLink" readonly>
-                        <button class="btn btn-outline-secondary" type="button" id="copyLinkBtn">
-                            <i class="far fa-copy"></i> Copy
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-home fa-3x mb-3"></i>
+                        <h2 class="mb-2">500+</h2>
+                        <p class="mb-0">Properties Delivered</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <h2 class="mb-2">1000+</h2>
+                        <p class="mb-0">Happy Families</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
+                        <h2 class="mb-2">15+</h2>
+                        <p class="mb-0">Prime Locations</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <i class="fas fa-award fa-3x mb-3"></i>
+                        <h2 class="mb-2">8+</h2>
+                        <p class="mb-0">Years Experience</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search and Filter Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form id="propertySearchForm" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="searchQuery" class="form-label">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchQuery" placeholder="Search by name, location, or features...">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="propertyTypeFilter" class="form-label">Property Type</label>
+                            <select class="form-select" id="propertyTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="plot">Plots</option>
+                                <option value="apartment">Apartments</option>
+                                <option value="villa">Villas</option>
+                                <option value="commercial">Commercial</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="locationFilter" class="form-label">Location</label>
+                            <select class="form-select" id="locationFilter">
+                                <option value="">All Locations</option>
+                                <option value="gorakhpur">Gorakhpur</option>
+                                <option value="lucknow">Lucknow</option>
+                                <option value="varanasi">Varanasi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="priceRangeFilter" class="form-label">Price Range</label>
+                            <select class="form-select" id="priceRangeFilter">
+                                <option value="">Any Price</option>
+                                <option value="0-1000000">Under ₹10 Lakhs</option>
+                                <option value="1000000-3000000">₹10L - ₹30L</option>
+                                <option value="3000000-5000000">₹30L - ₹50L</option>
+                                <option value="5000000-10000000">₹50L - ₹1 Cr</option>
+                                <option value="10000000">Above ₹1 Cr</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="sortBy" class="form-label">Sort By</label>
+                            <select class="form-select" id="sortBy">
+                                <option value="featured">Featured</option>
+                                <option value="price_asc">Price: Low to High</option>
+                                <option value="price_desc">Price: High to Low</option>
+                                <option value="newest">Newest First</option>
+                                <option value="area_asc">Area: Small to Large</option>
+                                <option value="area_desc">Area: Large to Small</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" id="advancedFiltersBtn" class="btn btn-outline-secondary w-100" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                                <i class="fas fa-sliders-h"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Advanced Filters -->
+                    <div class="collapse mt-3" id="advancedFilters">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Bedrooms</label>
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="bedrooms" id="bedroomAny" value="" checked>
+                                    <label class="btn btn-outline-primary" for="bedroomAny">Any</label>
+                                    <input type="radio" class="btn-check" name="bedrooms" id="bedroom1" value="1">
+                                    <label class="btn btn-outline-primary" for="bedroom1">1+</label>
+                                    <input type="radio" class="btn-check" name="bedrooms" id="bedroom2" value="2">
+                                    <label class="btn btn-outline-primary" for="bedroom2">2+</label>
+                                    <input type="radio" class="btn-check" name="bedrooms" id="bedroom3" value="3">
+                                    <label class="btn btn-outline-primary" for="bedroom3">3+</label>
+                                    <input type="radio" class="btn-check" name="bedrooms" id="bedroom4" value="4">
+                                    <label class="btn btn-outline-primary" for="bedroom4">4+</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Area (sq ft)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="minArea" placeholder="Min">
+                                    <span class="input-group-text">to</span>
+                                    <input type="number" class="form-control" id="maxArea" placeholder="Max">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Amenities</label>
+                                <select class="form-select" id="amenitiesFilter" multiple>
+                                    <option value="parking">Parking</option>
+                                    <option value="garden">Garden</option>
+                                    <option value="security">24/7 Security</option>
+                                    <option value="gym">Gym</option>
+                                    <option value="pool">Swimming Pool</option>
+                                    <option value="lift">Lift</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" id="resetFilters" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-undo me-1"></i> Reset Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Properties Grid -->
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">🏗️ Our Premium Projects</h2>
+                    <p class="text-muted mb-0">Handpicked properties that match your criteria</p>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <span id="propertyCount" class="badge bg-primary rounded-pill">0</span> 
+                        <span class="ms-1">Properties Found</span>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-secondary active view-toggle" data-view="grid">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary view-toggle" data-view="list">
+                            <i class="fas fa-list"></i>
                         </button>
                     </div>
                 </div>
-                <div class="social-share mt-4">
-                    <p class="mb-2">Share via:</p>
-                    <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-outline-primary btn-sm" id="shareFacebook">
-                            <i class="fab fa-facebook-f me-1"></i> Facebook
+            </div>
+
+            <div class="row g-4" id="propertiesGrid">
+                <!-- Properties will be loaded here via JavaScript -->
+            </div>
+
+            <div class="text-center mt-5" id="loadingSpinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Loading premium properties...</p>
+            </div>
+
+            <div class="text-center mt-5 d-none" id="noProperties">
+                <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                <h4 class="text-muted">No properties found matching your criteria</h4>
+                <p class="text-muted">Try adjusting your filters or browse all properties</p>
+                <button class="btn btn-primary" onclick="loadAllProperties()">Show All Properties</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Why Choose APS Dream Homes Pvt Ltd?</h2>
+                <p class="lead text-muted">Experience the difference with our professional approach</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h5>Registered Company</h5>
+                        <p class="text-muted">Licensed under Companies Act 2013 with proper legal compliance and transparent operations</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h5>Prime Locations</h5>
+                        <p class="text-muted">Strategically located projects in high-growth areas with excellent connectivity and infrastructure</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h5>Customer First</h5>
+                        <p class="text-muted">Every decision we make prioritizes customer satisfaction and long-term relationships</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h5>Timely Delivery</h5>
+                        <p class="text-muted">Proven track record of delivering projects on time without compromising quality standards</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h5>Sustainable Development</h5>
+                        <p class="text-muted">Eco-friendly construction practices with green spaces and energy-efficient designs</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h5>24/7 Support</h5>
+                        <p class="text-muted">Round-the-clock customer support and dedicated relationship managers for all clients</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="mb-4">Ready to Find Your Dream Property?</h2>
+                    <p class="lead mb-4">
+                        Join thousands of satisfied customers who have found their perfect home with APS Dream Homes Pvt Ltd
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="contact.php" class="btn btn-light btn-lg">
+                            <i class="fas fa-phone me-2"></i>Contact Us Today
                         </a>
-                        <a href="#" class="btn btn-outline-info btn-sm" id="shareTwitter">
-                            <i class="fab fa-twitter me-1"></i> Twitter
-                        </a>
-                        <a href="#" class="btn btn-outline-success btn-sm" id="shareWhatsApp">
-                            <i class="fab fa-whatsapp me-1"></i> WhatsApp
+                        <a href="about.php" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>Learn More About Us
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<?php require_once __DIR__ . '/includes/templates/footer.php'; ?>
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-3">
+                        <i class="fas fa-home me-2"></i>APS Dream Homes Pvt Ltd
+                    </h5>
+                    <p>Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction.</p>
+                    <div class="social-links mt-3">
+                        <a href="https://facebook.com/apsdreamhomes" class="text-white me-3" target="_blank">
+                            <i class="fab fa-facebook-f fa-lg"></i>
+                        </a>
+                        <a href="https://instagram.com/apsdreamhomes" class="text-white me-3" target="_blank">
+                            <i class="fab fa-instagram fa-lg"></i>
+                        </a>
+                        <a href="https://linkedin.com/company/aps-dream-homes-pvt-ltd" class="text-white me-3" target="_blank">
+                            <i class="fab fa-linkedin-in fa-lg"></i>
+                        </a>
+                        <a href="https://youtube.com/apsdreamhomes" class="text-white" target="_blank">
+                            <i class="fab fa-youtube fa-lg"></i>
+                        </a>
+                    </div>
+                </div>
 
-<script>
-// Initialize tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    
-    // Handle schedule visit button clicks
-    document.querySelectorAll('.schedule-visit-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const propertyId = this.getAttribute('data-property-id');
-            document.getElementById('schedulePropertyId').value = propertyId;
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="index.php" class="text-white-50">Home</a></li>
+                        <li class="mb-2"><a href="properties.php" class="text-white-50">Properties</a></li>
+                        <li class="mb-2"><a href="about.php" class="text-white-50">About Us</a></li>
+                        <li class="mb-2"><a href="contact.php" class="text-white-50">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="mb-3">Contact Info</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li class="mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            123, Kunraghat Main Road<br>
+                            Near Railway Station<br>
+                            Gorakhpur, UP - 273008
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-phone-alt me-2"></i>
+                            <a href="tel:+919554000001" class="text-white-50">+91-9554000001</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-envelope me-2"></i>
+                            <a href="mailto:info@apsdreamhomes.com" class="text-white-50">info@apsdreamhomes.com</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock me-2"></i>
+                            Mon-Sat: 9:30 AM - 7:00 PM<br>
+                            Sun: 10:00 AM - 5:00 PM
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="mb-3">Newsletter</h5>
+                    <p class="text-white-50">Subscribe for latest property updates and exclusive deals</p>
+                    <form class="mb-3" id="newsletterForm">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Your Email" required id="newsletterEmail">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr class="my-4 bg-white">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-white-50">
+                        &copy; 2025 APS Dream Homes Pvt Ltd. All rights reserved.<br>
+                        <small>Registration No: U70109UP2022PTC163047</small>
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-white-50 me-3">Privacy Policy</a>
+                    <a href="#" class="text-white-50">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
         });
-    });
-    
-    // Handle share button clicks
-    document.querySelectorAll('[data-bs-toggle="tooltip"][title="Share"]').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const propertyCard = this.closest('.property-card');
-            const propertyLink = propertyCard.querySelector('a[href^="property-details.php"]').href;
-            const propertyTitle = propertyCard.querySelector('.card-title').textContent.trim();
-            
-            const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
-            const shareLinkInput = document.getElementById('shareLink');
-            
-            shareLinkInput.value = propertyLink;
-            
-            // Set up share buttons
-            document.getElementById('shareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propertyLink)}`;
-            document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(propertyLink)}&text=${encodeURIComponent(propertyTitle)}`;
-            document.getElementById('shareWhatsApp').href = `https://wa.me/?text=${encodeURIComponent(propertyTitle + ' - ' + propertyLink)}`;
-            
-            shareModal.show();
+
+        // Sample properties data (in real app, this would come from database)
+        const propertiesData = [
+            {
+                id: 1,
+                title: "APS Green Valley - 2BHK Premium Apartments",
+                description: "Modern 2BHK apartments with world-class amenities in the heart of Gorakhpur. Features spacious living areas, contemporary design, and eco-friendly construction.",
+                price: 4500000,
+                type: "apartment",
+                location: "Gorakhpur",
+                bedrooms: 2,
+                bathrooms: 2,
+                area: 1200,
+                features: ["Clubhouse", "Swimming Pool", "Gymnasium", "Security", "Parking"],
+                image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800",
+                status: "Available"
+            },
+            {
+                id: 2,
+                title: "APS Royal Residency - 3BHK Luxury Flats",
+                description: "Experience luxury living with premium 3BHK apartments featuring Italian marble flooring, modular kitchens, and modern bathrooms with exclusive amenities.",
+                price: 7500000,
+                type: "apartment",
+                location: "Gorakhpur",
+                bedrooms: 3,
+                bathrooms: 3,
+                area: 1650,
+                features: ["Rooftop Pool", "Banquet Hall", "Concierge", "Smart Home", "Security"],
+                image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+                status: "Available"
+            },
+            {
+                id: 3,
+                title: "APS Lakeview Plots - Investment Opportunity",
+                description: "Prime residential plots in a rapidly developing area with excellent connectivity. Perfect for building your dream home or investment purposes.",
+                price: 3500000,
+                type: "plot",
+                location: "Gorakhpur",
+                bedrooms: 0,
+                bathrooms: 0,
+                area: 1200,
+                features: ["Scenic Location", "Infrastructure", "Investment", "Clear Title"],
+                image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800",
+                status: "Available"
+            },
+            {
+                id: 4,
+                title: "APS Smart Villas - 4BHK Independent Houses",
+                description: "Technology-integrated luxury villas with smart home features, private gardens, and premium construction quality for discerning homeowners.",
+                price: 15000000,
+                type: "villa",
+                location: "Gorakhpur",
+                bedrooms: 4,
+                bathrooms: 4,
+                area: 2500,
+                features: ["Smart Technology", "Private Garden", "Swimming Pool", "Security", "Premium"],
+                image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800",
+                status: "Available"
+            },
+            {
+                id: 5,
+                title: "APS Business Park - Commercial Spaces",
+                description: "Premium commercial office spaces designed for modern businesses with state-of-the-art infrastructure and professional management services.",
+                price: 8500000,
+                type: "commercial",
+                location: "Gorakhpur",
+                bedrooms: 0,
+                bathrooms: 2,
+                area: 1500,
+                features: ["Modern Infrastructure", "High-Speed Internet", "Conference Rooms", "Parking", "Management"],
+                image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
+                status: "Available"
+            },
+            {
+                id: 6,
+                title: "APS Affordable Housing - 1BHK Starter Homes",
+                description: "Quality 1BHK apartments for first-time buyers and young families. Modern amenities at budget-friendly prices with excellent construction quality.",
+                price: 2800000,
+                type: "apartment",
+                location: "Gorakhpur",
+                bedrooms: 1,
+                bathrooms: 1,
+                area: 650,
+                features: ["Affordable", "Quality Construction", "Community Center", "Security", "Parking"],
+                image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+                status: "Available"
+            }
+        ];
+
+        // Load properties on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllProperties();
+
+            // Newsletter form
+            document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('newsletterEmail').value;
+                if (email) {
+                    alert('Thank you for subscribing to our newsletter!');
+                    this.reset();
+                }
+            });
         });
-    });
-    
-    // Handle copy link button
-    document.getElementById('copyLinkBtn')?.addEventListener('click', function() {
-        const shareLink = document.getElementById('shareLink');
-        shareLink.select();
-        document.execCommand('copy');
-        
-        // Show feedback
-        const originalText = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-check"></i> Copied!';
-        
-        setTimeout(() => {
-            this.innerHTML = originalText;
-        }, 2000);
-    });
-    
-    // Handle form submission
-    document.getElementById('scheduleVisitForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Show loading state
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalButtonText = submitButton.innerHTML;
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Scheduling...';
-        
-        // Simulate form submission (replace with actual AJAX call)
-        setTimeout(() => {
-            // Reset button state
-            submitButton.disabled = false;
-            submitButton.innerHTML = originalButtonText;
+
+        // Filter properties
+        document.getElementById('searchBtn').addEventListener('click', filterProperties);
+        document.getElementById('propertyTypeFilter').addEventListener('change', filterProperties);
+        document.getElementById('locationFilter').addEventListener('change', filterProperties);
+        document.getElementById('priceFilter').addEventListener('change', filterProperties);
+
+        function filterProperties() {
+            const typeFilter = document.getElementById('propertyTypeFilter').value;
+            const locationFilter = document.getElementById('locationFilter').value;
+            const priceFilter = document.getElementById('priceFilter').value;
+
+            const filteredProperties = propertiesData.filter(property => {
+                const typeMatch = !typeFilter || property.type === typeFilter;
+                const locationMatch = !locationFilter || property.location === locationFilter;
+                let priceMatch = true;
+
+                if (priceFilter) {
+                    const [min, max] = priceFilter.split('-').map(v => v ? parseInt(v) : null);
+                    if (max) {
+                        priceMatch = property.price >= min && property.price <= max;
+                    } else {
+                        priceMatch = property.price >= min;
+                    }
+                }
+
+                return typeMatch && locationMatch && priceMatch;
+            });
+
+            displayProperties(filteredProperties);
+        }
+
+        function loadAllProperties() {
+            displayProperties(propertiesData);
+        }
+
+        // Display properties in grid or list view
+        function displayProperties(properties) {
+            const grid = document.getElementById('propertiesGrid');
+            const spinner = document.getElementById('loadingSpinner');
+            const noProperties = document.getElementById('noProperties');
+            const propertyCount = document.getElementById('propertyCount');
+
+            spinner.classList.remove('d-none');
+            grid.innerHTML = '';
+            propertyCount.textContent = properties.length;
+
+            // Simulate API delay
+            setTimeout(() => {
+                spinner.classList.add('d-none');
+
+                if (properties.length === 0) {
+                    noProperties.classList.remove('d-none');
+                    return;
+                }
+
+                noProperties.classList.add('d-none');
+
+                if (currentView === 'grid') {
+                    grid.className = 'row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4';
+                    grid.innerHTML = properties.map(property => createPropertyCard(property)).join('');
+                } else {
+                    grid.className = 'row row-cols-1 g-4';
+                    grid.innerHTML = properties.map(property => createPropertyListItem(property)).join('');
+                }
+
+                // Initialize tooltips
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+
+            }, 500);
+        }
+
+        // Create property card for grid view
+        function createPropertyCard(property) {
+            return `
+                <div class="col" data-aos="fade-up">
+                    <div class="card property-card h-100 shadow-sm">
+                        <div class="position-relative">
+                            <img src="${property.image}" class="card-img-top property-image" alt="${property.title}" loading="lazy">
+                            ${property.featured ? '<div class="featured-badge">Featured</div>' : ''}
+                            <div class="property-type-badge">${property.type.charAt(0).toUpperCase() + property.type.slice(1)}</div>
+                            <div class="property-actions">
+                                <button class="btn btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to favorites">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="btn btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Share property">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title fw-bold mb-0">${property.title}</h5>
+                                <div class="text-end">
+                                    <div class="text-primary fw-bold fs-4">${formatPrice(property.price)}</div>
+                                    <small class="text-muted">${(property.price / property.area).toFixed(2)}/sq.ft</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <span class="location-badge">
+                                    <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                                    ${property.location.charAt(0).toUpperCase() + property.location.slice(1)}
+                                </span>
+                            </div>
+                            
+                            <p class="card-text text-muted mb-3 flex-grow-1">
+                                ${property.description.substring(0, 100)}...
+                                <a href="#" class="text-decoration-none" onclick="viewProperty(${property.id}); return false;">Read more</a>
+                            </p>
+
+                            <div class="property-features mb-3">
+                                ${property.bedrooms ? `
+                                    <div class="feature">
+                                        <i class="fas fa-bed"></i>
+                                        <span>${property.bedrooms} ${property.bedrooms > 1 ? 'Beds' : 'Bed'}</span>
+                                    </div>
+                                ` : ''}
+                                ${property.bathrooms ? `
+                                    <div class="feature">
+                                        <i class="fas fa-bath"></i>
+                                        <span>${property.bathrooms} ${property.bathrooms > 1 ? 'Baths' : 'Bath'}</span>
+                                    </div>
+                                ` : ''}
+                                <div class="feature">
+                                    <i class="fas fa-vector-square"></i>
+                                    <span>${formatArea(property.area)} sq.ft</span>
+                                </div>
+                            </div>
+
+                            ${property.amenities && property.amenities.length > 0 ? `
+                                <div class="amenities mb-3">
+                                    ${property.amenities.slice(0, 3).map(amenity => `
+                                        <span class="badge bg-light text-dark me-1 mb-1" data-bs-toggle="tooltip" title="${amenity.charAt(0).toUpperCase() + amenity.slice(1)}">
+                                            <i class="fas fa-${getAmenityIcon(amenity)} me-1"></i>
+                                            ${amenity.charAt(0).toUpperCase() + amenity.slice(1)}
+                                        </span>
+                                    `).join('')}
+                                    ${property.amenities.length > 3 ? `
+                                        <span class="badge bg-light text-dark" data-bs-toggle="tooltip" title="${property.amenities.slice(3).join(', ')}">
+                                            +${property.amenities.length - 3} more
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+
+                            <div class="d-grid gap-2 mt-auto">
+                                <button class="btn btn-primary" onclick="viewProperty(${property.id}); return false;">
+                                    <i class="fas fa-eye me-1"></i> View Details
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="scheduleVisit(${property.id}, '${property.title.replace(/'/g, "\\'")}'); return false;">
+                                    <i class="far fa-calendar-alt me-1"></i> Schedule Visit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Create property list item for list view
+        function createPropertyListItem(property) {
+            return `
+                <div class="col" data-aos="fade-up">
+                    <div class="card property-list-item h-100 shadow-sm">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <div class="position-relative h-100">
+                                    <img src="${property.image}" class="img-fluid rounded-start h-100 w-100" style="object-fit: cover;" alt="${property.title}" loading="lazy">
+                                    ${property.featured ? '<div class="featured-badge">Featured</div>' : ''}
+                                    <div class="property-type-badge">${property.type.charAt(0).toUpperCase() + property.type.slice(1)}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body h-100 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h5 class="card-title fw-bold mb-1">${property.title}</h5>
+                                            <div class="mb-2">
+                                                <span class="location-badge">
+                                                    <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                                                    ${property.location.charAt(0).toUpperCase() + property.location.slice(1)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="text-primary fw-bold fs-4">${formatPrice(property.price)}</div>
+                                            <small class="text-muted">${(property.price / property.area).toFixed(2)}/sq.ft</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="card-text text-muted mb-3">
+                                        ${property.description.substring(0, 200)}...
+                                        <a href="#" class="text-decoration-none" onclick="viewProperty(${property.id}); return false;">Read more</a>
+                                    </p>
+
+                                    <div class="property-features mb-3">
+                                        ${property.bedrooms ? `
+                                            <div class="feature">
+                                                <i class="fas fa-bed"></i>
+                                                <span>${property.bedrooms} ${property.bedrooms > 1 ? 'Beds' : 'Bed'}</span>
+                                            </div>
+                                        ` : ''}
+                                        ${property.bathrooms ? `
+                                            <div class="feature">
+                                                <i class="fas fa-bath"></i>
+                                                <span>${property.bathrooms} ${property.bathrooms > 1 ? 'Baths' : 'Bath'}</span>
+                                            </div>
+                                        ` : ''}
+                                        <div class="feature">
+                                            <i class="fas fa-vector-square"></i>
+                                            <span>${formatArea(property.area)} sq.ft</span>
+                                        </div>
+                                    </div>
+
+                                    ${property.amenities && property.amenities.length > 0 ? `
+                                        <div class="amenities mb-3">
+                                            ${property.amenities.slice(0, 5).map(amenity => `
+                                                <span class="badge bg-light text-dark me-1 mb-1">
+                                                    <i class="fas fa-${getAmenityIcon(amenity)} me-1"></i>
+                                                    ${amenity.charAt(0).toUpperCase() + amenity.slice(1)}
+                                                </span>
+                                            `).join('')}
+                                            ${property.amenities.length > 5 ? `
+                                                <span class="badge bg-light text-dark" data-bs-toggle="tooltip" title="${property.amenities.slice(5).join(', ')}">
+                                                    +${property.amenities.length - 5} more
+                                                </span>
+                                            ` : ''}
+                                        </div>
+                                    ` : ''}
+
+                                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                                        <div class="property-actions">
+                                            <button class="btn btn-sm btn-outline-secondary me-2" data-bs-toggle="tooltip" title="Add to favorites">
+                                                <i class="far fa-heart"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary me-2" data-bs-toggle="tooltip" title="Share property">
+                                                <i class="fas fa-share-alt"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="Print details">
+                                                <i class="fas fa-print"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-outline-primary me-2" onclick="scheduleVisit(${property.id}, '${property.title.replace(/'/g, "\\'")}'); return false;">
+                                                <i class="far fa-calendar-alt me-1"></i> Schedule Visit
+                                            </button>
+                                            <button class="btn btn-primary" onclick="viewProperty(${property.id}); return false;">
+                                                <i class="fas fa-eye me-1"></i> View Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get icon for amenity
+        function getAmenityIcon(amenity) {
+            const icons = {
+                'parking': 'parking',
+                'garden': 'tree',
+                'security': 'shield-alt',
+                'gym': 'dumbbell',
+                'pool': 'swimming-pool',
+                'lift': 'elevator'
+            };
+            return icons[amenity] || 'check-circle';
+        }
+
+        // View property details
+        function viewProperty(propertyId) {
+            // In a real application, this would navigate to property detail page
+            // For now, show a modal with property details
+            const property = propertiesData.find(p => p.id === propertyId);
+            if (!property) return;
             
-            // Show success message
-            const modal = bootstrap.Modal.getInstance(document.getElementById('scheduleVisitModal'));
-            modal.hide();
-            
-            // Show success alert
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
-            alert.style.zIndex = '1060';
-            alert.role = 'alert';
-            alert.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i> Your visit has been scheduled successfully!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            // Create modal HTML
+            const modalHTML = `
+                <div class="modal fade" id="propertyModal" tabindex="-1" aria-labelledby="propertyModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="propertyModalLabel">${property.title}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-lg-7">
+                                        <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
+                                            <div class="carousel-inner rounded">
+                                                <div class="carousel-item active">
+                                                    <img src="${property.image}" class="d-block w-100" alt="${property.title}">
+                                                </div>
+                                                <!-- Additional images would go here -->
+                                            </div>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <h5>Description</h5>
+                                            <p class="text-muted">${property.description}</p>
+                                            
+                                            <div class="row mt-4">
+                                                <div class="col-md-6">
+                                                    <h5>Property Details</h5>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            <i class="fas fa-home me-2 text-primary"></i>
+                                                            <strong>Type:</strong> ${property.type.charAt(0).toUpperCase() + property.type.slice(1)}
+                                                        </li>
+                                                        ${property.bedrooms ? `
+                                                            <li class="mb-2">
+                                                                <i class="fas fa-bed me-2 text-primary"></i>
+                                                                <strong>Bedrooms:</strong> ${property.bedrooms}
+                                                            </li>
+                                                        ` : ''}
+                                                        ${property.bathrooms ? `
+                                                            <li class="mb-2">
+                                                                <i class="fas fa-bath me-2 text-primary"></i>
+                                                                <strong>Bathrooms:</strong> ${property.bathrooms}
+                                                            </li>
+                                                        ` : ''}
+                                                        <li class="mb-2">
+                                                            <i class="fas fa-vector-square me-2 text-primary"></i>
+                                                            <strong>Area:</strong> ${formatArea(property.area)} sq.ft
+                                                        </li>
+                                                        <li class="mb-2">
+                                                            <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                                            <strong>Location:</strong> ${property.location.charAt(0).toUpperCase() + property.location.slice(1)}
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>Price Details</h5>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            <i class="fas fa-tag me-2 text-primary"></i>
+                                                            <strong>Price:</strong> ${formatPrice(property.price)}
+                                                        </li>
+                                                        <li class="mb-2">
+                                                            <i class="fas fa-calculator me-2 text-primary"></i>
+                                                            <strong>Price per sq.ft:</strong> ₹${(property.price / property.area).toFixed(2)}
+                                                        </li>
+                                                        <li class="mb-2">
+                                                            <i class="fas fa-file-invoice-dollar me-2 text-primary"></i>
+                                                            <strong>Maintenance:</strong> Included
+                                                        </li>
+                                                    </ul>
+                                                    
+                                                    <div class="mt-4">
+                                                        <button class="btn btn-primary w-100 mb-2" onclick="scheduleVisit(${property.id}, '${property.title.replace(/'/g, "\\'")}'); $('#propertyModal').modal('hide');">
+                                                            <i class="far fa-calendar-alt me-1"></i> Schedule a Visit
+                                                        </button>
+                                                        <button class="btn btn-outline-primary w-100">
+                                                            <i class="fas fa-phone-alt me-1"></i> Contact Agent
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h5>Request Information</h5>
+                                                <form id="propertyInquiryForm" class="mt-3">
+                                                    <input type="hidden" name="property_id" value="${property.id}">
+                                                    <input type="hidden" name="property_title" value="${property.title}">
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="inquiryName" class="form-label">Your Name</label>
+                                                        <input type="text" class="form-control" id="inquiryName" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="inquiryEmail" class="form-label">Email Address</label>
+                                                        <input type="email" class="form-control" id="inquiryEmail" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="inquiryPhone" class="form-label">Phone Number</label>
+                                                        <input type="tel" class="form-control" id="inquiryPhone" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="inquiryMessage" class="form-label">Message</label>
+                                                        <textarea class="form-control" id="inquiryMessage" rows="3" placeholder="I'm interested in this property..."></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary w-100">
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                        <span class="btn-text">Send Inquiry</span>
+                                                    </button>
+                                                </form>
+                                                
+                                                <div class="mt-4">
+                                                    <h6>Share this property</h6>
+                                                    <div class="d-flex gap-2">
+                                                        <button class="btn btn-outline-secondary btn-sm">
+                                                            <i class="fab fa-facebook-f"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary btn-sm">
+                                                            <i class="fab fa-whatsapp"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary btn-sm">
+                                                            <i class="fas fa-link"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary btn-sm ms-auto" onclick="window.print()">
+                                                            <i class="fas fa-print"></i> Print
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             `;
             
-            document.body.appendChild(alert);
+            // Add modal to DOM
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = modalHTML;
+            document.body.appendChild(modalContainer);
             
-            // Initialize and show the alert
-            const bsAlert = new bootstrap.Alert(alert);
+            // Initialize and show modal
+            const propertyModal = new bootstrap.Modal(document.getElementById('propertyModal'));
+            propertyModal.show();
             
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                bsAlert.close();
-            }, 5000);
-            
-            // Reset form
-            this.reset();
-            
-        }, 1500);
-    });
-    
-    // Handle view toggle
-    const gridView = document.getElementById('grid-view');
-    const listView = document.getElementById('list-view');
-    const propertiesContainer = document.getElementById('properties-container');
-    
-    if (gridView && listView && propertiesContainer) {
-        gridView.addEventListener('change', function() {
-            if (this.checked) {
-                propertiesContainer.classList.remove('list-view');
-                propertiesContainer.classList.add('grid-view');
-            }
-        });
-        
-        listView.addEventListener('change', function() {
-            if (this.checked) {
-                propertiesContainer.classList.remove('grid-view');
-                propertiesContainer.classList.add('list-view');
-                
-                // Update property cards for list view
-                document.querySelectorAll('.property-card').forEach(card => {
-                    const img = card.querySelector('.property-image');
-                    const details = card.querySelector('.card-body');
+            // Handle form submission
+            const form = document.getElementById('propertyInquiryForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const spinner = submitBtn.querySelector('.spinner-border');
+                    const btnText = submitBtn.querySelector('.btn-text');
                     
-                    if (img && details) {
-                        card.classList.add('flex-row');
-                        img.parentElement.classList.add('col-md-5');
-                        details.classList.add('col-md-7');
-                    }
+                    // Show loading state
+                    spinner.classList.remove('d-none');
+                    btnText.textContent = 'Sending...';
+                    
+                    // Simulate form submission
+                    setTimeout(() => {
+                        // Reset form
+                        form.reset();
+                        
+                        // Hide loading state
+                        spinner.classList.add('d-none');
+                        btnText.textContent = 'Message Sent!';
+                        
+                        // Show success message
+                        showToast('Your inquiry has been sent successfully! Our team will contact you shortly.', 'success');
+                        
+                        // Reset button text after delay
+                        setTimeout(() => {
+                            btnText.textContent = 'Send Inquiry';
+                        }, 2000);
+                    }, 1500);
                 });
             }
-        });
-    }
-});
-</script>
+            
+            // Clean up modal on close
+            document.getElementById('propertyModal').addEventListener('hidden.bs.modal', function() {
+                modalContainer.remove();
+            });
+        }
+    </script>
+</body>
+</html>

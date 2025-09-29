@@ -57,6 +57,11 @@ function upload_to_google_drive($localFilePath, $driveFolderId = null, $fileName
     if (!class_exists('Google_Client')) {
         require_once __DIR__ . '/../../../vendor/autoload.php';
     }
+
+    if (!class_exists('Google_Client')) {
+        error_log('Google Client library not available');
+        return false;
+    }
     
     $client = new Google_Client();
     $client->setClientId($settings['google_drive_client_id']);
@@ -66,6 +71,12 @@ function upload_to_google_drive($localFilePath, $driveFolderId = null, $fileName
     $client->setScopes(['https://www.googleapis.com/auth/drive.file']);
     $client->setRedirectUri('urn:ietf:wg:oauth:2.0:oob');
     $client->refreshToken($settings['google_drive_refresh_token']);
+
+    // Check if Google API client is available
+    if (!class_exists('Google_Service_Drive')) {
+        error_log('Google API client not available for Drive upload');
+        return false;
+    }
 
     $service = new Google_Service_Drive($client);
     $fileMetadata = [

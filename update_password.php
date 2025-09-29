@@ -1,25 +1,23 @@
 <?php
-session_start();
-include("config.php");
+/**
+ * Script to update the password for the test user
+ */
 
-if (isset($_POST['email']) && isset($_POST['password'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+require_once 'config_simple.php';
 
-    // Hash the new password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+// Hash a known password
+$password = 'password123';
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+echo "New password hash: " . $hashed_password . "\n";
 
-    // Update the password in the user table
-    $updateQuery = "UPDATE users SET password='$hashedPassword' WHERE email='$email'";
-    if (mysqli_query($con, $updateQuery)) {
-        // Optionally, you can delete the OTP entry from the password_reset_temp table
-        mysqli_query($con, "DELETE FROM password_reset_temp WHERE email='$email'");
+// Update the password in the database
+$stmt = $conn->prepare("UPDATE mlm_agents SET password = ? WHERE mobile = ?");
+$mobile = '9123456789';
+$stmt->bind_param("ss", $hashed_password, $mobile);
 
-        echo 'Your password has been reset successfully. You can now <a href="login.php">login</a>.';
-    } else {
-        echo 'Error updating password: ' . mysqli_error($con);
-    }
+if ($stmt->execute()) {
+    echo "Password updated successfully!\n";
 } else {
-    echo 'Invalid request.';
+    echo "Error updating password: " . $conn->error . "\n";
 }
 ?>

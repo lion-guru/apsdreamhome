@@ -4,17 +4,32 @@ require_once __DIR__ . '/../includes/db_config.php';
 require_once __DIR__ . '/includes/geoip_utils.php';
 $conn = getDbConnection();
 
-// Get today's stats
-$stats = $conn->query("SELECT COUNT(*) as total, SUM(status = 'New') as new, SUM(status = 'Qualified') as qualified, SUM(status = 'Contacted') as contacted, SUM(status = 'Converted') as converted FROM leads")->fetch_assoc();
-$revenue = $conn->query("SELECT SUM(amount) as revenue FROM leads WHERE status = 'Converted' AND DATE(updated_at) = CURDATE()") ->fetch_assoc()['revenue'];
+// Get today's stats using prepared statement
+$stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(status = 'New') as new, SUM(status = 'Qualified') as qualified, SUM(status = 'Contacted') as contacted, SUM(status = 'Converted') as converted FROM leads");
+$stmt->execute();
+$stats = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+$revenue_stmt = $conn->prepare("SELECT SUM(amount) as revenue FROM leads WHERE status = 'Converted' AND DATE(updated_at) = CURDATE()");
+$revenue_stmt->execute();
+$revenue_result = $revenue_stmt->get_result()->fetch_assoc();
+$revenue = $revenue_result['revenue'];
+$revenue_stmt->close();
 
 $report = "Leads Report for " . date('Y-m-d') . ":\n";
 $report .= "Total: {$stats['total']}\nNew: {$stats['new']}\nQualified: {$stats['qualified']}\nContacted: {$stats['contacted']}\nConverted: {$stats['converted']}\n";
 $report .= "Today's Revenue: " . ($revenue ?: 0) . "\n";
 
-// Upload/Notification Audit Stats for Today
-$audit = $conn->query("SELECT COUNT(*) as total, SUM(slack_status='sent') as slack_ok, SUM(slack_status!='sent') as slack_fail, SUM(telegram_status='sent') as telegram_ok, SUM(telegram_status!='sent') as telegram_fail FROM upload_audit_log WHERE DATE(created_at) = CURDATE()")->fetch_assoc();
-$top_uploader = $conn->query("SELECT uploader, COUNT(*) as c FROM upload_audit_log WHERE DATE(created_at) = CURDATE() GROUP BY uploader ORDER BY c DESC LIMIT 1")->fetch_assoc();
+// Upload/Notification Audit Stats for Today using prepared statement
+$audit_stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(slack_status='sent') as slack_ok, SUM(slack_status!='sent') as slack_fail, SUM(telegram_status='sent') as telegram_ok, SUM(telegram_status!='sent') as telegram_fail FROM upload_audit_log WHERE DATE(created_at) = CURDATE()");
+$audit_stmt->execute();
+$audit = $audit_stmt->get_result()->fetch_assoc();
+$audit_stmt->close();
+
+$top_uploader_stmt = $conn->prepare("SELECT uploader, COUNT(*) as c FROM upload_audit_log WHERE DATE(created_at) = CURDATE() GROUP BY uploader ORDER BY c DESC LIMIT 1");
+$top_uploader_stmt->execute();
+$top_uploader = $top_uploader_stmt->get_result()->fetch_assoc();
+$top_uploader_stmt->close();
 
 $report .= "\nUploads Today: {$audit['total']}\n";
 $report .= "Slack OK: {$audit['slack_ok']} | Slack Fail: {$audit['slack_fail']}\n";

@@ -83,7 +83,6 @@ function createDefaultAdmin() {
             ];
         }
         
-        $conn->close();
     } catch (Exception $e) {
         return [
             'status' => 'error',
