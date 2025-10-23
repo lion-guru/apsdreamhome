@@ -1,6 +1,0 @@
-System Health Check Report - 2025-05-09 20:37:48
---------------------------------------------------
-Overall Status: ISSUES DETECTED ❌
-Errors:
-- Database Connection: Environment configuration failed
-- Environment Variables: Missing environment variable: DB_HOST

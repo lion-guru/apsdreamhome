@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin/
-Disallow: /cgi-bin/
-Disallow: /includes/
-Disallow: /DATABASE FILE/
-
-Sitemap: http://localhost:8000/sitemap.xml
