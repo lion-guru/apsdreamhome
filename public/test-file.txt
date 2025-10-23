@@ -1,3 +1,0 @@
-This is a test file to verify file download functionality.
-Created on: 2025-09-28
-File size: 1KB
