@@ -1,0 +1,141 @@
+/* Theme CSS */
+:root {
+    --primary-color: #4272d7;
+    --secondary-color: #fa4251;
+    --blue: #4272d7;
+    --red: #fa4251;
+    --green: #00ad5f;
+    --black: #000;
+    --white: #fff;
+    --gray: #999;
+    --light-gray: #f5f5f5;
+    --dark-gray: #666;
+    --font-family: 'Poppins', sans-serif;
+}
+
+/* General Styles */
+body {
+    font-family: var(--font-family);
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+    background-color: #fff;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: #3868cd;
+    text-decoration: none;
+}
+
+/* Header Styles */
+.header-desktop {
+    background: #fff;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+}
+
+.header-mobile {
+    background: #fff;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar Styles */
+.menu-sidebar {
+    background: #fff;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styles */
+.btn {
+    font-size: 14px;
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #3868cd;
+    border-color: #3868cd;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #e93a49;
+    border-color: #e93a49;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 3px;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f2f2f2;
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Form Styles */
+.form-control {
+    border-radius: 3px;
+    padding: 0.5rem 0.75rem;
+    font-size: 14px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(66, 114, 215, 0.25);
+}
+
+/* Table Styles */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    border-bottom: 2px solid #f2f2f2;
+    color: #333;
+    font-weight: 600;
+}
+
+.table td {
+    border-top: 1px solid #f2f2f2;
+}
+
+/* Utility Classes */
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.bg-secondary {
+    background-color: var(--secondary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-secondary {
+    color: var(--secondary-color) !important;
+}

@@ -1,0 +1,130 @@
+/* Team Page Styles */
+.team-filter {
+    margin-bottom: 2rem;
+}
+
+.team-member {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.team-member:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.member-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.member-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.team-member:hover .member-image img {
+    transform: scale(1.05);
+}
+
+.social-links {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.team-member:hover .social-links {
+    bottom: 0;
+}
+
+.social-links a {
+    color: white;
+    margin: 0 10px;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    transform: scale(1.2);
+}
+
+.member-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.member-info h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.member-info .designation {
+    color: #666;
+    font-size: 1rem;
+    margin: 5px 0;
+}
+
+.member-info .department {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.member-info .bio {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #666;
+    margin: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .member-image img {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .team-filter button {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .member-image img {
+        height: 280px;
+    }
+    
+    .social-links {
+        bottom: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2));
+    }
+}
+
+@media (max-width: 576px) {
+    .member-image img {
+        height: 250px;
+    }
+    
+    .member-info {
+        padding: 15px;
+    }
+    
+    .member-info h4 {
+        font-size: 1.1rem;
+    }
+    
+    .member-info .designation {
+        font-size: 0.9rem;
+    }
+}

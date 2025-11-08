@@ -1,0 +1,20 @@
+/*
+ * DEPRECATED: This file contains only 2 utility classes
+ * Modern utility classes - should be merged into custom-styles.css
+ * Glass morphism and gradient text utilities
+ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modern-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  background: linear-gradient(90deg, #3B82F6, #10B981);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

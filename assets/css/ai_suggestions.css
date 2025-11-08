@@ -1,0 +1,124 @@
+/* AI Suggestions Styling */
+.ai-suggestion-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ai-suggestion-form {
+    display: grid;
+    gap: 15px;
+}
+
+.ai-suggestion-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-suggestion-form label {
+    margin-bottom: 5px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.ai-suggestion-form select,
+.ai-suggestion-form input {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+}
+
+.ai-suggestion-form select:focus,
+.ai-suggestion-form input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#ai-loading-indicator {
+    display: none;
+    text-align: center;
+    margin: 20px 0;
+    color: #007bff;
+}
+
+#ai-error-container {
+    display: none;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.ai-suggestion-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.ai-suggestion-item {
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.ai-suggestion-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.suggestion-number {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.suggestion-content {
+    margin-bottom: 15px;
+    color: #495057;
+    line-height: 1.6;
+}
+
+.suggestion-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.suggestion-actions .btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.suggestion-actions .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.suggestion-actions .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.suggestion-actions .btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}

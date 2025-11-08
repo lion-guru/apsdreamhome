@@ -1,0 +1,108 @@
+<?php
+/**
+ * Get Lead Details API Endpoint
+ * 
+ * Fetches comprehensive information about a specific lead.
+ */
+
+// Include necessary files
+require_once __DIR__ . '/../includes/Database.php';
+require_once __DIR__ . '/lead_helpers.php';
+
+// Set error reporting
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// Set timezone
+date_default_timezone_set('UTC');
+
+// Set default request method if not set (e.g., when running from CLI)
+if (!isset($_SERVER['REQUEST_METHOD'])) {
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+}
+
+// Set default content type
+header('Content-Type: application/json');
+
+// Initialize response array
+$response = [
+    'success' => false,
+    'data' => null,
+    'error' => null,
+    'code' => null,
+    'meta' => [
+        'request_id' => uniqid('lead_', true),
+        'timestamp' => date('c'),
+        'version' => '1.0',
+        'included' => []
+    ]
+];
+
+try {
+    // Get database connection with error handling
+    try {
+        // Create a new instance of the Database class
+        $db = new Database();
+        $conn = $db->getConnection();
+        
+        // Test connection
+        if (!$conn || !$conn->ping()) {
+            throw new Exception('Database connection failed');
+        }
+    } catch (Exception $e) {
+        throw new Exception('Database connection error: ' . $e->getMessage());
+    }
+    
+    // Get and validate action from query string
+    $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING) ?? 'get';
+    $leadId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    $includeRelated = filter_input(INPUT_GET, 'include', FILTER_SANITIZE_STRING) ?: '';
+    
+    // For testing purposes, if running from CLI
+    if (php_sapi_name() === 'cli') {
+        // Set some default values for testing
+        $_SERVER['HTTP_HOST'] = 'localhost';
+        $_SERVER['REQUEST_URI'] = '/api/get_lead_details.php';
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        
+        // If no lead ID is provided, set a default one for testing
+        if (!$leadId) {
+            $leadId = 1; // Default test lead ID
+        }
+    }
+    
+    // Process the request based on action
+    switch ($action) {
+        case 'get':
+        default:
+            // Get single lead details with comprehensive data
+            $lead = getLeadById($conn, $leadId, ['user_id' => $_SESSION['user_id']]);
+            
+            if (!$lead) {
+                http_response_code(404);
+                $response['error'] = 'Lead not found or access denied';
+                $response['code'] = 'LEAD_NOT_FOUND';
+                break;
+            }
+            
+            $response['success'] = true;
+            $response['data'] = $lead;
+            break;
+    }
+    
+} catch (Exception $e) {
+    // Handle any exceptions
+    http_response_code(500);
+    $response['error'] = 'An error occurred while processing your request';
+    $response['code'] = 'INTERNAL_SERVER_ERROR';
+    $response['debug'] = [
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString()
+    ];
+}
+
+// Output the response
+echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+?>

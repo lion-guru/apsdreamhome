@@ -1,0 +1,260 @@
+/* Downloads Page Styles */
+.downloads-section {
+    padding: 60px 0;
+}
+
+/* Search Form */
+.downloads-search {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.downloads-search input {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.downloads-search input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Category Filters */
+.downloads-filters {
+    margin-bottom: 40px;
+}
+
+.filter-btn {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 8px 20px;
+    margin: 5px;
+    border-radius: 25px;
+    color: #333;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Downloads Grid */
+.downloads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.download-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.download-card:hover {
+    transform: translateY(-5px);
+}
+
+.download-icon {
+    background: #f8f9fa;
+    padding: 30px;
+    text-align: center;
+}
+
+.download-icon i {
+    font-size: 48px;
+    color: #007bff;
+}
+
+.download-content {
+    padding: 20px;
+}
+
+.download-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.download-meta {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.download-meta span {
+    margin-right: 15px;
+}
+
+.download-meta i {
+    margin-right: 5px;
+}
+
+.download-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.download-button {
+    display: inline-block;
+    background: #007bff;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.download-button:hover {
+    background: #0056b3;
+}
+
+/* Request Resources CTA */
+.request-resources {
+    background: #f8f9fa;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.request-resources h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.request-resources p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.request-button {
+    display: inline-block;
+    background: #28a745;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    font-weight: 600;
+}
+
+.request-button:hover {
+    background: #218838;
+}
+
+/* Search Results */
+.search-highlight {
+    background: #fff3cd;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+/* Pagination */
+.downloads-pagination {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.pagination-button {
+    display: inline-block;
+    padding: 8px 15px;
+    margin: 0 5px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.pagination-button:hover,
+.pagination-button.active {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .downloads-section {
+        padding: 40px 0;
+    }
+
+    .downloads-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .download-icon {
+        padding: 20px;
+    }
+
+    .download-icon i {
+        font-size: 36px;
+    }
+
+    .download-content {
+        padding: 15px;
+    }
+
+    .request-resources {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .downloads-search {
+        padding: 20px;
+    }
+
+    .filter-btn {
+        padding: 6px 15px;
+        font-size: 14px;
+    }
+
+    .download-title {
+        font-size: 16px;
+    }
+
+    .download-meta {
+        font-size: 12px;
+    }
+
+    .download-description {
+        font-size: 13px;
+    }
+
+    .request-resources h3 {
+        font-size: 20px;
+    }
+
+    .request-resources p {
+        font-size: 14px;
+    }
+
+    .request-button {
+        padding: 10px 25px;
+    }
+}

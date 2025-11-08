@@ -1,0 +1,19 @@
+# Disable directory listing
+Options -Indexes
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Set the base path for this app (subdirectory deployment)
+RewriteBase /apsdreamhomefinal/
+
+# Pass authorization header to PHP (useful for APIs)
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
+
+# If the request is for an existing file or directory, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Otherwise, route everything to index.php (front controller)
+RewriteRule ^ index.php [L]
