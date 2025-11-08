@@ -1,0 +1,53 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[services.php]
+tcpProxyApplicationPort = 8080
+
+[services.mysql]
+tcpProxyApplicationPort = 3306
+
+# Environment variables for PHP
+[services.php.variables]
+APP_ENV = "production"
+APP_DEBUG = "false"
+APP_URL = "https://apsdreamhomes.com"
+
+# Database configuration
+DB_CONNECTION = "mysql"
+DB_HOST = "@{MySQL.HOST}"
+DB_PORT = "@{MySQL.PORT}"
+DB_DATABASE = "@{MySQL.DATABASE}"
+DB_USERNAME = "@{MySQL.USERNAME}"
+DB_PASSWORD = "@{MySQL.PASSWORD}"
+
+# Security settings
+APP_KEY = "base64:your-generated-app-key-here"
+SESSION_DRIVER = "database"
+CACHE_DRIVER = "database"
+QUEUE_CONNECTION = "database"
+
+# Mail configuration
+MAIL_MAILER = "smtp"
+MAIL_HOST = "smtp.gmail.com"
+MAIL_PORT = "587"
+MAIL_USERNAME = "your-email@gmail.com"
+MAIL_PASSWORD = "your-app-password"
+MAIL_ENCRYPTION = "tls"
+MAIL_FROM_ADDRESS = "info@apsdreamhomes.com"
+MAIL_FROM_NAME = "APS Dream Homes"
+
+# AWS S3 for file uploads (optional)
+AWS_ACCESS_KEY_ID = "your-aws-key"
+AWS_SECRET_ACCESS_KEY = "your-aws-secret"
+AWS_DEFAULT_REGION = "ap-south-1"
+AWS_BUCKET = "aps-dream-homes"
+
+# Redis for caching (optional)
+REDIS_HOST = "@{Redis.HOST}"
+REDIS_PORT = "@{Redis.PORT}"
+REDIS_PASSWORD = "@{Redis.PASSWORD}"

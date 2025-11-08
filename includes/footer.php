@@ -1,0 +1,219 @@
+</main>
+
+        <!-- Footer -->
+        <footer class="footer bg-dark text-light py-5">
+            <div class="container">
+                <!-- Top Footer Section -->
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <img src="assets/images/logo-light.png" alt="APS Dream Homes" class="footer-logo mb-3" style="max-height: 60px;">
+                        <div class="social-links d-flex justify-content-center gap-3 mb-4">
+                            <a href="https://facebook.com/apsdreamhomes" target="_blank" title="Facebook" class="social-link">
+                                <i class="fab fa-facebook-f fa-lg"></i>
+                            </a>
+                            <a href="https://instagram.com/apsdreamhomes" target="_blank" title="Instagram" class="social-link">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                            <a href="https://linkedin.com/company/aps-dream-homes-pvt-ltd" target="_blank" title="LinkedIn" class="social-link">
+                                <i class="fab fa-linkedin-in fa-lg"></i>
+                            </a>
+                            <a href="https://youtube.com/apsdreamhomes" target="_blank" title="YouTube" class="social-link">
+                                <i class="fab fa-youtube fa-lg"></i>
+                            </a>
+                            <a href="https://wa.me/917007444842" target="_blank" title="WhatsApp" class="social-link">
+                                <i class="fab fa-whatsapp fa-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Footer Content -->
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-heading mb-4">About Us</h5>
+                        <p class="text-light-muted">Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction. Building dreams into reality with trust and innovation.</p>
+                        <div class="mt-3">
+                            <a href="about.php" class="btn btn-outline-light btn-sm">Learn More</a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-heading mb-4">Quick Links</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <ul class="list-unstyled footer-links">
+                                    <li><a href="index.php">Home</a></li>
+                                    <li><a href="properties.php">Properties</a></li>
+                                    <li><a href="projects.php">Projects</a></li>
+                                    <li><a href="resell_properties.php">Resell</a></li>
+                                    <li><a href="gallery.php">Gallery</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <ul class="list-unstyled footer-links">
+                                    <li><a href="blog.php">Blog</a></li>
+                                    <li><a href="career.php">Careers</a></li>
+                                    <li><a href="team.php">Our Team</a></li>
+                                    <li><a href="testimonials.php">Testimonials</a></li>
+                                    <li><a href="faq.php">FAQs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-heading mb-4">Contact Info</h5>
+                        <ul class="list-unstyled contact-info">
+                            <li class="d-flex mb-3">
+                                <i class="fas fa-map-marker-alt me-3 mt-1"></i>
+                                <div>
+                                    123, Kunraghat Main Road<br>
+                                    Near Railway Station<br>
+                                    Gorakhpur, UP - 273008
+                                </div>
+                            </li>
+                            <li class="d-flex mb-3">
+                                <i class="fas fa-phone-alt me-3 mt-1"></i>
+                                <div>
+                                    <a href="tel:+919554000001" class="text-light">+91-9554000001</a><br>
+                                    <a href="tel:+919554000001" class="text-light">+91-9554000001</a>
+                                </div>
+                            </li>
+                            <li class="d-flex mb-3">
+                                <i class="fas fa-envelope me-3 mt-1"></i>
+                                <div>
+                                    <a href="mailto:info@apsdreamhomes.com" class="text-light">info@apsdreamhomes.com</a><br>
+                                    <a href="mailto:sales@apsdreamhomes.com" class="text-light">sales@apsdreamhomes.com</a>
+                                </div>
+                            </li>
+                            <li class="d-flex">
+                                <i class="fas fa-clock me-3 mt-1"></i>
+                                <div>
+                                    Mon-Sat: 9:30 AM - 7:00 PM<br>
+                                    Sun: 10:00 AM - 5:00 PM
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="footer-heading mb-4">Newsletter</h5>
+                        <p class="text-light-muted">Subscribe for latest property updates, exclusive deals, and market insights.</p>
+                        <form class="newsletter-form mb-4">
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="Your Email" required>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="download-apps">
+                            <p class="mb-2">Download Our App:</p>
+                            <a href="#" class="me-2">
+                                <img src="assets/images/google-play.png" alt="Google Play" style="height: 35px;">
+                            </a>
+                            <a href="#">
+                                <img src="assets/images/app-store.png" alt="App Store" style="height: 35px;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Footer -->
+                <hr class="my-4 border-light opacity-25">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="mb-2 mb-md-0">
+                            &copy; 2025 APS Dream Homes Pvt Ltd. All rights reserved.<br>
+                            <small class="text-light-muted">Registration No: U70109UP2022PTC163047</small>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-inline text-md-end mb-0">
+                            <li class="list-inline-item">
+                                <a href="privacy-policy.php" class="text-light-muted">Privacy Policy</a>
+                            </li>
+                            <li class="list-inline-item mx-3">|</li>
+                            <li class="list-inline-item">
+                                <a href="terms-of-service.php" class="text-light-muted">Terms of Service</a>
+                            </li>
+                            <li class="list-inline-item mx-3">|</li>
+                            <li class="list-inline-item">
+                                <a href="sitemap.php" class="text-light-muted">Sitemap</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Back to Top Button -->
+        <button id="backToTop" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4" style="display: none;">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- AOS Animation -->
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+        <script>
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+
+            // Ensure dropdown menus work properly
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize all dropdowns
+                var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+                var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                    return new bootstrap.Dropdown(dropdownToggleEl);
+                });
+
+                // Fix for dropdown closing on mobile
+                document.querySelectorAll('.navbar-nav .dropdown').forEach(function(dropdown) {
+                    dropdown.addEventListener('shown.bs.dropdown', function() {
+                        // Ensure dropdown stays open on mobile
+                        dropdown.classList.add('show');
+                    });
+
+                    dropdown.addEventListener('hidden.bs.dropdown', function() {
+                        dropdown.classList.remove('show');
+                    });
+                });
+            });
+
+            // Newsletter subscription
+            document.querySelectorAll('.newsletter-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = this.querySelector('input[type="email"]').value;
+                    if (email) {
+                        alert('Thank you for subscribing to our newsletter!');
+                        this.reset();
+                    }
+                });
+            });
+
+            // Back to Top Button
+            const backToTopButton = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.style.display = 'block';
+                } else {
+                    backToTopButton.style.display = 'none';
+                }
+            });
+
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        </script>
+    </body>
+    </html>

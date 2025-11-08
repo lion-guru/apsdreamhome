@@ -1,0 +1,47 @@
+# Environment files
+.env
+.env.*
+.env.testing
+
+# Dependencies and build artifacts
+vendor/
+node_modules/
+dist/
+
+# Application storage and caches
+storage/
+cache/
+logs/
+backups/
+
+# Database dumps and large data
+DATABASE FILE/
+database/*.sql
+*.sql
+
+# Archives and binaries
+*.zip
+*.tar.gz
+*.tar
+*.7z
+*.rar
+*.log
+composer.phar
+redis-*.exe
+*.pdb
+EventLog.dll
+redis.zip
+
+# IDE and editor settings
+.vscode/
+.idea/
+nbproject/
+
+# Project-specific temp and reports
+health_report.html
+test_results.json
+
+# Internal tooling folders
+.qodo/
+.trae/
+.trunk/

@@ -1,0 +1,13 @@
+{
+  "admin_email": "admin@example.com",
+  "send_summary": true,
+  "send_audit": true,
+  "frequency": "daily",
+  "slack_enabled": false,
+  "slack_webhook": "",
+  "twilio_enabled": false,
+  "twilio_sid": "",
+  "twilio_token": "",
+  "twilio_from": "",
+  "twilio_to": ""
+}

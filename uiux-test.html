@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APS Dream Home - Enhanced UI/UX Test</title>
+
+    <!-- Enhanced CSS Integration -->
+    <link rel="stylesheet" href="assets/css/integrated-uiux.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Test page specific styles */
+        .test-info {
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+        }
+
+        .test-section h3 {
+            color: #1a237e;
+            margin-bottom: 1rem;
+        }
+
+        .device-test {
+            display: none;
+        }
+
+        .device-test.active {
+            display: block;
+        }
+
+        .device-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .device-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #1a237e;
+            background: white;
+            color: #1a237e;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .device-btn.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h1>🚀 APS Dream Home - Enhanced UI/UX Test Page</h1>
+        <p>Test the responsive design and new features across different screen sizes</p>
+    </div>
+
+    <div class="container">
+        <div class="device-buttons">
+            <button class="device-btn active" onclick="setDevice('desktop')">🖥️ Desktop</button>
+            <button class="device-btn" onclick="setDevice('tablet')">📱 Tablet</button>
+            <button class="device-btn" onclick="setDevice('mobile')">📱 Mobile</button>
+        </div>
+
+        <div class="device-test active" id="desktop-test">
+            <div class="test-section">
+                <h3>🖥️ Desktop View (1200px+)</h3>
+                <p>Test the full desktop experience with all features visible</p>
+                <div class="iframe-container">
+                    <iframe src="index-enhanced.php" title="Desktop View"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="device-test" id="tablet-test">
+            <div class="test-section">
+                <h3>📱 Tablet View (768px - 1199px)</h3>
+                <p>Test tablet responsiveness and layout adjustments</p>
+                <div class="iframe-container" style="height: 800px;">
+                    <iframe src="index-enhanced.php" style="transform: scale(0.8); transform-origin: top left; width: 125%;" title="Tablet View"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="device-test" id="mobile-test">
+            <div class="test-section">
+                <h3>📱 Mobile View (320px - 767px)</h3>
+                <p>Test mobile experience with hamburger menu and touch interactions</p>
+                <div class="iframe-container" style="height: 800px;">
+                    <iframe src="index-enhanced.php" style="transform: scale(0.6); transform-origin: top left; width: 166.67%;" title="Mobile View"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>✅ Features to Test:</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>🎨 Visual Enhancements</h4>
+                    <ul style="margin: 0; padding-left: 1.2rem;">
+                        <li>Gradient backgrounds</li>
+                        <li>Modern card designs</li>
+                        <li>Enhanced typography</li>
+                        <li>Smooth animations</li>
+                    </ul>
+                </div>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>📱 Responsive Design</h4>
+                    <ul style="margin: 0; padding-left: 1.2rem;">
+                        <li>Mobile navigation</li>
+                        <li>Flexible layouts</li>
+                        <li>Touch-friendly buttons</li>
+                        <li>Optimized spacing</li>
+                    </ul>
+                </div>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>⚡ Interactions</h4>
+                    <ul style="margin: 0; padding-left: 1.2rem;">
+                        <li>Property favorites</li>
+                        <li>Form submissions</li>
+                        <li>Smooth scrolling</li>
+                        <li>Hover effects</li>
+                    </ul>
+                </div>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <h4>♿ Accessibility</h4>
+                    <ul style="margin: 0; padding-left: 1.2rem;">
+                        <li>Keyboard navigation</li>
+                        <li>Screen reader support</li>
+                        <li>Focus indicators</li>
+                        <li>Skip links</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setDevice(device) {
+            // Remove active class from all device tests and buttons
+            document.querySelectorAll('.device-test, .device-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Add active class to selected device
+            document.getElementById(device + '-test').classList.add('active');
+            event.target.classList.add('active');
+
+            // Update iframe container height based on device
+            const container = document.querySelector('.device-test.active .iframe-container');
+            if (container) {
+                if (device === 'mobile') {
+                    container.style.height = '800px';
+                } else if (device === 'tablet') {
+                    container.style.height = '800px';
+                } else {
+                    container.style.height = '600px';
+                }
+            }
+        }
+
+        // Auto-refresh iframe content when switching devices
+        document.querySelectorAll('.device-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const device = this.textContent.toLowerCase().includes('desktop') ? 'desktop' :
+                              this.textContent.toLowerCase().includes('tablet') ? 'tablet' : 'mobile';
+
+                setTimeout(() => {
+                    const iframe = document.querySelector('.device-test.active iframe');
+                    if (iframe) {
+                        iframe.src = iframe.src; // Refresh iframe
+                    }
+                }, 100);
+            });
+        });
+
+        console.log('UI/UX Test Page loaded successfully! 🧪');
+    </script>
+</body>
+</html>

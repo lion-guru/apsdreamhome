@@ -1,0 +1,417 @@
+/* Search Form Styles */
+.search-form-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.search-form-container:hover {
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Search Results Section */
+#searchResultsSection {
+    margin-top: 2rem;
+}
+
+/* View Toggle Buttons */
+.view-toggle-buttons {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.view-toggle-buttons .btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.view-toggle-buttons .btn:first-child {
+    margin-left: 0;
+}
+
+.view-toggle-buttons .btn.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Property Cards */
+.property-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.property-card .card-img-top {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.property-card .card-body {
+    flex: 1;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.property-price {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+}
+
+.property-favorite {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: var(--bs-gray-600);
+    transition: all 0.2s ease;
+}
+
+.property-favorite:hover, .property-favorite.active {
+    color: var(--bs-red);
+    background: white;
+}
+
+.property-favorite i {
+    font-size: 1.1rem;
+}
+
+.property-features {
+    font-size: 0.875rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--bs-border-color);
+    margin-top: 0.75rem;
+}
+
+.property-features .feature {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.property-features .feature i {
+    margin-right: 0.5rem;
+    color: var(--bs-gray-600);
+}
+
+/* Map View */
+#mapView {
+    margin-bottom: 2rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+    height: 600px;
+}
+
+/* Map Popup */
+.leaflet-popup-content-wrapper {
+    border-radius: 0.5rem;
+    padding: 0;
+    overflow: hidden;
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    width: 250px !important;
+}
+
+.leaflet-popup-content .map-popup {
+    padding: 1rem;
+}
+
+.leaflet-popup-content .map-popup h6 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--bs-dark);
+}
+
+.leaflet-popup-content .map-popup p {
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.leaflet-popup-content .map-popup .btn {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    padding: 0.35rem 0.75rem;
+}
+
+/* View Toggle Buttons */
+.view-toggle-buttons {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#listViewBtn, #mapViewBtn {
+    min-width: 110px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+}
+
+#listViewBtn i, #mapViewBtn i {
+    margin-right: 0.35rem;
+}
+
+#listViewBtn.active, #mapViewBtn.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 0.5rem;
+    vertical-align: -2px;
+}
+
+/* Dark Mode Support */
+[data-bs-theme="dark"] .property-card {
+    background-color: var(--bs-dark-bg-subtle);
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .property-card .card-title,
+[data-bs-theme="dark"] .property-card .card-text {
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .leaflet-popup-content-wrapper {
+    background-color: var(--bs-dark-bg-subtle);
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .leaflet-popup-tip {
+    background-color: var(--bs-dark-bg-subtle);
+}
+
+[data-bs-theme="dark"] .property-card {
+    background-color: var(--bs-dark);
+}
+
+[data-bs-theme="dark"] .property-card .card-body {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .property-card .card-footer {
+    background-color: var(--bs-dark);
+    border-top: 1px solid var(--bs-gray-800);
+}
+
+[data-bs-theme="dark"] .property-features {
+    border-top-color: var(--bs-gray-800);
+}
+
+[data-bs-theme="dark"] .property-features .feature i {
+    color: var(--bs-gray-500);
+}
+
+/* Advanced Search Toggle */
+#toggleAdvancedSearch {
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+#toggleAdvancedSearch:hover {
+    color: var(--primary-light);
+    text-decoration: none;
+}
+
+#toggleAdvancedSearch i {
+    transition: transform 0.3s ease;
+}
+
+#toggleAdvancedSearch.active i {
+    transform: rotate(180deg);
+}
+
+/* Price Range Slider */
+.price-range-slider {
+    padding: 10px 0;
+}
+
+.range-slider {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    margin: 15px 0;
+    position: relative;
+}
+
+.range-slider .range-selected {
+    height: 100%;
+    left: 0%;
+    right: 0%;
+    position: absolute;
+    border-radius: 2px;
+    background: var(--primary);
+}
+
+.range-input {
+    position: relative;
+}
+
+.range-input input {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    top: -7px;
+    background: none;
+    pointer-events: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+}
+
+.range-input input::-webkit-slider-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    pointer-events: auto;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.range-input input::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(26, 35, 126, 0.1);
+}
+
+/* Filter Buttons */
+.btn-group .btn-outline-secondary {
+    color: #495057;
+    border-color: #dee2e6;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.btn-group .btn-check:checked + .btn-outline-secondary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Property Features Checkboxes */
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* Sort Dropdown */
+.sort-options {
+    display: flex;
+    align-items: center;
+}
+
+.sort-options .form-select {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    padding: 0.25rem 1.75rem 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    height: auto;
+}
+
+.sort-options .form-select:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+}
+
+/* Loading State */
+.loading-spinner {
+    display: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0.25rem solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .search-form-container {
+        padding: 1rem !important;
+    }
+    
+    .sort-options {
+        margin-top: 1rem;
+        justify-content: flex-end;
+    }
+    
+    .btn-group {
+        flex-wrap: wrap;
+    }
+    
+    .btn-group .btn {
+        flex: 1;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.3rem;
+    }
+}
+
+/* Animation for search results */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#searchResultsContainer {
+    animation: fadeIn 0.3s ease-out forwards;
+}

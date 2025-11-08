@@ -1,0 +1,264 @@
+/*
+ * DEPRECATED: This is a backup file of .htaccess
+ * Original .htaccess is active and working
+ * This backup can be safely deleted
+ *
+ * Backup Date: Unknown (legacy file)
+ * Purpose: URL rewriting and security configuration
+ * Status: REPLACED by current .htaccess
+ */
+# =============================================
+# APS Dream Home - Clean URL Rewriting & Security
+# =============================================
+
+# Enable the rewrite engine
+RewriteEngine On
+
+# Set the base directory for URL rewriting
+RewriteBase /apsdreamhomefinal/
+
+# =============================================
+# URL REWRITING RULES
+# =============================================
+
+# Set base URL for all rewrites
+RewriteBase /apsdreamhomefinal/
+
+# Handle root URL
+RewriteRule ^$ index.php [L]
+
+# Handle static files directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Handle API requests
+RewriteRule ^api/(.*)$ api/index.php?url=$1 [QSA,L]
+
+# Handle admin requests
+RewriteRule ^admin/(.*)$ router.php?url=admin/$1 [QSA,L]
+RewriteRule ^admin$ router.php?url=admin [QSA,L]
+
+# Handle associate requests
+RewriteRule ^associate/(.*)$ router.php?url=associate/$1 [QSA,L]
+RewriteRule ^associate$ router.php?url=associate [QSA,L]
+
+# Handle customer requests
+RewriteRule ^customer/(.*)$ router.php?url=customer/$1 [QSA,L]
+RewriteRule ^customer$ router.php?url=customer [QSA,L]
+
+# Handle auth requests
+RewriteRule ^auth/(.*)$ router.php?url=auth/$1 [QSA,L]
+RewriteRule ^auth$ router.php?url=auth [QSA,L]
+
+# Handle public pages with hybrid routing
+RewriteRule ^(projects|properties|about|contact|career|blog|services|faq|privacy|terms|support|gallery|team|testimonials|resell|news|downloads|property-management|legal-services|financial-services|interior-design|coming-soon|maintenance|thank-you)$ router.php?url=$1 [QSA,L]
+
+# Handle form submissions
+RewriteRule ^submit/([^/]+)/?$ router.php?url=submit/$1 [QSA,L]
+
+# Handle property listings
+RewriteRule ^properties/([^/]+)/?$ router.php?url=properties&slug=$1 [QSA,L]
+RewriteRule ^projects/([^/]+)/?$ router.php?url=projects&slug=$1 [QSA,L]
+RewriteRule ^blog/([^/]+)/?$ router.php?url=blog&slug=$1 [QSA,L]
+
+# Handle category pages
+RewriteRule ^properties/category/([^/]+)/?$ router.php?url=properties&category=$1 [QSA,L]
+RewriteRule ^projects/location/([^/]+)/?$ router.php?url=projects&location=$1 [QSA,L]
+RewriteRule ^blog/category/([^/]+)/?$ router.php?url=blog&category=$1 [QSA,L]
+
+# Handle search pages
+RewriteRule ^search/properties/?$ router.php?url=search&type=properties [QSA,L]
+RewriteRule ^search/projects/?$ router.php?url=search&type=projects [QSA,L]
+RewriteRule ^search/blog/?$ router.php?url=search&type=blog [QSA,L]
+
+# Handle all other requests with hybrid routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ router.php?url=$1 [QSA,L]
+
+# =============================================
+# SECURITY RULES
+# =============================================
+
+# Block access to sensitive files
+<FilesMatch "^\.|\.(ini|log|sh|sql|tpl|twig|json|lock|md|gitignore|gitattributes|env|example|dist|yml|yaml|bak|swp|tmp)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Allow access to PHP files (handled by router)
+<FilesMatch "\.(php)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Block access to hidden files and directories
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to specific directories
+<FilesMatch "^(vendor|node_modules|\.git|storage/logs|storage/framework|backups|logs)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# =============================================
+# ALLOWED FILE TYPES
+# =============================================
+
+# Allow access to static assets
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map|webp|pdf)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# =============================================
+# SECURITY HEADERS
+# =============================================
+
+<IfModule mod_headers.c>
+    # Basic Security Headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Remove server signature
+    Header always unset X-Powered-By
+    ServerSignature Off
+
+    # Cache control for assets
+    <FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule>
+
+# =============================================
+# PHP SETTINGS
+# =============================================
+
+# Note: php_flag directives are not supported in .htaccess on some servers
+# These settings should be configured in php.ini instead
+
+# Alternative method using SetEnv (if supported)
+<IfModule mod_env.c>
+    SetEnv display_errors 0
+    SetEnv session.cookie_httponly 1
+    SetEnv session.cookie_secure 0
+    SetEnv session.use_only_cookies 1
+</IfModule>
+
+# =============================================
+# MIME TYPES
+# =============================================
+
+<IfModule mod_mime.c>
+    AddType application/javascript          js
+    AddType application/vnd.ms-fontobject   eot
+    AddType application/x-font-ttf          ttf ttc
+    AddType font/opentype                   otf
+    AddType application/x-font-woff         woff
+    AddType image/svg+xml                   svg svgz
+    AddEncoding gzip                        svgz
+</IfModule>
+
+# =============================================
+# GZIP COMPRESSION
+# =============================================
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE font/opentype font/ttf font/eot font/otf
+
+    # Remove browser bugs
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+# =============================================
+# CACHE CONTROL
+# =============================================
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # HTML: No cache
+    ExpiresByType text/html "access plus 0 seconds"
+
+    # CSS, JavaScript, Text
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+
+    # Media files
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+
+    # Web fonts
+    ExpiresByType application/x-font-ttf "access plus 1 year"
+    ExpiresByType font/opentype "access plus 1 year"
+    ExpiresByType application/x-font-woff "access plus 1 year"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+
+    # Other
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType application/x-shockwave-flash "access plus 1 month"
+</IfModule>
+
+# =============================================
+# PREVENT HOTLINKING (Optional)
+# =============================================
+
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_REFERER} !^$
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?yourdomain\.com [NC]
+    RewriteRule \.(jpe?g|gif|bmp|png|webp)$ - [NC,F,L]
+</IfModule>
+
+# =============================================
+# CUSTOM ERROR PAGES
+# =============================================
+
+ErrorDocument 400 /apsdreamhomefinal/error.php?code=400
+ErrorDocument 401 /apsdreamhomefinal/error.php?code=401
+ErrorDocument 403 /apsdreamhomefinal/error.php?code=403
+ErrorDocument 404 /apsdreamhomefinal/error.php?code=404
+ErrorDocument 500 /apsdreamhomefinal/error.php?code=500
+
+# =============================================
+# KEEP-ALIVE
+# =============================================
+
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+</IfModule>
+
+# =============================================
+# PREVENT DIRECTORY LISTING
+# =============================================
+
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
+
+# =============================================
+# END OF HTACCESS
+# =============================================

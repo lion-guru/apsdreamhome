@@ -1,0 +1,88 @@
+{
+    "name": "apsdreamhome/real-estate",
+    "description": "APS Dream Home - Real Estate Management System",
+    "type": "project",
+    "keywords": ["real-estate", "property-management", "php", "laravel", "crm"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "APS Team",
+            "email": "support@apsdreamhome.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1.0",
+        "erusev/parsedown": "^1.7",
+        "phpmailer/phpmailer": "^6.11",
+        "monolog/monolog": "^3.0",
+        "vlucas/phpdotenv": "^5.5",
+        "predis/predis": "^2.0",
+        "league/flysystem": "^3.0",
+        "intervention/image": "^2.7",
+        "carbon/carbon": "^2.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.21",
+        "phpunit/phpunit": "^10.0",
+        "squizlabs/php_codesniffer": "^4.0",
+        "phpstan/phpstan": "^1.10",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "rector/rector": "^0.18",
+        "mockery/mockery": "^1.6",
+        "phpmd/phpmd": "^2.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "ApsDreamHome\\": "src/",
+            "ApsDreamHome\\Controllers\\": "src/Controllers/",
+            "ApsDreamHome\\Models\\": "src/Models/",
+            "ApsDreamHome\\Services\\": "src/Services/",
+            "ApsDreamHome\\Repositories\\": "src/Repositories/",
+            "ApsDreamHome\\Middleware\\": "src/Middleware/",
+            "ApsDreamHome\\Traits\\": "src/Traits/",
+            "ApsDreamHome\\Interfaces\\": "src/Interfaces/",
+            "ApsDreamHome\\Exceptions\\": "src/Exceptions/",
+            "ApsDreamHome\\Helpers\\": "src/Helpers/",
+            "ApsDreamHome\\Standards\\": "src/Standards/"
+        },
+        "files": [
+            "src/Helpers/functions.php",
+            "src/Standards/CodingStandards.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ApsDreamHome\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php -r \"copy('.env.example', '.env');\""
+        ],
+        "post-update-cmd": [
+            "php -r \"copy('.env.example', '.env');\""
+        ],
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-html=coverage",
+        "lint": "phpcs --standard=PSR12 src/",
+        "lint:fix": "phpcbf --standard=PSR12 src/",
+        "analyze": "phpstan analyze src/",
+        "fix": "php-cs-fixer fix src/",
+        "rector": "rector process src/",
+        "check": [
+            "@lint",
+            "@analyze",
+            "@test"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
