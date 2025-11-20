@@ -1,19 +1,16 @@
-# Disable directory listing
-Options -Indexes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # RewriteBase removed to support dynamic folder names in XAMPP
 
-# Enable URL rewriting
-RewriteEngine On
+    # Serve existing files/directories directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
-# Set the base path for this app (subdirectory deployment)
-RewriteBase /apsdreamhomefinal/
+    # Route everything else through public/index.php (modern App pipeline)
+    RewriteRule ^ public/index.php [L]
+</IfModule>
 
-# Pass authorization header to PHP (useful for APIs)
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
-
-# If the request is for an existing file or directory, serve it directly
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
-
-# Otherwise, route everything to index.php (front controller)
-RewriteRule ^ index.php [L]
+# Basic error documents (optional; adjust paths if custom pages exist)
+ErrorDocument 403 /errors/403.php
+ErrorDocument 404 /errors/404.php

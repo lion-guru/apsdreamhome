@@ -1,0 +1,6 @@
+{
+  "extends": "markdownlint:recommended",
+  "MD013": {
+    "line_length": 120
+  }
+}

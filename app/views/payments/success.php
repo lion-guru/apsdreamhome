@@ -1,4 +1,11 @@
-<?php include '../app/views/includes/header.php'; ?>
+<?php
+if (!isset($payment)) {
+    $payment = [];
+}
+if (!isset($property)) {
+    $property = [];
+}
+include __DIR__ . '/../includes/header.php'; ?>
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -15,7 +22,7 @@
                         Congratulations! Your payment has been processed successfully.
                     </p>
 
-                    <?php if (isset($payment) && is_array($payment)): ?>
+                    <?php if (is_array($payment)): ?>
                         <div class="row mb-4">
                             <div class="col-12">
                                 <div class="card bg-light">
@@ -43,7 +50,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <?php if (isset($property) && is_array($property)): ?>
+                    <?php if (is_array($property)): ?>
                         <div class="row mb-4">
                             <div class="col-12">
                                 <div class="card bg-light">
@@ -85,4 +92,4 @@
     </div>
 </div>
 
-<?php include '../app/views/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

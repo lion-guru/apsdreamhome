@@ -1,8 +1,9 @@
 <?php
 // Simple Admin Panel for Managing site_settings Table
 define('IN_ADMIN', true);
-require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+require_once __DIR__ . '/../includes/config.php';
+global $con;
+$conn = $con;
 if (!$conn) die('DB connection failed.');
 ?>
 
@@ -10,6 +11,9 @@ if (!$conn) die('DB connection failed.');
 
 // Handle update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('CSRF token validation failed.');
+    }
     foreach ($_POST['settings'] as $key => $value) {
         $stmt = $conn->prepare("REPLACE INTO site_settings (setting_name, value) VALUES (?, ?)");
         $stmt->bind_param('ss', $key, $value);
@@ -17,6 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     header('Location: manage_site_settings.php?updated=1');
     exit;
+}
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 // Fetch all settings
 $res = $conn->query("SELECT setting_name, value FROM site_settings ORDER BY setting_name");
@@ -34,7 +44,8 @@ while ($row = $res->fetch_assoc()) {
 <body>
 <h2 style="text-align:center">Manage Site Settings</h2>
 <?php if(isset($_GET['updated'])) echo '<p style="color:green;text-align:center">Settings updated!</p>'; ?>
-<form method="post"><table><tr><th>Setting Name</th><th>Value</th></tr>
+<form method="post">
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>"><table><tr><th>Setting Name</th><th>Value</th></tr>
 <?php foreach($settings as $name=>$val): ?>
 <tr><td><?=htmlspecialchars($name)?></td><td><input type="text" name="settings[<?=htmlspecialchars($name)?>]" value="<?=htmlspecialchars($val)?>"></td></tr>
 <?php endforeach; ?>
@@ -42,3 +53,4 @@ while ($row = $res->fetch_assoc()) {
 <div style="text-align:center"><button type="submit">Save All</button></div>
 </form>
 </body></html>
+

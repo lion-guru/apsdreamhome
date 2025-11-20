@@ -2,7 +2,8 @@
 // Script to export complete database structure to a single file
 
 // Include database configuration
-require_once 'config.php';
+require_once '../config/bootstrap.php';
+require_once '../config/database.php';
 
 // Set error reporting for development (disable in production)
 error_reporting(E_ALL);
@@ -79,14 +80,12 @@ function getRoutines($con) {
 
 // Function to get views
 function getViews($con) {
-    $views = "";
+    $viewNames = [];
     $result = $con->query("SHOW FULL TABLES WHERE Table_type = 'VIEW'");
     while ($row = $result->fetch_row()) {
-        $viewName = $row[0];
-        $createView = $con->query("SHOW CREATE VIEW `$viewName`")->fetch_assoc();
-        $views .= $createView['Create View'] . ";\n\n";
+        $viewNames[] = $row[0];
     }
-    return $views;
+    return $viewNames;
 }
 
 // Start output
@@ -110,14 +109,33 @@ echo "USE `" . DB_NAME . "`;\n\n";
 // Get all tables
 $tables = getTables($con);
 
-// First, drop all tables (for clean import)
+// Get views and store their names
+$views_array = getViews($con);
+$views_raw = ""; // Initialize views_raw as empty string
+foreach ($views_array as $viewName) {
+    $createView = $con->query("SHOW CREATE VIEW `$viewName`")->fetch_assoc();
+    $views_raw .= $createView['Create View'] . ";\n\n";
+}
+
+// First, drop all views
+echo "-- --------------------------------------------------------\n";
+echo "-- Drop existing views\n";
+echo "-- --------------------------------------------------------\n\n";
+foreach ($views_array as $view) {
+    echo "DROP VIEW IF EXISTS `$view`;\n";
+}
+echo "\n";
+
+// Then, drop all tables (for clean import)
 echo "-- --------------------------------------------------------\n";
 echo "-- Drop existing tables\n";
 echo "-- --------------------------------------------------------\n\n";
 
 echo "SET FOREIGN_KEY_CHECKS = 0;\n";
 foreach ($tables as $table) {
-    echo "DROP TABLE IF EXISTS `$table`;\n";
+    if (!in_array($table, $views_array)) { // Only drop tables, not views
+        echo "DROP TABLE IF EXISTS `$table`;\n";
+    }
 }
 echo "SET FOREIGN_KEY_CHECKS = 1;\n\n";
 
@@ -127,6 +145,9 @@ echo "-- Table structure\n";
 echo "-- --------------------------------------------------------\n\n";
 
 foreach ($tables as $table) {
+    if (in_array($table, $views_array)) { // Skip views when creating table structure and data
+        continue;
+    }
     echo "-- --------------------------------------------------------\n";
     echo "-- Table structure for table `$table`\n";
     echo "-- --------------------------------------------------------\n\n";
@@ -151,7 +172,7 @@ if (!empty($views)) {
     echo "-- --------------------------------------------------------\n";
     echo "-- Views\n";
     echo "-- --------------------------------------------------------\n\n";
-    echo $views;
+    echo $views_raw;
 }
 
 // Get stored procedures and functions

@@ -77,7 +77,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 									<small>Here, user can select feedbacks for displaying as testimonial. Note: Status "1" sets the feedback as testimonial.</small>
 									<?php 
 											if(isset($_GET['msg']))	
-											echo $_GET['msg'];
+											echo sanitizeInput($_GET['msg']);
 											
 										?>
 								</div>

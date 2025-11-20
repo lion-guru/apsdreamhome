@@ -14,9 +14,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 // Include universal dashboard template
 require_once 'includes/universal_dashboard_template.php';
-require_once __DIR__ . '/../includes/db_connection.php';
-
-$conn = getDbConnection();
+require_once __DIR__ . '/../includes/config/config.php';
+global $con; $conn = $con;
 
 // Fetch manager-specific data
 $totalProperties = $conn->query("SELECT COUNT(*) as count FROM properties")->fetch_assoc()['count'] ?? 0;

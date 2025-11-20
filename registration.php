@@ -4,7 +4,8 @@
  * User registration for the main website
  */
 
-require_once 'core/functions.php';
+require_once 'includes/config/config.php';
+require_once 'includes/functions.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
@@ -32,32 +33,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            $pdo = getDbConnection();
+            // Use the database connection from config
+            global $conn;
 
             // Check if email already exists
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
+            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-            if ($stmt->fetch()) {
+            if ($result->num_rows > 0) {
                 $errors[] = 'Email address is already registered';
             } else {
                 // Insert new user
-                $hashed_password = hash_password($password);
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, password, role, status, created_at) VALUES (?, ?, ?, ?, 'customer', 'active', NOW())");
-                $stmt->execute([$name, $email, $phone, $hashed_password]);
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $conn->prepare("INSERT INTO users (name, email, phone, password, role, status, created_at) VALUES (?, ?, ?, ?, 'customer', 'active', NOW())");
+                $stmt->bind_param("ssss", $name, $email, $phone, $hashed_password);
 
-                // Set session for auto-login
-                $_SESSION['user_logged_in'] = true;
-                $_SESSION['user_id'] = $pdo->lastInsertId();
-                $_SESSION['user_name'] = $name;
-                $_SESSION['user_email'] = $email;
-                $_SESSION['user_role'] = 'customer';
+                if ($stmt->execute()) {
+                    $user_id = $conn->insert_id;
 
-                header('Location: index.php?registration=success');
-                exit();
+                    // Set session for auto-login
+                    $_SESSION['user_logged_in'] = true;
+                    $_SESSION['user_id'] = $user_id;
+                    $_SESSION['user_name'] = $name;
+                    $_SESSION['user_email'] = $email;
+                    $_SESSION['user_role'] = 'customer';
+
+                    header('Location: index.php');
+                    exit();
+                } else {
+                    $errors[] = 'Registration failed. Please try again.';
+                }
             }
         } catch (Exception $e) {
-            $errors[] = 'Registration failed. Please try again.';
+            $errors[] = 'Registration failed: ' . $e->getMessage();
         }
     }
 }
@@ -263,6 +273,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a href="login.php" class="btn btn-outline-primary">
                             <i class="fas fa-sign-in-alt me-2"></i>Sign In
                         </a>
+
+                        <div class="mt-3">
+                            <a href="forgot_password.php" class="text-muted">
+                                <i class="fas fa-key me-1"></i>Forgot Password?
+                            </a>
+                        </div>
 
                         <div class="mt-3">
                             <a href="index.php" class="btn back-home">

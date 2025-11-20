@@ -8,7 +8,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get gallery categories
     $categoriesQuery = "SELECT DISTINCT category FROM gallery_images WHERE status = 'active' ORDER BY category";

@@ -7,7 +7,7 @@
 ?>
 
 <!-- Admin Dashboard Header -->
-<section class="admin-header py-4 bg-primary text-white">
+<header class="admin-header py-4 bg-primary text-white">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -32,7 +32,7 @@
             </div>
         </div>
     </div>
-</section>
+</header>
 
 <!-- Dashboard Stats Cards -->
 <section class="dashboard-stats py-5">
@@ -110,7 +110,7 @@
 </section>
 
 <!-- Main Dashboard Content -->
-<section class="dashboard-content py-5">
+<main class="dashboard-content py-5">
     <div class="container">
         <div class="row g-4">
             <!-- Recent Activities -->

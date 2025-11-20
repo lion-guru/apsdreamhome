@@ -136,7 +136,7 @@ try {
     echo "<h3>Next Steps:</h3>";
     echo "<ol>";
     echo "<li>Make sure Apache is running in XAMPP control panel</li>";
-    echo "<li>Visit <a href='http://localhost/apsdreamhomefinal/' target='_blank'>http://localhost/apsdreamhomefinal/</a></li>";
+    echo "<li>Visit <a href='http://localhost/apsdreamhome/' target='_blank'>http://localhost/apsdreamhomefinal/</a></li>";
     echo "<li>Test the project menu links in the header</li>";
     echo "<li>Test individual project pages using the links above</li>";
     echo "</ol>";

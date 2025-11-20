@@ -80,7 +80,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                         <h4 class="header-title mt-0 mb-4">Property View</h4>
 										<?php 
 											if(isset($_GET['msg']))	
-											echo $_GET['msg'];	
+											echo sanitizeInput($_GET['msg']);	
 										?>
                                         <table id="datatable-buttons" class="table table-striped dt-responsive nowrap">
                                             <thead>

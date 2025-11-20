@@ -1,13 +1,14 @@
 <?php
 // convert_inquiry_to_lead.php: Convert a contact inquiry to a CRM lead
 require_once __DIR__ . '/includes/session_manager.php';
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/includes/config/config.php';
+global $con;
 initAdminSession();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
     exit();
 }
-$conn = getDbConnection();
+$conn = $con;
 
 if (isset($_GET['inquiry_id']) && is_numeric($_GET['inquiry_id'])) {
     $inquiry_id = intval($_GET['inquiry_id']);

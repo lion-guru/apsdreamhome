@@ -10,7 +10,7 @@ echo "📱 Mobile API Test Suite\n";
 echo "=======================\n\n";
 
 $test_results = [];
-$base_url = 'http://localhost/apsdreamhomefinal';
+$base_url = 'http://localhost/apsdreamhome';
 
 // Test 1: Property Types API
 echo "1. 🏠 Testing Property Types API...\n";

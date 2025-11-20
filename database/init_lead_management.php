@@ -46,7 +46,7 @@ try {
     // 2. Create contact_inquiries table
     echo "Creating contact_inquiries table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `contact_inquiries` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
         `name` varchar(100) NOT NULL,
         `email` varchar(100) NOT NULL,
         `phone` varchar(20) DEFAULT NULL,
@@ -54,8 +54,8 @@ try {
         `message` text NOT NULL,
         `source` varchar(50) DEFAULT 'website',
         `status` enum('new','contacted','qualified','converted','lost') NOT NULL DEFAULT 'new',
-        `assigned_to` int(11) DEFAULT NULL,
-        `client_id` int(11) DEFAULT NULL,
+        `assigned_to` BIGINT UNSIGNED DEFAULT NULL,
+        `client_id` BIGINT UNSIGNED DEFAULT NULL,
         `last_contacted_at` datetime DEFAULT NULL,
         `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
         `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -70,9 +70,9 @@ try {
     // 3. Create lead_activities table
     echo "Creating lead_activities table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `lead_activities` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `lead_id` int(11) NOT NULL,
-        `user_id` int(11) NOT NULL,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `lead_id` BIGINT UNSIGNED NOT NULL,
+        `user_id` BIGINT UNSIGNED NOT NULL,
         `activity_type` enum('call','email','meeting','note','status_change') NOT NULL,
         `activity_details` text NOT NULL,
         `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -85,7 +85,7 @@ try {
     // 4. Create clients table
     echo "Creating clients table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `clients` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
         `name` varchar(100) NOT NULL,
         `email` varchar(100) DEFAULT NULL,
         `phone` varchar(20) DEFAULT NULL,
@@ -96,10 +96,10 @@ try {
         `country` varchar(50) DEFAULT 'India',
         `source` varchar(50) DEFAULT NULL,
         `status` enum('active','inactive','prospect','lead') NOT NULL DEFAULT 'active',
-        `assigned_to` int(11) DEFAULT NULL,
+        `assigned_to` BIGINT UNSIGNED DEFAULT NULL,
         `notes` text DEFAULT NULL,
-        `created_by` int(11) NOT NULL,
-        `updated_by` int(11) DEFAULT NULL,
+        `created_by` BIGINT UNSIGNED NOT NULL,
+        `updated_by` BIGINT UNSIGNED DEFAULT NULL,
         `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
         `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
         PRIMARY KEY (`id`),
@@ -112,8 +112,8 @@ try {
     // 5. Create client_contacts table
     echo "Creating client_contacts table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `client_contacts` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `client_id` int(11) NOT NULL,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `client_id` BIGINT UNSIGNED NOT NULL,
         `name` varchar(100) NOT NULL,
         `position` varchar(100) DEFAULT NULL,
         `email` varchar(100) DEFAULT NULL,
@@ -132,9 +132,9 @@ try {
     // 6. Create client_notes table
     echo "Creating client_notes table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `client_notes` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `client_id` int(11) NOT NULL,
-        `user_id` int(11) NOT NULL,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `client_id` BIGINT UNSIGNED NOT NULL,
+        `user_id` BIGINT UNSIGNED NOT NULL,
         `note` text NOT NULL,
         `is_important` tinyint(1) NOT NULL DEFAULT 0,
         `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -148,11 +148,11 @@ try {
     // 7. Create client_tasks table
     echo "Creating client_tasks table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `client_tasks` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `client_id` int(11) DEFAULT NULL,
-        `lead_id` int(11) DEFAULT NULL,
-        `assigned_to` int(11) NOT NULL,
-        `assigned_by` int(11) NOT NULL,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `client_id` BIGINT UNSIGNED DEFAULT NULL,
+        `lead_id` BIGINT UNSIGNED DEFAULT NULL,
+        `assigned_to` BIGINT UNSIGNED NOT NULL,
+        `assigned_by` BIGINT UNSIGNED NOT NULL,
         `title` varchar(255) NOT NULL,
         `description` text DEFAULT NULL,
         `due_date` date DEFAULT NULL,
@@ -174,12 +174,12 @@ try {
     // 8. Create notifications table
     echo "Creating notifications table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `notifications` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `user_id` int(11) NOT NULL,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `user_id` BIGINT UNSIGNED NOT NULL,
         `title` varchar(100) NOT NULL,
         `message` text NOT NULL,
         `type` varchar(50) DEFAULT NULL,
-        `reference_id` int(11) DEFAULT NULL,
+        `reference_id` BIGINT UNSIGNED DEFAULT NULL,
         `reference_type` varchar(50) DEFAULT NULL,
         `is_read` tinyint(1) NOT NULL DEFAULT 0,
         `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -194,11 +194,11 @@ try {
     // 9. Create audit_log table
     echo "Creating audit_log table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS `audit_log` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `user_id` int(11) DEFAULT NULL,
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `user_id` BIGINT UNSIGNED DEFAULT NULL,
         `action` varchar(50) NOT NULL,
         `table_name` varchar(50) NOT NULL,
-        `record_id` int(11) NOT NULL,
+        `record_id` BIGINT UNSIGNED NOT NULL,
         `old_values` text DEFAULT NULL,
         `new_values` text DEFAULT NULL,
         `ip_address` varchar(45) DEFAULT NULL,

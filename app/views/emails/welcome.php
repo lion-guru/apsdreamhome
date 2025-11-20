@@ -38,7 +38,7 @@
                 </ul>
             </div>
 
-            <p><strong>Ready to explore?</strong> <a href="http://localhost/apsdreamhomefinal/login" class="button">Login to Your Account</a></p>
+            <p><strong>Ready to explore?</strong> <a href="http://localhost/apsdreamhome/login" class="button">Login to Your Account</a></p>
 
             <p>If you have any questions, our support team is here to help:</p>
             <p>📧 Email: support@apsdreamhome.com<br>

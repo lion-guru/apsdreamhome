@@ -1,13 +1,14 @@
 <?php
 require_once __DIR__ . '/includes/session_manager.php';
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/../config.php';
 initAdminSession();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
     exit();
 }
 $error = $msg = '';
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 // Handle deleting a project
 if ($conn && isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
@@ -108,3 +109,4 @@ if ($conn) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

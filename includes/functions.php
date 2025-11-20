@@ -79,16 +79,27 @@ function sanitize_input($data) {
 }
 
 // Helper function to generate CSRF token
-function csrf_token() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+if (!function_exists('csrf_token')) {
+    function csrf_token() {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
     }
-    return $_SESSION['csrf_token'];
 }
 
 // Helper function to validate CSRF token
-function validate_csrf_token($token) {
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+if (!function_exists('validate_csrf_token')) {
+    function validate_csrf_token($token) {
+        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    }
+}
+
+// Helper function to validate CSRF token (fallback)
+if (!function_exists('validateCSRFTokenFallback')) {
+    function validateCSRFTokenFallback($token, $action = 'general') {
+        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    }
 }
 
 // Helper function to get user role name
@@ -347,13 +358,15 @@ function redirect($url, $permanent = false, $log_redirect = true) {
     exit();
 }
 
-// Generate a cryptographically secure random token
-function generate_csrf_token() {
-    if (!isset($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+// Backwards-compatible helper used by some admin pages
+if (!function_exists('redirectTo')) {
+    function redirectTo($url, $permanent = false) {
+        // Delegate to the central redirect helper
+        redirect($url, $permanent);
     }
-    return $_SESSION['csrf_token'];
 }
+
+// CSRF token functions are now in security_functions.php for enhanced security
 
 // Get recent properties
 function get_recent_properties($limit = 6) {

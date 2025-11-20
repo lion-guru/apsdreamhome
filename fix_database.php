@@ -7,16 +7,17 @@
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
 
-    echo "<h2>🔧 Database Setup & Fix</h2>\n";
+    echo "<h2>🔧 डेटाबेस सेटअप और फिक्स</h2>\n";
 
     // Check if site_settings table exists
     $check_table_sql = "SHOW TABLES LIKE 'site_settings'";
     $table_exists = $conn->query($check_table_sql)->rowCount() > 0;
 
     if (!$table_exists) {
-        echo "<p>📋 Creating site_settings table...</p>\n";
+        echo "<p>📋 site_settings टेबल बना रहे हैं...</p>\n";
 
         // Create site_settings table with correct structure
         $create_table_sql = "
@@ -30,15 +31,15 @@ try {
         ";
 
         $conn->exec($create_table_sql);
-        echo "<p>✅ site_settings table created successfully!</p>\n";
+        echo "<p>✅ site_settings टेबल सफलतापूर्वक बनाया गया!</p>\n";
     } else {
-        echo "<p>✅ site_settings table already exists.</p>\n";
+        echo "<p>✅ site_settings टेबल पहले से मौजूद है।</p>\n";
 
         // Check current structure
         $describe_sql = "DESCRIBE site_settings";
         $columns = $conn->query($describe_sql)->fetchAll(PDO::FETCH_ASSOC);
 
-        echo "<h4>📊 Current Table Structure:</h4>\n";
+        echo "<h4>📊 वर्तमान टेबल संरचना:</h4>\n";
         echo "<ul>\n";
         foreach ($columns as $column) {
             echo "<li><strong>{$column['Field']}:</strong> {$column['Type']} " .

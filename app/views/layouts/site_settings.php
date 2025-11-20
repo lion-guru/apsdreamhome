@@ -18,13 +18,12 @@ function getSiteSetting($key, $default = null) {
 
         // Load settings from database if available
         try {
-            if (function_exists('getDbConnection')) {
-                $pdo = getDbConnection();
-                $stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
-                if ($stmt) {
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        $settings[$row['setting_key']] = $row['setting_value'];
-                    }
+            global $con;
+            $pdo = $con;
+            $stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+            if ($stmt) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $settings[$row['setting_key']] = $row['setting_value'];
                 }
             }
         } catch (Exception $e) {
@@ -65,14 +64,11 @@ function getSiteSetting($key, $default = null) {
  */
 function setSiteSetting($key, $value) {
     try {
-        if (function_exists('getDbConnection')) {
-            $pdo = getDbConnection();
-
-            $stmt = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES (?, ?, NOW())
-                                  ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()");
-            return $stmt->execute([$key, $value, $value]);
-        }
-        return false;
+        global $con;
+        $pdo = $con;
+        $stmt = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES (?, ?, NOW())
+                               ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()");
+        return $stmt->execute([$key, $value, $value]);
     } catch (Exception $e) {
         return false;
     }

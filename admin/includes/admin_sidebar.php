@@ -40,6 +40,7 @@ $role = $_SESSION['admin_role'] ?? '';
         <li class="nav-item"><a href="customer_management.php" class="nav-link text-white"><i class="fas fa-users me-2"></i>Customer Master, KYC, Docs</a></li>
         <li class="nav-item"><a href="ledger.php" class="nav-link text-white"><i class="fas fa-book me-2"></i>Customer Ledger & Outstanding</a></li>
         <li class="nav-item"><a href="reminders.php" class="nav-link text-white"><i class="fas fa-bell me-2"></i>Payment Reminders & Reports</a></li>
+        <li class="nav-item"><a href="mlm_engagement.php" class="nav-link text-white"><i class="fas fa-chart-line me-2"></i>MLM Engagement</a></li>
         <li class="nav-item"><a href="add_income.php" class="nav-link text-white"><i class="fas fa-rupee-sign me-2"></i>Add Income</a></li>
         <li class="nav-item"><a href="add_expenses.php" class="nav-link text-white"><i class="fas fa-rupee-sign me-2"></i>Add Expenses</a></li>
         <li class="nav-item"><a href="admin_view_applicants.php" class="nav-link text-white"><i class="fas fa-briefcase me-2"></i>View Applicants</a></li>

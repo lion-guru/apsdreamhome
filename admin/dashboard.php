@@ -5,24 +5,35 @@
  * Security Enhanced Version
  */
 
-// Disable error display in production
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/logs/dashboard_security.log');
-error_reporting(E_ALL);
-
-// Set comprehensive security headers for admin panel
+// Enhanced security measures
 header('X-Frame-Options: DENY');
+header('Content-Security-Policy: default-src \'self\' https://cdn.jsdelivr.net; style-src \'self\' https://cdn.jsdelivr.net \'unsafe-inline\'; script-src \'self\' https://cdn.jsdelivr.net \'unsafe-inline\'');
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
 header('X-Content-Type-Options: nosniff');
 header('X-XSS-Protection: 1; mode=block');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-header('Content-Security-Policy: default-src \'self\'; script-src \'self\' https://cdn.jsdelivr.net \'unsafe-inline\'; style-src \'self\' https://cdn.jsdelivr.net \'unsafe-inline\'; img-src \'self\' data:;');
-header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
-header('Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()');
-header('X-Permitted-Cross-Domain-Policies: none');
-header('Cache-Control: no-cache, no-store, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
+
+// Session management
+session_start();
+session_regenerate_id(true);
+
+// Check if user is logged in
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: index.php');
+    exit();
+}
+
+// Session timeout check (30 minutes)
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
+    session_unset();
+    session_destroy();
+    header('Location: index.php');
+    exit();
+}
+$_SESSION['LAST_ACTIVITY'] = time();
+
+// Load dashboard UI
+require_once __DIR__ . '/views/dashboard.php';
 
 // Secure CORS configuration - Only allow specific origins
 $allowed_origins = [
@@ -242,7 +253,7 @@ if (!file_exists($db_connection_file) || !is_readable($db_connection_file)) {
 // Include database connection securely
 require_once $db_connection_file;
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     if (!$conn) {
         logSecurityEvent('Database Connection Failed in Dashboard', [
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
@@ -874,7 +885,7 @@ if (file_exists($header_file) && is_readable($header_file)) {
                 <a href="add_role.php" class="btn-modern btn-modern-outline">
                     <i class="fas fa-user-tag me-2"></i>Add Role
                 </a>
-                <a href="properties.php" class="btn-modern btn-modern-success">
+                <a href="properties.php" class="btn-modern btn-modern-primary">
                     <i class="fas fa-home me-2"></i>Add Property
                 </a>
                 <a href="leads.php" class="btn-modern btn-modern-warning">
@@ -1065,3 +1076,4 @@ if (isset($conn) && $conn) {
 
 include __DIR__ . '/includes/new_footer.php';
 ?>
+

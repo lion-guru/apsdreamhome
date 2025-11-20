@@ -12,7 +12,7 @@ try {
 
     // Load all components
     require_once 'includes/db_connection.php';
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     echo "✅ Database: " . get_class($pdo) . " connected\n";
 
     require_once 'includes/functions.php';

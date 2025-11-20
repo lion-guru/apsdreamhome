@@ -1,6 +1,13 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/functions.php';
+require_once __DIR__ . '/../../includes/cache_manager.php';
+
+// Initialize cache manager
+$cache = new CacheManager();
+
+// Set browser cache headers for better performance
+$cache->setBrowserCache(3600, true); // Cache for 1 hour
 
 // Initialize variables
 $page_title = "PAGE_TITLE - APS Dream Homes";
@@ -33,11 +40,11 @@ require_once __DIR__ . '/header.php';
                 <p class="lead text-muted">PAGE_SUBHEADING</p>
                 <div class="d-flex gap-3">
                     <a href="#main-content" class="btn btn-primary px-4">Learn More</a>
-                    <a href="/contact" class="btn btn-outline-primary px-4">Contact Us</a>
+                    <a href="<?= BASE_URL ?>contact" class="btn btn-outline-primary px-4">Contact Us</a>
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="<?= get_asset_url('images/PAGE_HERO_IMAGE.jpg') ?>" alt="PAGE_HERO_ALT" class="img-fluid rounded-3 shadow-lg">
+                <img src="<?= get_asset_url('images/PAGE_HERO_IMAGE.jpg') ?>" alt="PAGE_HERO_ALT" class="img-fluid rounded-3 shadow-lg" loading="lazy">
             </div>
         </div>
     </div>
@@ -47,7 +54,7 @@ require_once __DIR__ . '/header.php';
 <nav class="bg-light border-bottom py-2">
     <div class="container">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
             <li class="breadcrumb-item active">PAGE_NAME</li>
         </ol>
     </div>

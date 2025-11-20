@@ -6,7 +6,7 @@ require_once '../../../includes/auth_check.php';
 header('Content-Type: application/json');
 
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     
     // Get current month
     $currentMonth = date('Y-m');

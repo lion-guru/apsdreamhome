@@ -41,7 +41,7 @@
             </ol>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="http://localhost/apsdreamhomefinal/admin" class="button">Open Admin Panel</a>
+                <a href="http://localhost/apsdreamhome/admin" class="button">Open Admin Panel</a>
             </div>
         </div>
 

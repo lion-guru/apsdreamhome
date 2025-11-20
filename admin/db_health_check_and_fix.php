@@ -2,7 +2,7 @@
 // Automated Database Health Check and Repair Script
 // Scans all tables, checks for duplicates, table corruption, and fixes common issues
 define('IN_ADMIN', true);
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/../includes/config.php';
 
 function getAllTables($conn) {
     $tables = [];
@@ -73,7 +73,8 @@ function checkDuplicates($conn, $table) {
     return $report;
 }
 
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 if (!$conn) {
     die("Database connection failed. Please check your config.");
 }
@@ -93,3 +94,4 @@ echo "Database Health Check Report\n";
 echo str_repeat("=", 40) . "\n";
 echo implode("\n", $overall);
 echo "\nDone.";
+

@@ -1,6 +1,5 @@
 <?php
 require_once '../../includes/config.php';
-require_once '../../includes/db_connection.php';
 require_once '../../includes/auth_check.php';
 require_once '../includes/emi_foreclosure_logger.php';
 
@@ -147,7 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     
     try {
-        $conn = getDbConnection();
+        global $con;
+        $conn = $con;
         $reportGenerator = new EMIForeclosureReportGenerator($conn);
         
         $action = $_POST['action'] ?? '';

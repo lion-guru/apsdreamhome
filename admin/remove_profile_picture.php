@@ -12,7 +12,8 @@ if (!isset($_SESSION['admin_session']) || $_SESSION['admin_session']['is_authent
 }
 
 // Include database connection
-require_once __DIR__ . '/db_connection.php';
+require_once __DIR__ . '/../includes/config/config.php';
+global $con;
 
 // Set content type to JSON
 header('Content-Type: application/json');
@@ -27,7 +28,8 @@ if (empty($user_id) || !is_numeric($user_id)) {
 }
 
 try {
-    $conn = getDbConnection();
+        global $con;
+    $conn = $con;
     
     // Begin transaction
     $conn->begin_transaction();

@@ -6,7 +6,7 @@
 
 // Define BASE_URL if not already defined
 if (!defined('BASE_URL')) {
-    define('BASE_URL', 'http://localhost/apsdreamhomefinal/');
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
 }
 
 // Welcome Email Template

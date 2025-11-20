@@ -144,8 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('All required fields must be filled');
         }
 
-        // Get database connection
-        $conn = getDbConnection();
+        // Use getDbConnection() to connect to DB
+        global $con;
+        $conn = $con;
         if (!$conn) {
             throw new Exception('Database connection failed');
         }

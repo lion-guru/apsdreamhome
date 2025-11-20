@@ -61,7 +61,7 @@ class AdminUserCreator {
                 echo "✅ Admin user created successfully!\n";
                 echo "📧 Email: {$admin_data['email']}\n";
                 echo "🔐 Password: {$admin_data['password']}\n";
-                echo "🔗 Admin URL: http://localhost/apsdreamhomefinal/admin\n";
+                echo "🔗 Admin URL: http://localhost/apsdreamhome/admin\n";
                 echo "🆔 User ID: {$user_id}\n";
 
                 // Create admin role if not exists

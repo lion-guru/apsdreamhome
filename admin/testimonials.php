@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/includes/config/config.php';
+global $con;
 // Start session and check admin authentication
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
@@ -7,7 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 // Include database connection
-require_once '../includes/db_connection.php';
+
 
 // Handle testimonial actions (approve/reject/delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['id'])) {
@@ -15,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     $action = $_POST['action'];
     
     try {
-        $conn = getDbConnection();
+        $conn = $con;
         
         switch ($action) {
             case 'approve':
@@ -46,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
 // Get all testimonials
 $testimonials = [];
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     $result = $conn->query("SELECT 
         id,
         client_name as name,

@@ -63,6 +63,7 @@ if (!isset($_SESSION['auser'])) {
                         <li><a class="<?php echo basename($_SERVER['PHP_SELF']) == 'customer_management.php' ? 'active' : ''; ?>" href="customer_management.php">Customers</a></li>
                         <li><a class="<?php echo basename($_SERVER['PHP_SELF']) == 'booking.php' ? 'active' : ''; ?>" href="booking.php">Bookings</a></li>
                         <li><a class="<?php echo basename($_SERVER['PHP_SELF']) == 'aps_custom_report.php' ? 'active' : ''; ?>" href="aps_custom_report.php">Reports</a></li>
+                        <li><a class="<?php echo basename($_SERVER['PHP_SELF']) == 'mlm_engagement.php' ? 'active' : ''; ?>" href="mlm_engagement.php">MLM Engagement</a></li>
                     </ul>
                 </li>
                 

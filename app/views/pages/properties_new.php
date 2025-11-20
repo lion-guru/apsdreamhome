@@ -19,7 +19,7 @@ require_once 'includes/db_connection.php';
 
 // Get database connection
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     // Set default timezone
     date_default_timezone_set('Asia/Kolkata');

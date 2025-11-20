@@ -1,10 +1,10 @@
 <?php
 // This script will update ALL admin passwords to a new Argon2 hash of 'Aps@128128'.
-require_once __DIR__ . '/../includes/db_connection.php';
+require_once __DIR__ . '/../includes/config.php';
 $new_password = 'Aps@128128';
 $new_hash = password_hash($new_password, PASSWORD_ARGON2ID);
 
-$con = getDbConnection();
+global $con;
 if (!$con) {
     die('Database connection failed');
 }
@@ -22,3 +22,4 @@ while ($row = $result->fetch_assoc()) {
 $con->close();
 echo "Updated $updated admin passwords to 'Aps@128128' (Argon2). Please change after first login!\n";
 ?>
+

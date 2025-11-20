@@ -13,75 +13,86 @@ $conn = $config->getDatabaseConnection();
 $message = '';
 $message_type = '';
 
+// Generate CSRF token
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = trim($_POST['full_name']);
-    $mobile = trim($_POST['mobile']);
-    $email = trim($_POST['email']);
-    $referrer_code = trim($_POST['referrer_code']) ?: null;
-    $password = trim($_POST['password']);
-    $confirm_password = trim($_POST['confirm_password']);
-
-    // Validation
-    if (empty($full_name) || empty($mobile) || empty($email) || empty($password)) {
-        $message = "Please fill all required fields!";
-        $message_type = "danger";
-    } elseif ($password !== $confirm_password) {
-        $message = "Passwords do not match!";
-        $message_type = "danger";
-    } elseif (strlen($mobile) != 10) {
-        $message = "Mobile number must be 10 digits!";
-        $message_type = "danger";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $message = "Please enter a valid email address!";
+    // CSRF Token Validation
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        $message = "Invalid CSRF token. Action blocked.";
         $message_type = "danger";
     } else {
-        // Check if mobile or email already exists
-        $check_stmt = $conn->prepare("SELECT id FROM customers WHERE phone = ? OR email = ?");
-        $check_stmt->bind_param("ss", $mobile, $email);
-        $check_stmt->execute();
-        if ($check_stmt->get_result()->num_rows > 0) {
-            $message = "Mobile number or email already registered!";
+        $full_name = trim($_POST['full_name']);
+        $mobile = trim($_POST['mobile']);
+        $email = trim($_POST['email']);
+        $referrer_code = trim($_POST['referrer_code']) ?: null;
+        $password = trim($_POST['password']);
+        $confirm_password = trim($_POST['confirm_password']);
+
+        // Validation
+        if (empty($full_name) || empty($mobile) || empty($email) || empty($password)) {
+            $message = "Please fill all required fields!";
+            $message_type = "danger";
+        } elseif ($password !== $confirm_password) {
+            $message = "Passwords do not match!";
+            $message_type = "danger";
+        } elseif (strlen($mobile) != 10) {
+            $message = "Mobile number must be 10 digits!";
+            $message_type = "danger";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $message = "Please enter a valid email address!";
             $message_type = "danger";
         } else {
-            // Verify referral code if provided
-            $referrer_id = null;
-            if ($referrer_code) {
-                $ref_stmt = $conn->prepare("SELECT id FROM mlm_agents WHERE referral_code = ? AND status = 'active'");
-                $ref_stmt->bind_param("s", $referrer_code);
-                $ref_stmt->execute();
-                $ref_result = $ref_stmt->get_result()->fetch_assoc();
-                if (!$ref_result) {
-                    $message = "Invalid referral code!";
-                    $message_type = "danger";
-                } else {
-                    $referrer_id = $ref_result['id'];
+            // Check if mobile or email already exists
+            $check_stmt = $conn->prepare("SELECT id FROM customers WHERE phone = ? OR email = ?");
+            $check_stmt->bind_param("ss", $mobile, $email);
+            $check_stmt->execute();
+            if ($check_stmt->get_result()->num_rows > 0) {
+                $message = "Mobile number or email already registered!";
+                $message_type = "danger";
+            } else {
+                // Verify referral code if provided
+                $referrer_id = null;
+                if ($referrer_code) {
+                    $ref_stmt = $conn->prepare("SELECT id FROM mlm_agents WHERE referral_code = ? AND status = 'active'");
+                    $ref_stmt->bind_param("s", $referrer_code);
+                    $ref_stmt->execute();
+                    $ref_result = $ref_stmt->get_result()->fetch_assoc();
+                    if (!$ref_result) {
+                        $message = "Invalid referral code!";
+                        $message_type = "danger";
+                    } else {
+                        $referrer_id = $ref_result['id'];
+                    }
                 }
-            }
 
-            if (!$message) {
-                // Hash password
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                if (!$message) {
+                    // Hash password
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-                // Generate customer ID
-                $customer_id = 'CUST-' . str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
+                    // Generate customer ID
+                    $customer_id = 'CUST-' . str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
 
-                // Insert new customer
-                $stmt = $conn->prepare("INSERT INTO customers (id, name, email, phone, password, referred_by, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-                $stmt->bind_param("sssssi", $customer_id, $full_name, $email, $mobile, $hashed_password, $referrer_id);
+                    // Insert new customer
+                    $stmt = $conn->prepare("INSERT INTO customers (id, name, email, phone, password, referred_by, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                    $stmt->bind_param("sssssi", $customer_id, $full_name, $email, $mobile, $hashed_password, $referrer_id);
 
-                if ($stmt->execute()) {
-                    // Send welcome email/notification (placeholder)
-                    // sendCustomerWelcomeEmail($email, $full_name, $customer_id, $password);
+                    if ($stmt->execute()) {
+                        // Send welcome email/notification (placeholder)
+                        // sendCustomerWelcomeEmail($email, $full_name, $customer_id, $password);
 
-                    $message = "Registration successful! Your Customer ID is: <strong>$customer_id</strong>. Please save it for login. You can now login to your dashboard.";
-                    $message_type = "success";
+                        $message = "Registration successful! Your Customer ID is: <strong>$customer_id</strong>. Please save it for login. You can now login to your dashboard.";
+                        $message_type = "success";
 
-                    // Clear form data
-                    $_POST = array();
-                } else {
-                    $message = "Registration failed. Please try again!";
-                    $message_type = "danger";
+                        // Clear form data
+                        $_POST = array();
+                    } else {
+                        $message = "Registration failed. Please try again!";
+                        $message_type = "danger";
+                    }
                 }
             }
         }
@@ -253,6 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         <!-- Registration Form -->
                         <form method="POST" id="customerRegisterForm">
+                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">

@@ -3,7 +3,8 @@
  * Script to update the password for the test user
  */
 
-require_once 'config_simple.php';
+require_once __DIR__ . '/../../includes/config/config.php';
+global $conn;
 
 // Hash a known password
 $password = 'password123';

@@ -71,7 +71,7 @@ if(!isset($_SESSION['auser']))
 									<h4 class="card-title">Contact List</h4>
 									<?php 
 											if(isset($_GET['msg']))	
-											echo $_GET['msg'];
+											echo sanitizeInput($_GET['msg']);
 											
 										?>
 								</div>

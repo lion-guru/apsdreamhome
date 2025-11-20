@@ -12,23 +12,23 @@ $conn = $config->getDatabaseConnection();
 
 $message = '';
 $message_type = '';
-$property_id = $_GET['id'] ?? 0;
+$property_id = sanitizeInput($_GET['id'] ?? 0);
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = trim($_POST['full_name']);
-    $mobile = trim($_POST['mobile']);
-    $email = trim($_POST['email']);
-    $property_title = trim($_POST['property_title']);
-    $property_type = trim($_POST['property_type']);
-    $price = trim($_POST['price']);
-    $bedrooms = trim($_POST['bedrooms']);
-    $bathrooms = trim($_POST['bathrooms']);
-    $area = trim($_POST['area']);
-    $address = trim($_POST['address']);
-    $city = trim($_POST['city']);
-    $state = trim($_POST['state']);
-    $description = trim($_POST['description']);
+    $full_name = sanitizeInput($_POST['full_name']);
+    $mobile = sanitizeInput($_POST['mobile']);
+    $email = sanitizeInput($_POST['email']);
+    $property_title = sanitizeInput($_POST['property_title']);
+    $property_type = sanitizeInput($_POST['property_type']);
+    $price = sanitizeInput($_POST['price']);
+    $bedrooms = sanitizeInput($_POST['bedrooms']);
+    $bathrooms = sanitizeInput($_POST['bathrooms']);
+    $area = sanitizeInput($_POST['area']);
+    $address = sanitizeInput($_POST['address']);
+    $city = sanitizeInput($_POST['city']);
+    $state = sanitizeInput($_POST['state']);
+    $description = sanitizeInput($_POST['description']);
     $features = isset($_POST['features']) ? $_POST['features'] : [];
     $terms_accepted = isset($_POST['terms_accepted']) ? 1 : 0;
 
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $message_type = "success";
 
             // Clear form data
-            $_POST = array();
+            $_POST = [];
         } else {
             $message = "Property listing failed. Please try again!";
             $message_type = "danger";
@@ -156,6 +156,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 function sendWhatsAppNotification($mobile, $message) {
     error_log("WhatsApp Notification to: " . $mobile . "\nMessage: " . $message);
     return true;
+}
+
+function sanitizeInput($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+    return $data;
 }
 
 // Get states for dropdown

@@ -171,7 +171,7 @@ class TestFramework
 
         foreach ($apiEndpoints as $endpoint) {
             try {
-                $url = "http://localhost/apsdreamhomefinal/" . $endpoint;
+                $url = "http://localhost/apsdreamhome/" . $endpoint;
 
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);

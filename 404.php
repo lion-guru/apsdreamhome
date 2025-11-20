@@ -128,9 +128,9 @@ if (!isset($_SESSION[$rate_limit_key])) {
         'last_operation' => $current_time
     ];
 }
-
 $rate_limit_data = &$_SESSION[$rate_limit_key];
 
+$_SESSION[$rate_limit_key]['last_operation'] = $current_time;
 // Check if rate limit exceeded
 if ($current_time - $rate_limit_data['first_operation'] < 3600) {
     $rate_limit_data['operations']++;

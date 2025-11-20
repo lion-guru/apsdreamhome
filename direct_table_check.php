@@ -3,7 +3,7 @@
 require_once __DIR__ . '/includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     
     // Check legal_services
     $result1 = $pdo->query("SHOW TABLES LIKE 'legal_services'");

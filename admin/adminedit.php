@@ -1,6 +1,6 @@
 <?php
 require_once(__DIR__ . '/includes/session_manager.php');
-require_once(__DIR__ . '/../includes/db_config.php');
+require_once(__DIR__ . '/../includes/config.php');
 initAdminSession();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
@@ -18,7 +18,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 $edit_id = (int)$_GET['id'];
 
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 $msg = $error = '';
 
 // Fetch roles from roles table
@@ -137,3 +138,4 @@ $conn->close();
 </div>
 </body>
 </html>
+

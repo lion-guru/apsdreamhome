@@ -5,10 +5,17 @@
  */
 
 session_start();
+require_once '../../../includes/db_connection.php';
 require_once 'includes/config.php';
 
 $config = AppConfig::getInstance();
 $conn = $config->getDatabaseConnection();
+
+// Check if connection is valid
+if (!$conn) {
+    error_log("Database connection failed in resell_properties.php");
+    die("Database connection failed. Please try again later.");
+}
 
 // Get filter parameters
 $city_filter = $_GET['city'] ?? '';
@@ -68,23 +75,46 @@ if (!empty($search_query)) {
 
 $query .= " ORDER BY rp.is_featured DESC, rp.created_at DESC";
 
-$stmt = $conn->prepare($query);
-if (!empty($params)) {
-    $stmt->bind_param($types, ...$params);
+try {
+    $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        throw new Exception("Failed to prepare statement: " . $conn->error);
+    }
+    
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to execute statement: " . $stmt->error);
+    }
+    
+    $result = $stmt->get_result();
+    $properties = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    
+} catch (Exception $e) {
+    error_log("Database error in resell_properties.php: " . $e->getMessage());
+    $properties = [];
 }
-$stmt->execute();
-$properties = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 // Get unique cities and types for filters
-$cities_stmt = $conn->query("SELECT DISTINCT city FROM resell_properties WHERE status = 'approved' ORDER BY city");
-$cities = $cities_stmt->fetch_all(MYSQLI_ASSOC);
-
-$types_stmt = $conn->query("SELECT DISTINCT property_type FROM resell_properties WHERE status = 'approved' ORDER BY property_type");
-$property_types = $types_stmt->fetch_all(MYSQLI_ASSOC);
-
-// Get price ranges for filter
-$price_stmt = $conn->query("SELECT MIN(price) as min_price, MAX(price) as max_price FROM resell_properties WHERE status = 'approved'");
-$price_range = $price_stmt->fetch_assoc();
+try {
+    $cities_stmt = $conn->query("SELECT DISTINCT city FROM resell_properties WHERE status = 'approved' ORDER BY city");
+    $cities = $cities_stmt ? $cities_stmt->fetch_all(MYSQLI_ASSOC) : [];
+    
+    $types_stmt = $conn->query("SELECT DISTINCT property_type FROM resell_properties WHERE status = 'approved' ORDER BY property_type");
+    $property_types = $types_stmt ? $types_stmt->fetch_all(MYSQLI_ASSOC) : [];
+    
+    // Get price ranges for filter
+    $price_stmt = $conn->query("SELECT MIN(price) as min_price, MAX(price) as max_price FROM resell_properties WHERE status = 'approved'");
+    $price_range = $price_stmt ? $price_stmt->fetch_assoc() : ['min_price' => 0, 'max_price' => 0];
+    
+} catch (Exception $e) {
+    error_log("Database error in resell_properties.php (filter queries): " . $e->getMessage());
+    $cities = [];
+    $property_types = [];
+    $price_range = ['min_price' => 0, 'max_price' => 0];
+}
 ?>
 
 <!DOCTYPE html>

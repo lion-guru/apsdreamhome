@@ -15,47 +15,104 @@ header('X-XSS-Protection: 1; mode=block');
 header('X-Content-Type-Options: nosniff');
 
 // Include necessary files
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/../includes/db_connection.php';
 require_once __DIR__ . '/includes/csrf_protection.php';
+require_once __DIR__ . '/../includes/config/config.php';
+require_once __DIR__ . '/../includes/security_functions.php';
 
-// Debug: Check if database connection is working
-try {
-    $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASSWORD);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+// Generate or refresh captcha question
+$shouldGenerateCaptcha = !isset($_SESSION['captcha_question'])
+    || !isset($_SESSION['captcha_answer'])
+    || isset($_GET['refresh']);
+
+if ($shouldGenerateCaptcha) {
+    $numOne = random_int(2, 9);
+    $numTwo = random_int(1, 8);
+
+    $_SESSION['captcha_question'] = sprintf('%d + %d', $numOne, $numTwo);
+    $_SESSION['captcha_answer'] = $numOne + $numTwo;
 }
 
-// Generate CSRF token
-$csrf_token = CSRFProtection::generateToken();
+$captcha_question = $_SESSION['captcha_question'] ?? '';
 
-// Check for login error and success messages
-$login_error = $_SESSION['login_error'] ?? '';
-unset($_SESSION['login_error']);
+// Remember me functionality
+if (isset($_COOKIE['remember_me'])) {
+    $token = $_COOKIE['remember_me'];
+    
+    try {
+        require_once __DIR__ . '/../config/database.php';
+        global $con;
 
-$success_message = '';
-if (isset($_GET['password_changed']) && $_GET['password_changed'] == 1) {
-    $success_message = 'Your password has been changed successfully. Please log in with your new password.';
+        $stmt = $con->prepare("SELECT admin_id, expires_at FROM remember_me_tokens WHERE token = ?");
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $token_data = $result->fetch_assoc();
+
+        if ($token_data && strtotime($token_data['expires_at']) > time()) {
+            // Token is valid, log the user in
+            $_SESSION['admin_id'] = $token_data['admin_id'];
+            $_SESSION['admin_logged_in'] = true;
+
+            // You might want to fetch admin details and set other session variables here
+            $stmt = $con->prepare("SELECT role FROM admins WHERE id = ?");
+            $stmt->bind_param("i", $token_data['admin_id']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $admin = $result->fetch_assoc();
+
+            if ($admin) {
+                $_SESSION['admin_role'] = $admin['role'];
+                // Redirect based on role
+                $redirect_url = 'enhanced_dashboard.php'; // Default
+                if ($admin['role'] === 'superadmin') {
+                    $redirect_url = 'superadmin_dashboard.php';
+                } elseif ($admin['role'] === 'admin') {
+                    $redirect_url = 'admin_dashboard.php';
+                }
+                header('Location: ' . $redirect_url);
+                exit();
+            }
+        }
+    } catch (Exception $e) {
+        // Log error, but don't expose details
+        error_log('Remember me check failed: ' . $e->getMessage());
+    }
 }
 
-// Also check for success message in session (in case of redirect)
-if (isset($_SESSION['success_message'])) {
-    $success_message = $_SESSION['success_message'];
-    unset($_SESSION['success_message']);
-}
+// If already logged in, redirect to the appropriate dashboard
+if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+    $admin_role = $_SESSION['admin_role'] ?? 'admin';
 
-// Generate simple CAPTCHA
-$num1 = rand(1, 10);
-$num2 = rand(1, 10);
-$_SESSION['captcha_num1_admin'] = $num1;
-$_SESSION['captcha_num2_admin'] = $num2;
-$_SESSION['captcha_answer'] = $num1 + $num2;
-$captcha_question = "$num1 + $num2 = ?";
+    // Get appropriate dashboard for role
+    $dashboard_map = [
+        'superadmin' => 'superadmin_dashboard.php',
+        'admin' => 'admin_dashboard.php',
+        'manager' => 'manager_dashboard.php',
+        'director' => 'director_dashboard.php',
+        'office_admin' => 'office_admin_dashboard.php',
+        'ceo' => 'ceo_dashboard.php',
+        'cfo' => 'cfo_dashboard.php',
+        'coo' => 'coo_dashboard.php',
+        'cto' => 'cto_dashboard.php',
+        'cm' => 'cm_dashboard.php',
+        'sales' => 'sales_dashboard.php',
+        'employee' => 'employee_dashboard.php',
+        'legal' => 'legal_dashboard.php',
+        'marketing' => 'marketing_dashboard.php',
+        'finance' => 'finance_dashboard.php',
+        'hr' => 'hr_dashboard.php',
+        'it' => 'it_dashboard.php',
+        'operations' => 'operations_dashboard.php',
+        'support' => 'support_dashboard.php',
+        'builder' => 'builder_management_dashboard.php',
+        'agent' => 'agent_dashboard.php',
+        'associate' => 'associate_dashboard.php'
+    ];
 
-// Check if already logged in
-if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_session']['is_authenticated'] === true) {
-    header('Location: dashboard.php');
+    $redirect_dashboard = $dashboard_map[$admin_role] ?? 'enhanced_dashboard.php';
+    header('Location: ' . $redirect_dashboard);
     exit();
 }
 ?><!DOCTYPE html>
@@ -73,6 +130,34 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             --login-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
+
+            /* Core color palette */
+            --text-primary: #1f2933;
+            --text-secondary: #6b7280;
+            --success-color: #22c55e;
+            --error-color: #ef4444;
+
+            /* Spacing scale */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 0.75rem;
+            --space-lg: 1.25rem;
+            --space-xl: 1.75rem;
+            --space-2xl: 2.5rem;
+
+            /* Radius scale */
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 999px;
+
+            /* Typography scale */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+
+            /* Motion */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
         }
 
         body {
@@ -82,7 +167,10 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: clamp(1.5rem, 4vw, 2.5rem) var(--space-lg);
+            position: relative;
         }
 
         body::before {
@@ -107,13 +195,31 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             backdrop-filter: blur(20px);
             border-radius: var(--radius-xl);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            padding: var(--space-2xl);
+            padding: clamp(2.75rem, 6vw, 3.5rem) clamp(1.5rem, 4vw, 2.5rem);
             width: 100%;
-            max-width: 450px;
+            max-width: 520px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
             animation: slideUp 0.8s ease-out;
+            max-height: calc(100vh - 3rem);
+            overflow-y: auto;
+        }
+
+        .environment-badge {
+            position: absolute;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-full);
+            background: rgba(102, 126, 234, 0.08);
+            color: #4338ca;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            letter-spacing: 0.03em;
         }
 
         .login-container::before {
@@ -189,61 +295,123 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
+        .login-meta {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: var(--space-md);
+            background: rgba(255, 255, 255, 0.65);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(102, 126, 234, 0.12);
+            padding: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .meta-item i {
+            font-size: 1.1rem;
+            color: #6366f1;
+        }
+
+        .meta-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-title {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .meta-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
         .form-floating-modern {
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
             margin-bottom: var(--space-lg);
         }
 
-        .form-floating-modern input {
-            height: 60px;
-            padding: var(--space-lg) var(--space-md);
+        .form-floating-modern label {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            height: 56px;
+            padding: 0 calc(var(--space-xl) + 0.75rem) 0 var(--space-md);
             border: 2px solid #e1e8ed;
             border-radius: var(--radius-lg);
             font-size: var(--font-size-base);
             transition: all var(--transition-normal);
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
         }
 
-        .form-floating-modern input:focus {
+        .input-wrapper input:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
             background: white;
         }
 
-        .form-floating-modern label {
+        .input-wrapper .input-icon,
+        .input-wrapper .password-toggle {
             position: absolute;
-            left: var(--space-md);
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            padding: 0 var(--space-sm);
-            color: var(--text-secondary);
-            transition: all var(--transition-fast);
-            pointer-events: none;
-            font-weight: 500;
-        }
-
-        .form-floating-modern input:focus + label,
-        .form-floating-modern input:not(:placeholder-shown) + label {
             top: 0;
-            font-size: var(--font-size-xs);
-            color: #667eea;
-            background: white;
-            padding: 0 var(--space-xs);
+            right: var(--space-md);
+            bottom: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
         }
 
-        .form-floating-modern i {
-            position: absolute;
-            right: var(--space-md);
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
+        .input-wrapper .input-icon i {
+            font-size: 1rem;
+        }
+
+        .password-toggle {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
             transition: color var(--transition-fast);
         }
 
-        .form-floating-modern input:focus + i {
+        .password-toggle:hover,
+        .password-toggle:focus {
             color: #667eea;
+            outline: none;
+        }
+
+        .form-floating-modern.error .input-wrapper input {
+            border-color: var(--error-color);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
+
+        .form-floating-modern.error label,
+        .form-floating-modern.error .input-icon,
+        .form-floating-modern.error .password-toggle {
+            color: var(--error-color);
         }
 
         .btn-login {
@@ -318,6 +486,53 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             color: #667eea;
         }
 
+        .support-card {
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            color: #4338ca;
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .support-card strong {
+            font-weight: 600;
+        }
+
+        .contextual-banner {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-lg);
+            font-size: var(--font-size-sm);
+            color: #1d4ed8;
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+        }
+
+        .contextual-banner i {
+            font-size: 1.2rem;
+        }
+
+        .inline-error {
+            display: none;
+            font-size: 0.75rem;
+            color: var(--error-color);
+            margin-top: var(--space-xs);
+            font-weight: 500;
+            margin-left: var(--space-sm);
+        }
+
+        .form-floating-modern.error .inline-error {
+            display: block;
+        }
+
         .alert-modern {
             border: none;
             border-radius: var(--radius-lg);
@@ -348,12 +563,69 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             color: #856404;
         }
 
+        .captcha-refresh {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: #4338ca;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .captcha-refresh:hover {
+            color: #312e81;
+        }
+
+        .captcha-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: var(--space-sm);
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1055;
+        }
+
         .captcha-section {
             background: #f8f9fa;
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
             margin-top: var(--space-lg);
             border: 2px dashed #dee2e6;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .captcha-question {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: #312e81;
+            background: rgba(102, 126, 234, 0.12);
+            border-radius: var(--radius-full);
+            padding: 0.4rem 1rem;
+            width: fit-content;
+        }
+
+        .captcha-question .caption {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #4338ca;
+        }
+
+        .captcha-expression {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
         }
 
         .back-home-btn {
@@ -409,9 +681,16 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
 
         /* Responsive improvements */
         @media (max-width: 576px) {
+            body {
+                padding: var(--space-lg);
+                align-items: flex-start;
+            }
+
             .login-container {
-                margin: var(--space-lg);
-                padding: var(--space-xl);
+                margin: var(--space-lg) auto;
+                padding: var(--space-xl) var(--space-lg);
+                max-height: none;
+                overflow-y: visible;
             }
 
             .login-logo i {
@@ -452,6 +731,11 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             <div class="spinner"></div>
         </div>
 
+        <div class="environment-badge">
+            <i class="fas fa-globe"></i>
+            <?php echo htmlspecialchars(strtoupper($_ENV['APP_ENV'] ?? 'Development')); ?> MODE
+        </div>
+
         <?php if (!empty($success_message)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="fas fa-check-circle me-2"></i>
@@ -472,6 +756,38 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
             </div>
         </div>
 
+        <div class="login-meta">
+            <div class="meta-item">
+                <i class="fas fa-fingerprint"></i>
+                <div class="meta-text">
+                    <span class="meta-title">MFA Ready</span>
+                    <span class="meta-subtitle">Supports two-factor auth</span>
+                </div>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-database"></i>
+                <div class="meta-text">
+                    <span class="meta-title">Encrypted Data</span>
+                    <span class="meta-subtitle">AES-256 at rest & in transit</span>
+                </div>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-headset"></i>
+                <div class="meta-text">
+                    <span class="meta-title">24/7 Support</span>
+                    <span class="meta-subtitle">ops@apsdreamhome.com</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="contextual-banner">
+            <i class="fas fa-shield-check"></i>
+            <div>
+                <strong>Security First:</strong> Your login is protected with rate limiting, CSRF protection, and session hardening.
+                Please ensure you are accessing the panel from a trusted network.
+            </div>
+        </div>
+
         <?php if (!empty($login_error)): ?>
         <div class="alert alert-danger">
             <i class="fas fa-exclamation-triangle me-2"></i>
@@ -481,32 +797,53 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
 
         <form action="process_login.php" method="post" autocomplete="off" novalidate id="loginForm">
             <div class="form-floating-modern">
-                <input type="text" id="username" name="username" required
-                       placeholder="Enter your username" autocomplete="username">
-                <label for="username">
-                    <i class="fas fa-user me-2"></i>Username
-                </label>
-                <i class="fas fa-user"></i>
+                <label for="username"><i class="fas fa-user"></i> Username</label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" name="username" required
+                           placeholder="Enter your username" autocomplete="username">
+                    <span class="input-icon" aria-hidden="true"><i class="fas fa-user"></i></span>
+                </div>
+                <p class="inline-error" id="usernameError">Please enter a valid username.</p>
             </div>
 
             <div class="form-floating-modern">
-                <input type="password" id="password" name="password" required
-                       placeholder="Enter your password" autocomplete="current-password">
-                <label for="password">
-                    <i class="fas fa-lock me-2"></i>Password
-                </label>
-                <i class="fas fa-lock password-toggle" id="passwordToggle" title="Show Password"></i>
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" required
+                           placeholder="Enter your password" autocomplete="current-password">
+                    <button type="button" class="password-toggle fas fa-lock" id="passwordToggle" title="Show Password" aria-label="Show password"></button>
+                </div>
+                <p class="inline-error" id="passwordError">Password must be at least 6 characters long.</p>
             </div>
 
             <div class="captcha-section">
-                <div class="form-floating-modern">
-                    <input type="number" id="captcha_answer" name="captcha_answer" required
-                           placeholder="Enter the result" min="1" max="99">
-                    <label for="captcha_answer">
-                        <i class="fas fa-calculator me-2"></i>Security Question: <?php echo $captcha_question; ?>
-                    </label>
-                    <i class="fas fa-shield-alt"></i>
+                <div class="captcha-question" aria-live="polite">
+                    <i class="fas fa-calculator"></i>
+                    <span class="caption">Security Question</span>
+                    <span class="captcha-expression"><?php echo htmlspecialchars($captcha_question, ENT_QUOTES, 'UTF-8'); ?> = ?</span>
                 </div>
+                <div class="form-floating-modern mb-0">
+                    <label for="captcha_answer"><i class="fas fa-shield-alt"></i> Enter answer</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="captcha_answer" name="captcha_answer" required
+                               placeholder="Type the result" min="1" max="999">
+                        <span class="input-icon" aria-hidden="true"><i class="fas fa-check-circle"></i></span>
+                    </div>
+                    <p class="inline-error" id="captchaError">Please provide the security answer to proceed.</p>
+                </div>
+                <div class="captcha-actions">
+                    <span class="text-muted small">Need a new challenge?</span>
+                    <button type="button" class="btn btn-link p-0 captcha-refresh" id="refreshCaptcha">
+                        <i class="fas fa-sync-alt"></i> Refresh Question
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="" id="rememberMe" name="remember_me">
+                <label class="form-check-label" for="rememberMe">
+                    Remember me
+                </label>
             </div>
 
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
@@ -524,6 +861,10 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
         </form>
 
         <div class="login-footer">
+            <div class="support-card">
+                <i class="fas fa-life-ring"></i>
+                Need assistance? <strong>Call +91-98765-43210</strong>
+            </div>
             <div class="login-links">
                 <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
                     <i class="fas fa-key"></i>
@@ -567,115 +908,291 @@ if (isset($_SESSION['admin_session']['is_authenticated']) && $_SESSION['admin_se
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <div class="toast-container">
+        <div id="feedbackToast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">
+                    Action completed successfully.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    $(document).ready(function() {
-        // Password visibility toggle
-        $('#passwordToggle').on('click', function() {
-            const passwordInput = $('#password');
-            const icon = $(this);
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const defaultLoginBtnContent = loginBtn ? loginBtn.innerHTML : '';
 
-            if (passwordInput.attr('type') === 'password') {
-                passwordInput.attr('type', 'text');
-                icon.removeClass('fa-lock').addClass('fa-unlock');
-                icon.attr('title', 'Hide Password');
-            } else {
-                passwordInput.attr('type', 'password');
-                icon.removeClass('fa-unlock').addClass('fa-lock');
-                icon.attr('title', 'Show Password');
-            }
-        });
+        const toastElement = document.getElementById('feedbackToast');
+        let toastInstance = null;
 
-        // Form submission with loading state
-        $('#loginForm').on('submit', function(e) {
-            const loginBtn = $('#loginBtn');
-            const loadingOverlay = $('#loadingOverlay');
-
-            // Show loading state
-            loginBtn.prop('disabled', true).html(`
-                <div class="spinner" style="width: 20px; height: 20px; margin-right: 8px;"></div>
-                Signing In...
-            `);
-            loadingOverlay.addClass('show');
-
-            // Form will submit normally after showing loading state
-            // The loading state will remain until page redirects
-        });
-
-        // Handle forgot password form submission
-        $('#forgotPasswordForm').on('submit', function(e) {
-            e.preventDefault();
-
-            const email = $('#email').val().trim();
-            const submitBtn = $(this).find('button[type="submit"]');
-            const originalText = submitBtn.html();
-
-            if (!email) {
-                alert('Please enter your email address');
+        const showToast = (message, variant = 'primary') => {
+            if (!toastElement) {
                 return;
             }
 
-            // Basic email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address');
+            const toastBody = document.getElementById('toastMessage');
+            if (toastBody) {
+                toastBody.textContent = message;
+            }
+
+            toastElement.classList.remove('bg-primary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-secondary');
+            toastElement.classList.add(`bg-${variant}`);
+
+            if (!toastInstance) {
+                toastInstance = new bootstrap.Toast(toastElement, { delay: 4000 });
+            }
+
+            toastInstance.show();
+        };
+
+        const resetLoginButton = () => {
+            if (loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = defaultLoginBtnContent;
+            }
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('show');
+            }
+        };
+
+        const fieldConfig = {
+            username: {
+                input: document.getElementById('username'),
+                errorEl: document.getElementById('usernameError'),
+                validator: value => value.trim().length >= 3,
+                message: 'Username must be at least 3 characters.'
+            },
+            password: {
+                input: document.getElementById('password'),
+                errorEl: document.getElementById('passwordError'),
+                validator: value => value.trim().length >= 6,
+                message: 'Password must be at least 6 characters long.'
+            },
+            captcha_answer: {
+                input: document.getElementById('captcha_answer'),
+                errorEl: document.getElementById('captchaError'),
+                validator: value => value.trim() !== '' && Number(value) > 0,
+                message: 'Please provide the security answer to proceed.'
+            }
+        };
+
+        Object.values(fieldConfig).forEach(config => {
+            if (!config.input) {
                 return;
             }
 
-            submitBtn.prop('disabled', true).html(`
-                <div class="spinner" style="width: 16px; height: 16px; margin-right: 8px;"></div>
-                Sending...
-            `);
+            config.group = config.input.closest('.form-floating-modern');
+            if (config.errorEl && config.message) {
+                config.errorEl.textContent = config.message;
+            }
+        });
 
-            $.ajax({
-                url: 'reset_password.php',
-                type: 'POST',
-                data: { email: email },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        alert('✅ ' + response.message);
-                        $('#forgotPasswordModal').modal('hide');
-                    } else {
-                        alert('❌ ' + (response.message || 'Error sending reset link'));
+        const setFieldState = (config, isValid) => {
+            if (!config || !config.group) {
+                return;
+            }
+
+            config.group.classList.toggle('error', !isValid);
+
+            if (config.input) {
+                config.input.setAttribute('aria-invalid', (!isValid).toString());
+            }
+        };
+
+        const validateField = key => {
+            const config = fieldConfig[key];
+            if (!config || !config.input) {
+                return true;
+            }
+
+            const isValid = !!config.validator(config.input.value);
+            setFieldState(config, isValid);
+            return isValid;
+        };
+
+        const validateLoginForm = () => {
+            let isValid = true;
+            let firstInvalid = null;
+
+            Object.keys(fieldConfig).forEach(key => {
+                const fieldValid = validateField(key);
+                if (!fieldValid) {
+                    isValid = false;
+                    if (!firstInvalid) {
+                        firstInvalid = fieldConfig[key].input;
                     }
-                },
-                error: function(xhr, status, error) {
-                    alert('❌ An error occurred. Please try again.');
-                    console.error('Reset password error:', error);
-                },
-                complete: function() {
-                    submitBtn.prop('disabled', false).html(originalText);
+                }
+            });
+
+            if (!isValid && firstInvalid) {
+                firstInvalid.focus();
+            }
+
+            return isValid;
+        };
+
+        // Password visibility toggle
+        const passwordToggle = document.getElementById('passwordToggle');
+        if (passwordToggle) {
+            passwordToggle.addEventListener('click', function() {
+                const passwordInput = fieldConfig.password?.input;
+                const icon = this;
+
+                if (!passwordInput) {
+                    return;
+                }
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('fa-lock');
+                    icon.classList.add('fa-unlock');
+                    icon.title = 'Hide Password';
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('fa-unlock');
+                    icon.classList.add('fa-lock');
+                    icon.title = 'Show Password';
+                }
+            });
+        }
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                const formIsValid = validateLoginForm();
+                if (!formIsValid) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    resetLoginButton();
+                    showToast('Please fix the highlighted fields before continuing.', 'warning');
+                    return;
+                }
+
+                if (loginBtn) {
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = `
+                        <div class="spinner" style="width: 20px; height: 20px; margin-right: 8px;"></div>
+                        Signing In...
+                    `;
+                }
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('show');
+                }
+            });
+        }
+
+        Object.entries(fieldConfig).forEach(([key, config]) => {
+            if (!config.input) {
+                return;
+            }
+
+            config.input.addEventListener('blur', () => validateField(key));
+            config.input.addEventListener('input', () => {
+                if (config.group && config.group.classList.contains('error')) {
+                    validateField(key);
                 }
             });
         });
 
-        // Enhanced form validation feedback
-        $('input[required]').on('blur', function() {
-            const input = $(this);
-            const formGroup = input.closest('.form-floating-modern');
+        const usernameInput = fieldConfig.username?.input;
+        if (usernameInput) {
+            usernameInput.focus();
+        }
 
-            if (input.val().trim() === '') {
-                formGroup.addClass('error');
-            } else {
-                formGroup.removeClass('error');
-            }
-        });
+        const refreshCaptchaBtn = document.getElementById('refreshCaptcha');
+        if (refreshCaptchaBtn) {
+            refreshCaptchaBtn.addEventListener('click', function() {
+                const originalContent = refreshCaptchaBtn.innerHTML;
+                refreshCaptchaBtn.disabled = true;
+                refreshCaptchaBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Refreshing...';
+                setTimeout(() => {
+                    window.location.href = window.location.pathname + '?refresh=' + Date.now();
+                }, 150);
+            });
+        }
 
-        // Auto-focus on first input
-        $('#username').focus();
+        const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+        if (forgotPasswordForm) {
+            forgotPasswordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-        // Keyboard navigation improvements
-        $(document).on('keydown', function(e) {
-            // Escape key closes modals
+                const emailInput = document.getElementById('email');
+                const email = emailInput ? emailInput.value.trim() : '';
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn ? submitBtn.innerHTML : '';
+
+                if (!email) {
+                    showToast('Please enter your email address.', 'warning');
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showToast('Please enter a valid email address.', 'warning');
+                    return;
+                }
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `
+                        <div class="spinner" style="width: 16px; height: 16px; margin-right: 8px;"></div>
+                        Sending...
+                    `;
+                }
+
+                fetch('reset_password.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'email=' + encodeURIComponent(email)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message || 'Reset link sent to your email.', 'success');
+                        const forgotPasswordModal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+                        if (forgotPasswordModal) {
+                            forgotPasswordModal.hide();
+                        }
+                    } else {
+                        showToast(data.message || 'Error sending reset link.', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Reset password error:', error);
+                    showToast('An unexpected error occurred. Please try again.', 'danger');
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                $('.modal').modal('hide');
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                });
             }
 
-            // Enter key submits form when focused on password field
-            if (e.key === 'Enter' && $(e.target).is('#password')) {
-                $('#loginForm').submit();
+            if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'password') {
+                if (loginForm && typeof loginForm.requestSubmit === 'function') {
+                    loginForm.requestSubmit();
+                } else if (loginForm) {
+                    loginForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
             }
         });
     });

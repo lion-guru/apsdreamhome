@@ -3,6 +3,7 @@
  * Advanced Authentication Middleware
  * Provides robust authentication and authorization mechanisms
  */
+require_once __DIR__ . '/security/security_functions.php';
 class AuthMiddleware {
     private const MAX_LOGIN_ATTEMPTS = 5;
     private const LOCKOUT_DURATION = 900; // 15 minutes
@@ -48,8 +49,7 @@ class AuthMiddleware {
             }
 
             // Verify password
-            $hashedPassword = hash('sha256', $password . $user['salt']);
-            if (!hash_equals($user['password_hash'], $hashedPassword)) {
+            if (!verifyPassword($password, $user['password_hash'])) {
                 AdminLogger::log('INVALID_PASSWORD_ATTEMPT', [
                     'username' => $username,
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'

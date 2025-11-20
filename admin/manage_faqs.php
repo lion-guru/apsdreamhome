@@ -1,8 +1,9 @@
 <?php
 // Admin Panel: Manage FAQs
 define('IN_ADMIN', true);
-require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+require_once __DIR__ . '/../includes/config.php';
+global $con;
+$conn = $con;
 if (!$conn) die('DB connection failed.');
 
 // Create table if not exists
@@ -69,3 +70,4 @@ while ($row = $res->fetch_assoc()) $faqs[] = $row;
 </table>
 <p style="text-align:center"><a href="dashboard.php">Dashboard</a> | <a href="manage_site_settings.php">Site Settings</a> | <a href="manage_team.php">Team</a> | <a href="manage_gallery.php">Gallery</a> | <a href="manage_testimonials.php">Testimonials</a> | <a href="manage_projects.php">Projects</a></p>
 </body></html>
+

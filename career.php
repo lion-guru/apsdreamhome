@@ -9,7 +9,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get active job openings
     $jobs_query = "SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC";
@@ -136,12 +136,28 @@ try {
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="value-card">
+                        <div class="benefit-icon">
                             <i class="fas fa-balance-scale"></i>
                         </div>
                         <h5>Work-Life Balance</h5>
                         <p>Flexible working hours and supportive environment for personal growth</p>
                     </div>
-              // Form submission
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="value-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5>Competitive Pay</h5>
+                        <p>Industry-leading compensation with performance bonuses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Form submission
         document.getElementById('careerApplicationForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -182,18 +198,6 @@ try {
             });
         });
     </script>
-
-    <div class="col-lg-3 col-md-6">
-                <div class="value-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h5>Competitive Pay</h5>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
     <!-- Current Openings -->
     <section class="section-padding">

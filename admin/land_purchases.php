@@ -9,7 +9,7 @@ if (!isset($_SESSION['utype']) || !in_array($_SESSION['utype'], ['admin', 'super
     exit;
 }
 
-$conn = getDbConnection();
+$conn = $con;
 if (!$conn) {
     die('Database connection failed.');
 }

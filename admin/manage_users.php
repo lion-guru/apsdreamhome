@@ -280,7 +280,8 @@ if (!validateRequestHeaders()) {
 
 // Get database connection with error handling
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     if (!$conn) {
         logSecurityEvent('Database Connection Failed in Manage Users', [
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
@@ -838,3 +839,4 @@ if (isset($conn) && $conn) {
 
 include __DIR__ . '/../includes/templates/new_footer.php';
 ?>
+

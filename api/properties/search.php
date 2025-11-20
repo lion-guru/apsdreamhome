@@ -124,60 +124,80 @@ if (!in_array($sortOrder, ['ASC', 'DESC'])) {
 
 // Build query
 $sql = "SELECT * FROM properties WHERE 1=1";
+$params = [];
+$types = "";
 
 // Add filters
 if (!empty($location)) {
-    $location = $conn->real_escape_string($location);
-    $sql .= " AND (address LIKE '%$location%' OR city LIKE '%$location%' OR zip_code LIKE '%$location%')";
+    $sql .= " AND (address LIKE ? OR city LIKE ? OR zip_code LIKE ?)";
+    $locationParam = "%" . $location . "%";
+    array_push($params, $locationParam, $locationParam, $locationParam);
+    $types .= "sss";
 }
 
 if ($minPrice > 0) {
-    $sql .= " AND price >= $minPrice";
+    $sql .= " AND price >= ?";
+    $params[] = $minPrice;
+    $types .= "i";
 }
 
 if ($maxPrice < PHP_INT_MAX) {
-    $sql .= " AND price <= $maxPrice";
+    $sql .= " AND price <= ?";
+    $params[] = $maxPrice;
+    $types .= "i";
 }
 
 if (!empty($propertyType)) {
-    $propertyType = $conn->real_escape_string($propertyType);
-    $sql .= " AND type = '$propertyType'";
+    $sql .= " AND type = ?";
+    $params[] = $propertyType;
+    $types .= "s";
 }
 
 if ($bedrooms > 0) {
-    $sql .= " AND bedrooms >= $bedrooms";
+    $sql .= " AND bedrooms >= ?";
+    $params[] = $bedrooms;
+    $types .= "i";
 }
 
 if ($bathrooms > 0) {
-    $sql .= " AND bathrooms >= $bathrooms";
+    $sql .= " AND bathrooms >= ?";
+    $params[] = $bathrooms;
+    $types .= "i";
 }
 
 // Add sorting
-switch ($sortBy) {
-    case 'date':
-        $sql .= " ORDER BY created_at $sortOrder";
-        break;
-    case 'area':
-        $sql .= " ORDER BY area $sortOrder";
-        break;
-    case 'price':
-    default:
-        $sql .= " ORDER BY price $sortOrder";
-        break;
-}
+$sql .= " ORDER BY $sortBy $sortOrder";
 
 // Add pagination
-$sql .= " LIMIT $limit OFFSET $offset";
+$sql .= " LIMIT ? OFFSET ?";
+$params[] = $limit;
+$params[] = $offset;
+$types .= "ii";
 
 // Execute query
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+if ($stmt === false) {
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Database query preparation failed'
+    ]);
+    exit;
+}
+
+if (!empty($types) && !empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Check for errors
 if (!$result) {
     http_response_code(500);
     echo json_encode([
         'status' => 'error',
-        'message' => 'Database query failed: ' . $conn->error
+        'message' => 'Database query failed'
     ]);
     exit;
 }

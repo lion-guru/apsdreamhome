@@ -1457,23 +1457,28 @@ class Request implements Countable {
         
         $requestUri = rawurldecode($requestUri);
         
-        // Remove script filename from the path
-        $scriptName = $this->getScriptName();
-        $pathInfo = '/';
+        // Get the base URL to remove from the request URI
+        $baseUrl = $this->getBaseUrl();
+        $pathInfo = $requestUri;
         
-        // Remove the query string from script name if needed
-        if (false !== $pos = strpos($scriptName, '?')) {
-            $scriptName = substr($scriptName, 0, $pos);
+        // Remove the base URL from the request URI if it exists
+        if (!empty($baseUrl) && 0 === strpos($pathInfo, $baseUrl)) {
+            $pathInfo = substr($pathInfo, strlen($baseUrl));
         }
         
-        if (!empty($scriptName) && 0 === strpos($requestUri, $scriptName)) {
-            $pathInfo = substr($requestUri, strlen($scriptName));
-        } elseif (!empty($scriptName) && 0 === strpos($requestUri, dirname($scriptName))) {
-            $pathInfo = substr($requestUri, strlen(dirname($scriptName)));
+        // Ensure the path starts with /
+        if (empty($pathInfo) || $pathInfo[0] !== '/') {
+            $pathInfo = '/' . $pathInfo;
         }
         
-        if (false !== $pos = strpos($pathInfo, '?')) {
-            $pathInfo = substr($pathInfo, 0, $pos);
+        // Remove trailing slash for root path
+        if ($pathInfo !== '/') {
+            $pathInfo = rtrim($pathInfo, '/');
+        }
+        
+        // If path is empty after processing, return root
+        if (empty($pathInfo)) {
+            $pathInfo = '/';
         }
         
         return (string) $pathInfo;

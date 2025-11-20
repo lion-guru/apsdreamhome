@@ -4,14 +4,15 @@
  * Creates the necessary database table if it doesn't exist
  */
 
-require_once 'db_connection.php';
+require_once __DIR__ . '/includes/config/config.php';
+global $con;
 
 header('Content-Type: text/plain');
 echo "Setting up password reset functionality...\n\n";
 
 try {
     // Get database connection
-    $conn = getDbConnection();
+    $conn = $con;
     
     // Check if table already exists
     $checkTable = $conn->query("SHOW TABLES LIKE 'password_resets'");
@@ -55,4 +56,4 @@ try {
 }
 
 // Provide a link back to the admin panel
-echo "\n<a href='index.php'>Back to Admin Panel</a>";
+echo "\n<a href='index.php'>Back to Admin Panel</a>";

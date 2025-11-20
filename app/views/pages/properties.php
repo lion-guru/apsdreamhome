@@ -1,4 +1,12 @@
 <?php
+if (!defined('BASE_URL')) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $base = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    define('BASE_URL', $protocol . '://' . $host . rtrim($base, '/') . '/');
+}
+?>
+<?php
 /**
  * Enhanced Properties Page - APS Dream Home
  * Modern UI/UX for property listings with advanced filtering

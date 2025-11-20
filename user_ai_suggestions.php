@@ -13,9 +13,9 @@ session_start([
 ]);
 
 // Dependency Injection and Centralized Configuration
-require_once(__DIR__ . '/includes/env_loader.php');
-require_once(__DIR__ . '/includes/db_security_upgrade.php');
-require_once(__DIR__ . '/includes/classes/AIAssistant.php');
+require_once(__DIR__ . '/../../includes/env_loader.php');
+// require_once(__DIR__ . '/../../includes/db_security_upgrade.php');
+require_once(__DIR__ . '/../../includes/classes/AIAssistant.php');
 
 // Enhanced Authentication Check
 if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
@@ -64,8 +64,13 @@ if (!empty($missingFields)) {
 
 // Initialize Secure Database and AI Components
 try {
-    $dbSecurity = new DatabaseSecurityUpgrade();
-    $aiAssistant = new AIAssistant($dbSecurity);
+    // $dbSecurity = new DatabaseSecurityUpgrade($con);
+    // } catch (Exception $e) {
+    //     error_log("Failed to instantiate DatabaseSecurityUpgrade: " . $e->getMessage());
+    //     // Handle the error appropriately, e.g., redirect or show a user-friendly message
+    //     exit("Security system error. Please try again later.");
+    // }
+    $aiAssistant = new AIAssistant($con);
     
     // Generate AI Suggestions
     $suggestions = $aiAssistant->generateSuggestions($user_id, $context);
@@ -213,3 +218,4 @@ echo json_encode([
     'status'=>$status
 ]);
 
+

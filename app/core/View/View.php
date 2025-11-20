@@ -189,10 +189,18 @@ class View {
         $view = str_replace('.', '/', $view);
         
         foreach (static::$extensions as $extension) {
+            // First check in the default base path (resources/views)
             $path = $this->basePath . '/' . $view . '.' . $extension;
             
             if (file_exists($path)) {
                 return $path;
+            }
+            
+            // Also check in app/views directory for admin views
+            $appViewsPath = App::getInstance()->basePath('app/views') . '/' . $view . '.' . $extension;
+            
+            if (file_exists($appViewsPath)) {
+                return $appViewsPath;
             }
         }
         

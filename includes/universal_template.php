@@ -588,6 +588,146 @@ class UniversalTemplate {
                 }
             }
 
+            /* Mobile Menu Overlay and Sliding */
+            .mobile-menu-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1040;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .mobile-menu-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            body.mobile-menu-open {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+
+            @media (max-width: 991.98px) {
+                .navbar-collapse {
+                    position: fixed !important;
+                    top: 0;
+                    right: -100%;
+                    width: 280px;
+                    height: 100vh;
+                    background: white;
+                    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+                    transition: right 0.3s ease;
+                    z-index: 1050;
+                    overflow-y: auto;
+                    padding: 1rem;
+                    display: block !important;
+                    visibility: hidden;
+                }
+
+                .navbar-collapse.show {
+                    right: 0;
+                    visibility: visible;
+                }
+
+                .navbar-nav {
+                    margin-top: 2rem;
+                }
+
+                .navbar-toggler {
+                    z-index: 1060;
+                    position: relative;
+                }
+
+                /* Mobile menu overlay */
+                .mobile-menu-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    z-index: 1049;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: opacity 0.3s ease, visibility 0.3s ease;
+                }
+
+                .mobile-menu-overlay.active {
+                    opacity: 1;
+                    visibility: visible;
+                }
+
+                /* Prevent body scroll when mobile menu is open */
+                body.mobile-menu-open {
+                    overflow: hidden;
+                }
+
+                /* Mobile dropdown fixes */
+                .navbar-nav .dropdown-menu {
+                    position: static !important;
+                    float: none;
+                    width: 100%;
+                    margin: 0;
+                    background: #f8f9fa;
+                    border: none;
+                    box-shadow: none;
+                    border-radius: 0;
+                    padding: 0;
+                    transform: none !important;
+                    top: auto !important;
+                    left: auto !important;
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.3s ease;
+                }
+
+                .navbar-nav .dropdown-menu.show {
+                    max-height: 500px;
+                    margin-top: 0.5rem;
+                }
+
+                .navbar-nav .dropdown-item {
+                    padding: 0.75rem 1.5rem;
+                    border-bottom: 1px solid #e9ecef;
+                    transition: background-color 0.2s ease;
+                }
+
+                .navbar-nav .dropdown-item:hover {
+                    background-color: #e9ecef;
+                }
+
+                .navbar-nav .dropdown-toggle::after {
+                    float: right;
+                    margin-top: 0.5rem;
+                    transition: transform 0.3s ease;
+                }
+
+                .navbar-nav .dropdown-toggle.show::after {
+                    transform: rotate(180deg);
+                }
+
+                /* Mobile menu header styling */
+                .navbar-collapse .navbar-nav .nav-link {
+                    padding: 1rem 0;
+                    border-bottom: 1px solid #e9ecef;
+                    font-weight: 500;
+                }
+
+                .navbar-collapse .navbar-nav .nav-link:hover {
+                    background-color: #f8f9fa;
+                    margin: 0 -1rem;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+            }
+
             /* Enhanced Animations */
             .navbar {
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -849,7 +989,7 @@ class UniversalTemplate {
             <nav class="navbar navbar-expand-lg navbar-light sticky-top main-navbar">
                 <div class="container-fluid px-3">
                     <!-- Logo -->
-                    <a class="navbar-brand d-flex align-items-center" href="/">
+                    <a class="navbar-brand d-flex align-items-center" href="<?= BASE_URL ?>">
                         <div class="logo-icon me-2">
                             <i class="fas fa-home text-primary" style="font-size: 1.8rem;"></i>
                         </div>
@@ -860,15 +1000,15 @@ class UniversalTemplate {
                     </a>
 
                     <!-- Mobile Menu Button -->
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
                     <!-- Navigation Menu -->
-                    <div class="collapse navbar-collapse" id="navbarNav">
+                    <div class="navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link px-2 py-2 <?php echo ($current_page == 'index.php' || $current_page == '') ? 'active' : ''; ?>" href="/">
+                                <a class="nav-link px-2 py-2 <?php echo ($current_page == 'index.php' || $current_page == '') ? 'active' : ''; ?>" href="<?= BASE_URL ?>">
                                     <i class="fas fa-home me-1"></i><span class="d-inline d-lg-none">Home</span>
                                 </a>
                             </li>
@@ -878,13 +1018,13 @@ class UniversalTemplate {
                                     <span class="d-none d-lg-inline">Properties</span>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="propertiesDropdown">
-                                    <li><a class="dropdown-item" href="properties">All Properties</a></li>
-                                    <li><a class="dropdown-item" href="properties?type=apartment">Apartments</a></li>
-                                    <li><a class="dropdown-item" href="properties?type=villa">Villas</a></li>
-                                    <li><a class="dropdown-item" href="properties?type=plot">Plots</a></li>
-                                    <li><a class="dropdown-item" href="properties?type=commercial">Commercial</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>properties">All Properties</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>properties?type=apartment">Apartments</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>properties?type=villa">Villas</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>properties?type=plot">Plots</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>properties?type=commercial">Commercial</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="property-favorites">My Favorites</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>favorites">My Favorites</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -893,19 +1033,19 @@ class UniversalTemplate {
                                     <span class="d-none d-lg-inline">Services</span>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
-                                    <li><a class="dropdown-item" href="legal-services">Legal Services</a></li>
-                                    <li><a class="dropdown-item" href="financial-services">Financial Services</a></li>
-                                    <li><a class="dropdown-item" href="interior-design">Interior Design</a></li>
-                                    <li><a class="dropdown-item" href="property-management">Property Management</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>legal-services">Legal Services</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>financial-services">Financial Services</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>interior-design">Interior Design</a></li>
+                                    <li><a class="dropdown-item" href="<?= BASE_URL ?>property-management">Property Management</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item d-none d-lg-block">
-                                <a class="nav-link px-2 py-2 <?php echo ($current_page == 'about.php') ? 'active' : ''; ?>" href="about">
+                                <a class="nav-link px-2 py-2 <?php echo ($current_page == 'about.php') ? 'active' : ''; ?>" href="<?= BASE_URL ?>about">
                                     <i class="fas fa-info-circle me-1"></i>About Us
                                 </a>
                             </li>
                             <li class="nav-item d-none d-lg-block">
-                                <a class="nav-link px-2 py-2 <?php echo ($current_page == 'contact.php') ? 'active' : ''; ?>" href="contact">
+                                <a class="nav-link px-2 py-2 <?php echo ($current_page == 'contact.php') ? 'active' : ''; ?>" href="<?= BASE_URL ?>contact">
                                     <i class="fas fa-phone me-1"></i>Contact
                                 </a>
                             </li>
@@ -972,6 +1112,9 @@ class UniversalTemplate {
             </nav>
         </header>
 
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
         <!-- Search Modal -->
         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -981,7 +1124,7 @@ class UniversalTemplate {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="properties" method="GET" class="search-form">
+                        <form action="<?= BASE_URL ?>properties" method="GET" class="search-form">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Property Type</label>
@@ -1065,7 +1208,7 @@ class UniversalTemplate {
                     <div class="col-lg-2 col-md-6 mb-4">
                         <h5>Quick Links</h5>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><a href="/" class="text-white-50">Home</a></li>
+                            <li class="mb-2"><a href="<?= BASE_URL ?>" class="text-white-50">Home</a></li>
                             <li class="mb-2"><a href="properties" class="text-white-50">Properties</a></li>
                             <li class="mb-2"><a href="about" class="text-white-50">About Us</a></li>
                             <li class="mb-2"><a href="contact" class="text-white-50">Contact</a></li>
@@ -1165,13 +1308,20 @@ class UniversalTemplate {
                     const isOpen = navbarCollapse.hasClass('show');
 
                     if (isOpen) {
+                        // Close menu
                         navbarCollapse.removeClass('show');
                         $(this).removeClass('active');
+                        $('body').removeClass('mobile-menu-open');
+                        $('body').css('overflow', '');
+                        $('.mobile-menu-overlay').removeClass('active');
                     } else {
+                        // Open menu
                         navbarCollapse.addClass('show');
                         $(this).addClass('active');
+                        $('body').addClass('mobile-menu-open');
+                        $('body').css('overflow', 'hidden');
+                        $('.mobile-menu-overlay').addClass('active');
                     }
-
                 });
 
                 // Close mobile menu when clicking nav links
@@ -1179,6 +1329,41 @@ class UniversalTemplate {
                     if ($(window).width() < 992) {
                         $('.navbar-collapse').removeClass('show');
                         $('.navbar-toggler').removeClass('active');
+                        $('body').removeClass('mobile-menu-open');
+                        $('body').css('overflow', '');
+                        $('.mobile-menu-overlay').removeClass('active');
+                    }
+                });
+
+                // Close mobile menu when clicking overlay
+                $('.mobile-menu-overlay').on('click', function() {
+                    $('.navbar-collapse').removeClass('show');
+                    $('.navbar-toggler').removeClass('active');
+                    $('body').removeClass('mobile-menu-open');
+                    $('body').css('overflow', '');
+                    $(this).removeClass('active');
+                });
+
+                // Handle mobile dropdown menus
+                $('.navbar-nav .dropdown-toggle').on('click', function(e) {
+                    if ($(window).width() < 992) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const dropdown = $(this).closest('.dropdown');
+                        const menu = dropdown.find('.dropdown-menu');
+                        const isOpen = menu.hasClass('show');
+                        
+                        // Close other dropdowns
+                        $('.navbar-nav .dropdown-menu').removeClass('show');
+                        $('.navbar-nav .dropdown').removeClass('show');
+                        
+                        if (!isOpen) {
+                            menu.addClass('show');
+                            dropdown.addClass('show');
+                        }
+                        
+                        return false;
                     }
                 });
 
@@ -1259,3 +1444,4 @@ function admin_page($content, $title = 'Admin Panel') {
     page($content, $title, 'admin');
 }
 ?>
+

@@ -13,9 +13,13 @@ if (file_exists(__DIR__ . '/.env')) {
     }
 }
 
-// Get credentials from environment variables
-define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
-define('GOOGLE_CLIENT_SECRET', getenv('GOOGLE_CLIENT_SECRET'));
+// Get credentials from environment variables (only if not already defined)
+if (!defined('GOOGLE_CLIENT_ID')) {
+    define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
+}
+if (!defined('GOOGLE_CLIENT_SECRET')) {
+    define('GOOGLE_CLIENT_SECRET', getenv('GOOGLE_CLIENT_SECRET'));
+}
 
 // Set appropriate redirect URL based on environment
 $protocol = ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? 'http' : 'https';
@@ -28,7 +32,8 @@ define('GOOGLE_REDIRECT_URL_ASSOCIATE', $protocol . '://' . $host . $path);
 // Validate configuration
 if (empty(GOOGLE_CLIENT_ID) || empty(GOOGLE_CLIENT_SECRET)) {
     error_log('Google OAuth Error: Missing required credentials for associate authentication');
-    die('Google OAuth configuration error. Please check the server logs.');
+    // Don't die here, just log the error and continue without OAuth
+    // This prevents the error message from being output to the browser
 }
 
 // Log OAuth configuration for debugging

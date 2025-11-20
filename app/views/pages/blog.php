@@ -9,7 +9,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get blog posts
     $blogQuery = "SELECT * FROM blog_posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 12";

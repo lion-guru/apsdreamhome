@@ -82,3 +82,4 @@ if (!function_exists('make')) {
 require_once __DIR__ . '/Factories/Factory.php';
 require_once __DIR__ . '/Factories/PropertyFactory.php';
 require_once __DIR__ . '/Factories/UserFactory.php';
+require_once __DIR__ . '/TestCase.php';

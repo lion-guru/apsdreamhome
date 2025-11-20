@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Core\Controller;
+use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Property;
 
@@ -40,7 +40,7 @@ class HomeController extends Controller {
             'cities' => $cities
         ];
 
-        $this->view('home/index', $data);
+        $this->view('home/index', $data, 'layouts/base');
     }
 
     public function about() {
@@ -50,7 +50,7 @@ class HomeController extends Controller {
             'company_info' => $this->getCompanyInfo()
         ];
 
-        $this->view('pages/about', $data);
+        $this->view('pages/about', $data, 'layouts/base');
     }
 
     public function contact() {
@@ -59,7 +59,7 @@ class HomeController extends Controller {
             'contact_info' => $this->getContactInfo()
         ];
 
-        $this->view('pages/contact', $data);
+        $this->view('pages/contact', $data, 'layouts/base');
     }
 
     public function project($projectCode = null) {
@@ -83,7 +83,7 @@ class HomeController extends Controller {
             'project' => $project
         ];
 
-        $this->view('projects/detail', $data);
+        $this->view('projects/detail', $data, 'layouts/base');
     }
 
     public function projects() {
@@ -111,7 +111,7 @@ class HomeController extends Controller {
             'current_search' => $search
         ];
 
-        $this->view('projects/index', $data);
+        $this->view('projects/index', $data, 'layouts/base');
     }
 
     public function featuredProperties() {
@@ -122,22 +122,26 @@ class HomeController extends Controller {
             'properties' => $featuredProperties
         ];
 
-        $this->view('properties/featured', $data);
+        $this->view('properties/featured', $data, 'layouts/base');
     }
 
     public function propertyDetail($id) {
         $property = $this->propertyModel->getPropertyById($id);
 
         if (!$property) {
-            $this->notFound();
+            return $this->notFound('Property not found');
         }
 
+        // Get related properties
+        $relatedProperties = $this->propertyModel->getRelatedProperties($id, 3);
+
         $data = [
-            'title' => $property->title . ' - APS Dream Home',
-            'property' => $property
+            'title' => $property['title'] . ' - APS Dream Homes',
+            'property' => $property,
+            'related_properties' => $relatedProperties
         ];
 
-        $this->view('properties/detail', $data);
+        $this->view('properties/detail', $data, 'layouts/base');
     }
 
     private function getCompanyInfo() {
@@ -165,7 +169,8 @@ class HomeController extends Controller {
             'title' => 'Our Services - APS Dream Homes Pvt Ltd',
             'services' => $this->getServices()
         ];
-        $this->view('pages/services', $data);
+
+        $this->view('pages/services', $data, 'layouts/base');
     }
 
     public function team() {
@@ -173,7 +178,8 @@ class HomeController extends Controller {
             'title' => 'Our Team - APS Dream Homes Pvt Ltd',
             'team_members' => $this->getTeamMembers()
         ];
-        $this->view('pages/team', $data);
+
+        $this->view('pages/team', $data, 'layouts/base');
     }
 
     public function careers() {

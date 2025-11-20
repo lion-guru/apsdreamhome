@@ -1,4 +1,4 @@
-<?php
+\u003c?php
 /**
  * Security Configuration
  * Centralized security settings and constants
@@ -6,132 +6,141 @@
 
 // CSRF Protection
 $config['security'] = [
-    'csrf' => [
-        'enabled' => true,
-        'token_name' => 'csrf_token',
-        'timeout' => 3600, // 1 hour
-        'regenerate' => true,
+    'csrf' =\u003e [
+        'enabled' =\u003e true,
+        'token_name' =\u003e 'csrf_token',
+        'timeout' =\u003e 3600, // 1 hour
+        'regenerate' =\u003e true,
     ],
 
     // Rate limiting
-    'rate_limiting' => [
-        'enabled' => true,
-        'max_attempts' => [
-            'login' => 5,
-            'password_reset' => 3,
-            'contact_form' => 10,
-            'api' => 100,
+    'rate_limiting' =\u003e [
+        'enabled' =\u003e true,
+        'max_attempts' =\u003e [
+            'login' =\u003e 5,
+            'password_reset' =\u003e 3,
+            'contact_form' =\u003e 10,
+            'api' =\u003e 100,
         ],
-        'decay_minutes' => [
-            'login' => 15,
-            'password_reset' => 60,
-            'contact_form' => 5,
-            'api' => 1,
+        'decay_minutes' =\u003e [
+            'login' =\u003e 15,
+            'password_reset' =\u003e 60,
+            'contact_form' =\u003e 5,
+            'api' =\u003e 1,
         ],
     ],
 
     // Session security
-    'session' => [
-        'secure' => isset($_SERVER['HTTPS']),
-        'httponly' => true,
-        'samesite' => 'Lax',
-        'lifetime' => 7200, // 2 hours
-        'domain' => null,
-        'path' => '/',
+    'session' =\u003e [
+        'secure' =\u003e isset($_SERVER['HTTPS']),
+        'httponly' =\u003e true,
+        'samesite' =\u003e 'Lax',
+        'lifetime' =\u003e 7200, // 2 hours
+        'domain' =\u003e null,
+        'path' =\u003e '/',
     ],
 
     // Password requirements
-    'password' => [
-        'min_length' => 8,
-        'require_uppercase' => true,
-        'require_lowercase' => true,
-        'require_numbers' => true,
-        'require_symbols' => false,
-        'max_age' => 90, // days
+    'password' =\u003e [
+        'min_length' =\u003e 8,
+        'require_uppercase' =\u003e true,
+        'require_lowercase' =\u003e true,
+        'require_numbers' =\u003e true,
+        'require_symbols' =\u003e false,
+        'max_age' =\u003e 90, // days
     ],
 
     // File upload security
-    'upload' => [
-        'allowed_extensions' => ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'],
-        'max_size' => 10 * 1024 * 1024, // 10MB
-        'scan_viruses' => false,
-        'sanitize_names' => true,
+    'upload' =\u003e [
+        'allowed_extensions' =\u003e ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'],
+        'max_size' =\u003e 10 * 1024 * 1024, // 10MB
+        'scan_viruses' =\u003e true,
+        'sanitize_names' =\u003e true,
     ],
 
     // Headers security
-    'headers' => [
-        'x_frame_options' => 'SAMEORIGIN',
-        'x_content_type_options' => 'nosniff',
-        'x_xss_protection' => '1; mode=block',
-        'strict_transport_security' => 'max-age=31536000; includeSubDomains',
-        'content_security_policy' => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'",
-        'referrer_policy' => 'strict-origin-when-cross-origin',
+    'headers' =\u003e [
+        'x_frame_options' =\u003e 'SAMEORIGIN',
+        'x_content_type_options' =\u003e 'nosniff',
+        'x_xss_protection' =\u003e '1; mode=block',
+        'strict_transport_security' =\u003e 'max-age=31536000; includeSubDomains',
+        'content_security_policy' =\u003e "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'",
+        'referrer_policy' =\u003e 'strict-origin-when-cross-origin',
     ],
 
     // Input sanitization
-    'sanitization' => [
-        'html_purifier' => false,
-        'strip_tags' => true,
-        'escape_html' => true,
-        'validate_urls' => true,
+    'sanitization' =\u003e [
+        'html_purifier' =\u003e true,
+        'strip_tags' =\u003e true,
+        'escape_html' =\u003e true,
+        'validate_urls' =\u003e true,
     ],
 
     // Authentication
-    'auth' => [
-        'remember_me' => true,
-        'two_factor' => false,
-        'password_reset' => true,
-        'email_verification' => false,
-        'account_lockout' => [
-            'enabled' => true,
-            'attempts' => 5,
-            'lockout_duration' => 900, // 15 minutes
+    'auth' =\u003e [
+        'remember_me' =\u003e true,
+        'two_factor' =\u003e false,
+        'password_reset' =\u003e true,
+        'email_verification' =\u003e false,
+        'account_lockout' =\u003e [
+            'enabled' =\u003e true,
+            'attempts' =\u003e 5,
+            'lockout_duration' =\u003e 900, // 15 minutes
         ],
     ],
 
     // API Security
-    'api' => [
-        'require_auth' => false,
-        'rate_limiting' => true,
-        'throttle_requests' => true,
-        'validate_tokens' => true,
-        'cors' => [
-            'enabled' => true,
-            'origins' => ['*'],
-            'methods' => ['GET', 'POST', 'PUT', 'DELETE'],
-            'headers' => ['Content-Type', 'Authorization'],
+    'api' =\u003e [
+        'require_auth' =\u003e false,
+        'rate_limiting' =\u003e true,
+        'throttle_requests' =\u003e true,
+        'validate_tokens' =\u003e true,
+        'cors' =\u003e [
+            'enabled' =\u003e true,
+            'origins' =\u003e ['*'],
+            'methods' =\u003e ['GET', 'POST', 'PUT', 'DELETE'],
+            'headers' =\u003e ['Content-Type', 'Authorization'],
         ],
     ],
 
     // Database security
-    'database' => [
-        'prepared_statements' => true,
-        'parameter_binding' => true,
-        'connection_pooling' => true,
-        'query_logging' => ENVIRONMENT === 'development',
-        'slow_query_threshold' => 1000, // milliseconds
+    'database' =\u003e [
+        'prepared_statements' =\u003e true,
+        'parameter_binding' =\u003e true,
+        'connection_pooling' =\u003e true,
+        'query_logging' =\u003e ENVIRONMENT === 'development',
+        'slow_query_threshold' =\u003e 1000, // milliseconds
     ],
 ];
 
 // Initialize security headers
 if (!headers_sent()) {
-    foreach ($config['security']['headers'] as $header => $value) {
-        $header_name = 'X-' . str_replace('_', '-', $header);
-        header($header_name . ': ' . $value);
+    $map = [
+        'x_frame_options' =\u003e 'X-Frame-Options',
+        'x_content_type_options' =\u003e 'X-Content-Type-Options',
+        'x_xss_protection' =\u003e 'X-XSS-Protection',
+        'strict_transport_security' =\u003e 'Strict-Transport-Security',
+        'content_security_policy' =\u003e 'Content-Security-Policy',
+        'referrer_policy' =\u003e 'Referrer-Policy',
+    ];
+    foreach ($config['security']['headers'] as $key =\u003e $value) {
+        $name = $map[$key] ?? str_replace('_', '-', $key);
+        header($name . ': ' . $value);
     }
 }
 
 // Security utility functions
-class SecurityHelper {
-    public static function generateCSRFToken() {
-        if (empty($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+if (!class_exists('SecurityHelper')) {
+    class SecurityHelper {
+        public static function generateCSRFToken() {
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
+            return $_SESSION['csrf_token'];
         }
-        return $_SESSION['csrf_token'];
-    }
 
     public static function validateCSRFToken($token) {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+        return isset($_SESSION['csrf_token']) \u0026\u0026 hash_equals($_SESSION['csrf_token'], $token);
     }
 
     public static function sanitizeInput($input, $type = 'string') {
@@ -152,9 +161,9 @@ class SecurityHelper {
 
     public static function hashPassword($password) {
         return password_hash($password, PASSWORD_ARGON2ID, [
-            'memory_cost' => 65536,
-            'time_cost' => 4,
-            'threads' => 3,
+            'memory_cost' =\u003e 65536,
+            'time_cost' =\u003e 4,
+            'threads' =\u003e 3,
         ]);
     }
 
@@ -166,5 +175,8 @@ class SecurityHelper {
         return bin2hex(random_bytes($length));
     }
 }
+}
 
-?>
+return $config;
+
+?\u003e

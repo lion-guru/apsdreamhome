@@ -7,7 +7,7 @@ ini_set('display_errors', 1);
 require_once __DIR__ . '/simple_db.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     
     // Fetch documents with their full paths
     $stmt = $pdo->query("SELECT id, url, drive_file_id, 

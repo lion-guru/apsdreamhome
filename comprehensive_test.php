@@ -127,7 +127,7 @@ try {
 echo "<h3>3. Database Connection Test</h3>";
 try {
     require_once 'includes/db_connection.php';
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     // Test PDO connection (PDO doesn't have ping() method)
     if ($conn) {

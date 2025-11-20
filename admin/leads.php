@@ -11,6 +11,9 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/logs/leads_security.log');
 error_reporting(E_ALL);
 
+require_once __DIR__ . '/../includes/config/config.php';
+global $con;
+
 // Set comprehensive security headers for admin panel
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
@@ -243,7 +246,7 @@ if (!file_exists($db_connection_file) || !is_readable($db_connection_file)) {
 require_once $db_connection_file;
 
 // Get database connection with validation
-$conn = getDbConnection();
+$conn = $con;
 if (!$conn) {
     logSecurityEvent('Database Connection Failed', [
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',

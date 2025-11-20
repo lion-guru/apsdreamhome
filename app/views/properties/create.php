@@ -1,12 +1,16 @@
-<?php include '../app/views/includes/header.php'; ?>
-
+<?php
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+include __DIR__ . '/../includes/header.php';
+?>
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/properties">Properties</a></li>
+                    <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Home</a></li>
+                    <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>properties">Properties</a></li>
                     <li class="breadcrumb-item active">Add Property</li>
                 </ol>
             </nav>
@@ -24,7 +28,7 @@
                         <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
                     <?php endif; ?>
 
-                    <form action="/properties" method="POST" enctype="multipart/form-data">
+                    <form action="<?php echo BASE_URL; ?>properties" method="POST" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="title" class="form-label">Property Title *</label>
@@ -100,5 +104,4 @@
         </div>
     </div>
 </div>
-
-<?php include '../app/views/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

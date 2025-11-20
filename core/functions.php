@@ -1,3 +1,5 @@
+<?php
+
 // Security constants (for login rate limiting)
 if (!isset($GLOBALS['max_login_attempts'])) {
     $GLOBALS['max_login_attempts'] = 5; // Maximum failed login attempts before lockout
@@ -22,7 +24,7 @@ if (!isset($GLOBALS['lockout_duration'])) {
                 file_put_contents($log_file, json_encode($log_entry) . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
         }
-    }
+    }    
 
     /**
      * Enhanced input validation and sanitization
@@ -139,7 +141,7 @@ if (!isset($GLOBALS['lockout_duration'])) {
      */
     if (!function_exists('get_asset_url')) {
         function get_asset_url($filename, $folder = 'assets') {
-            $base_url = BASE_URL ?? 'http://localhost/apsdreamhomefinal/';
+            $base_url = BASE_URL ?? 'http://localhost/apsdreamhome/';
             return $base_url . $folder . '/' . $filename;
         }
     }
@@ -172,7 +174,11 @@ if (!isset($GLOBALS['lockout_duration'])) {
                 header('Location: ' . $url, true, $permanent ? 301 : 302);
                 exit();
             } else {
-                echo '<script>window.location.href = "' . htmlspecialchars($url) . '";</script>';
+                // Use a more robust approach for JavaScript redirect
+                $safe_url = filter_var($url, FILTER_SANITIZE_URL);
+                echo '<script type="text/javascript">';
+                echo 'window.location.href = ' . json_encode($safe_url) . ';';
+                echo '</script>';
                 exit();
             }
         }
@@ -502,5 +508,3 @@ if (!isset($GLOBALS['lockout_duration'])) {
             return password_verify($password, $hash);
         }
     }
-}
-?>

@@ -10,7 +10,8 @@ echo "Starting migration: Add profile_picture column to users table\n\n";
 
 try {
     // Get database connection
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     // Check if column already exists
     $checkColumn = $conn->query("SHOW COLUMNS FROM `users` LIKE 'profile_picture'");
@@ -39,3 +40,4 @@ try {
 
 // Provide a link back to the admin panel
 echo "\n<a href='../index.php'>Back to Admin Panel</a>";
+

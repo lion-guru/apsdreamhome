@@ -10,7 +10,7 @@ echo "Starting creation of missing tables...\n";
 
 try {
     // Get database connection
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     
     if ($pdo === null) {
         throw new Exception("Failed to connect to the database");

@@ -2,7 +2,7 @@
 // Admin Panel: Manage Gallery
 define('IN_ADMIN', true);
 require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+$conn = $con;
 if (!$conn) die('DB connection failed.');
 ?>
 

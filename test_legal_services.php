@@ -11,7 +11,7 @@ echo "Testing legal_services functionality...\n\n";
 
 try {
     // Get database connection
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     
     if ($pdo === null) {
         throw new Exception("Failed to connect to the database");

@@ -153,7 +153,13 @@ require_once '../includes/admin_header.php';
 <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
 <script src="../vendor/daterangepicker/daterangepicker.js"></script>
 
+<!-- Dependencies for payments.js -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
+
 <!-- Page level custom scripts -->
-<script src="js/payments.js"></script>
+<script src="/src/js/payments.js"></script>
 
 <?php require_once '../includes/admin_footer.php'; ?>

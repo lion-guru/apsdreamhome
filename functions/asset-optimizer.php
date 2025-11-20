@@ -6,6 +6,8 @@
  * for improved page performance.
  */
 
+require_once __DIR__ . '/../core/functions.php';
+
 /**
  * Get asset URL based on type and filename
  * 
@@ -44,27 +46,29 @@ if (!function_exists('get_asset_url')) {
  * 
  * @return string The page type (home, property, about, etc.)
  */
-function get_page_type() {
-    $current_file = basename($_SERVER['PHP_SELF']);
-    
-    // Map filenames to page types
-    $page_types = [
-        'index.php' => 'home',
-        'property.php' => 'property',
-        'propertydetail.php' => 'property-detail',
-        'about.php' => 'about',
-        'contact.php' => 'contact',
-        'career.php' => 'career',
-        'legal.php' => 'legal',
-        'project.php' => 'project',
-        'user_dashboard.php' => 'dashboard',
-        'customer_dashboard.php' => 'dashboard',
-        'associate_dashboard.php' => 'dashboard',
-        'builder_dashboard.php' => 'dashboard'
-    ];
-    
-    // Return the page type if found, otherwise return 'general'
-    return isset($page_types[$current_file]) ? $page_types[$current_file] : 'general';
+if (!function_exists('get_page_type')) {
+    function get_page_type() {
+        $current_file = basename($_SERVER['PHP_SELF']);
+        
+        // Map filenames to page types
+        $page_types = [
+            'index.php' => 'home',
+            'property.php' => 'property',
+            'propertydetail.php' => 'property-detail',
+            'about.php' => 'about',
+            'contact.php' => 'contact',
+            'career.php' => 'career',
+            'legal.php' => 'legal',
+            'project.php' => 'project',
+            'user_dashboard.php' => 'dashboard',
+            'customer_dashboard.php' => 'dashboard',
+            'associate_dashboard.php' => 'dashboard',
+            'builder_dashboard.php' => 'dashboard'
+        ];
+        
+        // Return the page type if found, otherwise return 'general'
+        return isset($page_types[$current_file]) ? $page_types[$current_file] : 'general';
+    }
 }
 
 /**

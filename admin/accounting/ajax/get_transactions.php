@@ -1,12 +1,12 @@
 <?php
 require_once '../../../includes/config.php';
-require_once '../../../includes/db_connection.php';
 require_once '../../../includes/auth_check.php';
 
 header('Content-Type: application/json');
 
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     // Parameters from DataTables
     $draw = isset($_POST['draw']) ? intval($_POST['draw']) : 1;
@@ -110,3 +110,4 @@ try {
     ]);
 }
 ?>
+

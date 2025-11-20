@@ -451,7 +451,7 @@ async function loadRecentActivity() {
         if (data.success) {
             const activityDiv = document.getElementById('recentActivity');
             activityDiv.innerHTML = data.logs.slice(0, 5).map(log =>
-                `<div class='mb-2'><small class='text-muted'>[${log.timestamp}]</small><br><small>${log.message}</small></div>`
+                `<div class='mb-2'><small class='text-muted'>[\${log.timestamp}]</small><br><small>\${log.message}</small></div>`
             ).join('');
         }
     } catch (error) {
@@ -463,12 +463,12 @@ function showSection(section) {
     // Section switching logic for mobile navigation
     const sections = ['status', 'whatsapp', 'ai', 'settings'];
     sections.forEach(s => {
-        document.querySelectorAll(`[href='#${s}']`).forEach(el => {
+        document.querySelectorAll(`[href='#\${s}']`).forEach(el => {
             el.classList.remove('active');
         });
     });
 
-    document.querySelector(`[href='#${section}']`).classList.add('active');
+    document.querySelector(`[href='#\${section}']`).classList.add('active');
 
     // Scroll to top when switching sections
     window.scrollTo(0, 0);

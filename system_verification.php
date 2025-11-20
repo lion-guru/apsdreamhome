@@ -94,7 +94,7 @@ $total_checks++;
 echo "<div class='verification-item ";
 try {
     require_once 'includes/db_connection.php';
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     if ($conn) {
         echo "success'><i class='fas fa-database me-2'></i><strong>Database:</strong> ✅ Connection successful";
         $score += 20;

@@ -4,8 +4,8 @@
  * Web interface for managing WhatsApp message templates
  */
 
-require_once 'config.php';
-require_once 'whatsapp_templates.php';
+require_once 'includes/config/config.php';
+require_once 'includes/whatsapp_templates.php';
 
 // Initialize templates if not exists
 $templates_created = initializeWhatsAppTemplates();
@@ -109,9 +109,9 @@ if (empty($templates)) {
         echo "<small class='text-muted'>Created: {$template['created_at']}</small>";
         echo "</div>";
         echo "<div class='card-footer text-center'>";
-        echo "<button class='btn btn-sm btn-primary me-2' onclick='editTemplate(\"{$name}\")'><i class='fas fa-edit me-1'></i>Edit</button>";
-        echo "<button class='btn btn-sm btn-success me-2' onclick='testTemplate(\"{$name}\")'><i class='fas fa-vial me-1'></i>Test</button>";
-        echo "<button class='btn btn-sm btn-danger' onclick='deleteTemplate(\"{$name}\")'><i class='fas fa-trash me-1'></i>Delete</button>";
+        echo "<button class='btn btn-sm btn-primary me-2' onclick='editTemplate(\"" . htmlspecialchars($name, ENT_QUOTES) . "\")'><i class='fas fa-edit me-1'></i>Edit</button>";
+        echo "<button class='btn btn-sm btn-success me-2' onclick='testTemplate(\"" . htmlspecialchars($name, ENT_QUOTES) . "\")'><i class='fas fa-vial me-1'></i>Test</button>";
+        echo "<button class='btn btn-sm btn-danger' onclick='deleteTemplate(\"" . htmlspecialchars($name, ENT_QUOTES) . "\")'><i class='fas fa-trash me-1'></i>Delete</button>";
         echo "</div>";
         echo "</div>";
         echo "</div>";

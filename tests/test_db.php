@@ -6,7 +6,7 @@ echo "<h2>Database Connection Test</h2>";
 
 // Test connection using the main function
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     if ($conn->connect_error) {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }

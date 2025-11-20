@@ -1,6 +1,6 @@
 <?php
 // Simple database connection
-function getDbConnection() {
+function getMysqliConnection() {
     $host = 'localhost';
     $db   = 'apsdreamhome';
     $user = 'root';

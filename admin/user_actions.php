@@ -587,6 +587,124 @@ if ($action === 'add') {
         sendSecurityResponse(403, 'Cannot delete superadmin users.');
     }
 
+    // Pre-delete RESTRICT checks for dependent records (saved_searches, sessions, associates, customers)
+    // saved_searches -> users (user_id) has ON DELETE RESTRICT
+    $savedCount = 0;
+    $stmt = $con->prepare("SELECT COUNT(*) AS cnt FROM saved_searches WHERE user_id = ?");
+    if (!$stmt) {
+        logSecurityEvent('Database Prepare Failed in Pre-Delete (saved_searches)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $con->error
+        ]);
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $stmt->bind_param("i", $id);
+    if (!$stmt->execute()) {
+        logSecurityEvent('Database Execute Failed in Pre-Delete (saved_searches)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $stmt->error
+        ]);
+        $stmt->close();
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $res = $stmt->get_result();
+    if ($res && $row = $res->fetch_assoc()) {
+        $savedCount = (int)($row['cnt'] ?? 0);
+    }
+    $stmt->close();
+
+    // sessions -> users (user_id) has ON DELETE RESTRICT
+    $sessionCount = 0;
+    $stmt = $con->prepare("SELECT COUNT(*) AS cnt FROM sessions WHERE user_id = ?");
+    if (!$stmt) {
+        logSecurityEvent('Database Prepare Failed in Pre-Delete (sessions)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $con->error
+        ]);
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $stmt->bind_param("i", $id);
+    if (!$stmt->execute()) {
+        logSecurityEvent('Database Execute Failed in Pre-Delete (sessions)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $stmt->error
+        ]);
+        $stmt->close();
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $res = $stmt->get_result();
+    if ($res && $row = $res->fetch_assoc()) {
+        $sessionCount = (int)($row['cnt'] ?? 0);
+    }
+    $stmt->close();
+
+    // associates -> users (user_id) has ON DELETE RESTRICT
+    $associateCount = 0;
+    $stmt = $con->prepare("SELECT COUNT(*) AS cnt FROM associates WHERE user_id = ?");
+    if (!$stmt) {
+        logSecurityEvent('Database Prepare Failed in Pre-Delete (associates)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $con->error
+        ]);
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $stmt->bind_param("i", $id);
+    if (!$stmt->execute()) {
+        logSecurityEvent('Database Execute Failed in Pre-Delete (associates)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $stmt->error
+        ]);
+        $stmt->close();
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $res = $stmt->get_result();
+    if ($res && $row = $res->fetch_assoc()) {
+        $associateCount = (int)($row['cnt'] ?? 0);
+    }
+    $stmt->close();
+
+    // customers -> users (user_id) has ON DELETE RESTRICT
+    $customerLinkCount = 0;
+    $stmt = $con->prepare("SELECT COUNT(*) AS cnt FROM customers WHERE user_id = ?");
+    if (!$stmt) {
+        logSecurityEvent('Database Prepare Failed in Pre-Delete (customers)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $con->error
+        ]);
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $stmt->bind_param("i", $id);
+    if (!$stmt->execute()) {
+        logSecurityEvent('Database Execute Failed in Pre-Delete (customers)', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'error' => $stmt->error
+        ]);
+        $stmt->close();
+        sendSecurityResponse(500, 'Database error occurred.');
+    }
+    $res = $stmt->get_result();
+    if ($res && $row = $res->fetch_assoc()) {
+        $customerLinkCount = (int)($row['cnt'] ?? 0);
+    }
+    $stmt->close();
+
+    if ($savedCount > 0 || $sessionCount > 0 || $associateCount > 0 || $customerLinkCount > 0) {
+        $details = [];
+        if ($savedCount > 0) { $details[] = $savedCount . ' saved searches'; }
+        if ($sessionCount > 0) { $details[] = $sessionCount . ' sessions'; }
+        if ($associateCount > 0) { $details[] = $associateCount . ' associate profiles'; }
+        if ($customerLinkCount > 0) { $details[] = $customerLinkCount . ' linked customer records'; }
+        logSecurityEvent('User Delete Restricted by Dependencies', [
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
+            'user_id' => $id,
+            'saved_searches_count' => $savedCount,
+            'sessions_count' => $sessionCount,
+            'associates_count' => $associateCount,
+            'customers_link_count' => $customerLinkCount
+        ]);
+        sendSecurityResponse(409, 'Cannot delete user. Remove dependent records first: ' . implode(', ', $details) . '.');
+    }
+
     $stmt = $con->prepare("DELETE FROM users WHERE id=?");
     if (!$stmt) {
         logSecurityEvent('Database Prepare Failed in User Delete', [

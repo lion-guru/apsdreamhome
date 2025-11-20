@@ -22,7 +22,7 @@ echo "Database connection file loaded\n";
 
 try {
     // Test PDO connection
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     echo "✓ PDO Connection successful\n";
     
     // Test query

@@ -7,7 +7,7 @@ require_once __DIR__ . '/../includes/db_connection.php';
 function testConnection() {
     try {
         // Get database connection
-        $conn = getDbConnection();
+        $conn = $con;
         
         if ($conn === false) {
             throw new Exception("Failed to get database connection");

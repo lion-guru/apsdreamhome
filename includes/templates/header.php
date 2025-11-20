@@ -24,15 +24,17 @@
     <meta name="Referrer-Policy" content="strict-origin-when-cross-origin">
 
     <title><?php echo getSiteSetting('site_title', 'APS Dream Homes Pvt Ltd'); ?></title>
+<link rel="icon" href="<?= BASE_URL ?>assets/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="<?= BASE_URL ?>assets/favicon.ico" type="image/x-icon">
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="<?= BASE_URL ?>assets/js/jquery.min.js"></script>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>assets/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/plugins/font-awesome/css/all.min.css">
     <!-- AOS Animation -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>assets/vendor/css/aos.css" rel="stylesheet">
 
     <style>
         :root {
@@ -65,6 +67,7 @@
         /* APS Dream Home - Professional Real Estate Header */
         .navbar {
             background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e40af 100%) !important;
+            -webkit-backdrop-filter: blur(25px);
             backdrop-filter: blur(25px);
             box-shadow: 0 4px 30px rgba(30, 64, 175, 0.15);
             padding: 0.75rem 0;
@@ -172,6 +175,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            min-width: auto;
+            min-width: -webkit-fill-available;
             min-width: fit-content;
             max-width: clamp(150px, 20vw, 220px);
         }
@@ -229,17 +234,18 @@
         /* Premium Navigation - Fully Responsive */
         .premium-nav .nav-link {
             font-weight: 600;
-            font-size: clamp(0.65rem, 1.5vw, 0.8rem);
-            padding: clamp(0.25rem, 0.8vw, 0.5rem) clamp(0.4rem, 1.2vw, 0.8rem);
-            margin: 0 clamp(0.05rem, 0.3vw, 0.1rem);
-            border-radius: clamp(12px, 2.5vw, 20px);
+            font-size: 0.85rem;
+            padding: 0.5rem 0.8rem;
+            margin: 0 0.1rem;
+            border-radius: 20px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             white-space: nowrap;
-            min-height: clamp(38px, 4vw, 44px);
+            min-height: 42px;
             display: flex;
             align-items: center;
+            line-height: 1.2;
         }
 
         .premium-nav .nav-link i {
@@ -303,22 +309,24 @@
             transition: transform 0.3s ease;
         }
 
-        /* Premium Mega Menu - Fully Responsive */
+        /* Premium Mega Menu - Desktop Optimized */
         .premium-mega-menu {
-            width: clamp(300px, 90vw, 900px);
+            width: 850px;
             max-width: 95vw;
-            min-height: clamp(300px, 60vh, 400px);
-            height: auto; /* Fallback for Firefox */
-            max-height: clamp(400px, 70vh, 500px);
+            min-height: 380px;
+            height: auto;
+            max-height: 450px;
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             border: none;
-            border-radius: clamp(8px, 2vw, 16px);
-            box-shadow: 0 clamp(10px, 3vw, 20px) clamp(30px, 5vw, 60px) rgba(0,0,0,0.15);
-            padding: clamp(1rem, 3vw, 2rem);
-            margin-top: clamp(0.5rem, 1vw, 1rem);
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            padding: 1.8rem;
+            margin-top: 0.8rem;
             position: absolute;
             z-index: 1050;
             overflow-y: auto;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .mega-menu-container {
@@ -443,15 +451,19 @@
             border-radius: clamp(20px, 3vw, 25px);
         }
 
-        /* Premium Dropdowns - Fully Responsive */
+        /* Premium Dropdowns - Desktop Optimized */
         .premium-dropdown {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             border: none;
-            border-radius: clamp(8px, 2vw, 12px);
-            box-shadow: 0 clamp(8px, 2vw, 10px) clamp(20px, 3vw, 30px) rgba(0,0,0,0.12);
-            padding: clamp(0.8rem, 2vw, 1rem);
-            min-width: clamp(250px, 40vw, 280px);
-            max-width: 90vw;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            padding: 1rem;
+            min-width: 260px;
+            max-width: 300px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 0.5rem;
         }
 
         .premium-dropdown .dropdown-header {
@@ -486,28 +498,41 @@
             font-size: clamp(0.8rem, 2vw, 0.9rem);
         }
 
-        /* Premium Action Buttons - Fully Responsive */
+        /* Premium Action Buttons - Desktop Optimized */
+        .premium-actions {
+            gap: 0.6rem;
+            margin-left: 1rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .premium-actions .premium-btn {
-            border-radius: clamp(20px, 3vw, 25px);
+            border-radius: 18px;
             font-weight: 600;
-            padding: clamp(0.4rem, 1.2vw, 0.6rem) clamp(0.8rem, 2vw, 1.2rem);
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            padding: 0.45rem 0.75rem;
+            font-size: 0.78rem;
             transition: all 0.3s ease;
             border: 2px solid transparent;
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            min-width: auto;
         }
 
         .premium-actions .premium-btn i {
-            font-size: clamp(0.8rem, 2vw, 1rem);
+            font-size: 0.9rem;
         }
 
         .premium-actions .premium-btn span {
-            font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+            font-size: 0.74rem;
         }
 
         .premium-actions .premium-btn:hover {
-            transform: translateY(clamp(-1px, -0.5vw, -2px));
-            box-shadow: 0 clamp(4px, 1vw, 6px) clamp(15px, 3vw, 20px) rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         /* Enhanced Animations */
@@ -535,39 +560,78 @@
         /* Comprehensive Responsive Breakpoints */
         @media (max-width: 1399.98px) {
             .premium-brand {
-                font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+                font-size: 1.5rem;
             }
 
             .brand-logo, .brand-icon {
-                height: clamp(32px, 7vw, 45px);
-                width: clamp(32px, 7vw, 45px);
+                height: 42px;
+                width: 42px;
             }
 
             .premium-nav .nav-link {
-                padding: clamp(0.45rem, 1.3vw, 0.7rem) clamp(0.7rem, 1.8vw, 1rem);
+                padding: 0.6rem 0.9rem;
+                font-size: 0.8rem;
+            }
+
+            .premium-actions .premium-btn {
+                padding: 0.4rem 0.68rem;
+                font-size: 0.74rem;
+                min-width: auto;
+            }
+
+            .premium-mega-menu {
+                width: 800px;
+                padding: 1.5rem;
+            }
+
+            .premium-dropdown {
+                min-width: 240px;
+                max-width: 280px;
             }
         }
 
         @media (max-width: 1199.98px) {
             .premium-navbar {
-                padding: 0.8rem 0;
+                padding: 0.7rem 0;
             }
 
             .premium-brand {
-                font-size: clamp(1rem, 2.5vw, 1.4rem);
+                font-size: 1.3rem;
             }
 
             .brand-title {
-                font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+                font-size: 1.1rem;
             }
 
             .brand-subtitle {
-                font-size: clamp(0.55rem, 1.3vw, 0.7rem);
+                font-size: 0.65rem;
             }
 
             .premium-nav .nav-link {
-                margin: 0 clamp(0.05rem, 0.3vw, 0.1rem);
-                padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.6rem, 1.5vw, 0.8rem);
+                margin: 0 0.08rem;
+                padding: 0.5rem 0.7rem;
+                font-size: 0.75rem;
+            }
+
+            .premium-actions {
+                gap: 0.5rem;
+                margin-left: 0.8rem;
+            }
+
+            .premium-actions .premium-btn {
+                padding: 0.4rem 0.7rem;
+                font-size: 0.7rem;
+                min-width: auto;
+            }
+
+            .premium-mega-menu {
+                width: 750px;
+                padding: 1.3rem;
+            }
+
+            .premium-dropdown {
+                min-width: 220px;
+                max-width: 260px;
             }
         }
 
@@ -615,10 +679,15 @@
             }
 
             .premium-actions {
-                gap: clamp(0.3rem, 1vw, 0.5rem) !important;
+                gap: clamp(0.3rem, 1vw, 0.45rem) !important;
                 margin-top: 1rem;
                 justify-content: center;
                 width: 100%;
+            }
+
+            .premium-actions .premium-btn {
+                padding: 0.45rem 0.75rem;
+                font-size: 0.76rem;
             }
 
             .premium-actions .premium-btn {
@@ -663,6 +732,7 @@
             .premium-mega-menu {
                 padding: clamp(0.8rem, 2vw, 1rem);
                 margin: clamp(0.5rem, 1.5vw, 0.8rem) 0 !important;
+                min-height: auto;
             }
 
             .mega-header {
@@ -882,6 +952,7 @@
         /* Premium Real Estate Dropdown Menus */
         .navbar-nav .dropdown-menu {
             background: rgba(255,255,255,0.98);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             border: none;
             box-shadow: 0 15px 45px rgba(0,0,0,0.15);
@@ -1005,6 +1076,7 @@
             border-radius: 30px;
             border: 2px solid rgba(255,255,255,0.3);
             background: rgba(255,255,255,0.9);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
 
@@ -1386,7 +1458,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top premium-navbar">
         <div class="container-fluid px-3">
             <!-- Premium Brand Section -->
-            <a class="navbar-brand premium-brand" href="/" title="APS Dream Homes - Premium Real Estate Developer">
+            <a class="navbar-brand premium-brand" href="<?= BASE_URL ?>" title="APS Dream Homes - Premium Real Estate Developer">
                 <div class="brand-container">
                     <?php
                     $site_title = getSiteSetting('site_title', 'APS Dream Homes');
@@ -1406,7 +1478,7 @@
             </a>
 
             <!-- Enhanced Mobile Menu Button -->
-            <button class="navbar-toggler premium-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler premium-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="toggler-icon"></span>
                 <span class="toggler-text">MENU</span>
             </button>
@@ -1425,15 +1497,15 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <h6 class="mega-header"><i class="fas fa-search me-2"></i>Browse Properties</h6>
-                                                <a class="mega-item" href="properties" title="View all available properties"><i class="fas fa-th-large me-2"></i>All Properties</a>
-                                                <a class="mega-item" href="properties?type=residential" title="Browse residential properties"><i class="fas fa-home me-2"></i>Residential</a>
-                                                <a class="mega-item" href="properties?type=commercial" title="Browse commercial properties"><i class="fas fa-building me-2"></i>Commercial</a>
-                                                <a class="mega-item" href="properties?type=plots" title="Browse land and plots"><i class="fas fa-map me-2"></i>Plots</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>properties" title="View all available properties"><i class="fas fa-th-large me-2"></i>All Properties</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>properties?type=residential" title="Browse residential properties"><i class="fas fa-home me-2"></i>Residential</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>properties?type=commercial" title="Browse commercial properties"><i class="fas fa-building me-2"></i>Commercial</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>properties?type=plots" title="Browse land and plots"><i class="fas fa-map me-2"></i>Plots</a>
                                             </div>
                                             <div class="col-md-6">
                                                 <h6 class="mega-header"><i class="fas fa-star me-2"></i>Featured</h6>
-                                                <a class="mega-item" href="featured-properties" title="View featured properties"><i class="fas fa-star me-2"></i>Featured Properties</a>
-                                                <a class="mega-item" href="resell" title="Browse resale properties"><i class="fas fa-recycle me-2"></i>Resale Properties</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>featured-properties" title="View featured properties"><i class="fas fa-star me-2"></i>Featured Properties</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>resell" title="Browse resale properties"><i class="fas fa-recycle me-2"></i>Resale Properties</a>
                                                 <div class="mega-highlight">
                                                     <i class="fas fa-fire text-warning me-2" aria-hidden="true"></i>
                                                     <span>Hot Deals Available!</span>
@@ -1471,31 +1543,35 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <h6 class="mega-header"><i class="fas fa-list me-2"></i>Quick Access</h6>
-                                                <a class="mega-item" href="projects"><i class="fas fa-th-large me-2"></i>All Projects</a>
-                                                <a class="mega-item" href="projects?status=upcoming"><i class="fas fa-calendar-plus me-2"></i>Upcoming</a>
-                                                <a class="mega-item" href="projects?status=ongoing"><i class="fas fa-play-circle me-2"></i>Ongoing</a>
-                                                <a class="mega-item" href="projects?status=completed"><i class="fas fa-check-circle me-2"></i>Completed</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects"><i class="fas fa-th-large me-2"></i>All Projects</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects?status=upcoming"><i class="fas fa-calendar-plus me-2"></i>Upcoming</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects?status=ongoing"><i class="fas fa-play-circle me-2"></i>Ongoing</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects?status=completed"><i class="fas fa-check-circle me-2"></i>Completed</a>
                                             </div>
                                             <div class="col-md-4">
                                                 <h6 class="mega-header"><i class="fas fa-map-marker-alt me-2"></i>Locations</h6>
-                                                <a class="mega-item" href="projects?location=Gorakhpur"><i class="fas fa-map-marker-alt me-2"></i>Gorakhpur</a>
-                                                <a class="mega-item" href="projects?location=Lucknow"><i class="fas fa-map-marker-alt me-2"></i>Lucknow</a>
-                                                <a class="mega-item" href="projects?location=Varanasi"><i class="fas fa-map-marker-alt me-2"></i>Varanasi</a>
-                                                <a class="mega-item" href="projects?location=Allahabad"><i class="fas fa-map-marker-alt me-2"></i>Allahabad</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects?location=Gorakhpur"><i class="fas fa-map-marker-alt me-2"></i>Gorakhpur</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects?location=Lucknow"><i class="fas fa-map-marker-alt me-2"></i>Lucknow</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects?location=Varanasi"><i class="fas fa-map-marker-alt me-2"></i>Varanasi</a>
+                                                <a class="mega-item" href="<?php echo BASE_URL; ?>projects?location=Allahabad"><i class="fas fa-map-marker-alt me-2"></i>Allahabad</a>
                                             </div>
                                             <div class="col-md-4">
                                                 <h6 class="mega-header"><i class="fas fa-building me-2"></i>Featured Projects</h6>
                                                 <?php
                                                 try {
                                                     require_once __DIR__ . '/../../includes/db_connection.php';
-                                                    $pdo = getDbConnection();
-                                                    $projectsQuery = $pdo->query("SELECT id, name, location, status FROM projects WHERE status = 'active' ORDER BY location, name LIMIT 4");
+                                                    $pdo = getMysqliConnection();
+                                                    if ($pdo) {
+                                                        $projectsQuery = $pdo->query("SELECT id, name, location, status FROM projects WHERE status = 'active' ORDER BY location, name LIMIT 4");
 
-                                                    if ($projectsQuery && $projectsQuery->rowCount() > 0) {
-                                                        while ($project = $projectsQuery->fetch(PDO::FETCH_ASSOC)) {
-                                                            echo '<a class="mega-item" href="project?id=' . $project['id'] . '"><i class="fas fa-building me-2"></i>' .
-                                                                 htmlspecialchars($project['name'] ?? '') . '</a>';
+                                                        if ($projectsQuery && $projectsQuery->num_rows > 0) {
+                                                            while ($project = $projectsQuery->fetch(PDO::FETCH_ASSOC)) {
+                                                                echo '<a class="mega-item" href="' . BASE_URL . 'project?id=' . $project['id'] . '"><i class="fas fa-building me-2"></i>' .
+                                                                     htmlspecialchars($project['name'] ?? '') . '</a>';
+                                                            }
                                                         }
+                                                    } else {
+                                                        echo '<span class="text-muted">Loading projects...</span>';
                                                     }
                                                 } catch (Exception $e) {
                                                     echo '<span class="text-muted">Loading projects...</span>';
@@ -1509,7 +1585,7 @@
                                             <i class="fas fa-rocket fa-2x text-primary mb-3"></i>
                                             <h6>Project Updates</h6>
                                             <p>Latest developments and upcoming launches</p>
-                                            <a href="projects" class="btn btn-primary btn-sm">View All</a>
+                                            <a href="<?php echo BASE_URL; ?>projects" class="btn btn-primary btn-sm">View All</a>
                                         </div>
                                     </div>
                                 </div>
@@ -1524,10 +1600,10 @@
                         </a>
                         <ul class="dropdown-menu premium-dropdown" aria-labelledby="servicesDropdown">
                             <li><h6 class="dropdown-header"><i class="fas fa-handshake me-1"></i>Our Services</h6></li>
-                            <li><a class="dropdown-item premium-item" href="property-management"><i class="fas fa-cog me-2"></i>Property Management</a></li>
-                            <li><a class="dropdown-item premium-item" href="legal-services"><i class="fas fa-gavel me-2"></i>Legal Services</a></li>
-                            <li><a class="dropdown-item premium-item" href="financial-services"><i class="fas fa-rupee-sign me-2"></i>Financial Services</a></li>
-                            <li><a class="dropdown-item premium-item" href="interior-design"><i class="fas fa-palette me-2"></i>Interior Design</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>property-management"><i class="fas fa-cog me-2"></i>Property Management</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>legal-services"><i class="fas fa-gavel me-2"></i>Legal Services</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>financial-services"><i class="fas fa-rupee-sign me-2"></i>Financial Services</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>interior-design"><i class="fas fa-palette me-2"></i>Interior Design</a></li>
                         </ul>
                     </li>
 
@@ -1538,10 +1614,10 @@
                         </a>
                         <ul class="dropdown-menu premium-dropdown" aria-labelledby="aboutDropdown">
                             <li><h6 class="dropdown-header"><i class="fas fa-building me-1"></i>Company</h6></li>
-                            <li><a class="dropdown-item premium-item" href="about"><i class="fas fa-building me-2"></i>Company Overview</a></li>
-                            <li><a class="dropdown-item premium-item" href="team"><i class="fas fa-users me-2"></i>Our Team</a></li>
-                            <li><a class="dropdown-item premium-item" href="testimonials"><i class="fas fa-comments me-2"></i>Testimonials</a></li>
-                            <li><a class="dropdown-item premium-item" href="faq"><i class="fas fa-question-circle me-2"></i>FAQs</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>about"><i class="fas fa-building me-2"></i>Company Overview</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>team"><i class="fas fa-users me-2"></i>Our Team</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>testimonials"><i class="fas fa-comments me-2"></i>Testimonials</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>faq"><i class="fas fa-question-circle me-2"></i>FAQs</a></li>
                         </ul>
                     </li>
 
@@ -1552,12 +1628,12 @@
                         </a>
                         <ul class="dropdown-menu premium-dropdown" aria-labelledby="resourcesDropdown">
                             <li><h6 class="dropdown-header"><i class="fas fa-newspaper me-1"></i>Content</h6></li>
-                            <li><a class="dropdown-item premium-item" href="blog"><i class="fas fa-blog me-2"></i>Blog</a></li>
-                            <li><a class="dropdown-item premium-item" href="news"><i class="fas fa-newspaper me-2"></i>News & Updates</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>blog"><i class="fas fa-blog me-2"></i>Blog</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>news"><i class="fas fa-newspaper me-2"></i>News & Updates</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><h6 class="dropdown-header"><i class="fas fa-images me-1"></i>Media</h6></li>
-                            <li><a class="dropdown-item premium-item" href="gallery"><i class="fas fa-images me-2"></i>Gallery</a></li>
-                            <li><a class="dropdown-item premium-item" href="downloads"><i class="fas fa-download me-2"></i>Downloads</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>gallery"><i class="fas fa-images me-2"></i>Gallery</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>downloads"><i class="fas fa-download me-2"></i>Downloads</a></li>
                         </ul>
                     </li>
 
@@ -1568,8 +1644,8 @@
                         </a>
                         <ul class="dropdown-menu premium-dropdown" aria-labelledby="quickLinksDropdown">
                             <li><h6 class="dropdown-header"><i class="fas fa-briefcase me-1"></i>Career & Contact</h6></li>
-                            <li><a class="dropdown-item premium-item" href="career"><i class="fas fa-briefcase me-2"></i>Careers</a></li>
-                            <li><a class="dropdown-item premium-item" href="contact"><i class="fas fa-phone me-2"></i>Contact Us</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>career"><i class="fas fa-briefcase me-2"></i>Careers</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>contact"><i class="fas fa-phone me-2"></i>Contact Us</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1577,23 +1653,23 @@
                 <!-- Premium Action Buttons -->
                 <div class="d-flex align-items-center gap-2 flex-nowrap premium-actions">
                     <!-- Premium Phone Button -->
-                    <a href="tel:+917007444842" class="btn btn-success premium-btn" title="Call us at +91-7007444842">
+                    <a href="tel:+917007444842" class="btn btn-success premium-btn" title="Call us at +91-7007444842" aria-label="Call APS Dream Homes">
                         <i class="fas fa-phone" aria-hidden="true"></i>
                         <span class="d-none d-xl-inline ms-1">Call</span>
                     </a>
 
                     <!-- Premium Account Dropdown -->
                     <div class="dropdown">
-                        <button class="btn btn-outline-light premium-btn dropdown-toggle" type="button" id="userDropdown" title="User Account Options">
+                        <button class="btn btn-outline-light premium-btn dropdown-toggle" type="button" id="userDropdown" title="User Account Options" aria-label="User account options">
                             <i class="fas fa-user" aria-hidden="true"></i>
                             <span class="d-none d-lg-inline ms-1">Account</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end premium-dropdown" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item premium-item" href="login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
-                            <li><a class="dropdown-item premium-item" href="register"><i class="fas fa-user-plus me-2"></i>Register</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>register"><i class="fas fa-user-plus me-2"></i>Register</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item premium-item" href="customer-dashboard"><i class="fas fa-tachometer-alt me-2"></i>Customer Dashboard</a></li>
-                            <li><a class="dropdown-item premium-item" href="associate-dashboard"><i class="fas fa-chart-line me-2"></i>Associate Dashboard</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>customer-dashboard"><i class="fas fa-tachometer-alt me-2"></i>Customer Dashboard</a></li>
+                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>associate-dashboard"><i class="fas fa-chart-line me-2"></i>Associate Dashboard</a></li>
                         </ul>
                     </div>
                 </div>
@@ -1605,50 +1681,118 @@
     <main class="main-content" style="margin-top: 100px;">
 
     <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>assets/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
     <script>
-        // APS Dream Home - Simple Dropdown Fix
+        // APS Dream Home - Enhanced Mobile Menu and Dropdown System
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 APS Header: Starting simple dropdown fix...');
+            console.log('ðŸ”§ APS Header: Starting enhanced mobile menu and dropdown fix...');
 
-            // Simple manual dropdown functionality
+            // Mobile Menu Functionality
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.getElementById('navbarNav');
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+
+            // Function to close mobile menu
+            function closeMobileMenu() {
+                if (navbarCollapse && navbarToggler) {
+                    const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                    if (bsCollapse) {
+                        bsCollapse.hide();
+                    }
+                }
+                if (mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.remove('active');
+                }
+            }
+
+            // Function to open mobile menu
+            function openMobileMenu() {
+                if (mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.add('active');
+                }
+            }
+
+            // Mobile menu toggle events
+            if (navbarToggler && navbarCollapse) {
+                navbarToggler.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isExpanded = navbarToggler.getAttribute('aria-expanded') === 'true';
+                    if (isExpanded) {
+                        closeMobileMenu();
+                    } else {
+                        openMobileMenu();
+                    }
+                });
+
+                // Close menu when clicking outside
+                if (mobileMenuOverlay) {
+                    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+                }
+
+                // Close menu when clicking on nav links
+                const navLinks = navbarCollapse.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        // Only close if it's not a dropdown toggle
+                        if (!this.classList.contains('dropdown-toggle')) {
+                            closeMobileMenu();
+                        }
+                    });
+                });
+
+                // Bootstrap collapse events
+                navbarCollapse.addEventListener('show.bs.collapse', openMobileMenu);
+                navbarCollapse.addEventListener('hide.bs.collapse', closeMobileMenu);
+            }
+
+            // Enhanced Dropdown Functionality with Slide Animation
             const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
 
-            console.log('Found dropdown toggles:', dropdownToggles.length);
-
             dropdownToggles.forEach((toggle, index) => {
-                console.log(`Setting up dropdown ${index + 1}:`, toggle.id || 'unnamed');
-
                 toggle.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    console.log(`🔍 Manual dropdown ${index + 1} clicked`);
+                    const menu = this.nextElementSibling;
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    const isMobile = window.innerWidth < 992;
+
+                    console.log(`ðŸ” Dropdown ${index + 1} clicked, mobile: ${isMobile}`);
 
                     // Close all other dropdowns
                     dropdownToggles.forEach(otherToggle => {
                         if (otherToggle !== toggle) {
                             const otherMenu = otherToggle.nextElementSibling;
-                            if (otherMenu && !otherMenu.classList.contains('mega-menu')) {
+                            if (otherMenu) {
                                 otherMenu.classList.remove('show');
+                                otherMenu.style.maxHeight = '0';
                                 otherToggle.setAttribute('aria-expanded', 'false');
                             }
                         }
                     });
 
-                    // Toggle current dropdown
-                    const menu = this.nextElementSibling;
+                    // Toggle current dropdown with slide animation
                     if (menu) {
-                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
                         if (isExpanded) {
+                            // Close dropdown with animation
                             menu.classList.remove('show');
+                            if (isMobile) {
+                                menu.style.maxHeight = '0';
+                            }
                             this.setAttribute('aria-expanded', 'false');
-                            console.log(`🔽 Dropdown ${index + 1} closed`);
+                            console.log(`ðŸ”½ Dropdown ${index + 1} closed`);
                         } else {
+                            // Open dropdown with animation
                             menu.classList.add('show');
+                            if (isMobile) {
+                                menu.style.maxHeight = menu.scrollHeight + 'px';
+                            }
                             this.setAttribute('aria-expanded', 'true');
-                            console.log(`🔼 Dropdown ${index + 1} opened`);
+                            console.log(`ðŸ”¼ Dropdown ${index + 1} opened`);
                         }
                     }
                 });
@@ -1661,12 +1805,296 @@
                         const menu = toggle.nextElementSibling;
                         if (menu && menu.classList.contains('show')) {
                             menu.classList.remove('show');
+                            if (window.innerWidth < 992) {
+                                menu.style.maxHeight = '0';
+                            }
                             toggle.setAttribute('aria-expanded', 'false');
                         }
                     });
                 }
             });
 
-            console.log('✅ Manual dropdown system initialized');
+            // Handle window resize
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (window.innerWidth >= 992) {
+                        // Reset mobile menu state on desktop
+                        closeMobileMenu();
+                        // Reset dropdown max-height
+                        dropdownToggles.forEach(toggle => {
+                            const menu = toggle.nextElementSibling;
+                            if (menu) {
+                                menu.style.maxHeight = '';
+                            }
+                        });
+                    }
+                }, 250);
+            });
+
+            console.log('âœ… Enhanced mobile menu and dropdown system initialized');
         });
+
+        // CSS for mobile menu overlay and animations
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Mobile Menu Overlay */
+            .mobile-menu-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1040;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .mobile-menu-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            /* Mobile dropdown slide animation */
+            @media (max-width: 991.98px) {
+                .dropdown-menu {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.3s ease;
+                    border: none;
+                    box-shadow: none;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+
+                .dropdown-menu.show {
+                    max-height: 500px;
+                }
+
+                .mega-menu {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: max-height 0.3s ease;
+                }
+
+                .mega-menu.show {
+                    max-height: 800px;
+                }
+
+                /* Enhanced mobile navbar collapse */
+                .navbar-collapse {
+                    position: fixed;
+                    top: 0;
+                    right: -100%;
+                    width: 80%;
+                    max-width: 320px;
+                    height: 100vh;
+                    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+                    transition: right 0.3s ease;
+                    z-index: 1050;
+                    padding: 1rem;
+                    overflow-y: auto;
+                }
+
+                .navbar-collapse.show {
+                    right: 0;
+                }
+
+                /* Mobile menu close button */
+                .navbar-collapse::before {
+                    content: 'âœ•';
+                    position: absolute;
+                    top: 1rem;
+                    right: 1rem;
+                    color: white;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                    z-index: 1051;
+                }
+            }
+
+            /* Override Bootstrap's default navbar behavior for desktop */
+            @media (min-width: 992px) {
+                /* Force navbar to expand properly */
+                .navbar-expand-lg .navbar-collapse {
+                    display: flex !important;
+                    flex-basis: auto !important;
+                    flex-grow: 1 !important;
+                    flex-shrink: 1 !important;
+                    position: static !important;
+                    right: auto !important;
+                    width: auto !important;
+                    max-width: none !important;
+                    height: auto !important;
+                    background: none !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-expand-lg .navbar-nav {
+                    flex-direction: row !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-expand-lg .nav-item {
+                    display: inline-block !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-expand-lg .nav-link {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    white-space: nowrap !important;
+                }
+            }
+                /* Force horizontal navbar layout */
+                .navbar-nav {
+                    flex-direction: row !important;
+                    gap: 0.5rem;
+                }
+                
+                .premium-nav .nav-item {
+                    display: inline-block !important;
+                }
+
+                .premium-nav .nav-link {
+                    font-size: 0.85rem;
+                    padding: 0.5rem 0.8rem;
+                }
+
+                .premium-actions {
+                    flex-direction: row !important;
+                    gap: 0.5rem;
+                }
+
+                .premium-btn {
+                    font-size: 0.8rem;
+                    padding: 0.4rem 0.8rem;
+                }
+                
+                /* Hide mobile toggler on desktop */
+                .navbar-toggler.premium-toggler {
+                    display: none !important;
+                }
+                
+                /* Ensure navbar collapse stays horizontal */
+                .navbar-collapse {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    justify-content: space-between !important;
+                    align-items: center !important;
+                    position: static !important;
+                    right: auto !important;
+                    width: auto !important;
+                    max-width: none !important;
+                    height: auto !important;
+                    background: none !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-collapse::before {
+                    display: none !important;
+                }
+            }
+
+            @media (min-width: 1200px) {
+                /* Force navbar to expand properly at 1200px */
+                .navbar-expand-lg .navbar-collapse {
+                    display: flex !important;
+                    flex-basis: auto !important;
+                    flex-grow: 1 !important;
+                    flex-shrink: 1 !important;
+                    position: static !important;
+                    right: auto !important;
+                    width: auto !important;
+                    max-width: none !important;
+                    height: auto !important;
+                    background: none !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-expand-lg .navbar-nav {
+                    flex-direction: row !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-expand-lg .nav-item {
+                    display: inline-block !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-expand-lg .nav-link {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    white-space: nowrap !important;
+                }
+                /* Ensure horizontal layout persists */
+                .navbar-nav {
+                    flex-direction: row !important;
+                    gap: 0.8rem;
+                }
+                
+                .premium-nav .nav-item {
+                    display: inline-block !important;
+                }
+
+                .premium-nav .nav-link {
+                    font-size: 0.9rem;
+                    padding: 0.6rem 1rem;
+                }
+
+                .premium-actions {
+                    flex-direction: row !important;
+                    gap: 0.8rem;
+                }
+                
+                /* Ensure navbar collapse stays horizontal */
+                .navbar-collapse {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    justify-content: space-between !important;
+                    align-items: center !important;
+                    position: static !important;
+                    right: auto !important;
+                    width: auto !important;
+                    max-width: none !important;
+                    height: auto !important;
+                    background: none !important;
+                    padding: 0 !important;
+                }
+                
+                .navbar-collapse::before {
+                    display: none !important;
+                }
+
+                .premium-btn {
+                    font-size: 0.85rem;
+                    padding: 0.5rem 1rem;
+                }
+            }
+
+            /* Fix for ultra-wide screens */
+            @media (min-width: 1400px) {
+                .container-fluid {
+                    max-width: 1320px;
+                }
+
+                .premium-nav .nav-link {
+                    font-size: 0.95rem;
+                    padding: 0.7rem 1.2rem;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
+
+
+
+
+

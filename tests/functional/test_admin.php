@@ -13,7 +13,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Test database connection
 echo "<h2>Database Connection Test</h2>";
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     if ($conn->connect_error) {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }

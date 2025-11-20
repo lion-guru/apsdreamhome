@@ -1,12 +1,12 @@
 <?php
 require_once '../../../includes/config.php';
-require_once '../../../includes/db_connection.php';
 require_once '../../../includes/auth_check.php';
 
 header('Content-Type: application/json');
 
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     $search = isset($_GET['search']) ? $_GET['search'] : '';
     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
@@ -54,3 +54,4 @@ try {
     ]);
 }
 ?>
+

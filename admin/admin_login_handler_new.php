@@ -92,7 +92,8 @@ class AdminLoginHandler {
 
     private static function getUserByUsername($username) {
         try {
-            $conn = getDbConnection();
+            global $con;
+            $conn = $con;
             if (!$conn) {
                 return null;
             }
@@ -195,3 +196,4 @@ class AdminLoginHandler {
     }
 }
 ?>
+

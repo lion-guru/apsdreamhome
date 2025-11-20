@@ -14,7 +14,7 @@ require_once __DIR__ . '/../includes/input_validation.php';
 // Apply rate limiting
 $rateLimitMiddleware->handle('search');
 // Get database connection
-$con = getDbConnection();
+global $con;
 if (!$con) {
     http_response_code(500);
     if (class_exists('App\\Common\\Transformers\\ResponseTransformer') && function_exists('json_response')) {

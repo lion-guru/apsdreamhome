@@ -8,7 +8,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get legal services
     $servicesQuery = "SELECT * FROM legal_services WHERE status = 'active' ORDER BY display_order ASC";

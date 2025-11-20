@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db_connection.php';
+
 
 $token = $_GET['token'] ?? '';
 $error = $success = '';
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['token'])) {
     
     try {
         // Validate token
-        $conn = getDbConnection();
+        $conn = $con;
         $stmt = $conn->prepare("SELECT email FROM password_resets WHERE token = ? AND expires_at > NOW() AND used = 0");
         $stmt->bind_param('s', $token);
         $stmt->execute();
@@ -60,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['token'])) {
 } elseif (!empty($token)) {
     // Verify token is valid
     try {
-        $conn = getDbConnection();
+                global $con;
+        $conn = $con;
         $stmt = $conn->prepare("SELECT email FROM password_resets WHERE token = ? AND expires_at > NOW() AND used = 0");
         $stmt->bind_param('s', $token);
         $stmt->execute();

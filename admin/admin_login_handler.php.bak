@@ -287,7 +287,7 @@ class AdminLoginHandlerNew {
             }
 
         // Use getDbConnection() to connect to DB
-        $con = getDbConnection();
+        $con = $con;
         if (!$con) {
             $_SESSION['login_error'] = 'Database connection error';
             header('Location: index.php');
@@ -586,3 +586,4 @@ class AdminLoginHandlerNew {
         return true;
     }
 }
+

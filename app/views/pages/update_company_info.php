@@ -14,7 +14,7 @@ $company_description = "Your trusted partner in real estate solutions. We provid
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     echo "<h2>🏢 Updating Company Information</h2>\n";
 

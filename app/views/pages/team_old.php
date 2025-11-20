@@ -8,7 +8,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get distinct departments
     $deptQuery = "SELECT DISTINCT department FROM team_members WHERE status = 'active' ORDER BY department";

@@ -1,4 +1,47 @@
-<?php require_once 'app/views/layouts/header.php'; ?>
+<?php
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+require_once __DIR__ . '/../includes/header.php';
+
+// Helper function to get status badge class
+if (!function_exists('getStatusBadgeClass')) {
+    function getStatusBadgeClass($status) {
+        switch ($status) {
+            case 'active': return 'success';
+            case 'inactive': return 'secondary';
+            case 'sold': return 'danger';
+            default: return 'info';
+        }
+    }
+}
+
+// Helper function to get status text
+if (!function_exists('getStatusText')) {
+    function getStatusText($status) {
+        switch ($status) {
+            case 'active': return 'उपलब्ध';
+            case 'inactive': return 'निष्क्रिय';
+            case 'sold': return 'बिका हुआ';
+            default: return 'जानकारी नहीं';
+        }
+    }
+}
+
+// Ensure $properties is defined to prevent errors
+if (!isset($properties)) {
+    $properties = [];
+}
+
+/**
+ * Featured Properties View
+ * Shows featured properties with filtering
+ */
+
+// Set page title and description for layout
+$page_title = 'फीचर्ड प्रॉपर्टीज़ - APS Dream Home';
+$page_description = 'Discover exceptional featured properties handpicked for you';
+?>
 
 <div class="container-fluid mt-4">
     <!-- Page Header -->
@@ -49,8 +92,8 @@
 
                             <!-- Property Status Badge -->
                             <div class="property-status-badge">
-                                <span class="badge badge-<?= $this->getStatusBadgeClass($property['status'] ?? 'available') ?>">
-                                    <?= $this->getStatusText($property['status'] ?? 'available') ?>
+                                <span class="badge badge-<?= getStatusBadgeClass($property['status'] ?? 'available') ?>">
+                                    <?= getStatusText($property['status'] ?? 'available') ?>
                                 </span>
                             </div>
 
@@ -282,4 +325,4 @@ function contactOwner(propertyId) {
 }
 </style>
 
-<?php require_once 'app/views/layouts/footer.php'; ?>
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

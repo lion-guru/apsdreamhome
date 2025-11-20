@@ -2,7 +2,7 @@
 // Responsive Header Test Page for APS Dream Home
 $page_title = 'Responsive Header Test - APS Dream Home';
 $page_description = 'Testing responsive design across all screen sizes';
-$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/apsdreamhomefinal';
+$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/apsdreamhome';
 $current_url = $base_url . $_SERVER['REQUEST_URI'];
 
 // Include the professional header

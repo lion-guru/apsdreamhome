@@ -11,12 +11,12 @@ $config = AppConfig::getInstance();
 $conn = $config->getDatabaseConnection();
 
 // Get filter parameters
-$city_filter = $_GET['city'] ?? '';
-$type_filter = $_GET['type'] ?? '';
-$min_price = $_GET['min_price'] ?? '';
-$max_price = $_GET['max_price'] ?? '';
-$bedrooms = $_GET['bedrooms'] ?? '';
-$search_query = $_GET['search'] ?? '';
+$city_filter = mysqli_real_escape_string($conn, $_GET['city'] ?? '');
+    $type_filter = mysqli_real_escape_string($conn, $_GET['type'] ?? '');
+    $min_price = isset($_GET['min_price']) ? intval($_GET['min_price']) : '';
+    $max_price = isset($_GET['max_price']) ? intval($_GET['max_price']) : '';
+    $bedrooms = isset($_GET['bedrooms']) ? intval($_GET['bedrooms']) : '';
+    $search_query = mysqli_real_escape_string($conn, $_GET['search'] ?? '');
 
 // Build query for approved properties only
 $query = "SELECT rp.*, ru.full_name, ru.mobile 

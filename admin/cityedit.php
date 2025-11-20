@@ -17,8 +17,10 @@ if(isset($_POST['insert']))
 	
 	if(!empty($ustate) && !empty($ucity))
 	{
-		$sql="UPDATE city SET cname = '{$ucity}' ,sid = '{$ustate}' WHERE cid = {$cid}";
-		$result=mysqli_query($con,$sql);
+		$sql="UPDATE city SET cname = ?, sid = ? WHERE cid = ?";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "sii", $ucity, $ustate, $cid);
+        $result = mysqli_stmt_execute($stmt);
 		if($result)
 			{
 				$msg="<p class='alert alert-success'>City Updated</p>";
@@ -104,8 +106,11 @@ if(isset($_POST['insert']))
 									<?php if($msg) echo $msg; ?>
 									<?php 
 									$cid = $_GET['id'];
-									$sql = "SELECT * FROM city WHERE cid = {$cid}";
-									$result = mysqli_query($con, $sql);
+									$sql = "SELECT * FROM city WHERE cid = ?";
+									$stmt = mysqli_prepare($con, $sql);
+									mysqli_stmt_bind_param($stmt, "i", $cid);
+									mysqli_stmt_execute($stmt);
+									$result = mysqli_stmt_get_result($stmt);
 									if($row = mysqli_fetch_assoc($result)):
 									?>
 									<form method="POST" action="" class="needs-validation" novalidate>

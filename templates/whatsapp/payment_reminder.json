@@ -1,0 +1,17 @@
+{
+    "name": "payment_reminder",
+    "category": "payment",
+    "language": "en",
+    "header": "\ud83d\udcb3 Payment Reminder",
+    "body": "Hi {{customer_name}},\n\nThis is a friendly reminder about your pending payment:\n\n\ud83d\udcb0 Amount: \u20b9{{amount}}\n\ud83d\udcc5 Due Date: {{due_date}}\n\ud83d\udd22 Invoice: {{invoice_number}}\n\nPayment Methods:\n\u2022 Online Transfer\n\u2022 UPI\n\u2022 Bank Deposit\n\nPlease make payment to avoid late fees.",
+    "footer": "Need help? Contact our finance team: {{finance_phone}}",
+    "variables": [
+        "customer_name",
+        "amount",
+        "due_date",
+        "invoice_number",
+        "finance_phone"
+    ],
+    "created_at": "2025-10-27 06:27:01",
+    "updated_at": "2025-10-27 06:27:01"
+}

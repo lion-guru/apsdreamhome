@@ -1,7 +1,7 @@
 <?php
 // auto_revenue_commission_cron.php: Calculate daily revenue and agent commissions from converted leads
 require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+$conn = $con;
 
 // Example: Assume each lead has amount and agent_id fields
 $sql = "SELECT agent_id, SUM(amount) as revenue, COUNT(*) as deals FROM leads WHERE status = 'Converted' AND DATE(updated_at) = CURDATE() GROUP BY agent_id";

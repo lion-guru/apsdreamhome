@@ -25,7 +25,7 @@ try {
     }
 
     // Get database connection
-    $con = getDbConnection();
+    $con = getMysqliConnection();
     if (!$con) {
         throw new Exception('Database connection failed');
     }

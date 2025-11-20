@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db_connection.php';
+require_once '../includes/config.php';
 header('Content-Type: application/json');
 
 $response = ['success' => false, 'message' => ''];
@@ -28,7 +28,8 @@ try {
         throw new Exception('New password and confirm password do not match');
     }
     
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     // Get current user data with all password fields
     $stmt = $conn->prepare("SELECT id, username, password, apass, upass FROM users WHERE id = ?");
@@ -96,3 +97,4 @@ try {
 
 echo json_encode($response);
 exit();
+

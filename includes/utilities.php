@@ -8,7 +8,8 @@
 function getDatabaseConnection() {
     try {
         require_once 'includes/db_connection.php';
-        return getDbConnection(); // Use the proper function from db_connection.php
+                global $con;
+        return $con;
     } catch (Exception $e) {
         error_log("Database connection failed: " . $e->getMessage());
         return null;
@@ -95,7 +96,7 @@ function sendEmail($to, $subject, $message, $from = 'noreply@apsdreamhome.com') 
 
 // Property search utility
 function searchProperties($filters = []) {
-    $conn = getDbConnection(); // Use the proper function directly
+    $conn = getMysqliConnection(); // Use the proper function directly
     if (!$conn) return [];
 
     $sql = "SELECT * FROM properties WHERE status = 'active'";
@@ -153,7 +154,7 @@ function requireLogin() {
 function getCurrentUser() {
     if (!isLoggedIn()) return null;
 
-    $conn = getDbConnection(); // Use the proper function directly
+    $conn = getMysqliConnection(); // Use the proper function directly
     if (!$conn) return null;
 
     try {

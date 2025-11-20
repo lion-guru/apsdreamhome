@@ -1,8 +1,9 @@
 <?php
 // auto_admin_report_cron.php: Generate and email a daily admin report (summary only, no email sending for demo)
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/includes/geoip_utils.php';
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 
 // Get today's stats using prepared statement
 $stmt = $conn->prepare("SELECT COUNT(*) as total, SUM(status = 'New') as new, SUM(status = 'Qualified') as qualified, SUM(status = 'Contacted') as contacted, SUM(status = 'Converted') as converted FROM leads");
@@ -180,3 +181,4 @@ if (date('w') == 0) {
     }
 }
 ?>
+

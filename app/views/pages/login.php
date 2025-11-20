@@ -6,6 +6,11 @@
 
 require_once 'core/functions.php';
 
+// Function to sanitize input data
+function sanitizeInput($data) {
+    return htmlspecialchars(stripslashes(trim($data)));
+}
+
 // Redirect if already logged in
 if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
     header('Location: index.php');
@@ -14,15 +19,15 @@ if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) 
 
 // Handle login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $username = sanitizeInput($_POST['username'] ?? '');
+    $password = sanitizeInput($_POST['password'] ?? '');
 
     if (empty($username) || empty($password)) {
         $error = 'Please fill in all fields';
     } else {
         // Check user credentials (simplified for main site)
         try {
-            $pdo = getDbConnection();
+            $pdo = getMysqliConnection();
             $stmt = $pdo->prepare("SELECT id, name, email, phone, role, status FROM users WHERE email = ? AND status = 'active' LIMIT 1");
             $stmt->execute([$username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);

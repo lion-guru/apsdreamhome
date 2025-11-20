@@ -129,7 +129,7 @@ mobile/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd apsdreamhomefinal/mobile
+   cd apsdreamhome/mobile
    ```
 
 2. **Install dependencies**
@@ -181,7 +181,7 @@ Create a `.env` file in the mobile directory:
 
 ```env
 # API Configuration
-API_BASE_URL=http://localhost/apsdreamhomefinal/api
+API_BASE_URL=http://localhost/apsdreamhome/api
 API_TIMEOUT=15000
 
 # App Configuration
@@ -206,7 +206,7 @@ GOOGLE_ANALYTICS_ID=your-ga-id
 
 The app automatically detects the environment and configures API endpoints:
 
-- **Development**: `http://localhost/apsdreamhomefinal/api`
+- **Development**: `http://localhost/apsdreamhome/api`
 - **Production**: `https://api.apsdreamhome.com/v1`
 
 ## 📱 App Screens

@@ -1,53 +1,91 @@
 <?php
 /**
- * Enhanced Modern Homepage - APS Dream Home
- * Complete UI/UX overhaul with modern design patterns
+ * Unified Modern Homepage - APS Dream Homes
+ * Production-ready view using EnhancedUniversalTemplate
  */
+
+// Ensure BASE_URL is defined
+if (!defined('BASE_URL')) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $script_name = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+    $base_path = str_replace('\\', '/', $script_name);
+    $base_path = rtrim($base_path, '/') . '/';
+    define('BASE_URL', $protocol . $host . $base_path);
+}
+
+// Prepare data for view
+$featured_properties = $featured_properties ?? [];
+$locations = $locations ?? [];
+$company_stats_defaults = [
+    'properties_listed' => 1200,
+    'happy_customers' => 950,
+    'years_experience' => 12,
+    'cities_covered' => 18
+];
+$company_stats = array_merge($company_stats_defaults, $company_stats ?? []);
+
+require_once __DIR__ . '/../../../includes/enhanced_universal_template.php';
+
+$page_title = 'APS Dream Homes | Premium Real Estate in Gorakhpur';
+$page_description = 'Discover premium properties, investment opportunities, and modern real estate services with APS Dream Homes in Gorakhpur and beyond.';
+
+$template = new EnhancedUniversalTemplate();
+$template->setTitle($page_title)
+    ->setDescription($page_description)
+    ->addMeta('keywords', 'APS Dream Homes, real estate, Gorakhpur properties, premium housing, investment plots')
+    ->addCssFile('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css')
+    ->addCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css')
+    ->addCssFile('https://unpkg.com/aos@2.3.1/dist/aos.css')
+    ->addJS('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', true, false)
+    ->addJS('https://unpkg.com/aos@2.3.1/dist/aos.js', true, false);
+
+ob_start();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'APS Dream Home - Your Trusted Real Estate Partner'; ?></title>
-
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Find your dream home with APS Dream Home. Premium properties in Gorakhpur, Lucknow & UP. Expert real estate services with modern technology.">
-    <meta name="keywords" content="real estate Gorakhpur, property for sale, buy house, apartments Lucknow, real estate UP, dream home">
-    <meta name="author" content="APS Dream Home">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo BASE_URL; ?>">
-    <meta property="og:title" content="APS Dream Home - Premium Real Estate in UP">
-    <meta property="og:description" content="Discover exclusive properties with the most trusted real estate platform in Uttar Pradesh.">
-    <meta property="og:image" content="<?php echo BASE_URL; ?>assets/images/og-image.jpg">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="<?php echo BASE_URL; ?>">
-    <meta property="twitter:title" content="APS Dream Home - Premium Real Estate">
-    <meta property="twitter:description" content="Find your dream home with APS Dream Home - Premium properties in UP">
-    <meta property="twitter:image" content="<?php echo BASE_URL; ?>assets/images/twitter-card.jpg">
-
-    <!-- Modern CSS Framework -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="https://unpkg.com/swiper@10/swiper-bundle.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <style>
+<style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --purple-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            --glass-bg: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.18);
+            --brand-navy: #1e293b;
+            --brand-indigo: #1d4ed8;
+            --brand-sky: #2563eb;
+            --brand-gold: #f59e0b;
+            --brand-gold-soft: #fbbf24;
+            --brand-slate: #475569;
+
+            --surface-page: #f4f6fb;
+            --surface-section: #ffffff;
+            --surface-card: #ffffff;
+            --surface-card-muted: #f8fafc;
+            --surface-border: rgba(148, 163, 184, 0.16);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-on-primary: #f8fafc;
+
+            --primary-gradient: linear-gradient(135deg, #1f3a93 0%, #2563eb 100%);
+            --hero-gradient: linear-gradient(135deg, #16213e 0%, #1f4ca1 65%, #2563eb 100%);
+            --secondary-gradient: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            --success-gradient: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            --glass-bg: rgba(255, 255, 255, 0.22);
+            --glass-border: rgba(255, 255, 255, 0.24);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --surface-page: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+                --surface-section: rgba(17, 24, 39, 0.92);
+                --surface-card: rgba(15, 23, 42, 0.9);
+                --surface-card-muted: rgba(30, 41, 59, 0.9);
+                --surface-border: rgba(59, 130, 246, 0.3);
+                --text-primary: #e2e8f0;
+                --text-secondary: #cbd5f5;
+                --text-muted: #94a3b8;
+                --text-on-primary: #f8fafc;
+
+                --hero-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(12, 74, 110, 0.9) 50%, rgba(30, 64, 175, 0.9) 100%);
+                --glass-bg: rgba(15, 23, 42, 0.65);
+                --glass-border: rgba(59, 130, 246, 0.4);
+            }
         }
 
         * {
@@ -57,19 +95,46 @@
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
-            background: #f8f9fa;
+            color: var(--text-primary);
+            background: var(--surface-page);
             scroll-behavior: smooth;
+        }
+
+        main {
+            padding-top: 7.5rem;
+        }
+
+        main .content-wrapper {
+            width: 100%;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-primary);
+        }
+
+        p, .lead {
+            color: var(--text-secondary);
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .section-container + .section-container {
+            margin-top: clamp(2.5rem, 4vw, 4rem);
         }
 
         /* Modern Hero Section */
         .hero-section {
             position: relative;
-            min-height: 100vh;
+            min-height: min(88vh, 720px);
             display: flex;
             align-items: center;
-            background: var(--primary-gradient);
+            background: var(--hero-gradient);
             overflow: hidden;
+            padding: clamp(6rem, 7vw, 7.5rem) 0 3rem;
         }
 
         .hero-section::before {
@@ -91,7 +156,7 @@
         .hero-content {
             position: relative;
             z-index: 2;
-            color: white;
+            color: var(--text-on-primary);
         }
 
         .hero-title {
@@ -104,7 +169,7 @@
 
         .hero-subtitle {
             font-size: 1.25rem;
-            opacity: 0.9;
+            color: rgba(248, 250, 252, 0.8);
             margin-bottom: 2rem;
             max-width: 600px;
         }
@@ -163,14 +228,15 @@
 
         /* Glass Morphism Search Card */
         .search-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
             position: relative;
             overflow: hidden;
+            color: var(--text-primary);
         }
 
         .search-card::before {
@@ -180,13 +246,24 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(248, 250, 252, 0.8));
+            border-radius: 20px;
         }
 
         .search-card > * {
             position: relative;
             z-index: 2;
+        }
+
+        .search-card .text-muted,
+        .search-card .form-label,
+        .search-card label,
+        .search-card small {
+            color: #334155 !important;
+        }
+
+        .search-card .badge {
+            color: #1e293b;
         }
 
         /* Modern Form Controls */
@@ -222,12 +299,12 @@
 
         /* Property Cards */
         .property-card {
-            background: white;
+            background: var(--surface-card);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.18);
         }
 
         .property-card:hover {
@@ -283,13 +360,13 @@
         .property-title {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #2c3e50;
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
             line-height: 1.3;
         }
 
         .property-location {
-            color: #667eea;
+            color: #1d4ed8;
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
@@ -304,34 +381,34 @@
         .property-feature {
             text-align: center;
             padding: 0.5rem;
-            background: #f8f9fa;
+            background: var(--surface-card-muted);
             border-radius: 10px;
         }
 
         .property-feature-value {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #2c3e50;
+            color: var(--text-primary);
             display: block;
         }
 
         .property-feature-label {
             font-size: 0.8rem;
-            color: #6c757d;
+            color: var(--text-muted);
         }
 
         .property-price {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #28a745;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--brand-gold);
             text-align: center;
         }
 
         /* Statistics Section */
         .stats-section {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 4rem 0;
+            background: linear-gradient(135deg, #1f3a93, #2563eb);
+            color: var(--text-on-primary);
+            padding: 3.5rem 0;
             position: relative;
             overflow: hidden;
         }
@@ -375,20 +452,28 @@
 
         /* Testimonials */
         .testimonial-card {
-            background: white;
+            background: var(--surface-card);
             border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
             text-align: center;
             position: relative;
             margin-bottom: 2rem;
+        }
+
+        .testimonial-card .testimonial-quote {
+            color: #1f2937;
+        }
+
+        .testimonial-card small {
+            color: #475569;
         }
 
         .testimonial-quote {
             font-size: 1.1rem;
             line-height: 1.6;
             margin-bottom: 1.5rem;
-            color: #2c3e50;
+            color: var(--text-secondary);
         }
 
         .testimonial-author {
@@ -413,19 +498,28 @@
 
         .testimonial-info h6 {
             margin-bottom: 0;
-            color: #2c3e50;
+            color: var(--text-primary);
         }
 
         .testimonial-info small {
-            color: #6c757d;
+            color: var(--text-muted);
         }
 
         /* CTA Section */
         .cta-section {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 4rem 0;
+            background: linear-gradient(135deg, #1f2937, #0f172a);
+            color: var(--text-on-primary);
+            padding: 3.5rem 0;
             text-align: center;
+        }
+
+        .cta-section .btn-outline-light {
+            border-color: rgba(248, 250, 252, 0.6);
+            color: #f8fafc;
+        }
+
+        .cta-section .btn-outline-light:hover {
+            background: rgba(248, 250, 252, 0.12);
         }
 
         .cta-title {
@@ -474,8 +568,9 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .hero-section {
-                min-height: 80vh;
+                min-height: 70vh;
                 text-align: center;
+                padding: 6rem 0 2.5rem;
             }
 
             .search-card {
@@ -551,8 +646,6 @@
             animation-delay: 4s;
         }
     </style>
-</head>
-<body>
 
 <?php
 // Define BASE_URL if not already defined
@@ -566,7 +659,22 @@ if (!defined('BASE_URL')) {
 }
 ?>
 
-<?php include __DIR__ . '/../layouts/header_unified.php'; ?>
+<?php
+require_once __DIR__ . '/../../../includes/templates/project_availability.php';
+ob_start();
+renderProjectAvailability(['limit' => 4]);
+$availabilityWidget = ob_get_clean();
+echo '<section class="py-5 bg-light"><div class="section-container">'
+    . '<div class="d-flex justify-content-between align-items-center mb-4">'
+    . '<div>'
+    . '<h2 class="h3 fw-bold mb-1">Live Project Availability</h2>'
+    . '<p class="text-muted mb-0">Real-time snapshot of inventory across key APS Dream Homes projects.</p>'
+    . '</div>'
+    . '<a href="' . htmlspecialchars(BASE_URL . 'projects') . '" class="btn btn-outline-primary rounded-pill">View all projects</a>'
+    . '</div>'
+    . $availabilityWidget
+    . '</div></section>'; 
+?>
 
 <!-- Modern Hero Section -->
 <section class="hero-section">
@@ -581,8 +689,8 @@ if (!defined('BASE_URL')) {
         <i class="fas fa-map-marker-alt text-white opacity-25" style="font-size: 1.8rem;"></i>
     </div>
 
-    <div class="container">
-        <div class="row align-items-center min-vh-100">
+    <div class="section-container">
+        <div class="row align-items-center min-vh-100 gx-lg-5 gy-5">
             <div class="col-lg-6">
                 <div class="hero-content animate-fade-up">
                     <!-- Trust Badge -->
@@ -633,11 +741,15 @@ if (!defined('BASE_URL')) {
 
                         <div class="d-flex align-items-center">
                             <div class="text-warning me-2">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
+                                <form class="newsletter-form mb-4" id="newsletterForm">
+                                    <div class="input-group">
+                                        <label for="newsletter-email" class="visually-hidden">Email address</label>
+                                        <input type="email" id="newsletter-email" name="email" class="form-control" placeholder="Your Email" autocomplete="email" required>
+                                        <button class="btn btn-primary" type="submit" aria-label="Subscribe to newsletter">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                             <div>
                                 <div class="text-white fw-bold">4.8/5</div>
@@ -663,10 +775,10 @@ if (!defined('BASE_URL')) {
                         <div class="row g-3">
                             <!-- Property Type -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">
+                                <label class="form-label fw-semibold" for="search-type">
                                     <i class="fas fa-home me-2 text-primary"></i>Property Type
                                 </label>
-                                <select class="form-select form-select-modern" name="type">
+                                <select class="form-select form-select-modern" id="search-type" name="type" autocomplete="section-properties type">
                                     <option value="">All Types</option>
                                     <option value="apartment">🏢 Apartment</option>
                                     <option value="villa">🏘️ Villa</option>
@@ -678,10 +790,10 @@ if (!defined('BASE_URL')) {
 
                             <!-- Location -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">
+                                <label class="form-label fw-semibold" for="search-location">
                                     <i class="fas fa-map-marker-alt me-2 text-primary"></i>Location
                                 </label>
-                                <select class="form-select form-select-modern" name="location">
+                                <select class="form-select form-select-modern" id="search-location" name="location" autocomplete="section-properties address-level2">
                                     <option value="">All Locations</option>
                                     <?php if (!empty($locations)): ?>
                                         <?php foreach ($locations as $state => $cities): ?>
@@ -699,10 +811,10 @@ if (!defined('BASE_URL')) {
 
                             <!-- Budget Range -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">
+                                <label class="form-label fw-semibold" for="search-budget">
                                     <i class="fas fa-rupee-sign me-2 text-primary"></i>Budget Range
                                 </label>
-                                <select class="form-select form-select-modern" name="budget">
+                                <select class="form-select form-select-modern" id="search-budget" name="budget" autocomplete="section-properties price">
                                     <option value="">Any Budget</option>
                                     <option value="0-3000000">Under ₹30 Lakh</option>
                                     <option value="3000000-5000000">₹30-50 Lakh</option>
@@ -714,10 +826,10 @@ if (!defined('BASE_URL')) {
 
                             <!-- Bedrooms -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">
+                                <label class="form-label fw-semibold" for="search-bedrooms">
                                     <i class="fas fa-bed me-2 text-primary"></i>Bedrooms
                                 </label>
-                                <select class="form-select form-select-modern" name="bedrooms">
+                                <select class="form-select form-select-modern" id="search-bedrooms" name="bedrooms" autocomplete="section-properties bedrooms">
                                     <option value="">Any</option>
                                     <option value="1">1 BHK</option>
                                     <option value="2">2 BHK</option>
@@ -754,12 +866,11 @@ if (!defined('BASE_URL')) {
                 </div>
             </div>
         </div>
-    </div>
 </section>
 
 <!-- Company Statistics Section -->
 <section class="stats-section">
-    <div class="container">
+    <div class="section-container">
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="stat-card animate-fade-up">
@@ -791,7 +902,7 @@ if (!defined('BASE_URL')) {
 
 <!-- Featured Properties Section -->
 <section id="featured-properties" class="py-5 bg-light">
-    <div class="container">
+    <div class="section-container">
         <div class="row mb-5">
             <div class="col-12 text-center">
                 <h2 class="display-5 fw-bold mb-3">
@@ -896,7 +1007,7 @@ if (!defined('BASE_URL')) {
 
 <!-- Why Choose Us Section -->
 <section class="py-5">
-    <div class="container">
+    <div class="section-container">
         <div class="row mb-5">
             <div class="col-12 text-center">
                 <h2 class="display-5 fw-bold mb-3">
@@ -993,7 +1104,7 @@ if (!defined('BASE_URL')) {
 
 <!-- Testimonials Section -->
 <section class="py-5 bg-light">
-    <div class="container">
+    <div class="section-container">
         <div class="row mb-5">
             <div class="col-12 text-center">
                 <h2 class="display-5 fw-bold mb-3">
@@ -1069,7 +1180,7 @@ if (!defined('BASE_URL')) {
 
 <!-- Call to Action Section -->
 <section class="cta-section">
-    <div class="container">
+    <div class="section-container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
                 <h2 class="cta-title">
@@ -1084,7 +1195,7 @@ if (!defined('BASE_URL')) {
                     <a href="#featured-properties" class="btn btn-light btn-lg px-5 py-3">
                         <i class="fas fa-search me-2"></i>Browse Properties
                     </a>
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-outline-light btn-lg px-5 py-3">
+                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-outline-light btn-lg px-5 py-3" style="border-color: var(--btn-outline-color); color: var(--text-on-primary);">
                         <i class="fas fa-phone-alt me-2"></i>Contact Us
                     </a>
                     <a href="<?php echo BASE_URL; ?>associate" class="btn btn-warning btn-lg px-5 py-3">
@@ -1095,8 +1206,6 @@ if (!defined('BASE_URL')) {
         </div>
     </div>
 </section>
-
-<?php include __DIR__ . '/../layouts/footer_unified.php'; ?>
 
 <!-- Modern JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1154,14 +1263,21 @@ if (!defined('BASE_URL')) {
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            const href = this.getAttribute('href');
+            if (!href || href.trim() === '#') {
+                return;
             }
+
+            const target = document.querySelector(href);
+            if (!target) {
+                return;
+            }
+
+            e.preventDefault();
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         });
     });
 
@@ -1254,5 +1370,21 @@ if (!defined('BASE_URL')) {
     }
 </script>
 
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+
+$template->addCustomJs(<<<'JS'
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 900,
+            easing: 'ease-in-out-cubic',
+            once: true
+        });
+    }
+});
+JS
+);
+
+page($content, $page_title);
+?>

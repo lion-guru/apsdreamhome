@@ -1,13 +1,13 @@
 <?php
 // lead_followup_stats.php: Dashboard widget/page for lead follow-up statistics
 require_once __DIR__ . '/includes/session_manager.php';
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/../includes/config.php';
 initAdminSession();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
     exit();
 }
-$conn = getDbConnection();
+$conn = $con;
 
 // Get stats
 $totalLeads = $conn->query("SELECT COUNT(*) as c FROM leads")->fetch_assoc()['c'];
@@ -81,3 +81,4 @@ $convertedLeads = $conn->query("SELECT COUNT(*) as c FROM leads WHERE status = '
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

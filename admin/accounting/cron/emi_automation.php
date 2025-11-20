@@ -1,6 +1,7 @@
 <?php
 require_once '../../../includes/config.php';
-require_once '../../../includes/db_connection.php';
+
+$conn = $con;
 
 // Set execution time limit to 5 minutes
 set_time_limit(300);
@@ -286,7 +287,7 @@ function generateMonthlyReport() {
 }
 
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     
     // Start transaction
     $conn->begin_transaction();

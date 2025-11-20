@@ -13,12 +13,14 @@ header("X-XSS-Protection: 1; mode=block");
 header("X-Content-Type-Options: nosniff");
 
 // Include essential files
-require_once __DIR__ . '/../../includes/config/db_config.php';
+require_once __DIR__ . '/../../includes/config/config.php';
+global $con;
 require_once __DIR__ . '/../../includes/classes/SessionManager.php';
 require_once __DIR__ . '/../../includes/classes/Authentication.php';
 
 // Initialize database connection
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 if (!$conn) {
     error_log("Failed to connect to database in admin init");
     die("Database connection failed. Please try again later.");

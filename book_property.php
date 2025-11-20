@@ -7,6 +7,12 @@
 session_start();
 require_once '../includes/config.php';
 
+// CSRF Token Generation
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
 $config = AppConfig::getInstance();
 $conn = $config->getDatabaseConnection();
 
@@ -25,16 +31,21 @@ if ($property_id) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = trim($_POST['full_name']);
-    $mobile = trim($_POST['mobile']);
-    $email = trim($_POST['email']);
-    $property_id = trim($_POST['property_id']);
-    $booking_type = trim($_POST['booking_type']);
-    $visit_date = trim($_POST['visit_date']);
-    $visit_time = trim($_POST['visit_time']);
-    $budget_range = trim($_POST['budget_range']);
-    $financing_needed = isset($_POST['financing_needed']) ? 1 : 0;
-    $special_requirements = trim($_POST['special_requirements']);
+    // CSRF Token Validation
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        $message = "Invalid CSRF token. Please try again.";
+        $message_type = "danger";
+    } else {
+        $full_name = trim($_POST['full_name']);
+        $mobile = trim($_POST['mobile']);
+        $email = trim($_POST['email']);
+        $property_id = trim($_POST['property_id']);
+        $booking_type = trim($_POST['booking_type']);
+        $visit_date = trim($_POST['visit_date']);
+        $visit_time = trim($_POST['visit_time']);
+        $budget_range = trim($_POST['budget_range']);
+        $financing_needed = isset($_POST['financing_needed']) ? 1 : 0;
+        $special_requirements = trim($_POST['special_requirements']);
 
     // Validation
     if (empty($full_name) || empty($mobile) || empty($email) || empty($property_id)) {
@@ -102,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $whatsapp_message .= "• Mobile Number + Password\n";
             $whatsapp_message .= "• Email + Password\n\n";
 
-            $whatsapp_message .= "📞 Need Help? Call: +91-9876543210\n";
+            $whatsapp_message .= "📞 Need Help? Call: +91-7007444842\n";
             $whatsapp_message .= "🌐 Visit: http://localhost/apsdreamhome/customer_login.php\n\n";
             $whatsapp_message .= "APS Dream Homes - Your Dream Home Awaits! 🏡✨";
 
@@ -120,6 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+    }
 
 // WhatsApp notification function (placeholder)
 function sendWhatsAppNotification($mobile, $message) {
@@ -283,8 +295,9 @@ function sendWhatsAppNotification($mobile, $message) {
 
                         <!-- Booking Form -->
                         <form method="POST" id="bookingForm">
+                            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                             <input type="hidden" name="property_id" value="<?php echo $property_id; ?>">
-
+                        
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -433,3 +446,4 @@ function sendWhatsAppNotification($mobile, $message) {
     </script>
 </body>
 </html>
+

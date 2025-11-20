@@ -10,6 +10,9 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/logs/admin_login_security.log');
 error_reporting(E_ALL);
 
+// Include main site config for database connection
+require_once __DIR__ . '/../includes/config/config.php';
+
 // Set comprehensive security headers for admin panel
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
@@ -32,6 +35,7 @@ class AdminLoginHandler {
     private const SESSION_TIMEOUT = 1800; // 30 minutes in seconds
 
     public static function login($username, $password) {
+        error_log("Login attempt for username: " . $username);
         try {
             // Validate login attempt
             $validation = self::validateLoginAttempt($username, $password);
@@ -87,26 +91,32 @@ class AdminLoginHandler {
     }
 
     private static function getUserByUsername($username) {
+        global $con;
+
         try {
-            $conn = getDbConnection();
-            if (!$conn) {
+            if (!$con) {
                 return null;
             }
 
-            $query = "SELECT id, auser, apass, role, status FROM admin WHERE auser = ? AND status = 'active' LIMIT 1";
-            $stmt = $conn->prepare($query);
+            $query = "SELECT auser, apass, role, status, email FROM admin WHERE auser = ? AND status = 'active' LIMIT 1";
+            $stmt = $con->prepare($query);
             if (!$stmt) {
                 return null;
             }
 
-            if (!$stmt->execute([$username])) {
+            $stmt->bind_param("s", $username);
+            if (!$stmt->execute()) {
                 return null;
             }
 
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+            $stmt->close();
+
             return $user ?: null;
 
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
+            error_log('Database error in getUserByUsername: ' . $e->getMessage());
             return null;
         }
     }
@@ -121,7 +131,6 @@ class AdminLoginHandler {
 
     private static function createSession($user) {
         $_SESSION['admin_logged_in'] = true;
-        $_SESSION['admin_id'] = $user['id'];
         $_SESSION['admin_username'] = $user['auser'];
         $_SESSION['admin_role'] = $user['role'];
         $_SESSION['admin_last_activity'] = time();
@@ -138,10 +147,15 @@ class AdminLoginHandler {
     private static function getDashboardForRole($role) {
         $role_dashboard_map = [
             'superadmin' => 'superadmin_dashboard.php',
-            'admin' => 'dashboard.php',
+            'admin' => 'admin_dashboard.php',
             'manager' => 'manager_dashboard.php',
             'director' => 'director_dashboard.php',
             'office_admin' => 'office_admin_dashboard.php',
+            'ceo' => 'ceo_dashboard.php',
+            'cfo' => 'cfo_dashboard.php',
+            'coo' => 'coo_dashboard.php',
+            'cto' => 'cto_dashboard.php',
+            'cm' => 'cm_dashboard.php',
             'sales' => 'sales_dashboard.php',
             'employee' => 'employee_dashboard.php',
             'legal' => 'legal_dashboard.php',
@@ -150,10 +164,13 @@ class AdminLoginHandler {
             'hr' => 'hr_dashboard.php',
             'it' => 'it_dashboard.php',
             'operations' => 'operations_dashboard.php',
-            'support' => 'support_dashboard.php'
+            'support' => 'support_dashboard.php',
+            'builder' => 'builder_management_dashboard.php',
+            'agent' => 'agent_dashboard.php',
+            'associate' => 'associate_dashboard.php'
         ];
 
-        return $role_dashboard_map[$role] ?? 'dashboard.php';
+        return $role_dashboard_map[$role] ?? 'enhanced_dashboard.php';
     }
 
     public static function checkSession() {

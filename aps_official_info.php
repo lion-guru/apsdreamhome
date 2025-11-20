@@ -7,7 +7,7 @@
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     echo "<h2>🏢 APS Dream Homes Pvt Ltd - Official Information</h2>\n";
 

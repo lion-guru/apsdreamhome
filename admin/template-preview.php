@@ -6,7 +6,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die('Invalid template ID');
 }
 
-$db = getDBConnection();
+global $con;
+$db = $con;
 $layoutTemplate = new Admin\Models\LayoutTemplate($db);
 
 $template = $layoutTemplate->getById($_GET['id']);

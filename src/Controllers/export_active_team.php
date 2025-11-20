@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/includes/db_config.php';
-$con = getDbConnection();
+$con = getMysqliConnection();
 if (!$con) { http_response_code(500); echo 'Database connection failed.'; exit; }
 if (!isset($_SESSION['aid'])) { header('Location: login.php'); exit; }
 $associate_id = $_SESSION['aid'];

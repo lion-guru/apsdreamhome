@@ -13,7 +13,8 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
 
     // Check if user is logged in as admin
     if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {

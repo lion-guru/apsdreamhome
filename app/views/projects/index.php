@@ -1,8 +1,22 @@
 <?php
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+
+// Ensure variables are defined to prevent errors
+if (!isset($projects)) { $projects = []; }
+if (!isset($cities)) { $cities = []; }
+if (!isset($current_city)) { $current_city = ''; }
+if (!isset($project_types)) { $project_types = []; }
+
 /**
  * Projects Index View
  * Shows all projects with filtering and search
  */
+
+// Set page title and description for layout
+$page_title = $title ?? 'Our Projects - APS Dream Home';
+$page_description = 'Discover exceptional residential and commercial spaces crafted with precision and care';
 ?>
 
 <div class="container-fluid py-5">

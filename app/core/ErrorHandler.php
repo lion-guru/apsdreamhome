@@ -1,153 +1,179 @@
 <?php
 /**
- * Error Handler
- * Centralized error handling and logging
+ * Unified Error Handler
+ * Handles all error pages using the modern layout system
  */
 
 namespace App\Core;
 
-class ErrorHandler {
-    private $logPath;
-    private $isDevelopment;
-
-    public function __construct() {
-        $this->logPath = APP_ROOT . '/storage/logs/';
-        $this->isDevelopment = ENVIRONMENT === 'development';
-
-        $this->initialize();
-    }
-
+class ErrorHandler
+{
     /**
-     * Initialize error handling
+     * Render an error page with the specified code and message
+     * 
+     * @param int $code HTTP error code
+     * @param string $message Optional custom message
+     * @param array $data Additional data for the error page
      */
-    public function initialize() {
-        // Set error reporting
-        if ($this->isDevelopment) {
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-        } else {
-            error_reporting(E_ERROR | E_PARSE);
-            ini_set('display_errors', 0);
-        }
-
-        // Set error and exception handlers
-        set_error_handler([$this, 'handleError']);
-        set_exception_handler([$this, 'handleException']);
-        register_shutdown_function([$this, 'handleShutdown']);
-
-        // Create log directory if it doesn't exist
-        if (!is_dir($this->logPath)) {
-            mkdir($this->logPath, 0755, true);
-        }
-
-        // Set error log file
-        ini_set('error_log', $this->logPath . 'php_errors.log');
-        ini_set('log_errors', 1);
-    }
-
-    /**
-     * Handle PHP errors
-     */
-    public function handleError($errno, $errstr, $errfile, $errline) {
-        $error = [
-            'type' => $errno,
-            'message' => $errstr,
-            'file' => $errfile,
-            'line' => $errline,
-            'timestamp' => date('Y-m-d H:i:s'),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown',
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
-            'request_uri' => $_SERVER['REQUEST_URI'] ?? 'Unknown',
-        ];
-
-        $this->logError($error);
-
-        // Don't show errors in production unless fatal
-        if (!$this->isDevelopment && !in_array($errno, [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+    public static function render($code, $message = null, $data = [])
+    {
+        // Set the HTTP response code
+        http_response_code($code);
+        
+        // Log the error
+        $requestUri = $_SERVER['REQUEST_URI'] ?? 'CLI';
+        $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'CLI';
+        error_log("HTTP {$code} Error: " . $requestUri . " - IP: " . $remoteAddr . ($message ? " - Message: {$message}" : ""));
+        
+        // Add detailed debug logging
+        error_log("ErrorHandler::render() - Starting error rendering for code: {$code}");
+        error_log("ErrorHandler::render() - Message: " . ($message ?? 'null'));
+        error_log("ErrorHandler::render() - Data: " . json_encode($data));
+        
+        // Determine the error page path
+        $errorView = __DIR__ . '/../../resources/views/errors/' . $code . '.php';
+        error_log("ErrorHandler::render() - Error view path: {$errorView}");
+        
+        // If specific error page doesn't exist, use a generic one
+        if (!file_exists($errorView)) {
+            error_log("ErrorHandler::render() - Error view file not found, using generic renderer");
+            self::renderGeneric($code, $message, $data);
             return;
         }
-
-        // Show error in development
-        if ($this->isDevelopment) {
-            echo '<div style="background: #f8d7da; color: #721c24; padding: 10px; margin: 10px; border: 1px solid #f5c6cb; border-radius: 4px;">';
-            echo '<strong>Error:</strong> ' . htmlspecialchars($errstr) . '<br>';
-            echo '<strong>File:</strong> ' . htmlspecialchars($errfile) . ':' . $errline;
-            echo '</div>';
+        
+        error_log("ErrorHandler::render() - Error view file exists, including: {$errorView}");
+        
+        // Include the error page
+        try {
+            require $errorView;
+            error_log("ErrorHandler::render() - Error view included successfully");
+        } catch (\Exception $e) {
+            error_log("ErrorHandler::render() - Exception while including error view: " . $e->getMessage());
+            error_log("ErrorHandler::render() - Exception file: " . $e->getFile() . " line: " . $e->getLine());
+            throw $e;
         }
     }
-
+    
     /**
-     * Handle exceptions
+     * Render a generic error page when specific page doesn't exist
+     * 
+     * @param int $code HTTP error code
+     * @param string $message Optional custom message
+     * @param array $data Additional data for the error page
      */
-    public function handleException($exception) {
-        $error = [
-            'type' => 'Exception',
-            'message' => $exception->getMessage(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTraceAsString(),
-            'timestamp' => date('Y-m-d H:i:s'),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown',
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown',
-            'request_uri' => $_SERVER['REQUEST_URI'] ?? 'Unknown',
+    protected static function renderGeneric($code, $message = null, $data = [])
+    {
+        error_log("ErrorHandler::renderGeneric() - Starting generic error rendering for code: {$code}");
+        
+        // Set default title and message based on code
+        $titles = [
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Page Not Found',
+            500 => 'Internal Server Error',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable'
         ];
-
-        $this->logError($error);
-
-        // Show exception in development
-        if ($this->isDevelopment) {
-            echo '<div style="background: #f8d7da; color: #721c24; padding: 15px; margin: 10px; border: 1px solid #f5c6cb; border-radius: 4px;">';
-            echo '<strong>Exception:</strong> ' . htmlspecialchars($exception->getMessage()) . '<br>';
-            echo '<strong>File:</strong> ' . htmlspecialchars($exception->getFile()) . ':' . $exception->getLine() . '<br>';
-            echo '<strong>Trace:</strong><pre>' . htmlspecialchars($exception->getTraceAsString()) . '</pre>';
-            echo '</div>';
-        } else {
-            // Show generic error page in production
-            http_response_code(500);
-            echo '<h1>Internal Server Error</h1>';
-            echo '<p>Something went wrong. Please try again later.</p>';
+        
+        $defaultMessages = [
+            400 => 'The request could not be understood by the server.',
+            401 => 'You need to be logged in to access this page.',
+            403 => 'You don\'t have permission to access this page.',
+            404 => 'The page you are looking for could not be found.',
+            500 => 'Something went wrong on our end. We\'re working to fix it.',
+            502 => 'The server received an invalid response.',
+            503 => 'The server is temporarily unavailable.'
+        ];
+        
+        $title = $titles[$code] ?? 'Error ' . $code;
+        $message = $message ?? $defaultMessages[$code] ?? 'An error occurred.';
+        
+        // Set the page title
+        $pageTitle = $code . ' - ' . $title;
+        
+        error_log("ErrorHandler::renderGeneric() - Page title: {$pageTitle}");
+        error_log("ErrorHandler::renderGeneric() - Message: {$message}");
+        
+        // Capture the content for the layout
+        ob_start();
+        ?>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card p-5">
+                    <div class="error-icon mb-4">
+                        <i class="fas fa-exclamation-triangle fa-5x text-warning"></i>
+                    </div>
+                    <h1 class="display-4 mb-3"><?= htmlspecialchars($title) ?></h1>
+                    <p class="lead text-muted mb-4">
+                        <?= htmlspecialchars($message) ?>
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="<?= BASE_URL ?>" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home me-2"></i>Return to Homepage
+                        </a>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Go Back
+                        </a>
+                    </div>
+                    <small class="d-block mt-4 text-muted">
+                        Error <?= $code ?> - <?= htmlspecialchars($title) ?>
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <?php
+        $content = ob_get_clean();
+        
+        error_log("ErrorHandler::renderGeneric() - Content captured, length: " . strlen($content));
+        
+        // Include the modern layout
+        $layoutPath = __DIR__ . '/../../resources/views/layouts/modern.php';
+        error_log("ErrorHandler::renderGeneric() - Layout path: {$layoutPath}");
+        error_log("ErrorHandler::renderGeneric() - Layout exists: " . (file_exists($layoutPath) ? 'yes' : 'no'));
+        
+        try {
+            require $layoutPath;
+            error_log("ErrorHandler::renderGeneric() - Layout included successfully");
+        } catch (\Exception $e) {
+            error_log("ErrorHandler::renderGeneric() - Exception while including layout: " . $e->getMessage());
+            error_log("ErrorHandler::renderGeneric() - Exception file: " . $e->getFile() . " line: " . $e->getLine());
+            throw $e;
         }
     }
-
+    
     /**
-     * Handle fatal errors on shutdown
+     * Handle 404 Not Found errors
      */
-    public function handleShutdown() {
-        $error = error_get_last();
-        if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
-            $this->handleError($error['type'], $error['message'], $error['file'], $error['line']);
-        }
+    public static function handle404()
+    {
+        self::render(404);
     }
-
+    
     /**
-     * Log error to file
+     * Handle 500 Internal Server errors
      */
-    private function logError($error) {
-        $logFile = $this->logPath . 'application.log';
-        $logEntry = json_encode($error) . PHP_EOL;
-
-        file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+    public static function handle500($exception = null)
+    {
+        $message = $exception ? $exception->getMessage() : null;
+        self::render(500, $message);
     }
-
+    
     /**
-     * Get recent errors
+     * Handle 403 Forbidden errors
      */
-    public function getRecentErrors($limit = 50) {
-        $logFile = $this->logPath . 'application.log';
-        if (!file_exists($logFile)) {
-            return [];
-        }
-
-        $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $lines = array_reverse($lines); // Most recent first
-
-        $errors = [];
-        foreach (array_slice($lines, 0, $limit) as $line) {
-            $errors[] = json_decode($line, true);
-        }
-
-        return $errors;
+    public static function handle403($message = null)
+    {
+        self::render(403, $message);
+    }
+    
+    /**
+     * Handle 401 Unauthorized errors
+     */
+    public static function handle401($message = null)
+    {
+        self::render(401, $message);
     }
 }
-
-?>

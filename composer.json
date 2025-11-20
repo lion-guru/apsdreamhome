@@ -19,21 +19,22 @@
         "predis/predis": "^2.0",
         "league/flysystem": "^3.0",
         "intervention/image": "^2.7",
-        "carbon/carbon": "^2.0"
+        "nesbot/carbon": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.21",
-        "phpunit/phpunit": "^10.0",
-        "squizlabs/php_codesniffer": "^4.0",
-        "phpstan/phpstan": "^1.10",
         "friendsofphp/php-cs-fixer": "^3.0",
-        "rector/rector": "^0.18",
         "mockery/mockery": "^1.6",
-        "phpmd/phpmd": "^2.13"
+        "phpmd/phpmd": "^2.13",
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.5",
+        "rector/rector": "^0.18",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "autoload": {
         "psr-4": {
             "ApsDreamHome\\": "src/",
+            "App\\": "app/",
             "ApsDreamHome\\Controllers\\": "src/Controllers/",
             "ApsDreamHome\\Models\\": "src/Models/",
             "ApsDreamHome\\Services\\": "src/Services/",
@@ -43,7 +44,8 @@
             "ApsDreamHome\\Interfaces\\": "src/Interfaces/",
             "ApsDreamHome\\Exceptions\\": "src/Exceptions/",
             "ApsDreamHome\\Helpers\\": "src/Helpers/",
-            "ApsDreamHome\\Standards\\": "src/Standards/"
+            "ApsDreamHome\\Standards\\": "src/Standards/",
+            "Database\\": "src/Database/"
         },
         "files": [
             "src/Helpers/functions.php",
@@ -52,7 +54,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ApsDreamHome\\Tests\\": "tests/"
+            "ApsDreamHome\\Tests\\": "tests/",
+            "Tests\\Database\\": "tests/Database/",
+            "Tests\\Database\\Migrations\\MigrationClasses\\": "tests/Database/MigrationClasses/"
         }
     },
     "scripts": {

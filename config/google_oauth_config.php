@@ -41,7 +41,8 @@ define('GOOGLE_REDIRECT_URL', $protocol . '://' . $host . $path);
 // Validate configuration
 if (empty(GOOGLE_CLIENT_ID) || empty(GOOGLE_CLIENT_SECRET)) {
     error_log('Google OAuth Error: Missing required credentials');
-    die('Google OAuth configuration error. Please check the server logs.');
+    // Don't die here, just log the error and continue without OAuth
+    // This prevents the error message from being output to the browser
 }
 
 // Log OAuth configuration for debugging

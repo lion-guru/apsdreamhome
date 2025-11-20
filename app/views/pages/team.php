@@ -3,26 +3,14 @@
  * Enhanced Team Page - APS Dream Home
  * Modern UI/UX showcasing company team members
  */
+
+// Set page title and description for layout
+$page_title = 'Our Team - APS Dream Home';
+$page_description = 'Meet the experienced team behind APS Dream Home. Our real estate professionals are dedicated to helping you find your perfect property.';
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'Our Team - APS Dream Home'; ?></title>
-
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Meet the experienced team behind APS Dream Home. Our real estate professionals are dedicated to helping you find your perfect property.">
-    <meta name="keywords" content="APS Dream Home team, real estate professionals Gorakhpur, property experts UP">
-
-    <!-- Modern CSS Framework -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome@6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <style>
+<style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);

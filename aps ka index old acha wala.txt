@@ -6,7 +6,7 @@ require_once 'includes/helpers/file_helpers.php';
 
 // Get database connection with improved error handling
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     
     // Start session if not already started
     if (session_status() === PHP_SESSION_NONE) {

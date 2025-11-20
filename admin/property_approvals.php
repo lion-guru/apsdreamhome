@@ -10,7 +10,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit();
 }
 require_permission('manage_inventory');
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 $msg = $error = '';
 
 // Handle approve/reject actions
@@ -108,3 +109,4 @@ if ($conn) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

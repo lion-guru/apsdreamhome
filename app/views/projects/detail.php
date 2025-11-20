@@ -1,8 +1,45 @@
 <?php
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+
+// Ensure $project is defined to prevent errors
+if (!isset($project) || !is_array($project)) {
+    $project = [
+        'project_name' => '',
+        'short_description' => '',
+        'description' => '',
+        'base_price' => 0,
+        'city' => '',
+        'available_plots' => 0,
+        'gallery_images' => [],
+        'project_type' => '',
+        'total_area' => 0,
+        'total_plots' => 0,
+        'price_per_sqft' => 0,
+        'possession_date' => '',
+        'rera_number' => '',
+        'developer_name' => '',
+        'developer_contact' => '',
+        'developer_email' => '',
+        'project_head' => '',
+        'sales_manager' => '',
+        'amenities' => [],
+        'highlights' => [],
+        'latitude' => '',
+        'longitude' => '',
+        'address' => '',
+    ];
+}
+
 /**
  * Project Detail View
  * Shows complete project information with gallery, amenities, etc.
  */
+
+// Set page title and description for layout
+$page_title = htmlspecialchars($project['project_name'] ?? 'Project Details') . ' - APS Dream Home';
+$page_description = htmlspecialchars($project['short_description'] ?? $project['description'] ?? 'Discover this exceptional residential project');
 ?>
 
 <!-- Hero Section -->

@@ -8,8 +8,8 @@
 session_start();
 
 // Include required files
-require_once 'includes/Database.php';
-require_once 'includes/WhatsAppManager.php';
+require_once __DIR__ . '/../includes/Database.php';
+require_once __DIR__ . '/../includes/WhatsAppManager.php';
 
 // Initialize database connection
 $db = new Database();
@@ -219,9 +219,9 @@ $status = [
     'WhatsApp Manager' => class_exists('WhatsAppManager') ? '✅ Loaded' : '❌ Not Loaded',
     'Database Connection' => $conn ? '✅ Connected' : '❌ Disconnected',
     'Templates Available' => count($templates) > 0 ? '✅ ' . count($templates) . ' Templates' : '❌ No Templates',
-    'Campaign System' => method_exists($whatsAppManager, 'createWhatsAppCampaign') ? '✅ Working' : '❌ Not Working',
-    'Analytics System' => method_exists($whatsAppManager, 'getWhatsAppDashboard') ? '✅ Working' : '❌ Not Working',
-    'Message System' => method_exists($whatsAppManager, 'sendWhatsAppMessage') ? '✅ Working' : '❌ Not Working'
+    'Campaign System' => $whatsAppManager->createWhatsAppCampaign($campaignData) ? '✅ Working' : '❌ Not Working',
+    'Analytics System' => $whatsAppManager->getWhatsAppDashboard() ? '✅ Working' : '❌ Not Working',
+    'Message System' => $whatsAppManager->sendWhatsAppMessage($testLead['phone'], ['content' => 'test']) ? '✅ Working' : '❌ Not Working'
 ];
 
 echo "<h3>System Components Status:</h3>";

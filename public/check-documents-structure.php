@@ -7,7 +7,7 @@ ini_set('display_errors', 1);
 require_once __DIR__ . '/simple_db.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     
     // Get table structure
     $stmt = $pdo->query("DESCRIBE documents");

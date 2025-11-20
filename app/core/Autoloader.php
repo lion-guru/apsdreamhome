@@ -135,4 +135,18 @@ $autoloader->addClassMap('Database', APP_ROOT . '/app/core/Database.php');
 $autoloader->addClassMap('SessionManager', APP_ROOT . '/app/core/SessionManager.php');
 $autoloader->addClassMap('ErrorHandler', APP_ROOT . '/app/core/ErrorHandler.php');
 
+// Register consolidated models for seamless migration
+$autoloader->addClassMap('ConsolidatedUser', APP_ROOT . '/app/Models/ConsolidatedUser.php');
+$autoloader->addClassMap('ConsolidatedProperty', APP_ROOT . '/app/Models/ConsolidatedProperty.php');
+$autoloader->addClassMap('UnifiedModel', APP_ROOT . '/app/Core/UnifiedModel.php');
+
+// Register legacy managers for backward compatibility
+$autoloader->addClassMap('UserManager', APP_ROOT . '/includes/managers.php');
+$autoloader->addClassMap('PropertyManager', APP_ROOT . '/includes/managers.php');
+$autoloader->addClassMap('ContactManager', APP_ROOT . '/includes/managers.php');
+
+// Ensure AppConfig is autoloaded from legacy config
+$autoloader->addClassMap('AppConfig', APP_ROOT . '/includes/config.php');
+
 ?>
+

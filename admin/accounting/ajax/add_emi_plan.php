@@ -1,6 +1,7 @@
 <?php
 require_once '../../../includes/config.php';
-require_once '../../../includes/db_connection.php';
+global $con;
+$conn = $con;
 require_once '../../../includes/auth_check.php';
 
 header('Content-Type: application/json');
@@ -14,8 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $conn = getDbConnection();
-    
     // Validate required fields
     $requiredFields = [
         'customer_id', 'property_id', 'total_amount', 'interest_rate',
@@ -150,3 +149,4 @@ try {
     ]);
 }
 ?>
+

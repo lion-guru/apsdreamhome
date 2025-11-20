@@ -85,7 +85,8 @@ class LoginSystemDiagnostic {
 
         try {
             require_once $this->baseDir . '/includes/db_connection.php';
-            $conn = getDbConnection();
+            global $con;
+        $conn = $con;
 
             if (!$conn) {
                 throw new Exception("Database connection failed");

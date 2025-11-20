@@ -9,7 +9,8 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 
 $emiPlanId = intval($_GET['id']);
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 
 // Get EMI plan details
 $query = "SELECT ep.*, c.name as customer_name, c.phone as customer_phone, 

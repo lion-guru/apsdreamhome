@@ -70,7 +70,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                     <h4 class="card-title">List Of Gallary Image</h4>
                                     <?php
                                             if(isset($_GET['msg']))
-                                            echo $_GET['msg'];
+                                            echo sanitizeInput($_GET['msg']);
 
                                     ?>
                                 </div>

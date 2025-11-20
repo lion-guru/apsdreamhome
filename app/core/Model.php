@@ -42,6 +42,16 @@ abstract class Model {
     protected $attributesDefault = [];
     
     /**
+     * @var array The query where conditions
+     */
+    protected $wheres = [];
+    
+    /**
+     * @var array The original attributes for dirty checking
+     */
+    protected $original = [];
+    
+    /**
      * @var PDO The database connection
      */
     protected static $connection;
@@ -50,6 +60,7 @@ abstract class Model {
      * Create a new model instance
      */
     public function __construct(array $attributes = []) {
+        $this->wheres = [];
         $this->fill($attributes);
     }
     
@@ -411,15 +422,9 @@ abstract class Model {
     /**
      * Add a basic where clause to the query
      */
-    public function where($column, $operator = null, $value = null, $boolean = 'AND') {
+    protected function addWhere($column, $operator = null, $value = null, $boolean = 'AND') {
         if (is_array($column)) {
             return $this->addArrayOfWheres($column, $boolean);
-        }
-        
-        // Handle dynamic where clauses
-        if (func_num_args() === 2) {
-            $value = $operator;
-            $operator = '=';
         }
         
         $this->wheres[] = [
@@ -433,14 +438,39 @@ abstract class Model {
     }
     
     /**
+     * Add a basic where clause to the query (public wrapper)
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'AND') {
+        // Handle dynamic where clauses (when operator is the value and operator defaults to '=')
+        if ($operator !== null && $value === null && func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+        return $this->addWhere($column, $operator, $value, $boolean);
+    }
+    
+    /**
+     * Static method to create a query with where clause
+     */
+    public static function whereStatic($column, $operator = null, $value = null, $boolean = 'AND') {
+        $instance = new static();
+        // Handle dynamic where clauses (when operator is the value and operator defaults to '=')
+        if ($operator !== null && $value === null && func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+        return $instance->where($column, $operator, $value, $boolean);
+    }
+    
+    /**
      * Add an array of where clauses to the query
      */
     protected function addArrayOfWheres(array $wheres, $boolean = 'and') {
         foreach ($wheres as $key => $value) {
             if (is_numeric($key) && is_array($value)) {
-                $this->where(...array_values($value));
+                $this->addWhere(...array_values($value));
             } else {
-                $this->where($key, '=', $value, $boolean);
+                $this->addWhere($key, '=', $value, $boolean);
             }
         }
         
@@ -520,7 +550,7 @@ abstract class Model {
         // Handle dynamic where methods (e.g., whereName('John'))
         if (strpos($method, 'where') === 0) {
             $column = lcfirst(substr($method, 5));
-            return $this->where($column, '=', $parameters[0]);
+            return $this->addWhere($column, '=', $parameters[0]);
         }
         
         throw new \BadMethodCallException(sprintf(
@@ -532,13 +562,18 @@ abstract class Model {
      * Handle dynamic static method calls
      */
     public static function __callStatic($method, $parameters) {
-        return (new static)->$method(...$parameters);
+        $instance = new static();
+        return $instance->$method(...$parameters);
     }
     
     /**
      * Get an attribute from the model
      */
     public function __get($key) {
+        // First check if it's a declared property
+        if (property_exists($this, $key)) {
+            return $this->$key;
+        }
         return $this->getAttribute($key);
     }
     

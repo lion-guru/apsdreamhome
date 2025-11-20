@@ -1,8 +1,9 @@
 <?php
 // Script to create the missing 'site_settings' table based on the existing 'settings' table structure
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/../includes/config.php';
 
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 if (!$conn) {
     die("Database connection failed. Please check your config.");
 }
@@ -25,3 +26,4 @@ if ($conn->query($sql) === TRUE) {
     echo "Error creating table: " . $conn->error . "\n";
 }
 $conn->close();
+

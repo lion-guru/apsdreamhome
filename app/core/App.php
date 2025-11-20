@@ -61,6 +61,9 @@ class App {
     public function __construct($basePath = null) {
         if ($basePath) {
             $this->setBasePath($basePath);
+        } else {
+            // Set default base path to project root
+            $this->setBasePath(dirname(__DIR__, 2));
         }
         
         $this->bootstrap();
@@ -72,6 +75,9 @@ class App {
      * Bootstrap the application
      */
     protected function bootstrap() {
+        // Load helpers first (before config)
+        $this->loadHelpers();
+        
         // Load configuration
         $this->loadConfig();
         
@@ -110,10 +116,28 @@ class App {
             throw new Exception('Config directory not found');
         }
         
-        // Load each PHP file in the config directory
+        // Load bootstrap first to define constants
+        $bootstrapFile = $configDir . '/bootstrap.php';
+        if (file_exists($bootstrapFile)) {
+            require_once $bootstrapFile;
+        }
+        
+        // Load each PHP file in the config directory, excluding bootstrap.php
         foreach (glob($configDir . '/*.php') as $configFile) {
             $key = basename($configFile, '.php');
-            $this->config[$key] = require $configFile;
+            if ($key !== 'bootstrap') { // Skip bootstrap as it's already loaded
+                $this->config[$key] = require $configFile;
+            }
+        }
+    }
+    
+    /**
+     * Load helper functions
+     */
+    protected function loadHelpers() {
+        $helpersFile = $this->basePath('app/Helpers/env.php');
+        if (file_exists($helpersFile)) {
+            require_once $helpersFile;
         }
     }
     
@@ -170,10 +194,26 @@ class App {
      * Load application routes
      */
     protected function loadRoutes() {
-        $routesFile = $this->basePath('routes/web.php');
+        // Make $app available to all route files
+        $app = $this;
         
-        if (file_exists($routesFile)) {
-            require $routesFile;
+        // Load modern routes first
+        $modernRoutesFile = $this->basePath('routes/modern.php');
+        if (file_exists($modernRoutesFile)) {
+            require $modernRoutesFile;
+        }
+        
+        // Load legacy routes as fallback
+        $legacyRoutesFile = $this->basePath('routes/web.php');
+        if (file_exists($legacyRoutesFile)) {
+            // Make sure $app is available in the web.php scope
+            require $legacyRoutesFile;
+        }
+        
+        // Load API routes
+        $apiRoutesFile = $this->basePath('routes/api.php');
+        if (file_exists($apiRoutesFile)) {
+            require $apiRoutesFile;
         }
     }
     
@@ -281,9 +321,9 @@ class App {
     /**
      * Get the application instance
      */
-    public static function getInstance() {
+    public static function getInstance($basePath = null) {
         if (is_null(static::$instance)) {
-            static::$instance = new static;
+            static::$instance = new static($basePath);
         }
         
         return static::$instance;

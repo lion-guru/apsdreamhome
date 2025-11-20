@@ -1,8 +1,9 @@
 <?php
-require_once __DIR__ . '/../includes/db_connection.php';
+require_once __DIR__ . '/../config.php';
 
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     if (!$conn) {
         die('DB connection failed');
     }
@@ -44,3 +45,4 @@ try {
     echo "<div style='color:red;'>Exception: " . htmlspecialchars($e->getMessage()) . "</div>";
 }
 ?>
+

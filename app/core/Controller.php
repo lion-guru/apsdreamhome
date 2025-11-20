@@ -68,14 +68,16 @@ class Controller {
      * Controller constructor
      */
     public function __construct() {
-        $app = App::getInstance();
+        // Get the base path from APP_ROOT constant or use default
+        $basePath = defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 2);
+        $app = App::getInstance($basePath);
         
-        $this->request = $app->request;
-        $this->response = $app->response;
+        $this->request = $app->request();
+        $this->response = $app->response();
         $this->view = new View();
-        $this->auth = $app->auth;
-        $this->db = $app->db;
-        $this->session = $app->session;
+        $this->auth = $app->auth ?? null;
+        $this->db = $app->db();
+        $this->session = $app->session();
         $this->app = $app;
     }
 

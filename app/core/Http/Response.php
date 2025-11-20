@@ -2102,12 +2102,15 @@ class Response implements \JsonSerializable {
         
         // Handle streamed content
         if (is_callable($this->content)) {
+            ob_start();
             try {
                 call_user_func($this->content);
             } catch (\Exception $e) {
-                // Rethrow as RuntimeException to maintain the method's contract
+                ob_end_clean(); // Clean the buffer on error
+                // Rethrow as RuntimeException to maintain the method\'s contract
                 throw new \RuntimeException('Error executing response callback: ' . $e->getMessage(), 0, $e);
             }
+            $this->content = ob_get_clean(); // Capture the output
             return $this;
         }
         
@@ -2123,10 +2126,10 @@ class Response implements \JsonSerializable {
         echo @$content;
         
         // Flush output buffers if any
-        if (ob_get_level() > 0) {
-            ob_flush();
-            flush();
-        }
+        // if (ob_get_level() > 0) {
+        //     ob_flush();
+        //     flush();
+        // }
         
         return $this;
     }
@@ -2149,60 +2152,55 @@ class Response implements \JsonSerializable {
                 $line
             ));
         }
-        
-        try {
-            // Status line
-            if (!@header(sprintf('HTTP/1.1 %s %s', $this->statusCode, $this->statusText), true, $this->statusCode)) {
-                throw new \RuntimeException('Failed to send HTTP status line');
-            }
-            
-            // Headers
-            foreach ($this->headers as $name => $values) {
-                $replace = 0 === strcasecmp($name, 'Content-Type');
+
+        // Only send headers if not in a CLI environment
+        if (php_sapi_name() !== 'cli') {
+            try {
+                // Status line
+                if (!@header(sprintf('HTTP/1.1 %s %s', $this->statusCode, $this->statusText), true, $this->statusCode)) {
+                    throw new \RuntimeException('Failed to send HTTP status line');
+                }
                 
-                foreach ((array) $values as $value) {
-                    if (!@header($name . ': ' . $value, $replace, $this->statusCode)) {
-                        throw new \RuntimeException(sprintf('Failed to send header: %s', $name));
+                // Headers
+                foreach ($this->headers as $name => $values) {
+                    $replace = 0 === strcasecmp($name, 'Content-Type');
+                    
+                    foreach ((array) $values as $value) {
+                        if (!@header($name . ': ' . $value, $replace, $this->statusCode)) {
+                            throw new \RuntimeException(sprintf('Failed to send header: %s', $name));
+                        }
                     }
                 }
-            }
-            
-            // Cookies (handled separately as they have different header syntax)
-            if (isset($this->headers['Set-Cookie'])) {
-                foreach ((array) $this->headers['Set-Cookie'] as $cookie) {
-                    if (!@header('Set-Cookie: ' . $cookie, false, $this->statusCode)) {
-                        throw new \RuntimeException('Failed to send cookie header');
+                
+                // Cookies (handled separately as they have different header syntax)
+                if (isset($this->headers['Set-Cookie'])) {
+                    foreach ((array) $this->headers['Set-Cookie'] as $cookie) {
+                        if (!@header('Set-Cookie: ' . $cookie, false, $this->statusCode)) {
+                            throw new \RuntimeException('Failed to send cookie header');
+                        }
                     }
                 }
+                
+            } catch (\Exception $e) {
+                // Clean any headers that might have been sent
+                if (headers_sent()) {
+                    header_remove();
+                }
+                
+                throw new \RuntimeException(
+                    sprintf('Failed to send headers: %s', $e->getMessage()),
+                    $e->getCode(),
+                    $e
+                );
             }
-            
-            return $this;
-            
-        } catch (\Exception $e) {
-            // Clean any headers that might have been sent
-            if (headers_sent()) {
-                header_remove();
-            }
-            
-            throw new \RuntimeException(
-                sprintf('Failed to send headers: %s', $e->getMessage()),
-                $e->getCode(),
-                $e
-            );
         }
+        
+        return $this;
     }
     
     /**
      * Stream a file or other streamable resource
      *
-     * @param string|resource $stream The file path or stream resource
-     * @param int $status The HTTP status code
-     * @param array $headers Additional headers
-     * @param string|null $contentType The content type (null to guess)
-     * @return static
-     */
-    public static function stream($stream, int $status = 200, array $headers = [], ?string $contentType = null): static {
-        if (is_string($stream)) {
             if (!is_readable($stream)) {
                 throw new RuntimeException(sprintf('The file "%s" is not readable.', $stream));
             }

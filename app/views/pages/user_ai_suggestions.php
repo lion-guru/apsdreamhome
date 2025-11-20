@@ -13,9 +13,16 @@ session_start([
 ]);
 
 // Dependency Injection and Centralized Configuration
-require_once(__DIR__ . '/includes/env_loader.php');
-require_once(__DIR__ . '/includes/db_security_upgrade.php');
-require_once(__DIR__ . '/includes/classes/AIAssistant.php');
+require_once(__DIR__ . '/../../includes/env_loader.php');
+require_once(__DIR__ . '/../../includes/db_security_upgrade.php');
+require_once(__DIR__ . '/../../includes/classes/AIAssistant.php');
+
+// Sanitize input function
+if (!function_exists('sanitizeInput')) {
+    function sanitizeInput($data) {
+        return htmlspecialchars(stripslashes(trim($data)));
+    }
+}
 
 // Enhanced Authentication Check
 if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
@@ -42,13 +49,27 @@ if (!$user_id) {
     exit();
 }
 
+try {
+    $dbSecurity = new DatabaseSecurityUpgrade();
+    $aiAssistant = new AIAssistant($dbSecurity);
+} catch (Exception $e) {
+    error_log('AI Suggestions Initialization Error: ' . $e->getMessage());
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'System Error',
+        'message' => 'Unable to initialize AI components at this time.'
+    ]);
+    exit();
+}
+
 // Validate and sanitize input context
 $context = [
     'property_type' => $dbSecurity->sanitizeInput($_POST['property_type'] ?? ''),
     'budget' => $dbSecurity->sanitizeInput($_POST['budget'] ?? ''),
     'location' => $dbSecurity->sanitizeInput($_POST['location'] ?? '')
 ];
-
 // Validate context completeness
 $missingFields = array_filter($context, function($value) { return empty($value); });
 if (!empty($missingFields)) {
@@ -62,38 +83,29 @@ if (!empty($missingFields)) {
     exit();
 }
 
-// Initialize Secure Database and AI Components
-try {
-    $dbSecurity = new DatabaseSecurityUpgrade();
-    $aiAssistant = new AIAssistant($dbSecurity);
-    
-    // Generate AI Suggestions
-    $suggestions = $aiAssistant->generateSuggestions($user_id, $context);
-    
-    // Return Suggestions
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => true,
-        'suggestions' => $suggestions
-    ]);
-    exit();
+// Generate AI Suggestions
+$suggestions = $aiAssistant->generateSuggestions($user_id, $context);
 
-} catch (Exception $e) {
-    error_log('AI Suggestions Error: ' . $e->getMessage());
-    http_response_code(500);
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => false,
-        'error' => 'System Error',
-        'message' => 'Unable to process your request at this time.'
-    ]);
-    exit();
-}
-    exit;
+// Return Suggestions
+header('Content-Type: application/json');
+echo json_encode([
+    'success' => true,
+    'suggestions' => $suggestions
+]);
+exit();
 
 
+
+
+
+global $con;
 // Gather user info
-$user = mysqli_fetch_assoc(mysqli_query($con, "SELECT * FROM users WHERE id=$user_id"));
+$stmt = $con->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
 $suggestions = [];
 $status = [];
 
@@ -106,17 +118,29 @@ if (($user['documents_uploaded'] ?? 1) == 0) {
     $status[] = 'Upload your required documents to proceed.';
 }
 // Upcoming property visits
-$res = mysqli_query($con, "SELECT date, property_id FROM property_visits WHERE user_id=$user_id AND date >= CURDATE() ORDER BY date ASC LIMIT 1");
+$stmt = $con->prepare("SELECT date, property_id FROM property_visits WHERE user_id = ? AND date >= CURDATE() ORDER BY date ASC LIMIT 1");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res = $stmt->get_result();
+$stmt->close();
 if ($visit = mysqli_fetch_assoc($res)) {
     $status[] = 'You have a property visit scheduled on ' . $visit['date'] . '.';
 }
 // Expiring booking
-$res = mysqli_query($con, "SELECT expiry_date FROM property WHERE user_id=$user_id AND status='booked' AND expiry_date >= CURDATE() AND expiry_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) LIMIT 1");
+$stmt = $con->prepare("SELECT expiry_date FROM property WHERE user_id = ? AND status = 'booked' AND expiry_date >= CURDATE() AND expiry_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) LIMIT 1");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res = $stmt->get_result();
+$stmt->close();
 if ($row = mysqli_fetch_assoc($res)) {
     $status[] = 'Your booking will expire on ' . $row['expiry_date'] . '. Please complete any pending steps.';
 }
 // Payment due
-$res = mysqli_query($con, "SELECT amount_due, due_date FROM payments WHERE user_id=$user_id AND status='pending' AND due_date <= CURDATE() LIMIT 1");
+$stmt = $con->prepare("SELECT amount_due, due_date FROM payments WHERE user_id = ? AND status = 'pending' AND due_date <= CURDATE() LIMIT 1");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$res = $stmt->get_result();
+$stmt->close();
 if ($row = mysqli_fetch_assoc($res)) {
     $status[] = 'You have a pending payment of Rs. ' . $row['amount_due'] . ' due on ' . $row['due_date'] . '.';
 }
@@ -126,19 +150,34 @@ $context = [];
 $role = $_SESSION['role'] ?? 'guest';
 if ($role === 'customer') {
     // Pending documents
-    $res = mysqli_query($con, "SELECT COUNT(*) as cnt FROM documents WHERE user_id=$user_id AND status='pending'");
+    $stmt = $con->prepare("SELECT COUNT(*) as cnt FROM documents WHERE user_id = ? AND status = 'pending'");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $stmt->close();
     $context['pending_docs'] = mysqli_fetch_assoc($res)['cnt'] ?? 0;
     // Upcoming visit
-    $res = mysqli_query($con, "SELECT date FROM property_visits WHERE user_id=$user_id AND date>=CURDATE() ORDER BY date ASC LIMIT 1");
+    $stmt = $con->prepare("SELECT date FROM property_visits WHERE user_id = ? AND date >= CURDATE() ORDER BY date ASC LIMIT 1");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $stmt->close();
     $row = mysqli_fetch_assoc($res);
     if ($row && $row['date']) $context['upcoming_visit'] = $row['date'];
 }
 if ($role === 'agent') {
-    $res = mysqli_query($con, "SELECT COUNT(*) as cnt FROM leads WHERE agent_id=$user_id AND last_contact < DATE_SUB(CURDATE(), INTERVAL 3 DAY)");
+    $stmt = $con->prepare("SELECT COUNT(*) as cnt FROM leads WHERE agent_id = ? AND last_contact < DATE_SUB(CURDATE(), INTERVAL 3 DAY)");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $stmt->close();
     $context['cold_leads'] = mysqli_fetch_assoc($res)['cnt'] ?? 0;
 }
 if ($role === 'admin') {
-    $res = mysqli_query($con, "SELECT COUNT(*) as cnt FROM tickets WHERE status='open'");
+    $stmt = $con->prepare("SELECT COUNT(*) as cnt FROM tickets WHERE status = 'open'");
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $stmt->close();
     $context['unresolved_tickets'] = mysqli_fetch_assoc($res)['cnt'] ?? 0;
 }
 
@@ -191,17 +230,28 @@ if (empty($suggestions)) {
 
 // Example reminders (status)
 if ($role === 'customer') {
-    $res = mysqli_query($con, "SELECT COUNT(*) as cnt FROM payments WHERE user_id=$user_id AND status='due'");
+    $stmt = $con->prepare("SELECT COUNT(*) as cnt FROM payments WHERE user_id = ? AND status = 'due'");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $stmt->close();
     $due = mysqli_fetch_assoc($res)['cnt'] ?? 0;
     if ($due > 0) $status[] = "You have $due payment(s) due. Please pay on time to avoid penalties.";
 }
 if ($role === 'agent') {
-    $res = mysqli_query($con, "SELECT COUNT(*) as cnt FROM tickets WHERE agent_id=$user_id AND status='open'");
+    $stmt = $con->prepare("SELECT COUNT(*) as cnt FROM tickets WHERE agent_id = ? AND status = 'open'");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $stmt->close();
     $open = mysqli_fetch_assoc($res)['cnt'] ?? 0;
     if ($open > 0) $status[] = "You have $open open support ticket(s) assigned.";
 }
 if ($role === 'admin') {
-    $res = mysqli_query($con, "SELECT COUNT(*) as cnt FROM tickets WHERE status='open' AND created_at < DATE_SUB(NOW(), INTERVAL 3 DAY)");
+    $stmt = $con->prepare("SELECT COUNT(*) as cnt FROM tickets WHERE status = 'open' AND created_at < DATE_SUB(NOW(), INTERVAL 3 DAY)");
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $stmt->close();
     $old = mysqli_fetch_assoc($res)['cnt'] ?? 0;
     if ($old > 0) $status[] = "$old support tickets unresolved for over 3 days.";
 }
@@ -213,3 +263,4 @@ echo json_encode([
     'status'=>$status
 ]);
 
+

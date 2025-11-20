@@ -33,11 +33,18 @@ if (!function_exists('get_setting')) {
             $settings = [
                 'site_title' => 'APS Dream Home',
                 'site_description' => 'Your trusted real estate partner',
-                'contact_phone' => '+91 95540 00001',
+                'contact_phone' => '+91 7007444842',
                 'contact_email' => 'info@apsdreamhome.com',
-                'company_address' => '123 Dream Avenue, Gorakhpur, UP, India',
+                'company_address' => '1st floor singhariya, kunraghat, Gorakhpur, UP, India',
                 'business_hours' => 'Mon - Sat: 9:00 AM - 8:00 PM'
             ];
+        }
+
+        if (function_exists('getSiteSetting')) {
+            $value = getSiteSetting($key, null);
+            if ($value !== null) {
+                return $value;
+            }
         }
 
         return $settings[$key] ?? $default;
@@ -258,21 +265,31 @@ if (!function_exists('is_active_path')) {
         <?php endif; ?>
 
     <?php else: ?>
+    <?php
+        $site_title = get_setting('site_title', 'APS Dream Home') ?: 'APS Dream Home';
+    ?>
     <!-- Top Bar for Public Site -->
     <div class="top-bar bg-primary text-white py-2 d-none d-lg-block">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div class="d-flex gap-3">
-                        <span><i class="fas fa-phone-alt me-2"></i> <?php echo get_setting('contact_phone'); ?></span>
-                        <span><i class="fas fa-envelope me-2"></i> <?php echo get_setting('contact_email'); ?></span>
+            <div class="row g-2 align-items-center">
+                <div class="col-lg-6">
+                    <div class="top-contact d-flex flex-wrap align-items-center gap-3">
+                        <span class="top-company text-uppercase fw-semibold d-flex align-items-center">
+                            <i class="fas fa-building me-2"></i><?= htmlspecialchars($site_title); ?>
+                        </span>
+                        <a class="text-white text-decoration-none" href="<?php echo 'tel:' . preg_replace('/[^\d+]/', '', get_setting('contact_phone')); ?>">
+                            <i class="fas fa-phone-alt me-2"></i><?php echo get_setting('contact_phone'); ?>
+                        </a>
+                        <a class="text-white text-decoration-none" href="mailto:<?php echo get_setting('contact_email'); ?>">
+                            <i class="fas fa-envelope me-2"></i><?php echo get_setting('contact_email'); ?>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="social-links">
-                        <a href="#" class="text-white me-2" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white me-2" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white me-2" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <div class="col-lg-6 text-lg-end">
+                    <div class="social-links d-flex justify-content-lg-end gap-3">
+                        <a href="#" class="text-white" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white" title="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="#" class="text-white" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
@@ -280,71 +297,216 @@ if (!function_exists('is_active_path')) {
         </div>
     </div>
 
+    <?php
+        $raw_logo_path = get_setting('logo_path', '');
+        $logo_setting = get_setting('logo_path', '');
+        $logo_url = !empty($logo_setting)
+            ? (str_starts_with($logo_setting, 'http') ? $logo_setting : BASE_URL . ltrim($logo_setting, '/'))
+            : BASE_URL . 'assets/images/logo/apslogo.png';
+
+        if (!empty($raw_logo_path)) {
+            if (str_starts_with($raw_logo_path, 'http')) {
+                $logo_url = $raw_logo_path;
+            } else {
+                $logo_url = BASE_URL . ltrim($raw_logo_path, '/');
+            }
+        }
+
+        $contact_phone = get_setting('contact_phone', '+91 7007444842');
+        $contact_email = get_setting('contact_email', 'info@apsdreamhome.com');
+        $tel_link = 'tel:' . preg_replace('/[^\d+]/', '', $contact_phone);
+    ?>
+
     <!-- Main Header for Public Site -->
-    <header class="header sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <div class="container">
-                <!-- Logo -->
-                <a class="navbar-brand" href="<?php echo BASE_URL; ?>">
-                    <img src="<?php echo BASE_URL; ?>assets/images/logo.png" alt="APS Dream Home" class="img-fluid" style="max-height: 50px;">
+    <header class="public-header">
+        <nav class="navbar navbar-expand-lg navbar-dark premium-navbar sticky-top" aria-label="Primary Navigation">
+            <div class="container-fluid">
+                <a class="navbar-brand premium-brand" href="<?= BASE_URL; ?>" title="<?= htmlspecialchars($site_title); ?>">
+                    <div class="brand-container">
+                        <img src="<?= htmlspecialchars($logo_url); ?>" alt="<?= htmlspecialchars($site_title); ?>" class="brand-logo" loading="lazy">
+                    </div>
                 </a>
 
-                <!-- Mobile Toggle -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-                    <span class="navbar-toggler-icon"></span>
+                <span class="navbar-center-brand d-flex d-lg-none align-items-center justify-content-center mx-auto text-white">
+                    <?= htmlspecialchars($site_title); ?>
+                </span>
+
+                <button class="navbar-toggler premium-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="toggler-icon"></span>
+                    <span class="toggler-text">Menu</span>
                 </button>
 
-                <!-- Main Navigation -->
                 <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav premium-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo is_current_page('') ? 'active' : ''; ?>"
-                               href="<?php echo BASE_URL; ?>">
-                                <i class="fas fa-home d-lg-none me-2"></i> Home
+                            <a class="nav-link <?php echo is_current_page('') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>">
+                                <i class="fas fa-house-chimney me-1" aria-hidden="true"></i>Home
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo is_active_path('properties') ? 'active' : ''; ?>"
-                               href="<?php echo BASE_URL; ?>properties">
-                                <i class="fas fa-building d-lg-none me-2"></i> Properties
+
+                        <li class="nav-item dropdown mega-dropdown">
+                            <a class="nav-link dropdown-toggle premium-dropdown-toggle <?php echo is_active_path('properties') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>properties" id="propertiesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-home me-1" aria-hidden="true"></i>Properties
                             </a>
+                            <div class="dropdown-menu premium-mega-menu" aria-labelledby="propertiesDropdown">
+                                <div class="mega-menu-container">
+                                    <div class="row g-0">
+                                        <div class="col-lg-8">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h6 class="mega-header"><i class="fas fa-search me-2"></i>Browse by Type</h6>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties"><i class="fas fa-th-large me-2"></i>All Properties</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=apartment"><i class="fas fa-building me-2"></i>Apartments</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=villa"><i class="fas fa-house-user me-2"></i>Villas</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=commercial"><i class="fas fa-city me-2"></i>Commercial Spaces</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=plots"><i class="fas fa-map me-2"></i>Plots / Land</a>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6 class="mega-header"><i class="fas fa-fire me-2"></i>Featured Collections</h6>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?featured=1"><i class="fas fa-star me-2"></i>Featured Listings</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>resell"><i class="fas fa-recycle me-2"></i>Resale Properties</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?status=ready-to-move"><i class="fas fa-key me-2"></i>Ready to Move</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?price=5000000-10000000"><i class="fas fa-rupee-sign me-2"></i>₹50L - ₹1Cr Homes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 mega-sidebar">
+                                            <div class="mega-stats">
+                                                <h6>Key Highlights</h6>
+                                                <div class="stat-item">
+                                                    <span class="stat-number">500+</span>
+                                                    <span class="stat-label">Active Listings</span>
+                                                </div>
+                                                <div class="stat-item">
+                                                    <span class="stat-number">50+</span>
+                                                    <span class="stat-label">Neighbourhoods</span>
+                                                </div>
+                                                <div class="mega-highlight">
+                                                    <i class="fas fa-phone-volume me-2"></i>Need help? <strong>+91 7007444842</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo is_active_path('projects') ? 'active' : ''; ?>"
-                               href="<?php echo BASE_URL; ?>projects">
-                                <i class="fas fa-project-diagram d-lg-none me-2"></i> Projects
+
+                        <li class="nav-item dropdown mega-dropdown">
+                            <a class="nav-link dropdown-toggle premium-dropdown-toggle <?php echo is_active_path('projects') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>projects" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-project-diagram me-1" aria-hidden="true"></i>Projects
                             </a>
+                            <div class="dropdown-menu premium-mega-menu" aria-labelledby="projectsDropdown">
+                                <div class="mega-menu-container">
+                                    <div class="row g-0">
+                                        <div class="col-lg-8">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <h6 class="mega-header"><i class="fas fa-list me-2"></i>By Status</h6>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects"><i class="fas fa-th me-2"></i>All Projects</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?status=upcoming"><i class="fas fa-calendar-plus me-2"></i>Upcoming Launches</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?status=ongoing"><i class="fas fa-business-time me-2"></i>Under Construction</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?status=completed"><i class="fas fa-check-circle me-2"></i>Completed Projects</a>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <h6 class="mega-header"><i class="fas fa-map-marker-alt me-2"></i>By City</h6>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?location=Gorakhpur"><i class="fas fa-location-dot me-2"></i>Gorakhpur</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?location=Lucknow"><i class="fas fa-location-dot me-2"></i>Lucknow</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?location=Varanasi"><i class="fas fa-location-dot me-2"></i>Varanasi</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?location=Allahabad"><i class="fas fa-location-dot me-2"></i>Prayagraj</a>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <h6 class="mega-header"><i class="fas fa-building me-2"></i>Discover</h6>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?segment=luxury"><i class="fas fa-crown me-2"></i>Luxury Projects</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?segment=affordable"><i class="fas fa-hand-holding-heart me-2"></i>Affordable Housing</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>projects?segment=commercial"><i class="fas fa-briefcase me-2"></i>Commercial Hubs</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 mega-sidebar">
+                                            <div class="mega-project-card text-center">
+                                                <h6>Latest Project Updates</h6>
+                                                <p class="mb-3">Download brochures, floor plans, and exclusive launch offers.</p>
+                                                <a href="<?= BASE_URL; ?>projects" class="btn btn-primary btn-sm">Explore Projects</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo is_active_path('about') ? 'active' : ''; ?>"
-                               href="<?php echo BASE_URL; ?>about">
-                                <i class="fas fa-info-circle d-lg-none me-2"></i> About Us
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle premium-dropdown-toggle <?php echo is_active_path('services') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>services" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cogs me-1" aria-hidden="true"></i>Services
                             </a>
+                            <ul class="dropdown-menu premium-dropdown" aria-labelledby="servicesDropdown">
+                                <li><h6 class="dropdown-header"><i class="fas fa-handshake me-2"></i>Our Services</h6></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>services"><i class="fas fa-briefcase me-2"></i>Overview</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>property-management"><i class="fas fa-warehouse me-2"></i>Property Management</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>legal-services"><i class="fas fa-gavel me-2"></i>Legal Advisory</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>financial-services"><i class="fas fa-rupee-sign me-2"></i>Financial Guidance</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>interior-design"><i class="fas fa-palette me-2"></i>Interior Design</a></li>
+                            </ul>
                         </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle premium-dropdown-toggle <?php echo is_active_path('about') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>about" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-info-circle me-1" aria-hidden="true"></i>About
+                            </a>
+                            <ul class="dropdown-menu premium-dropdown" aria-labelledby="aboutDropdown">
+                                <li><h6 class="dropdown-header"><i class="fas fa-building me-2"></i>Company</</li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>about"><i class="fas fa-landmark me-2"></i>Company Overview</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>team"><i class="fas fa-users me-2"></i>Our Team</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>testimonials"><i class="fas fa-comment-dots me-2"></i>Testimonials</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>faq"><i class="fas fa-question-circle me-2"></i>FAQs</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle premium-dropdown-toggle <?php echo (is_active_path('blog') || is_active_path('gallery') || is_active_path('downloads')) ? 'active' : ''; ?>" href="<?= BASE_URL; ?>blog" id="resourcesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-folder-open me-1" aria-hidden="true"></i>Resources
+                            </a>
+                            <ul class="dropdown-menu premium-dropdown" aria-labelledby="resourcesDropdown">
+                                <li><h6 class="dropdown-header"><i class="fas fa-newspaper me-2"></i>Content</h6></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>blog"><i class="fas fa-blog me-2"></i>Blog</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>news"><i class="fas fa-rss me-2"></i>News & Updates</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header"><i class="fas fa-images me-2"></i>Media</h6></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>gallery"><i class="fas fa-images me-2"></i>Gallery</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>downloads"><i class="fas fa-download me-2"></i>Downloads</a></li>
+                            </ul>
+                        </li>
+
                         <li class="nav-item">
-                            <a class="nav-link <?php echo is_active_path('contact') ? 'active' : ''; ?>"
-                               href="<?php echo BASE_URL; ?>contact">
-                                <i class="fas fa-envelope d-lg-none me-2"></i> Contact
+                            <a class="nav-link <?php echo is_active_path('contact') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>contact">
+                                <i class="fas fa-envelope-open-text me-1" aria-hidden="true"></i>Contact
                             </a>
                         </li>
                     </ul>
 
-                    <!-- User Actions -->
-                    <div class="d-flex align-items-center gap-3">
-                        <a href="<?php echo BASE_URL; ?>login" class="btn btn-outline-primary">
-                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                    <div class="premium-actions">
+                        <a href="<?= htmlspecialchars($tel_link); ?>" class="btn btn-success premium-btn" title="Call <?= htmlspecialchars($contact_phone); ?>">
+                            <i class="fas fa-phone-alt" aria-hidden="true"></i>
+                            <span class="d-none d-xl-inline ms-1">Call</span>
                         </a>
-                        <a href="<?php echo BASE_URL; ?>register" class="btn btn-primary">
-                            <i class="fas fa-user-plus me-1"></i> Register
-                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light premium-btn dropdown-toggle" type="button" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user" aria-hidden="true"></i>
+                                <span class="d-none d-lg-inline ms-1">Account</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end premium-dropdown" aria-labelledby="accountDropdown">
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>register"><i class="fas fa-user-plus me-2"></i>Register</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>customer/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Customer Dashboard</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>associate/dashboard"><i class="fas fa-chart-line me-2"></i>Associate Dashboard</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </nav>
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay" role="presentation"></div>
     </header>
-
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay"></div>
 
     <!-- Page Content Wrapper for Public Site -->
     <main class="main-content">

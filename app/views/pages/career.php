@@ -9,7 +9,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get active job openings
     $jobs_query = "SELECT * FROM jobs WHERE status = 'active' ORDER BY created_at DESC";

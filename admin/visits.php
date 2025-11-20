@@ -261,11 +261,11 @@ $stats = [
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">From Date</label>
-                        <input type="date" name="date_from" class="form-control" value="<?php echo $_GET['date_from'] ?? ''; ?>">
+                        <input type="date" name="date_from" class="form-control" value="<?php echo sanitizeInput($_GET['date_from'] ?? ''); ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">To Date</label>
-                        <input type="date" name="date_to" class="form-control" value="<?php echo $_GET['date_to'] ?? ''; ?>">
+                        <input type="date" name="date_to" class="form-control" value="<?php echo sanitizeInput($_GET['date_to'] ?? ''); ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">&nbsp;</label>

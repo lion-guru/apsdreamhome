@@ -11,7 +11,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 
 $installmentId = intval($_GET['id']);
-$conn = getDbConnection();
+$conn = $con;
 
 // Get installment details with related information
 $query = "SELECT ei.*, ep.*, c.name as customer_name, c.phone as customer_phone, 

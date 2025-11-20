@@ -8,7 +8,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get interior design services
     $servicesQuery = "SELECT * FROM services WHERE category = 'interior_design' AND status = 'active' ORDER BY display_order ASC";

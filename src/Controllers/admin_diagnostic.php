@@ -49,7 +49,8 @@ foreach ($writableDirs as $dir) {
 // Check database connection
 try {
     require_once __DIR__ . '/includes/db_connection.php';
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     $dbCheck = $conn && $conn->ping();
     checkItem('Database Connection', $dbCheck, $dbCheck ? 'Connected successfully' : 'Connection failed');
     

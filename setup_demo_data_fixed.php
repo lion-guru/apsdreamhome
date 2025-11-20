@@ -14,7 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     echo "<h1>🚀 APS Dream Home - Demo Data Setup (FIXED)</h1>";
     echo "<p>Setting up demo data for testing and demonstration...</p>";

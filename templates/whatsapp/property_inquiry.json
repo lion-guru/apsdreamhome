@@ -1,0 +1,17 @@
+{
+    "name": "property_inquiry",
+    "category": "property",
+    "language": "en",
+    "header": "\ud83c\udfe0 Property Inquiry Received",
+    "body": "Hi {{customer_name}},\n\nThank you for your interest in our properties! \ud83d\udccb\n\nWe've received your inquiry about:\n\ud83d\udccd {{property_location}}\n\ud83d\udcb0 Budget: {{budget_range}}\n\ud83d\udccf Size: {{property_size}}\n\nOur property expert will contact you within 24 hours with suitable options.",
+    "footer": "Need immediate assistance? Call us: {{phone_number}}",
+    "variables": [
+        "customer_name",
+        "property_location",
+        "budget_range",
+        "property_size",
+        "phone_number"
+    ],
+    "created_at": "2025-10-27 06:27:01",
+    "updated_at": "2025-10-27 06:27:01"
+}

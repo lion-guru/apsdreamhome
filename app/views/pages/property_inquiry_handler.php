@@ -9,18 +9,28 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         require_once '../includes/db_connection.php';
-        $pdo = getDbConnection();
+        $pdo = getMysqliConnection();
+
+        // Sanitize input function
+        if (!function_exists('sanitizeInput')) {
+            function sanitizeInput($data) {
+                $data = trim($data);
+                $data = stripslashes($data);
+                $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+                return $data;
+            }
+        }
 
         // Get form data
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
+        $name = sanitizeInput($_POST['name'] ?? '');
+        $email = sanitizeInput($_POST['email'] ?? '');
+        $phone = sanitizeInput($_POST['phone'] ?? '');
         $property_id = (int)($_POST['property_id'] ?? 0);
-        $inquiry_type = trim($_POST['inquiry_type'] ?? '');
-        $message = trim($_POST['message'] ?? '');
-        $budget_min = isset($_POST['budget_min']) ? (float)$_POST['budget_min'] : null;
-        $budget_max = isset($_POST['budget_max']) ? (float)$_POST['budget_max'] : null;
-        $preferred_location = trim($_POST['preferred_location'] ?? '');
+        $inquiry_type = sanitizeInput($_POST['inquiry_type'] ?? '');
+        $message = sanitizeInput($_POST['message'] ?? '');
+        $budget_min = isset($_POST['budget_min']) ? (float)sanitizeInput($_POST['budget_min']) : null;
+        $budget_max = isset($_POST['budget_max']) ? (float)sanitizeInput($_POST['budget_max']) : null;
+        $preferred_location = sanitizeInput($_POST['preferred_location'] ?? '');
 
         // Validation
         $errors = [];
@@ -31,6 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($phone)) $errors[] = 'Phone number is required';
         if (empty($property_id)) $errors[] = 'Property selection is required';
         if (empty($inquiry_type)) $errors[] = 'Inquiry type is required';
+        if ($budget_min !== null && !is_numeric($budget_min)) $errors[] = 'Minimum budget must be a number';
+        if ($budget_max !== null && !is_numeric($budget_max)) $errors[] = 'Maximum budget must be a number';
+        if ($budget_min !== null && $budget_max !== null && $budget_min > $budget_max) $errors[] = 'Minimum budget cannot be greater than maximum budget';
+        if (strlen($preferred_location) > 255) $errors[] = 'Preferred location cannot exceed 255 characters';
 
         if (!empty($errors)) {
             http_response_code(400);
@@ -104,3 +118,4 @@ Message: $message
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
 }
 ?>
+

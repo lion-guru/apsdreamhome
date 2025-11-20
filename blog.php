@@ -8,8 +8,12 @@ session_start();
 require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
+// Set page variables for layout
+$page_title = 'Blog - Real Estate Insights - APS Dream Homes';
+$page_description = 'Stay updated with the latest trends, tips, and news in the real estate industry. From market analysis to investment strategies, our expert insights help you make informed decisions.';
+
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get blog posts
     $blogQuery = "SELECT * FROM blog_posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 12";
@@ -28,92 +32,76 @@ try {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - Real Estate Insights - APS Dream Homes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-        }
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 100px 0 60px;
-            text-align: center;
-        }
-        .section-padding {
-            padding: 80px 0;
-        }
-        .blog-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 30px;
-            height: 100%;
-        }
-        .blog-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        .blog-image {
-            height: 200px;
-            object-fit: cover;
-        }
-        .category-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(102, 126, 234, 0.9);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        .read-more-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        .read-more-btn:hover {
-            transform: translateY(-2px);
-            color: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .newsletter-section {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 60px 0;
-        }
-        .filter-btn {
-            border: 2px solid #667eea;
-            background: transparent;
-            color: #667eea;
-            padding: 8px 20px;
-            border-radius: 25px;
-            margin: 0 5px 10px;
-            transition: all 0.3s;
-        }
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: #667eea;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <?php include 'includes/templates/header.php'; ?>
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 100px 0 60px;
+        text-align: center;
+    }
+    .section-padding {
+        padding: 80px 0;
+    }
+    .blog-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        height: 100%;
+    }
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .blog-image {
+        height: 200px;
+        object-fit: cover;
+    }
+    .category-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(102, 126, 234, 0.9);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+    }
+    .read-more-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    .read-more-btn:hover {
+        transform: translateY(-2px);
+        color: white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .newsletter-section {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 60px 0;
+    }
+    .filter-btn {
+        border: 2px solid #667eea;
+        background: transparent;
+        color: #667eea;
+        padding: 8px 20px;
+        border-radius: 25px;
+        margin: 0 5px 10px;
+        transition: all 0.3s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: #667eea;
+        color: white;
+    }
+</style>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -293,41 +281,35 @@ try {
         </div>
     </section>
 
-    <!-- Footer -->
-    <?php include 'includes/templates/footer.php'; ?>
+<script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const blogCards = document.querySelectorAll('[data-category]');
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Filter functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            const blogCards = document.querySelectorAll('[data-category]');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
 
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const category = this.getAttribute('data-category');
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
 
-                    // Update active button
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // Filter posts
-                    blogCards.forEach(card => {
-                        if (category === 'all' || card.getAttribute('data-category') === category) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+                // Filter posts
+                blogCards.forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
                 });
             });
-
-            // Load more functionality
-            document.getElementById('loadMore').addEventListener('click', function() {
-                // In a real application, this would load more posts via AJAX
-                alert('Load more functionality would be implemented here');
-            });
         });
-    </script>
-</body>
-</html>
+
+        // Load more functionality
+        document.getElementById('loadMore').addEventListener('click', function() {
+            // In a real application, this would load more posts via AJAX
+            alert('Load more functionality would be implemented here');
+        });
+    });
+</script>

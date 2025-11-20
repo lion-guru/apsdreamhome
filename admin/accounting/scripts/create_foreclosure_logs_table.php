@@ -3,7 +3,7 @@ require_once dirname(__DIR__, 3) . '/includes/config.php';
 require_once dirname(__DIR__, 3) . '/includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     
     // SQL to create foreclosure logs table
     $sql = "CREATE TABLE IF NOT EXISTS foreclosure_logs (

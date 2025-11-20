@@ -8,7 +8,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     exit;
 }
 
-$db = getDBConnection();
+$db = $con;
 $layoutTemplate = new Admin\Models\LayoutTemplate($db);
 
 try {

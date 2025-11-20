@@ -20,13 +20,8 @@ class Database {
         }
 
         // Resolve connection from various sources
-        if (function_exists('getDbConnection')) {
-            $this->conn = getDbConnection();
-        }
-
-        if (!$this->conn && isset($conn) && $conn instanceof \mysqli) {
-            $this->conn = $conn;
-        }
+        global $con;
+        $this->conn = $con;
 
         if (!$this->conn && isset($con) && $con instanceof \mysqli) {
             $this->conn = $con;

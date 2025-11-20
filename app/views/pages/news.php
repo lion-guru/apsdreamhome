@@ -2,6 +2,11 @@
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/functions.php';
 
+// Function to sanitize input data
+function sanitizeInput($data) {
+    return htmlspecialchars(stripslashes(trim($data)));
+}
+
 // Initialize variables
 $page_title = "News & Updates - APS Dream Homes";
 $meta_description = "Stay updated with the latest real estate news, market trends, and company updates from APS Dream Homes.";
@@ -20,12 +25,14 @@ $additional_js = '
 ';
 
 // Fetch news categories
-$categories_query = "SELECT DISTINCT category FROM news WHERE status = 'published' ORDER BY category";
-$categories_result = mysqli_query($conn, $categories_query);
-$categories = [];
-while ($row = mysqli_fetch_assoc($categories_result)) {
-    $categories[] = $row['category'];
-}
+    $categories = [];
+    $stmt = $conn->prepare("SELECT DISTINCT category FROM news WHERE status = 'published' ORDER BY category");
+    $stmt->execute();
+    $categories_result = $stmt->get_result();
+    while ($row = $categories_result->fetch_assoc()) {
+        $categories[] = $row['category'];
+    }
+    $stmt->close();
 
 // Fetch news with pagination
 $items_per_page = 9;
@@ -35,18 +42,34 @@ $offset = ($current_page - 1) * $items_per_page;
 $current_category = isset($_GET['category']) ? mysqli_real_escape_string($conn, $_GET['category']) : 'all';
 $where_clause = $current_category !== 'all' ? "AND category = '$current_category'" : "";
 
-$count_query = "SELECT COUNT(*) as total FROM news WHERE status = 'published' $where_clause";
-$count_result = mysqli_query($conn, $count_query);
-$total_items = mysqli_fetch_assoc($count_result)['total'];
+    $count_query = "SELECT COUNT(*) as total FROM news WHERE status = 'published' ";
+    if ($current_category !== 'all') {
+        $count_query .= "AND category = ?";
+    }
+    $stmt = $conn->prepare($count_query);
+    if ($current_category !== 'all') {
+        $stmt->bind_param("s", $current_category);
+    }
+    $stmt->execute();
+    $count_result = $stmt->get_result();
+    $total_items = $count_result->fetch_assoc()['total'];
+    $stmt->close();
 $total_pages = ceil($total_items / $items_per_page);
 
-$news_query = "SELECT n.*, u.name as author_name, u.profile_image as author_image 
-               FROM news n 
-               LEFT JOIN users u ON n.author_id = u.id 
-               WHERE n.status = 'published' $where_clause 
-               ORDER BY n.created_at DESC 
-               LIMIT $offset, $items_per_page";
-$news_result = mysqli_query($conn, $news_query);
+    $news_query = "SELECT n.*, u.name as author_name, u.profile_image as author_image 
+                   FROM news n 
+                   LEFT JOIN users u ON n.author_id = u.id 
+                   WHERE n.status = 'published' $where_clause 
+                   ORDER BY n.created_at DESC 
+                   LIMIT ?, ?";
+    $stmt = $conn->prepare($news_query);
+    if ($current_category !== 'all') {
+        $stmt->bind_param("sii", $current_category, $offset, $items_per_page);
+    } else {
+        $stmt->bind_param("ii", $offset, $items_per_page);
+    }
+    $stmt->execute();
+    $news_result = $stmt->get_result();
 
 // Include header
 require_once __DIR__ . '/includes/templates/header.php';

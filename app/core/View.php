@@ -150,7 +150,28 @@ class View {
      */
     protected function getViewPath(string $view): string {
         $view = str_replace('.', '/', $view);
-        return '../app/views/' . $view . '.php';
+        
+        // Primary: Check in resources/views (modern system)
+        $modernPath = '../resources/views/' . $view . '.php';
+        if (file_exists($modernPath)) {
+            return $modernPath;
+        }
+        
+        // Secondary: Check for .blade.php extension
+        $bladePath = '../resources/views/' . $view . '.blade.php';
+        if (file_exists($bladePath)) {
+            return $bladePath;
+        }
+        
+        // Fallback: Check in src/Views (legacy system) during migration
+        $legacyPath = '../src/Views/' . $view . '.php';
+        if (file_exists($legacyPath)) {
+            return $legacyPath;
+        }
+        
+        // Final fallback: Check old app/views location
+        $oldPath = '../app/views/' . $view . '.php';
+        return $oldPath;
     }
     
     /**

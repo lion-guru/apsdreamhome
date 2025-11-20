@@ -6,7 +6,8 @@
 
 // Prevent direct access
 if (!defined('BASE_URL')) {
-    exit('Direct access not allowed');
+    // Define BASE_URL if not already defined
+    define('BASE_URL', 'https://apsdreamhomes.com');
 }
 
 class AIDreamHome {
@@ -186,7 +187,7 @@ class AIDreamHome {
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->api_key,
-            'HTTP-Referer: ' . (defined('BASE_URL') ? BASE_URL : 'http://localhost'),
+            'HTTP-Referer: https://apsdreamhomes.com',
             'X-Title: APS Dream Home AI Assistant'
         ];
 

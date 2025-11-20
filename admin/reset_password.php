@@ -16,7 +16,7 @@ try {
         throw new Exception('Please provide a valid email address');
     }
 
-    $conn = getDbConnection();
+    $conn = $con;
     
     // Check if user exists
     $stmt = $conn->prepare("SELECT id, username, email FROM users WHERE email = ?");

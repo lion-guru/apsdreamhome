@@ -4,6 +4,10 @@
  * Beautiful services page showcasing real estate services
  */
 
+// Set page title and description for layout
+$page_title = 'Our Services - APS Dream Home';
+$page_description = 'Discover our comprehensive range of real estate services designed to help you find your perfect property';
+
 ?>
 
 <!-- Hero Section -->
