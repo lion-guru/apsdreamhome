@@ -1,0 +1,20 @@
+{
+    "name": "booking_confirmation",
+    "category": "booking",
+    "language": "en",
+    "header": "\u2705 Booking Confirmed!",
+    "body": "Great news {{customer_name}}! \ud83c\udf8a\n\nYour booking has been successfully confirmed:\n\n\ud83c\udfe0 Property: {{property_name}}\n\ud83d\udcc5 Date: {{booking_date}}\n\u23f0 Time: {{booking_time}}\n\ud83d\udccd Location: {{property_location}}\n\nBooking ID: {{booking_id}}\n\nOur team will meet you at the scheduled time. Please bring valid ID proof.",
+    "footer": "Questions? Contact: {{agent_name}} - {{agent_phone}}",
+    "variables": [
+        "customer_name",
+        "property_name",
+        "booking_date",
+        "booking_time",
+        "property_location",
+        "booking_id",
+        "agent_name",
+        "agent_phone"
+    ],
+    "created_at": "2025-10-27 06:27:01",
+    "updated_at": "2025-10-27 06:27:01"
+}

@@ -7,6 +7,11 @@ if (!isset($_SESSION['uid'])) {
     exit();
 }
 
+// Generate CSRF token
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 $project_id = $_GET['id'];
 $stmt = $conn->prepare("SELECT * FROM projects WHERE bid = ?");
 $stmt->bind_param("i", $project_id);
@@ -15,6 +20,9 @@ $result = $stmt->get_result();
 $project = $result->fetch_assoc();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Invalid CSRF token');
+    }
     $project_name = $_POST['project_name'];
     $status = $_POST['status'];
     $description = $_POST['description'];
@@ -45,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="container">
         <h1>Edit Project</h1>
         <form method="POST" action="">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             <div class="form-group">
                 <label for="project_name">Project Name</label>
                 <input type="text" class="form-control" name="project_name" value="<?php echo htmlspecialchars($project['project_name']); ?>" required>

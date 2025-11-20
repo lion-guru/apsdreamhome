@@ -1,7 +1,8 @@
 <?php
 // Super simple DB seeder for testing user/admin/associate/customer data
-require_once(__DIR__ . '/../includes/db_config.php');
-$conn = getDbConnection();
+require_once(__DIR__ . '/../includes/config.php');
+global $con;
+$conn = $con;
 if (!$conn) { die('Database connection failed.'); }
 
 $pw = password_hash('Aps@123', PASSWORD_DEFAULT);
@@ -33,3 +34,4 @@ $conn->query("INSERT INTO associates (name, email, phone, commission_percent, le
 // Done
 header('Content-Type: text/plain');
 echo "Test data seeded successfully!\n";
+

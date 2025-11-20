@@ -7,7 +7,7 @@
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     // Sample properties data
     $properties = [

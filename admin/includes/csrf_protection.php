@@ -107,7 +107,7 @@ class CSRFProtection {
             if (!self::validateToken($token)) {
                 // Check if request is from admin area
                 if (strpos($_SERVER['REQUEST_URI'], '/admin/') !== false) {
-                    header('Location: /admin/login.php?error=csrf');
+                    header('Location: /admin/index.php?error=csrf');
                     exit();
                 }
                 

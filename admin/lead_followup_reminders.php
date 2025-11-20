@@ -1,13 +1,15 @@
 <?php
 // lead_followup_reminders.php: List leads needing follow-up and allow admin to mark as contacted/followed-up
 require_once __DIR__ . '/includes/session_manager.php';
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/includes/config/config.php';
 initAdminSession();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
     exit();
 }
-$conn = getDbConnection();
+global $con;
+$conn = $con;
+// require_once __DIR__ . '/../includes/db_config.php';
 
 // Mark lead as followed up
 if (isset($_GET['followup']) && is_numeric($_GET['followup'])) {

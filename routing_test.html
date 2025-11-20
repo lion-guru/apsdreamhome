@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Routing Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-result { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background-color: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        .test-link { display: inline-block; padding: 10px 20px; margin: 10px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .test-link:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>APS Dream Home - Routing Test</h1>
+    
+    <div class="test-result info">
+        <h3>Routing Test Information</h3>
+        <p>This page tests the error handling routing system for the APS Dream Home application.</p>
+        <p>The routing system should properly handle the URL <code>/test/error/404</code> and display the test error page.</p>
+    </div>
+    
+    <div class="test-result success">
+        <h3>✅ Test Files Status</h3>
+        <ul>
+            <li>test_error.php: EXISTS</li>
+            <li>error_pages/404.php: EXISTS</li>
+            <li>router.php: EXISTS (with routing configured)</li>
+        </ul>
+    </div>
+    
+    <div class="test-result info">
+        <h3>Test Links</h3>
+        <p>Click the links below to test the routing:</p>
+        <a href="/test/error/404" class="test-link">Test 404 Error Page</a>
+        <a href="/error_pages/404.php" class="test-link">Direct 404 Page</a>
+        <a href="/test_error.php" class="test-link">Direct Test Error Page</a>
+    </div>
+    
+    <div class="test-result info">
+        <h3>Expected Behavior</h3>
+        <ul>
+            <li><strong>/test/error/404</strong> Should route through router.php and display test_error.php</li>
+            <li><strong>/error_pages/404.php</strong> Should display the standard 404 error page directly</li>
+            <li><strong>/test_error.php</strong> Should display the test error page directly</li>
+        </ul>
+    </div>
+    
+    <div class="test-result info">
+        <h3>Routing Configuration</h3>
+        <p>The router.php file contains the following route mapping:</p>
+        <code>'test/error/404' => 'test_error.php'</code>
+        <p>This means when you access /test/error/404, the router should load test_error.php.</p>
+    </div>
+    
+    <div class="test-result info">
+        <h3>Server Configuration</h3>
+        <p>Current server setup:</p>
+        <ul>
+            <li>Apache .htaccess: Configured to route through index.php</li>
+            <li>PHP Router: Enhanced routing system with auto-discovery</li>
+            <li>Error Pages: Standardized 404, 403, 500 error pages</li>
+        </ul>
+    </div>
+</body>
+</html>

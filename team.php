@@ -4,39 +4,25 @@
  * Display team members and departments
  */
 
-require_once 'core/functions.php';
-require_once 'includes/db_connection.php';
+require_once 'includes/config/config.php';
+require_once 'includes/functions.php';
 
 try {
-    $pdo = getDbConnection();
+    // Use the database connection from config.php
+    global $conn;
 
     // Check if team_members table exists
-    $tables = $pdo->query("SHOW TABLES LIKE 'team_members'")->fetchAll(PDO::FETCH_COLUMN);
+    $tables = $conn->query("SHOW TABLES LIKE 'team_members'");
 
-    if (empty($tables)) {
+    if ($tables && $tables->num_rows > 0) {
+        // Table exists, get team data
+        $result = $conn->query("SELECT * FROM team_members ORDER BY department, name");
+        $members = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+        $departments = array_unique(array_column($members, 'department'));
+    } else {
         // Table doesn't exist, use fallback data
         $departments = ['sales', 'marketing', 'support', 'management'];
         $members = [];
-    } else {
-        // Get distinct departments
-        $deptQuery = "SELECT DISTINCT COALESCE(department, 'general') as department FROM team_members WHERE status = 'active' ORDER BY department";
-        $deptStmt = $pdo->query($deptQuery);
-        $departments = $deptStmt->fetchAll(PDO::FETCH_COLUMN);
-
-        // Get current department filter
-        $currentDepartment = $_GET['department'] ?? 'all';
-        $whereClause = $currentDepartment !== 'all' ? "AND COALESCE(department, 'general') = :department" : "";
-
-        // Get team members
-        $membersQuery = "SELECT * FROM team_members WHERE status = 'active' {$whereClause} ORDER BY display_order ASC, name ASC LIMIT 20";
-        $membersStmt = $pdo->prepare($membersQuery);
-
-        if ($currentDepartment !== 'all') {
-            $membersStmt->bindParam(':department', $currentDepartment);
-        }
-
-        $membersStmt->execute();
-        $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 } catch (Exception $e) {
@@ -44,7 +30,6 @@ try {
     // Fallback to static data
     $departments = ['sales', 'marketing', 'support', 'management'];
     $members = [];
-    $currentDepartment = $_GET['department'] ?? 'all';
 }
 ?>
 

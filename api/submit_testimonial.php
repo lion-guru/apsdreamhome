@@ -80,7 +80,8 @@ try {
     }
     
     // Get database connection
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     // Generate a unique filename for the avatar
     $avatarPath = '';

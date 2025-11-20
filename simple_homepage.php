@@ -1,65 +1,16 @@
 <?php
-// Simple test homepage without database dependency
-$page_title = 'APS Dream Home - Welcome';
+/**
+ * Simple Working Homepage for APS Dream Home
+ * This is a basic, functional homepage that works immediately
+ */
 
-// Start output buffering
-ob_start();
-?>
+// Basic configuration
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$base_url = $protocol . $host . '/';
 
-<!-- Hero Section -->
-<section class="hero-section bg-primary text-white py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 80vh; display: flex; align-items: center;">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-3 fw-bold mb-4">Welcome to APS Dream Home</h1>
-                <p class="lead mb-4">Your trusted partner in real estate with premium properties and exceptional service.</p>
-                <div class="hero-buttons">
-                    <a href="properties" class="btn btn-light btn-lg me-3 mb-2">
-                        <i class="fas fa-search me-2"></i>Browse Properties
-                    </a>
-                    <a href="about" class="btn btn-outline-light btn-lg mb-2">
-                        <i class="fas fa-info-circle me-2"></i>Learn More
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Features Section -->
-<section class="features-section py-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-4 text-center">
-                <div class="feature-card p-4 rounded shadow-sm h-100">
-                    <i class="fas fa-home fa-3x text-primary mb-3"></i>
-                    <h4>Premium Properties</h4>
-                    <p>Discover a curated selection of premium residential and commercial properties across prime locations.</p>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="feature-card p-4 rounded shadow-sm h-100">
-                    <i class="fas fa-handshake fa-3x text-primary mb-3"></i>
-                    <h4>Expert Guidance</h4>
-                    <p>Our experienced team provides personalized guidance throughout your property journey.</p>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="feature-card p-4 rounded shadow-sm h-100">
-                    <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
-                    <h4>Trusted Service</h4>
-                    <p>With years of experience and thousands of satisfied customers, we deliver reliable service you can trust.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<?php
-// End output buffering and get content
-$content = ob_get_clean();
-
-// Simple template without database dependency
+// Simple page title
+$page_title = 'APS Dream Home - Premium Real Estate in Gorakhpur';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,63 +18,290 @@ $content = ob_get_clean();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page_title); ?></title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        .hero-section {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .feature-card:hover {
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            text-align: center;
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        nav {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        nav a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        nav a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: #4a5568;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .feature h3 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-info {
+            margin-bottom: 20px;
+        }
+        
+        .contact-info h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .contact-info p {
+            color: #4a5568;
+            margin: 5px 0;
+        }
+        
+        .admin-links {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .admin-links a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .admin-links a:hover {
+            background: #5a67d8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .hero {
+                padding: 40px 20px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            nav a {
+                display: block;
+                margin: 10px auto;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fas fa-home me-2"></i>APS Dream Home
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="properties">Properties</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contact">Contact</a></li>
-                </ul>
-                <div class="d-flex">
-                    <a href="login" class="btn btn-outline-light me-2">Login</a>
-                    <a href="register" class="btn btn-success">Register</a>
-                </div>
+    <div class="container">
+        <header>
+            <div class="logo">🏠 APS Dream Home</div>
+            <div class="tagline">Premium Real Estate Solutions in Gorakhpur</div>
+            <nav>
+                <a href="<?php echo $base_url; ?>">Home</a>
+                <a href="<?php echo $base_url; ?>properties.php">Properties</a>
+                <a href="<?php echo $base_url; ?>about.php">About</a>
+                <a href="<?php echo $base_url; ?>contact.php">Contact</a>
+                <a href="<?php echo $base_url; ?>projects.php">Projects</a>
+            </nav>
+        </header>
+        
+        <section class="hero">
+            <h1>Welcome to APS Dream Home</h1>
+            <p>Your trusted partner for premium real estate solutions in Gorakhpur. Discover exceptional properties, innovative projects, and unparalleled service.</p>
+            <a href="<?php echo $base_url; ?>properties.php" class="cta-button">Explore Properties</a>
+        </section>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🏢 Premium Properties</h3>
+                <p>Discover a wide range of premium residential and commercial properties in prime locations across Gorakhpur.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🚀 Innovative Projects</h3>
+                <p>Explore our cutting-edge real estate projects designed with modern amenities and sustainable living concepts.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>🤝 Trusted Service</h3>
+                <p>Experience professional, transparent, and reliable real estate services with complete customer satisfaction.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📍 Prime Locations</h3>
+                <p>Properties strategically located in developing areas with excellent connectivity and growth potential.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>💎 Quality Assurance</h3>
+                <p>Every property is thoroughly verified for legal compliance, quality construction, and value appreciation.</p>
+            </div>
+            
+            <div class="feature">
+                <h3>📞 Expert Support</h3>
+                <p>Our experienced team provides end-to-end assistance from property selection to documentation and possession.</p>
             </div>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main style="margin-top: 80px;">
-        <?php echo $content; ?>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p>&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <footer>
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <p><strong>Address:</strong> APS Dream Home Office, Gorakhpur, Uttar Pradesh</p>
+                <p><strong>Phone:</strong> +91-XXXXXXXXXX</p>
+                <p><strong>Email:</strong> info@apsdreamhome.com</p>
+                <p><strong>Website:</strong> www.apsdreamhome.com</p>
+            </div>
+            
+            <div class="admin-links">
+                <a href="<?php echo $base_url; ?>admin/login.php">Admin Login</a>
+                <a href="<?php echo $base_url; ?>login.php">User Login</a>
+                <a href="<?php echo $base_url; ?>registration.php">Register</a>
+                <a href="<?php echo $base_url; ?>test.php">System Test</a>
+            </div>
+            
+            <div style="margin-top: 20px; color: #718096; font-size: 0.9rem;">
+                <p>&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
+                <p>Designed and Developed for APS Dream Home Real Estate</p>
+            </div>
+        </footer>
+    </div>
 </body>
 </html>

@@ -10,64 +10,32 @@ use InvalidArgumentException;
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     // Alias for assertSame for better readability
-    protected function assertSame($expected, $actual, string $message = ''): void
-    {
-        parent::assertSame($expected, $actual, $message);
-    }
     
-    // Alias for assertEquals for better readability
-    protected function assertEquals($expected, $actual, string $message = ''): void
-    {
-        parent::assertEquals($expected, $actual, $message);
-    }
+    
+
     
     // Alias for assertTrue for better readability
-    protected function assertTrue($condition, string $message = ''): void
-    {
-        parent::assertTrue($condition, $message);
-    }
+    
     
     // Alias for assertFalse for better readability
-    protected function assertFalse($condition, string $message = ''): void
-    {
-        parent::assertFalse($condition, $message);
-    }
+    
     
     // Alias for assertEmpty for better readability
-    protected function assertEmpty($actual, string $message = ''): void
-    {
-        parent::assertEmpty($actual, $message);
-    }
+    
     
     // Alias for assertCount for better readability
-    protected function assertCount(int $expectedCount, $haystack, string $message = ''): void
-    {
-        parent::assertCount($expectedCount, $haystack, $message);
-    }
+    
     
     // Alias for assertArrayHasKey for better readability
-    protected function assertArrayHasKey($key, $array, string $message = ''): void
-    {
-        parent::assertArrayHasKey($key, $array, $message);
-    }
+    
     
     // Alias for assertStringContainsString for better readability
-    protected function assertStringContainsString(string $needle, string $haystack, string $message = ''): void
-    {
-        parent::assertStringContainsString($needle, $haystack, $message);
-    }
+
     
     // Alias for assertNotFalse for better readability
-    protected function assertNotFalse($condition, string $message = ''): void
-    {
-        parent::assertNotFalse($condition, $message);
-    }
     
-    // Alias for expectException for better readability
-    protected function expectException(string $exception): void
-    {
-        parent::expectException($exception);
-    }
+    
+
     
     /**
      * Assert that an array has all the specified keys.
@@ -95,16 +63,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString($needle, $haystack, $message);
     }
     
-    /**
-     * Assert that a variable is an array.
-     *
-     * @param mixed $actual
-     * @param string $message
-     */
-    protected function assertIsArray($actual, string $message = ''): void
-    {
-        $this->assertTrue(is_array($actual), $message ?: 'Expected value to be an array');
-    }
+
 }
 
 /**
@@ -285,11 +244,9 @@ class ResponseTest extends TestCase
         $response = new Response(function() use (&$output) {
             $output[] = 'First chunk';
             echo 'First chunk';
-            flush();
             
             $output[] = 'Second chunk';
             echo 'Second chunk';
-            flush();
         });
         
         ob_start();

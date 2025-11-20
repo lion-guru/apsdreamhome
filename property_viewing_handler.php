@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         require_once '../includes/db_connection.php';
-        $pdo = getDbConnection();
+        $pdo = getMysqliConnection();
 
         // Get form data
         $name = trim($_POST['name'] ?? '');

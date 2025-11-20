@@ -232,10 +232,10 @@ echo "# Test payment system\n";
 echo "php test_payment_simple.php\n";
 echo "\n";
 echo "# Create test payment\n";
-echo "http://localhost/apsdreamhomefinal/payment?property_id=1&amount=1\n";
+echo "http://localhost/apsdreamhome/payment?property_id=1&amount=1\n";
 echo "\n";
 echo "# View payment in admin\n";
-echo "http://localhost/apsdreamhomefinal/admin/reports/financial\n";
+echo "http://localhost/apsdreamhome/admin/reports/financial\n";
 
 echo "\n🎉 Payment System Ready for Production!\n";
 ?>

@@ -1,4 +1,9 @@
 <?php
+if (defined('DB_CONNECTION_LOADED')) {
+    return;
+}
+define('DB_CONNECTION_LOADED', true);
+
 /**
  * Database Connection Handler
  * Establishes and manages database connections
@@ -6,7 +11,7 @@
 
 try {
     // Include the database configuration
-    require_once __DIR__ . '/config.php';
+    require_once __DIR__ . '/config/config.php';
 
     // Check if database constants are defined
     if (!defined('DB_HOST') || !defined('DB_NAME') || !defined('DB_USER') || !defined('DB_PASS')) {
@@ -16,7 +21,8 @@ try {
     // Create database connection with better error handling
     $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
 
-    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+    $dbPassword = defined('DB_PASSWORD') ? DB_PASSWORD : (defined('DB_PASS') ? DB_PASS : '');
+    $pdo = new PDO($dsn, DB_USER, $dbPassword, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
@@ -24,6 +30,10 @@ try {
 
     // Set timezone
     $pdo->exec("SET time_zone = '+05:30';");
+
+    // Initialize global $conn for MySQLi compatibility
+    $con = getMysqliConnection();
+    $conn = $con;
 
 } catch (PDOException $e) {
     // Log error and show generic message
@@ -55,7 +65,7 @@ try {
  * Get database connection (PDO)
  * @return PDO
  */
-function getDbConnection() {
+function getPdoConnection() {
     global $pdo;
     return $pdo;
 }
@@ -87,7 +97,7 @@ function getMysqliConnection() {
  * @return PDOStatement
  */
 function executeQuery($sql, $params = []) {
-    $pdo = getDbConnection();
+    $pdo = getPdoConnection();
     $stmt = $pdo->prepare($sql);
 
     if (!$stmt) {

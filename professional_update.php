@@ -7,7 +7,7 @@
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     echo "<h2>🏢 Updating with Professional Real Estate Details</h2>\n";
 

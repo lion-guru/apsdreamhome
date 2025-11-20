@@ -338,7 +338,7 @@ try {
     require_once $required_files[0];
 
     // Get database connection
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     if (!$conn) {
         logSecurityEvent('Database Connection Failed in Search API', [

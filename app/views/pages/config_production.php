@@ -51,7 +51,7 @@ if ($is_production) {
 }
 
 // Database connection function
-function getDbConnection() {
+function getMysqliConnection() {
     static $conn = null;
 
     if ($conn !== null) {
@@ -86,7 +86,7 @@ function getDbConnection() {
 // Get company settings
 function getCompanySettings() {
     try {
-        $conn = getDbConnection();
+        $conn = getMysqliConnection();
         if (!$conn) return [];
 
         $sql = "SELECT setting_name, setting_value FROM site_settings";

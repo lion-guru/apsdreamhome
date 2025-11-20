@@ -105,6 +105,15 @@ try {
     </div>
 </section>
 
+<?php
+// Compliance & trust hub
+require_once __DIR__ . '/includes/templates/compliance_hub.php';
+ob_start();
+renderComplianceHub(['theme' => 'light']);
+$complianceWidget = ob_get_clean();
+echo '<section class="py-4 bg-light"><div class="container">' . $complianceWidget . '</div></section>';
+?>
+
 <!-- Company Story Section -->
 <section class="py-5">
     <div class="container">

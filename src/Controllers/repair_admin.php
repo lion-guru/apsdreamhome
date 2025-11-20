@@ -130,7 +130,7 @@ function executeSQLFile($conn, $file) {
                 logMessage('info', 'Checking database connection...');
                 try {
                     require_once __DIR__ . '/includes/db_connection.php';
-                    $conn = getDbConnection();
+                    $conn = getMysqliConnection();
                     
                     if ($conn->connect_error) {
                         throw new Exception("Connection failed: " . $conn->connect_error);

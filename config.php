@@ -34,6 +34,12 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.gc_maxlifetime', 3600); // 1 hour
 }
 
+// Include URL fix for admin pages
+require_once __DIR__ . '/includes/url_fix.php';
+
+// Include enhanced security functions
+require_once __DIR__ . '/includes/security_functions.php';
+
 // Environment-based Database Configuration
 function getEnvVar($key, $default = null) {
     // First check environment variables
@@ -69,6 +75,9 @@ if (!defined('DB_NAME')) {
     define('DB_NAME', getEnvVar('DB_NAME', 'apsdreamhome'));
 }
 
+if (!defined('TESTSPRITE_API_KEY')) {
+    define('TESTSPRITE_API_KEY', getEnvVar('TESTSPRITE_API_KEY', ''));
+}
 // Compatibility
 if (!defined('DB_PASS')) {
     define('DB_PASS', DB_PASSWORD);

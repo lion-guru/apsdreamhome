@@ -180,7 +180,7 @@ function executeSqlFile($filePath) {
     }
     
     // Execute each statement
-    $connection = getDbConnection();
+    $connection = getMysqliConnection();
     if (!$connection) {
         error_log("Could not get database connection");
         return false;

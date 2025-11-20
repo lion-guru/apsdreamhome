@@ -1,9 +1,10 @@
 <?php
 // integration_helpers.php: Helper functions for external integrations
-require_once __DIR__ . '/../../includes/db_config.php';
+require_once __DIR__ . '/../../includes/config.php';
 
 function get_integration_settings() {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     $settings = $conn->query("SELECT * FROM integration_settings WHERE id=1")->fetch_assoc();
     return $settings ?: [];
 }
@@ -105,7 +106,8 @@ function upload_to_google_drive($localFilePath, $driveFolderId = null, $fileName
 function upload_to_google_drive_and_save_id($localFilePath, $dbTable, $dbIdField, $dbIdValue, $dbFileIdField, $driveFolderId = null, $fileName = null) {
     $driveId = upload_to_google_drive($localFilePath, $driveFolderId, $fileName);
     if ($driveId) {
-        $conn = getDbConnection();
+        global $con;
+        $conn = $con;
         $stmt = $conn->prepare("UPDATE $dbTable SET $dbFileIdField = ? WHERE $dbIdField = ?");
         $stmt->bind_param('ss', $driveId, $dbIdValue);
         $stmt->execute();
@@ -159,3 +161,4 @@ function send_telegram_notification($message, $bot_token = null, $chat_id = null
     curl_close($ch);
     return $result;
 }
+

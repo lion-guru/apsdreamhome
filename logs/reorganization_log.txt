@@ -1,0 +1,118 @@
+प्रोजेक्ट रिऑर्गनाइजेशन लॉग - 2025-04-24 20:20:28
+
+2025-04-24 20:20:28 - आवश्यक डायरेक्टरी स्ट्रक्चर बना रहे हैं...
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/database
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/database/migrations
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/database/backups
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/database/scripts
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/includes/config
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/includes/classes
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/includes/functions
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/includes/templates
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/assets/css
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/assets/js
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/assets/images
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/assets/fonts
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/assets/vendor
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/uploads/property
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/uploads/users
+2025-04-24 20:20:28 - डायरेक्टरी पहले से मौजूद है: C:\xampp\htdocs\apsdreamhome/docs
+2025-04-24 20:20:28 - डेटाबेस फाइल्स को मूव कर रहे हैं...
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/DATABASE FILE/apsdreamhomes.sql -> C:\xampp\htdocs\apsdreamhome/database/apsdreamhomes.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/DATABASE FILE/apsdreamhomes_crm_patch.sql -> C:\xampp\htdocs\apsdreamhome/database/apsdreamhomes_crm_patch.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/DATABASE FILE/apsdreamhomes_crm_patch_addendum.sql -> C:\xampp\htdocs\apsdreamhome/database/apsdreamhomes_crm_patch_addendum.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/aps_data_migration.sql -> C:\xampp\htdocs\apsdreamhome/database/migrations/aps_data_migration.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/aps_schema_recommended.sql -> C:\xampp\htdocs\apsdreamhome/database/aps_schema_recommended.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/apsdreamhomes_backup.sql -> C:\xampp\htdocs\apsdreamhome/database/apsdreamhomes_backup.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/associate_bank_details.sql -> C:\xampp\htdocs\apsdreamhome/database/associate_bank_details.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/create_roles_table.sql -> C:\xampp\htdocs\apsdreamhome/database/create_roles_table.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/db_backup_before_schema_upgrade.sql -> C:\xampp\htdocs\apsdreamhome/database/db_backup_before_schema_upgrade.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/db_export_autoscan.sql -> C:\xampp\htdocs\apsdreamhome/database/db_export_autoscan.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/mlm_tables.sql -> C:\xampp\htdocs\apsdreamhome/database/mlm_tables.sql
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/news_table.sql -> C:\xampp\htdocs\apsdreamhome/database/news_table.sql
+2025-04-24 20:20:28 - डेटाबेस स्क्रिप्ट्स को मूव कर रहे हैं...
+2025-04-24 20:20:28 - CSS फाइल्स को मूव कर रहे हैं...
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/bootstrap-datetimepicker.min.css -> C:\xampp\htdocs\apsdreamhome/assets/css/bootstrap-datetimepicker.min.css
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/bootstrap-slider.css -> C:\xampp\htdocs\apsdreamhome/assets/css/bootstrap-slider.css
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/bootstrap.min.css -> C:\xampp\htdocs\apsdreamhome/assets/css/bootstrap.min.css
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/career.css -> C:\xampp\htdocs\apsdreamhome/assets/css/career.css
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/color.css -> C:\xampp\htdocs\apsdreamhome/assets/css/color.css
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/demo.css -> C:\xampp\htdocs\apsdreamhome/assets/css/demo.css
+2025-04-24 20:20:28 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/editprofile.css -> C:\xampp\htdocs\apsdreamhome/assets/css/editprofile.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/enhanced-styles.css -> C:\xampp\htdocs\apsdreamhome/assets/css/enhanced-styles.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/font-awesome.min.css -> C:\xampp\htdocs\apsdreamhome/assets/css/font-awesome.min.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/font-face.css -> C:\xampp\htdocs\apsdreamhome/assets/css/font-face.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/gallery.css -> C:\xampp\htdocs\apsdreamhome/assets/css/gallery.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/header-styles.css -> C:\xampp\htdocs\apsdreamhome/assets/css/header-styles.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/jquery-ui.css -> C:\xampp\htdocs\apsdreamhome/assets/css/jquery-ui.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/layerslider.css -> C:\xampp\htdocs\apsdreamhome/assets/css/layerslider.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/login.css -> C:\xampp\htdocs\apsdreamhome/assets/css/login.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/modern-styles.css -> C:\xampp\htdocs\apsdreamhome/assets/css/modern-styles.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/owl.carousel.min.css -> C:\xampp\htdocs\apsdreamhome/assets/css/owl.carousel.min.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/style.css -> C:\xampp\htdocs\apsdreamhome/assets/css/style.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/styles.css -> C:\xampp\htdocs\apsdreamhome/assets/css/styles.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/swiper-bundle.min.css -> C:\xampp\htdocs\apsdreamhome/assets/css/swiper-bundle.min.css
+2025-04-24 20:20:29 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/css/theme.css -> C:\xampp\htdocs\apsdreamhome/assets/css/theme.css
+2025-04-24 20:20:29 - JS फाइल्स को मूव कर रहे हैं...
+2025-04-24 20:20:30 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/ChatAI.js -> C:\xampp\htdocs\apsdreamhome/assets/js/ChatAI.js
+2025-04-24 20:20:30 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/bootstrap-datetimepicker.js -> C:\xampp\htdocs\apsdreamhome/assets/js/bootstrap-datetimepicker.js
+2025-04-24 20:20:30 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/bootstrap.bundle.min.js -> C:\xampp\htdocs\apsdreamhome/assets/js/bootstrap.bundle.min.js
+2025-04-24 20:20:30 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/bootstrap.min.js -> C:\xampp\htdocs\apsdreamhome/assets/js/bootstrap.min.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/chart.min.js -> C:\xampp\htdocs\apsdreamhome/assets/js/chart.min.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/content-loader.js -> C:\xampp\htdocs\apsdreamhome/assets/js/content-loader.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/custom.js -> C:\xampp\htdocs\apsdreamhome/assets/js/custom.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/draggable-0.1.js -> C:\xampp\htdocs\apsdreamhome/assets/js/draggable-0.1.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/enhanced-scripts.js -> C:\xampp\htdocs\apsdreamhome/assets/js/enhanced-scripts.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/form-validation.js -> C:\xampp\htdocs\apsdreamhome/assets/js/form-validation.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/gallery-touch.js -> C:\xampp\htdocs\apsdreamhome/assets/js/gallery-touch.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/gallery.js -> C:\xampp\htdocs\apsdreamhome/assets/js/gallery.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/greensock.js -> C:\xampp\htdocs\apsdreamhome/assets/js/greensock.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/home-slider.js -> C:\xampp\htdocs\apsdreamhome/assets/js/home-slider.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/jquery.countdown.js -> C:\xampp\htdocs\apsdreamhome/assets/js/jquery.countdown.js
+2025-04-24 20:20:31 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/jquery.dependClass-0.1.js -> C:\xampp\htdocs\apsdreamhome/assets/js/jquery.dependClass-0.1.js
+2025-04-24 20:20:32 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/jquery.min.js -> C:\xampp\htdocs\apsdreamhome/assets/js/jquery.min.js
+2025-04-24 20:20:32 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/jquery.slider.js -> C:\xampp\htdocs\apsdreamhome/assets/js/jquery.slider.js
+2025-04-24 20:20:33 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/layerslider.kreaturamedia.jquery.js -> C:\xampp\htdocs\apsdreamhome/assets/js/layerslider.kreaturamedia.jquery.js
+2025-04-24 20:20:33 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/layerslider.transitions.js -> C:\xampp\htdocs\apsdreamhome/assets/js/layerslider.transitions.js
+2025-04-24 20:20:33 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/main.js -> C:\xampp\htdocs\apsdreamhome/assets/js/main.js
+2025-04-24 20:20:33 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/moment.js -> C:\xampp\htdocs\apsdreamhome/assets/js/moment.js
+2025-04-24 20:20:33 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/nav-menu.js -> C:\xampp\htdocs\apsdreamhome/assets/js/nav-menu.js
+2025-04-24 20:20:33 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/owl.carousel.min.js -> C:\xampp\htdocs\apsdreamhome/assets/js/owl.carousel.min.js
+2025-04-24 20:20:33 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/popper.min.js -> C:\xampp\htdocs\apsdreamhome/assets/js/popper.min.js
+2025-04-24 20:20:34 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/script.js -> C:\xampp\htdocs\apsdreamhome/assets/js/script.js
+2025-04-24 20:20:34 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/scrollbar-init.js -> C:\xampp\htdocs\apsdreamhome/assets/js/scrollbar-init.js
+2025-04-24 20:20:34 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/js/wow.js -> C:\xampp\htdocs\apsdreamhome/assets/js/wow.js
+2025-04-24 20:20:34 - इंक्लूड फाइल्स को मूव कर रहे हैं...
+2025-04-24 20:20:34 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/include/dynamic_footer.php -> C:\xampp\htdocs\apsdreamhome/includes/dynamic_footer.php
+2025-04-24 20:20:34 - फाइल मूव की गई: C:\xampp\htdocs\apsdreamhome/include/dynamic_header.php -> C:\xampp\htdocs\apsdreamhome/includes/dynamic_header.php
+2025-04-24 20:20:34 - फाइल पहले से मौजूद है, स्किप कर रहे हैं: updated-common-footer.php
+2025-04-24 20:20:34 - फाइल पहले से मौजूद है, स्किप कर रहे हैं: updated-common-header.php
+2025-04-24 20:20:34 - इंक्लूड्स फाइल्स को उचित सबफोल्डर्स में मूव कर रहे हैं...
+2025-04-24 20:20:34 - फाइल कॉपी की गई: Associate.php -> includes/classes/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: Authentication.php -> includes/classes/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: Database.php -> includes/classes/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: DatabaseConfig.php -> includes/config/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: EnhancedValidator.php -> includes/classes/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: SessionManager.php -> includes/classes/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: User.php -> includes/classes/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: Validator.php -> includes/classes/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: common-functions.php -> includes/functions/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: config-paths.php -> includes/config/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: db_config.php -> includes/config/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: dynamic_footer.php -> includes/templates/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: dynamic_header.php -> includes/templates/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: functions.php -> includes/functions/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: migration_helper.php -> includes/functions/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: security_config.php -> includes/config/
+2025-04-24 20:20:34 - फाइल कॉपी की गई: static_footer.php -> includes/templates/
+2025-04-24 20:20:35 - फाइल कॉपी की गई: updated-common-footer.php -> includes/templates/
+2025-04-24 20:20:35 - फाइल कॉपी की गई: updated-common-header.php -> includes/templates/
+2025-04-24 20:20:35 - फाइल कॉपी की गई: updated-config-paths.php -> includes/config/
+2025-04-24 20:20:35 - डुप्लिकेट फाइल्स की पहचान कर रहे हैं...
+2025-04-24 20:20:35 - 
+रिऑर्गनाइजेशन पूरा हुआ!
+2025-04-24 20:20:35 - एक्जीक्यूशन टाइम: 7.01 सेकंड
+2025-04-24 20:20:35 - 
+नोट: यह स्क्रिप्ट केवल फाइल्स को मूव करती है, पाथ अपडेट नहीं करती है।
+2025-04-24 20:20:35 - कृपया सभी PHP फाइल्स में इंक्लूड पाथ और एसेट पाथ मैन्युअली अपडेट करें।
+2025-04-24 20:20:35 - डुप्लिकेट फाइल्स को हटाने से पहले उनकी समीक्षा करें और बैकअप लें।

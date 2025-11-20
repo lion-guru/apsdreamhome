@@ -6,7 +6,7 @@
                 <!-- Top Footer Section -->
                 <div class="row mb-4">
                     <div class="col-12 text-center">
-                        <img src="assets/images/logo-light.png" alt="APS Dream Homes" class="footer-logo mb-3" style="max-height: 60px;">
+                        <img src="<?= BASE_URL ?>assets/images/logo-light.png" alt="APS Dream Homes" class="footer-logo mb-3" style="max-height: 60px;">
                         <div class="social-links d-flex justify-content-center gap-3 mb-4">
                             <a href="https://facebook.com/apsdreamhomes" target="_blank" title="Facebook" class="social-link">
                                 <i class="fab fa-facebook-f fa-lg"></i>
@@ -42,20 +42,20 @@
                         <div class="row">
                             <div class="col-6">
                                 <ul class="list-unstyled footer-links">
-                                    <li><a href="index.php">Home</a></li>
-                                    <li><a href="properties.php">Properties</a></li>
-                                    <li><a href="projects.php">Projects</a></li>
-                                    <li><a href="resell_properties.php">Resell</a></li>
-                                    <li><a href="gallery.php">Gallery</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>">Home</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>properties">Properties</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>projects">Projects</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>resell">Resell</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>gallery">Gallery</a></li>
                                 </ul>
                             </div>
                             <div class="col-6">
                                 <ul class="list-unstyled footer-links">
-                                    <li><a href="blog.php">Blog</a></li>
-                                    <li><a href="career.php">Careers</a></li>
-                                    <li><a href="team.php">Our Team</a></li>
-                                    <li><a href="testimonials.php">Testimonials</a></li>
-                                    <li><a href="faq.php">FAQs</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>blog">Blog</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>career">Careers</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>team">Our Team</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>testimonials">Testimonials</a></li>
+                                    <li><a href="<?php echo BASE_URL; ?>faq">FAQs</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -119,6 +119,15 @@
                     </div>
                 </div>
 
+                <div class="row g-4 mt-2">
+                    <div class="col-12">
+                        <?php
+                        require_once __DIR__ . '/compliance_hub.php';
+                        renderComplianceHub(['theme' => 'dark']);
+                        ?>
+                    </div>
+                </div>
+
                 <!-- Bottom Footer -->
                 <hr class="my-4 border-light opacity-25">
                 <div class="row align-items-center">
@@ -131,11 +140,11 @@
                     <div class="col-md-6">
                         <ul class="list-inline text-md-end mb-0">
                             <li class="list-inline-item">
-                                <a href="privacy-policy.php" class="text-light-muted">Privacy Policy</a>
+                                <a href="<?php echo BASE_URL; ?>privacy-policy" class="text-light-muted">Privacy Policy</a>
                             </li>
                             <li class="list-inline-item mx-3">|</li>
                             <li class="list-inline-item">
-                                <a href="terms-of-service.php" class="text-light-muted">Terms of Service</a>
+                                <a href="<?php echo BASE_URL; ?>terms-of-service" class="text-light-muted">Terms of Service</a>
                             </li>
                             <li class="list-inline-item mx-3">|</li>
                             <li class="list-inline-item">

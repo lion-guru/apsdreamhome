@@ -8,7 +8,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get properties with basic info for initial load
     $propertiesQuery = "SELECT * FROM properties WHERE status = 'available' ORDER BY featured DESC, created_at DESC LIMIT 20";

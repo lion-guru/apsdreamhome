@@ -1,8 +1,9 @@
 <?php
 // Admin Panel: Manage Team Members
 define('IN_ADMIN', true);
-require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+require_once __DIR__ . '/../includes/config.php';
+global $con;
+$conn = $con;
 if (!$conn) die('DB connection failed.');
 ?>
 
@@ -66,3 +67,4 @@ while ($row = $res->fetch_assoc()) $team[] = $row;
 </table>
 <p style="text-align:center"><a href="manage_site_settings.php">Manage Site Settings</a> | <a href="manage_gallery.php">Manage Gallery</a> | <a href="manage_testimonials.php">Manage Testimonials</a></p>
 </body></html>
+

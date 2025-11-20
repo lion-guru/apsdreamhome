@@ -14,7 +14,7 @@ $sha_actual = hash_file('sha256', $path);
 $ok = hash_equals($sha_expected, $sha_actual);
 
 // Log the verification event
-$conn = getDbConnection();
+$conn = $con;
 $user = $_SESSION['auser'];
 $ip = $_SERVER['REMOTE_ADDR'] ?? '';
 $stmt = $conn->prepare("INSERT INTO audit_access_log (admin_user, action, details, ip_address) VALUES (?, 'archive_verify', ?, ?)");

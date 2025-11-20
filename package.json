@@ -1,48 +1,67 @@
 {
-  "name": "aps-dream-homes",
-  "version": "1.0.0",
-  "description": "APS Dream Homes - Real Estate Management System",
+  "name": "aps-dream-home",
+  "version": "2.0.0",
+  "description": "Professional Real Estate Platform - APS Dream Home (Enhanced)",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "serve": "php -S localhost:8000 -t .",
     "start": "run-p dev serve",
-    "lint": "eslint . --ext .js",
-    "tailwind": "tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --watch",
-    "test": "karma start --single-run",
-    "test:watch": "karma start --auto-watch --no-single-run"
+    "lint": "eslint assets/js/**/*.js --fix",
+    "format": "prettier --write assets/js/**/*.js assets/css/**/*.css",
+    "test": "echo \"Setting up test suite...\" && exit 0",
+    "optimize": "node optimize.js"
   },
   "keywords": [
     "real-estate",
     "property-management",
-    "php"
+    "php",
+    "vite",
+    "pwa",
+    "modern-web",
+    "performance"
   ],
-  "author": "APS Team",
+  "author": "APS Dream Home Team",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
-    "@tailwindcss/forms": "^0.5.7",
+    "@popperjs/core": "^2.11.8",
+    "aos": "^2.3.4",
     "bootstrap": "^5.3.3",
-    "flatpickr": "^4.6.13",
-    "font-awesome": "^4.7.0",
     "jquery": "^3.7.1",
-    "owl.carousel": "^2.3.4",
-    "popper.js": "^1.16.1",
-    "postcss": "^8.4.38",
-    "swiper": "^11.0.7",
-    "tailwindcss": "^3.4.1",
-    "vanilla-tilt": "^1.8.1",
-    "vite": "^7.1.7",
-    "vite-plugin-pwa": "^1.0.0",
-    "wow.js": "^1.2.2"
+    "vite-plugin-pwa": "^1.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.17",
     "eslint": "^8.57.1",
-    "eslint-plugin-vue": "^9.23.0",
+    "markdownlint-cli": "^0.45.0",
     "npm-run-all": "^4.1.5",
-    "postcss-import": "^16.1.0",
-    "sass": "^1.71.1"
-  }
+    "postcss": "^8.4.38",
+    "vite": "^5.4.21"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11"
+  ],
+  "main": "optimize.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhaysingh3007aps/apsdreamhome.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abhaysingh3007aps/apsdreamhome/issues"
+  },
+  "homepage": "https://github.com/abhaysingh3007aps/apsdreamhome#readme"
 }

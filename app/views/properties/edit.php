@@ -1,5 +1,25 @@
-<?php include '../app/views/includes/header.php'; ?>
+<?php
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
 
+// Ensure $property is defined to prevent errors
+if (!isset($property)) {
+    $property = [
+        'id' => '',
+        'title' => '',
+        'type' => '',
+        'description' => '',
+        'location' => '',
+        'price' => '',
+        'bedrooms' => '',
+        'bathrooms' => '',
+        'area' => '',
+        'status' => 'active'
+    ];
+}
+include __DIR__ . '/../includes/header.php';
+?>
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
@@ -106,5 +126,5 @@
         </div>
     </div>
 </div>
-
-<?php include '../app/views/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php';
+?>

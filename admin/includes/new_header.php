@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config/config.php';
+global $con;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -456,7 +458,7 @@ if (!isset($_SESSION['admin_session']) || $_SESSION['admin_session']['is_authent
                 $user_id = $_SESSION['admin_session']['user_id'] ?? 0;
                 $user = [];
                 if ($user_id) {
-                    $conn = getDbConnection();
+                    $conn = $con;
                     $result = $conn->query("SELECT * FROM users WHERE id = $user_id");
                     $user = $result->fetch_assoc();
                 }

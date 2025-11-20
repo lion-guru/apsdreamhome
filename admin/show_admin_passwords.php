@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/db_connection.php';
-$con = getDbConnection();
+$con = $con;
 $result = $con->query('SELECT auser, apass, status FROM admin');
 echo "<pre>";
 while($row = $result->fetch_assoc()) {

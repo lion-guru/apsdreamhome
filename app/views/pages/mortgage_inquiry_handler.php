@@ -9,22 +9,32 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         require_once '../includes/db_connection.php';
-        $pdo = getDbConnection();
+        $pdo = getMysqliConnection();
+
+        // Sanitize input function
+        if (!function_exists('sanitizeInput')) {
+            function sanitizeInput($data) {
+                $data = trim($data);
+                $data = stripslashes($data);
+                $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+                return $data;
+            }
+        }
 
         // Get form data
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $property_value = (float)($_POST['property_value'] ?? 0);
-        $down_payment = (float)($_POST['down_payment'] ?? 0);
-        $loan_amount = (float)($_POST['loan_amount'] ?? 0);
-        $loan_tenure = (int)($_POST['loan_tenure'] ?? 0);
-        $employment_type = trim($_POST['employment_type'] ?? '');
-        $monthly_income = (float)($_POST['monthly_income'] ?? 0);
-        $existing_loans = (float)($_POST['existing_loans'] ?? 0);
-        $property_location = trim($_POST['property_location'] ?? '');
-        $urgency_level = trim($_POST['urgency_level'] ?? '');
-        $additional_info = trim($_POST['additional_info'] ?? '');
+        $name = sanitizeInput($_POST['name'] ?? '');
+        $email = sanitizeInput($_POST['email'] ?? '');
+        $phone = sanitizeInput($_POST['phone'] ?? '');
+        $property_value = (float)sanitizeInput($_POST['property_value'] ?? 0);
+        $down_payment = (float)sanitizeInput($_POST['down_payment'] ?? 0);
+        $loan_amount = (float)sanitizeInput($_POST['loan_amount'] ?? 0);
+        $loan_tenure = (int)sanitizeInput($_POST['loan_tenure'] ?? 0);
+        $employment_type = sanitizeInput($_POST['employment_type'] ?? '');
+        $monthly_income = (float)sanitizeInput($_POST['monthly_income'] ?? 0);
+        $existing_loans = (float)sanitizeInput($_POST['existing_loans'] ?? 0);
+        $property_location = sanitizeInput($_POST['property_location'] ?? '');
+        $urgency_level = sanitizeInput($_POST['urgency_level'] ?? '');
+        $additional_info = sanitizeInput($_POST['additional_info'] ?? '');
 
         // Validation
         $errors = [];
@@ -40,6 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($employment_type)) $errors[] = 'Employment type is required';
         if ($monthly_income <= 0) $errors[] = 'Monthly income must be greater than 0';
         if (empty($property_location)) $errors[] = 'Property location is required';
+        if (!in_array($urgency_level, ['low', 'medium', 'high'])) $errors[] = 'Invalid urgency level';
+        if (strlen($additional_info) > 1000) $errors[] = 'Additional information cannot exceed 1000 characters';
 
         if (!empty($errors)) {
             http_response_code(400);
@@ -113,3 +125,4 @@ Additional Information:
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
 }
 ?>
+

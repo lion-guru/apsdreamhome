@@ -1,0 +1,18 @@
+{
+    "name": "appointment_reminder",
+    "category": "appointment",
+    "language": "en",
+    "header": "\ud83d\udcc5 Appointment Reminder",
+    "body": "Hi {{customer_name}},\n\nJust a reminder about your upcoming appointment:\n\n\ud83d\udcc5 Date: {{appointment_date}}\n\u23f0 Time: {{appointment_time}}\n\ud83d\udccd Location: {{appointment_location}}\n\ud83d\udc65 With: {{agent_name}}\n\nPlease arrive 10 minutes early. Bring:\n\u2022 Valid ID proof\n\u2022 Property documents (if any)\n\nSee you soon! \ud83c\udfe0",
+    "footer": "Need to reschedule? Call: {{agent_phone}}",
+    "variables": [
+        "customer_name",
+        "appointment_date",
+        "appointment_time",
+        "appointment_location",
+        "agent_name",
+        "agent_phone"
+    ],
+    "created_at": "2025-10-27 06:27:01",
+    "updated_at": "2025-10-27 06:27:01"
+}

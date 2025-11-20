@@ -12,7 +12,7 @@ class PaymentGateway {
     private $settings;
 
     public function __construct() {
-        $this->settings = $this->getPaymentSettings();
+        $this->settings = $this->_getPaymentSettingsFromEnv();
         $this->razorpay_key_id = $this->settings['razorpay_key_id'] ?? '';
         $this->razorpay_key_secret = $this->settings['razorpay_key_secret'] ?? '';
     }
@@ -20,7 +20,7 @@ class PaymentGateway {
     /**
      * Get payment settings from environment
      */
-    private function getPaymentSettings() {
+    private function _getPaymentSettingsFromEnv() {
         return [
             'razorpay_key_id' => env('RAZORPAY_KEY_ID', ''),
             'razorpay_key_secret' => env('RAZORPAY_KEY_SECRET', ''),

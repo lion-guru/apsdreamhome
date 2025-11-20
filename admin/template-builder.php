@@ -3,7 +3,8 @@ require_once 'config.php';
 require_once 'admin-functions.php';
 
 // Initialize the database connection
-$db = getDBConnection();
+global $con;
+$db = $con;
 $layoutTemplate = new Admin\Models\LayoutTemplate($db);
 
 // Get template ID from URL if editing existing template

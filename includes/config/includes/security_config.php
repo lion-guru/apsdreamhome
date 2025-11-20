@@ -10,7 +10,7 @@ $security_headers = [
     'X-Content-Type-Options' => 'nosniff',
     'X-XSS-Protection' => '1; mode=block',
     'Referrer-Policy' => 'strict-origin-when-cross-origin',
-    'Content-Security-Policy' => "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;"
+    'Content-Security-Policy' => "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;"
 ];
 
 // Apply security headers

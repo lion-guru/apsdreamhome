@@ -167,7 +167,7 @@ function app_config()
         'name' => env('APP_NAME', 'APS Dream Home'),
         'env' => env('APP_ENV', 'development'),
         'debug' => env('APP_DEBUG', true),
-        'url' => env('APP_URL', 'http://localhost/apsdreamhomefinal'),
+        'url' => env('APP_URL', 'http://localhost/apsdreamhome'),
         'key' => env('APP_KEY', ''),
     ];
 }

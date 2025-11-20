@@ -1,4 +1,29 @@
-<?php include '../app/views/includes/header.php'; ?>
+<?php
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+
+// Ensure $user is defined, e.g., from a session or passed from a controller
+if (!isset($user)) {
+    // This is a placeholder. In a real application, you would fetch user data
+    // from a session or database if it's not already provided.
+    // For now, we'll define a basic structure to prevent errors.
+    $user = [
+        'username' => 'Guest',
+        'email' => 'guest@example.com',
+        'mobile' => '',
+        'address' => '',
+        'city' => '',
+        'state' => '',
+        'pincode' => '',
+        'role' => 'user',
+        'status' => 'active',
+        'email_verified_at' => null,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+}
+?>
+<?php include __DIR__ . '/../includes/header.php'; ?>
 
 <div class="container mt-4">
     <div class="row">
@@ -142,4 +167,4 @@
     </div>
 </div>
 
-<?php include '../app/views/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

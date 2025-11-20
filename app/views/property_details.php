@@ -1,10 +1,18 @@
 <?php
+if (!defined('BASE_URL')) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $base = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    define('BASE_URL', $protocol . '://' . $host . rtrim($base, '/') . '/');
+}
+?>
+<?php
 /**
  * Enhanced Property Details Page
  * Complete property information with modern UI
  */
 
-include '../app/views/includes/header.php';
+include BASE_URL . 'app/views/includes/header.php';
 
 // Get property ID from URL
 $property_id = $_GET['id'] ?? 0;
@@ -22,7 +30,7 @@ $agent_info = null;
 
 // Fetch property details
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     // Get main property information
     $query = "
@@ -452,4 +460,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include '../app/views/includes/footer.php'; ?>
+include BASE_URL . 'app/views/includes/footer.php';

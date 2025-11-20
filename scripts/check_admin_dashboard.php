@@ -39,7 +39,7 @@ echo "=== Admin Dashboard Health Check ===\n\n";
 try {
     // 1. Check database connection
     echo "1. Testing database connection... ";
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     if ($conn === null) {
         throw new Exception("Failed to connect to the database");
     }

@@ -35,7 +35,7 @@
 
             <h3>Hi Valued Customer!</h3>
 
-            <p>Thank you for your payment! Your transaction has been successfully processed.</p>
+            <p>Thank you for your payment to apsdreamhome. Your transaction has been successfully processed.</p>
 
             <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 20px 0;">
                 <p><strong>What happens next?</strong></p>
@@ -48,8 +48,8 @@
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="http://localhost/apsdreamhomefinal/payment/receipt" class="button">Download Receipt</a>
-                <a href="http://localhost/apsdreamhomefinal/dashboard" class="button" style="background: #6c757d;">View Dashboard</a>
+                <a href="http://localhost/apsdreamhome/payment/receipt" class="button">Download Receipt</a>
+                <a href="http://localhost/apsdreamhome/dashboard" class="button" style="background: #6c757d;">View Dashboard</a>
             </div>
 
             <p>If you have any questions about your payment, please contact our support team:</p>

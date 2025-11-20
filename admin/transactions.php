@@ -6,10 +6,13 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     header('Location: login.php');
     exit();
 }
-$conn = getDbConnection();
-// Fetch transactions
+$conn = $con;
+// Fetch transactions with optional customer info (nullable via FK SET NULL)
 $transactions = [];
-$result = $conn->query("SELECT * FROM transactions ORDER BY id DESC");
+$result = $conn->query("SELECT t.*, c.name AS customer_name
+                        FROM transactions t
+                        LEFT JOIN customers c ON t.customer_id = c.id
+                        ORDER BY t.id DESC");
 while ($row = $result && $result->fetch_assoc()) $transactions[] = $row;
 ?>
 <!DOCTYPE html>
@@ -41,6 +44,7 @@ while ($row = $result && $result->fetch_assoc()) $transactions[] = $row;
                             <th>ID</th>
                             <th>Date</th>
                             <th>Type</th>
+                            <th>Customer</th>
                             <th>Amount</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -55,6 +59,7 @@ while ($row = $result && $result->fetch_assoc()) $transactions[] = $row;
                                     <td><?php echo $t['id']; ?></td>
                                     <td><?php echo htmlspecialchars($t['transaction_date']); ?></td>
                                     <td><?php echo htmlspecialchars($t['type']); ?></td>
+                                    <td><?php echo htmlspecialchars($t['customer_name'] ?? '—'); ?></td>
                                     <td><?php echo htmlspecialchars($t['amount']); ?></td>
                                     <td><?php echo htmlspecialchars($t['status']); ?></td>
                                     <td>

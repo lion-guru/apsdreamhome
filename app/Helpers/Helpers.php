@@ -60,4 +60,28 @@ class Helpers {
     public static function isValidEmail($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
+
+    /**
+     * Generate a URL-friendly slug from a string
+     *
+     * @param string $str The string to convert to slug
+     * @param string $separator The separator to use (default: '-')
+     * @return string The slugified string
+     */
+    public static function str_slug($str, $separator = '-') {
+        // Convert to lowercase
+        $str = strtolower($str);
+        
+        // Replace spaces and special characters with separator
+        $str = preg_replace('/[^a-z0-9\s]/', $separator, $str);
+        $str = preg_replace('/\s+/', $separator, $str);
+        
+        // Remove multiple consecutive separators
+        $str = preg_replace('/' . preg_quote($separator, '/') . '+/', $separator, $str);
+        
+        // Trim separators from beginning and end
+        $str = trim($str, $separator);
+        
+        return $str;
+    }
 }

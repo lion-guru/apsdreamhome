@@ -69,7 +69,7 @@ if (!$apiKey) {
                 'Authorization: Bearer <token> header', 
                 'api_key query parameter'
             ],
-            'example_curl' => 'curl -H "X-API-Key: your_api_key_here" http://localhost/apsdreamhomefinal/api/test_api_auth.php'
+            'example_curl' => 'curl -H "X-API-Key: your_api_key_here" http://localhost/apsdreamhome/api/test_api_auth.php'
         ]
     ]);
     exit;

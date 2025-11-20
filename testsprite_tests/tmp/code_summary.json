@@ -1,0 +1,24 @@
+{
+  "tech_stacks": [
+    "PHP",
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "MySQL"
+  ],
+  "features": [
+    "User Authentication and Authorization",
+    "Admin Panel",
+    "RESTful API",
+    "Lead Management",
+    "Blog/News System",
+    "Contact Form",
+    "Image Gallery",
+    "User Management",
+    "Workflow Automation"
+  ],
+  "frameworks": [
+    "Likely a custom PHP MVC framework or a lightweight one, given the directory structure (app/, models/, views/)"
+  ],
+  "database": "MySQL"
+}

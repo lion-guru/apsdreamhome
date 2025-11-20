@@ -1,6 +1,6 @@
 <?php
 require_once '../../../includes/config.php';
-require_once '../../../includes/db_connection.php';
+require_once '../../../includes/config/config.php';
 require_once '../../../includes/auth_check.php';
 
 header('Content-Type: application/json');
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $conn = getDbConnection();
+    global $con; $conn = $con;
     
     // Validate required fields
     $requiredFields = ['customer_id', 'amount', 'payment_type', 'payment_method'];

@@ -6,7 +6,8 @@
 
 // Prevent direct access
 if (!defined('BASE_URL')) {
-    exit('Direct access not allowed');
+    // Define BASE_URL if not already defined
+    define('BASE_URL', 'https://apsdreamhomes.com');
 }
 
 class AIDreamHome {
@@ -18,7 +19,7 @@ class AIDreamHome {
         // Use configuration values if not provided
         global $config;
 
-        $this->api_key = $api_key ?: ($config['ai']['api_key'] ?? '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');
+        $this->api_key = $api_key ?: ($config['ai']['api_key'] ?? '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');
         $this->model = $model ?: ($config['ai']['model'] ?? 'qwen/qwen3-coder:free');
 
         // Set timezone for consistent timestamps
@@ -186,7 +187,7 @@ class AIDreamHome {
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->api_key,
-            'HTTP-Referer: ' . (defined('BASE_URL') ? BASE_URL : 'http://localhost'),
+            'HTTP-Referer: https://apsdreamhomes.com',
             'X-Title: APS Dream Home AI Assistant'
         ];
 

@@ -36,7 +36,7 @@ class LoginAuthenticationTest {
 
         try {
             require_once $this->baseDir . '/includes/db_connection.php';
-            $conn = getDbConnection();
+            $conn = getMysqliConnection();
 
             if (!$conn) {
                 throw new Exception("Database connection failed");
@@ -63,7 +63,7 @@ class LoginAuthenticationTest {
             require_once $this->baseDir . '/includes/db_connection.php';
             require_once $this->baseDir . '/includes/password_utils.php';
 
-            $conn = getDbConnection();
+            $conn = getMysqliConnection();
             
             // Hash a test password
             $testPassword = PasswordUtils::hashPassword('TestAdmin123!');

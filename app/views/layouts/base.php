@@ -84,5 +84,7 @@
     </main>
 
     <?php include __DIR__ . '/footer_unified.php'; ?>
+
+    <script src="<?php echo BASE_URL; ?>public/js/premium-header.js"></script>
 </body>
 </html>

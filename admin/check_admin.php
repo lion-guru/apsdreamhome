@@ -1,9 +1,10 @@
 <?php
-require_once '../includes/config/db_config.php';
+require_once '../includes/config.php';
 
 // Check if admin user exists
 function checkAdminUser() {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     // Check if users table exists
     $result = $conn->query("SHOW TABLES LIKE 'users'");
@@ -36,7 +37,8 @@ function checkAdminUser() {
 
 // Check database connection
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     $dbStatus = $conn ? 'success' : 'error';
     $dbError = $conn ? '' : $conn->connect_error;
     
@@ -66,3 +68,4 @@ try {
 
 $conn->close();
 ?>
+

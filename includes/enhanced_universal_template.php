@@ -6,8 +6,18 @@
  */
 
 // Prevent direct access - but allow when accessed via web server or command line testing
-if (!defined('ABSPATH') && !isset($_SERVER['HTTP_HOST']) && php_sapi_name() !== 'cli') {
+if (!defined('ABSPATH') && !defined('BASE_URL') && !isset($_SERVER['HTTP_HOST']) && php_sapi_name() !== 'cli') {
     exit('Direct access forbidden');
+}
+
+// Define ABSPATH if not defined
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__FILE__) . '/');
+}
+
+// Define BASE_URL if not defined
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'https://apsdreamhomes.com');
 }
 
 class EnhancedUniversalTemplate {
@@ -208,10 +218,26 @@ class EnhancedUniversalTemplate {
                 <?php
                 // Output JavaScript files
                 foreach ($this->js_files as $js) {
-                    echo sprintf(
-                        '<script src="%s"></script>' . PHP_EOL,
-                        htmlspecialchars($js)
-                    );
+                    if (is_array($js)) {
+                        $attributes = '';
+                        if (!empty($js['defer'])) {
+                            $attributes .= ' defer';
+                        }
+                        if (!empty($js['async'])) {
+                            $attributes .= ' async';
+                        }
+                        echo sprintf(
+                            '<script src="%s"%s></script>' . PHP_EOL,
+                            htmlspecialchars($js['path']),
+                            $attributes
+                        );
+                    } else {
+                        // Fallback for old string-based paths
+                        echo sprintf(
+                            '<script src="%s"></script>' . PHP_EOL,
+                            htmlspecialchars($js)
+                        );
+                    }
                 }
                 
                 // Output custom JavaScript

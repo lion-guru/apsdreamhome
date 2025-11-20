@@ -15,8 +15,10 @@ if(isset($_POST['insert']))
 	$sid = $_GET['id'];
 	$ustate=$_POST['ustate'];
 
-	$sql="UPDATE state SET sname = '{$ustate}'  WHERE sid = {$sid}";
-	$result=mysqli_query($con,$sql);
+	$sql="UPDATE state SET sname = ? WHERE sid = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, "si", $ustate, $sid);
+    $result = mysqli_stmt_execute($stmt);
 	if($result)
 		{
 			log_admin_activity('edit_state', 'Edited state ID: ' . $sid . ', new name: ' . $ustate);
@@ -101,8 +103,11 @@ if(isset($_POST['insert']))
 									<?php if($msg) echo $msg; ?>
 									<?php 
 									$sid = $_GET['id'];
-									$sql = "SELECT * FROM state WHERE sid = {$sid}";
-									$result = mysqli_query($con, $sql);
+									$sql = "SELECT * FROM state WHERE sid = ?";
+									$stmt = mysqli_prepare($con, $sql);
+									mysqli_stmt_bind_param($stmt, "i", $sid);
+									mysqli_stmt_execute($stmt);
+									$result = mysqli_stmt_get_result($stmt);
 									if($row = mysqli_fetch_assoc($result)):
 									?>
 									<form method="POST" action="" class="needs-validation" novalidate>

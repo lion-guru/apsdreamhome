@@ -4,7 +4,7 @@ require_once 'includes/db_connection.php';
 require_once 'includes/helpers/file_helpers.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     $page_title = 'System Status - APS Dream Home';
     $meta_description = 'System status and diagnostics for APS Dream Home website';
 } catch (Exception $e) {

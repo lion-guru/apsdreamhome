@@ -1,0 +1,172 @@
+[
+    {
+        "url": "\/",
+        "description": "Home Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/about",
+        "description": "About Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/about",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/contact",
+        "description": "Contact Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/contact",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/projects",
+        "description": "Projects Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/projects",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/properties",
+        "description": "Properties Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/properties",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/blog",
+        "description": "Blog Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/apsdreamhomefinal\/error.php?code=500&internal=1",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/career",
+        "description": "Career Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/apsdreamhomefinal\/error.php?code=500&internal=1",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/services",
+        "description": "Services Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/services",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/faq",
+        "description": "FAQ Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/faq",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/support",
+        "description": "Support Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/customer_login.php",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/login",
+        "description": "Login Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/apsdreamhomefinal\/error.php?code=500&internal=1",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/register",
+        "description": "Register Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/apsdreamhomefinal\/error.php?code=500&internal=1",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/forgot-password",
+        "description": "Forgot Password Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/forgot-password",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/admin",
+        "description": "Admin Dashboard",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/apsdreamhomefinal\/error.php?code=500&internal=1",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/admin\/dashboard",
+        "description": "Admin Dashboard Detailed",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/apsdreamhomefinal\/error.php?code=500&internal=1",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/api\/properties",
+        "description": "API Properties",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/api\/properties",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    },
+    {
+        "url": "\/nonexistent-page",
+        "description": "404 Error Page",
+        "http_code": 200,
+        "redirect_url": "http:\/\/localhost:8000\/nonexistent-page",
+        "content_type": "text\/html; charset=UTF-8",
+        "success": true,
+        "is_redirect": false,
+        "is_error": false
+    }
+]

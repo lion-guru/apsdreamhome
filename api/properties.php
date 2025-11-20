@@ -8,8 +8,8 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 try {
-    global $pdo;
-
+    require_once __DIR__ . '/../config/bootstrap.php';
+    
     if (!$pdo) {
         sendJsonResponse(['success' => false, 'error' => 'Database connection not available'], 500);
     }
@@ -25,7 +25,7 @@ try {
     $params = [];
 
     if (isset($_GET['property_type']) && !empty($_GET['property_type'])) {
-        $where_conditions[] = "p.property_type = ?";
+        $where_conditions[] = "p.property_type_id = ?";
         $params[] = $_GET['property_type'];
     }
 
@@ -45,7 +45,7 @@ try {
     }
 
     if (isset($_GET['featured']) && $_GET['featured'] === 'true') {
-        $where_conditions[] = "p.featured = 1";
+        $where_conditions[] = "p.hot_offer = 1";
     }
 
     // Always filter by available status
@@ -90,7 +90,7 @@ try {
             'bedrooms' => (int)$property['bedrooms'],
             'bathrooms' => (int)$property['bathrooms'],
             'area_sqft' => (float)$property['area_sqft'],
-            'featured' => (bool)$property['featured'],
+            'featured' => (bool)$property['hot_offer'],
             'status' => $property['status'],
             'latitude' => $property['latitude'] ? (float)$property['latitude'] : null,
             'longitude' => $property['longitude'] ? (float)$property['longitude'] : null,
@@ -119,14 +119,4 @@ try {
         'error' => 'Internal server error',
         'message' => $e->getMessage()
     ], 500);
-}
-
-/**
- * Send JSON response
- */
-function sendJsonResponse($data, $status_code = 200) {
-    http_response_code($status_code);
-    header('Content-Type: application/json');
-    echo json_encode($data);
-    exit;
 }

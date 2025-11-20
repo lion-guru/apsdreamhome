@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once('src/Database/Database.php');
+require_once __DIR__ . '/includes/config/config.php';
+global $con;
 
 header('Content-Type: application/json');
 
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     if (!$conn) {
         throw new Exception('Database connection failed');
     }

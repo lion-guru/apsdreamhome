@@ -10,7 +10,7 @@ function isAdminLoggedIn() {
 // 2. Check required files and directories
 function checkRequiredFiles() {
     $requiredFiles = [
-        '../includes/config/db_config.php',
+        '../includes/config.php',
         '../includes/functions.php',
         'dashboard.php',
         'includes/header.php',
@@ -30,7 +30,8 @@ function checkRequiredFiles() {
 
 // 3. Check database connection and required tables
 function checkDatabase() {
-    require_once __DIR__ . '/../includes/db_connection.php';
+    global $con;
+    $conn = $con;
     
     $tables = [
         'users',
@@ -44,7 +45,8 @@ function checkDatabase() {
     $missingTables = [];
     
     try {
-        $conn = getDbConnection();
+            global $con;
+    $conn = $con;
         
         // Check each required table using prepared statement
         foreach ($tables as $table) {
@@ -136,3 +138,4 @@ if (!$results['admin_logged_in']) {
     echo "<a href='login.php'>Admin Login</a>";
 }
 ?>
+

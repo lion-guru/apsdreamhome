@@ -13,8 +13,7 @@ require_once __DIR__ . '/../includes/db_connection.php';
 
 // For backward compatibility, make sure $con is available
 try {
-    $con = getDbConnection();
-    
+    global $con;
     // Log successful connection for debugging
     error_log('Admin panel database connection established successfully');
 } catch (Exception $e) {

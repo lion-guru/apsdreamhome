@@ -6,6 +6,11 @@
 
 require_once 'core/functions.php';
 
+// Function to sanitize input data
+function sanitizeInput($data) {
+    return htmlspecialchars(stripslashes(trim($data)));
+}
+
 // Redirect if already logged in
 if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
     header('Location: index.php');
@@ -14,11 +19,11 @@ if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) 
 
 // Handle registration form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $phone = $_POST['phone'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
+    $name = sanitizeInput($_POST['name'] ?? '');
+    $email = sanitizeInput($_POST['email'] ?? '');
+    $phone = sanitizeInput($_POST['phone'] ?? '');
+    $password = sanitizeInput($_POST['password'] ?? '');
+    $confirm_password = sanitizeInput($_POST['confirm_password'] ?? '');
 
     $errors = [];
 
@@ -32,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
-            $pdo = getDbConnection();
+            $pdo = getMysqliConnection();
 
             // Check if email already exists
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");

@@ -4,6 +4,9 @@
  * Displays detailed information about a single property
  */
 
+require_once '../../../includes/db_connection.php';
+$pdo = getMysqliConnection();
+
 ?>
 
 <!-- Property Hero Section -->
@@ -136,7 +139,6 @@
                         if (isset($_SESSION['user_id'])) {
                             // Check if this property is in user's favorites
                             try {
-                                global $pdo;
                                 if ($pdo) {
                                     $stmt = $pdo->prepare("SELECT id FROM property_favorites WHERE user_id = ? AND property_id = ?");
                                     $stmt->execute([$_SESSION['user_id'], $property['id']]);
@@ -148,7 +150,8 @@
                                     }
                                 }
                             } catch (Exception $e) {
-                                // Ignore errors for now
+                                // Log error for debugging
+                                error_log("Error checking favorites: " . $e->getMessage());
                             }
                         }
                         ?>

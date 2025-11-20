@@ -437,7 +437,8 @@ class SecurityValidator {
 // Run the security validation
 try {
     require_once __DIR__ . '/../includes/db_connection.php';
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
 
     $validator = new SecurityValidator($conn);
     $validator->runFullSecurityValidation();

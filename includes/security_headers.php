@@ -34,8 +34,8 @@ function setSecurityHeaders() {
         
         // Content Security Policy
         'Content-Security-Policy' => "default-src 'self'; " .
-                                   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " .
-                                   "style-src 'self' 'unsafe-inline' https:; " .
+                                   "script-src 'self' https:; " .
+                                   "style-src 'self' https:; " .
                                    "img-src 'self' data: https:; " .
                                    "font-src 'self' https: data:; " .
                                    "connect-src 'self' https:;",

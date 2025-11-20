@@ -21,7 +21,7 @@ try {
     echo "✅ Connected to MySQL server successfully!\n";
     
     // Check if database exists
-    $stmt = $pdo->query("SHOW DATABASES LIKE 'apsdreamhomefinal'");
+    $stmt = $pdo->query("SHOW DATABASES LIKE 'apsdreamhome'");
     if ($stmt->rowCount() > 0) {
         echo "✅ Database 'apsdreamhomefinal' exists\n";
     } else {

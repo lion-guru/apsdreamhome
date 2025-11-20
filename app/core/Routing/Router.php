@@ -170,7 +170,9 @@ class Router {
      */
     protected function mergeWithLastGroup($new)
     {
-        return $this->mergeGroup($new, end($this->groupStack));
+        // Use array_slice to get the last element without modifying the array pointer
+        $lastGroup = array_slice($this->groupStack, -1, 1)[0];
+        return $this->mergeGroup($new, $lastGroup);
     }
     
     /**
@@ -330,7 +332,8 @@ class Router {
             return '';
         }
         
-        $lastGroup = end($this->groupStack);
+        // Use array_slice to get the last element without modifying the array pointer
+        $lastGroup = array_slice($this->groupStack, -1, 1)[0];
         
         return $lastGroup['prefix'] ?? '';
     }
@@ -425,28 +428,38 @@ class Router {
     public function dispatch(Request $request) {
         $this->request = $request;
         
-        $method = $request->method();
+        $method = $request->getMethod();
         $uri = $request->path();
+        
+        error_log("Router::dispatch() - Method: {$method}, URI: {$uri}");
         
         // Find the matching route
         $route = $this->findRoute($method, $uri);
         
+        error_log("Router::dispatch() - Route found: " . ($route ? 'yes' : 'no'));
+        
         if (!$route) {
-            return $this->handleNotFound();
+            error_log("Router::dispatch() - No route found, trying legacy fallback");
+            // Try legacy fallback if modern route not found
+            return $this->handleLegacyFallback($method, $uri);
         }
         
         $this->currentRoute = $route;
         
         // Apply route middleware
+        error_log("Router::dispatch() - Running route middleware");
         $response = $this->runRouteMiddleware($route);
         
         if ($response instanceof Response) {
+            error_log("Router::dispatch() - Middleware returned response");
             return $response;
         }
         
+        error_log("Router::dispatch() - Executing route action");
         // Execute the route action
         $response = $this->runRoute($route);
         
+        error_log("Router::dispatch() - Preparing response");
         return $this->prepareResponse($response);
     }
     
@@ -454,13 +467,16 @@ class Router {
      * Find the route matching the request
      */
     protected function findRoute($method, $uri) {
+        // Get routes for this method
+        $methodRoutes = $this->routes->get($method);
+        
         // First, try to find an exact match
-        if (isset($this->routes[$method][$uri])) {
-            return $this->routes[$method][$uri];
+        if (isset($methodRoutes[$uri])) {
+            return $methodRoutes[$uri];
         }
         
         // If no exact match, try to find a parameterized route
-        foreach ($this->routes[$method] as $route) {
+        foreach ($methodRoutes as $route) {
             if ($this->matchesRoute($route, $uri)) {
                 return $route;
             }
@@ -470,10 +486,91 @@ class Router {
     }
     
     /**
+     * Handle legacy route fallback
+     */
+    protected function handleLegacyFallback($method, $uri) {
+        // Check if legacy routes file exists and try to find a match
+        $legacyRoutesFile = $this->app->basePath('routes/web.php');
+        
+        if (file_exists($legacyRoutesFile)) {
+            // Include legacy routes configuration
+            $webRoutes = [];
+            require $legacyRoutesFile;
+            
+            // Try to find a legacy route match in public routes (for error testing)
+            if (isset($webRoutes['public'][$method][$uri])) {
+                return $this->handleLegacyRoute($webRoutes['public'][$method][$uri], $uri);
+            }
+            
+            // Try to match legacy routes with parameters in public routes
+            if (isset($webRoutes['public'][$method])) {
+                foreach ($webRoutes['public'][$method] as $routeUri => $handler) {
+                    if ($this->matchesLegacyRoute($routeUri, $uri)) {
+                        return $this->handleLegacyRoute($handler, $uri);
+                    }
+                }
+            }
+        }
+        
+        // If no legacy route found, try enhancedAutoRouting from router.php
+        if (file_exists($this-\u003eapp-\u003ebasePath('router.php'))) {
+            require_once $this-\u003eapp-\u003ebasePath('router.php');
+            if (function_exists('enhancedAutoRouting')) {
+                $legacyRouteFile = enhancedAutoRouting($uri);
+                if ($legacyRouteFile) {
+                    // If enhancedAutoRouting finds a file, include it and return a success response
+                    require_once $legacyRouteFile;
+                    return new Response('Legacy route handled', 200); // Or a more appropriate response
+                }
+            }
+        }
+
+        // If no legacy route found, return 404
+        return $this-\u003ehandleNotFound();
+    }
+    
+    /**
+     * Handle legacy route execution
+     */
+    protected function handleLegacyRoute($handler, $uri) {
+        // Convert legacy route handler to modern format
+        if (is_string($handler) && strpos($handler, '@') !== false) {
+            // Execute the controller method directly
+            list($controller, $method) = explode('@', $handler);
+            
+            // Create controller instance
+            $controller = $this->app->make($controller);
+            
+            if (!method_exists($controller, $method)) {
+                return $this->handleNotFound();
+            }
+            
+            // Execute the method
+            $response = $controller->$method();
+            
+            return $this->prepareResponse($response);
+        }
+        
+        // If it's a closure or other format, handle accordingly
+        return $this->handleNotFound();
+    }
+    
+    /**
+     * Check if a legacy route matches the URI
+     */
+    protected function matchesLegacyRoute($routeUri, $uri) {
+        // Convert legacy route patterns to regex
+        $pattern = preg_replace('/\{([^}]+)\}/', '([^/]+)', $routeUri);
+        $pattern = '#^' . $pattern . '$#';
+        
+        return preg_match($pattern, $uri);
+    }
+    
+    /**
      * Check if a route matches the given URI
      */
     protected function matchesRoute($route, $uri) {
-        $pattern = $this->compileRoute($route['uri'], $route['where'] ?? []);
+        $pattern = $this->compileRoute($route->uri(), []);
         
         return (bool) preg_match('#^' . $pattern . '$#', $uri);
     }
@@ -503,7 +600,7 @@ class Router {
      * Run the route middleware
      */
     protected function runRouteMiddleware($route) {
-        $middleware = $route['middleware'] ?? [];
+        $middleware = $route->getMiddleware();
         
         foreach ($middleware as $middlewareName) {
             $middlewareInstance = $this->app->make($middlewareName);
@@ -524,7 +621,7 @@ class Router {
      * Run the route action
      */
     protected function runRoute($route) {
-        $action = $route['action'];
+        $action = $route->getAction();
         
         if (isset($action['uses'])) {
             return $this->runController($action['uses']);
@@ -543,14 +640,24 @@ class Router {
     protected function runController($controller) {
         list($class, $method) = explode('@', $controller);
         
-        $controller = $this->app->make($class);
+        // Try to get controller from container first
+        try {
+            $controller = $this->app->make($class);
+        } catch (Exception $e) {
+            // If not found in container, try to instantiate directly
+            if (class_exists($class)) {
+                $controller = new $class();
+            } else {
+                throw new Exception("Controller class {$class} not found");
+            }
+        }
         
         if (!method_exists($controller, $method)) {
             throw new Exception("Method {$method} does not exist on controller {$class}");
         }
         
         $parameters = $this->resolveMethodDependencies(
-            $controller, $method, $this->request->route()
+            [$controller, $method], $this->request->route()
         );
         
         return $controller->$method(...$parameters);

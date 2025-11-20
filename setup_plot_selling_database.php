@@ -8,7 +8,7 @@
 require_once 'includes/db_connection.php';
 
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
 
     echo "<h2>🏗️ Creating Plot Selling Database Tables</h2>\n";
 

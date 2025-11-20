@@ -5,6 +5,7 @@
 // Define base path
 define('BASE_PATH', dirname(dirname(__FILE__)));
 define('APP_ROOT', BASE_PATH);
+define('ABSPATH', BASE_PATH . '/'); // Define ABSPATH for security checks
 
 // Include required files
 require_once BASE_PATH . '/includes/db_config.php';
@@ -198,7 +199,7 @@ if (time() < ($_SESSION['login_blocked_until'] ?? 0)) {
         $csrf_valid = CSRFProtection::validateToken($csrf_token);
     } else {
         // Fallback CSRF validation
-        $csrf_valid = validateCSRFTokenFallback($csrf_token, 'login');
+        $csrf_valid = validateCSRFTokenFallback($csrf_token);
     }
     
     if (!isset($_POST['csrf_token']) || !$csrf_valid) {

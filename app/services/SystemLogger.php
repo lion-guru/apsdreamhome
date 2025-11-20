@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use Database\DatabaseConnection;
+use App\Core\Database\Database;
 use Exception;
 use JsonSerializable;
 
@@ -32,7 +32,7 @@ class SystemLogger {
      */
     public function __construct(array $config = []) {
         // Initialize database connection
-        $this->db = DatabaseConnection::getInstance();
+        $this->db = Database::getInstance();
 
         // Load configuration from ConfigurationManager
         $configManager = \App\Services\ConfigurationManager::getInstance();
@@ -336,3 +336,4 @@ class SystemLogger {
         return $sanitized;
     }
 }
+

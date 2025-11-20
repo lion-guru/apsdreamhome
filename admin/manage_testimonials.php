@@ -1,8 +1,9 @@
 <?php
 // Admin Panel: Manage Testimonials
 define('IN_ADMIN', true);
-require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+require_once __DIR__ . '/../includes/config.php';
+global $con;
+$conn = $con;
 if (!$conn) die('DB connection failed.');
 ?>
 
@@ -64,3 +65,4 @@ while ($row = $res->fetch_assoc()) $testimonials[] = $row;
 </table>
 <p style="text-align:center"><a href="manage_site_settings.php">Manage Site Settings</a> | <a href="manage_team.php">Manage Team</a> | <a href="manage_gallery.php">Manage Gallery</a></p>
 </body></html>
+

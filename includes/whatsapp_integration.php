@@ -514,18 +514,6 @@ function sendWhatsAppPropertyInquiry($phone_number, $property_data, $customer_da
 }
 
 /**
- * Send WhatsApp booking confirmation
- */
-function sendWhatsAppBookingConfirmation($phone_number, $booking_data) {
-    try {
-        $whatsapp = new WhatsAppIntegration();
-        return $whatsapp->sendBookingConfirmation($phone_number, $booking_data);
-    } catch (Exception $e) {
-        return ['success' => false, 'error' => $e->getMessage()];
-    }
-}
-
-/**
  * Send WhatsApp commission notification
  */
 function sendWhatsAppCommissionNotification($phone_number, $commission_data) {
@@ -583,4 +571,142 @@ function sendWhatsAppTemplateMessage($phone_number, $template_name, $variables =
     } catch (Exception $e) {
         return ['success' => false, 'error' => $e->getMessage()];
     }
+}
+
+/**
+ * Get WhatsApp statistics
+ */
+function getWhatsAppStats() {
+    global $conn;
+
+    try {
+        // Get total messages sent
+        $total_sent = $conn->query("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'SENT'")->fetch_assoc()['count'];
+
+        // Get total messages delivered
+        $total_delivered = $conn->query("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'DELIVERED'")->fetch_assoc()['count'];
+
+        // Get total messages failed
+        $total_failed = $conn->query("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'FAILED'")->fetch_assoc()['count'];
+
+        // Get success rate
+        $success_rate = $total_sent > 0 ? round(($total_delivered / $total_sent) * 100, 2) : 0;
+
+        // Get recent activity (last 7 days)
+        $recent_query = "SELECT
+            COUNT(CASE WHEN action = 'SENT' THEN 1 END) as sent_today,
+            COUNT(CASE WHEN action = 'DELIVERED' THEN 1 END) as delivered_today,
+            COUNT(CASE WHEN action = 'FAILED' THEN 1 END) as failed_today
+        FROM whatsapp_logs
+        WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+
+        $recent_result = $conn->query($recent_query)->fetch_assoc();
+
+        return [
+            'total_sent' => (int)$total_sent,
+            'total_delivered' => (int)$total_delivered,
+            'total_failed' => (int)$total_failed,
+            'success_rate' => (float)$success_rate,
+            'recent_activity' => [
+                'sent_7days' => (int)$recent_result['sent_today'],
+                'delivered_7days' => (int)$recent_result['delivered_today'],
+                'failed_7days' => (int)$recent_result['failed_today']
+            ],
+            'last_updated' => date('Y-m-d H:i:s')
+        ];
+
+    } catch (Exception $e) {
+        return [
+            'total_sent' => 0,
+            'total_delivered' => 0,
+            'total_failed' => 0,
+            'success_rate' => 0.0,
+            'recent_activity' => [
+                'sent_7days' => 0,
+                'delivered_7days' => 0,
+                'failed_7days' => 0
+            ],
+            'error' => $e->getMessage()
+        ];
+    }
+}
+
+/**
+ * Initialize WhatsApp integration (if not already done)
+ */
+function initializeWhatsAppIntegration() {
+    static $initialized = false;
+
+    if ($initialized) {
+        return true;
+    }
+
+    try {
+        // Check if WhatsApp is enabled
+        global $config;
+        if (!$config['whatsapp']['enabled']) {
+            return false;
+        }
+
+        // Create logs table if it doesn't exist
+        global $conn;
+        $conn->query("CREATE TABLE IF NOT EXISTS whatsapp_logs (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            phone_number VARCHAR(20) NOT NULL,
+            message TEXT,
+            action ENUM('SENT', 'DELIVERED', 'FAILED', 'TEMPLATE_USED') NOT NULL,
+            provider VARCHAR(50),
+            message_id VARCHAR(255),
+            error_message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_phone (phone_number),
+            INDEX idx_action (action),
+            INDEX idx_created_at (created_at)
+        )");
+
+        $initialized = true;
+        return true;
+
+    } catch (Exception $e) {
+        error_log('WhatsApp initialization failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Log WhatsApp activity
+ */
+function logWhatsAppActivity($action, $phone_number, $message = '', $error = '') {
+    global $conn;
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO whatsapp_logs (phone_number, message, action, error_message) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $phone_number, $message, $action, $error);
+        return $stmt->execute();
+    } catch (Exception $e) {
+        error_log('WhatsApp logging failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Log WhatsApp activity
+ */
+function sendWhatsAppBookingConfirmation($phone_number, $booking_details) {
+    global $config;
+
+    if (!$config['whatsapp']['enabled']) {
+        return ['success' => false, 'error' => 'WhatsApp integration disabled'];
+    }
+
+    $variables = [
+        'customer_name' => $booking_details['customer_name'] ?? 'Valued Customer',
+        'booking_id' => $booking_details['booking_id'] ?? '',
+        'property_name' => $booking_details['property_name'] ?? '',
+        'booking_date' => $booking_details['booking_date'] ?? date('Y-m-d'),
+        'total_amount' => $booking_details['total_amount'] ?? '',
+        'agent_name' => $booking_details['agent_name'] ?? 'Our Team'
+    ];
+
+    return sendWhatsAppTemplateMessage($phone_number, 'booking_confirmation', $variables);
 }

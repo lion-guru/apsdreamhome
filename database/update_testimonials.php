@@ -41,7 +41,7 @@ try {
     require_once __DIR__ . '/../includes/db_connection.php';
     
     // Get database connection
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     
     // Start transaction
     $conn->begin_transaction();

@@ -2,7 +2,7 @@
 // Logo Test Page for APS Dream Home
 $page_title = 'Logo Test - APS Dream Home';
 $page_description = 'Testing logo display';
-$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/apsdreamhomefinal';
+$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/apsdreamhome';
 $current_url = $base_url . $_SERVER['REQUEST_URI'];
 
 // Include the professional header

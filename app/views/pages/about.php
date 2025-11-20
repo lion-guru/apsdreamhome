@@ -3,26 +3,13 @@
  * Enhanced About Page - APS Dream Home
  * Modern UI/UX for company information and team details
  */
+
+// Set page title and description for layout
+$page_title = $title ?? 'About Us - APS Dream Home';
+$page_description = 'Learn about APS Dream Home - your trusted real estate partner since 2009. Discover our story, values, and commitment to excellence.';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'About Us - APS Dream Home'; ?></title>
-
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Learn about APS Dream Home - your trusted real estate partner since 2009. Discover our story, values, and commitment to excellence.">
-    <meta name="keywords" content="about APS Dream Home, real estate company Gorakhpur, property developers UP, real estate story">
-
-    <!-- Modern CSS Framework -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome@6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <style>
+<style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
@@ -827,12 +814,6 @@
     </div>
 </section>
 
-<?php include __DIR__ . '/../layouts/modern_footer.php'; ?>
-
-<!-- JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
 <script>
     // Initialize AOS
     AOS.init({
@@ -923,6 +904,3 @@
         timelineObserver.observe(item);
     });
 </script>
-
-</body>
-</html>

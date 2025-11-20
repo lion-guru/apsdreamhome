@@ -32,6 +32,19 @@ if (file_exists(APP_ROOT . '/vendor/autoload.php')) {
     require_once APP_ROOT . '/vendor/autoload.php';
 }
 
+// Run migrations before tests
+function runTestMigrations() {
+    if (getenv('RUN_MIGRATIONS') !== 'false') {
+        $mysqli = getTestMysqliConnection();
+        require_once __DIR__ . '/Database/MigrationManager.php';
+        $migrationManager = new Tests\Database\MigrationManager(
+            $mysqli,
+            __DIR__ . '/../database/migrations'
+        );
+        $migrationManager->migrate();
+    }
+}
+
 // Load test configuration
 if (file_exists(APP_ROOT . '/tests/config/database.php')) {
     $testDbConfig = require APP_ROOT . '/tests/config/database.php';
@@ -57,6 +70,7 @@ function getTestDbConnection() {
     
     if ($db === null) {
         try {
+            // Attempt to connect to the database
             $db = new PDO(
                 "mysql:host=" . TEST_DB_HOST . ";dbname=" . TEST_DB_NAME . ";charset=utf8mb4",
                 TEST_DB_USER,
@@ -68,7 +82,35 @@ function getTestDbConnection() {
                 ]
             );
         } catch (PDOException $e) {
-            die("Test database connection failed: " . $e->getMessage());
+            // If the database doesn't exist, try to create it
+            if (strpos($e->getMessage(), 'Unknown database') !== false) {
+                try {
+                    $tempDb = new PDO(
+                        "mysql:host=" . TEST_DB_HOST . ";charset=utf8mb4",
+                        TEST_DB_USER,
+                        TEST_DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+                    );
+                    $tempDb->exec("CREATE DATABASE IF NOT EXISTS `" . TEST_DB_NAME . "`");
+                    $tempDb = null; // Close the temporary connection
+                    
+                    // Reconnect to the newly created database
+                    $db = new PDO(
+                        "mysql:host=" . TEST_DB_HOST . ";dbname=" . TEST_DB_NAME . ";charset=utf8mb4",
+                        TEST_DB_USER,
+                        TEST_DB_PASS,
+                        [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                            PDO::ATTR_EMULATE_PREPARES => false,
+                        ]
+                    );
+                } catch (PDOException $e) {
+                    die("Test database creation or connection failed: " . $e->getMessage());
+                }
+            } else {
+                die("Test database connection failed: " . $e->getMessage());
+            }
         }
     }
     
@@ -80,6 +122,23 @@ function getTestMysqliConnection() {
     static $mysqli = null;
     
     if ($mysqli === null) {
+        // Ensure the database exists before connecting with mysqli
+        try {
+            $tempDb = new mysqli(
+                TEST_DB_HOST,
+                TEST_DB_USER,
+                TEST_DB_PASS
+            );
+            if ($tempDb->connect_error) {
+                die("Temporary mysqli connection failed: " . $tempDb->connect_error);
+            }
+            $tempDb->query("CREATE DATABASE IF NOT EXISTS `" . TEST_DB_NAME . "`");
+            $tempDb->close();
+        } catch (Exception $e) {
+            // This catch is for general exceptions, mysqli errors are usually connect_error
+            // or query errors which are handled by the above checks.
+        }
+
         $mysqli = new mysqli(
             TEST_DB_HOST,
             TEST_DB_USER,
@@ -97,23 +156,13 @@ function getTestMysqliConnection() {
     return $mysqli;
 }
 
-// Run migrations before tests
-function runTestMigrations() {
-    if (getenv('RUN_MIGRATIONS') !== 'false') {
-        $mysqli = getTestMysqliConnection();
-        $migrationManager = new Tests\Database\MigrationManager(
-            $mysqli,
-            __DIR__ . '/Database/Migrations'
-        );
-        $migrationManager->migrate();
-    }
-}
-
 // Include the test helper
 require_once __DIR__ . '/TestHelper.php';
 
 // Run migrations and seed the test database when this file is included
 if (php_sapi_name() !== 'cli' || (isset($argv[0]) && basename($argv[0]) === 'phpunit')) {
+    error_log("Entering PHPUnit execution block.");
+    runTestMigrations();
     try {
         // Create a PDO connection for the seeder
         $pdo = new PDO(

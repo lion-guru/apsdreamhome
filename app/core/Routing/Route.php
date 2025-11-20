@@ -114,10 +114,21 @@ class Route
      * @param  string  $prefix
      * @return $this
      */
-    public function prefix($prefix)
+    public function setPrefix($prefix)
     {
         $this->prefix = trim($prefix, '/') . '/';
         return $this;
+    }
+    
+    /**
+     * Set the route prefix (alias for setPrefix).
+     *
+     * @param  string  $prefix
+     * @return $this
+     */
+    public function prefix($prefix)
+    {
+        return $this->setPrefix($prefix);
     }
     
     /**

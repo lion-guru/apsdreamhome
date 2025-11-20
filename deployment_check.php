@@ -29,7 +29,7 @@ echo "<!DOCTYPE html>
 
 // Test database connection
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     if ($conn) {
         echo "<div class='status-card success'><strong>✅ Database Connection:</strong> SUCCESS</div>";
     } else {

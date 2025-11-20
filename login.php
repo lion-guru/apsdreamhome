@@ -4,7 +4,8 @@
  * User authentication for the main website
  */
 
-require_once 'core/functions.php';
+require_once 'includes/config/config.php';
+require_once 'includes/functions.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
@@ -22,18 +23,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Check user credentials (simplified for main site)
         try {
-            $pdo = getDbConnection();
-            $stmt = $pdo->prepare("SELECT id, name, email, phone, role, status FROM users WHERE email = ? AND status = 'active' LIMIT 1");
-            $stmt->execute([$username]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Use the database connection from config
+            global $conn;
 
-            if ($user && password_verify($password, $user['password'] ?? '')) {
+            $stmt = $conn->prepare("SELECT id, name, email, phone, role, status, password FROM users WHERE email = ? AND status = 'active' LIMIT 1");
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+
+            if ($user && password_verify($password, $user['password'])) {
                 // Set session for main site
                 $_SESSION['user_logged_in'] = true;
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_role'] = $user['role'];
+
+                // Update last login
+                $update_stmt = $conn->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
+                $update_stmt->bind_param("i", $user['id']);
+                $update_stmt->execute();
 
                 header('Location: index.php');
                 exit();
@@ -45,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+?>
 ?>
 
 <!DOCTYPE html>
@@ -241,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <a href="index.php">
                                 <i class="fas fa-home me-1"></i>Home
                             </a>
-                            <a href="forgot-password.php">
+                            <a href="forgot_password.php">
                                 <i class="fas fa-key me-1"></i>Forgot Password?
                             </a>
                         </div>

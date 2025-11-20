@@ -4,7 +4,8 @@
  * Test script for WhatsApp messaging functionality
  */
 
-require_once 'includes/config.php';
+require_once 'includes/config/config.php';
+require_once 'includes/whatsapp_integration.php';
 
 // Test WhatsApp integration
 echo "<h1>WhatsApp Integration Test</h1>";
@@ -28,10 +29,16 @@ if ($config['whatsapp']['enabled'] ?? false) {
     echo "<div style='background: #fff3cd; padding: 20px; margin: 20px 0; border-radius: 5px;'>";
     echo "<h3>WhatsApp Statistics:</h3>";
     try {
-        $stats = getWhatsAppStats();
-        echo "<pre>";
-        print_r($stats);
-        echo "</pre>";
+        // Check if function exists
+        if (function_exists('getWhatsAppStats')) {
+            $stats = getWhatsAppStats();
+            echo "<pre>";
+            print_r($stats);
+            echo "</pre>";
+        } else {
+            echo "<p style='color: orange;'>⚠️ getWhatsAppStats() function not available. WhatsApp integration is configured but stats tracking needs to be implemented.</p>";
+            echo "<p>The WhatsApp integration is ready to use with the configured settings above.</p>";
+        }
     } catch (Exception $e) {
         echo "<p style='color: red;'>Error getting WhatsApp stats: " . $e->getMessage() . "</p>";
     }

@@ -1,12 +1,13 @@
 <?php
 // integration_settings.php: GUI for super admin to manage external integrations (WhatsApp, Google Sheets, Email, SMS, CRM)
 session_start();
-require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/../includes/config.php';
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['role'] !== 'super_admin') {
     header('Location: login.php');
     exit();
 }
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -92,3 +93,4 @@ $settings = $conn->query("SELECT * FROM integration_settings WHERE id=1")->fetch
 </div>
 </body>
 </html>
+

@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../includes/db_connection.php';
-$con = getDbConnection();
+require_once __DIR__ . '/../includes/config/config.php';
+global $con;
+// $con = getDbConnection(); // Original line, replaced with global $con;
 $result = $con->query('SELECT id, auser, apass, status FROM admin');
 echo "<pre>";
 while($row = $result->fetch_assoc()) {

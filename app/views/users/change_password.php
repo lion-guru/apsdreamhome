@@ -1,4 +1,12 @@
-<?php include '../app/views/includes/header.php'; ?>
+<?php
+if (!defined('BASE_URL')) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $base = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    define('BASE_URL', $protocol . '://' . $host . rtrim($base, '/') . '/');
+}
+?>
+<?php include BASE_URL . 'app/views/includes/header.php'; ?>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -73,4 +81,4 @@
     });
 </script>
 
-<?php include '../app/views/includes/footer.php'; ?>
+<?php include BASE_URL . 'app/views/includes/footer.php'; ?>

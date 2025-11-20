@@ -1,7 +1,7 @@
 <?php
 // auto_cleanup_cron.php: Archive or delete leads older than 1 year to keep the database clean
 require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+$conn = $con;
 
 // Archive leads older than 1 year
 $conn->query("UPDATE leads SET status = 'Archived' WHERE status != 'Archived' AND created_at < (NOW() - INTERVAL 1 YEAR)");

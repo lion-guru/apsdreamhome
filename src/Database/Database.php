@@ -57,9 +57,10 @@ class Database {
             $result = $stmt->get_result();
             $stmt->close();
         } else {
+            error_log("Executing SQL: " . $sql);
             $result = $this->connection->query($sql);
             if ($result === false) {
-                throw new \Exception("Query failed: " . $this->connection->error);
+                throw new \Exception("Query failed: " . $this->connection->error . " (SQL: " . $sql . ")");
             }
         }
 

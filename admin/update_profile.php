@@ -106,7 +106,7 @@ elseif (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error']
 }
 
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     
     // Prepare SQL
     $sql = "UPDATE users SET name = ?, phone = ?";

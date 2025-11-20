@@ -8,7 +8,7 @@ require_once __DIR__ . '/simple_db.php';
 
 // Get database connection
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     
     // Fetch documents from database
     $stmt = $pdo->prepare("SELECT d.*, u.name as username, p.title as property_title 

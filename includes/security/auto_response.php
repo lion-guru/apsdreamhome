@@ -63,7 +63,7 @@ class AutoResponseSystem {
     ];
 
     public function __construct($database_connection = null) {
-        $this->con = $database_connection ?? getDbConnection();
+                $this->con = $database_connection ?? $GLOBALS['con'];
         $this->logger = new SecurityLogger();
         $this->emailManager = new EmailManager();
         $this->smsManager = new SmsManager();

@@ -1,7 +1,10 @@
 /**
- * APS Dream Home - Comprehensive Test Suite
+ * APS Dream Home - System Test (Windows Compatible)
  * Tests all optimized systems and functionality
  */
+
+const fs = require('fs');
+const path = require('path');
 
 class SystemTester {
     constructor() {
@@ -9,15 +12,166 @@ class SystemTester {
         this.startTime = Date.now();
     }
 
+    // Test if files exist
+    testFileExists(filePath, description) {
+        try {
+            if (fs.existsSync(filePath)) {
+                this.logSuccess(`${description} exists`);
+                return true;
+            } else {
+                this.logError(`${description} missing`);
+                return false;
+            }
+        } catch (error) {
+            this.logError(`${description} error: ${error.message}`);
+            return false;
+        }
+    }
+
+    // Test directory structure
+    testDirectoryStructure() {
+        console.log('🧪 Testing Directory Structure...');
+
+        const directories = [
+            'assets/css',
+            'assets/js',
+            'includes',
+            'admin'
+        ];
+
+        let allValid = true;
+        directories.forEach(dir => {
+            if (!this.testFileExists(dir, `Directory ${dir}`)) {
+                allValid = false;
+            }
+        });
+
+        return allValid;
+    }
+
     // Test template system
     testTemplateSystem() {
         console.log('🧪 Testing Template System...');
 
-        try {
-            // Test if template files exist
-            const templatePath = 'includes/enhanced_universal_template.php';
-            if (fs.existsSync(templatePath)) {
-                this.logSuccess('Template system file exists');
+        return this.testFileExists('includes/enhanced_universal_template.php', 'Enhanced template system') &&
+               this.testFileExists('includes/templates/header.php', 'Template header') &&
+               this.testFileExists('includes/templates/footer.php', 'Template footer');
+    }
+
+    // Test JavaScript utilities
+    testJavaScriptUtilities() {
+        console.log('🧪 Testing JavaScript System...');
+
+        return this.testFileExists('assets/js/utils.js', 'JavaScript utils') &&
+               this.testFileExists('assets/js/custom.js', 'Custom JavaScript') &&
+               this.testFileExists('package.json', 'Package configuration');
+    }
+
+    // Test CSS consolidation
+    testCSSConsolidation() {
+        console.log('🧪 Testing CSS System...');
+
+        const cssFiles = [
+            'assets/css/custom-styles.css',
+            'assets/css/admin.css',
+            'assets/css/style.css'
+        ];
+
+        let allValid = true;
+        cssFiles.forEach(file => {
+            if (!this.testFileExists(file, `CSS file ${path.basename(file)}`)) {
+                allValid = false;
+            }
+        });
+
+        return allValid;
+    }
+
+    // Test PHP files
+    testPHPFiles() {
+        console.log('🧪 Testing PHP Files...');
+
+        const phpFiles = [
+            'index.php',
+            'homepage.php',
+            'admin/admin_panel.php'
+        ];
+
+        let allValid = true;
+        phpFiles.forEach(file => {
+            if (!this.testFileExists(file, `PHP file ${path.basename(file)}`)) {
+                allValid = false;
+            }
+        });
+
+        return allValid;
+    }
+
+    // Run all tests
+    runAllTests() {
+        console.log('🚀 APS Dream Home - System Validation');
+        console.log('=' .repeat(50));
+
+        const tests = [
+            this.testDirectoryStructure.bind(this),
+            this.testTemplateSystem.bind(this),
+            this.testCSSConsolidation.bind(this),
+            this.testJavaScriptUtilities.bind(this),
+            this.testPHPFiles.bind(this)
+        ];
+
+        let passedTests = 0;
+        let totalTests = tests.length;
+
+        tests.forEach((test, index) => {
+            console.log(`\n--- Test ${index + 1}/${totalTests} ---`);
+            if (test()) {
+                passedTests++;
+            }
+        });
+
+        const endTime = Date.now();
+        const duration = (endTime - this.startTime) / 1000;
+
+        console.log('\n' + '=' .repeat(50));
+        console.log('📊 VALIDATION RESULTS');
+        console.log('=' .repeat(50));
+        console.log(`✅ Tests Passed: ${passedTests}/${totalTests}`);
+        console.log(`❌ Tests Failed: ${totalTests - passedTests}/${totalTests}`);
+        console.log(`⏱️  Duration: ${duration.toFixed(2)} seconds`);
+
+        if (passedTests === totalTests) {
+            console.log('\n🎉 ALL SYSTEMS VALIDATED! Ready for development.');
+            console.log('🌐 Development: http://localhost:3000');
+            console.log('🔧 PHP Server: http://localhost:8000');
+            console.log('📱 PWA Ready: npm run build');
+        } else {
+            console.log('\n⚠️  Some systems need attention. Check errors above.');
+        }
+
+        return passedTests === totalTests;
+    }
+
+    // Helper methods
+    logSuccess(message) {
+        console.log(`  ✅ ${message}`);
+        this.results.push({ type: 'success', message });
+    }
+
+    logError(message) {
+        console.log(`  ❌ ${message}`);
+        this.results.push({ type: 'error', message });
+    }
+}
+
+// Run tests if called directly
+if (require.main === module) {
+    const tester = new SystemTester();
+    const success = tester.runAllTests();
+    process.exit(success ? 0 : 1);
+}
+
+module.exports = SystemTester;
             } else {
                 this.logError('Template system file missing');
                 return false;

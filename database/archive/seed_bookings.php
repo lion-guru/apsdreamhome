@@ -137,7 +137,7 @@ echo "=== Booking Data Seeder ===\n\n";
 
 try {
     // Get database connection
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     
     if ($conn === null) {
         throw new Exception("Failed to connect to the database");

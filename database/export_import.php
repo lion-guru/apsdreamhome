@@ -69,7 +69,7 @@ log_message("=======================================\n");
 // Process each source database
 foreach ($config['source_dbs'] as $source_db) {
     // Check if source database exists
-    $check_db = run_command("$mysql -u{$config['user']} -e \"SHOW DATABASES LIKE '$source_db'\"");
+    $check_db = run_command("$mysql -u" . escapeshellarg($config['user']) . " -e \"SHOW DATABASES LIKE " . escapeshellarg($source_db) . "\"");
     
     if (empty($check_db) || strpos(implode("\n", $check_db), $source_db) === false) {
         log_message("Source database '$source_db' does not exist, skipping...");
@@ -81,7 +81,7 @@ foreach ($config['source_dbs'] as $source_db) {
     
     // Get list of tables
     $tables = [];
-    $tables_result = run_command("$mysql -u{$config['user']} -e \"SHOW TABLES FROM `$source_db`\"");
+    $tables_result = run_command("$mysql -u" . escapeshellarg($config['user']) . " -e \"SHOW TABLES FROM " . escapeshellarg($source_db) . "\"");
     
     if ($tables_result) {
         foreach ($tables_result as $line) {
@@ -104,14 +104,14 @@ foreach ($config['source_dbs'] as $source_db) {
         $dump_file = "$temp_dir/{$source_db}_{$table}.sql";
         
         // Export table structure without data
-        $cmd = "$mysqldump --no-data -u{$config['user']} --skip-add-drop-table --skip-triggers $source_db $table > \"$dump_file\"";
+        $cmd = "$mysqldump --no-data -u" . escapeshellarg($config['user']) . " --skip-add-drop-table --skip-triggers " . escapeshellarg($source_db) . " " . escapeshellarg($table) . " > " . escapeshellarg($dump_file);
         if (!run_command($cmd)) {
             log_message("  - Error exporting structure for $table");
             continue;
         }
         
         // Export table data
-        $cmd = "$mysqldump --no-create-info --skip-triggers -u{$config['user']} $source_db $table >> \"$dump_file\"";
+        $cmd = "$mysqldump --no-create-info --skip-triggers -u" . escapeshellarg($config['user']) . " " . escapeshellarg($source_db) . " " . escapeshellarg($table) . " >> " . escapeshellarg($dump_file);
         if (!run_command($cmd)) {
             log_message("  - Error exporting data for $table");
             continue;
@@ -120,7 +120,7 @@ foreach ($config['source_dbs'] as $source_db) {
         log_message("  - Exported $table");
         
         // Import into target database
-        $cmd = "$mysql -u{$config['user']} {$config['target_db']} < \"$dump_file\"";
+        $cmd = "$mysql -u" . escapeshellarg($config['user']) . " " . escapeshellarg($config['target_db']) . " < " . escapeshellarg($dump_file);
         if (run_command($cmd)) {
             log_message("  - Imported $table");
         } else {

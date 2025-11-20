@@ -17,8 +17,9 @@ if (class_exists('App\Core\Application')) {
  */
 class Application {
     private static $instance = null;
-    private $config = [];
+    private $config = array();
     private $initialized = false;
+    private $router;
 
     /**
      * Get singleton instance
@@ -28,6 +29,28 @@ class Application {
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    /**
+     * Set the router instance
+     */
+    public function setRouter($router) {
+        $this->router = $router;
+    }
+
+    /**
+     * Handle the incoming request
+     *
+     * @param string $requestPath
+     */
+    public function handleRequest($requestPath) {
+        if (!$this->router) {
+            throw new \Exception("Router not set in Application.");
+        }
+
+        if (!$this->router->route($requestPath)) {
+            $this->router->renderError(404, 'Page Not Found', 'The requested page could not be found.');
+        }
     }
 
     /**
@@ -112,8 +135,8 @@ class Application {
      */
     public function shutdown() {
         // Clean up resources, close connections, etc.
-        if (isset($GLOBALS['con']) && $GLOBALS['con'] instanceof mysqli) {
-            mysqli_close($GLOBALS['con']);
+        if (isset($GLOBALS['con']) && $GLOBALS['con'] instanceof \mysqli) {
+            \mysqli_close($GLOBALS['con']);
         }
     }
 
@@ -139,35 +162,4 @@ class Application {
     }
 }
 
-/**
- * Global helper function to get configuration values
- */
-function config($key, $default = null) {
-    global $config;
 
-    if (!isset($config)) {
-        $config = [];
-    }
-
-    $keys = explode('.', $key);
-    $value = $config;
-
-    foreach ($keys as $k) {
-        if (isset($value[$k])) {
-            $value = $value[$k];
-        } else {
-            return $default;
-        }
-    }
-
-    return $value;
-}
-
-/**
- * Global helper function for application instance
- */
-function app() {
-    return Application::getInstance();
-}
-
-?>

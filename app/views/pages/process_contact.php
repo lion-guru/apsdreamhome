@@ -50,6 +50,10 @@ try {
     if (empty($message)) {
         $errors['message'] = 'Message is required';
     }
+
+    if (!empty($phone) && !preg_match("/^[0-9]{10,}$/", $phone)) {
+        $errors['phone'] = 'Please enter a valid phone number';
+    }
     
     // If there are validation errors
     if (!empty($errors)) {
@@ -114,3 +118,4 @@ try {
 // Return JSON response
 echo json_encode($response);
 ?>
+

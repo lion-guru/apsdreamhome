@@ -1,7 +1,9 @@
 <?php
 // auto_admin_notification_cron.php: Notify admins about important automatic events
-require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+// require_once __DIR__ . '/../includes/db_config.php';
+require_once __DIR__ . '/includes/config/config.php';
+global $con;
+$conn = $con;
 
 // Example: Notify about new auto-converted leads today using prepared statement
 $stmt = $conn->prepare("SELECT COUNT(*) as c FROM leads WHERE status = 'Converted' AND DATE(updated_at) = CURDATE() AND notes LIKE '%[Auto] Converted%'");
@@ -33,3 +35,4 @@ if ($reminders > 0) {
     $stmt->close();
 }
 ?>
+

@@ -1,5 +1,5 @@
 
-Fatal error: Uncaught Error: Call to undefined function getDbConnection() in C:\xampp\htdocs\apsdreamhome\admin\bookings.php:246 Stack trace: #0 {main} thrown in C:\xampp\htdocs\apsdreamhome\admin\bookings.php on line 246<?php
+<?php
 /**
  * Universal Dashboard Template for All Employee Roles
  * Mobile-First, Modern UI/UX Design

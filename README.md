@@ -1,284 +1,736 @@
-# 🚀 APS Dream Homes - Real Estate Platform
+# APS Dream Home - Comprehensive Fix Guide
 
-## 📋 Project Overview
+## Project Overview
+This document provides a comprehensive guide to fix all critical issues identified in the APS Dream Home project, ensuring security, performance, and maintainability.
 
-**APS Dream Homes** is a comprehensive real estate platform built with modern PHP, featuring property listings, team management, legal services, financial services, and interior design services. This is an enterprise-grade real estate solution with professional design and robust functionality.
+## 🚨 Critical Issues Identified
 
-## 🎯 Current Status
+### 1. Database Security Vulnerabilities
+- **SQL Injection Risks**: Multiple files using string concatenation in SQL queries
+- **Database Connection Issues**: Inconsistent password constant usage (DB_PASSWORD vs DB_PASS)
+- **Missing Input Validation**: Direct user input in database queries
 
-### ✅ **COMPLETED FEATURES:**
+### 2. Frontend Asset Bloat
+- **Duplicate Files**: Multiple versions of same libraries (moment.js/moment.min.js, slick.js/slick.min.js)
+- **Unoptimized Build**: No modern build system for asset optimization
+- **Mixed Content**: PHP and frontend assets mixed together
 
-#### **🏠 Core Real Estate Platform:**
-- ✅ **Property Management System** - Complete CRUD operations for properties
-- ✅ **User-Friendly Interface** - Modern, responsive Bootstrap 5 design
-- ✅ **Advanced Search & Filtering** - Location, price, type-based filtering
-- ✅ **Property Gallery** - Beautiful image galleries with lightbox
-- ✅ **Contact Forms** - Integrated contact and inquiry forms
-- ✅ **Admin Panel** - Complete administrative interface
+### 3. Routing Fragmentation
+- **Multiple Routing Systems**: Inconsistent routing approaches across the project
+- **404 Errors**: Improper error handling for missing routes
+- **No Centralized Router**: Fragmented routing logic
 
-#### **👥 Team & Services:**
-- ✅ **Team Management** - Professional team member profiles
-- ✅ **Legal Services** - Dedicated legal consultation services
-- ✅ **Financial Services** - Investment and loan advisory
-- ✅ **Interior Design** - Portfolio and design consultation
-- ✅ **Career Portal** - Job listings and applications
+### 4. Security Headers Missing
+- **No CSP**: Content Security Policy not implemented
+- **Missing Security Headers**: XSS protection, CSRF tokens absent
+- **CDN Dependencies**: External CDN links without integrity checks
 
-#### **🔧 Technical Excellence:**
-- ✅ **Modern PHP Architecture** - PDO database connections
-- ✅ **Security Hardened** - SQL injection prevention, XSS protection
-- ✅ **SEO Optimized** - Meta tags, structured data ready
-- ✅ **Performance Optimized** - Efficient queries, CDN integration
-- ✅ **Mobile Responsive** - Works perfectly on all devices
+## 🔧 Step-by-Step Fix Instructions
 
-#### **⚡ Recent Optimizations (2025):**
-- ✅ **88% Template Cleanup** - Eliminated duplicate header/footer templates
-- ✅ **87% CSS Consolidation** - Reduced from 47 to 6 essential CSS files
-- ✅ **90% JavaScript Optimization** - Shared utilities eliminate duplicate code
-- ✅ **70% Documentation Cleanup** - Organized and streamlined documentation
-- ✅ **Professional Codebase** - Clean, maintainable, production-ready structure
+### Phase 1: Database Security (Priority: HIGH)
 
----
+#### 1.1 Fix Database Connection
+**File**: `includes/db_connection.php`
 
-## 📁 Optimized Project Structure
+```php
+<?php
+// Support both constant names for backward compatibility
+if (!defined('DB_PASSWORD') && defined('DB_PASS')) {
+    define('DB_PASSWORD', DB_PASS);
+}
+
+class Database {
+    private static $instance = null;
+    private $pdo;
+    
+    private function __construct() {
+        try {
+            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+            $this->pdo = new PDO($dsn, DB_USER, DB_PASSWORD, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        } catch (PDOException $e) {
+            error_log("Database connection failed: " . $e->getMessage());
+            die("Database connection failed. Please check configuration.");
+        }
+    }
+    
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+    
+    public function getConnection() {
+        return $this->pdo;
+    }
+}
+
+// Usage helper function
+function getDb() {
+    return Database::getInstance()->getConnection();
+}
+?>
+```
+
+#### 1.2 Fix SQL Injection in Admin Files
+**Files**: All admin files with SQL queries
+
+**Before (Vulnerable)**:
+```php
+$query = "SELECT * FROM users WHERE id = " . $_GET['id'];
+```
+
+**After (Secure)**:
+```php
+<?php
+require_once __DIR__ . '/../includes/db_connection.php';
+
+function getUserById($id) {
+    $db = getDb();
+    $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+function updateUser($id, $data) {
+    $db = getDb();
+    $stmt = $db->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+    return $stmt->execute([$data['name'], $data['email'], $id]);
+}
+?>
+```
+
+### Phase 2: Frontend Asset Optimization (Priority: HIGH)
+
+#### 2.1 Set Up Modern Build System
+**File**: `vite.config.js`
+
+```javascript
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+
+export default defineConfig({
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'src/js/app.js'),
+        style: resolve(__dirname, 'src/css/style.css')
+      },
+      output: {
+        manualChunks: {
+          vendor: ['jquery', 'moment', 'chart.js'],
+          utilities: ['lodash', 'axios']
+        }
+      }
+    }
+  },
+  publicDir: 'public_assets', // Separate from PHP files
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': 'http://localhost:8080'
+    }
+  }
+});
+```
+
+#### 2.2 Clean Duplicate Assets
+**Script**: `scripts/cleanup-assets.php`
+
+```php
+<?php
+/**
+ * Asset Cleanup Script
+ * Removes duplicate files and optimizes frontend assets
+ */
+
+$duplicates = [
+    'moment.js' => 'moment.min.js',
+    'slick.js' => 'slick.min.js',
+    'jquery.js' => 'jquery.min.js',
+    'bootstrap.js' => 'bootstrap.min.js'
+];
+
+$removedFiles = [];
+foreach ($duplicates as $original => $minified) {
+    $originalPath = "assets/js/$original";
+    $minifiedPath = "assets/js/$minified";
+    
+    if (file_exists($originalPath) && file_exists($minifiedPath)) {
+        // Keep minified version, remove original
+        if (unlink($originalPath)) {
+            $removedFiles[] = $originalPath;
+        }
+    }
+}
+
+echo "Removed " . count($removedFiles) . " duplicate files:\n";
+foreach ($removedFiles as $file) {
+    echo "- $file\n";
+}
+?>
+```
+
+### Phase 3: Routing System Unification (Priority: HIGH)
+
+#### 3.1 Create Modern Router
+**File**: `app/core/Routing/Router.php`
+
+```php
+<?php
+namespace App\Core\Routing;
+
+class Router {
+    private $routes = [];
+    private $middleware = [];
+    private $currentGroup = [];
+    
+    public function get($uri, $action) {
+        return $this->addRoute('GET', $uri, $action);
+    }
+    
+    public function post($uri, $action) {
+        return $this->addRoute('POST', $uri, $action);
+    }
+    
+    public function group($attributes, $callback) {
+        $previousGroup = $this->currentGroup;
+        $this->currentGroup = array_merge($previousGroup, $attributes);
+        $callback($this);
+        $this->currentGroup = $previousGroup;
+    }
+    
+    private function addRoute($method, $uri, $action) {
+        $route = new Route($method, $uri, $action);
+        
+        // Apply group middleware
+        if (isset($this->currentGroup['middleware'])) {
+            $route->middleware($this->currentGroup['middleware']);
+        }
+        
+        $this->routes[] = $route;
+        return $route;
+    }
+    
+    public function dispatch() {
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
+        $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        
+        foreach ($this->routes as $route) {
+            if ($route->matches($requestMethod, $requestUri)) {
+                return $route->dispatch();
+            }
+        }
+        
+        // Handle 404
+        $this->handle404();
+    }
+    
+    private function handle404() {
+        http_response_code(404);
+        require_once __DIR__ . '/../../views/errors/404.php';
+        exit;
+    }
+}
+
+class Route {
+    private $method;
+    private $uri;
+    private $action;
+    private $middleware = [];
+    private $parameters = [];
+    
+    public function __construct($method, $uri, $action) {
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->action = $action;
+    }
+    
+    public function matches($method, $uri) {
+        if ($this->method !== $method) {
+            return false;
+        }
+        
+        // Convert route parameters to regex
+        $pattern = preg_replace('/\{([^}]+)\}/', '([^/]+)', $this->uri);
+        $pattern = '#^' . $pattern . '$#';
+        
+        if (preg_match($pattern, $uri, $matches)) {
+            array_shift($matches); // Remove full match
+            $this->parameters = $matches;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public function dispatch() {
+        // Apply middleware
+        foreach ($this->middleware as $middleware) {
+            $middleware->handle();
+        }
+        
+        if (is_callable($this->action)) {
+            return call_user_func_array($this->action, $this->parameters);
+        }
+        
+        if (is_string($this->action) && strpos($this->action, '@') !== false) {
+            list($controller, $method) = explode('@', $this->action);
+            $controllerInstance = new $controller();
+            return call_user_func_array([$controllerInstance, $method], $this->parameters);
+        }
+    }
+    
+    public function middleware($middleware) {
+        $this->middleware[] = $middleware;
+        return $this;
+    }
+}
+?>
+```
+
+#### 3.2 Implement Router in Main Entry Point
+**File**: `public/index.php`
+
+```php
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../app/core/Routing/Router.php';
+
+use App\Core\Routing\Router;
+
+$router = new Router();
+
+// Home route
+$router->get('/', function() {
+    require_once __DIR__ . '/../app/views/home.php';
+});
+
+// Admin routes group
+$router->group(['middleware' => ['auth', 'admin']], function($router) {
+    $router->get('/admin', 'AdminController@index');
+    $router->get('/admin/users', 'AdminController@users');
+    $router->get('/admin/properties', 'AdminController@properties');
+});
+
+// API routes
+$router->group(['prefix' => 'api'], function($router) {
+    $router->get('/properties', 'ApiController@properties');
+    $router->get('/properties/{id}', 'ApiController@property');
+    $router->post('/contact', 'ApiController@contact');
+});
+
+// Error routes
+$router->get('/test/error/404', function() {
+    http_response_code(404);
+    require_once __DIR__ . '/../app/views/errors/404.php';
+});
+
+$router->dispatch();
+?>
+```
+
+### Phase 4: Security Headers Implementation (Priority: MEDIUM)
+
+#### 4.1 Create Security Configuration
+**File**: `config/security.php`
+
+```php
+<?php
+/**
+ * Security Headers and CSP Configuration
+ */
+
+// Generate CSP nonce for inline scripts
+if (!isset($_SESSION['csp_nonce'])) {
+    $_SESSION['csp_nonce'] = bin2hex(random_bytes(16));
+}
+
+// Content Security Policy
+$csp = [
+    "default-src 'self'",
+    "script-src 'self' 'nonce-" . $_SESSION['csp_nonce'] . "' https://cdn.jsdelivr.net",
+    "style-src 'self' 'nonce-" . $_SESSION['csp_nonce'] . "' https://fonts.googleapis.com",
+    "img-src 'self' data: https:",
+    "font-src 'self' https://fonts.gstatic.com",
+    "connect-src 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'"
+];
+
+// Security headers
+$securityHeaders = [
+    'X-Content-Type-Options' => 'nosniff',
+    'X-Frame-Options' => 'DENY',
+    'X-XSS-Protection' => '1; mode=block',
+    'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains',
+    'Referrer-Policy' => 'strict-origin-when-cross-origin',
+    'Permissions-Policy' => 'geolocation=(), microphone=(), camera=()',
+    'Content-Security-Policy' => implode('; ', $csp)
+];
+
+// Apply headers
+foreach ($securityHeaders as $header => $value) {
+    header("$header: $value");
+}
+
+// CSRF token generation
+function generateCSRFToken() {
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+// CSRF token validation
+function validateCSRFToken($token) {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+?>
+```
+
+#### 4.2 Implement Input Validation
+**File**: `app/core/Validation/Validator.php`
+
+```php
+<?php
+namespace App\Core\Validation;
+
+class Validator {
+    private $data = [];
+    private $errors = [];
+    private $rules = [];
+    
+    public function __construct($data) {
+        $this->data = $data;
+    }
+    
+    public function rule($field, $rule, $params = []) {
+        $this->rules[$field][] = ['rule' => $rule, 'params' => $params];
+        return $this;
+    }
+    
+    public function validate() {
+        foreach ($this->rules as $field => $rules) {
+            foreach ($rules as $ruleData) {
+                $this->applyRule($field, $ruleData['rule'], $ruleData['params']);
+            }
+        }
+        
+        return empty($this->errors);
+    }
+    
+    private function applyRule($field, $rule, $params) {
+        $value = $this->data[$field] ?? null;
+        
+        switch ($rule) {
+            case 'required':
+                if (empty($value)) {
+                    $this->errors[$field][] = "The $field field is required.";
+                }
+                break;
+                
+            case 'email':
+                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $this->errors[$field][] = "The $field field must be a valid email.";
+                }
+                break;
+                
+            case 'min':
+                if (strlen($value) < $params[0]) {
+                    $this->errors[$field][] = "The $field field must be at least {$params[0]} characters.";
+                }
+                break;
+                
+            case 'max':
+                if (strlen($value) > $params[0]) {
+                    $this->errors[$field][] = "The $field field must not exceed {$params[0]} characters.";
+                }
+                break;
+                
+            case 'numeric':
+                if (!is_numeric($value)) {
+                    $this->errors[$field][] = "The $field field must be numeric.";
+                }
+                break;
+                
+            case 'alphanumeric':
+                if (!ctype_alnum($value)) {
+                    $this->errors[$field][] = "The $field field must be alphanumeric.";
+                }
+                break;
+        }
+    }
+    
+    public function errors() {
+        return $this->errors;
+    }
+    
+    public function sanitized($field) {
+        $value = $this->data[$field] ?? '';
+        return htmlspecialchars(strip_tags(trim($value)), ENT_QUOTES, 'UTF-8');
+    }
+}
+?>
+```
+
+### Phase 5: Environment Configuration (Priority: MEDIUM)
+
+#### 5.1 Create Environment Template
+**File**: `.env.example`
+
+```bash
+# Application Configuration
+APP_NAME="APS Dream Home"
+APP_ENV=development
+APP_DEBUG=true
+APP_URL=http://localhost:8080
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=apsdreamhome
+DB_USER=root
+DB_PASSWORD=
+DB_CHARSET=utf8mb4
+
+# Security Configuration
+SESSION_LIFETIME=120
+CSRF_PROTECTION=true
+CSP_ENABLED=true
+
+# Email Configuration
+MAIL_DRIVER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_ENCRYPTION=tls
+
+# File Upload Configuration
+MAX_FILE_SIZE=5242880
+ALLOWED_FILE_TYPES=jpg,jpeg,png,gif,pdf,doc,docx
+UPLOAD_PATH=uploads/
+
+# Cache Configuration
+CACHE_DRIVER=file
+CACHE_LIFETIME=3600
+
+# Logging Configuration
+LOG_CHANNEL=daily
+LOG_LEVEL=debug
+
+# External Services
+CDN_URL=https://cdn.jsdelivr.net
+GOOGLE_MAPS_API_KEY=
+RECAPTCHA_SITE_KEY=
+RECAPTCHA_SECRET_KEY=
+```
+
+#### 5.2 Create Environment Loader
+**File**: `config/env.php`
+
+```php
+<?php
+/**
+ * Environment Configuration Loader
+ */
+
+class Env {
+    private static $variables = [];
+    
+    public static function load($file) {
+        if (!file_exists($file)) {
+            throw new Exception("Environment file not found: $file");
+        }
+        
+        $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        
+        foreach ($lines as $line) {
+            if (strpos($line, '#') === 0) {
+                continue; // Skip comments
+            }
+            
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value, '"\'');
+            
+            self::$variables[$key] = $value;
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
+        }
+    }
+    
+    public static function get($key, $default = null) {
+        return self::$variables[$key] ?? $_ENV[$key] ?? $default;
+    }
+    
+    public static function set($key, $value) {
+        self::$variables[$key] = $value;
+        $_ENV[$key] = $value;
+        $_SERVER[$key] = $value;
+    }
+}
+
+// Load environment variables
+if (file_exists(__DIR__ . '/../.env')) {
+    Env::load(__DIR__ . '/../.env');
+}
+
+// Define constants for backward compatibility
+define('DB_HOST', Env::get('DB_HOST', 'localhost'));
+define('DB_NAME', Env::get('DB_NAME', 'apsdreamhome'));
+define('DB_USER', Env::get('DB_USER', 'root'));
+define('DB_PASSWORD', Env::get('DB_PASSWORD', ''));
+define('DB_CHARSET', Env::get('DB_CHARSET', 'utf8mb4'));
+?>
+```
+
+## 🏗️ Project Structure After Fixes
 
 ```
-apsdreamhomefinal/
-├── 📁 admin/                    # Admin panel (secure, optimized)
-│   ├── admin_login.php
-│   ├── admin_dashboard.php
-│   ├── admin_login_handler.php
-│   └── [Property, User, Settings management]
-├── 📁 api/                      # API endpoints
+apsdreamhome/
+├── app/
+│   ├── core/
+│   │   ├── Routing/
+│   │   │   └── Router.php
+│   │   ├── Validation/
+│   │   │   └── Validator.php
+│   │   └── Middleware/
+│   ├── controllers/
+│   ├── models/
+│   └── views/
+│       └── errors/
+│           └── 404.php
+├── config/
+│   ├── env.php
+│   └── security.php
+├── includes/
+│   └── db_connection.php
+├── public/
 │   └── index.php
-├── 📁 assets/                   # Static assets (optimized)
-│   ├── css/                     # 6 essential CSS files
-│   │   ├── custom-styles.css    # Main UI system (12KB)
-│   │   ├── admin.css            # Admin styling (4KB)
-│   │   ├── style.css            # General fallback (13KB)
-│   │   └── faq.css              # FAQ specific styling
-│   └── js/                      # 20 optimized JS files
-│       ├── utils.js             # Shared utilities (NEW)
-│       ├── custom.js            # Main functionality
-│       └── [Feature-specific files]
-├── 📁 core/                     # Core functionality
-│   └── functions.php
-├── 📁 includes/                 # Template system (clean)
-│   ├── enhanced_universal_template.php # Main template system
-│   ├── templates/               # Clean header/footer
-│   └── [Optimized include files]
-├── 📁 logs/                     # Error and access logs
-├── 📄 index.php                 # Homepage (optimized)
-├── 📄 properties.php            # Property listings (optimized)
-├── 📄 about.php                 # About page (optimized)
-├── 📄 contact.php               # Contact page (optimized)
-└── 📄 admin_panel.php           # Admin panel (secure)
+├── src/
+│   ├── js/
+│   └── css/
+├── scripts/
+│   └── cleanup-assets.php
+├── uploads/
+├── .env.example
+├── .htaccess
+├── vite.config.js
+└── package.json
 ```
 
----
+## 🚀 Deployment Commands
 
-## 🚀 Getting Started
+### Development Setup
+```bash
+# Install dependencies
+npm install
 
-### **Quick Start:**
-1. **Homepage:** Visit `index.php` for the main real estate platform
-2. **Properties:** Browse `properties.php` for property listings
-3. **Admin Panel:** Access `admin/admin_panel.php` for management
-4. **About:** Learn more at `about.php`
-5. **Contact:** Reach us via `contact.php`
+# Copy environment file
+cp .env.example .env
 
-### **Technical Features:**
-- **Modern PHP 8+** with comprehensive error handling
-- **Universal Template System** with 4 themes (default, dashboard, login, admin)
-- **Enhanced Security** with 15+ security headers and measures
-- **Performance Optimized** with shared utilities and efficient loading
-- **Responsive Design** optimized for all devices
-- **SEO Ready** with meta tags and structured data
+# Configure database in .env
+# Edit .env file with your database credentials
 
----
+# Run asset cleanup
+php scripts/cleanup-assets.php
 
-## 📈 Performance Metrics
+# Start development server
+npm run dev
+```
 
-| **Metric** | **Before** | **After** | **Improvement** |
-|------------|------------|-----------|---------------|
-| **Template Files** | 16+ scattered | 6 organized | **88% reduction** |
-| **CSS Files** | 47 files | 6 essential | **87% reduction** |
-| **JS Duplicate Code** | 90% duplicated | 10% shared | **90% optimization** |
-| **Documentation** | 50+ files | 15-20 essential | **70% reduction** |
-| **Loading Speed** | Good | Optimized | **Much faster** |
+### Production Build
+```bash
+# Build optimized assets
+npm run build
 
----
+# Set production environment
+export APP_ENV=production
+export APP_DEBUG=false
 
-## 🔧 Development
+# Run database migrations (if any)
+php scripts/migrate.php
 
-### **Code Quality:**
-- **Clean Architecture** - Organized, maintainable structure
-- **Shared Utilities** - JavaScript utilities eliminate duplication
-- **Modern Standards** - ES6 modules, CSS custom properties
-- **Security First** - Comprehensive security measures
-- **Performance Focused** - Optimized loading and caching
+# Set proper permissions
+chmod -R 755 uploads/
+chmod -R 644 config/*.php
+```
 
-### **Contributing:**
-- Follow the established patterns in existing code
-- Use the shared utility functions in `assets/js/utils.js`
-- Maintain the clean file organization
-- Update documentation for any new features
+## 🔍 Testing Checklist
 
----
+### Security Tests
+- [ ] SQL injection prevention verified
+- [ ] CSRF tokens working on all forms
+- [ ] XSS protection headers active
+- [ ] Input validation working
+- [ ] File upload restrictions enforced
+
+### Performance Tests
+- [ ] Asset optimization completed
+- [ ] Duplicate files removed
+- [ ] CDN links integrity checked
+- [ ] Database queries optimized
+- [ ] Caching implemented
+
+### Functionality Tests
+- [ ] All routes working correctly
+- [ ] 404 errors handled properly
+- [ ] Admin panel accessible
+- [ ] Contact forms functional
+- [ ] File uploads working
+
+## 📋 MCP Builder Compatibility
+
+This project is now compatible with MCP (Model Context Protocol) builders with the following features:
+
+### Standardized Structure
+- Clear separation of concerns (MVC pattern)
+- Consistent naming conventions
+- Modular architecture
+- Environment-based configuration
+
+### Development Commands
+```bash
+# Quick setup for MCP builders
+npm run setup:dev
+npm run build:prod
+npm run test:all
+npm run lint:fix
+```
+
+### Configuration Files
+- `.env.example` - Environment template
+- `vite.config.js` - Build configuration
+- `config/security.php` - Security settings
+- `config/env.php` - Environment loader
+
+## 🎯 Next Steps
+
+1. **Apply Phase 1 fixes immediately** (Database security)
+2. **Implement frontend optimization** (Asset cleanup)
+3. **Deploy new routing system** (Router implementation)
+4. **Add security headers** (CSP and protection)
+5. **Configure environment** (Proper .env setup)
+6. **Test all functionality** (Complete checklist)
+7. **Deploy to production** (Follow deployment guide)
 
 ## 📞 Support
 
-For technical support or questions about the codebase:
-- Check the comprehensive documentation in `/docs/`
-- Review the security implementation in admin files
-- Examine the template system in `includes/`
-
-**Status:** ✅ **Production Ready** - Fully optimized and tested
-│   ├── config.php
-│   ├── db_connection.php
-│   ├── utilities.php
-│   ├── site_settings.php
-│   └── templates/
-│       ├── header.php
-│       └── footer.php
-├── 📁 uploads/                  # File uploads (resumes, etc.)
-├── 📄 [40+ PHP pages]          # Public pages & forms
-├── 📄 .htaccess                # URL rewriting & security
-├── 📄 router.php               # Main routing system
-└── 📄 README.md                # This file
-```
-
-## 🎨 **Pages & Features**
-
-### **🏠 Public Pages (All Functional):**
-| **Page** | **Features** | **Status** |
-|----------|--------------|------------|
-| **Home** | Hero section, services, featured properties | ✅ **Live** |
-| **About** | Company info, mission, team preview | ✅ **Live** |
-| **Properties** | Advanced search, filters, property cards | ✅ **Live** |
-| **Projects** | Project showcase with galleries | ✅ **Live** |
-| **Services** | Service overview page | ✅ **Live** |
-| **Legal Services** | Legal consultation, team, FAQs | ✅ **Live** |
-| **Financial Services** | Financial advisory, team, process | ✅ **Live** |
-| **Interior Design** | Design portfolio, team, process | ✅ **Live** |
-| **Career** | Job listings, application forms | ✅ **Live** |
-| **Gallery** | Image gallery with categories | ✅ **Live** |
-| **Team** | Team member profiles | ✅ **Live** |
-| **Testimonials** | Client reviews and ratings | ✅ **Live** |
-| **Contact** | Contact forms and information | ✅ **Live** |
-| **Blog** | Blog with categories (ready for content) | ✅ **Live** |
-| **FAQ** | Frequently asked questions | ✅ **Live** |
+For issues or questions regarding these fixes:
+1. Check the troubleshooting section in each phase
+2. Verify all environment variables are set correctly
+3. Ensure proper file permissions are applied
+4. Review error logs for specific issues
 
 ---
 
-## 🚀 **Form Handlers Created**
-
-### **📝 Contact & Inquiry Forms:**
-1. **`contact_handler.php`** - General contact form submissions
-2. **`property_inquiry_handler.php`** - Property-specific inquiries
-3. **`job_application_handler.php`** - Career applications with file upload
-
-### **🎯 Form Features:**
-- ✅ **Real-time Validation** - Client and server-side validation
-- ✅ **File Upload Support** - Resume uploads for job applications
-- ✅ **Email Notifications** - Automated email system (ready to configure)
-- ✅ **Database Integration** - All submissions stored in database
-- ✅ **Error Handling** - Comprehensive error management
-- ✅ **Security** - CSRF protection and input sanitization
-
----
-
-## 📊 **Sample Data Seeded**
-
-### **✅ Database Content:**
-- **🗂️ Properties**: 5 sample properties (villas, apartments, commercial)
-- **👥 Team Members**: 5 professional team profiles
-- **💬 Testimonials**: 4 client testimonials
-- **💼 Job Openings**: 3 current job positions
-- **❓ FAQs**: 5 frequently asked questions
-- **⚙️ Site Settings**: Complete site configuration
-
----
-
-## 🛠️ **Technical Specifications**
-
-### **💻 Technology Stack:**
-- **Backend**: PHP 8.0+ with PDO
-- **Frontend**: Bootstrap 5.3, jQuery, AOS animations
-- **Database**: MySQL 8.0+
-- **Server**: Apache 2.4+ with mod_rewrite
-
-### **🔒 Security Features:**
-- **SQL Injection Prevention**: PDO prepared statements
-- **XSS Protection**: HTML entity encoding
-- **CSRF Protection**: Token-based validation
-- **File Upload Security**: Type and size validation
-
----
-
-## 🚀 **Quick Start Guide**
-
-### **1. Installation:**
-```bash
-# 1. Copy project to web server
-# 2. Create MySQL database
-# 3. Import database schema
-# 4. Configure database connection in includes/db_connection.php
-# 5. Run sample data seeder: php seed_sample_data.php
-# 6. Access via web browser
-```
-
-### **2. Database Setup:**
-```sql
-CREATE DATABASE apsdreamhomes;
--- Import schema from database/apsdreamhomes.sql
--- Run sample data seeder
-```
-
----
-
-## 📈 **Development Roadmap**
-
-### **🎯 Immediate Goals (Next 24-48 Hours):**
-- [ ] **Content Enhancement**: Add more property listings and images
-- [ ] **SEO Optimization**: Complete meta tags and sitemap
-- [ ] **Performance Testing**: Load testing and optimization
-
-### **📅 Short-term Goals (1 Week):**
-- [ ] **Advanced Search**: Enhanced property search with maps
-- [ ] **User Accounts**: Registration and login system
-- [ ] **Property Comparison**: Side-by-side property comparison
-
-### **📈 Medium-term Goals (1 Month):**
-- [ ] **Payment Gateway**: Integration with payment processors
-- [ ] **Virtual Tours**: 360° property tours
-- [ ] **Mortgage Calculator**: Built-in loan calculation tools
-
----
-
-## 🎯 **Success Metrics**
-
-### **📊 Key Performance Indicators:**
-- **Page Views**: Track popular pages and content
-- **Form Conversions**: Monitor inquiry and application rates
-- **User Engagement**: Time on site, bounce rates
-
----
-
-## 🎉 **Congratulations!**
-
-**You now have a world-class real estate platform!**
-
-### **🏆 What's Been Accomplished:**
-- ✅ **Enterprise-Grade Architecture**: Modern, scalable, secure
-- ✅ **Professional Design**: Beautiful, responsive, user-friendly
-- ✅ **Complete Functionality**: All features working perfectly
-- ✅ **Sample Data**: Ready for demonstration and testing
-
----
-
-## 📞 **Need Help?**
-
-For technical support:
-- **Email**: support@apsdreamhomes.com
-- **Phone**: +91-522-400-1234
-
-**Happy selling!** 🏠💰
+**Note**: This guide provides comprehensive fixes for all critical issues identified. Implement phases in order of priority for best results.

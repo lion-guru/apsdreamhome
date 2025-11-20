@@ -79,7 +79,7 @@ class Application
                 'version' => APP_VERSION ?? '2.1',
                 'environment' => ENVIRONMENT ?? 'development',
                 'debug' => (ENVIRONMENT ?? 'development') === 'development',
-                'url' => getenv('APP_URL') ?: 'http://localhost/apsdreamhomefinal',
+                'url' => getenv('APP_URL') ?: 'http://localhost/apsdreamhome',
                 'timezone' => getenv('APP_TIMEZONE') ?: 'Asia/Kolkata',
             ],
             'database' => $config['database'] ?? [],

@@ -7,7 +7,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit();
 }
 require_permission('manage_customers');
-$conn = getDbConnection();
+$conn = $con;
 $customers = [];
 if ($conn) {
     $result = $conn->query("SELECT * FROM customers ORDER BY id DESC");

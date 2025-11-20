@@ -12,7 +12,8 @@ if (isset($_GET['download']) && $_SESSION['auser'] === 'superadmin') {
     $path = $LOG_ARCHIVE_DIR . '/' . $file;
     if (is_file($path)) {
         // Log the download event
-        $conn = getDbConnection();
+        global $con;
+        $conn = $con;
         $user = $_SESSION['auser'];
         $ip = $_SERVER['REMOTE_ADDR'] ?? '';
         $stmt = $conn->prepare("INSERT INTO audit_access_log (admin_user, action, details, ip_address) VALUES (?, 'archive_download', ?, ?)");
@@ -39,7 +40,8 @@ if (isset($_GET['test_cloud']) && $_SESSION['auser'] === 'superadmin') {
         curl_close($ch);
         if ($http_code !== 200) {
             // Log and alert
-            $conn = getDbConnection();
+            global $con;
+            $conn = $con;
             $user = $_SESSION['auser'];
             $ip = $_SERVER['REMOTE_ADDR'] ?? '';
             $stmt = $conn->prepare("INSERT INTO audit_access_log (admin_user, action, details, ip_address) VALUES (?, 'cloud_download_failed', ?, ?)");
@@ -132,3 +134,4 @@ function get_cloud_url($file) {
 </div>
 </body>
 </html>
+

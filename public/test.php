@@ -1,0 +1,1 @@
+\u003c?php echo 'Hello from test.php'; phpinfo(); ?\u003e

@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // API Configuration
 const API_BASE_URL = __DEV__
-  ? 'http://localhost/apsdreamhomefinal/api'
+  ? 'http://localhost/apsdreamhome/api'
   : 'https://api.apsdreamhome.com/v1';
 
 // Create axios instance

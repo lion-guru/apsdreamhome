@@ -7,7 +7,8 @@
 require_once __DIR__ . '/src/Database/Database.php';
 
 // Get database connection
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 if (!$conn) {
     die("Failed to establish database connection");
 }

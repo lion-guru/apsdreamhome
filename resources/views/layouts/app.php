@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $this->getSection('title', 'APS Dream Home') ?></title>
+    <title><?= $this->yield('title') ?: 'APS Dream Home' ?></title>
 
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
@@ -23,7 +23,7 @@
     <!-- Custom app styles -->
     <link rel="stylesheet" href="/css/app.css">
 
-    <?= $this->getSection('styles') ?>
+    <?= $this->yield('styles') ?>
 </head>
 <body class="bg-gray-50 font-[Poppins]">
     <!-- Header -->
@@ -39,6 +39,6 @@
 
     <!-- Scripts -->
     <script src="/js/app.js" defer></script>
-    <?= $this->getSection('scripts') ?>
+    <?= $this->yield('scripts') ?>
 </body>
 </html>

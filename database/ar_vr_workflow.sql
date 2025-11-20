@@ -1,0 +1,16 @@
+-- AR/VR Tours
+CREATE TABLE IF NOT EXISTS ar_vr_tours (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  property_id INT NOT NULL,
+  asset_url VARCHAR(255) NOT NULL,
+  asset_type VARCHAR(50),
+  uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+-- Workflow Builder
+CREATE TABLE IF NOT EXISTS workflows (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  definition JSON,
+  created_by INT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

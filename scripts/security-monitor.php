@@ -229,7 +229,8 @@ class SecurityMonitor {
 // Usage example
 try {
     require_once __DIR__ . '/../includes/db_connection.php';
-    $conn = getDbConnection();
+        global $con;
+    $conn = $con;
 
     $monitor = new SecurityMonitor($conn);
 

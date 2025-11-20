@@ -33,10 +33,11 @@ function createMissingDirectories() {
 
 // 2. Create default admin user if not exists
 function createDefaultAdmin() {
-    require_once '../includes/config/db_config.php';
+    require_once __DIR__ . '/includes/config/config.php';
+    global $con;
     
     try {
-        $conn = getDbConnection();
+        $conn = $con;
         
         // Check if users table exists
         $result = $conn->query("SHOW TABLES LIKE 'users'");
@@ -141,3 +142,4 @@ if (isset($results['admin_user']['status']) && $results['admin_user']['status'] 
     echo "<a href='login.php'>Go to Admin Login</a>";
 }
 ?>
+

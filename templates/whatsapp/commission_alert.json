@@ -1,0 +1,18 @@
+{
+    "name": "commission_alert",
+    "category": "commission",
+    "language": "en",
+    "header": "\ud83d\udcb0 Commission Earned!",
+    "body": "Congratulations {{associate_name}}! \ud83c\udf89\n\nYou've earned a commission:\n\n\ud83d\udcb5 Amount: \u20b9{{commission_amount}}\n\ud83c\udfe0 Property: {{property_name}}\n\ud83d\udc65 Customer: {{customer_name}}\n\ud83d\udcc5 Date: {{transaction_date}}\n\nCommission Status: {{status}}\n\nYour commission will be processed within 7-10 business days.",
+    "footer": "Thank you for your excellent service! \ud83c\udf1f",
+    "variables": [
+        "associate_name",
+        "commission_amount",
+        "property_name",
+        "customer_name",
+        "transaction_date",
+        "status"
+    ],
+    "created_at": "2025-10-27 06:27:01",
+    "updated_at": "2025-10-27 06:27:01"
+}

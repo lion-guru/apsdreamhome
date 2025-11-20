@@ -27,7 +27,7 @@ return [
         ],
         'syslog' => [
             'enabled' => false,
-            'facility' => LOG_LOCAL0,
+            'facility' => defined('LOG_LOCAL0') ? LOG_LOCAL0 : 16, // Fallback for Windows
             'log_levels' => ['emergency', 'alert', 'critical', 'error']
         ],
         'external_siem' => [

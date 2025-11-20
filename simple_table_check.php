@@ -6,7 +6,7 @@
 require_once __DIR__ . '/includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $conn = getMysqliConnection();
     
     $tables = ['legal_services', 'team_members', 'faqs'];
     

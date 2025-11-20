@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/includes/config/config.php';
+global $con;
 /**
  * Enhanced Security Property Management Interface
  * Provides secure property management with comprehensive security measures
@@ -240,10 +242,9 @@ if (!file_exists($db_connection_file) || !is_readable($db_connection_file)) {
 }
 
 // Include database connection securely
-require_once $db_connection_file;
-
+// require_once $db_connection_file;
 // Get database connection with validation
-$con = getDbConnection();
+$con = $con;
 if (!$con) {
     logSecurityEvent('Database Connection Failed', [
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',

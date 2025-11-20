@@ -59,7 +59,7 @@ abstract class Factory
         $attributes = $this->make($attributes);
         
         // Insert into database
-        $db = $this->getDbConnection();
+        $db = $this->getMysqliConnection();
         $columns = implode(', ', array_map(function($col) {
             return "`$col`";
         }, array_keys($attributes)));
@@ -93,8 +93,11 @@ abstract class Factory
      */
     public function times(int $count, array $attributes = []): array
     {
-        return array_map(function () use ($attributes) {
-        }, range(1, $count));
+        $results = [];
+        foreach (range(1, $count) as $i) {
+            $results[] = $this->create($attributes);
+        }
+        return $results;
     }
 
     /**
@@ -102,16 +105,16 @@ abstract class Factory
      * 
      * @return \mysqli The database connection
      */
-    protected function getDbConnection(): \mysqli
+    protected function getMysqliConnection(): \mysqli
     {
         global $testDbConnection;
         
         if (!isset($testDbConnection)) {
             $testDbConnection = new \mysqli(
-                getenv('DB_HOST') ?: 'localhost',
-                getenv('DB_USER') ?: 'testuser',
-                getenv('DB_PASS') ?: 'testpass',
-                getenv('DB_NAME') ?: 'apsdreamhome_test'
+                TEST_DB_HOST,
+                TEST_DB_USER,
+                TEST_DB_PASS,
+                TEST_DB_NAME
             );
             
             if ($testDbConnection->connect_error) {

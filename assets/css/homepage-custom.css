@@ -1,0 +1,113 @@
+
+/* Enhanced Achievements Section */
+.achievements-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.achievements-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23667eea\' fill-opacity=\'0.03\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'2\'%3E%3C/circle%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: 0;
+}
+
+.achievements-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Company Highlights Card */
+.company-highlights-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.highlight-item {
+    text-align: center;
+    padding: 20px;
+}
+
+.highlight-icon {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.highlight-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1a237e;
+    margin-bottom: 5px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.highlight-label {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Stats Container */
+.stats-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.stats-heading {
+    color: #1a237e;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 15px;
+}
+
+.stats-grid-primary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.stat-card-primary {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.stat-card-primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+}
+
+.stat-icon-container {
+    /* Add more styles as needed */
+}

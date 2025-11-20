@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__ . '/includes/config/config.php';
+global $con;
 // auto_lead_reminder_cron.php: Send automatic follow-up reminders for leads not contacted within 3 days
-require_once __DIR__ . '/../includes/db_config.php';
-$conn = getDbConnection();
+$conn = $con;
 
 // Fetch leads that are 'New' or 'Qualified' and created more than 3 days ago
 $sql = "SELECT * FROM leads WHERE (status = 'New' OR status = 'Qualified') AND created_at < (NOW() - INTERVAL 3 DAY)";
@@ -17,3 +18,4 @@ while ($lead = $result && $result->fetch_assoc()) {
 }
 // Optional: Email/SMS logic can be added here
 ?>
+

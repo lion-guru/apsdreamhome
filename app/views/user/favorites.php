@@ -1,4 +1,9 @@
 <?php
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+?>
+<?php
 /**
  * User Favorites Page Template
  * Shows user's favorite properties

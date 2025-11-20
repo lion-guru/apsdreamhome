@@ -1,4 +1,4 @@
-<?php include '../app/views/includes/header.php'; ?>
+<?php include __DIR__ . '/../includes/header.php'; ?>
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -49,4 +49,4 @@
     </div>
 </div>
 
-<?php include '../app/views/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

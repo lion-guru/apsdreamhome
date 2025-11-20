@@ -1,0 +1,15 @@
+{
+    "name": "welcome_message",
+    "category": "customer_service",
+    "language": "en",
+    "header": "\ud83c\udf89 Welcome to APS Dream Home!",
+    "body": "Hi {{customer_name}}! \ud83d\udc4b\n\nThank you for choosing APS Dream Home for your property needs.\n\nWe're excited to help you find your perfect property! \ud83c\udfe0\n\nOur team will be in touch with you shortly with personalized recommendations.",
+    "footer": "\ud83d\udcde Contact us anytime: {{phone_number}}\n\ud83c\udf10 Visit: {{website_url}}",
+    "variables": [
+        "customer_name",
+        "phone_number",
+        "website_url"
+    ],
+    "created_at": "2025-10-27 06:27:01",
+    "updated_at": "2025-10-27 06:27:01"
+}

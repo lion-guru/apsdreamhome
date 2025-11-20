@@ -36,7 +36,7 @@ class SystemHealthCheck {
 
     private function checkDatabaseConnection() {
         require_once __DIR__ . '/includes/db_connection.php';
-        $conn = getDbConnection();
+        $conn = getMysqliConnection();
         if (!$conn) {
             throw new Exception('Unable to establish database connection');
         }

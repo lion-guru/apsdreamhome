@@ -2,7 +2,7 @@
 require_once 'config.php';
 require_once 'admin-functions.php';
 
-$db = getDBConnection();
+$db = $con;
 $layoutTemplate = new Admin\Models\LayoutTemplate($db);
 
 // Get all templates, including inactive ones

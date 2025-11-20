@@ -1,19 +1,22 @@
 <?php
 /**
- * Customer Logout Script
+ * Customer Logout Script - APS Dream Home
  * Handles secure customer logout
  */
 
-require_once 'includes/session_manager.php';
+session_start();
 
 // Log the logout event
-if (isset($_SESSION['customer_id'])) {
-    error_log('Customer logged out - ID: ' . $_SESSION['customer_id']);
+if (isset($_SESSION['user_id'])) {
+    error_log('Customer logged out - ID: ' . $_SESSION['user_id'] . ', Email: ' . $_SESSION['user_email']);
 }
 
-// Call the logout function
-customerLogout();
+// Clear all session data
+$_SESSION = array();
 
-// If somehow we're still here, redirect to login page
-header('Location: customer_login.php');
+// Destroy the session
+session_destroy();
+
+// Redirect to home page with success message
+header('Location: index.php?logout=success');
 exit();

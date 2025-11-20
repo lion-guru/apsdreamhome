@@ -10,7 +10,7 @@ $config['app'] = [
     'version' => APP_VERSION,
     'environment' => ENVIRONMENT,
     'debug' => ENVIRONMENT === 'development',
-    'url' => getenv('APP_URL') ?: 'http://localhost/apsdreamhomefinal',
+    'url' => getenv('APP_URL') ?: 'http://localhost/apsdreamhome',
     'timezone' => getenv('APP_TIMEZONE') ?: 'Asia/Kolkata',
     'locale' => getenv('APP_LOCALE') ?: 'en',
     'key' => getenv('APP_KEY') ?: 'base64:your-secret-key-here',
@@ -18,8 +18,8 @@ $config['app'] = [
 ];
 
 // URL and Path helpers
-define('BASE_URL', rtrim($config['app']['url'], '/') . '/');
-define('ASSET_URL', BASE_URL . 'assets/');
+if (!defined('BASE_URL')) define('BASE_URL', rtrim($config['app']['url'], '/') . '/');
+if (!defined('ASSET_URL')) define('ASSET_URL', BASE_URL . 'assets/');
 
 // File upload settings
 $config['upload'] = [
@@ -127,5 +127,7 @@ $config['performance'] = [
     'caching' => ENVIRONMENT === 'production',
     'compression' => true,
 ];
+
+return $config;
 
 ?>

@@ -348,13 +348,11 @@ class PropertyManager {
                 unlink($filePath);
             }
         }
-
-        // Delete database records
-        $sql = "DELETE FROM property_images WHERE property_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $propertyId);
-        $stmt->execute();
-        $stmt->close();
+        
+        // Note: Do NOT delete property_images rows here.
+        // They will be removed automatically via FK ON DELETE CASCADE
+        // when the parent property is deleted. This avoids manual DB cleanup
+        // and ensures referential integrity policies are respected.
     }
 
     /**

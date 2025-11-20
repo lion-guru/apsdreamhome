@@ -428,7 +428,8 @@ function validateRequestHeaders() {
 // Main API logic
 try {
     // Get database connection
-    $con = getDbConnection();
+    global $con;
+$con = $con;
     if (!$con) {
         logSecurityEvent('Database Connection Failed in Visit Scheduling API', [
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'

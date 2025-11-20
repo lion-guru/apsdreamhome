@@ -8,7 +8,7 @@ require_once 'core/functions.php';
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
 
     // Get distinct categories
     $categoryQuery = "SELECT DISTINCT category FROM testimonials WHERE status = 'approved' ORDER BY category";

@@ -2,7 +2,8 @@
 session_start();
 include 'config.php';
 if (!isset($_SESSION['auser']) || $_SESSION['auser'] !== 'superadmin') { http_response_code(403); exit('Access denied.'); }
-$conn = getDbConnection();
+global $con;
+$conn = $con;
 
 // Summary metrics
 $last_archive = $conn->query("SELECT MAX(created_at) as last FROM upload_audit_log")->fetch_assoc()['last'] ?? 'N/A';

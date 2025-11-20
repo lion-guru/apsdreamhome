@@ -26,17 +26,12 @@ class MigrationManager
         $migrations = $this->getPendingMigrations();
         
         if (empty($migrations)) {
-            echo "No pending migrations.\n";
             return;
         }
 
-        echo "Running " . count($migrations) . " migration(s)...\n";
-        
         foreach ($migrations as $migration) {
             $this->runMigration($migration);
         }
-        
-        echo "Migrations completed successfully.\n";
     }
 
     /**
@@ -65,10 +60,10 @@ class MigrationManager
      */
     private function runMigration(string $migrationClass): void
     {
+        preg_match('/\d{4}_\d{2}_\d{2}_\d{6}_(.*)/', $migrationClass, $matches);
+        $className = str_replace('_', '', ucwords($matches[1], '_'));
         require_once $this->migrationsPath . $migrationClass . '.php';
-        
-        $fullClassName = "Tests\\Database\\Migrations\\$migrationClass";
-        $migration = new $fullClassName($this->db);
+        $migration = new $className($this->db);
         
         echo "Running migration: $migrationClass... ";
         
@@ -90,10 +85,10 @@ class MigrationManager
      */
     private function rollbackMigration(string $migrationClass): void
     {
+        preg_match('/\d{4}_\d{2}_\d{2}_\d{6}_(.*)/', $migrationClass, $matches);
+        $className = str_replace('_', '', ucwords($matches[1], '_'));
         require_once $this->migrationsPath . $migrationClass . '.php';
-        
-        $fullClassName = "Tests\\Database\\Migrations\\$migrationClass";
-        $migration = new $fullClassName($this->db);
+        $migration = new $className($this->db);
         
         echo "Rolling back: $migrationClass... ";
         
@@ -110,23 +105,22 @@ class MigrationManager
         }
     }
 
-    /**
-     * Get all pending migrations
-     */
-    private function getPendingMigrations(): array
+    public function getPendingMigrations(): array
     {
-        $migrations = [];
+        $appliedMigrations = $this->getAppliedMigrations();
         $files = glob($this->migrationsPath . '*.php');
-        
+        $pendingMigrations = [];
         foreach ($files as $file) {
-            $migration = basename($file, '.php');
-            if (!$this->isMigrated($migration)) {
-                $migrations[] = $migration;
+            $fileName = basename($file, '.php');
+            preg_match('/^\d{4}_\d{2}_\d{2}_\d{6}_(.*)$/', $fileName, $matches);
+            if (isset($matches[1])) {
+                $className = str_replace('_', '', ucwords($matches[1], '_'));
+                if (!in_array($fileName, $appliedMigrations)) {
+                    $pendingMigrations[] = $fileName;
+                }
             }
         }
-        
-        sort($migrations);
-        return $migrations;
+        return $pendingMigrations;
     }
 
     /**
@@ -145,6 +139,19 @@ class MigrationManager
             $migrations[] = $row['migration'];
         }
         
+        return $migrations;
+    }
+
+    /**
+     * Get all applied migrations
+     */
+    private function getAppliedMigrations(): array
+    {
+        $result = $this->db->query("SELECT migration FROM {$this->migrationsTable}");
+        $migrations = [];
+        while ($row = $result->fetch_assoc()) {
+            $migrations[] = $row['migration'];
+        }
         return $migrations;
     }
 

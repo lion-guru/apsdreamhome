@@ -67,7 +67,7 @@ function log_message($message, $level = 'error', array $context = []) {
         foreach ($backtrace as $i => $trace) {
             $file = $trace['file'] ?? 'unknown';
             $line = $trace['line'] ?? 0;
-            $function = $trace['function'] ?? 'unknown';
+            $function = $trace['function'];
             $class = $trace['class'] ?? '';
             $type = $trace['type'] ?? '';
             
@@ -89,11 +89,11 @@ function log_message($message, $level = 'error', array $context = []) {
 /**
  * Log an exception
  *
- * @param Exception $e The exception to log
+ * @param Throwable $e The exception to log
  * @param array $context Additional context data
  * @return bool True on success, false on failure
  */
-function log_exception($e, array $context = []) {
+function log_exception(Throwable $e, array $context = []) {
     $message = sprintf(
         'Exception: %s in %s:%d',
         $e->getMessage(),

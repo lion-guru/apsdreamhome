@@ -59,7 +59,7 @@ echo "<h1>Admin Panel Test Suite</h1>";
 
 // 1. Test database connection
 try {
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     if ($conn === null) {
         throw new Exception("Failed to connect to database");
     }

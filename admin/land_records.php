@@ -3,7 +3,7 @@ require_once 'admin-functions.php';
 require_once 'src/Database/Database.php';
 
 // Get database connection
-$conn = getDbConnection();
+$conn = $con;
 if (!$conn) {
     die("Failed to establish database connection");
 }

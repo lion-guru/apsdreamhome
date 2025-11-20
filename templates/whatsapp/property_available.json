@@ -1,0 +1,20 @@
+{
+    "name": "property_available",
+    "category": "property",
+    "language": "en",
+    "header": "\ud83c\udfe0 New Property Available!",
+    "body": "Hi {{customer_name}},\n\nGreat news! We have a new property that matches your preferences:\n\n\ud83c\udfe0 {{property_name}}\n\ud83d\udccd {{property_location}}\n\ud83d\udcb0 \u20b9{{property_price}}\n\ud83d\udccf {{property_size}}\n\nKey Features:\n{{property_features}}\n\nThis property won't last long! Contact us today for a viewing.",
+    "footer": "Call now: {{agent_phone}} | View online: {{property_url}}",
+    "variables": [
+        "customer_name",
+        "property_name",
+        "property_location",
+        "property_price",
+        "property_size",
+        "property_features",
+        "agent_phone",
+        "property_url"
+    ],
+    "created_at": "2025-10-27 06:27:01",
+    "updated_at": "2025-10-27 06:27:01"
+}

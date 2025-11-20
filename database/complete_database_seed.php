@@ -183,12 +183,12 @@ foreach ($tables as $table) {
                 
             case 'property_visits':
                 if (in_array('property_id', $columns) && in_array('customer_id', $columns)) {
-                    $sql = "INSERT IGNORE INTO property_visits (customer_id, property_id, visit_date, visit_time, status) VALUES
-                        (1, 1, '2025-05-20', '14:00:00', 'scheduled'),
-                        (2, 2, '2025-05-21', '11:00:00', 'scheduled'),
-                        (3, 3, '2025-05-22', '16:00:00', 'scheduled'),
-                        (4, 4, '2025-05-15', '10:00:00', 'completed'),
-                        (5, 5, '2025-05-16', '15:00:00', 'cancelled')";
+                    $sql = "INSERT IGNORE INTO property_visits (customer_id, property_id, visit_date, status) VALUES
+                        (1, 1, '2025-05-20 14:00:00', 'scheduled'),
+                        (2, 2, '2025-05-21 11:00:00', 'scheduled'),
+                        (3, 3, '2025-05-22 16:00:00', 'scheduled'),
+                        (4, 4, '2025-05-15 10:00:00', 'completed'),
+                        (5, 5, '2025-05-16 15:00:00', 'cancelled')";
                 } else {
                     // If no specific columns, just use ID
                     $sql = "INSERT IGNORE INTO property_visits (id) VALUES (1), (2), (3), (4), (5)";
@@ -210,8 +210,8 @@ foreach ($tables as $table) {
                 break;
                 
             case 'notifications':
-                if (in_array('title', $columns) && in_array('message', $columns)) {
-                    $sql = "INSERT IGNORE INTO notifications (user_id, type, title, message, status) VALUES
+                if (in_array('title', $columns) && in_array('body', $columns)) {
+                    $sql = "INSERT IGNORE INTO notifications (user_id, type, title, body, is_read) VALUES
                         (1, 'system', 'Welcome to APS Dream Home', 'Welcome to your admin dashboard. Start managing your real estate business.', 'unread'),
                         (1, 'lead', 'New Lead: Luxury Villa', 'You have received a new lead for Luxury Villa from Rahul Sharma.', 'unread'),
                         (1, 'visit', 'Visit Scheduled: City Apartment', 'Priya Singh has scheduled a visit for City Apartment on 2025-05-21 at 11:00.', 'unread'),
@@ -279,6 +279,14 @@ foreach ($tables as $table) {
                 }
                 break;
                 
+            case 'workflow_automations':
+                $sql = "INSERT IGNORE INTO workflow_automations (name, provider, webhook_url, status, created_at) VALUES
+                    ('Welcome Email', 'SendGrid', 'https://api.sendgrid.com/webhook', 'active', NOW()),
+                    ('Lead Nurturing', 'Mailchimp', 'https://api.mailchimp.com/webhook', 'active', NOW()),
+                    ('Property Alert', 'Twilio', 'https://api.twilio.com/webhook', 'active', NOW()),
+                    ('Follow-up Call', 'Zapier', 'https://api.zapier.com/webhook', 'inactive', NOW()),
+                    ('New Listing SMS', 'Twilio', 'https://api.twilio.com/webhook', 'active', NOW())";
+                break;
             default:
                 // For any other table, just add IDs if it has an auto-increment primary key
                 if (hasAutoIncrementPK($conn, $table)) {
@@ -291,27 +299,27 @@ foreach ($tables as $table) {
         }
         
         // Execute the query
-        if($conn->query($sql) === TRUE) {
-            echo "Data added successfully to $table\n";
+        if (!empty($sql) && $conn->query($sql) === TRUE) {
+            file_put_contents(__DIR__ . '\seed_results.log', "Data added successfully to $table\n", FILE_APPEND);
         } else {
-            echo "Error adding data to $table: " . $conn->error . "\n";
+            file_put_contents(__DIR__ . '\seed_results.log', "Error adding data to $table: " . $conn->error . "\n", FILE_APPEND);
             
             // Try a minimal approach if the specific approach failed
             if (hasAutoIncrementPK($conn, $table)) {
                 $sql = "INSERT IGNORE INTO $table (id) VALUES (1), (2), (3), (4), (5)";
                 if($conn->query($sql) === TRUE) {
-                    echo "Minimal data added successfully to $table\n";
+                    file_put_contents(__DIR__ . '\seed_results.log', "Minimal data added successfully to $table\n", FILE_APPEND);
                 } else {
-                    echo "Error adding minimal data to $table: " . $conn->error . "\n";
+                    file_put_contents(__DIR__ . '\seed_results.log', "Error adding minimal data to $table: " . $conn->error . "\n", FILE_APPEND);
                 }
             }
         }
     } else {
-        echo "Table $table already has data ($count records), skipping\n";
+        file_put_contents(__DIR__ . '\seed_results.log', "Table $table already has data ($count records), skipping\n", FILE_APPEND);
     }
 }
 
 // Close connection
 $conn->close();
-echo "\nDatabase seeding complete. All tables should now have data.\n";
+file_put_contents(__DIR__ . '\seed_results.log', "\nDatabase seeding complete. All tables should now have data.\n", FILE_APPEND);
 ?>

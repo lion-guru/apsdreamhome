@@ -241,7 +241,7 @@ echo "<div class='row mb-4'>
                 <div class='activity-timeline'>";
 
 try {
-    $response = file_get_contents('http://localhost/apsdreamhomefinal/api/get_system_logs.php');
+    $response = file_get_contents('http://localhost/apsdreamhome/api/get_system_logs.php');
     $logs_data = json_decode($response, true);
 
     if ($logs_data && $logs_data['success']) {

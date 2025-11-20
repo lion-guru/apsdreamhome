@@ -95,7 +95,7 @@ if (!defined('SRC_PATH')) {
 if (!defined('APP_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    define('APP_URL', $protocol . $host . '/apsdreamhomefinal/');
+    define('APP_URL', $protocol . $host . '/apsdreamhome/');
 }
 
 if (!defined('APP_ENV')) {

@@ -135,7 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     // Validate required fields
     $requiredFields = ['emi_plan_id'];
@@ -358,3 +359,4 @@ try {
     exit;
 }
 ?>
+

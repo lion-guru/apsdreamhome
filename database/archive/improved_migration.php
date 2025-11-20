@@ -179,7 +179,7 @@ function backupDatabase() {
     echo "<div class='container'>";
     echo "<h2>Database Backup</h2>";
     
-    $connection = getDbConnection();
+    $connection = getMysqliConnection();
     
     if (!$connection) {
         echo "<div class='error'>Failed to connect to the database.</div>";

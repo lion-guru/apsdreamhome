@@ -4,7 +4,7 @@
  * Creates and manages reusable WhatsApp message templates
  */
 
-require_once '../includes/config.php';
+require_once __DIR__ . '/config/config.php';
 
 class WhatsAppTemplateManager {
     private $templates = [];

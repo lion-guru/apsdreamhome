@@ -4,8 +4,20 @@
  * Comprehensive analysis of entire project structure and functionality
  */
 
-echo "<h1>🔍 APS Dream Home - Complete Project Deep Scan</h1>";
-echo "<div style='font-family: Arial, sans-serif; max-width: 1400px; margin: 0 auto; padding: 20px; line-height: 1.6;'>";
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
+
+echo "<!DOCTYPE html>";
+echo "<html lang='en'>";
+echo "<head>";
+echo "<meta charset='UTF-8'>";
+echo "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
+echo "<title>🔍 APS Dream Home - Complete Project Deep Scan</title>";
+echo "</head>";
+echo "<body style='margin:0; padding:0; background:#f5f7fb; font-family: Arial, sans-serif;'>";
+echo "<h1 style='text-align:center; margin-top:30px;'>🔍 APS Dream Home - Complete Project Deep Scan</h1>";
+echo "<div style='max-width: 1400px; margin: 0 auto 40px auto; padding: 20px; line-height: 1.6; background:#fff; box-shadow:0 10px 30px rgba(0,0,0,0.05); border-radius:16px;'>";
 
 // Project information
 $projectRoot = __DIR__;
@@ -336,4 +348,6 @@ echo "🚀 Project Status: Enterprise Ready";
 echo "</p>";
 
 echo "</div>";
+echo "</body>";
+echo "</html>";
 ?>

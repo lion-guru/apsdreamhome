@@ -3,13 +3,18 @@
  * Mortgage Inquiry Handler - APS Dream Homes
  * Handles mortgage and loan inquiries
  */
-
+session_start();
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (empty($_SESSION['csrf_token']) || !isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Invalid CSRF token']);
+        exit;
+    }
     try {
         require_once '../includes/db_connection.php';
-        $pdo = getDbConnection();
+        $pdo = getMysqliConnection();
 
         // Get form data
         $name = trim($_POST['name'] ?? '');

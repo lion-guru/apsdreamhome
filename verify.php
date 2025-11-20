@@ -6,7 +6,7 @@ echo "<p>? PHP is working: " . date('Y-m-d H:i:s') . "</p>";
 // Test database connection
 try {
     require_once 'includes/db_connection.php';
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     if ($conn) {
         echo "<p>✅ Database connected successfully!</p>";
 

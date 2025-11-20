@@ -18,11 +18,11 @@ function getSiteSetting($key, $default = null) {
 
         // Load settings from database if available
         try {
-            if (function_exists('getDbConnection')) {
-                $pdo = getDbConnection();
-                $stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+            global $conn;
+            if (isset($conn) && $conn) {
+                $stmt = $conn->query("SELECT setting_key, setting_value FROM site_settings");
                 if ($stmt) {
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    while ($row = $stmt->fetch_assoc()) {
                         $settings[$row['setting_key']] = $row['setting_value'];
                     }
                 }
@@ -65,10 +65,9 @@ function getSiteSetting($key, $default = null) {
  */
 function setSiteSetting($key, $value) {
     try {
-        if (function_exists('getDbConnection')) {
-            $pdo = getDbConnection();
-
-            $stmt = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES (?, ?, NOW())
+        global $conn;
+        if (isset($conn) && $conn) {
+            $stmt = $conn->prepare("INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES (?, ?, NOW())
                                   ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()");
             return $stmt->execute([$key, $value, $value]);
         }
@@ -83,6 +82,49 @@ function setSiteSetting($key, $value) {
  * @return array
  */
 function getAllSiteSettings() {
-    return getSiteSetting(null, []);
+    static $all_settings = null;
+
+    if ($all_settings === null) {
+        $all_settings = [];
+
+        // Load settings from database if available
+        try {
+            global $conn;
+            if (isset($conn) && $conn) {
+                $stmt = $conn->query("SELECT setting_key, setting_value FROM site_settings");
+                if ($stmt) {
+                    while ($row = $stmt->fetch_assoc()) {
+                        $all_settings[$row['setting_key']] = $row['setting_value'];
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Settings not available, use defaults
+        }
+
+        // Set default settings if not in database
+        $default_settings = [
+            'site_title' => 'APS Dream Homes Pvt Ltd',
+            'site_description' => 'APS Dream Homes Pvt Ltd - Leading real estate developer in Gorakhpur with 8+ years of excellence',
+            'site_keywords' => 'real estate, property, Gorakhpur, apartments, villas, plots, commercial',
+            'contact_phone' => '+91-7007444842',
+            'contact_email' => 'info@apsdreamhome.com',
+            'contact_address' => 'Gorakhpur, Uttar Pradesh, India',
+            'logo_path' => '',
+            'social_facebook' => '',
+            'social_twitter' => '',
+            'social_instagram' => '',
+            'social_linkedin' => '',
+            'social_youtube' => ''
+        ];
+
+        foreach ($default_settings as $setting_key => $setting_value) {
+            if (!isset($all_settings[$setting_key])) {
+                $all_settings[$setting_key] = $setting_value;
+            }
+        }
+    }
+
+    return $all_settings;
 }
 ?>

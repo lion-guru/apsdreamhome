@@ -1,0 +1,25 @@
+{
+  "tables": {
+    "test_table": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INT(11)",
+          "nullable": false,
+          "auto_increment": true,
+          "default": null,
+          "comment": null
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "auto_increment": false,
+          "default": null,
+          "comment": null
+        }
+      ]
+    }
+  },
+  "views": {}
+}

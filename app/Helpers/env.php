@@ -19,3 +19,9 @@ if (!function_exists('database_path')) {
         return __DIR__ . '/../database/' . $path;
     }
 }
+
+if (!function_exists('str_slug')) {
+    function str_slug($str, $separator = '-') {
+        return \App\Helpers\Helpers::str_slug($str, $separator);
+    }
+}

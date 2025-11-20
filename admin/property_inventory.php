@@ -7,7 +7,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit();
 }
 require_permission('manage_inventory');
-$conn = getDbConnection();
+$conn = $conn;
 $error = $msg = '';
 // Fetch property types using prepared statement
 $propertyTypes = [];

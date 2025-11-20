@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once(__DIR__ . '/includes/db_config.php');
-$conn = getDbConnection();
-require_once('../config.php');
+require_once(__DIR__ . '/includes/config/config.php');
+global $con;
+$conn = $con;
 require_once('admin-functions.php');
 require_once('config/ai_tools_config.php');
 

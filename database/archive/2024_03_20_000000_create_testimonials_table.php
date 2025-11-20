@@ -25,7 +25,7 @@ class CreateTestimonialsTable {
         ";
         
         try {
-            $conn = getDbConnection();
+            $conn = getMysqliConnection();
             $conn->multi_query($sql);
             
             // Clear any remaining results
@@ -46,7 +46,7 @@ class CreateTestimonialsTable {
         $sql = "DROP TABLE IF EXISTS `testimonials`";
         
         try {
-            $conn = getDbConnection();
+            $conn = getMysqliConnection();
             return $conn->query($sql);
         } catch (Exception $e) {
             error_log('Error dropping testimonials table: ' . $e->getMessage());

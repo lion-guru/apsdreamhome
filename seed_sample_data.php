@@ -7,7 +7,7 @@
 require_once 'includes/db_connection.php';
 
 try {
-    $pdo = getDbConnection();
+    $pdo = getMysqliConnection();
     echo "Starting sample data seeding...\n";
 
     // Seed Properties

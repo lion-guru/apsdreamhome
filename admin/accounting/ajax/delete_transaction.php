@@ -14,7 +14,7 @@ if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
 }
 
 try {
-    $conn = getDbConnection();
+    $conn = $con;
     
     // Start transaction
     $conn->begin_transaction();

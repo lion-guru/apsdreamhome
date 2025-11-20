@@ -1,4 +1,13 @@
-<?php include '../app/views/includes/header.php'; ?>
+<?php
+if (!isset($property)) {
+    $property = [
+        'title' => 'N/A',
+        'location' => 'N/A',
+        'price' => 0,
+        'id' => 'N/A'
+    ];
+}
+include __DIR__ . '/../includes/header.php'; ?>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -148,4 +157,4 @@
     });
 </script>
 
-<?php include '../app/views/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

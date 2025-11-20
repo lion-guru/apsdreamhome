@@ -33,7 +33,7 @@
 
             <p><strong>Reset your password:</strong></p>
             <p style="text-align: center;">
-                <a href="http://localhost/apsdreamhomefinal/reset-password?token=RESET_TOKEN_HERE" class="reset-button">Reset Password Now</a>
+                <a href="http://localhost/apsdreamhome/reset-password?token=RESET_TOKEN_HERE" class="reset-button">Reset Password Now</a>
             </p>
 
             <p><strong>Didn't request this reset?</strong></p>

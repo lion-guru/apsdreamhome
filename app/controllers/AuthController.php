@@ -1,370 +1,346 @@
 <?php
 /**
- * Authentication Controller
- * Handles user login, registration, logout and session management
+ * Unified Auth Controller
+ * Handles registration, login, and MLM referral tracking
  */
 
-namespace App\Controllers;
+use App\Core\View;
 
-class AuthController extends BaseController {
+class AuthController {
+    private $conn;
+    private $view;
+    
     public function __construct() {
-        // Initialize data array for view rendering
-        $this->data = [];
+        $config = AppConfig::getInstance();
+        $this->conn = $config->getDatabaseConnection();
+        $this->view = new View();
     }
-
+    
     /**
-     * Display login page
-     */
-    public function login() {
-        // If already logged in, redirect to appropriate dashboard
-        if (isset($_SESSION['user_id'])) {
-            if ($_SESSION['user_role'] === 'admin') {
-                $this->redirect(BASE_URL . 'admin');
-            } else {
-                $this->redirect(BASE_URL . 'dashboard');
-            }
-            return;
-        }
-
-        // Set page data
-        $this->data['page_title'] = 'Login - ' . APP_NAME;
-        $this->data['breadcrumbs'] = [
-            ['title' => 'Home', 'url' => BASE_URL],
-            ['title' => 'Login', 'url' => BASE_URL . 'login']
-        ];
-
-        // Check for login error messages
-        $this->data['error'] = $_GET['error'] ?? '';
-        $this->data['success'] = $_GET['success'] ?? '';
-
-        // Render the login page
-        $this->render('auth/login');
-    }
-
-    /**
-     * Process login form submission
-     */
-    public function processLogin() {
-        // Check if it's a POST request
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        // Get form data
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $remember = isset($_POST['remember']);
-
-        // Validate input
-        if (empty($email) || empty($password)) {
-            $this->redirect(BASE_URL . 'login?error=' . urlencode('Please fill in all fields'));
-            return;
-        }
-
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->redirect(BASE_URL . 'login?error=' . urlencode('Please enter a valid email address'));
-            return;
-        }
-
-        // Attempt to login
-        $user = $this->authenticateUser($email, $password);
-
-        if ($user) {
-            // Login successful - set session
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_role'] = $user['role'] ?? 'customer';
-            $_SESSION['user_status'] = $user['status'];
-            $_SESSION['login_time'] = time();
-
-            // Update last login
-            $this->updateLastLogin($user['id']);
-
-            // Set remember me cookie if requested
-            if ($remember) {
-                $this->setRememberMeCookie($user['id']);
-            }
-
-            // Redirect based on role
-            if ($user['role'] === 'admin') {
-                $this->redirect(BASE_URL . 'admin');
-            } else {
-                $this->redirect(BASE_URL . 'dashboard');
-            }
-        } else {
-            // Login failed
-            $this->redirect(BASE_URL . 'login?error=' . urlencode('Invalid email or password'));
-        }
-    }
-
-    /**
-     * Display registration page
+     * Handle unified registration
      */
     public function register() {
-        // If already logged in, redirect to dashboard
-        if (isset($_SESSION['user_id'])) {
-            $this->redirect(BASE_URL . 'dashboard');
-            return;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            return $this->processRegistration();
         }
-
-        // Set page data
-        $this->data['page_title'] = 'Register - ' . APP_NAME;
-        $this->data['breadcrumbs'] = [
-            ['title' => 'Home', 'url' => BASE_URL],
-            ['title' => 'Register', 'url' => BASE_URL . 'register']
-        ];
-
-        // Check for registration messages
-        $this->data['error'] = $_GET['error'] ?? '';
-        $this->data['success'] = $_GET['success'] ?? '';
-
-        // Render the registration page
-        $this->render('auth/register');
+        
+        // Use modern View system
+        return $this->view->render('auth.register');
     }
-
+    
     /**
-     * Process registration form submission
+     * Process registration with MLM integration
      */
-    public function processRegister() {
-        // Check if it's a POST request
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect(BASE_URL . 'register');
-            return;
-        }
-
-        // Get form data
-        $name = trim($_POST['name'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $confirm_password = $_POST['confirm_password'] ?? '';
-        $role = $_POST['role'] ?? 'customer';
-
+    private function processRegistration() {
         // Validate input
-        if (empty($name) || empty($email) || empty($phone) || empty($password) || empty($confirm_password)) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Please fill in all fields'));
-            return;
+        $full_name = trim($_POST['full_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $mobile = trim($_POST['mobile'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $user_type = $_POST['user_type'] ?? 'customer';
+        $referrer_code = trim($_POST['referrer_code'] ?? '');
+        
+        // Validation
+        $errors = [];
+        
+        if (empty($full_name)) $errors[] = "Full name is required";
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Valid email required";
+        if (empty($mobile) || strlen($mobile) != 10) $errors[] = "Valid 10-digit mobile required";
+        if (empty($password) || strlen($password) < 6) $errors[] = "Password must be 6+ characters";
+        
+        // Check existing user
+        $stmt = $this->conn->prepare("SELECT id FROM users WHERE email = ? OR mobile = ?");
+        $stmt->bind_param("ss", $email, $mobile);
+        $stmt->execute();
+        if ($stmt->get_result()->num_rows > 0) {
+            $errors[] = "Email or mobile already registered";
         }
-
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Please enter a valid email address'));
-            return;
+        
+        // Verify referrer
+        $sponsor_id = null;
+        if ($referrer_code) {
+            $stmt = $this->conn->prepare("SELECT user_id FROM mlm_profiles WHERE referral_code = ? AND status = 'active'");
+            $stmt->bind_param("s", $referrer_code);
+            $stmt->execute();
+            $result = $stmt->get_result()->fetch_assoc();
+            if ($result) {
+                $sponsor_id = $result['user_id'];
+            } else {
+                $errors[] = "Invalid referrer code";
+            }
         }
-
-        // Validate password strength
-        if (strlen($password) < 6) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Password must be at least 6 characters long'));
-            return;
+        
+        if (!empty($errors)) {
+            return ['success' => false, 'errors' => $errors];
         }
-
-        // Check if passwords match
-        if ($password !== $confirm_password) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Passwords do not match'));
-            return;
-        }
-
-        // Check if email already exists
-        if ($this->emailExists($email)) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('An account with this email already exists'));
-            return;
-        }
-
-        // Register the user
-        $user_id = $this->registerUser([
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
-            'password' => $password,
-            'role' => $role
-        ]);
-
-        if ($user_id) {
-            // Send registration notification email
-            $this->sendRegistrationNotifications([
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'role' => $role
-            ]);
-
-            // Registration successful
-            $this->redirect(BASE_URL . 'login?success=' . urlencode('Registration successful! Please login with your credentials.'));
-        } else {
-            // Registration failed
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Registration failed. Please try again.'));
+        
+        // Generate referral code
+        $referral_code = $this->generateReferralCode($full_name, $email);
+        
+        // Hash password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        
+        // Start transaction
+        $this->conn->begin_transaction();
+        
+        try {
+            // Insert user
+            $stmt = $this->conn->prepare("INSERT INTO users (name, email, mobile, password, type, status, created_at) VALUES (?, ?, ?, ?, ?, 'active', NOW())");
+            $stmt->bind_param("sssss", $full_name, $email, $mobile, $hashed_password, $user_type);
+            $stmt->execute();
+            $user_id = $this->conn->insert_id;
+            
+            // Create MLM profile
+            $stmt = $this->conn->prepare("INSERT INTO mlm_profiles (user_id, referral_code, sponsor_user_id, sponsor_code, user_type, verification_status, status) VALUES (?, ?, ?, ?, ?, 'verified', 'active')");
+            $stmt->bind_param("isiss", $user_id, $referral_code, $sponsor_id, $referrer_code, $user_type);
+            $stmt->execute();
+            
+            // Create referral record if sponsor exists
+            if ($sponsor_id) {
+                $stmt = $this->conn->prepare("INSERT INTO mlm_referrals (referrer_user_id, referred_user_id, referral_type, created_at) VALUES (?, ?, ?, NOW())");
+                $stmt->bind_param("iis", $sponsor_id, $user_id, $user_type);
+                $stmt->execute();
+                
+                // Update sponsor's direct referrals
+                $stmt = $this->conn->prepare("UPDATE mlm_profiles SET direct_referrals = direct_referrals + 1 WHERE user_id = ?");
+                $stmt->bind_param("i", $sponsor_id);
+                $stmt->execute();
+                
+                // Build network tree
+                $this->buildNetworkTree($user_id, $sponsor_id);
+            }
+            
+            // Handle role-specific fields
+            $this->handleRoleSpecificFields($user_id, $user_type);
+            
+            $this->conn->commit();
+            
+            return ['success' => true, 'user_id' => $user_id, 'referral_code' => $referral_code];
+            
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            return ['success' => false, 'errors' => ["Registration failed: " . $e->getMessage()]];
         }
     }
-
+    
+    /**
+     * Generate unique referral code
+     */
+    private function generateReferralCode($name, $email) {
+        $prefix = strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $name), 0, 3));
+        $suffix = strtoupper(substr(md5($email . time()), 0, 4));
+        return $prefix . $suffix;
+    }
+    
+    /**
+     * Build network tree for new user
+     */
+    private function buildNetworkTree($user_id, $sponsor_id) {
+        $level = 1;
+        $current = $sponsor_id;
+        
+        while ($current) {
+            $stmt = $this->conn->prepare("INSERT INTO mlm_network_tree (ancestor_user_id, descendant_user_id, level, created_at) VALUES (?, ?, ?, NOW())");
+            $stmt->bind_param("iii", $current, $user_id, $level);
+            $stmt->execute();
+            
+            // Get next ancestor
+            $stmt = $this->conn->prepare("SELECT sponsor_user_id FROM mlm_profiles WHERE user_id = ?");
+            $stmt->bind_param("i", $current);
+            $stmt->execute();
+            $result = $stmt->get_result()->fetch_assoc();
+            
+            if ($result && $result['sponsor_user_id']) {
+                $current = $result['sponsor_user_id'];
+                $level++;
+            } else {
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Handle role-specific fields
+     */
+    private function handleRoleSpecificFields($user_id, $user_type) {
+        switch ($user_type) {
+            case 'agent':
+                $license = $_POST['license_number'] ?? '';
+                $experience = $_POST['experience'] ?? 0;
+                
+                $stmt = $this->conn->prepare("INSERT INTO agent_details (user_id, license_number, experience_years) VALUES (?, ?, ?)");
+                $stmt->bind_param("isi", $user_id, $license, $experience);
+                $stmt->execute();
+                break;
+                
+            case 'associate':
+                $pan = $_POST['pan_number'] ?? '';
+                $aadhar = $_POST['aadhar_number'] ?? '';
+                
+                $stmt = $this->conn->prepare("INSERT INTO associate_details (user_id, pan_number, aadhar_number) VALUES (?, ?, ?)");
+                $stmt->bind_param("iss", $user_id, $pan, $aadhar);
+                $stmt->execute();
+                break;
+                
+            case 'builder':
+                $company = $_POST['company_name'] ?? '';
+                $rera = $_POST['rera_registration'] ?? '';
+                
+                $stmt = $this->conn->prepare("INSERT INTO builder_details (user_id, company_name, rera_registration) VALUES (?, ?, ?)");
+                $stmt->bind_param("iss", $user_id, $company, $rera);
+                $stmt->execute();
+                break;
+                
+            case 'investor':
+                $range = $_POST['investment_range'] ?? '';
+                $type = $_POST['investment_type'] ?? '';
+                
+                $stmt = $this->conn->prepare("INSERT INTO investor_details (user_id, investment_range, investment_type) VALUES (?, ?, ?)");
+                $stmt->bind_param("iss", $user_id, $range, $type);
+                $stmt->execute();
+                break;
+        }
+    }
+    
+    /**
+     * Get referral link for user
+     */
+    public function getReferralLink($user_id) {
+        $stmt = $this->conn->prepare("SELECT referral_code FROM mlm_profiles WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        
+        if ($result) {
+            return BASE_URL . 'register?ref=' . $result['referral_code'];
+        }
+        return null;
+    }
+    
+    /**
+     * Get user's network stats
+     */
+    public function getNetworkStats($user_id) {
+        // Get profile
+        $stmt = $this->conn->prepare("SELECT * FROM mlm_profiles WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $profile = $stmt->get_result()->fetch_assoc();
+        
+        // Get direct referrals
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM mlm_referrals WHERE referrer_user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $direct_referrals = $stmt->get_result()->fetch_assoc()['count'];
+        
+        // Get total team size
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM mlm_network_tree WHERE ancestor_user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $total_team = $stmt->get_result()->fetch_assoc()['count'];
+        
+        // Get total commission
+        $stmt = $this->conn->prepare("SELECT SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'paid'");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $total_commission = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
+        
+        return [
+            'profile' => $profile,
+            'direct_referrals' => $direct_referrals,
+            'total_team' => $total_team,
+            'total_commission' => $total_commission,
+            'referral_link' => $this->getReferralLink($user_id)
+        ];
+    }
+    
+    /**
+     * Show login form
+     */
+    public function login() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            return $this->processLogin();
+        }
+        
+        // Use modern View system
+        return $this->view->render('auth.login');
+    }
+    
+    /**
+     * Process login
+     */
+    public function processLogin() {
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        
+        $errors = [];
+        
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Valid email required";
+        }
+        if (empty($password)) {
+            $errors[] = "Password required";
+        }
+        
+        if (!empty($errors)) {
+            return $this->view->render('auth.login', ['errors' => $errors, 'email' => $email]);
+        }
+        
+        // Check user credentials
+        $stmt = $this->conn->prepare("SELECT id, full_name, email, password, user_type, status FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $user = $stmt->get_result()->fetch_assoc();
+        
+        if (!$user || !password_verify($password, $user['password'])) {
+            return $this->view->render('auth.login', ['errors' => ['Invalid credentials'], 'email' => $email]);
+        }
+        
+        if ($user['status'] !== 'active') {
+            return $this->view->render('auth.login', ['errors' => ['Account is not active'], 'email' => $email]);
+        }
+        
+        // Set session
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_name'] = $user['full_name'];
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_type'] = $user['user_type'];
+        
+        // Redirect to dashboard
+        header('Location: /dashboard');
+        exit();
+    }
+    
     /**
      * Logout user
      */
     public function logout() {
-        // Clear session data
-        session_unset();
         session_destroy();
-
-        // Clear remember me cookie
-        if (isset($_COOKIE['remember_me'])) {
-            setcookie('remember_me', '', time() - 3600, '/');
-        }
-
-        // Redirect to home page
-        $this->redirect(BASE_URL);
+        header('Location: /login');
+        exit();
     }
-
-    /**
-     * Authenticate user credentials
-     */
-    private function authenticateUser($email, $password) {
-        try {
-            global $pdo;
-            if (!$pdo) {
-                return false;
-            }
-
-            $stmt = $pdo->prepare("
-                SELECT id, name, email, phone, role, status, password
-                FROM users
-                WHERE email = ? AND status = 'active'
-            ");
-            $stmt->execute([$email]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($user && $this->verifyPassword($password, $user['password'])) {
-                // Remove password from user data before returning
-                unset($user['password']);
-                return $user;
-            }
-
-            return false;
-
-        } catch (Exception $e) {
-            error_log('Authentication error: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Register a new user
-     */
-    private function registerUser($user_data) {
-        try {
-            global $pdo;
-            if (!$pdo) {
-                return false;
-            }
-
-            // Hash the password
-            $hashed_password = $this->hashPassword($user_data['password']);
-
-            // Prepare user data
-            $user = [
-                'name' => $user_data['name'],
-                'email' => $user_data['email'],
-                'phone' => $user_data['phone'],
-                'password' => $hashed_password,
-                'role' => $user_data['role'],
-                'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-
-            $stmt = $pdo->prepare("
-                INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-
-            if ($stmt->execute(array_values($user))) {
-                return $pdo->lastInsertId();
-            }
-
-            return false;
-
-        } catch (Exception $e) {
-            error_log('Registration error: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Check if email already exists
-     */
-    private function emailExists($email) {
-        try {
-            global $pdo;
-            if (!$pdo) {
-                return false;
-            }
-
-            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            return (int)($result['count'] ?? 0) > 0;
-
-        } catch (Exception $e) {
-            error_log('Email check error: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Hash password using Argon2ID (PHP 7.2+)
-     */
-    private function hashPassword($password) {
-        return password_hash($password, PASSWORD_ARGON2ID, [
-            'memory_cost' => 65536,
-            'time_cost' => 4,
-            'threads' => 3
-        ]);
-    }
-
-    /**
-     * Verify password against hash
-     */
-    private function verifyPassword($password, $hash) {
-        return password_verify($password, $hash);
-    }
-
-    /**
-     * Update user's last login time
-     */
-    private function updateLastLogin($user_id) {
-        try {
-            global $pdo;
-            if (!$pdo) {
-                return;
-            }
-
-            $stmt = $pdo->prepare("
-                UPDATE users
-                SET last_login = NOW(), updated_at = NOW()
-                WHERE id = ?
-            ");
-            $stmt->execute([$user_id]);
-
-        } catch (Exception $e) {
-            error_log('Last login update error: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Set remember me cookie
-     */
-    private function setRememberMeCookie($user_id) {
-        $token = bin2hex(random_bytes(32));
-        $expiry = time() + (30 * 24 * 3600); // 30 days
-
-        setcookie('remember_me', $token, $expiry, '/', '', true, true);
-
-        // In production, store this token in database for validation
-        // For now, we'll just set the cookie
-    }
-
 }
 
+// Helper functions
+function getRoleIcon($type) {
+    $icons = [
+        'customer' => 'user',
+        'agent' => 'user-tie',
+        'associate' => 'users',
+        'builder' => 'building',
+        'investor' => 'chart-line'
+    ];
+    return $icons[$type] ?? 'user';
+}
+
+function getRoleDescription($type) {
+    $descriptions = [
+        'customer' => 'Buy properties and earn referral rewards',
+        'agent' => 'Sell properties and earn commissions',
+        'associate' => 'Build network and earn multi-level commissions',
+        'builder' => 'List properties and manage sales',
+        'investor' => 'Invest in properties and earn returns'
+    ];
+    return $descriptions[$type] ?? 'Standard user';
+}
 ?>

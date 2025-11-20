@@ -1,12 +1,12 @@
 <?php
 require_once '../../../includes/config.php';
-require_once '../../../includes/db_connection.php';
 require_once '../../../includes/auth_check.php';
 
 header('Content-Type: application/json');
 
 try {
-    $conn = getDbConnection();
+    global $con;
+    $conn = $con;
     
     // Get current month's data
     $currentMonth = date('Y-m');
@@ -55,3 +55,4 @@ try {
     ]);
 }
 ?>
+

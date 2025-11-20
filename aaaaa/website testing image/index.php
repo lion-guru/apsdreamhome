@@ -27,7 +27,7 @@ $additional_js = '<script src="/assets/vendor/js/swiper-bundle.min.js?v=1.0" def
 require_once __DIR__ . '/includes/templates/dynamic_header.php';
 
 // Fetch dynamic sections from DB for homepage
-$conn = getDbConnection();
+$conn = getMysqliConnection();
 
 // Site settings
 $settings = [];

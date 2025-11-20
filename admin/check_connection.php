@@ -15,7 +15,8 @@ ini_set('display_errors', 1);
 // Function to test database connection
 function testDatabaseConnection() {
     try {
-        $conn = getDbConnection();
+        global $con;
+        $conn = $con;
         
         if ($conn instanceof mysqli && !$conn->connect_error) {
             // Test query to verify connection and permissions
@@ -55,4 +56,4 @@ $connection_status = testDatabaseConnection();
 
 // Output results in JSON format
 header('Content-Type: application/json');
-echo json_encode($connection_status, JSON_PRETTY_PRINT);
+echo json_encode($connection_status, JSON_PRETTY_PRINT);

@@ -4,20 +4,17 @@
  * This file provides database connection and other configurations for the admin panel
  */
 
-// Include main configuration files
-// Include centralized database connection
-require_once(__DIR__ . '/../includes/db_connection.php');
-
-// Get database connection
-try {
-    $con = getDbConnection();
-} catch (Exception $e) {
-    handleDatabaseError($e);
-}
+// Include the main site database configuration
+require_once __DIR__ . '/../includes/config/config.php';
+require_once __DIR__ . '/../includes/db_connection.php';
 
 // Set admin-specific constants
-define('ADMIN_BASE_URL', '/apsdreamhome/admin');
-define('ADMIN_ASSETS_URL', ADMIN_BASE_URL . '/assets');
+if (!defined('ADMIN_BASE_URL')) {
+    define('ADMIN_BASE_URL', '/apsdreamhome/admin');
+}
+if (!defined('ADMIN_ASSETS_URL')) {
+    define('ADMIN_ASSETS_URL', ADMIN_BASE_URL . '/assets');
+}
 
 // Set timezone
 date_default_timezone_set('Asia/Kolkata');
@@ -26,6 +23,16 @@ date_default_timezone_set('Asia/Kolkata');
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Set session cookie parameters to prevent conflicts
+session_set_cookie_params([
+    'lifetime' => 1800, // 30 minutes
+    'path' => '/apsdreamhome/admin/',
+    'domain' => '',
+    'secure' => false, // Set to true in production with HTTPS
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 
 // Add configurable SIEM/log forwarding endpoint variable
 $SIEM_ENDPOINT = getenv('SIEM_ENDPOINT') ?: '';
@@ -46,8 +53,8 @@ $S3_REGION = getenv('S3_REGION') ?: 'us-east-1';
 
 // Admin authentication check
 function checkAdminAuth() {
-    if (!isset($_SESSION['auser'])) {
-        header('location:index.php');
+    if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+        header('Location: index.php');
         exit();
     }
 }

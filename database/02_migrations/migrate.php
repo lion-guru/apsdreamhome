@@ -62,7 +62,7 @@ try {
     }
     
     // Create migrations table if it doesn't exist
-    $conn = getDbConnection();
+    $conn = getMysqliConnection();
     
     // First check if migrations table exists
     $tableExists = $conn->query("SHOW TABLES LIKE 'migrations'");

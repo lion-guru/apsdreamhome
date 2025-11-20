@@ -223,27 +223,16 @@ function validateRequestHeaders() {
     return true;
 }
 
-// Validate database connection file
-$db_connection_file = __DIR__ . '/../includes/db_config.php';
-if (!file_exists($db_connection_file) || !is_readable($db_connection_file)) {
-    logSecurityEvent('Database Connection File Missing', [
-        'file_path' => $db_connection_file,
-        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
-    ]);
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'System configuration error.',
-        'timestamp' => date('Y-m-d H:i:s')
-    ]);
-    exit();
-}
+// Force cache clear by adding timestamp
+$cache_buster = time();
 
-// Include database connection securely
-require_once $db_connection_file;
+// Include main site config for database connection
+require_once __DIR__ . '/../includes/config/config.php';
+
+// Ensure $conn is set from $con provided by config.php
+$conn = $con;
 
 // Get database connection with validation
-$conn = getDbConnection();
 if (!$conn) {
     logSecurityEvent('Database Connection Failed', [
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
@@ -259,12 +248,12 @@ if (!$conn) {
 }
 
 // Check if user has admin privileges
-if (!isset($_SESSION['auser'])) {
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     logSecurityEvent('Unauthorized Access Attempt to Bookings', [
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
         'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN'
     ]);
-    header('Location: /admin/index.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -287,7 +276,7 @@ logSecurityEvent('Bookings Page Accessed', [
     'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
     'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN',
     'session_id' => session_id(),
-    'admin_user' => $_SESSION['auser']
+    'admin_user' => $_SESSION['admin_username'] ?? 'Unknown'
 ]);
 
 // Enhanced input validation and sanitization
@@ -388,11 +377,12 @@ function validateInput($input, $type = 'string', $max_length = null, $required =
     return $input;
 }
 
-// Initialize variables
-$msg = '';
-$search_term = '';
-$bookings = [];
-$booking_stats = [];
+// Initialize rate limiting variables
+$max_booking_operations = 50; // Max operations per hour
+$rate_limit_data = [
+    'operations' => 0,
+    'reset_time' => time() + 3600
+];
 
 // Handle search functionality
 if (isset($_GET['search']) && !empty($_GET['search'])) {
@@ -422,7 +412,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 
             logSecurityEvent('Booking Search Performed', [
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
-                'admin_user' => $_SESSION['auser'],
+                'admin_user' => $_SESSION['admin_username'] ?? 'Unknown',
                 'search_term' => $search_term,
                 'results_count' => count($bookings)
             ]);
@@ -430,7 +420,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
             logSecurityEvent('Booking Search Error', [
                 'error_message' => $e->getMessage(),
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
-                'admin_user' => $_SESSION['auser'],
+                'admin_user' => $_SESSION['admin_username'] ?? 'Unknown',
                 'search_term' => $search_term
             ]);
         }
@@ -496,7 +486,7 @@ if (isset($_POST['delete_booking']) && isset($_POST['booking_id'])) {
         // Log successful booking deletion
         logSecurityEvent('Booking Deleted Successfully', [
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
-            'admin_user' => $_SESSION['auser'],
+            'admin_user' => $_SESSION['admin_username'] ?? 'Unknown',
             'booking_id' => $booking_id,
             'customer_name' => ($booking_data['first_name'] ?? '') . ' ' . ($booking_data['last_name'] ?? ''),
             'property_name' => $booking_data['property_name'] ?? 'Unknown',
@@ -512,7 +502,7 @@ if (isset($_POST['delete_booking']) && isset($_POST['booking_id'])) {
             'error_message' => $e->getMessage(),
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN',
-            'admin_user' => $_SESSION['auser'],
+            'admin_user' => $_SESSION['admin_username'] ?? 'Unknown',
             'booking_id' => $_POST['booking_id'] ?? 'UNKNOWN'
         ]);
         $msg = htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
@@ -543,7 +533,7 @@ try {
     logSecurityEvent('Error Fetching Bookings', [
         'error_message' => $e->getMessage(),
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
-        'admin_user' => $_SESSION['auser']
+        'admin_user' => $_SESSION['admin_username'] ?? 'Unknown'
     ]);
     $bookings = [];
 }
@@ -574,7 +564,9 @@ try {
 }
 
 // Close database connection
-$conn->close();
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -613,8 +605,14 @@ $header_file = __DIR__ . '/includes/new_header.php';
 if (file_exists($header_file) && is_readable($header_file)) {
     include $header_file;
 } else {
-    logSecurityEvent('Header File Missing', ['file_path' => $header_file]);
-    echo '<!-- Header not available -->';
+    // Fallback to admin header
+    $header_file = __DIR__ . '/includes/admin_header.php';
+    if (file_exists($header_file) && is_readable($header_file)) {
+        include $header_file;
+    } else {
+        logSecurityEvent('Header File Missing', ['file_path' => $header_file]);
+        echo '<!-- Header not available -->';
+    }
 }
 ?>
 
@@ -919,13 +917,23 @@ $footer_file = __DIR__ . '/includes/new_footer.php';
 if (file_exists($footer_file) && is_readable($footer_file)) {
     include $footer_file;
 } else {
-    logSecurityEvent('Footer File Missing', ['file_path' => $footer_file]);
-    echo '<!-- Footer not available -->';
+    // Fallback to admin footer
+    $footer_file = __DIR__ . '/includes/modern-footer.php';
+    if (file_exists($footer_file) && is_readable($footer_file)) {
+        include $footer_file;
+    } else {
+        logSecurityEvent('Footer File Missing', ['file_path' => $footer_file]);
+        echo '<!-- Footer not available -->';
+    }
 }
 ?>
 
 <!-- DataTables JS -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+// Fallback: if CDN jQuery fails, load local copy immediately before plugins
+        window.jQuery || document.write('<script src="<?php echo BASE_URL; ?>/assets/js/jquery.min.js"><\/script>');
+</script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

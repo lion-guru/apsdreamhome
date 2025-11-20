@@ -39,7 +39,18 @@ $scriptPath = dirname($_SERVER['SCRIPT_NAME']);
 $base_url = $protocol . $domainName . $scriptPath;
 
 if (!defined('BASE_URL')) {
-    define('BASE_URL', rtrim($base_url, '/'));
+    define('BASE_URL', rtrim($base_url, '/') . '/');
+}
+
+// Serve static files directly when using PHP built-in server
+if (php_sapi_name() === 'cli-server') {
+    $requestedPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    $staticFile = PUBLIC_PATH . $requestedPath;
+    
+    // Only serve as static file if it's NOT a PHP file
+    if ($requestedPath && is_file($staticFile) && !preg_match('/\.php$/i', $requestedPath)) {
+        return false; // Let built-in server serve assets (css/js/images/fonts)
+    }
 }
 
 // Include configuration
@@ -88,265 +99,282 @@ $routes = [
     'interior-design' => 'interior_design.php',
     
     // Blog related routes
-    'blog/([^/]+)' => 'blog_post.php?slug=$1',
+    'blog/([0-9]+)' => 'blog-details.php?id=$1',
     'blog/category/([^/]+)' => 'blog.php?category=$1',
-    'blog/author/([^/]+)' => 'blog.php?author=$1',
+    'blog/tag/([^/]+)' => 'blog.php?tag=$1',
     
-    // Search routes
-    'search' => 'search.php',
-    'search/properties' => 'search.php?type=properties',
-    'search/projects' => 'search.php?type=projects',
-    'search/blog' => 'search.php?type=blog',
-    
-    // Additional pages
-    'privacy-policy' => 'privacy-policy.php',
-    'terms-of-service' => 'terms-of-service.php',
-    'sitemap' => 'sitemap.php',
-    'colonies' => 'colonies.php',
-    
-    // Utility pages
-    'coming-soon' => 'coming_soon.php',
-    'maintenance' => 'maintenance.php',
-    'thank-you' => 'thank_you.php',
-    
-    // Form handlers
-    'submit/contact' => 'contact_handler.php',
-    'submit/property-inquiry' => 'property_inquiry_handler.php',
-    'submit/job-application' => 'job_application_handler.php',
-
-    // Authentication routes
-    'login' => 'auth/login.php',
-    'register' => 'auth/register.php',
+    // User authentication routes
+    'login' => 'login.php',
+    'register' => 'registration.php',
     'logout' => 'logout.php',
     'forgot-password' => 'forgot_password.php',
     'reset-password' => 'reset_password.php',
-
-    // User dashboard routes - Map to existing files
-    'dashboard' => 'dash.php',
-    'customer-dashboard' => 'customer_dashboard.php',
-    'associate-dashboard' => 'dashasso.php',
     'profile' => 'profile.php',
-    'properties/my' => 'properties.php', // Will need parameter handling
-    'properties/add' => 'properties.php', // Will need parameter handling
-    'properties/edit/([0-9]+)' => 'property_details.php?id=$1',
-    'bookings' => 'bookings.php',
-    'favorites' => 'favorites.php',
-    'messages' => 'messages.php',
-    'notifications' => 'notifications.php',
-    'settings' => 'settings.php',
-
-    // Admin routes - Direct file access for now
-    'admin' => 'admin.php',
-    'admin/dashboard' => 'admin/admin_dashboard.php',
+    'dashboard' => 'dashboard.php',
+    
+    // Admin routes
+    'admin' => 'admin/dashboard.php',
+    'admin/login' => 'admin/login.php',
+    'admin/logout' => 'admin/logout.php',
+    'admin/dashboard' => 'admin/dashboard.php',
     'admin/properties' => 'admin/properties.php',
-    'admin/users' => 'admin/manage_users.php',
-    'admin/leads' => 'admin/leads.php',
+    'admin/projects' => 'admin/projects.php',
+    'admin/users' => 'admin/users.php',
+    'admin/blog' => 'admin/blog.php',
+    'admin/settings' => 'admin/settings.php',
     'admin/reports' => 'admin/reports.php',
-    'admin/settings' => 'admin/manage_site_settings.php',
-    'admin/database' => 'admin/db_health_check_and_fix.php',
-    'admin/logs' => 'admin/log_viewer.php',
-    'admin/bookings' => 'admin/bookings.php',
-
+    
+    // Error pages
+    'error/404' => 'error_pages/404.php',
+    'error/500' => 'error_pages/500.php',
+    'error/403' => 'error_pages/403.php',
+    
     // API routes
     'api/properties' => 'api/properties.php',
-    'api/properties/([0-9]+)' => 'api/property_details.php',
-    'api/bookings' => 'api/bookings.php',
-    'api/messages' => 'api/messages.php',
-
-    // Support routes
-    'support' => 'support.php',
-    'support/tickets' => 'admin/support_tickets.php',
-
-    // 404 page (catch-all route)
-    '404' => 'errors/404.php'
+    'api/projects' => 'api/projects.php',
+    'api/contact' => 'api/contact.php',
+    'api/newsletter' => 'api/newsletter.php',
+    'api/booking' => 'api/booking.php',
+    
+    // Payment routes
+    'payment/process' => 'payment/process.php',
+    'payment/success' => 'payment/success.php',
+    'payment/failed' => 'payment/failed.php',
+    'payment/webhook' => 'payment/webhook.php',
+    
+    // WhatsApp routes
+    'whatsapp/send' => 'whatsapp/send.php',
+    'whatsapp/webhook' => 'whatsapp/webhook.php',
+    
+    // Test routes
+    'test/error/404' => 'test_error.php',
+    'test/error/500' => 'test_error_500.php',
+    'test/performance' => 'test_performance.php',
+    'test/database' => 'test_database.php',
+    'test/email' => 'test_email.php',
+    'test/whatsapp' => 'test_whatsapp.php',
+    'test/payment' => 'test_payment.php',
+    
+    // Legal pages
+    'privacy-policy' => 'privacy_policy.php',
+    'terms-of-service' => 'terms_of_service.php',
+    'cookie-policy' => 'cookie_policy.php',
+    'disclaimer' => 'disclaimer.php',
+    
+    // Sitemap and feeds
+    'sitemap.xml' => 'sitemap_xml.php',
+    'sitemap' => 'sitemap.php',
+    'rss' => 'rss.php',
+    'atom' => 'atom.php',
+    
+    // AJAX endpoints
+    'ajax/search' => 'ajax/search.php',
+    'ajax/contact' => 'ajax/contact.php',
+    'ajax/newsletter' => 'ajax/newsletter.php',
+    'ajax/property-inquiry' => 'ajax/property_inquiry.php',
+    'ajax/project-inquiry' => 'ajax/project_inquiry.php',
+    'ajax/booking' => 'ajax/booking.php',
+    'ajax/calculator' => 'ajax/calculator.php',
+    
+    // Calculator
+    'calculator' => 'calculator.php',
+    'emi-calculator' => 'emi_calculator.php',
+    'loan-calculator' => 'loan_calculator.php',
+    
+    // Documents
+    'documents' => 'documents.php',
+    'downloads' => 'downloads.php',
+    
+    // Landing pages
+    'landing/([a-zA-Z0-9-]+)' => 'landing.php?page=$1',
+    
+    // Default catch-all route for enhanced pages
+    '([a-zA-Z0-9-]+)' => 'enhanced_router.php?page=$1',
 ];
-
-// Get the requested URL
-$request_uri = $_SERVER['REQUEST_URI'];
-
-// Remove query string
-$query_string_pos = strpos($request_uri, '?');
-if ($query_string_pos !== false) {
-    $request_uri = substr($request_uri, 0, $query_string_pos);
-}
-
-// Remove leading slash and any path issues
-$request_uri = trim($request_uri, '/');
-
-// Handle specific path adjustments if needed
-if (strpos($request_uri, 'apsdreamhomefinal/') === 0) {
-    $request_uri = str_replace('apsdreamhomefinal/', '', $request_uri);
-}
-
-// Default to home if no URI
-if (empty($request_uri)) {
-    $request_uri = 'home';
-}
 
 /**
  * Enhanced Auto-Routing System
- * Automatically handles page requests based on file structure
+ * Automatically discovers and routes to the appropriate file
  */
-
-// Enhanced routing with auto-discovery
-function enhancedAutoRouting($request_uri, $routes) {
-    // First check explicit routes
-    if (isset($routes[$request_uri])) {
-        $route = $routes[$request_uri];
-        // Prevent recursion by never routing to index.php from router
-        if ($route === 'index.php') {
-            $route = 'homepage.php';
-        }
-        if (file_exists($route)) {
-            return $route;
-        }
+function enhancedAutoRouting($requestedPath) {
+    // Remove leading/trailing slashes
+    $requestedPath = trim($requestedPath, '/');
+    
+    // If empty, route to homepage
+    if (empty($requestedPath)) {
+        return PUBLIC_PATH . '/homepage.php';
     }
-
-    // Auto-discover pages in root directory
+    
+    // Convert path to filename format
+    $fileName = str_replace('-', '_', $requestedPath) . '.php';
+    $fileName2 = str_replace('-', '', $requestedPath) . '.php';
+    $fileName3 = str_replace('-', '-', $requestedPath) . '.php';
+    
+    // Check for template variants
     $possibleFiles = [
-        $request_uri . '.php',
-        strtolower($request_uri) . '.php',
-        str_replace('-', '_', $request_uri) . '.php'
+        APP_PATH . '/views/home/' . $requestedPath . '.php',
+        APP_PATH . '/views/home/' . $fileName,
+        $fileName2,
+        $fileName3,
+        APP_PATH . '/views/templates/' . $requestedPath . '.php',
+        APP_PATH . '/views/templates/' . $fileName,
+        APP_PATH . '/views/pages/' . $requestedPath . '.php',
+        APP_PATH . '/views/pages/' . $fileName,
+        APP_PATH . '/views/' . $requestedPath . '.php',
+        APP_PATH . '/views/' . $fileName,
+        APP_PATH . '/views/components/' . $requestedPath . '.php',
+        APP_PATH . '/views/components/' . $fileName,
+        APP_PATH . '/views/modules/' . $requestedPath . '.php',
+        APP_PATH . '/views/modules/' . $fileName,
+        APP_PATH . '/views/sections/' . $requestedPath . '.php',
+        APP_PATH . '/views/sections/' . $fileName,
+        APP_PATH . '/views/features/' . $requestedPath . '.php',
+        APP_PATH . '/views/features/' . $fileName,
+        APP_PATH . '/views/includes/' . $requestedPath . '.php',
+        APP_PATH . '/views/includes/' . $fileName,
+        APP_PATH . '/views/inc/' . $requestedPath . '.php',
+        APP_PATH . '/views/inc/' . $fileName,
+        APP_PATH . '/views/template_' . $requestedPath . '.php',
+        APP_PATH . '/views/template_' . $fileName,
+        APP_PATH . '/views/page_' . $requestedPath . '.php',
+        APP_PATH . '/views/page_' . $fileName,
+        APP_PATH . '/views/component_' . $requestedPath . '.php',
+        APP_PATH . '/views/component_' . $fileName,
+        APP_PATH . '/views/section_' . $requestedPath . '.php',
+        APP_PATH . '/views/section_' . $fileName,
+        APP_PATH . '/views/feature_' . $requestedPath . '.php',
+        APP_PATH . '/views/feature_' . $fileName,
+        APP_PATH . '/views/' . $requestedPath . '_template.php',
+        APP_PATH . '/views/' . $fileName . '_template.php',
+        APP_PATH . '/views/' . $requestedPath . '_page.php',
+        APP_PATH . '/views/' . $fileName . '_page.php',
+        APP_PATH . '/views/' . $requestedPath . '_component.php',
+        APP_PATH . '/views/' . $fileName . '_component.php',
+        APP_PATH . '/views/' . $requestedPath . '_section.php',
+        APP_PATH . '/views/' . $fileName . '_section.php',
+        APP_PATH . '/views/' . $requestedPath . '_feature.php',
+        APP_PATH . '/views/' . $fileName . '_feature.php',
+        APP_PATH . '/views/' . $requestedPath . '_view.php',
+        APP_PATH . '/views/' . $fileName . '_view.php',
+        APP_PATH . '/views/' . $requestedPath . '_module.php',
+        APP_PATH . '/views/' . $fileName . '_module.php',
     ];
-
+    
+    // Check each possible file
     foreach ($possibleFiles as $file) {
         if (file_exists($file)) {
             return $file;
         }
     }
-
-    // Check in subdirectories that are likely to contain pages
-    $subdirectories = [
-        'associate_dir',
-        'customer',
-        'admin',
-        'api',
-        'auth'
-    ];
-
-    foreach ($subdirectories as $subdir) {
-        $filePath = $subdir . '/' . $request_uri . '.php';
-        if (file_exists($filePath)) {
-            return $filePath;
+    
+    // Check for directory index
+    if (is_dir(APP_PATH . '/views/' . $requestedPath)) {
+        $indexFiles = ['index.php', 'home.php', 'default.php', 'main.php'];
+        foreach ($indexFiles as $indexFile) {
+            if (file_exists(APP_PATH . '/views/' . $requestedPath . '/' . $indexFile)) {
+                return APP_PATH . '/views/' . $requestedPath . '/' . $indexFile;
+            }
         }
     }
-
+    
+    // Check for category-based routing
+    $pathParts = explode('/', $requestedPath);
+    if (count($pathParts) > 1) {
+        $category = $pathParts[0];
+        $item = $pathParts[1];
+        
+        $categoryFiles = [
+            APP_PATH . '/views/' . $category . '/' . $item . '.php',
+        APP_PATH . '/views/' . $category . '/details_' . $item . '.php',
+        APP_PATH . '/views/' . $category . '/view_' . $item . '.php',
+        APP_PATH . '/views/' . $category . '/show_' . $item . '.php',
+        APP_PATH . '/views/' . $category . '/item_' . $item . '.php',
+        APP_PATH . '/views/category_' . $category . '.php',
+        APP_PATH . '/views/category_' . $category . '_details.php',
+        ];
+        
+        foreach ($categoryFiles as $file) {
+            if (file_exists($file)) {
+                return $file;
+            }
+        }
+    }
+    
     return false;
 }
 
-// Route the request
-$found = false;
-$file_path = '';
+// Get the requested path
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+$requestedPath = parse_url($requestUri, PHP_URL_PATH);
+$requestedPath = trim($requestedPath, '/');
 
-// Use enhanced auto-routing
-$file_path = enhancedAutoRouting($request_uri, $routes);
-if ($file_path) {
-    $found = true;
-    require_once $file_path;
-    exit();
-}
-
-// Simple exact match first (fallback)
-if (isset($routes[$request_uri])) {
-    $route = $routes[$request_uri];
-
-    // Check if this is an MVC controller route (admin/*)
-    if (strpos($route, '/') !== false && strpos($route, 'admin/') === 0) {
-        $found = true;
-        handleMVCRequest($route);
-        exit();
-    } elseif (file_exists($route)) {
-        $file_path = $route;
-        $found = true;
-    }
-} else {
-    // Try pattern matching for dynamic routes
-    foreach ($routes as $route => $file) {
-        // Skip if it's a simple route (already checked)
-        if (strpos($route, '(') === false) {
-            continue;
+// Check if the request matches any defined route
+foreach ($routes as $pattern => $target) {
+    // Convert route pattern to regex
+    $regex = '#^' . $pattern . '$#';
+    
+    if (preg_match($regex, $requestedPath, $matches)) {
+        // Remove the full match from the beginning
+        array_shift($matches);
+        
+        // Replace placeholders in the target
+        $targetFile = $target;
+        foreach ($matches as $index => $value) {
+            $targetFile = str_replace('$' . ($index + 1), $value, $targetFile);
         }
-
-        // Convert route to regex pattern
-        $pattern = '#^' . $route . '$#';
-
-        // Check if the current request matches the route
-        if (preg_match($pattern, $request_uri, $matches)) {
-            // Remove the full match from matches
-            array_shift($matches);
-
-            // Replace placeholders in the file path
-            $file_path = str_replace('$1', $matches[0] ?? '', $file);
-            $file_path = ltrim($file_path, '/');
-
-            // Check if the file exists
-            if (file_exists($file_path)) {
-                $found = true;
-                require_once $file_path;
-                exit();
-            }
-            break;
+        
+        // Check if the target file exists
+        $targetPath = PUBLIC_PATH . '/' . $targetFile;
+        if (file_exists($targetPath)) {
+            // Route to the target file
+            require_once $targetPath;
+            exit;
         }
     }
 }
 
-/**
- * Handle MVC controller requests
- */
-function handleMVCRequest($route) {
-    // Parse controller and method from route
-    $parts = explode('/', $route);
-    $controllerName = ucfirst($parts[0]) . 'Controller';
-    $methodName = $parts[1] ?? 'index';
-
-    $controllerPath = APP_PATH . "/controllers/{$controllerName}.php";
-
-    if (file_exists($controllerPath)) {
-        require_once $controllerPath;
-
-        $fullControllerName = "App\\Controllers\\{$controllerName}";
-
-        if (class_exists($fullControllerName)) {
-            $controller = new $fullControllerName();
-
-            if (method_exists($controller, $methodName)) {
-                $controller->$methodName();
-                return;
-            }
-        }
-    }
-
-    // Fallback to 404 if MVC route fails
-    show404();
+// Try enhanced auto-routing
+$autoRoutedFile = enhancedAutoRouting($requestedPath);
+if ($autoRoutedFile && file_exists($autoRoutedFile)) {
+    require_once $autoRoutedFile;
+    exit;
 }
 
-/**
- * Show 404 page
- */
-function show404() {
-    header("HTTP/1.0 404 Not Found");
-    if (file_exists('errors/404.php')) {
-        require_once 'errors/404.php';
-    } else {
-        echo '<!DOCTYPE html>
-        <html>
-        <head>
-            <title>404 - Page Not Found</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        </head>
-        <body class="bg-light">
-            <div class="container py-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-8 text-center">
-                        <h1 class="display-1 text-danger">404</h1>
-                        <h2>Page Not Found</h2>
-                        <p class="lead">The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
-                        <a href="' . BASE_URL . '" class="btn btn-primary">Go to Homepage</a>
-                    </div>
-                </div>
-            </div>
-        </body>
-        </html>';
+// Check for error pages
+$errorPages = [
+    '404' => 'error_pages/404.php',
+    '403' => 'error_pages/403.php',
+    '500' => 'error_pages/500.php',
+    '401' => 'error_pages/401.php',
+    '400' => 'error_pages/400.php',
+];
+
+// Try to find a suitable error page
+foreach ($errorPages as $code => $errorPage) {
+    $errorPagePath = PUBLIC_PATH . '/' . $errorPage;
+    if (file_exists($errorPagePath)) {
+        http_response_code((int)$code);
+        require_once $errorPagePath;
+        exit;
     }
-    exit();
 }
+
+// If no route or error page is found, show a generic error
+http_response_code(404);
+echo '<!DOCTYPE html>';
+echo '<html>';
+echo '<head>';
+echo '<title>404 - Page Not Found</title>';
+echo '<style>';
+echo 'body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }';
+echo 'h1 { color: #e74c3c; }';
+echo 'p { color: #666; }';
+echo '</style>';
+echo '</head>';
+echo '<body>';
+echo '<h1>404 - Page Not Found</h1>';
+echo '<p>The page you are looking for could not be found.</p>';
+echo '<p>Requested URL: ' . htmlspecialchars($requestedPath) . '</p>';
+echo '</body>';
+echo '</html>';
+exit;
