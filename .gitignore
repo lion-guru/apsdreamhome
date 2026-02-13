@@ -78,7 +78,6 @@ dist/
 
 # Dependencies
 vendor/
-composer.lock
 
 # OpenMemory - IDE/Assistant specific rules
 .windsurf\rules\openmemory.md
