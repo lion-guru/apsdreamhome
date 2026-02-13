@@ -28,7 +28,9 @@ $webRoutes = [
             '/faq' => 'HomeController@faq',
             '/sitemap' => 'HomeController@sitemap',
             '/privacy' => 'HomeController@privacy',
+            '/privacy-settings' => 'HomeController@privacy', // Added alias for privacy settings
             '/terms' => 'HomeController@terms',
+            '/notifications' => 'DashboardController@notifications', // Added notifications route
             '/associate/login' => 'AssociateController@login',
             '/associate/logout' => 'AssociateController@logout',
             '/employee/login' => 'EmployeeController@login',
@@ -38,7 +40,7 @@ $webRoutes = [
             '/payment/{id}' => 'PaymentController@show',
             '/payment/success/{id}' => 'PaymentController@success',
             '/payment/cancel/{id}' => 'PaymentController@cancel',
-            
+
             // Error page tests
             '/test/error/404' => 'App\Controllers\ErrorTestController@test404',
             '/test/error/500' => 'App\Controllers\ErrorTestController@test500',
@@ -225,7 +227,7 @@ $webRoutes = [
 // Register routes with the router
 if (isset($app) && $app instanceof \App\Core\App) {
     $router = $app->router();
-    
+
     // Register public routes
     foreach ($webRoutes['public'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
@@ -252,7 +254,7 @@ if (isset($app) && $app instanceof \App\Core\App) {
             }
         }
     }
-    
+
     // Register authenticated routes with auth middleware
     foreach ($webRoutes['authenticated'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
@@ -279,7 +281,7 @@ if (isset($app) && $app instanceof \App\Core\App) {
             }
         }
     }
-    
+
     // Register associate routes with auth middleware
     foreach ($webRoutes['associate'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
@@ -306,7 +308,7 @@ if (isset($app) && $app instanceof \App\Core\App) {
             }
         }
     }
-    
+
     // Register employee routes with auth middleware
     foreach ($webRoutes['employee'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
@@ -333,7 +335,7 @@ if (isset($app) && $app instanceof \App\Core\App) {
             }
         }
     }
-    
+
     // Register customer routes with auth middleware
     foreach ($webRoutes['customer'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
@@ -360,7 +362,7 @@ if (isset($app) && $app instanceof \App\Core\App) {
             }
         }
     }
-    
+
     // Register admin routes with admin middleware
     foreach ($webRoutes['admin'] as $method => $routes) {
         foreach ($routes as $path => $handler) {

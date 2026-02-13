@@ -1,0 +1,1231 @@
+<?php
+
+namespace App\Services;
+
+use App\Core\Database;
+use App\Models\Lead;
+use App\Models\LeadActivity;
+use App\Models\LeadNote;
+use App\Models\LeadTag;
+use App\Models\LeadFile;
+use App\Models\LeadDeal;
+use App\Models\LeadCustomFieldValue;
+use App\Models\User;
+use App\Models\Customer;
+use App\Core\Support\Str;
+
+class LeadService
+{
+    private $db;
+
+    public function __construct() {
+        $this->db = Database::getInstance();
+    }
+
+    /**
+     * Get active campaigns count
+     */
+    public function getActiveCampaignsCount() {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM campaigns WHERE status = 'active'";
+            $stmt = $this->db->query($sql);
+            $data = $stmt->fetch();
+            return $data['count'] ?? 0;
+        } catch (\Exception $e) {
+            error_log('Failed to get active campaigns count: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get leads with filters
+     */
+    public function getLeads($filters = []) {
+        try {
+            $query = Lead::with(['assignedTo', 'createdBy', 'tags']);
+
+            if (!empty($filters['search'])) {
+                $search = $filters['search'];
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%$search%")
+                      ->orWhere('email', 'LIKE', "%$search%")
+                      ->orWhere('phone', 'LIKE', "%$search%")
+                      ->orWhere('company', 'LIKE', "%$search%");
+                });
+            }
+
+            if (!empty($filters['status'])) {
+                $query->where('status', '=', $filters['status']);
+            }
+
+            if (!empty($filters['status_id'])) {
+                $query->where('status_id', '=', $filters['status_id']);
+            }
+
+            if (!empty($filters['source'])) {
+                $query->where('source', '=', $filters['source']);
+            }
+
+            if (!empty($filters['source_id'])) {
+                $query->where('source_id', '=', $filters['source_id']);
+            }
+
+            if (!empty($filters['assigned_to'])) {
+                if ($filters['assigned_to'] === 'unassigned') {
+                    $query->whereNull('assigned_to');
+                } else {
+                    $query->where('assigned_to', '=', $filters['assigned_to']);
+                }
+            }
+
+            if (!empty($filters['created_by'])) {
+                $query->where('created_by', '=', $filters['created_by']);
+            }
+
+            if (!empty($filters['tag'])) {
+                $query->whereHas('tags', function($q) use ($filters) {
+                    $q->where('name', '=', $filters['tag']);
+                });
+            }
+
+            if (!empty($filters['date_from'])) {
+                $query->where('created_at', '>=', $filters['date_from']);
+            }
+
+            if (!empty($filters['date_to'])) {
+                $query->where('created_at', '<=', $filters['date_to']);
+            }
+
+            // Apply sorting
+            $sortField = $filters['sort_field'] ?? 'created_at';
+            $sortDirection = $filters['sort_direction'] ?? 'desc';
+            $query->orderBy($sortField, $sortDirection);
+
+            $perPage = $filters['per_page'] ?? 20;
+            $page = $filters['page'] ?? 1;
+
+            return $query->paginate($perPage, ['*'], 'page', $page);
+        } catch (\Exception $e) {
+            error_log('Failed to fetch leads: ' . $e->getMessage());
+            return ['data' => [], 'total' => 0];
+        }
+    }
+
+    /**
+     * Get lead by ID
+     */
+    public function getLeadById($id) {
+        return Lead::find($id);
+    }
+
+    /**
+     * Get lead data (legacy compatibility)
+     */
+    public function getLead($id) {
+        return Lead::find($id);
+    }
+
+    /**
+     * Get lead data via direct SQL (for complex joins or legacy support)
+     */
+    public function getLeadData($id) {
+        $sql = "SELECT * FROM leads WHERE id = ?";
+        $stmt = $this->db->query($sql, [$id]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Get lead activities
+     */
+    public function getLeadActivities($lead_id) {
+        try {
+            $sql = "SELECT la.*, u.name as created_by_name
+                    FROM lead_activities la
+                    LEFT JOIN users u ON la.created_by = u.id
+                    WHERE la.lead_id = ?
+                    ORDER BY la.created_at DESC";
+
+            $stmt = $this->db->query($sql, [$lead_id]);
+            return $stmt ? $stmt->fetchAll() : [];
+
+        } catch (\Exception $e) {
+            error_log('Lead activities fetch error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Export leads in various formats
+     */
+    public function exportLeads($format = 'csv', $filters = []) {
+        try {
+            $leads_data = $this->getLeads(array_merge($filters, ['per_page' => 1000]));
+            $leads = $leads_data['data'] ?? [];
+
+            if (empty($leads)) return false;
+
+            if ($format === 'csv') {
+                $output = fopen('php://temp', 'r+');
+                
+                // Header
+                fputcsv($output, ['ID', 'Name', 'Email', 'Phone', 'Source', 'Status', 'Priority', 'Assigned To', 'Created At']);
+                
+                // Data
+                foreach ($leads as $lead) {
+                    fputcsv($output, [
+                        $lead->id,
+                        $lead->name,
+                        $lead->email,
+                        $lead->phone,
+                        $lead->source,
+                        $lead->status,
+                        $lead->priority ?? 'Medium',
+                        $lead->assignedTo->name ?? 'Unassigned',
+                        $lead->created_at
+                    ]);
+                }
+                
+                rewind($output);
+                $csv = stream_get_contents($output);
+                fclose($output);
+                return $csv;
+
+            } elseif ($format === 'json') {
+                return json_encode($leads, JSON_PRETTY_PRINT);
+            }
+
+            return false;
+
+        } catch (\Exception $e) {
+            error_log('Leads export error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get lead notes
+     */
+    public function getLeadNotes($leadId) {
+        return LeadNote::where('lead_id', '=', $leadId)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+    }
+
+    /**
+     * Get lead statistics
+     */
+    public function getLeadStats() {
+        try {
+            $status_distribution = Lead::query()
+                ->select('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get();
+
+            $source_distribution = Lead::query()
+                ->select('source, COUNT(*) as count')
+                ->groupBy('source')
+                ->get();
+
+            $total_leads = 0;
+            $won_leads = 0;
+            foreach ($status_distribution as $status) {
+                $total_leads += (int)$status['count'];
+                if ($status['status'] === 'won' || $status['status'] === 'closed_won') {
+                    $won_leads = (int)$status['count'];
+                }
+            }
+
+            $recent_leads = Lead::query()
+                ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-7 days')))
+                ->count();
+
+            return [
+                'by_status' => $status_distribution,
+                'by_source' => $source_distribution,
+                'total_leads' => $total_leads,
+                'won_leads' => $won_leads,
+                'conversion_rate' => $total_leads > 0 ? round(($won_leads / $total_leads) * 100, 2) : 0,
+                'recent_leads' => $recent_leads,
+                'avg_lead_score' => $this->getAverageLeadScore()
+            ];
+        } catch (\Exception $e) {
+            error_log('Lead stats error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Bulk update lead status
+     */
+    public function bulkUpdateStatus($leadIds, $newStatus) {
+        try {
+            if (empty($leadIds)) {
+                return false;
+            }
+
+            $success = Lead::query()
+                ->whereIn('id', $leadIds)
+                ->update(['status' => $newStatus, 'updated_at' => date('Y-m-d H:i:s')]);
+
+            if ($success) {
+                foreach ($leadIds as $id) {
+                    $this->logActivity($id, 'bulk_status_update', "Bulk status update to: $newStatus");
+                }
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            error_log('Bulk status update error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get agent performance metrics
+     */
+    public function getAgentPerformance($agentId, $days = 30) {
+        try {
+            $dateLimit = date('Y-m-d H:i:s', strtotime("-$days days"));
+            
+            $query = Lead::query()
+                ->where('assigned_to', $agentId)
+                ->where('created_at', '>=', $dateLimit);
+
+            $totalLeads = (clone $query)->count();
+            $wonLeads = (clone $query)->whereIn('status', ['won', 'closed_won'])->count();
+            $lostLeads = (clone $query)->whereIn('status', ['lost', 'closed_lost'])->count();
+
+            return [
+                'total_leads' => $totalLeads,
+                'won_leads' => $wonLeads,
+                'lost_leads' => $lostLeads,
+                'conversion_rate' => $totalLeads > 0 ? round(($wonLeads / $totalLeads) * 100, 2) : 0,
+            ];
+        } catch (\Exception $e) {
+            error_log('Agent performance error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get lead source analysis
+     */
+    public function getSourceAnalysis() {
+        try {
+            $sources = $this->getSources();
+            $analysis = [];
+
+            foreach ($sources as $source) {
+                $query = Lead::query()->where('source', $source);
+                $total = (clone $query)->count();
+                $converted = (clone $query)->whereIn('status', ['won', 'closed_won'])->count();
+
+                $analysis[] = [
+                    'lead_source' => $source,
+                    'total_leads' => $total,
+                    'converted_leads' => $converted,
+                    'conversion_rate' => $total > 0 ? round(($converted / $total) * 100, 2) : 0
+                ];
+            }
+
+            // Sort by total leads descending
+            usort($analysis, function($a, $b) {
+                return $b['total_leads'] <=> $a['total_leads'];
+            });
+
+            return $analysis;
+        } catch (\Exception $e) {
+            error_log('Source analysis error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get average lead score
+     */
+    public function getAverageLeadScore() {
+        try {
+            $leads = Lead::query()->get();
+            if (empty($leads)) return 0;
+
+            $totalScore = 0;
+            foreach ($leads as $lead) {
+                $totalScore += $this->calculateLeadScore($lead);
+            }
+
+            return round($totalScore / count($leads), 2);
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Get lead sources
+     */
+    public function getSources() {
+        try {
+            return Lead::query()
+                ->select('DISTINCT source')
+                ->whereNotNull('source')
+                ->orderBy('source')
+                ->get()
+                ->pluck('source');
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get lead statuses
+     */
+    public function getStatuses() {
+        try {
+            return Lead::query()
+                ->select('DISTINCT status')
+                ->whereNotNull('status')
+                ->orderBy('status')
+                ->get()
+                ->pluck('status');
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Create lead
+     */
+    public function createLead($data) {
+        try {
+            // Generate lead number if not provided
+            if (empty($data['lead_number'])) {
+                $data['lead_number'] = $this->generateLeadNumber();
+            }
+
+            $lead = new Lead();
+            $lead->fill($data);
+            
+            // Set default assigned_to if not provided
+            if (empty($lead->assigned_to)) {
+                $lead->assigned_to = auth()->id() ?: 1;
+            }
+            
+            if ($lead->save()) {
+                // Log activity
+                $this->logActivity($lead->id, 'lead_created', "Lead #{$data['lead_number']} created", [
+                    'assigned_to' => $lead->assigned_to,
+                    'status' => $lead->status,
+                ]);
+                
+                // Handle tags if provided
+                if (!empty($data['tags'])) {
+                    $this->syncTags($lead->id, $data['tags']);
+                }
+                
+                return $lead->id;
+            }
+            error_log('Lead::save() returned false');
+            return false;
+        } catch (\Exception $e) {
+            error_log('Failed to create lead Exception: ' . $e->getMessage());
+            if (php_sapi_name() === 'cli') {
+                echo 'Failed to create lead Exception: ' . $e->getMessage() . "\n";
+                echo $e->getTraceAsString() . "\n";
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Update lead
+     */
+    public function updateLead($id, $data) {
+        $lead = $id instanceof Lead ? $id : Lead::find($id);
+        
+        if (!$lead) {
+            return false;
+        }
+
+        try {
+            $lead->fill($data);
+            return $lead->save();
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Delete lead (soft delete)
+     */
+    public function deleteLead($id) {
+        $lead = $id instanceof Lead ? $id : Lead::find($id);
+        
+        if (!$lead) {
+            return false;
+        }
+
+        try {
+            $lead->is_deleted = true;
+            return $lead->save();
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Log lead activity
+     */
+    public function logActivity($leadId, $type, $description, $data = [], $subject = null, $activityDate = null) {
+        try {
+            $activity = new LeadActivity();
+            $activity->lead_id = $leadId;
+            $activity->activity_type = $type;
+            $activity->description = $description;
+            $activity->subject = $subject;
+            $activity->activity_date = $activityDate;
+            $activity->metadata = !empty($data) ? json_encode($data) : null;
+            $activity->created_by = auth()->id() ?: null;
+            
+            $result = $activity->save();
+            if (!$result) {
+                error_log("LeadActivity::save() returned false for lead $leadId");
+            }
+            return $result;
+        } catch (\Exception) {
+            error_log('Activity log error');
+            return false;
+        }
+    }
+
+    /**
+     * Add activity to a lead (alias for logActivity with array support)
+     */
+    public function addActivity($data) {
+        $leadId = $data['lead_id'] ?? null;
+        if (!$leadId) return false;
+
+        $type = $data['activity_type'] ?? 'general';
+        $description = $data['description'] ?? ($data['subject'] ?? 'Activity');
+        $subject = $data['subject'] ?? null;
+        $activityDate = $data['activity_date'] ?? null;
+        $createdBy = $data['created_by'] ?? 1;
+        $metadata = $data['metadata'] ?? [];
+
+        // If activity_date is provided, we can't easily use logActivity which uses NOW()
+        // but for CRM consistency, we'll use logActivity logic with the model
+        try {
+            return $this->logActivity($leadId, $type, $description, $metadata, $subject, $activityDate);
+        } catch (\Exception $e) {
+            error_log("Error adding lead activity: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get lead files
+     */
+    public function getLeadFiles($leadId) {
+        return LeadFile::where('lead_id', '=', $leadId)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+    }
+
+    /**
+     * Sync tags for a lead
+     */
+    public function syncTags($leadId, $tags) {
+        try {
+            if (empty($tags)) {
+                $this->db->execute("DELETE FROM lead_tag_mapping WHERE lead_id = ?", [$leadId]);
+                return true;
+            }
+
+            if (is_string($tags)) {
+                $tags = array_map('trim', explode(',', $tags));
+            }
+
+            $tagIds = [];
+            foreach ($tags as $tagName) {
+                if (empty($tagName)) continue;
+
+                // Find or create tag
+                $stmt = $this->db->query("SELECT id FROM lead_tags WHERE name = ?", [$tagName]);
+                $tag = $stmt->fetch();
+
+                if ($tag) {
+                    $tagIds[] = is_object($tag) ? $tag->id : $tag['id'];
+                } else {
+                    $this->db->execute("INSERT INTO lead_tags (name, created_at) VALUES (?, ?)", [
+                        $tagName, 
+                        date('Y-m-d H:i:s')
+                    ]);
+                    $tagIds[] = $this->db->lastInsertId();
+                }
+            }
+
+            // Sync mapping
+            $this->db->execute("DELETE FROM lead_tag_mapping WHERE lead_id = ?", [$leadId]);
+            foreach ($tagIds as $tagId) {
+                $this->db->execute("INSERT INTO lead_tag_mapping (lead_id, tag_id) VALUES (?, ?)", [$leadId, $tagId]);
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            error_log('Sync tags error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Generate a unique lead number
+     */
+    public function generateLeadNumber() {
+        $prefix = 'LEAD';
+        $year = date('Y');
+        $month = date('m');
+
+        try {
+            $pattern = $prefix . $year . $month . '%';
+            // Prefix(4) + Year(4) + Month(2) = 10 characters. Sequence starts at 11.
+            $stmt = $this->db->query("SELECT MAX(CAST(SUBSTRING(lead_number, 11) AS UNSIGNED)) as max_num FROM leads WHERE lead_number LIKE '$pattern'");
+            $result = $stmt->fetch();
+            $maxNum = $result['max_num'] ?? 0;
+
+            $nextNum = $maxNum + 1;
+            return $prefix . $year . $month . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+        } catch (\Exception $e) {
+            return $prefix . $year . $month . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        }
+    }
+
+    /**
+     * Generate a unique opportunity number
+     */
+    public function generateOpportunityNumber() {
+        $prefix = 'OPP';
+        $year = date('Y');
+        $month = date('m');
+
+        try {
+            $pattern = $prefix . $year . $month . '%';
+            // Prefix(3) + Year(4) + Month(2) = 9 characters. Sequence starts at 10.
+            $stmt = $this->db->query("SELECT MAX(CAST(SUBSTRING(opportunity_number, 10) AS UNSIGNED)) as max_num FROM opportunities WHERE opportunity_number LIKE '$pattern'");
+            $result = $stmt->fetch();
+            $maxNum = $result['max_num'] ?? 0;
+
+            $nextNum = $maxNum + 1;
+            return $prefix . $year . $month . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+        } catch (\Exception $e) {
+            return $prefix . $year . $month . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        }
+    }
+
+    /**
+     * Create opportunity
+     */
+    public function createOpportunity($data) {
+        try {
+            // Insert into opportunities table
+            $opportunityNumber = $data['opportunity_number'] ?? $this->generateOpportunityNumber();
+            $sql = "INSERT INTO opportunities (
+                        opportunity_number, 
+                        lead_id, 
+                        stage, 
+                        expected_value, 
+                        value,
+                        assigned_to, 
+                        created_by, 
+                        status, 
+                        expected_close,
+                        created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            // Map opportunity_type or status to stage if stage is not provided
+            $stage = $data['stage'] ?? $data['opportunity_type'] ?? $data['status'] ?? 'prospect';
+            $status = $data['status'] ?? 'open';
+            $expectedValue = $data['expected_value'] ?? 0;
+            $value = $data['value'] ?? $expectedValue;
+            $expectedClose = $data['expected_close'] ?? $data['expected_close_date'] ?? null;
+
+            $params = [
+                $opportunityNumber,
+                $data['lead_id'],
+                $stage,
+                $expectedValue,
+                $value,
+                $data['assigned_to'] ?? 1,
+                $data['created_by'] ?? 1,
+                $status,
+                $expectedClose,
+                date('Y-m-d H:i:s')
+            ];
+            
+            $success = $this->db->execute($sql, $params);
+            
+            if ($success) {
+                $oppId = $this->db->lastInsertId();
+                $this->logActivity($data['lead_id'], 'opportunity_created', "Opportunity #$opportunityNumber created");
+                return $oppId;
+            }
+            
+            return false;
+        } catch (\Exception $e) {
+            error_log("Error creating opportunity: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Convert lead to customer
+     */
+    public function convertToCustomer($leadId) {
+        try {
+            $lead = Lead::find($leadId);
+            if (!$lead) {
+                return false;
+            }
+
+            // Check if already a customer by looking at customer_profiles
+            $stmt = $this->db->query("SELECT user_id FROM customer_profiles WHERE lead_id = ?", [$leadId]);
+            $existingProfile = $stmt->fetch();
+            if ($existingProfile) {
+                $customerId = is_object($existingProfile) ? $existingProfile->user_id : $existingProfile['user_id'];
+                return $customerId;
+            }
+
+            // Create customer record using the Customer model's createCustomer method
+            $customerModel = new \App\Models\Customer();
+            
+            $customerData = [
+                'name' => $lead->name,
+                'email' => $lead->email,
+                'phone' => $lead->phone,
+                'lead_id' => $leadId,
+                'password' => 'password123', // Default password or generate one
+                'address' => $lead->address ?? null,
+                'city' => $lead->city ?? null,
+                'state' => $lead->state ?? null,
+                'pincode' => $lead->pincode ?? null,
+                'marital_status' => $lead->marital_status ?? null,
+                'anniversary_date' => $lead->anniversary_date ?? null,
+                'referral_source' => $lead->referral_source ?? null
+            ];
+            
+            $customerId = $customerModel->createCustomer($customerData);
+            
+            if ($customerId) {
+                // Update lead status
+                $lead->status = 'converted';
+                $lead->save();
+
+                $this->logActivity($leadId, 'lead_converted', "Lead converted to customer: ID $customerId", [
+                    'customer_id' => $customerId
+                ]);
+
+                return $customerId;
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            error_log('Lead conversion error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Create support ticket
+     */
+    public function createSupportTicket($data) {
+        try {
+            $sql = "INSERT INTO support_tickets (user_id, assigned_to, subject, category, message, status, priority, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $success = $this->db->execute($sql, [
+                $data['user_id'] ?? ($data['customer_id'] ?? ($data['lead_id'] ?? 0)),
+                $data['assigned_to'] ?? null,
+                $data['subject'] ?? 'Support Ticket',
+                $data['category'] ?? null,
+                $data['message'] ?? ($data['description'] ?? ''),
+                $data['status'] ?? 'open',
+                $data['priority'] ?? 'medium',
+                date('Y-m-d H:i:s')
+            ]);
+            
+            if ($success) {
+                $ticketId = $this->db->lastInsertId();
+                
+                // Auto-assign if category is provided
+                if (!empty($data['category'])) {
+                    $this->autoAssignTicket($ticketId, $data['category']);
+                }
+                
+                return $ticketId;
+            }
+            return false;
+        } catch (\Exception $e) {
+            error_log("Error creating support ticket: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Link ticket to property
+     */
+    public function linkTicketToProperty($ticketId, $propertyId) {
+        $sql = "UPDATE support_tickets SET internal_notes = CONCAT(
+                IFNULL(internal_notes, ''), '\nLinked to Property ID: ?'
+                ) WHERE id = ?";
+        return $this->db->execute($sql, [$propertyId, $ticketId]);
+    }
+
+    /**
+     * Link ticket to plot
+     */
+    public function linkTicketToPlot($ticketId, $plotId) {
+        $sql = "UPDATE support_tickets SET internal_notes = CONCAT(
+                IFNULL(internal_notes, ''), '\nLinked to Plot ID: ?'
+                ) WHERE id = ?";
+        return $this->db->execute($sql, [$plotId, $ticketId]);
+    }
+
+    /**
+     * Auto-assign ticket based on type/category
+     */
+    public function autoAssignTicket($ticketId, $ticketType = null) {
+        if (!$ticketType) {
+            $stmt = $this->db->query("SELECT category FROM support_tickets WHERE id = ?", [$ticketId]);
+            $ticket = $stmt->fetch();
+            $ticketType = $ticket['category'] ?? null;
+        }
+
+        if (!$ticketType) return false;
+
+        $assignmentRules = [
+            'property' => 'property_manager',
+            'plot' => 'plot_manager',
+            'booking' => 'sales_manager',
+            'technical' => 'technical_support',
+            'billing' => 'accounts_manager',
+            'sales' => 'sales_executive'
+        ];
+
+        if (isset($assignmentRules[strtolower($ticketType)])) {
+            $role = $assignmentRules[strtolower($ticketType)];
+            $sql = "SELECT id FROM users WHERE role = ? AND status = 'active' LIMIT 1";
+            $stmt = $this->db->query($sql, [$role]);
+            $user = $stmt->fetch();
+
+            if ($user) {
+                $userId = is_object($user) ? $user->id : $user['id'];
+                $updateSql = "UPDATE support_tickets SET assigned_to = ? WHERE id = ?";
+                return $this->db->execute($updateSql, [$userId, $ticketId]);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create property booking
+     */
+    public function createPropertyBooking($bookingData) {
+        $sql = "INSERT INTO bookings (property_id, user_id, booking_type, message, status, created_at)
+                VALUES (?, ?, ?, ?, 'pending', NOW())";
+        
+        $success = $this->db->execute($sql, [
+            $bookingData['property_id'],
+            $bookingData['user_id'],
+            $bookingData['booking_type'],
+            $bookingData['message']
+        ]);
+
+        return $success ? $this->db->lastInsertId() : false;
+    }
+
+    /**
+     * Get lead to customer conversion rate
+     */
+    public function getLeadToCustomerConversionRate() {
+        try {
+            $sql = "SELECT
+                (SELECT COUNT(*) FROM leads) as total_leads,
+                (SELECT COUNT(DISTINCT lead_id) FROM customer_profiles) as converted_customers";
+
+            $stmt = $this->db->query($sql);
+            $data = $stmt->fetch();
+
+            return $data['total_leads'] > 0 ?
+                round(($data['converted_customers'] / $data['total_leads']) * 100, 2) : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Get opportunity to sale conversion rate
+     */
+    public function getOpportunityToSaleConversionRate() {
+        try {
+            $sql = "SELECT
+                (SELECT COUNT(*) FROM opportunities) as total_opportunities,
+                (SELECT COUNT(*) FROM opportunities WHERE stage = 'won' OR stage = 'closed_won') as won_opportunities";
+
+            $stmt = $this->db->query($sql);
+            $data = $stmt->fetch();
+
+            return $data['total_opportunities'] > 0 ?
+                round(($data['won_opportunities'] / $data['total_opportunities']) * 100, 2) : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Get average sales cycle
+     */
+    public function getAverageSalesCycle() {
+        try {
+            $sql = "SELECT AVG(DATEDIFF(closed_date, created_at)) as avg_cycle
+                    FROM (
+                        SELECT created_at,
+                               CASE WHEN stage IN ('won', 'closed_won', 'lost', 'closed_lost') THEN updated_at
+                                    ELSE NULL END as closed_date
+                        FROM opportunities
+                        WHERE stage IN ('won', 'closed_won', 'lost', 'closed_lost')
+                    ) as closed_deals
+                    WHERE closed_date IS NOT NULL";
+
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch();
+            return $result['avg_cycle'] ?? 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Generate lead report
+     */
+    public function generateReport($typeOrFilters = 'summary', $dateRange = []) {
+        $filters = is_array($typeOrFilters) ? $typeOrFilters : ['type' => $typeOrFilters];
+        if (!empty($dateRange)) {
+            $filters['date_from'] = $dateRange['start'] ?? null;
+            $filters['date_to'] = $dateRange['end'] ?? null;
+        }
+
+        $query = Lead::query();
+
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['source'])) {
+            $query->where('source', $filters['source']);
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->where('created_at', '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->where('created_at', '<=', $filters['date_to']);
+        }
+
+        return [
+            'total' => $query->count(),
+            'by_status' => $query->select('status, COUNT(*) as count')->groupBy('status')->get(),
+            'by_source' => $query->select('source, COUNT(*) as count')->groupBy('source')->get(),
+            'type' => $filters['type'] ?? 'summary',
+            'date_range' => [
+                'start' => $filters['date_from'] ?? null,
+                'end' => $filters['date_to'] ?? null
+            ]
+        ];
+    }
+
+    /**
+     * Get assignable users
+     */
+    public function getAssignableUsers() {
+        try {
+            return User::query()
+                ->where('status', 'active')
+                ->orderBy('name')
+                ->get();
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Calculate lead score based on various factors
+     */
+    public function calculateLeadScore($id) {
+        try {
+            $lead = $id instanceof Lead ? $id : Lead::find($id);
+            if (!$lead) {
+                return 0;
+            }
+
+            $score = 0;
+
+            // Budget score (higher budget = higher score)
+            $budget = $lead->estimated_value ?? $lead->budget ?? 0;
+            if ($budget >= 20000000) $score += 60; // 2Cr+
+            elseif ($budget >= 10000000) $score += 50; // 1Cr-2Cr
+            elseif ($budget >= 5000000) $score += 40; // 50L-1Cr
+            elseif ($budget >= 2500000) $score += 30; // 25L-50L
+            elseif ($budget >= 1000000) $score += 20; // 10L-25L
+            else $score += 10;
+
+            // Source score
+            $source_scores = [
+                'referral' => 30,
+                'mlm' => 25,
+                'direct' => 20,
+                'website' => 15,
+                'social_media' => 10,
+                'advertising' => 5,
+                'google' => 15,
+                'facebook' => 10,
+                'walk-in' => 25
+            ];
+            $score += $source_scores[strtolower($lead->source ?? '')] ?? 0;
+
+            // Status score
+            $status_scores = [
+                'new' => 10,
+                'contacted' => 20,
+                'qualified' => 40,
+                'proposal' => 60,
+                'negotiation' => 80,
+                'won' => 100,
+                'closed_won' => 100,
+                'lost' => 0,
+                'closed_lost' => 0
+            ];
+            $score += $status_scores[strtolower($lead->status ?? '')] ?? 0;
+
+            // Priority bonus
+            $priority = strtolower($lead->priority ?? 'medium');
+            if ($priority === 'high') {
+                $score += 20;
+            } elseif ($priority === 'medium') {
+                $score += 10;
+            }
+
+            // Recency bonus
+            $createdAt = $lead->created_at ? strtotime($lead->created_at) : time();
+            $days_old = floor((time() - $createdAt) / 86400);
+            if ($days_old <= 1) {
+                $score += 20;
+            } elseif ($days_old <= 7) {
+                $score += 10;
+            }
+
+            return min($score, 100);
+
+        } catch (\Exception $e) {
+            error_log('Lead scoring error: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get conversion funnel
+     */
+    public function getConversionFunnel() {
+        try {
+            $stats = Lead::query()
+                ->select('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get();
+
+            $funnel = [
+                'new_leads' => 0,
+                'contacted_leads' => 0,
+                'qualified_leads' => 0,
+                'proposal_leads' => 0,
+                'negotiation_leads' => 0,
+                'won_leads' => 0,
+                'lost_leads' => 0
+            ];
+
+            foreach ($stats as $stat) {
+                $status = strtolower($stat->status);
+                if ($status === 'new') $funnel['new_leads'] = $stat->count;
+                elseif ($status === 'contacted') $funnel['contacted_leads'] = $stat->count;
+                elseif ($status === 'qualified') $funnel['qualified_leads'] = $stat->count;
+                elseif ($status === 'proposal') $funnel['proposal_leads'] = $stat->count;
+                elseif ($status === 'negotiation') $funnel['negotiation_leads'] = $stat->count;
+                elseif ($status === 'won' || $status === 'closed_won') $funnel['won_leads'] += $stat->count;
+                elseif ($status === 'lost' || $status === 'closed_lost') $funnel['lost_leads'] += $stat->count;
+            }
+
+            return $funnel;
+
+        } catch (\Exception $e) {
+            error_log('Conversion funnel error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get leads requiring follow-up
+     */
+    public function getFollowUpLeads($days_overdue = 3) {
+        try {
+            $dateLimit = date('Y-m-d H:i:s', strtotime("-$days_overdue days"));
+            
+            return Lead::with(['assignedTo'])
+                ->whereIn('status', ['new', 'contacted', 'qualified'])
+                ->where(function($q) use ($dateLimit) {
+                    $q->whereNull('last_contact_date')
+                      ->orWhere('last_contact_date', '<=', $dateLimit);
+                })
+                ->orderBy('last_contact_date', 'ASC')
+                ->get();
+
+        } catch (\Exception $e) {
+            error_log('Follow-up leads fetch error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Update last contact date
+     */
+    public function updateLastContact($lead_id, $contact_notes = '') {
+        try {
+            $lead = Lead::find($lead_id);
+            if (!$lead) return false;
+
+            $lead->last_contact_date = date('Y-m-d H:i:s');
+            $success = $lead->save();
+
+            if ($success && !empty($contact_notes)) {
+                $this->logActivity($lead_id, 'contacted', $contact_notes);
+            }
+
+            return $success;
+
+        } catch (\Exception $e) {
+            error_log('Last contact update error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Add note to a lead
+     */
+    public function addNote($leadId, $content, $createdBy = null) {
+        try {
+            $note = new LeadNote();
+            $note->lead_id = $leadId;
+            $note->content = $content;
+            $note->created_by = $createdBy ?? (auth()->id() ?? 0);
+            $note->created_at = date('Y-m-d H:i:s');
+            
+            if ($note->save()) {
+                $this->logActivity($leadId, 'note_added', "Note added: " . substr($content, 0, 50) . (strlen($content) > 50 ? '...' : ''));
+                return $note->id;
+            }
+            return false;
+        } catch (\Exception $e) {
+            error_log('Add note error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update lead status
+     */
+    public function updateLeadStatus($leadId, $status) {
+        try {
+            $lead = Lead::find($leadId);
+            if (!$lead) return false;
+
+            $oldStatus = $lead->status;
+            $lead->status = $status;
+            $lead->updated_at = date('Y-m-d H:i:s');
+            
+            if ($lead->save()) {
+                $this->logActivity($leadId, 'status_updated', "Status updated from $oldStatus to $status");
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            error_log('Update lead status error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Assign lead to a user
+     */
+    public function assignLead($leadId, $userId) {
+        try {
+            $lead = Lead::find($leadId);
+            if (!$lead) return false;
+
+            $lead->assigned_to = $userId;
+            $lead->updated_at = date('Y-m-d H:i:s');
+            
+            if ($lead->save()) {
+                $userName = User::find($userId)->name ?? "User #$userId";
+                $this->logActivity($leadId, 'lead_assigned', "Lead assigned to $userName");
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            error_log('Assign lead error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update custom fields for a lead
+     */
+    public function updateCustomFields($leadId, $fields) {
+        try {
+            foreach ($fields as $fieldId => $value) {
+                $customField = LeadCustomFieldValue::where('lead_id', $leadId)
+                    ->where('field_id', $fieldId)
+                    ->first();
+                
+                if (!$customField) {
+                    $customField = new LeadCustomFieldValue();
+                    $customField->lead_id = $leadId;
+                    $customField->field_id = $fieldId;
+                }
+                
+                $customField->value = $value;
+                $customField->save();
+            }
+            
+            $this->logActivity($leadId, 'custom_fields_updated', "Custom fields updated");
+            return true;
+        } catch (\Exception $e) {
+            error_log('Update custom fields error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Create a deal for a lead
+     */
+    public function createDeal($data) {
+        try {
+            $deal = new LeadDeal();
+            $deal->fill($data);
+            $deal->created_at = date('Y-m-d H:i:s');
+            
+            if ($deal->save()) {
+                $this->logActivity($data['lead_id'], 'deal_created', "Deal created: " . ($data['title'] ?? 'New Deal'));
+                return $deal->id;
+            }
+            return false;
+        } catch (\Exception $e) {
+            error_log('Create deal error: ' . $e->getMessage());
+            return false;
+        }
+    }
+}

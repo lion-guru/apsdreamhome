@@ -1662,14 +1662,32 @@
                     <div class="dropdown">
                         <button class="btn btn-outline-light premium-btn dropdown-toggle" type="button" id="userDropdown" title="User Account Options" aria-label="User account options">
                             <i class="fas fa-user" aria-hidden="true"></i>
-                            <span class="d-none d-lg-inline ms-1">Account</span>
+                            <span class="d-none d-lg-inline ms-1">
+                                <?php echo isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'Account'; ?>
+                            </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end premium-dropdown" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
-                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>register"><i class="fas fa-user-plus me-2"></i>Register</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>customer-dashboard"><i class="fas fa-tachometer-alt me-2"></i>Customer Dashboard</a></li>
-                            <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>associate-dashboard"><i class="fas fa-chart-line me-2"></i>Associate Dashboard</a></li>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <li><h6 class="dropdown-header">Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></h6></li>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>dashboard"><i class="fas fa-tachometer-alt me-2"></i>My Dashboard</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>dashboard/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>dashboard/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>notifications"><i class="fas fa-bell me-2"></i>Notifications</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="<?php echo BASE_URL; ?>logout" method="POST" class="px-3">
+                                        <button type="submit" class="btn btn-danger btn-sm w-100 mt-1">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            <?php else: ?>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>register"><i class="fas fa-user-plus me-2"></i>Register</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>customer-dashboard"><i class="fas fa-tachometer-alt me-2"></i>Customer Dashboard</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?php echo BASE_URL; ?>associate-dashboard"><i class="fas fa-chart-line me-2"></i>Associate Dashboard</a></li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                 </div>
