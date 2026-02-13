@@ -66,6 +66,38 @@ class DashboardController extends Controller {
         $this->view('user/profile', $data);
     }
 
+    public function settings() {
+        $userId = $_SESSION['user_id'];
+        $user = $this->userModel->getUserById($userId);
+
+        $data = [
+            'title' => 'Settings - APS Dream Home',
+            'user' => $user,
+            'success' => $_SESSION['settings_success'] ?? null,
+            'error' => $_SESSION['settings_error'] ?? null
+        ];
+
+        unset($_SESSION['settings_success']);
+        unset($_SESSION['settings_error']);
+
+        $this->view('user/settings', $data);
+    }
+
+    public function notifications() {
+        $userId = $_SESSION['user_id'];
+        
+        // Fetch notifications from model (assuming a Notification model exists or using User model)
+        // For now, let's just use dummy data if the model isn't ready
+        $notifications = []; 
+        
+        $data = [
+            'title' => 'Notifications - APS Dream Home',
+            'notifications' => $notifications
+        ];
+
+        $this->view('user/notifications', $data);
+    }
+
     public function updateProfile() {
         // Validate CSRF token
         if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
