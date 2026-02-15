@@ -279,6 +279,29 @@ class AuthController extends BaseController
             if ($user && $this->verifyPassword($password, $user['password'])) {
                 // Remove password from user data before returning
                 unset($user['password']);
+
+                // Fetch specific role if employee
+                if ($user['role'] === 'employee') {
+                    try {
+                        // Try to get specific role from user_roles and roles table
+                        $roleStmt = $this->db->prepare("
+                            SELECT r.name 
+                            FROM roles r 
+                            JOIN user_roles ur ON r.id = ur.role_id 
+                            WHERE ur.user_id = ?
+                            LIMIT 1
+                        ");
+                        $roleStmt->execute([$user['id']]);
+                        $specificRole = $roleStmt->fetchColumn();
+                        
+                        if ($specificRole) {
+                            $user['role'] = $specificRole;
+                        }
+                    } catch (\Exception $e) {
+                        // Ignore if tables don't exist or other error, fallback to 'employee'
+                    }
+                }
+
                 return $user;
             }
 

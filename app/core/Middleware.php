@@ -55,7 +55,10 @@ abstract class Middleware
     protected function getUserId(): ?int
     {
         $user = $this->getUserSession();
-        return $user['id'] ?? null;
+        if ($user && isset($user['id'])) {
+            return $user['id'];
+        }
+        return $_SESSION['user_id'] ?? null;
     }
     
     /**
@@ -64,7 +67,10 @@ abstract class Middleware
     protected function getUserRole(): ?string
     {
         $user = $this->getUserSession();
-        return $user['role'] ?? null;
+        if ($user && isset($user['role'])) {
+            return $user['role'];
+        }
+        return $_SESSION['user_role'] ?? null;
     }
     
     /**
