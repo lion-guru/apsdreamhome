@@ -7,7 +7,8 @@ adminAccessControl(['finance', 'superadmin']);
 $db = \App\Core\App::database();
 
 // Function to add income
-function addIncome($user_id, $amount, $source, $date, $description) {
+function addIncome($user_id, $amount, $source, $date, $description)
+{
     $db = \App\Core\App::database();
     $db->insert('income', [
         'user_id' => $user_id,
@@ -20,7 +21,8 @@ function addIncome($user_id, $amount, $source, $date, $description) {
 }
 
 // Function to add expense
-function addExpense($user_id, $amount, $category, $date, $description) {
+function addExpense($user_id, $amount, $category, $date, $description)
+{
     $db = \App\Core\App::database();
     $db->insert('expenses', [
         'user_id' => $user_id,
@@ -33,25 +35,31 @@ function addExpense($user_id, $amount, $category, $date, $description) {
 }
 
 // Function to fetch all transactions
-function getTransactions($user_id) {
+function getTransactions($user_id)
+{
     $db = \App\Core\App::database();
-    $query = "SELECT * FROM (SELECT id, amount, source AS category, date, description, 'income' AS type FROM income WHERE user_id = ? UNION ALL SELECT id, amount, category, date, description, 'expense' AS type FROM expenses WHERE user_id = ?) AS transactions ORDER BY date DESC";
-    return $db->fetchAll($query, [$user_id, $user_id]);
+    $query = "SELECT * FROM (SELECT id, amount, source AS category, date, description, 'income' AS type FROM income WHERE user_id = :user_id_income UNION ALL SELECT id, amount, category, date, description, 'expense' AS type FROM expenses WHERE user_id = :user_id_expense) AS transactions ORDER BY date DESC";
+    return $db->fetchAll($query, [
+        'user_id_income' => $user_id,
+        'user_id_expense' => $user_id
+    ]);
 }
 
 // Function to delete a transaction
-function deleteTransaction($id, $type) {
+function deleteTransaction($id, $type)
+{
     $db = \App\Core\App::database();
     $table = ($type === 'income') ? 'income' : 'expenses';
-    $db->execute("DELETE FROM $table WHERE id = ?", [$id]);
+    $db->execute("DELETE FROM $table WHERE id = :id", ['id' => $id]);
     log_admin_activity('delete_transaction', 'Transaction ID: ' . $id . ', type: ' . $type);
 }
 
 // Function to fetch a transaction for editing
-function getTransaction($id, $type) {
+function getTransaction($id, $type)
+{
     $db = \App\Core\App::database();
     $table = ($type === 'income') ? 'income' : 'expenses';
-    return $db->fetch("SELECT * FROM $table WHERE id = ?", [$id]);
+    return $db->fetch("SELECT * FROM $table WHERE id = :id", ['id' => $id]);
 }
 
 // Process form submissions
@@ -87,9 +95,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $desc_val = $description;
 
         if ($transaction_type === 'income') {
-            $db->execute("UPDATE income SET amount = ?, source = ?, date = ?, description = ? WHERE id = ?", [$amount_val, $_POST['source'], $date_val, $desc_val, $transaction_id]);
+            $db->execute("UPDATE income SET amount = :amount, source = :source, date = :date, description = :description WHERE id = :id", [
+                'amount' => $amount_val,
+                'source' => $_POST['source'],
+                'date' => $date_val,
+                'description' => $desc_val,
+                'id' => $transaction_id
+            ]);
         } else {
-            $db->execute("UPDATE expenses SET amount = ?, category = ?, date = ?, description = ? WHERE id = ?", [$amount_val, $_POST['category'], $date_val, $desc_val, $transaction_id]);
+            $db->execute("UPDATE expenses SET amount = :amount, category = :category, date = :date, description = :description WHERE id = :id", [
+                'amount' => $amount_val,
+                'category' => $_POST['category'],
+                'date' => $date_val,
+                'description' => $desc_val,
+                'id' => $transaction_id
+            ]);
         }
         log_admin_activity('edit_transaction', 'Transaction ID: ' . $transaction_id . ', type: ' . $transaction_type . ', amount: ' . $amount_val . ', category/source: ' . ($_POST['category'] ?? $_POST['source']) . ', date: ' . $date_val . ', description: ' . $desc_val);
     }
@@ -108,13 +128,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Fetch totals
-function getTotalIncome($user_id) {
+function getTotalIncome($user_id)
+{
     $db = \App\Core\App::database();
     $row = $db->fetch("SELECT SUM(amount) as total FROM income WHERE user_id = ?", [$user_id]);
     return $row['total'] ?? 0;
 }
 
-function getTotalExpenses($user_id) {
+function getTotalExpenses($user_id)
+{
     $db = \App\Core\App::database();
     $row = $db->fetch("SELECT SUM(amount) as total FROM expenses WHERE user_id = ?", [$user_id]);
     return $row['total'] ?? 0;
@@ -133,6 +155,7 @@ $is_admin = isAdmin() && hasSubRole(['superadmin']);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
@@ -142,6 +165,7 @@ $is_admin = isAdmin() && hasSubRole(['superadmin']);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 
     <!-- Main Wrapper -->
@@ -293,7 +317,7 @@ $is_admin = isAdmin() && hasSubRole(['superadmin']);
     <!-- /Footer -->
 
     <script>
-        $('#editModal').on('show.bs.modal', function (event) {
+        $('#editModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var id = button.data('id'); // Extract info from data-* attributes
             var type = button.data('type');
@@ -313,4 +337,5 @@ $is_admin = isAdmin() && hasSubRole(['superadmin']);
     </script>
 
 </body>
+
 </html>

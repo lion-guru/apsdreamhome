@@ -35,9 +35,9 @@ class SecurityMonitor {
             $sql = "
                 SELECT blocked_until
                 FROM ip_block_list
-                WHERE ip_address = ? AND blocked_until > NOW()
+                WHERE ip_address = :ip AND blocked_until > NOW()
             ";
-            $blockData = $db->fetch($sql, [$ip]);
+            $blockData = $db->fetch($sql, ['ip' => $ip]);
 
             if ($blockData) {
                 // IP is currently blocked
@@ -53,20 +53,27 @@ class SecurityMonitor {
             $sql = "
                 INSERT INTO login_attempts
                 (username, ip_address, attempt_time, successful)
-                VALUES (?, ?, NOW(), ?)
+                VALUES (:username, :ip, NOW(), :successful)
             ";
-            $db->execute($sql, [$username, $ip, $successful ? 1 : 0]);
+            $db->execute($sql, [
+                'username' => $username,
+                'ip' => $ip,
+                'successful' => $successful ? 1 : 0
+            ]);
 
             // Count failed attempts in last hour
             $sql = "
                 SELECT COUNT(*) as failed_attempts
                 FROM login_attempts
-                WHERE username = ?
-                AND ip_address = ?
+                WHERE username = :username
+                AND ip_address = :ip
                 AND successful = 0
                 AND attempt_time > DATE_SUB(NOW(), INTERVAL 1 HOUR)
             ";
-            $attemptsData = $db->fetch($sql, [$username, $ip]);
+            $attemptsData = $db->fetch($sql, [
+                'username' => $username,
+                'ip' => $ip
+            ]);
 
             // Check if brute force threshold is reached
             if ($attemptsData['failed_attempts'] >= self::THRESHOLDS['login_attempts']) {
@@ -74,11 +81,11 @@ class SecurityMonitor {
                 $sql = "
                     INSERT INTO ip_block_list
                     (ip_address, blocked_until, block_reason)
-                    VALUES (?, DATE_ADD(NOW(), INTERVAL 1 HOUR), 'BRUTE_FORCE')
+                    VALUES (:ip, DATE_ADD(NOW(), INTERVAL 1 HOUR), 'BRUTE_FORCE')
                     ON DUPLICATE KEY UPDATE
                     blocked_until = DATE_ADD(NOW(), INTERVAL 1 HOUR)
                 ";
-                $db->execute($sql, [$ip]);
+                $db->execute($sql, ['ip' => $ip]);
 
                 // Log security alert
                 AdminLogger::securityAlert('IP_BLOCKED_BRUTE_FORCE', [

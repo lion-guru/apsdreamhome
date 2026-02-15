@@ -81,7 +81,7 @@ try {
     $report .= "Top Uploader: " . ($top_uploader['uploader'] ?? 'None') . " (" . ($top_uploader['c'] ?? 0) . ")\n";
 
     // Log report to database
-    $db->execute("INSERT INTO admin_reports (report_date, report_text) VALUES (CURDATE(), ?)", [$report]);
+    $db->execute("INSERT INTO admin_reports (report_date, report_text) VALUES (CURDATE(), :report)", ['report' => $report]);
 
     // Send to Admins
     // In production, fetch from user table with role='admin'
