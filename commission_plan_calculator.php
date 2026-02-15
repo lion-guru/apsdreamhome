@@ -24,9 +24,13 @@ if (!isAssociateAdmin($associate_id)) {
 $associate_name = $_SESSION['associate_name'];
 
 // Get all available plans
-$plans_query = "SELECT * FROM mlm_commission_plans WHERE status != 'archived' ORDER BY status DESC, created_at DESC";
-$plans_result = $conn->query($plans_query);
-$plans = $plans_result->fetch_all(MYSQLI_ASSOC);
+$db = \App\Core\App::database();
+$plans = [];
+try {
+    $plans = $db->fetch("SELECT * FROM mlm_commission_plans WHERE status != 'archived' ORDER BY status DESC, created_at DESC");
+} catch (Exception $e) {
+    error_log("Error getting plans: " . $e->getMessage());
+}
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -43,26 +47,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 function calculateScenario($data) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     try {
         // Get plan details
-        $plan_query = "SELECT * FROM mlm_commission_plans WHERE id = ?";
-        $stmt = $conn->prepare($plan_query);
-        $stmt->bind_param("i", $data['plan_id']);
-        $stmt->execute();
-        $plan = $stmt->get_result()->fetch_assoc();
+        $plan = $db->fetch("SELECT * FROM mlm_commission_plans WHERE id = :id", ['id' => $data['plan_id']], false);
 
         if (!$plan) {
             return ['success' => false, 'message' => 'Plan not found'];
         }
 
         // Get plan levels
-        $levels_query = "SELECT * FROM mlm_plan_levels WHERE plan_id = ? ORDER BY level_order";
-        $stmt = $conn->prepare($levels_query);
-        $stmt->bind_param("i", $data['plan_id']);
-        $stmt->execute();
-        $levels = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $levels = $db->fetch("SELECT * FROM mlm_plan_levels WHERE plan_id = :plan_id ORDER BY level_order", ['plan_id' => $data['plan_id']]);
 
         $results = [];
         $total_associates = 0;

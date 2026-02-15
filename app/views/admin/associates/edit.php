@@ -39,21 +39,21 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label"><?php echo h($mlSupport->translate('Full Name')); ?> <span class="text-danger">*</span></label>
-                                        <input type="text" name="name" class="form-control" value="<?php echo h($associate['user_name']); ?>" required>
+                                        <input type="text" name="name" class="form-control" value="<?php echo h($associate['name']); ?>" required>
                                         <div class="invalid-feedback"><?php echo h($mlSupport->translate('Please enter full name.')); ?></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label"><?php echo h($mlSupport->translate('Email Address')); ?> <span class="text-danger">*</span></label>
-                                        <input type="email" name="email" class="form-control" value="<?php echo h($associate['user_email']); ?>" required>
+                                        <input type="email" name="email" class="form-control" value="<?php echo h($associate['email']); ?>" required>
                                         <div class="invalid-feedback"><?php echo h($mlSupport->translate('Please enter a valid email.')); ?></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label"><?php echo h($mlSupport->translate('Phone Number')); ?> <span class="text-danger">*</span></label>
-                                        <input type="text" name="phone" class="form-control" pattern="[6-9][0-9]{9}" value="<?php echo h($associate['user_phone']); ?>" required>
+                                        <input type="text" name="phone" class="form-control" pattern="[6-9][0-9]{9}" value="<?php echo h($associate['phone']); ?>" required>
                                         <div class="invalid-feedback"><?php echo h($mlSupport->translate('Please enter a valid 10-digit phone number.')); ?></div>
                                     </div>
                                 </div>

@@ -35,8 +35,8 @@ abstract class Model {
     public static function find($id) {
         $db = Database::getInstance();
         $stmt = $db->query(
-            "SELECT * FROM " . static::$table . " WHERE id = ?",
-            [$id]
+            "SELECT * FROM " . static::$table . " WHERE id = :id",
+            ['id' => $id]
         );
         $result = $stmt->fetch();
         return $result ? new static($result) : null;
@@ -61,12 +61,12 @@ abstract class Model {
         
         if (isset($this->attributes['id'])) {
             $updates = [];
-            $values = [];
+            $params = [];
             foreach ($this->attributes as $key => $value) {
                 if ($key === 'id') continue;
                 if ($value !== ($this->original[$key] ?? null)) {
-                    $updates[] = "{$key} = ?";
-                    $values[] = $value;
+                    $updates[] = "{$key} = :{$key}";
+                    $params[$key] = $value;
                 }
             }
             
@@ -74,19 +74,22 @@ abstract class Model {
                 return true;
             }
             
-            $values[] = $this->attributes['id'];
-            $sql = "UPDATE " . static::$table . " SET " . implode(", ", $updates) . " WHERE id = ?";
-            $db->query($sql, $values);
+            $params['id'] = $this->attributes['id'];
+            $sql = "UPDATE " . static::$table . " SET " . implode(", ", $updates) . " WHERE id = :id";
+            $db->query($sql, $params);
         } else {
             $columns = array_keys(array_filter($this->attributes));
-            $values = array_values(array_filter($this->attributes));
-            $placeholders = array_fill(0, count($values), '?');
+            $params = array_filter($this->attributes);
+            $placeholders = [];
+            foreach ($columns as $column) {
+                $placeholders[] = ":{$column}";
+            }
             
             $sql = "INSERT INTO " . static::$table . 
                    " (" . implode(", ", $columns) . ") " .
                    "VALUES (" . implode(", ", $placeholders) . ")";
             
-            $db->query($sql, $values);
+            $db->query($sql, $params);
             $this->attributes['id'] = $db->lastInsertId();
         }
         
@@ -101,8 +104,8 @@ abstract class Model {
 
         $db = Database::getInstance();
         $db->query(
-            "DELETE FROM " . static::$table . " WHERE id = ?",
-            [$this->attributes['id']]
+            "DELETE FROM " . static::$table . " WHERE id = :id",
+            ['id' => $this->attributes['id']]
         );
 
         return true;
@@ -111,8 +114,8 @@ abstract class Model {
     public static function where(string $column, string $operator, $value): array {
         $db = Database::getInstance();
         $stmt = $db->query(
-            "SELECT * FROM " . static::$table . " WHERE {$column} {$operator} ?",
-            [$value]
+            "SELECT * FROM " . static::$table . " WHERE {$column} {$operator} :value",
+            ['value' => $value]
         );
         $results = $stmt->fetchAll();
         return array_map(fn($result) => new static($result), $results);

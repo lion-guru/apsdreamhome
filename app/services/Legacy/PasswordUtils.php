@@ -73,7 +73,10 @@ function resetAdminPassword(string $username, string $newPassword) {
 
     $hashedPassword = PasswordUtils::hashPassword($newPassword);
 
-    return $db->execute("UPDATE admin SET apass = ? WHERE auser = ?", [$hashedPassword, $username]);
+    return $db->execute("UPDATE admin SET apass = :password WHERE auser = :username", [
+        'password' => $hashedPassword,
+        'username' => $username
+    ]);
 }
 
 /**

@@ -11,7 +11,10 @@ require_once __DIR__ . '/init.php';
 $team_members = [];
 try {
     $db = \App\Core\App::database();
-    $team_members = $db->fetchAll("SELECT * FROM user WHERE utype = ? AND status = ? ORDER BY uname LIMIT 6", ['agent', 'active']);
+    $team_members = $db->fetchAll("SELECT * FROM user WHERE utype = :utype AND status = :status ORDER BY uname LIMIT 6", [
+        'utype' => 'agent',
+        'status' => 'active'
+    ]);
 } catch (Exception $e) {
     error_log('Error fetching team members: ' . $e->getMessage());
 }
@@ -20,7 +23,9 @@ try {
 $testimonials = [];
 try {
     $db = \App\Core\App::database();
-    $testimonials = $db->fetchAll("SELECT * FROM testimonials WHERE status = ? ORDER BY rating DESC LIMIT 4", ['approved']);
+    $testimonials = $db->fetchAll("SELECT * FROM testimonials WHERE status = :status ORDER BY rating DESC LIMIT 4", [
+        'status' => 'approved'
+    ]);
 } catch (Exception $e) {
     error_log('Error fetching testimonials: ' . $e->getMessage());
 }
@@ -204,8 +209,8 @@ if (!empty($team_members)) {
         </div>
 
         <div class='row g-4'>";
-            foreach ($team_members as $member) {
-                $content .= "
+    foreach ($team_members as $member) {
+        $content .= "
             <div class='col-lg-4 col-md-6' data-aos='fade-up'>
                 <div class='card h-100 border-0 shadow-sm text-center'>
                     <div class='card-body p-4'>
@@ -227,8 +232,8 @@ if (!empty($team_members)) {
                     </div>
                 </div>
             </div>";
-            }
-            $content .= "
+    }
+    $content .= "
         </div>
     </div>
 </section>";
@@ -248,16 +253,16 @@ if (!empty($testimonials)) {
         </div>
 
         <div class='row g-4'>";
-            foreach ($testimonials as $testimonial) {
-                $content .= "
+    foreach ($testimonials as $testimonial) {
+        $content .= "
             <div class='col-lg-6' data-aos='fade-up'>
                 <div class='card border-0 shadow-sm h-100'>
                     <div class='card-body p-4'>
                         <div class='mb-3'>";
-                            for ($i = 0; $i < ($testimonial['rating'] ?? 5); $i++) {
-                                $content .= "<i class='fas fa-star text-warning'></i>";
-                            }
-                            $content .= "
+        for ($i = 0; $i < ($testimonial['rating'] ?? 5); $i++) {
+            $content .= "<i class='fas fa-star text-warning'></i>";
+        }
+        $content .= "
                         </div>
                         <p class='card-text fst-italic mb-4'>\"" . h($testimonial['message'] ?? '') . "\"</p>
                         <div class='d-flex align-items-center'>
@@ -272,8 +277,8 @@ if (!empty($testimonials)) {
                     </div>
                 </div>
             </div>";
-            }
-            $content .= "
+    }
+    $content .= "
         </div>
     </div>
 </section>";
@@ -394,4 +399,3 @@ $template->addCSS("
 // Render the complete page with base template
 require_once __DIR__ . '/../../includes/base_template.php';
 render_base_template('About Us - APS Dream Home', $content);
-?>

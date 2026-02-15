@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modernized User Dashboard
  * Migrated from Views/dashboards/user_dashboard.php
@@ -17,10 +18,10 @@ $uid = $_SESSION['uid'];
 $user_name = $_SESSION['name'] ?? 'User';
 
 // Fetch user data
-$user_data = $db->fetch("SELECT * FROM users WHERE id = ?", [$uid]);
+$user_data = $db->fetch("SELECT * FROM users WHERE id = :id", ['id' => $uid]);
 
 // Fetch user's properties
-$properties = $db->fetchAll("SELECT * FROM property WHERE uid = ? ORDER BY date DESC", [$uid]);
+$properties = $db->fetchAll("SELECT * FROM property WHERE uid = :uid ORDER BY date DESC", ['uid' => $uid]);
 
 // Fetch stats
 $stats = [
@@ -31,7 +32,7 @@ $stats = [
 ];
 
 // Fetch unread notifications count
-$stats['notifications'] = $db->query("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0", [$uid])->fetchColumn() ?? 0;
+$stats['notifications'] = $db->query("SELECT COUNT(*) as count FROM notifications WHERE user_id = :uid AND is_read = 0", ['uid' => $uid])->fetchColumn() ?? 0;
 
 $page_title = "User Dashboard | APS Dream Homes";
 $layout = 'modern';
@@ -121,7 +122,7 @@ ob_start();
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
                                                     <img src="<?= !empty($property['pimage']) ? BASE_URL . 'public/uploads/property/' . $property['pimage'] : BASE_URL . 'public/assets/images/property-placeholder.jpg' ?>"
-                                                         alt="Property" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        alt="Property" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                                     <div>
                                                         <h6 class="mb-0 fw-bold"><?= h($property['title']) ?></h6>
                                                         <small class="text-muted">ID: #<?= $property['pid'] ?></small>
@@ -147,7 +148,9 @@ ob_start();
                                                     <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
                                                         <li><a class="dropdown-item py-2" href="property_detail.php?pid=<?= $property['pid'] ?>"><i class="fas fa-eye me-2 text-primary"></i>View Details</a></li>
                                                         <li><a class="dropdown-item py-2" href="edit-property.php?id=<?= $property['pid'] ?>"><i class="fas fa-edit me-2 text-info"></i>Edit Property</a></li>
-                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
                                                         <li><a class="dropdown-item py-2 text-danger" href="#"><i class="fas fa-trash-alt me-2"></i>Delete</a></li>
                                                     </ul>
                                                 </div>
@@ -207,7 +210,7 @@ ob_start();
                 <div class="text-center mb-4">
                     <div class="position-relative d-inline-block">
                         <img src="<?= !empty($user_data['uimage']) ? '/admin/user/' . $user_data['uimage'] : '/assets/images/user-placeholder.jpg' ?>"
-                             alt="Profile" class="rounded-circle shadow-sm border border-4 border-light" style="width: 100px; height: 100px; object-fit: cover;">
+                            alt="Profile" class="rounded-circle shadow-sm border border-4 border-light" style="width: 100px; height: 100px; object-fit: cover;">
                         <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
                     </div>
                     <h5 class="mt-3 mb-1 fw-bold"><?= h($user_name) ?></h5>
@@ -247,64 +250,85 @@ ob_start();
 </div>
 
 <style>
-.bg-primary-soft { background-color: rgba(13, 110, 253, 0.1); }
-.bg-info-soft { background-color: rgba(13, 202, 240, 0.1); }
-.bg-warning-soft { background-color: rgba(255, 193, 7, 0.1); }
-.bg-success-soft { background-color: rgba(25, 135, 84, 0.1); }
+    .bg-primary-soft {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
 
-.transition-hover {
-    transition: all 0.3s ease;
-}
-.transition-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
-}
+    .bg-info-soft {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
 
-.hover-lift {
-    transition: transform 0.2s ease;
-}
-.hover-lift:hover {
-    transform: translateX(5px);
-}
+    .bg-warning-soft {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
 
-.animate-fade-up {
-    animation: fadeUp 0.6s ease forwards;
-    opacity: 0;
-}
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
 
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+    .transition-hover {
+        transition: all 0.3s ease;
+    }
 
-.icon-box {
-    transition: transform 0.3s ease;
-}
-.card:hover .icon-box {
-    transform: scale(1.1);
-}
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .hover-lift {
+        transition: transform 0.2s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateX(5px);
+    }
+
+    .animate-fade-up {
+        animation: fadeUp 0.6s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .icon-box {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover .icon-box {
+        transform: scale(1.1);
+    }
 </style>
 
 <script>
-// AI Chatbot Functionality
-function sendAIQuery() {
-    const input = document.getElementById('aiChatInput').value.trim();
-    if (!input) return;
+    // AI Chatbot Functionality
+    function sendAIQuery() {
+        const input = document.getElementById('aiChatInput').value.trim();
+        if (!input) return;
 
-    const responseBox = document.getElementById('aiChatResponse');
-    responseBox.classList.remove('d-none');
-    responseBox.innerHTML = '<div class="d-flex align-items-center"><div class="spinner-border spinner-border-sm me-2" role="status"></div><span>Thinking...</span></div>';
+        const responseBox = document.getElementById('aiChatResponse');
+        responseBox.classList.remove('d-none');
+        responseBox.innerHTML = '<div class="d-flex align-items-center"><div class="spinner-border spinner-border-sm me-2" role="status"></div><span>Thinking...</span></div>';
 
-    setTimeout(() => {
-        responseBox.innerHTML = `<strong>AI Response:</strong><p class="mb-0 mt-1">I've analyzed your request about "${input}". Based on your profile, you can find more information in the help section or contact our support.</p>`;
-    }, 1500);
-}
+        setTimeout(() => {
+            responseBox.innerHTML = `<strong>AI Response:</strong><p class="mb-0 mt-1">I've analyzed your request about "${input}". Based on your profile, you can find more information in the help section or contact our support.</p>`;
+        }, 1500);
+    }
 
-// AI Suggestions (Simulated AJAX)
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        const panel = document.getElementById('aiSuggestionsPanel');
-        panel.innerHTML = `
+    // AI Suggestions (Simulated AJAX)
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            const panel = document.getElementById('aiSuggestionsPanel');
+            panel.innerHTML = `
             <div class="list-group list-group-flush">
                 <div class="list-group-item bg-transparent border-0 px-0 mb-3">
                     <div class="d-flex w-100 justify-content-between">
@@ -323,8 +347,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-    }, 1000);
-});
+        }, 1000);
+    });
 </script>
 
 <?php

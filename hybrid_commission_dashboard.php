@@ -9,13 +9,7 @@ require_once 'includes/associate_permissions.php';
 require_once 'includes/hybrid_commission_system.php';
 
 // Initialize database connection
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
-
-// Check if connection is successful
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+$db = \App\Core\App::database();
 
 session_start();
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
@@ -27,7 +21,7 @@ $associate_id = $_SESSION['associate_id'];
 $associate_name = $_SESSION['associate_name'];
 
 // Initialize hybrid commission system
-$hybrid_system = new HybridRealEstateCommission($conn);
+$hybrid_system = new HybridRealEstateCommission($db);
 
 // Get commission summary with error handling
 try {
@@ -46,7 +40,7 @@ $property_stats = getPropertyStatistics();
 
 // Helper functions
 function getPendingCommissions($associate_id) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     try {
         $query = "SELECT
@@ -54,25 +48,16 @@ function getPendingCommissions($associate_id) {
                     COUNT(*) as total_count,
                     AVG(commission_amount) as avg_commission
                  FROM hybrid_commission_records
-                 WHERE associate_id = ? AND payout_status = 'pending'";
+                 WHERE associate_id = :associate_id AND payout_status = 'pending'";
 
-        $stmt = $conn->prepare($query);
-
-        if (!$stmt) {
-            return ['total_pending' => 0, 'total_count' => 0, 'avg_commission' => 0];
-        }
-
-        $stmt->bind_param("i", $associate_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc() ?: ['total_pending' => 0, 'total_count' => 0, 'avg_commission' => 0];
+        return $db->fetch($query, ['associate_id' => $associate_id]) ?: ['total_pending' => 0, 'total_count' => 0, 'avg_commission' => 0];
     } catch (Exception $e) {
         return ['total_pending' => 0, 'total_count' => 0, 'avg_commission' => 0];
     }
 }
 
 function getRecentSales($associate_id) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     try {
         $query = "SELECT
@@ -85,27 +70,18 @@ function getRecentSales($associate_id) {
                  FROM hybrid_commission_records hcr
                  LEFT JOIN real_estate_properties p ON hcr.property_id = p.id
                  LEFT JOIN customers c ON hcr.customer_id = c.id
-                 WHERE hcr.associate_id = ?
+                 WHERE hcr.associate_id = :associate_id
                  ORDER BY hcr.created_at DESC
                  LIMIT 10";
 
-        $stmt = $conn->prepare($query);
-
-        if (!$stmt) {
-            return [];
-        }
-
-        $stmt->bind_param("i", $associate_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_all(MYSQLI_ASSOC) ?: [];
+        return $db->fetchAll($query, ['associate_id' => $associate_id]);
     } catch (Exception $e) {
         return [];
     }
 }
 
 function getPropertyStatistics() {
-    global $conn;
+    $db = \App\Core\App::database();
 
     try {
         $query = "SELECT
@@ -117,19 +93,16 @@ function getPropertyStatistics() {
                  FROM real_estate_properties
                  GROUP BY property_type";
 
-        $result = $conn->query($query);
+        $results = $db->fetchAll($query);
 
-        if (!$result) {
+        if (empty($results)) {
             return [
                 ['property_type' => 'company', 'total_properties' => 0, 'available' => 0, 'sold' => 0, 'avg_value' => 0],
                 ['property_type' => 'resell', 'total_properties' => 0, 'available' => 0, 'sold' => 0, 'avg_value' => 0]
             ];
         }
 
-        return $result->fetch_all(MYSQLI_ASSOC) ?: [
-            ['property_type' => 'company', 'total_properties' => 0, 'available' => 0, 'sold' => 0, 'avg_value' => 0],
-            ['property_type' => 'resell', 'total_properties' => 0, 'available' => 0, 'sold' => 0, 'avg_value' => 0]
-        ];
+        return $results;
     } catch (Exception $e) {
         return [
             ['property_type' => 'company', 'total_properties' => 0, 'available' => 0, 'sold' => 0, 'avg_value' => 0],

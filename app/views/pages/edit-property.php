@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modernized Edit Property Page
  * Migrated from Views/submitpropertyupdate.php
@@ -21,7 +22,10 @@ $msg = "";
 // Verify property ownership
 $property = null;
 if ($pid > 0) {
-    $property = $db->fetch("SELECT * FROM property WHERE pid = ? AND uid = ?", [$pid, $uid]);
+    $property = $db->fetch("SELECT * FROM property WHERE pid = :pid AND uid = :uid", [
+        'pid' => $pid,
+        'uid' => $uid
+    ]);
 }
 
 if (!$property) {
@@ -68,7 +72,7 @@ if (isset($_POST['update_property'])) {
             'topmapimage' => $property['topmapimage'],
             'groundmapimage' => $property['groundmapimage']
         ];
-        
+
         $image_map = [
             'aimage' => 'pimage',
             'aimage1' => 'pimage1',
@@ -129,7 +133,10 @@ if (isset($_POST['update_property'])) {
             if ($db->update('property', $data, ['pid' => $pid, 'uid' => $uid])) {
                 $msg = "Property updated successfully!";
                 // Refresh property data
-                $property = $db->fetch("SELECT * FROM property WHERE pid = ? AND uid = ?", [$pid, $uid]);
+                $property = $db->fetch("SELECT * FROM property WHERE pid = :pid AND uid = :uid", [
+                    'pid' => $pid,
+                    'uid' => $uid
+                ]);
             } else {
                 $error = "Failed to update property. Database error.";
             }
@@ -153,7 +160,7 @@ ob_start();
                     <p class="mb-0 opacity-75">Update your property details below</p>
                 </div>
                 <div class="card-body p-4 p-md-5">
-                    
+
                     <?php if ($error): ?>
                         <div class="alert alert-danger rounded-3 border-0 shadow-sm mb-4">
                             <i class="fas fa-exclamation-circle me-2"></i> <?= $error ?>
@@ -168,7 +175,7 @@ ob_start();
 
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         <input type="hidden" name="csrf_token" value="<?= CSRFProtection::generateToken('edit_property') ?>">
-                        
+
                         <h5 class="fw-bold mb-4 text-primary border-bottom pb-2">Basic Information</h5>
                         <div class="row g-3 mb-4">
                             <div class="col-md-12">
@@ -262,21 +269,21 @@ ob_start();
                             <div class="col-md-12">
                                 <label class="form-label fw-semibold">Featured Image (Leave empty to keep current)</label>
                                 <input type="file" name="aimage" class="form-control bg-light border-0" accept="image/*">
-                                <?php if($property['pimage']): ?>
+                                <?php if ($property['pimage']): ?>
                                     <div class="mt-2"><img src="<?= BASE_URL ?>public/uploads/property/<?= $property['pimage'] ?>" height="60" class="rounded shadow-sm"></div>
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Gallery Image 1</label>
                                 <input type="file" name="aimage1" class="form-control bg-light border-0" accept="image/*">
-                                <?php if($property['pimage1']): ?>
+                                <?php if ($property['pimage1']): ?>
                                     <div class="mt-2"><img src="<?= BASE_URL ?>public/uploads/property/<?= $property['pimage1'] ?>" height="50" class="rounded shadow-sm"></div>
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Gallery Image 2</label>
                                 <input type="file" name="aimage2" class="form-control bg-light border-0" accept="image/*">
-                                <?php if($property['pimage2']): ?>
+                                <?php if ($property['pimage2']): ?>
                                     <div class="mt-2"><img src="<?= BASE_URL ?>public/uploads/property/<?= $property['pimage2'] ?>" height="50" class="rounded shadow-sm"></div>
                                 <?php endif; ?>
                             </div>
@@ -310,36 +317,39 @@ ob_start();
 </div>
 
 <style>
-.hover-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-.form-control:focus, .form-select:focus {
-    background-color: #fff !important;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
-    border: 1px solid #0d6efd !important;
-}
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        border: 1px solid #0d6efd !important;
+    }
 </style>
 
 <script>
-// Form validation
-(function () {
-  'use strict'
-  var forms = document.querySelectorAll('.needs-validation')
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
-        form.classList.add('was-validated')
-      }, false)
-    })
-})()
+    // Form validation
+    (function() {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
 </script>
 
 <?php
@@ -347,4 +357,3 @@ $content = ob_get_clean();
 $page_title = "Edit Property - APS Dream Home";
 require_once __DIR__ . '/../layouts/modern.php';
 ?>
-

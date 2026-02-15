@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Daily Database Backup Cron Job
  * Creates a SQL dump and notifies admins on failure
@@ -62,7 +63,7 @@ try {
 
     if ($retval === 0) {
         echo "[" . date('Y-m-d H:i:s') . "] Database backup successful: $filename\n";
-        
+
         // Cleanup old backups (older than 30 days)
         $files = glob($backupDir . "*.sql");
         $now = time();
@@ -76,7 +77,6 @@ try {
     } else {
         throw new Exception("mysqldump failed with exit code $retval");
     }
-
 } catch (Exception $e) {
     $errorMsg = $e->getMessage();
     error_log("Database backup failed: " . $errorMsg);
@@ -85,19 +85,19 @@ try {
     // Notify Admins of failure
     $admin_emails = ['techguruabhay@gmail.com'];
     foreach ($admin_emails as $email) {
-        $admin_user = $db->fetch("SELECT uid FROM user WHERE uemail = ? LIMIT 1", [$email]);
-
-        $nm->send([
-            'user_id' => $admin_user['uid'] ?? 1,
-            'email' => $email,
-            'template' => 'SYSTEM_ALERT',
-            'data' => [
-                'subject' => 'Database Backup Failed',
-                'details' => $errorMsg,
-                'time' => date('Y-m-d H:i:s')
-            ],
-            'channels' => ['db', 'email']
-        ]);
+        $admin_user = $db->fetch("SELECT uid FROM user WHERE uemail = :email LIMIT 1", ['email' => $email]);
+        if ($admin_user) {
+            $nm->send([
+                'user_id' => $admin_user['uid'] ?? 1,
+                'email' => $email,
+                'template' => 'SYSTEM_ALERT',
+                'data' => [
+                    'subject' => 'Database Backup Failed',
+                    'details' => $errorMsg,
+                    'time' => date('Y-m-d H:i:s')
+                ],
+                'channels' => ['db', 'email']
+            ]);
+        }
     }
 }
-

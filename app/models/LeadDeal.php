@@ -96,8 +96,8 @@ class LeadDeal extends Model
     public function activities()
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_activities WHERE related_id = ? AND related_type = 'deal'");
-        $stmt->execute([$this->id]);
+        $stmt = $db->prepare("SELECT * FROM lead_activities WHERE related_id = :id AND related_type = 'deal'");
+        $stmt->execute(['id' => $this->id]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $activities = [];
@@ -244,8 +244,8 @@ class LeadDeal extends Model
     public static function status($status)
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE status = ?");
-        $stmt->execute([$status]);
+        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE status = :status");
+        $stmt->execute(['status' => $status]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $deals = [];
@@ -262,8 +262,8 @@ class LeadDeal extends Model
     public static function stage($stage)
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE deal_stage = ?");
-        $stmt->execute([$stage]);
+        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE deal_stage = :stage");
+        $stmt->execute(['stage' => $stage]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $deals = [];
@@ -281,8 +281,8 @@ class LeadDeal extends Model
     {
         $today = date('Y-m-d');
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE expected_close_date >= ? ORDER BY expected_close_date ASC");
-        $stmt->execute([$today]);
+        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE expected_close_date >= :today ORDER BY expected_close_date ASC");
+        $stmt->execute(['today' => $today]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $deals = [];
@@ -300,8 +300,8 @@ class LeadDeal extends Model
     {
         $today = date('Y-m-d');
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE expected_close_date < ? AND status NOT IN ('won', 'lost', 'cancelled') ORDER BY expected_close_date ASC");
-        $stmt->execute([$today]);
+        $stmt = $db->prepare("SELECT * FROM lead_deals WHERE expected_close_date < :today AND status NOT IN ('won', 'lost', 'cancelled') ORDER BY expected_close_date ASC");
+        $stmt->execute(['today' => $today]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $deals = [];

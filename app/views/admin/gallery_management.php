@@ -45,14 +45,14 @@ if (isset($_GET['delete'])) {
         $error_message = "Invalid CSRF token.";
     } else {
         $id = intval($_GET['delete']);
-        $img_data = $db->fetchOne("SELECT image_path FROM gallery WHERE id = ?", [$id]);
+        $img_data = $db->fetchOne("SELECT image_path FROM gallery WHERE id = :id", ['id' => $id]);
         $image_path = $img_data['image_path'] ?? null;
 
         if ($image_path && file_exists("../" . $image_path)) {
             unlink("../" . $image_path);
         }
 
-        if ($db->execute("DELETE FROM gallery WHERE id = ?", [$id])) {
+        if ($db->execute("DELETE FROM gallery WHERE id = :id", ['id' => $id])) {
             $success_message = "Image deleted successfully!";
         } else {
             $error_message = "Error deleting image from database.";

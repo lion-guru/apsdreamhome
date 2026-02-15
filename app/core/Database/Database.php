@@ -90,6 +90,31 @@ class Database
         return $this->pdo->lastInsertId();
     }
 
+    public function insert($table, $data)
+    {
+        $columns = implode(', ', array_keys($data));
+        $placeholders = implode(', ', array_map(fn($key) => ":$key", array_keys($data)));
+        $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
+        
+        $this->execute($sql, $data);
+        return $this->lastInsertId();
+    }
+
+    public function update($table, $data, $where, $whereParams = [])
+    {
+        $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
+        $sql = "UPDATE {$table} SET {$set} WHERE {$where}";
+        
+        $params = array_merge($data, $whereParams);
+        return $this->execute($sql, $params)->rowCount();
+    }
+
+    public function delete($table, $where, $params = [])
+    {
+        $sql = "DELETE FROM {$table} WHERE {$where}";
+        return $this->execute($sql, $params)->rowCount();
+    }
+
     public function beginTransaction()
     {
         return $this->pdo->beginTransaction();

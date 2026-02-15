@@ -59,13 +59,13 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                 <div class="col-sm-6">
                                     <div class="form-group mb-3">
                                         <label><?php echo h($mlSupport->translate('Department')); ?></label>
-                                        <select class="form-control" name="department">
-                                            <option value="General" <?php echo $employee['department'] == 'General' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('General')); ?></option>
-                                            <option value="Sales" <?php echo $employee['department'] == 'Sales' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Sales')); ?></option>
-                                            <option value="Marketing" <?php echo $employee['department'] == 'Marketing' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Marketing')); ?></option>
-                                            <option value="Accounts" <?php echo $employee['department'] == 'Accounts' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Accounts')); ?></option>
-                                            <option value="IT" <?php echo $employee['department'] == 'IT' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('IT')); ?></option>
-                                            <option value="Operations" <?php echo $employee['department'] == 'Operations' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Operations')); ?></option>
+                                        <select class="form-control" name="department_id">
+                                            <option value=""><?php echo h($mlSupport->translate('Select Department')); ?></option>
+                                            <?php if (!empty($departments)): ?>
+                                                <?php foreach ($departments as $dept): ?>
+                                                    <option value="<?php echo h($dept['id']); ?>" <?php echo (isset($employee['department_id']) && $employee['department_id'] == $dept['id']) ? 'selected' : ''; ?>><?php echo h($mlSupport->translate($dept['name'])); ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                         <select class="form-control" name="role_id" required>
                                             <option value=""><?php echo h($mlSupport->translate('Select Role')); ?></option>
                                             <?php foreach ($roles as $role): ?>
-                                                <option value="<?php echo h($role['id']); ?>" <?php echo (isset($assignedRole['id']) && $assignedRole['id'] == $role['id']) ? 'selected' : ''; ?>>
+                                                <option value="<?php echo h($role['id']); ?>" <?php echo (isset($employee['role_id']) && $employee['role_id'] == $role['id']) ? 'selected' : ''; ?>>
                                                     <?php echo h($mlSupport->translate($role['name'])); ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -85,13 +85,8 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group mb-3">
-                                        <label><?php echo h($mlSupport->translate('Designation (Employee Role)')); ?></label>
-                                        <select class="form-control" name="role">
-                                            <option value="employee" <?php echo $employee['role'] == 'employee' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Employee')); ?></option>
-                                            <option value="manager" <?php echo $employee['role'] == 'manager' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Manager')); ?></option>
-                                            <option value="supervisor" <?php echo $employee['role'] == 'supervisor' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Supervisor')); ?></option>
-                                            <option value="executive" <?php echo $employee['role'] == 'executive' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Executive')); ?></option>
-                                        </select>
+                                        <label><?php echo h($mlSupport->translate('Designation (Job Title)')); ?></label>
+                                        <input class="form-control" type="text" name="designation" value="<?php echo h($employee['designation'] ?? ''); ?>" placeholder="<?php echo h($mlSupport->translate('e.g. Senior Manager')); ?>">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">

@@ -17,6 +17,32 @@ class CustomerController extends BaseController
     }
 
     /**
+     * Search customers for Select2
+     */
+    public function search()
+    {
+        header('Content-Type: application/json');
+
+        $request = $this->request();
+        $search = $request->get('search', '');
+        $page = (int)$request->get('page', 1);
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        try {
+            $customerModel = $this->model('Customer');
+            $result = $customerModel->searchCustomers($search, $limit, $offset);
+
+            echo json_encode([
+                'items' => $result['items'],
+                'more' => ($page * $limit) < $result['total']
+            ]);
+        } catch (Exception $e) {
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Display a listing of the customers.
      */
     public function index()

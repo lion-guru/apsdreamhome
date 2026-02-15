@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Property Booking/Sale Form with MLM Commission Integration
  * This form handles property sales and automatically distributes MLM commissions
@@ -22,7 +23,7 @@ if ($property_id === 0) {
 $db = \App\Core\App::database();
 
 // Get property details
-$property = $db->fetch("SELECT * FROM properties WHERE id = ?", [$property_id]);
+$property = $db->fetch("SELECT * FROM properties WHERE id = :id", ['id' => $property_id]);
 
 if (!$property) {
     header('Location: properties.php');
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
 $agents = $db->query("SELECT id, name, email FROM users WHERE type = 'agent' AND status = 'active'")->fetchAll(\PDO::FETCH_ASSOC);
 
 // Check if user is MLM associate
-$associate = $db->fetch("SELECT * FROM associates WHERE user_id = ?", [$_SESSION['user_id']]);
+$associate = $db->fetch("SELECT * FROM associates WHERE user_id = :user_id", ['user_id' => $_SESSION['user_id']]);
 $is_associate = $associate ? true : false;
 
 $page_title = "Property Purchase - " . h($property['title']);
@@ -59,193 +60,193 @@ include 'includes/templates/header.php';
 ?>
 
 <style>
-.property-purchase-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-.property-card {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    overflow: hidden;
-    margin-bottom: 2rem;
-}
-
-.property-image {
-    height: 300px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 3rem;
-}
-
-.property-details {
-    padding: 2rem;
-}
-
-.property-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-.property-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.info-label {
-    font-weight: 600;
-    color: #666;
-}
-
-.info-value {
-    color: #333;
-}
-
-.booking-form {
-    background: white;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.commission-info {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-}
-
-.commission-info h4 {
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-.commission-benefits {
-    list-style: none;
-    padding: 0;
-}
-
-.commission-benefits li {
-    padding: 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.commission-benefits li::before {
-    content: "✓";
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.btn-purchase {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    width: 100%;
-}
-
-.btn-purchase:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-}
-
-.alert {
-    padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 1.5rem;
-}
-
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.alert-danger {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.price-display {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #28a745;
-    margin: 1rem 0;
-}
-
-.commission-display {
-    font-size: 1.2rem;
-    color: #666;
-}
-
-@media (max-width: 768px) {
     .property-purchase-container {
-        margin: 1rem auto;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .property-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .property-image {
+        height: 300px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+    }
+
+    .property-details {
+        padding: 2rem;
     }
 
     .property-title {
-        font-size: 1.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .property-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #666;
+    }
+
+    .info-value {
+        color: #333;
+    }
+
+    .booking-form {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .commission-info {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .commission-info h4 {
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .commission-benefits {
+        list-style: none;
+        padding: 0;
+    }
+
+    .commission-benefits li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .commission-benefits li::before {
+        content: "✓";
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .btn-purchase {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        width: 100%;
+    }
+
+    .btn-purchase:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
     }
 
     .price-display {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #28a745;
+        margin: 1rem 0;
     }
-}
+
+    .commission-display {
+        font-size: 1.2rem;
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .property-purchase-container {
+            margin: 1rem auto;
+        }
+
+        .property-title {
+            font-size: 1.5rem;
+        }
+
+        .price-display {
+            font-size: 2rem;
+        }
+    }
 </style>
 
 <div class="property-purchase-container">
@@ -284,16 +285,16 @@ include 'includes/templates/header.php';
 
     <!-- MLM Commission Info (for associates) -->
     <?php if ($is_associate): ?>
-    <div class="commission-info">
-        <h4>🎯 MLM Commission Benefits</h4>
-        <p>As an MLM Associate, you'll earn commissions on this purchase:</p>
-        <ul class="commission-benefits">
-            <li>7% commission distributed to your upline</li>
-            <li>Your sponsor network earns from your purchase</li>
-            <li>Build your team to earn from their purchases</li>
-            <li>Track commissions in your MLM dashboard</li>
-        </ul>
-    </div>
+        <div class="commission-info">
+            <h4>🎯 MLM Commission Benefits</h4>
+            <p>As an MLM Associate, you'll earn commissions on this purchase:</p>
+            <ul class="commission-benefits">
+                <li>7% commission distributed to your upline</li>
+                <li>Your sponsor network earns from your purchase</li>
+                <li>Build your team to earn from their purchases</li>
+                <li>Track commissions in your MLM dashboard</li>
+            </ul>
+        </div>
     <?php endif; ?>
 
     <!-- Booking Form -->
@@ -317,21 +318,21 @@ include 'includes/templates/header.php';
             <div class="form-group">
                 <label class="form-label">Purchase Amount (₹)</label>
                 <input type="number" name="sale_amount" class="form-control"
-                       value="<?php echo h($property['price'] ?? 5000000); ?>"
-                       min="100000" step="10000" required>
+                    value="<?php echo h($property['price'] ?? 5000000); ?>"
+                    min="100000" step="10000" required>
                 <small>Enter the final purchase amount</small>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Your Information</label>
                 <input type="text" class="form-control"
-                       value="<?php echo h($_SESSION['user_name'] ?? ''); ?>" readonly>
+                    value="<?php echo h($_SESSION['user_name'] ?? ''); ?>" readonly>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Your Email</label>
                 <input type="email" class="form-control"
-                       value="<?php echo h($_SESSION['user_email'] ?? ''); ?>" readonly>
+                    value="<?php echo h($_SESSION['user_email'] ?? ''); ?>" readonly>
             </div>
 
             <div class="form-group">
@@ -350,13 +351,13 @@ include 'includes/templates/header.php';
             <div class="form-group">
                 <label class="form-label">Special Requirements</label>
                 <textarea name="requirements" class="form-control" rows="4"
-                          placeholder="Any special requirements or notes for this purchase..."></textarea>
+                    placeholder="Any special requirements or notes for this purchase..."></textarea>
             </div>
 
             <?php if ($is_associate): ?>
-            <div class="alert alert-info">
-                <strong>MLM Associate Notice:</strong> This purchase will generate commissions for your upline network. You can earn commissions by referring others to make property purchases.
-            </div>
+                <div class="alert alert-info">
+                    <strong>MLM Associate Notice:</strong> This purchase will generate commissions for your upline network. You can earn commissions by referring others to make property purchases.
+                </div>
             <?php endif; ?>
 
             <button type="submit" name="submit_booking" class="btn-purchase">

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Commission Plans Management System
  * Admin interface for creating and managing MLM commission plans
@@ -6,6 +7,8 @@
 
 require_once 'includes/config.php';
 require_once 'includes/associate_permissions.php';
+
+$db = \App\Core\App::database();
 
 // Check if user is admin (only Site Manager, President, VP can access)
 session_start();
@@ -44,19 +47,19 @@ $plans = getAllCommissionPlans();
 // Get active plan
 $active_plan = getActiveCommissionPlan();
 
-function createCommissionPlan($data) {
-    global $conn;
+function createCommissionPlan($data)
+{
+    $db = \App\Core\App::database();
 
     try {
-        $query = "INSERT INTO mlm_commission_plans
-                  (plan_name, plan_code, description, plan_type, status, created_by)
-                  VALUES (?, ?, ?, ?, 'draft', ?)";
-
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssssi", $data['plan_name'], $data['plan_code'], $data['description'], $data['plan_type'], $_SESSION['associate_id']);
-        $stmt->execute();
-
-        $plan_id = $conn->insert_id;
+        $plan_id = $db->insert('mlm_commission_plans', [
+            'plan_name' => $data['plan_name'],
+            'plan_code' => $data['plan_code'],
+            'description' => $data['description'],
+            'plan_type' => $data['plan_type'],
+            'status' => 'draft',
+            'created_by' => $_SESSION['associate_id']
+        ]);
 
         // Create default levels
         createDefaultLevels($plan_id);
@@ -64,14 +67,42 @@ function createCommissionPlan($data) {
         $_SESSION['success_message'] = "Commission plan created successfully!";
         header("Location: commission_plan_manager.php");
         exit();
-
     } catch (Exception $e) {
         $_SESSION['error_message'] = "Error creating plan: " . $e->getMessage();
     }
 }
 
-function createDefaultLevels($plan_id) {
-    global $conn;
+function updateCommissionPlan($data)
+{
+    $db = \App\Core\App::database();
+
+    try {
+        $plan_id = $data['plan_id'];
+
+        // Update plan details
+        $db->update('mlm_commission_plans', [
+            'plan_name' => $data['plan_name'],
+            'plan_code' => $data['plan_code'],
+            'description' => $data['description'],
+            'plan_type' => $data['plan_type'],
+            'updated_at' => date('Y-m-d H:i:s')
+        ], ['id' => $plan_id]);
+
+        // Check if levels need to be updated - usually done via separate API/method
+        // But if provided in $data, we could update them here.
+        // For now, we assume this function only updates the main plan details.
+
+        $_SESSION['success_message'] = "Commission plan updated successfully!";
+        header("Location: commission_plan_manager.php");
+        exit();
+    } catch (Exception $e) {
+        $_SESSION['error_message'] = "Error updating plan: " . $e->getMessage();
+    }
+}
+
+function createDefaultLevels($plan_id)
+{
+    $db = \App\Core\App::database();
 
     $default_levels = [
         ['Associate', 5.00, 2.00, 0.00, 0.00, 0.00, 0.00, 1000000],
@@ -83,20 +114,25 @@ function createDefaultLevels($plan_id) {
         ['Site Manager', 20.00, 8.00, 7.00, 18.00, 5.00, 5.00, 999999999]
     ];
 
-    $query = "INSERT INTO mlm_plan_levels
-              (plan_id, level_name, level_order, direct_commission, team_commission, level_bonus, matching_bonus, leadership_bonus, performance_bonus, monthly_target)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($query);
-
     foreach ($default_levels as $index => $level) {
-        $stmt->bind_param("iiiddddddd", $plan_id, $level[0], ($index + 1), $level[1], $level[2], $level[3], $level[4], $level[5], $level[6], $level[7]);
-        $stmt->execute();
+        $db->insert('mlm_plan_levels', [
+            'plan_id' => $plan_id,
+            'level_name' => $level[0],
+            'level_order' => ($index + 1),
+            'direct_commission' => $level[1],
+            'team_commission' => $level[2],
+            'level_bonus' => $level[3],
+            'matching_bonus' => $level[4],
+            'leadership_bonus' => $level[5],
+            'performance_bonus' => $level[6],
+            'monthly_target' => $level[7]
+        ]);
     }
 }
 
-function getAllCommissionPlans() {
-    global $conn;
+function getAllCommissionPlans()
+{
+    $db = \App\Core\App::database();
 
     $query = "SELECT p.*, a.full_name as created_by_name,
               (SELECT COUNT(*) FROM mlm_plan_levels WHERE plan_id = p.id) as level_count
@@ -104,84 +140,78 @@ function getAllCommissionPlans() {
               LEFT JOIN mlm_agents a ON p.created_by = a.id
               ORDER BY p.created_at DESC";
 
-    $result = $conn->query($query);
-    return $result->fetch_all(MYSQLI_ASSOC);
+    return $db->fetch($query);
 }
 
-function getActiveCommissionPlan() {
-    global $conn;
+function getActiveCommissionPlan()
+{
+    $db = \App\Core\App::database();
 
     $query = "SELECT * FROM mlm_commission_plans WHERE status = 'active' LIMIT 1";
-    $result = $conn->query($query);
-    return $result->fetch_assoc();
+    return $db->fetch($query, [], false); // false for single row
 }
 
-function activatePlan($plan_id) {
-    global $conn;
+function activatePlan($plan_id)
+{
+    $db = \App\Core\App::database();
 
     try {
         // Deactivate current active plan
-        $conn->query("UPDATE mlm_commission_plans SET status = 'inactive', deactivated_at = NOW() WHERE status = 'active'");
+        $db->execute("UPDATE mlm_commission_plans SET status = 'inactive', deactivated_at = NOW() WHERE status = 'active'");
 
         // Activate new plan
-        $query = "UPDATE mlm_commission_plans SET status = 'active', activated_at = NOW() WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $plan_id);
-        $stmt->execute();
+        $db->update(
+            'mlm_commission_plans',
+            ['status' => 'active', 'activated_at' => date('Y-m-d H:i:s')],
+            ['id' => $plan_id]
+        );
 
         $_SESSION['success_message'] = "Commission plan activated successfully!";
         header("Location: commission_plan_manager.php");
         exit();
-
     } catch (Exception $e) {
         $_SESSION['error_message'] = "Error activating plan: " . $e->getMessage();
     }
 }
 
-function deactivatePlan($plan_id) {
-    global $conn;
+function deactivatePlan($plan_id)
+{
+    $db = \App\Core\App::database();
 
     try {
-        $query = "UPDATE mlm_commission_plans SET status = 'inactive', deactivated_at = NOW() WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $plan_id);
-        $stmt->execute();
+        $db->update(
+            'mlm_commission_plans',
+            ['status' => 'inactive', 'deactivated_at' => date('Y-m-d H:i:s')],
+            ['id' => $plan_id]
+        );
 
         $_SESSION['success_message'] = "Commission plan deactivated successfully!";
         header("Location: commission_plan_manager.php");
         exit();
-
     } catch (Exception $e) {
         $_SESSION['error_message'] = "Error deactivating plan: " . $e->getMessage();
     }
 }
 
-function deletePlan($plan_id) {
-    global $conn;
+function deletePlan($plan_id)
+{
+    $db = \App\Core\App::database();
 
     try {
         // Check if plan is active
-        $check_query = "SELECT status FROM mlm_commission_plans WHERE id = ?";
-        $stmt = $conn->prepare($check_query);
-        $stmt->bind_param("i", $plan_id);
-        $stmt->execute();
-        $plan = $stmt->get_result()->fetch_assoc();
+        $plan = $db->fetch("SELECT status FROM mlm_commission_plans WHERE id = :id", ['id' => $plan_id], false);
 
-        if ($plan['status'] == 'active') {
+        if ($plan && $plan['status'] == 'active') {
             $_SESSION['error_message'] = "Cannot delete active plan. Please deactivate first.";
             header("Location: commission_plan_manager.php");
             exit();
         }
 
-        $query = "DELETE FROM mlm_commission_plans WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $plan_id);
-        $stmt->execute();
+        $db->execute("DELETE FROM mlm_commission_plans WHERE id = :id", ['id' => $plan_id]);
 
         $_SESSION['success_message'] = "Commission plan deleted successfully!";
         header("Location: commission_plan_manager.php");
         exit();
-
     } catch (Exception $e) {
         $_SESSION['error_message'] = "Error deleting plan: " . $e->getMessage();
     }
@@ -190,6 +220,7 @@ function deletePlan($plan_id) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -220,7 +251,7 @@ function deletePlan($plan_id) {
         .dashboard-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
             overflow: hidden;
         }
@@ -228,14 +259,14 @@ function deletePlan($plan_id) {
         .plan-card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             margin-bottom: 1.5rem;
         }
 
         .plan-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         .status-badge {
@@ -245,10 +276,25 @@ function deletePlan($plan_id) {
             font-weight: 500;
         }
 
-        .status-draft { background-color: #fff3cd; color: #856404; }
-        .status-active { background-color: #d4edda; color: #155724; }
-        .status-inactive { background-color: #f8d7da; color: #721c24; }
-        .status-archived { background-color: #e2e3e5; color: #6c757d; }
+        .status-draft {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-archived {
+            background-color: #e2e3e5;
+            color: #6c757d;
+        }
 
         .level-progress {
             background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
@@ -282,7 +328,9 @@ function deletePlan($plan_id) {
             color: white;
         }
 
-        .modal-xl { max-width: 1200px; }
+        .modal-xl {
+            max-width: 1200px;
+        }
 
         .form-section {
             background: #f8f9fa;
@@ -304,6 +352,7 @@ function deletePlan($plan_id) {
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -319,15 +368,17 @@ function deletePlan($plan_id) {
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="associate_dashboard.php">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a></li>
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
                         <li><a class="dropdown-item" href="commission_dashboard.php">
-                            <i class="fas fa-rupee-sign me-2"></i>Commission Dashboard
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
+                                <i class="fas fa-rupee-sign me-2"></i>Commission Dashboard
+                            </a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="associate_logout.php">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a></li>
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
                     </ul>
                 </div>
             </div>
@@ -380,18 +431,20 @@ function deletePlan($plan_id) {
 
                         <!-- Alerts -->
                         <?php if (isset($_SESSION['success_message'])): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success_message']; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php unset($_SESSION['success_message']); endif; ?>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success_message']; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php unset($_SESSION['success_message']);
+                        endif; ?>
 
                         <?php if (isset($_SESSION['error_message'])): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error_message']; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php unset($_SESSION['error_message']); endif; ?>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error_message']; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php unset($_SESSION['error_message']);
+                        endif; ?>
 
                         <!-- Plans List -->
                         <div id="plans" class="mb-5">
@@ -399,70 +452,70 @@ function deletePlan($plan_id) {
 
                             <div class="row">
                                 <?php foreach ($plans as $plan): ?>
-                                <div class="col-md-6 mb-4">
-                                    <div class="card plan-card h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                                <div>
-                                                    <h5 class="card-title"><?php echo htmlspecialchars($plan['plan_name']); ?></h5>
-                                                    <p class="card-text small text-muted">
-                                                        Code: <?php echo htmlspecialchars($plan['plan_code']); ?>
-                                                    </p>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card plan-card h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                                    <div>
+                                                        <h5 class="card-title"><?php echo htmlspecialchars($plan['plan_name']); ?></h5>
+                                                        <p class="card-text small text-muted">
+                                                            Code: <?php echo htmlspecialchars($plan['plan_code']); ?>
+                                                        </p>
+                                                    </div>
+                                                    <span class="status-badge status-<?php echo $plan['status']; ?>">
+                                                        <?php echo ucfirst($plan['status']); ?>
+                                                    </span>
                                                 </div>
-                                                <span class="status-badge status-<?php echo $plan['status']; ?>">
-                                                    <?php echo ucfirst($plan['status']); ?>
-                                                </span>
-                                            </div>
 
-                                            <p class="card-text"><?php echo htmlspecialchars($plan['description']); ?></p>
+                                                <p class="card-text"><?php echo htmlspecialchars($plan['description']); ?></p>
 
-                                            <div class="mb-3">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-calendar me-1"></i>Created: <?php echo date('M d, Y', strtotime($plan['created_at'])); ?><br>
-                                                    <i class="fas fa-user me-1"></i>By: <?php echo htmlspecialchars($plan['created_by_name']); ?><br>
-                                                    <i class="fas fa-layer-group me-1"></i><?php echo $plan['level_count']; ?> levels
-                                                </small>
-                                            </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar me-1"></i>Created: <?php echo date('M d, Y', strtotime($plan['created_at'])); ?><br>
+                                                        <i class="fas fa-user me-1"></i>By: <?php echo htmlspecialchars($plan['created_by_name']); ?><br>
+                                                        <i class="fas fa-layer-group me-1"></i><?php echo $plan['level_count']; ?> levels
+                                                    </small>
+                                                </div>
 
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-outline-primary" onclick="viewPlan(<?php echo $plan['id']; ?>)">
-                                                    <i class="fas fa-eye me-1"></i>View
-                                                </button>
-                                                <?php if ($plan['status'] == 'draft'): ?>
-                                                <button class="btn btn-sm btn-warning" onclick="editPlan(<?php echo $plan['id']; ?>)">
-                                                    <i class="fas fa-edit me-1"></i>Edit
-                                                </button>
-                                                <?php endif; ?>
-                                                <?php if ($plan['status'] == 'draft'): ?>
-                                                <button class="btn btn-sm btn-success" onclick="activatePlan(<?php echo $plan['id']; ?>)">
-                                                    <i class="fas fa-play me-1"></i>Activate
-                                                </button>
-                                                <?php elseif ($plan['status'] == 'active'): ?>
-                                                <button class="btn btn-sm btn-warning" onclick="deactivatePlan(<?php echo $plan['id']; ?>)">
-                                                    <i class="fas fa-pause me-1"></i>Deactivate
-                                                </button>
-                                                <?php endif; ?>
-                                                <?php if ($plan['status'] != 'active'): ?>
-                                                <button class="btn btn-sm btn-danger" onclick="deletePlan(<?php echo $plan['id']; ?>)">
-                                                    <i class="fas fa-trash me-1"></i>Delete
-                                                </button>
-                                                <?php endif; ?>
+                                                <div class="action-buttons">
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="viewPlan(<?php echo $plan['id']; ?>)">
+                                                        <i class="fas fa-eye me-1"></i>View
+                                                    </button>
+                                                    <?php if ($plan['status'] == 'draft'): ?>
+                                                        <button class="btn btn-sm btn-warning" onclick="editPlan(<?php echo $plan['id']; ?>)">
+                                                            <i class="fas fa-edit me-1"></i>Edit
+                                                        </button>
+                                                    <?php endif; ?>
+                                                    <?php if ($plan['status'] == 'draft'): ?>
+                                                        <button class="btn btn-sm btn-success" onclick="activatePlan(<?php echo $plan['id']; ?>)">
+                                                            <i class="fas fa-play me-1"></i>Activate
+                                                        </button>
+                                                    <?php elseif ($plan['status'] == 'active'): ?>
+                                                        <button class="btn btn-sm btn-warning" onclick="deactivatePlan(<?php echo $plan['id']; ?>)">
+                                                            <i class="fas fa-pause me-1"></i>Deactivate
+                                                        </button>
+                                                    <?php endif; ?>
+                                                    <?php if ($plan['status'] != 'active'): ?>
+                                                        <button class="btn btn-sm btn-danger" onclick="deletePlan(<?php echo $plan['id']; ?>)">
+                                                            <i class="fas fa-trash me-1"></i>Delete
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                                 <?php endforeach; ?>
                             </div>
 
                             <?php if (empty($plans)): ?>
-                            <div class="text-center py-5">
-                                <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
-                                <h5 class="text-muted">No commission plans found</h5>
-                                <p class="text-muted">Create your first commission plan to get started</p>
-                                <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#createPlanModal">
-                                    <i class="fas fa-plus me-2"></i>Create New Plan
-                                </button>
-                            </div>
+                                <div class="text-center py-5">
+                                    <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No commission plans found</h5>
+                                    <p class="text-muted">Create your first commission plan to get started</p>
+                                    <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#createPlanModal">
+                                        <i class="fas fa-plus me-2"></i>Create New Plan
+                                    </button>
+                                </div>
                             <?php endif; ?>
                         </div>
 
@@ -480,9 +533,9 @@ function deletePlan($plan_id) {
                                                     <select class="form-select" name="plan_id" required>
                                                         <option value="">Choose a plan...</option>
                                                         <?php foreach ($plans as $plan): ?>
-                                                        <option value="<?php echo $plan['id']; ?>">
-                                                            <?php echo htmlspecialchars($plan['plan_name']); ?>
-                                                        </option>
+                                                            <option value="<?php echo $plan['id']; ?>">
+                                                                <?php echo htmlspecialchars($plan['plan_name']); ?>
+                                                            </option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </div>
@@ -663,7 +716,7 @@ function deletePlan($plan_id) {
             let total = 0;
 
             // Level-based commission rates
-            switch(level) {
+            switch (level) {
                 case 'Associate':
                     directCommission = propertyValue * 0.05;
                     teamCommission = propertyValue * 0.02;
@@ -753,4 +806,5 @@ function deletePlan($plan_id) {
         }
     </script>
 </body>
+
 </html>

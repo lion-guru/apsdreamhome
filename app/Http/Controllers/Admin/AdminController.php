@@ -73,20 +73,59 @@ class AdminController extends BaseController
         switch ($role) {
             case 'ceo':
             case 'director':
+            case 'coo':
+            case 'cfo':
                 $this->data['financial_summary'] = $this->getFinancialSummary();
                 $this->data['company_growth'] = $this->getGrowthStats();
+                $this->data['project_performance'] = $this->getProjectPerformance();
                 break;
             case 'sales':
+            case 'marketing':
+            case 'cm':
                 $this->data['leads_pipeline'] = $this->getLeadsPipeline();
                 $this->data['sales_targets'] = $this->getSalesTargets();
+                $this->data['marketing_roi'] = $this->getMarketingROI();
                 break;
             case 'cto':
+            case 'it':
                 $this->data['server_health'] = $this->getServerHealth();
                 $this->data['api_usage'] = $this->getApiUsageStats();
+                $this->data['system_uptime'] = $this->getSystemUptime();
                 break;
             case 'superadmin':
+            case 'admin':
                 $this->data['audit_logs'] = $this->getRecentAuditLogs();
                 $this->data['user_management_stats'] = $this->getUserStats();
+                $this->data['system_health'] = $this->getSystemStatus();
+                break;
+            case 'finance':
+            case 'accounting':
+                $this->data['pending_payouts'] = $this->getPayoutStats();
+                $this->data['revenue_report'] = $this->getRevenueReport();
+                break;
+            case 'hr':
+                $this->data['employee_stats'] = $this->getEmployeeStats();
+                $this->data['pending_leaves'] = $this->getLeaveRequests();
+                break;
+            case 'legal':
+                $this->data['document_status'] = $this->getDocumentStatus();
+                $this->data['pending_verifications'] = $this->getPendingVerifications();
+                break;
+            case 'operations':
+                $this->data['inventory_stats'] = $this->getInventoryStats();
+                $this->data['task_status'] = $this->getTaskStatus();
+                break;
+            case 'builder':
+                $this->data['construction_progress'] = $this->getConstructionProgress();
+                $this->data['material_requests'] = $this->getMaterialRequests();
+                break;
+            case 'agent':
+            case 'associate':
+                $this->data['my_commissions'] = $this->getAgentCommissions();
+                $this->data['my_network'] = $this->getAgentNetwork();
+                break;
+            default:
+                $this->data['general_stats'] = $this->getDashboardStats();
                 break;
         }
     }
@@ -462,7 +501,201 @@ class AdminController extends BaseController
             return;
         }
         $this->data['page_title'] = 'About Us - ' . APP_NAME;
+
+        // Fetch about items
+        try {
+            $db = \App\Core\App::database();
+            $this->data['about_items'] = $db->fetchAll("SELECT * FROM about ORDER BY id DESC");
+        } catch (Exception $e) {
+            $this->data['error'] = "Error loading about content: " . $e->getMessage();
+            $this->data['about_items'] = [];
+        }
+
         $this->render('admin/aboutview');
+    }
+
+    /**
+     * Show create about form
+     */
+    public function aboutCreate()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+            return;
+        }
+        $this->data['page_title'] = 'Add About Content - ' . APP_NAME;
+        $this->render('admin/aboutadd');
+    }
+
+    /**
+     * Store new about content
+     */
+    public function aboutStore()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['title'] ?? '';
+            $content = $_POST['content'] ?? '';
+            $image = '';
+
+            if (empty($title) || empty($content)) {
+                $this->data['error'] = "Title and Content are required";
+                $this->data['page_title'] = 'Add About Content - ' . APP_NAME;
+                $this->render('admin/aboutadd');
+                return;
+            }
+
+            // Handle Image Upload
+            if (!empty($_FILES['image']['name'])) {
+                $targetDir = "upload/";
+                if (!file_exists($targetDir)) {
+                    mkdir($targetDir, 0755, true);
+                }
+                $fileName = time() . '_' . basename($_FILES["image"]["name"]);
+                $targetFile = $targetDir . $fileName;
+                if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile)) {
+                    $image = $fileName;
+                }
+            }
+
+            try {
+                $db = \App\Core\App::database();
+                $data = [
+                    'title' => $title,
+                    'content' => $content,
+                    'image' => $image
+                ];
+                $db->insert('about', $data);
+                $this->redirect('admin/about?msg=Content added successfully');
+            } catch (Exception $e) {
+                $this->data['error'] = "Error adding content: " . $e->getMessage();
+                $this->data['page_title'] = 'Add About Content - ' . APP_NAME;
+                $this->render('admin/aboutadd');
+            }
+        }
+    }
+
+    /**
+     * Show edit about form
+     */
+    public function aboutEdit($id)
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+            return;
+        }
+
+        try {
+            $db = \App\Core\App::database();
+            // Fetch using fetchOne as fetch might return false or array
+            $about = $db->fetchOne("SELECT * FROM about WHERE id = ?", [$id]);
+
+            if (!$about) {
+                $this->redirect('admin/about?error=Content not found');
+                return;
+            }
+
+            $this->data['page_title'] = 'Edit About Content - ' . APP_NAME;
+            $this->data['about_data'] = $about;
+            $this->layout = 'layouts/admin';
+            $this->render('admin/aboutedit');
+        } catch (Exception $e) {
+            $this->redirect('admin/about?error=Error loading content: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update about content
+     */
+    public function aboutUpdate($id)
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['title'] ?? '';
+            $content = $_POST['content'] ?? '';
+
+            if (empty($title) || empty($content)) {
+                $this->redirect("admin/about/edit/{$id}?error=Title and Content are required");
+                return;
+            }
+
+            try {
+                $db = \App\Core\App::database();
+                $existing = $db->fetchOne("SELECT * FROM about WHERE id = ?", [$id]);
+
+                if (!$existing) {
+                    $this->redirect('admin/about?error=Content not found');
+                    return;
+                }
+
+                $image = $existing['image'];
+                if (!empty($_FILES['image']['name'])) {
+                    $targetDir = "upload/";
+                    if (!file_exists($targetDir)) {
+                        mkdir($targetDir, 0755, true);
+                    }
+                    $fileName = time() . '_' . basename($_FILES["image"]["name"]);
+                    $targetFile = $targetDir . $fileName;
+                    if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile)) {
+                        // Delete old image if exists
+                        if (!empty($existing['image']) && file_exists($targetDir . $existing['image'])) {
+                            unlink($targetDir . $existing['image']);
+                        }
+                        $image = $fileName;
+                    }
+                }
+
+                $data = [
+                    'title' => $title,
+                    'content' => $content,
+                    'image' => $image
+                ];
+
+                $db->update('about', $data, 'id = :id', ['id' => $id]);
+                $this->redirect('admin/about?msg=Content updated successfully');
+            } catch (Exception $e) {
+                $this->redirect("admin/about/edit/{$id}?error=Error updating content: " . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Delete about content
+     */
+    public function aboutDelete($id)
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $db = \App\Core\App::database();
+
+                // Get image to delete
+                $existing = $db->fetchOne("SELECT image FROM about WHERE id = ?", [$id]);
+                if ($existing && !empty($existing['image'])) {
+                    $imagePath = "upload/" . $existing['image'];
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                }
+
+                $db->delete('about', 'id = :id', ['id' => $id]);
+                $this->redirect('admin/about?msg=Content deleted successfully');
+            } catch (Exception $e) {
+                $this->redirect('admin/about?error=Error deleting content: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -731,23 +964,20 @@ class AdminController extends BaseController
 
             // Search filter
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(p.title LIKE ? OR p.description LIKE ? OR p.city LIKE ?)";
-                $search_term = '%' . $filters['search'] . '%';
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
+                $where_conditions[] = "(p.title LIKE :search OR p.description LIKE :search OR p.city LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
 
             // Status filter
             if (!empty($filters['status'])) {
-                $where_conditions[] = "p.status = ?";
-                $params[] = $filters['status'];
+                $where_conditions[] = "p.status = :status";
+                $params['status'] = $filters['status'];
             }
 
             // Featured filter
             if ($filters['featured'] !== '') {
-                $where_conditions[] = "p.featured = ?";
-                $params[] = (int)$filters['featured'];
+                $where_conditions[] = "p.featured = :featured";
+                $params['featured'] = (int)$filters['featured'];
             }
 
             $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
@@ -772,10 +1002,15 @@ class AdminController extends BaseController
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
                 {$where_clause}
                 {$order_clause}
-                LIMIT {$filters['per_page']} OFFSET " . (($filters['page'] - 1) * $filters['per_page']);
+                LIMIT :limit OFFSET :offset";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', (int)$filters['per_page'], \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
+            $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Admin properties query error: ' . $e->getMessage());
@@ -798,23 +1033,20 @@ class AdminController extends BaseController
 
             // Search filter
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(p.title LIKE ? OR p.description LIKE ? OR p.city LIKE ?)";
-                $search_term = '%' . $filters['search'] . '%';
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
+                $where_conditions[] = "(p.title LIKE :search OR p.description LIKE :search OR p.city LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
 
             // Status filter
             if (!empty($filters['status'])) {
-                $where_conditions[] = "p.status = ?";
-                $params[] = $filters['status'];
+                $where_conditions[] = "p.status = :status";
+                $params['status'] = $filters['status'];
             }
 
             // Featured filter
             if ($filters['featured'] !== '') {
-                $where_conditions[] = "p.featured = ?";
-                $params[] = (int)$filters['featured'];
+                $where_conditions[] = "p.featured = :featured";
+                $params['featured'] = (int)$filters['featured'];
             }
 
             $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
@@ -846,23 +1078,20 @@ class AdminController extends BaseController
 
             // Search filter
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
-                $search_term = '%' . $filters['search'] . '%';
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
+                $where_conditions[] = "(u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
 
             // Role filter
             if (!empty($filters['role'])) {
-                $where_conditions[] = "u.role = ?";
-                $params[] = $filters['role'];
+                $where_conditions[] = "u.role = :role";
+                $params['role'] = $filters['role'];
             }
 
             // Status filter
             if (!empty($filters['status'])) {
-                $where_conditions[] = "u.status = ?";
-                $params[] = $filters['status'];
+                $where_conditions[] = "u.status = :status";
+                $params['status'] = $filters['status'];
             }
 
             $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
@@ -887,10 +1116,15 @@ class AdminController extends BaseController
                 FROM users u
                 {$where_clause}
                 {$order_clause}
-                LIMIT {$filters['per_page']} OFFSET " . (($filters['page'] - 1) * $filters['per_page']);
+                LIMIT :limit OFFSET :offset";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', (int)$filters['per_page'], \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
+            $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Admin users query error: ' . $e->getMessage());
@@ -913,23 +1147,20 @@ class AdminController extends BaseController
 
             // Search filter
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
-                $search_term = '%' . $filters['search'] . '%';
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
+                $where_conditions[] = "(u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
 
             // Role filter
             if (!empty($filters['role'])) {
-                $where_conditions[] = "u.role = ?";
-                $params[] = $filters['role'];
+                $where_conditions[] = "u.role = :role";
+                $params['role'] = $filters['role'];
             }
 
             // Status filter
             if (!empty($filters['status'])) {
-                $where_conditions[] = "u.status = ?";
-                $params[] = $filters['status'];
+                $where_conditions[] = "u.status = :status";
+                $params['status'] = $filters['status'];
             }
 
             $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
@@ -978,20 +1209,28 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR mobile LIKE ?)";
-                $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term, $term]);
+                $where[] = "(name LIKE :search OR email LIKE :search OR mobile LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sort = in_array($filters['sort'], ['id', 'name', 'email', 'created_at', 'status']) ? $filters['sort'] : 'created_at';
             $order = strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
-            $sql = "SELECT * FROM associates {$where_clause} ORDER BY {$sort} {$order} LIMIT {$filters['per_page']} OFFSET " . (($filters['page'] - 1) * $filters['per_page']);
+
+            $limit = (int)$filters['per_page'];
+            $offset = (int)(($filters['page'] - 1) * $filters['per_page']);
+
+            $sql = "SELECT * FROM associates {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+            $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return [];
@@ -1005,13 +1244,12 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR mobile LIKE ?)";
-                $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term, $term]);
+                $where[] = "(name LIKE :search OR email LIKE :search OR mobile LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sql = "SELECT COUNT(*) FROM associates {$where_clause}";
@@ -1030,20 +1268,28 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR mobile LIKE ?)";
-                $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term, $term]);
+                $where[] = "(name LIKE :search OR email LIKE :search OR mobile LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sort = in_array($filters['sort'], ['id', 'name', 'email', 'created_at']) ? $filters['sort'] : 'created_at';
             $order = strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
-            $sql = "SELECT * FROM customers {$where_clause} ORDER BY {$sort} {$order} LIMIT {$filters['per_page']} OFFSET " . (($filters['page'] - 1) * $filters['per_page']);
+
+            $limit = (int)$filters['per_page'];
+            $offset = (int)(($filters['page'] - 1) * $filters['per_page']);
+
+            $sql = "SELECT * FROM customers {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+            $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return [];
@@ -1057,13 +1303,15 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR mobile LIKE ?)";
+                $where[] = "(name LIKE :search_name OR email LIKE :search_email OR mobile LIKE :search_mobile)";
                 $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term, $term]);
+                $params['search_name'] = $term;
+                $params['search_email'] = $term;
+                $params['search_mobile'] = $term;
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sql = "SELECT COUNT(*) FROM customers {$where_clause}";
@@ -1082,26 +1330,39 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(booking_number LIKE ? OR customer_id IN (SELECT id FROM customers WHERE name LIKE ?))";
+                $where[] = "(booking_number LIKE :search_booking OR customer_id IN (SELECT id FROM customers WHERE name LIKE :search_customer))";
                 $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term]);
+                $params['search_booking'] = $term;
+                $params['search_customer'] = $term;
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sort = in_array($filters['sort'], ['id', 'booking_number', 'booking_date', 'status']) ? $filters['sort'] : 'booking_date';
             $order = strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
+
+            // Use named parameters for LIMIT and OFFSET
+            $limit = (int)$filters['per_page'];
+            $offset = (int)(($filters['page'] - 1) * $filters['per_page']);
+
             $sql = "SELECT b.*, c.name as customer_name, p.title as property_title 
                     FROM bookings b 
                     LEFT JOIN customers c ON b.customer_id = c.id 
                     LEFT JOIN properties p ON b.property_id = p.id 
                     {$where_clause} 
                     ORDER BY b.{$sort} {$order} 
-                    LIMIT {$filters['per_page']} OFFSET " . (($filters['page'] - 1) * $filters['per_page']);
+                    LIMIT :limit OFFSET :offset";
+
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+            $stmt->execute();
+
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return [];
@@ -1115,13 +1376,14 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(booking_number LIKE ? OR customer_id IN (SELECT id FROM customers WHERE name LIKE ?))";
+                $where[] = "(booking_number LIKE :search_booking OR customer_id IN (SELECT id FROM customers WHERE name LIKE :search_customer))";
                 $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term]);
+                $params['search_booking'] = $term;
+                $params['search_customer'] = $term;
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sql = "SELECT COUNT(*) FROM bookings {$where_clause}";
@@ -1140,20 +1402,32 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR phone LIKE ?)";
+                $where[] = "(name LIKE :search_name OR email LIKE :search_email OR phone LIKE :search_phone)";
                 $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term, $term]);
+                $params['search_name'] = $term;
+                $params['search_email'] = $term;
+                $params['search_phone'] = $term;
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sort = in_array($filters['sort'], ['id', 'name', 'email', 'created_at', 'status']) ? $filters['sort'] : 'created_at';
             $order = strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
-            $sql = "SELECT * FROM employees {$where_clause} ORDER BY {$sort} {$order} LIMIT {$filters['per_page']} OFFSET " . (($filters['page'] - 1) * $filters['per_page']);
+
+            $limit = (int)$filters['per_page'];
+            $offset = (int)(($filters['page'] - 1) * $filters['per_page']);
+
+            $sql = "SELECT * FROM employees {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+            $stmt->execute();
+
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return [];
@@ -1167,13 +1441,15 @@ class AdminController extends BaseController
             $where = [];
             $params = [];
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR phone LIKE ?)";
+                $where[] = "(name LIKE :search_name OR email LIKE :search_email OR phone LIKE :search_phone)";
                 $term = '%' . $filters['search'] . '%';
-                $params = array_merge($params, [$term, $term, $term]);
+                $params['search_name'] = $term;
+                $params['search_email'] = $term;
+                $params['search_phone'] = $term;
             }
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
-                $params[] = $filters['status'];
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
             }
             $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
             $sql = "SELECT COUNT(*) FROM employees {$where_clause}";

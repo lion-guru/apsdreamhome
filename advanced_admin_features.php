@@ -6,33 +6,40 @@
 
 // Advanced admin dashboard functions
 function get_admin_analytics_data() {
-    global $conn;
+    $db = \App\Core\App::database();
 
     $analytics = [];
 
-    // Total properties
-    $result = $conn->query("SELECT COUNT(*) as count FROM properties");
-    $analytics['total_properties'] = $result ? $result->fetch_assoc()['count'] : 0;
+    try {
+        // Total properties
+        $analytics['total_properties'] = $db->fetch("SELECT COUNT(*) as count FROM properties", [], false)['count'] ?? 0;
 
-    // Active properties
-    $result = $conn->query("SELECT COUNT(*) as count FROM properties WHERE status = 'available'");
-    $analytics['active_properties'] = $result ? $result->fetch_assoc()['count'] : 0;
+        // Active properties
+        $analytics['active_properties'] = $db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'available'", [], false)['count'] ?? 0;
 
-    // Total users
-    $result = $conn->query("SELECT COUNT(*) as count FROM users");
-    $analytics['total_users'] = $result ? $result->fetch_assoc()['count'] : 0;
+        // Total users
+        $analytics['total_users'] = $db->fetch("SELECT COUNT(*) as count FROM users", [], false)['count'] ?? 0;
 
-    // Recent inquiries
-    $result = $conn->query("SELECT COUNT(*) as count FROM contact_inquiries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
-    $analytics['recent_inquiries'] = $result ? $result->fetch_assoc()['count'] : 0;
+        // Recent inquiries
+        $analytics['recent_inquiries'] = $db->fetch("SELECT COUNT(*) as count FROM contact_inquiries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [], false)['count'] ?? 0;
 
-    // Newsletter subscribers
-    $result = $conn->query("SELECT COUNT(*) as count FROM newsletter_subscribers WHERE is_active = 1");
-    $analytics['newsletter_subscribers'] = $result ? $result->fetch_assoc()['count'] : 0;
+        // Newsletter subscribers
+        $analytics['newsletter_subscribers'] = $db->fetch("SELECT COUNT(*) as count FROM newsletter_subscribers WHERE is_active = 1", [], false)['count'] ?? 0;
 
-    // Monthly revenue (if payment system exists)
-    $result = $conn->query("SELECT COALESCE(SUM(amount), 0) as revenue FROM payments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
-    $analytics['monthly_revenue'] = $result ? $result->fetch_assoc()['revenue'] : 0;
+        // Monthly revenue (if payment system exists)
+        $analytics['monthly_revenue'] = $db->fetch("SELECT COALESCE(SUM(amount), 0) as revenue FROM payments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [], false)['revenue'] ?? 0;
+    } catch (Exception $e) {
+        error_log("Error in get_admin_analytics_data: " . $e->getMessage());
+        // Return zeros if any query fails
+        return [
+            'total_properties' => 0,
+            'active_properties' => 0,
+            'total_users' => 0,
+            'recent_inquiries' => 0,
+            'newsletter_subscribers' => 0,
+            'monthly_revenue' => 0
+        ];
+    }
 
     return $analytics;
 }

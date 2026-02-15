@@ -5,41 +5,45 @@ require_once __DIR__ . '/../config/config.php';
 if (!function_exists('fetchAllDownlineIds')) {
     /**
      * Recursively fetch all downline associate IDs.
-     * @param mysqli $con
+     * @param PDO $db
      * @param int $root_id
      * @param array $ids
      * @return void
      */
-    function fetchAllDownlineIds($con, $root_id, &$ids) {
-        $stmt = $con->prepare("SELECT id FROM associates WHERE parent_id=?");
-        $stmt->bind_param('i', $root_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
+    function fetchAllDownlineIds($db, $root_id, &$ids) {
+        $stmt = $db->prepare("SELECT id FROM associates WHERE parent_id = :parent_id");
+        $stmt->execute(['parent_id' => $root_id]);
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $ids[] = $row['id'];
-            fetchAllDownlineIds($con, $row['id'], $ids);
+            fetchAllDownlineIds($db, $row['id'], $ids);
         }
-        $stmt->close();
     }
 }
 
 /**
  * Calculate total business for an associate, including their team (downline).
- * @param mysqli $con
+ * @param PDO $db
  * @param int $associate_id
  * @return float
  */
-function getTotalTeamBusiness($con, $associate_id) {
+function getTotalTeamBusiness($db, $associate_id) {
     $ids = [$associate_id];
-    fetchAllDownlineIds($con, $associate_id, $ids);
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $types = str_repeat('i', count($ids));
-    $stmt = $con->prepare("SELECT SUM(amount) as total_business FROM commission_transactions WHERE associate_id IN ($placeholders)");
-    $stmt->bind_param($types, ...$ids);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $stmt->close();
+    fetchAllDownlineIds($db, $associate_id, $ids);
+    
+    // Using named parameters for the IN clause is tricky, 
+    // but we can generate them dynamically.
+    $params = [];
+    foreach ($ids as $index => $id) {
+        $params["id_$index"] = $id;
+    }
+    
+    $placeholders = implode(',', array_map(fn($k) => ":$k", array_keys($params)));
+    
+    $sql = "SELECT SUM(amount) as total_business FROM commission_transactions WHERE associate_id IN ($placeholders)";
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+    
     return $row['total_business'] ?? 0;
 }
 
@@ -66,21 +70,19 @@ function getRewardTier($total_business) {
 
 /**
  * Get business and reward info for an associate (personal + team).
- * @param mysqli $con
+ * @param PDO $db
  * @param int $associate_id
  * @return array
  */
-function getAssociateBusinessSummary($con, $associate_id) {
+function getAssociateBusinessSummary($db, $associate_id) {
     // Personal business
-    $stmt = $con->prepare("SELECT SUM(amount) as personal_business FROM commission_transactions WHERE associate_id=?");
-    $stmt->bind_param('i', $associate_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
+    $stmt = $db->prepare("SELECT SUM(amount) as personal_business FROM commission_transactions WHERE associate_id = :associate_id");
+    $stmt->execute(['associate_id' => $associate_id]);
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
     $personal = $row['personal_business'] ?? 0;
-    $stmt->close();
+    
     // Team business
-    $team = getTotalTeamBusiness($con, $associate_id) - $personal;
+    $team = getTotalTeamBusiness($db, $associate_id) - $personal;
     $total = $personal + $team;
     $reward = getRewardTier($total);
     return [

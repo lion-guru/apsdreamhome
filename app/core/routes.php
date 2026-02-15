@@ -37,10 +37,24 @@ Route::get('/admin/users', 'AdminController@users');
 Route::get('/admin/properties', 'AdminController@properties');
 Route::get('/admin/properties/create', 'AdminController@createProperty');
 Route::get('/admin/associates', 'AdminController@associates');
+// Customer Management
+Route::get('/admin/customers/search', 'Admin\CustomerController@search');
 Route::get('/admin/customers', 'AdminController@customers');
 Route::get('/admin/bookings', 'AdminController@bookings');
 Route::get('/admin/employees', 'AdminController@employees');
 Route::get('/admin/settings', 'AdminController@settings');
+
+// Payment Management
+Route::get('/admin/payments', 'Admin\PaymentController@index');
+Route::get('/admin/payments/dashboard-stats', 'Admin\PaymentController@dashboardStats');
+Route::get('/admin/payments/data', 'Admin\PaymentController@data');
+Route::get('/admin/payments/customers', 'Admin\PaymentController@customers');
+Route::post('/admin/payments/store', 'Admin\PaymentController@store');
+Route::post('/admin/payments/update/{id}', 'Admin\PaymentController@update');
+Route::post('/admin/payments/delete/{id}', 'Admin\PaymentController@destroy');
+Route::get('/admin/payments/show/{id}', 'Admin\PaymentController@show');
+Route::get('/admin/payments/receipt/{id}', 'Admin\PaymentController@receipt');
+Route::get('/admin/payments/edit/{id}', 'Admin\PaymentController@edit');
 
 // Visit Management
 Route::get('/admin/visits', 'Admin\VisitController@index');
@@ -50,6 +64,8 @@ Route::post('/admin/visits/update-status/{id}', 'Admin\VisitController@updateSta
 
 // EMI Management
 Route::get('/admin/emi', 'Admin\EMIController@index');
+Route::post('/admin/emi/list', 'Admin\EMIController@list');
+Route::get('/admin/emi/stats', 'Admin\EMIController@stats');
 Route::get('/admin/emi/show/{id}', 'Admin\EMIController@show');
 Route::post('/admin/emi/store', 'Admin\EMIController@store');
 Route::post('/admin/emi/pay', 'Admin\EMIController@pay');

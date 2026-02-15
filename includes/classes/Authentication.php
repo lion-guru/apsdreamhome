@@ -1,29 +1,28 @@
 <?php
 require_once 'SessionManager.php';
 
-class Authentication {
-    private $conn;
+class Authentication
+{
+    private $db;
     private $sessionManager;
 
-    public function __construct($dbConnection) {
-        $this->conn = $dbConnection;
+    public function __construct()
+    {
+        $this->db = \App\Core\App::database();
         $this->sessionManager = new SessionManager();
     }
 
-    public function login(string $email, string $password): array {
+    public function login(string $email, string $password): array
+    {
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return ['success' => false, 'message' => 'Invalid email format'];
         }
 
         // First check associates table
-        $stmt = $this->conn->prepare('SELECT * FROM associates WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $user = $this->db->fetch('SELECT * FROM associates WHERE email = :email', ['email' => $email]);
 
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
+        if ($user) {
             if (password_verify($password, $user['password'])) {
                 $userData = [
                     'uid' => $user['uid'],
@@ -37,13 +36,9 @@ class Authentication {
         }
 
         // Check users table
-        $stmt = $this->conn->prepare('SELECT * FROM users WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $user = $this->db->fetch('SELECT * FROM users WHERE email = :email', ['email' => $email]);
 
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
+        if ($user) {
             if (password_verify($password, $user['password'])) {
                 $userData = [
                     'uid' => $user['uid'],
@@ -59,7 +54,8 @@ class Authentication {
         return ['success' => false, 'message' => 'Invalid email or password'];
     }
 
-    public function registerAssociate(array $data): array {
+    public function registerAssociate(array $data): array
+    {
         if (!$this->validateAssociateData($data)) {
             return ['success' => false, 'message' => 'Invalid data provided'];
         }
@@ -81,24 +77,24 @@ class Authentication {
         $newUid = $this->generateAssociateId();
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
-        $stmt = $this->conn->prepare('INSERT INTO associates (uid, name, email, phone, password, sponsor_id) VALUES (?, ?, ?, ?, ?, ?)');
-        if (!$stmt) {
-            error_log('Prepare failed: ' . $this->conn->error);
-            return ['success' => false, 'message' => 'Database error occurred. Please try again later.'];
-        }
+        $params = [
+            'uid' => $newUid,
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'password' => $hashedPassword,
+            'sponsor_id' => $data['sponsor_id']
+        ];
 
-        $stmt->bind_param('ssssss', $newUid, $data['name'], $data['email'], $data['phone'], $hashedPassword, $data['sponsor_id']);
-
-        if ($stmt->execute()) {
+        if ($this->db->execute('INSERT INTO associates (uid, name, email, phone, password, sponsor_id) VALUES (:uid, :name, :email, :phone, :password, :sponsor_id)', $params)) {
             return ['success' => true, 'message' => 'Registration successful', 'uid' => $newUid];
-        } else {
-            error_log('Execute failed: ' . $stmt->error);
         }
 
         return ['success' => false, 'message' => 'Registration failed'];
     }
 
-    public function registerUser(array $data): array {
+    public function registerUser(array $data): array
+    {
         if (!$this->validateUserData($data)) {
             return ['success' => false, 'message' => 'Invalid data provided'];
         }
@@ -108,21 +104,28 @@ class Authentication {
         }
 
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-        $stmt = $this->conn->prepare('INSERT INTO users (name, email, phone, password, utype) VALUES (?, ?, ?, ?, ?)');
-        $stmt->bind_param('sssss', $data['name'], $data['email'], $data['phone'], $hashedPassword, $data['utype']);
 
-        if ($stmt->execute()) {
+        $params = [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'password' => $hashedPassword,
+            'utype' => $data['utype']
+        ];
+
+        if ($this->db->execute('INSERT INTO users (name, email, phone, password, utype) VALUES (:name, :email, :phone, :password, :utype)', $params)) {
             return ['success' => true, 'message' => 'Registration successful'];
         }
 
         return ['success' => false, 'message' => 'Registration failed'];
     }
 
-    private function validateAssociateData(array $data): bool {
+    private function validateAssociateData(array $data): bool
+    {
         return (
-            isset($data['name']) && 
-            isset($data['email']) && 
-            isset($data['phone']) && 
+            isset($data['name']) &&
+            isset($data['email']) &&
+            isset($data['phone']) &&
             isset($data['password']) &&
             filter_var($data['email'], FILTER_VALIDATE_EMAIL) &&
             strlen($data['phone']) === 10 &&
@@ -131,11 +134,12 @@ class Authentication {
         );
     }
 
-    private function validateUserData(array $data): bool {
+    private function validateUserData(array $data): bool
+    {
         return (
-            isset($data['name']) && 
-            isset($data['email']) && 
-            isset($data['phone']) && 
+            isset($data['name']) &&
+            isset($data['email']) &&
+            isset($data['phone']) &&
             isset($data['password']) &&
             isset($data['utype']) &&
             $this->sessionManager->isValidUserType($data['utype']) &&
@@ -146,39 +150,33 @@ class Authentication {
         );
     }
 
-    private function emailExists(string $email): bool {
+    private function emailExists(string $email): bool
+    {
         // Check in associates table
-        $stmt = $this->conn->prepare('SELECT email FROM associates WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        if ($stmt->get_result()->num_rows > 0) {
+        $result = $this->db->fetch('SELECT email FROM associates WHERE email = :email', ['email' => $email]);
+        if ($result) {
             return true;
         }
 
         // Check in users table
-        $stmt = $this->conn->prepare('SELECT email FROM users WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        return $stmt->get_result()->num_rows > 0;
+        $result = $this->db->fetch('SELECT email FROM users WHERE email = :email', ['email' => $email]);
+        return (bool)$result;
     }
 
-    private function validateSponsorId(string $sponsorId): array {
+    private function validateSponsorId(string $sponsorId): array
+    {
         // Check sponsor ID format (APS followed by 6 digits)
         if (!preg_match('/^APS\d{6}$/', $sponsorId)) {
             return ['valid' => false, 'message' => 'Invalid sponsor ID format. Must be APS followed by 6 digits'];
         }
 
         // Check if sponsor exists and is active
-        $stmt = $this->conn->prepare('SELECT uid, status FROM associates WHERE uid = ?');
-        $stmt->bind_param('s', $sponsorId);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $sponsor = $this->db->fetch('SELECT uid, status FROM associates WHERE uid = :uid', ['uid' => $sponsorId]);
 
-        if ($result->num_rows === 0) {
+        if (!$sponsor) {
             return ['valid' => false, 'message' => 'Sponsor ID does not exist'];
         }
 
-        $sponsor = $result->fetch_assoc();
         if ($sponsor['status'] !== 'active') {
             return ['valid' => false, 'message' => 'Sponsor account is not active'];
         }
@@ -186,13 +184,11 @@ class Authentication {
         return ['valid' => true, 'message' => ''];
     }
 
-    private function generateAssociateId(): string {
-        $stmt = $this->conn->prepare('SELECT uid FROM associates ORDER BY associate_id DESC LIMIT 1');
-        $stmt->execute();
-        $result = $stmt->get_result();
+    private function generateAssociateId(): string
+    {
+        $lastId = $this->db->fetchColumn('SELECT uid FROM associates ORDER BY associate_id DESC LIMIT 1');
 
-        if ($result->num_rows > 0) {
-            $lastId = $result->fetch_assoc()['uid'];
+        if ($lastId) {
             $numericPart = intval(substr($lastId, 3)) + 1;
         } else {
             $numericPart = 1;
@@ -201,7 +197,8 @@ class Authentication {
         return sprintf('APS%06d', $numericPart);
     }
 
-    public function logout(): void {
+    public function logout(): void
+    {
         $this->sessionManager->logout();
     }
 }

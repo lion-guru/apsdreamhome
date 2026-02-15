@@ -58,8 +58,8 @@ class Lead extends Model
     public static function find($id)
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM leads WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $db->prepare("SELECT * FROM leads WHERE id = :id");
+        $stmt->execute(['id' => $id]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $result ? new static($result) : null;
     }

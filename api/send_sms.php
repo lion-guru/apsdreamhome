@@ -323,23 +323,22 @@ function validateAdminAccess() {
     require_once $required_files[0];
 
     // Check if user is admin using prepared statement
-    global $conn;
-    if (!$conn) {
-        logSecurityEvent('Database Connection Failed in SMS API', [
-            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
-        ]);
-        return false;
-    }
+    try {
+        $db = \App\Core\App::database();
+        $admin_check = $db->fetch("SELECT ur.user_id FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = :user_id AND r.name = 'Admin'", [
+            'user_id' => $user_id
+        ], false);
 
-    $admin_check_stmt = $conn->prepare("SELECT ur.user_id FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = ? AND r.name = 'Admin'");
-    $admin_check_stmt->bind_param('i', $user_id);
-    $admin_check_stmt->execute();
-    $result = $admin_check_stmt->get_result();
-    $admin_check_stmt->close();
-
-    if ($result->num_rows === 0) {
-        logSecurityEvent('Unauthorized SMS API Access Attempt', [
-            'user_id' => $user_id,
+        if (!$admin_check) {
+            logSecurityEvent('Unauthorized SMS API Access Attempt', [
+                'user_id' => $user_id,
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
+            ]);
+            return false;
+        }
+    } catch (Exception $e) {
+        logSecurityEvent('Database Error in SMS API Auth', [
+            'error' => $e->getMessage(),
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN'
         ]);
         return false;

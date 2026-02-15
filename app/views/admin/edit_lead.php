@@ -8,7 +8,7 @@ if (!verifyCSRFToken()) {
 if (isset($_GET['id'])) {
     $db = \App\Core\App::database();
     $lead_id = (int)$_GET['id'];
-    $lead = $db->fetchOne("SELECT * FROM leads WHERE id = ?", [$lead_id]);
+    $lead = $db->fetchOne("SELECT * FROM leads WHERE id = :id", ['id' => $lead_id]);
 
     if ($lead) {
         ?>

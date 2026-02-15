@@ -70,27 +70,31 @@ class EnhancedPropertyManager {
                     title, description, price, area, bedrooms, bathrooms,
                     property_type, status, address, city, state, zipcode,
                     featured, images, created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+                ) VALUES (
+                    :title, :description, :price, :area, :bedrooms, :bathrooms,
+                    :property_type, :status, :address, :city, :state, :zipcode,
+                    :featured, :images, NOW(), NOW()
+                )
             ";
 
             $imagesJson = json_encode($imageUrls);
             $featured = isset($validatedData['featured']) ? 1 : 0;
 
             $params = [
-                $validatedData['title'],
-                $validatedData['description'],
-                $validatedData['price'],
-                $validatedData['area'],
-                $validatedData['bedrooms'],
-                $validatedData['bathrooms'],
-                $validatedData['property_type'],
-                $validatedData['status'],
-                $validatedData['address'],
-                $validatedData['city'],
-                $validatedData['state'],
-                $validatedData['zipcode'],
-                $featured,
-                $imagesJson
+                ':title' => $validatedData['title'],
+                ':description' => $validatedData['description'],
+                ':price' => $validatedData['price'],
+                ':area' => $validatedData['area'],
+                ':bedrooms' => $validatedData['bedrooms'],
+                ':bathrooms' => $validatedData['bathrooms'],
+                ':property_type' => $validatedData['property_type'],
+                ':status' => $validatedData['status'],
+                ':address' => $validatedData['address'],
+                ':city' => $validatedData['city'],
+                ':state' => $validatedData['state'],
+                ':zipcode' => $validatedData['zipcode'],
+                ':featured' => $featured,
+                ':images' => $imagesJson
             ];
 
             if (!$this->db->execute($sql, $params)) {
@@ -168,7 +172,7 @@ class EnhancedPropertyManager {
 
         try {
             // Begin transaction
-            $this->conn->begin_transaction();
+            $this->db->beginTransaction();
 
             // Handle new file uploads if provided
             if (!empty($files['images']['name'][0])) {
@@ -187,46 +191,45 @@ class EnhancedPropertyManager {
             }
 
             // Update property data
-            $stmt = $this->conn->prepare("
+            $sql = "
                 UPDATE properties SET
-                    title = ?, description = ?, price = ?, area = ?,
-                    bedrooms = ?, bathrooms = ?, property_type = ?,
-                    status = ?, address = ?, city = ?, state = ?,
-                    zipcode = ?, featured = ?, images = ?,
+                    title = :title, description = :description, price = :price, area = :area,
+                    bedrooms = :bedrooms, bathrooms = :bathrooms, property_type = :property_type,
+                    status = :status, address = :address, city = :city, state = :state,
+                    zipcode = :zipcode, featured = :featured, images = :images,
                     updated_at = NOW()
-                WHERE id = ?
-            ");
+                WHERE id = :id
+            ";
 
             $featured = isset($validatedData['featured']) ? 1 : 0;
 
-            $stmt->bind_param(
-                "ssddiisssssissi",
-                $validatedData['title'],
-                $validatedData['description'],
-                $validatedData['price'],
-                $validatedData['area'],
-                $validatedData['bedrooms'],
-                $validatedData['bathrooms'],
-                $validatedData['property_type'],
-                $validatedData['status'],
-                $validatedData['address'],
-                $validatedData['city'],
-                $validatedData['state'],
-                $validatedData['zipcode'],
-                $featured,
-                $validatedData['images'],
-                $propertyId
-            );
+            $params = [
+                ':title' => $validatedData['title'],
+                ':description' => $validatedData['description'],
+                ':price' => $validatedData['price'],
+                ':area' => $validatedData['area'],
+                ':bedrooms' => $validatedData['bedrooms'],
+                ':bathrooms' => $validatedData['bathrooms'],
+                ':property_type' => $validatedData['property_type'],
+                ':status' => $validatedData['status'],
+                ':address' => $validatedData['address'],
+                ':city' => $validatedData['city'],
+                ':state' => $validatedData['state'],
+                ':zipcode' => $validatedData['zipcode'],
+                ':featured' => $featured,
+                ':images' => $validatedData['images'],
+                ':id' => $propertyId
+            ];
 
-            if (!$stmt->execute()) {
-                throw new Exception("Failed to update property: " . $stmt->error);
+            if (!$this->db->execute($sql, $params)) {
+                throw new Exception("Failed to update property");
             }
 
             // Log the action
             $this->logAction('property_updated', $propertyId, $_SESSION['auser']['id'] ?? 0);
 
             // Commit transaction
-            $this->conn->commit();
+            $this->db->commit();
 
             return [
                 'success' => true,
@@ -234,7 +237,7 @@ class EnhancedPropertyManager {
             ];
 
         } catch (Exception $e) {
-            $this->conn->rollback();
+            $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -258,26 +261,24 @@ class EnhancedPropertyManager {
 
         try {
             // Begin transaction
-            $this->conn->begin_transaction();
+            $this->db->beginTransaction();
 
             // Soft delete the property
-            $stmt = $this->conn->prepare("
+            $sql = "
                 UPDATE properties
                 SET status = 'deleted', updated_at = NOW()
-                WHERE id = ?
-            ");
+                WHERE id = :id
+            ";
 
-            $stmt->bind_param("i", $propertyId);
-
-            if (!$stmt->execute()) {
-                throw new Exception("Failed to delete property: " . $stmt->error);
+            if (!$this->db->execute($sql, [':id' => $propertyId])) {
+                throw new Exception("Failed to delete property");
             }
 
             // Log the action
             $this->logAction('property_deleted', $propertyId, $_SESSION['auser']['id'] ?? 0);
 
             // Commit transaction
-            $this->conn->commit();
+            $this->db->commit();
 
             return [
                 'success' => true,
@@ -285,7 +286,7 @@ class EnhancedPropertyManager {
             ];
 
         } catch (Exception $e) {
-            $this->conn->rollback();
+            $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -294,23 +295,19 @@ class EnhancedPropertyManager {
      * Get property by ID
      */
     public function getProperty($propertyId) {
-        $stmt = $this->conn->prepare("
+        $sql = "
             SELECT * FROM properties
-            WHERE id = ? AND status != 'deleted'
-        ");
+            WHERE id = :id AND status != 'deleted'
+        ";
 
-        $stmt->bind_param("i", $propertyId);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $property = $this->db->fetch($sql, [':id' => $propertyId]);
 
-        if ($result->num_rows === 0) {
+        if (!$property) {
             return null;
         }
 
-        $property = $result->fetch_assoc();
         $property['images'] = json_decode($property['images'], true) ?? [];
 
-        $stmt->close();
         return $property;
     }
 
@@ -320,73 +317,67 @@ class EnhancedPropertyManager {
     public function getProperties($filters = [], $page = 1, $perPage = 20) {
         $whereConditions = ["status != 'deleted'"];
         $params = [];
-        $types = "";
 
         // Build filter conditions
         if (!empty($filters['property_type'])) {
-            $whereConditions[] = "property_type = ?";
-            $params[] = $filters['property_type'];
-            $types .= "s";
+            $whereConditions[] = "property_type = :property_type";
+            $params[':property_type'] = $filters['property_type'];
         }
 
         if (!empty($filters['status'])) {
-            $whereConditions[] = "status = ?";
-            $params[] = $filters['status'];
-            $types .= "s";
+            $whereConditions[] = "status = :status";
+            $params[':status'] = $filters['status'];
         }
 
         if (!empty($filters['min_price'])) {
-            $whereConditions[] = "price >= ?";
-            $params[] = $filters['min_price'];
-            $types .= "d";
+            $whereConditions[] = "price >= :min_price";
+            $params[':min_price'] = $filters['min_price'];
         }
 
         if (!empty($filters['max_price'])) {
-            $whereConditions[] = "price <= ?";
-            $params[] = $filters['max_price'];
-            $types .= "d";
+            $whereConditions[] = "price <= :max_price";
+            $params[':max_price'] = $filters['max_price'];
         }
 
         if (!empty($filters['city'])) {
-            $whereConditions[] = "city LIKE ?";
-            $params[] = "%{$filters['city']}%";
-            $types .= "s";
+            $whereConditions[] = "city LIKE :city";
+            $params[':city'] = "%{$filters['city']}%";
         }
 
         $whereClause = implode(" AND ", $whereConditions);
 
         // Get total count
-        $countStmt = $this->conn->prepare("SELECT COUNT(*) as total FROM properties WHERE $whereClause");
-        if (!empty($params)) {
-            $countStmt->bind_param($types, ...$params);
-        }
-        $countStmt->execute();
-        $totalResult = $countStmt->get_result();
-        $total = $totalResult->fetch_assoc()['total'];
-        $countStmt->close();
+        $countSql = "SELECT COUNT(*) as total FROM properties WHERE $whereClause";
+        $total = $this->db->fetchColumn($countSql, $params);
 
         // Calculate pagination
         $offset = ($page - 1) * $perPage;
         $totalPages = ceil($total / $perPage);
 
         // Get properties
-        $query = "SELECT * FROM properties WHERE $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        $params[] = $perPage;
-        $params[] = $offset;
-        $types .= "ii";
+        $query = "SELECT * FROM properties WHERE $whereClause ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+        
+        $params[':limit'] = (int)$perPage;
+        $params[':offset'] = (int)$offset;
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param($types, ...$params);
+        // Use raw PDO for limit/offset as the wrapper might not handle integer binding correctly for LIMIT
+        $pdo = $this->db->getPdo();
+        $stmt = $pdo->prepare($query);
+        
+        foreach ($params as $key => $value) {
+            if ($key === ':limit' || $key === ':offset') {
+                $stmt->bindValue($key, $value, \PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue($key, $value);
+            }
+        }
+        
         $stmt->execute();
-        $result = $stmt->get_result();
-
         $properties = [];
-        while ($row = $result->fetch_assoc()) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $row['images'] = json_decode($row['images'], true) ?? [];
             $properties[] = $row;
         }
-
-        $stmt->close();
 
         return [
             'properties' => $properties,

@@ -1,27 +1,32 @@
 <?php
-class User {
+class User
+{
     private $db;
     private $table = 'users';
 
-    public function __construct(\Database\Database $database) { // Added namespace for Database
-        $this->db = $database;
+    public function __construct()
+    {
+        $this->db = \App\Core\App::database();
     }
 
-    public function getById(string $uid): ?array {
-        return $this->db->fetch( // Changed from fetchOne to fetch
-            "SELECT * FROM {$this->table} WHERE uid = ?",
-            [$uid]
+    public function getById(string $uid): ?array
+    {
+        return $this->db->fetch(
+            "SELECT * FROM {$this->table} WHERE uid = :uid",
+            ['uid' => $uid]
         );
     }
 
-    public function getByEmail(string $email): ?array {
-        return $this->db->fetch( // Changed from fetchOne to fetch
-            "SELECT * FROM {$this->table} WHERE email = ?",
-            [$email]
+    public function getByEmail(string $email): ?array
+    {
+        return $this->db->fetch(
+            "SELECT * FROM {$this->table} WHERE email = :email",
+            ['email' => $email]
         );
     }
 
-    public function create(array $userData): array {
+    public function create(array $userData): array
+    {
         try {
             $this->db->beginTransaction();
 
@@ -34,8 +39,7 @@ class User {
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
-            $userId = $this->db->insert($this->table, $data); // Use return value of insert for user ID
-            // $userId = $this->db->lastInsertId(); // This line is removed
+            $userId = $this->db->insert($this->table, $data);
 
             $this->db->commit();
 
@@ -45,7 +49,7 @@ class User {
                 'user_id' => $userId
             ];
         } catch (Exception $e) {
-            $this->db->rollback();
+            $this->db->rollBack();
             return [
                 'success' => false,
                 'message' => 'Failed to create user: ' . $e->getMessage()
@@ -53,7 +57,8 @@ class User {
         }
     }
 
-    public function update(string $uid, array $data): array {
+    public function update(string $uid, array $data): array
+    {
         try {
             if (isset($data['password'])) {
                 $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -62,8 +67,8 @@ class User {
             $this->db->update(
                 $this->table,
                 $data,
-                'uid = ?', // This should be the WHERE clause string
-                [$uid]     // And these are the parameters for the WHERE clause
+                'uid = :uid',
+                ['uid' => $uid]
             );
 
             return [
@@ -78,10 +83,10 @@ class User {
         }
     }
 
-    public function delete(string $uid): array {
+    public function delete(string $uid): array
+    {
         try {
-            // The delete method in Database.php expects $where as a string
-            $this->db->delete($this->table, 'uid = ?', [$uid]); 
+            $this->db->delete($this->table, 'uid = :uid', ['uid' => $uid]);
             return [
                 'success' => true,
                 'message' => 'User deleted successfully'
@@ -94,18 +99,21 @@ class User {
         }
     }
 
-    public function validatePassword(string $password): bool {
+    public function validatePassword(string $password): bool
+    {
         return strlen($password) >= 8 &&
-               preg_match('/[A-Z]/', $password) &&
-               preg_match('/[a-z]/', $password) &&
-               preg_match('/[0-9]/', $password);
+            preg_match('/[A-Z]/', $password) &&
+            preg_match('/[a-z]/', $password) &&
+            preg_match('/[0-9]/', $password);
     }
 
-    public function validatePhone(string $phone): bool {
+    public function validatePhone(string $phone): bool
+    {
         return strlen($phone) === 10 && ctype_digit($phone);
     }
 
-    public function validateEmail(string $email): bool {
+    public function validateEmail(string $email): bool
+    {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 }

@@ -11,7 +11,7 @@ if (!isAuthenticated()) {
 
 if (isset($_GET['id'])) {
     $opportunity_id = intval($_GET['id']);
-    $opportunity = $db->fetchOne("SELECT * FROM opportunities WHERE opportunity_id = ?", [$opportunity_id]);
+    $opportunity = $db->fetchOne("SELECT * FROM opportunities WHERE opportunity_id = :opportunity_id", ['opportunity_id' => $opportunity_id]);
 
     if ($opportunity) {
         ?>

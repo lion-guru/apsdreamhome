@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Advanced Performance Optimization Manager
  * Comprehensive system for monitoring and optimizing application performance
  */
 
-class PerformanceManager {
+class PerformanceManager
+{
     // Cache Types
     const CACHE_TYPE_MEMORY = 'memory';
     const CACHE_TYPE_FILE = 'file';
@@ -69,9 +71,10 @@ class PerformanceManager {
     private $query_log = [];
     private $included_files = [];
 
-    public function __construct($logger = null, $db = null) {
+    public function __construct($logger = null)
+    {
         $this->logger = $logger;
-        $this->db = $db;
+        $this->db = \App\Core\App::database();
 
         // Set cache path
         $this->config['cache_path'] = __DIR__ . '/../cache/';
@@ -98,7 +101,8 @@ class PerformanceManager {
     /**
      * Ensure cache directory exists
      */
-    private function ensureCacheDirectory() {
+    private function ensureCacheDirectory()
+    {
         if (!is_dir($this->config['cache_path'])) {
             mkdir($this->config['cache_path'], 0755, true);
         }
@@ -116,7 +120,8 @@ class PerformanceManager {
     /**
      * Initialize cache driver
      */
-    private function initializeCacheDriver() {
+    private function initializeCacheDriver()
+    {
         switch ($this->config['cache_driver']) {
             case self::CACHE_TYPE_MEMORY:
                 $this->cache_driver = new MemoryCacheDriver();
@@ -135,12 +140,13 @@ class PerformanceManager {
     /**
      * Track included files
      */
-    private function trackIncludedFiles() {
+    private function trackIncludedFiles()
+    {
         $this->included_files = get_included_files();
         $this->metrics['files_included'] = count($this->included_files);
 
         // Register include handler
-        register_tick_function(function() {
+        register_tick_function(function () {
             $this->included_files = get_included_files();
             $this->metrics['files_included'] = count($this->included_files);
         }, 1000); // Check every 1000 ticks
@@ -149,7 +155,8 @@ class PerformanceManager {
     /**
      * Start performance profiling
      */
-    public function startProfiling() {
+    public function startProfiling()
+    {
         if (!$this->config['profiling_enabled']) return;
 
         $this->metrics['start_time'] = microtime(true);
@@ -165,7 +172,8 @@ class PerformanceManager {
     /**
      * Start database query logging
      */
-    private function startQueryLogging() {
+    private function startQueryLogging()
+    {
         if ($this->db) {
             // Override database methods to log queries
             $this->db->query = $this->wrapQueryMethod($this->db->query);
@@ -176,8 +184,9 @@ class PerformanceManager {
     /**
      * Wrap query methods for logging
      */
-    private function wrapQueryMethod($method) {
-        return function($query, ...$args) use ($method) {
+    private function wrapQueryMethod($method)
+    {
+        return function ($query, ...$args) use ($method) {
             $start_time = microtime(true);
 
             $result = $method($query, ...$args);
@@ -208,7 +217,8 @@ class PerformanceManager {
     /**
      * End performance profiling
      */
-    public function endProfiling() {
+    public function endProfiling()
+    {
         if (!$this->config['profiling_enabled']) return;
 
         $this->metrics['end_time'] = microtime(true);
@@ -228,7 +238,8 @@ class PerformanceManager {
     /**
      * End query logging
      */
-    private function endQueryLogging() {
+    private function endQueryLogging()
+    {
         // Save query log to file
         $log_file = __DIR__ . '/../logs/query_performance.log';
         $log_data = [
@@ -245,7 +256,8 @@ class PerformanceManager {
     /**
      * Generate performance report
      */
-    private function generatePerformanceReport() {
+    private function generatePerformanceReport()
+    {
         $report = [
             'timestamp' => date('Y-m-d H:i:s'),
             'execution_time' => $this->metrics['total_execution_time'],
@@ -268,7 +280,8 @@ class PerformanceManager {
     /**
      * Get performance level
      */
-    private function getPerformanceLevel() {
+    private function getPerformanceLevel()
+    {
         $execution_time = $this->metrics['total_execution_time'];
 
         if ($execution_time < 0.5) {
@@ -285,21 +298,23 @@ class PerformanceManager {
     /**
      * Get cache statistics
      */
-    public function getCacheStats() {
+    public function getCacheStats()
+    {
         return [
             'driver' => $this->config['cache_driver'],
             'enabled' => $this->config['cache_enabled'],
             'hits' => $this->metrics['cache_hits'],
             'misses' => $this->metrics['cache_misses'],
             'hit_ratio' => $this->metrics['cache_hits'] + $this->metrics['cache_misses'] > 0 ?
-                         ($this->metrics['cache_hits'] / ($this->metrics['cache_hits'] + $this->metrics['cache_misses'])) * 100 : 0
+                ($this->metrics['cache_hits'] / ($this->metrics['cache_hits'] + $this->metrics['cache_misses'])) * 100 : 0
         ];
     }
 
     /**
      * Cache data with key
      */
-    public function cache($key, $data, $lifetime = null) {
+    public function cache($key, $data, $lifetime = null)
+    {
         if (!$this->config['cache_enabled']) {
             return false;
         }
@@ -326,7 +341,8 @@ class PerformanceManager {
     /**
      * Retrieve cached data
      */
-    public function getCache($key) {
+    public function getCache($key)
+    {
         if (!$this->config['cache_enabled']) {
             return false;
         }
@@ -354,7 +370,8 @@ class PerformanceManager {
     /**
      * Delete cached data
      */
-    public function deleteCache($key) {
+    public function deleteCache($key)
+    {
         $cache_key = $this->generateCacheKey($key);
         return $this->cache_driver->delete($cache_key);
     }
@@ -362,21 +379,24 @@ class PerformanceManager {
     /**
      * Clear all cache
      */
-    public function clearCache() {
+    public function clearCache()
+    {
         return $this->cache_driver->clear();
     }
 
     /**
      * Generate cache key
      */
-    private function generateCacheKey($key) {
+    private function generateCacheKey($key)
+    {
         return md5($key . $_SERVER['REQUEST_URI'] . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : ''));
     }
 
     /**
      * Minify HTML content
      */
-    public function minifyHTML($html) {
+    public function minifyHTML($html)
+    {
         if (!$this->config['minify_html']) {
             return $html;
         }
@@ -398,7 +418,8 @@ class PerformanceManager {
     /**
      * Minify CSS content
      */
-    public function minifyCSS($css) {
+    public function minifyCSS($css)
+    {
         if (!$this->config['minify_css']) {
             return $css;
         }
@@ -416,7 +437,8 @@ class PerformanceManager {
     /**
      * Minify JavaScript content
      */
-    public function minifyJS($js) {
+    public function minifyJS($js)
+    {
         if (!$this->config['minify_js']) {
             return $js;
         }
@@ -437,7 +459,8 @@ class PerformanceManager {
     /**
      * Optimize image (basic optimization)
      */
-    public function optimizeImage($image_path, $quality = 85) {
+    public function optimizeImage($image_path, $quality = 85)
+    {
         if (!$this->config['optimize_images'] || !file_exists($image_path)) {
             return false;
         }
@@ -483,7 +506,8 @@ class PerformanceManager {
     /**
      * Format bytes to human readable format
      */
-    private function formatBytes($bytes) {
+    private function formatBytes($bytes)
+    {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
@@ -497,14 +521,16 @@ class PerformanceManager {
     /**
      * Get performance metrics
      */
-    public function getMetrics() {
+    public function getMetrics()
+    {
         return $this->metrics;
     }
 
     /**
      * Check performance on shutdown
      */
-    public function checkPerformance() {
+    public function checkPerformance()
+    {
         $this->endProfiling();
 
         // Check for performance issues
@@ -534,7 +560,8 @@ class PerformanceManager {
     /**
      * Get optimization recommendations
      */
-    public function getOptimizationRecommendations() {
+    public function getOptimizationRecommendations()
+    {
         $recommendations = [];
 
         // Check execution time
@@ -568,21 +595,25 @@ class PerformanceManager {
 }
 
 // Cache Driver Interfaces and Classes
-interface CacheDriver {
+interface CacheDriver
+{
     public function get($key);
     public function set($key, $value, $lifetime);
     public function delete($key);
     public function clear();
 }
 
-class FileCacheDriver implements CacheDriver {
+class FileCacheDriver implements CacheDriver
+{
     private $cache_path;
 
-    public function __construct($cache_path) {
+    public function __construct($cache_path)
+    {
         $this->cache_path = $cache_path;
     }
 
-    public function get($key) {
+    public function get($key)
+    {
         $file = $this->getCacheFile($key);
 
         if (!file_exists($file)) {
@@ -605,7 +636,8 @@ class FileCacheDriver implements CacheDriver {
         return $cache_data['data'];
     }
 
-    public function set($key, $value, $lifetime) {
+    public function set($key, $value, $lifetime)
+    {
         $file = $this->getCacheFile($key);
 
         $cache_data = [
@@ -618,7 +650,8 @@ class FileCacheDriver implements CacheDriver {
         return file_put_contents($file, $data, LOCK_EX) !== false;
     }
 
-    public function delete($key) {
+    public function delete($key)
+    {
         $file = $this->getCacheFile($key);
 
         if (file_exists($file)) {
@@ -628,7 +661,8 @@ class FileCacheDriver implements CacheDriver {
         return true;
     }
 
-    public function clear() {
+    public function clear()
+    {
         $files = glob($this->cache_path . '*');
 
         foreach ($files as $file) {
@@ -640,15 +674,18 @@ class FileCacheDriver implements CacheDriver {
         return true;
     }
 
-    private function getCacheFile($key) {
+    private function getCacheFile($key)
+    {
         return $this->cache_path . md5($key) . '.cache';
     }
 }
 
-class MemoryCacheDriver implements CacheDriver {
+class MemoryCacheDriver implements CacheDriver
+{
     private $cache = [];
 
-    public function get($key) {
+    public function get($key)
+    {
         if (isset($this->cache[$key]) && $this->cache[$key]['expires'] > time()) {
             return $this->cache[$key]['data'];
         }
@@ -656,7 +693,8 @@ class MemoryCacheDriver implements CacheDriver {
         return false;
     }
 
-    public function set($key, $value, $lifetime) {
+    public function set($key, $value, $lifetime)
+    {
         $this->cache[$key] = [
             'data' => $value,
             'expires' => time() + $lifetime
@@ -665,29 +703,32 @@ class MemoryCacheDriver implements CacheDriver {
         return true;
     }
 
-    public function delete($key) {
+    public function delete($key)
+    {
         unset($this->cache[$key]);
         return true;
     }
 
-    public function clear() {
+    public function clear()
+    {
         $this->cache = [];
         return true;
     }
 }
 
-class DatabaseCacheDriver implements CacheDriver {
+class DatabaseCacheDriver implements CacheDriver
+{
     private $db;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
-    public function get($key) {
+    public function get($key)
+    {
         try {
-            $stmt = $this->db->prepare("SELECT data, expires FROM cache WHERE cache_key = ?");
-            $stmt->execute([$key]);
-            $result = $stmt->fetch();
+            $result = $this->db->fetch("SELECT data, expires FROM cache WHERE cache_key = :key", ['key' => $key]);
 
             if ($result && $result['expires'] > time()) {
                 return unserialize($result['data']);
@@ -699,34 +740,43 @@ class DatabaseCacheDriver implements CacheDriver {
         }
     }
 
-    public function set($key, $value, $lifetime) {
+    public function set($key, $value, $lifetime)
+    {
         try {
             $data = serialize($value);
             $expires = time() + $lifetime;
 
-            $stmt = $this->db->prepare("INSERT OR REPLACE INTO cache (cache_key, data, expires) VALUES (?, ?, ?)");
-            return $stmt->execute([$key, $data, $expires]);
+            return $this->db->execute(
+                "INSERT INTO cache (cache_key, data, expires) VALUES (:key, :data, :expires)
+                 ON DUPLICATE KEY UPDATE data = :data_update, expires = :expires_update",
+                [
+                    'key' => $key,
+                    'data' => $data,
+                    'expires' => $expires,
+                    'data_update' => $data,
+                    'expires_update' => $expires
+                ]
+            );
         } catch (Exception $e) {
             return false;
         }
     }
 
-    public function delete($key) {
+    public function delete($key)
+    {
         try {
-            $stmt = $this->db->prepare("DELETE FROM cache WHERE cache_key = ?");
-            return $stmt->execute([$key]);
+            return $this->db->execute("DELETE FROM cache WHERE cache_key = :key", ['key' => $key]);
         } catch (Exception $e) {
             return false;
         }
     }
 
-    public function clear() {
+    public function clear()
+    {
         try {
-            $stmt = $this->db->prepare("DELETE FROM cache");
-            return $stmt->execute();
+            return $this->db->execute("DELETE FROM cache");
         } catch (Exception $e) {
             return false;
         }
     }
 }
-?>

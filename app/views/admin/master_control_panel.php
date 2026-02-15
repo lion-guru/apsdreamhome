@@ -205,7 +205,7 @@ try {
     $tables = ['employees', 'employee_tasks', 'employee_activities'];
     $tables_found = 0;
     foreach ($tables as $table) {
-        $result = $db->fetch("SHOW TABLES LIKE ?", [$table]);
+        $result = $db->fetch("SHOW TABLES LIKE :table", ['table' => $table]);
         if ($result) {
             $tables_found++;
         }

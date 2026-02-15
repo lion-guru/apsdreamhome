@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message_type = "danger";
     } elseif (isset($_POST['action']) && $_POST['action'] === 'delete') {
         $id = intval($_POST['id']);
-        if ($db->execute("DELETE FROM attendance WHERE id = ?", [$id])) {
+        if ($db->execute("DELETE FROM attendance WHERE id = :id", ['id' => $id])) {
             $message = $mlSupport->translate("Attendance record deleted successfully.");
             $message_type = "success";
             logAdminActivity("Attendance Deleted", "Deleted attendance record ID: $id");

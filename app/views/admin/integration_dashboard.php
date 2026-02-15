@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $url = $_POST['url'] ?? '';
                 $secret = $_POST['secret'] ?: null;
                 $events = $_POST['events'] ?? [];
-                
+
                 $webhookManager->createWebhook($name, $url, $events, $secret);
                 logAdminActivity($userId, 'add_webhook', 'Added new webhook: ' . $name);
                 $success_msg = $mlSupport->translate('Webhook added successfully!');
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
             sms_api = :sms_api, crm_api = :crm_api, slack_webhook_url = :slack_webhook_url, 
             telegram_bot_token = :telegram_bot_token, telegram_chat_id = :telegram_chat_id 
             WHERE id = 1";
-        
+
         $params = [
             'whatsapp_api' => $_POST['whatsapp_api'],
             'google_drive_client_id' => $_POST['google_drive_client_id'],
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
             'telegram_bot_token' => $_POST['telegram_bot_token'],
             'telegram_chat_id' => $_POST['telegram_chat_id']
         ];
-        
+
         if ($db->execute($sql, $params)) {
             logAdminActivity($userId, 'update_integration_settings', 'Updated integration API settings');
             $success_msg = $mlSupport->translate('Settings updated successfully!');
@@ -110,7 +110,11 @@ if ($has_logs_table) {
 $logs = [];
 $total_logs = 0;
 if ($has_logs_table) {
-    $logs = $db->fetchAll("SELECT * FROM integration_activity_logs ORDER BY created_at DESC LIMIT ? OFFSET ?", [$limit, $offset]);
+    $db = \App\Core\App::database();
+    $logs = $db->fetchAll("SELECT * FROM integration_activity_logs ORDER BY created_at DESC LIMIT :limit OFFSET :offset", [
+        'limit' => (int)$limit,
+        'offset' => (int)$offset
+    ]);
     $total_logs = $db->fetch("SELECT COUNT(*) as count FROM integration_activity_logs")['count'] ?? 0;
 }
 $total_pages = ceil($total_logs / $limit);
@@ -173,29 +177,29 @@ require_once __DIR__ . '/admin_sidebar.php';
                         </div>
                     <?php endif; ?>
                     <?php foreach ($stats as $s): ?>
-                    <div class="col-md-3 mb-4">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-body">
-                                <h6 class="card-title text-uppercase fw-bold text-muted small mb-3"><?= h(str_replace('_', ' ', $s['integration_type'])) ?></h6>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small"><?= h($mlSupport->translate('Total')) ?>:</span>
-                                    <span class="fw-bold"><?= h($s['total']) ?></span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small"><?= h($mlSupport->translate('Success')) ?>:</span>
-                                    <span class="text-success fw-bold"><?= h($s['success']) ?></span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small"><?= h($mlSupport->translate('Failures')) ?>:</span>
-                                    <span class="text-danger fw-bold"><?= h($s['failure']) ?></span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-muted small"><?= h($mlSupport->translate('Errors')) ?>:</span>
-                                    <span class="text-warning fw-bold"><?= h($s['error']) ?></span>
+                        <div class="col-md-3 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-uppercase fw-bold text-muted small mb-3"><?= h(str_replace('_', ' ', $s['integration_type'])) ?></h6>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small"><?= h($mlSupport->translate('Total')) ?>:</span>
+                                        <span class="fw-bold"><?= h($s['total']) ?></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small"><?= h($mlSupport->translate('Success')) ?>:</span>
+                                        <span class="text-success fw-bold"><?= h($s['success']) ?></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small"><?= h($mlSupport->translate('Failures')) ?>:</span>
+                                        <span class="text-danger fw-bold"><?= h($s['failure']) ?></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted small"><?= h($mlSupport->translate('Errors')) ?>:</span>
+                                        <span class="text-warning fw-bold"><?= h($s['error']) ?></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -220,35 +224,35 @@ require_once __DIR__ . '/admin_sidebar.php';
                                         </thead>
                                         <tbody>
                                             <?php foreach ($logs as $log): ?>
-                                            <tr>
-                                                <td><?= h(date('Y-m-d H:i:s', strtotime($log['created_at']))) ?></td>
-                                                <td>
-                                                    <span class="badge bg-info text-white"><?= h(strtoupper($log['integration_type'])) ?></span>
-                                                </td>
-                                                <td>
-                                                    <?php if ($log['status'] == 'success'): ?>
-                                                        <span class="badge bg-success"><?= h($mlSupport->translate('SUCCESS')) ?></span>
-                                                    <?php elseif ($log['status'] == 'failure'): ?>
-                                                        <span class="badge bg-danger"><?= h($mlSupport->translate('FAILURE')) ?></span>
-                                                    <?php else: ?>
-                                                        <span class="badge bg-warning"><?= h($mlSupport->translate('ERROR')) ?></span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td class="text-truncate" style="max-width: 300px;">
-                                                    <?= h($log['error_message'] ?: $mlSupport->translate('Processed successfully')) ?>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary border-0 shadow-sm" 
+                                                <tr>
+                                                    <td><?= h(date('Y-m-d H:i:s', strtotime($log['created_at']))) ?></td>
+                                                    <td>
+                                                        <span class="badge bg-info text-white"><?= h(strtoupper($log['integration_type'])) ?></span>
+                                                    </td>
+                                                    <td>
+                                                        <?php if ($log['status'] == 'success'): ?>
+                                                            <span class="badge bg-success"><?= h($mlSupport->translate('SUCCESS')) ?></span>
+                                                        <?php elseif ($log['status'] == 'failure'): ?>
+                                                            <span class="badge bg-danger"><?= h($mlSupport->translate('FAILURE')) ?></span>
+                                                        <?php else: ?>
+                                                            <span class="badge bg-warning"><?= h($mlSupport->translate('ERROR')) ?></span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="text-truncate" style="max-width: 300px;">
+                                                        <?= h($log['error_message'] ?: $mlSupport->translate('Processed successfully')) ?>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary border-0 shadow-sm"
                                                             onclick='showLogDetail(<?= json_encode($log) ?>)'>
-                                                        <i class="fas fa-eye me-1"></i> <?= h($mlSupport->translate('View')) ?>
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                                            <i class="fas fa-eye me-1"></i> <?= h($mlSupport->translate('View')) ?>
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                             <?php endforeach; ?>
                                             <?php if (empty($logs)): ?>
-                                            <tr>
-                                                <td colspan="5" class="text-center py-4 text-muted"><?= h($mlSupport->translate('No activity logs found.')) ?></td>
-                                            </tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-center py-4 text-muted"><?= h($mlSupport->translate('No activity logs found.')) ?></td>
+                                                </tr>
                                             <?php endif; ?>
                                         </tbody>
                                     </table>
@@ -256,17 +260,17 @@ require_once __DIR__ . '/admin_sidebar.php';
 
                                 <!-- Pagination -->
                                 <?php if ($total_pages > 1): ?>
-                                <div class="mt-4">
-                                    <nav aria-label="Page navigation">
-                                        <ul class="pagination justify-content-center">
-                                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                            <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                                                <a class="page-link border-0 shadow-sm mx-1 rounded" href="?page=<?= $i ?>"><?= h($i) ?></a>
-                                            </li>
-                                            <?php endfor; ?>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                    <div class="mt-4">
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination justify-content-center">
+                                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                                        <a class="page-link border-0 shadow-sm mx-1 rounded" href="?page=<?= $i ?>"><?= h($i) ?></a>
+                                                    </li>
+                                                <?php endfor; ?>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -284,7 +288,7 @@ require_once __DIR__ . '/admin_sidebar.php';
                         <form method="POST">
                             <?= getCsrfField() ?>
                             <input type="hidden" name="update_settings" value="1">
-                            
+
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <h5 class="mb-3 border-bottom pb-2 fw-bold text-primary"><i class="fab fa-google me-2"></i><?= h($mlSupport->translate('Google Cloud (Drive/Sheets)')) ?></h5>
@@ -386,46 +390,46 @@ require_once __DIR__ . '/admin_sidebar.php';
                                 </thead>
                                 <tbody>
                                     <?php foreach ($webhooks as $webhook): ?>
-                                    <tr>
-                                        <td class="fw-bold"><?= h($webhook['name']) ?></td>
-                                        <td class="text-muted small"><?= h($webhook['url']) ?></td>
-                                        <td>
-                                            <?php 
-                                            $events = is_array($webhook['events']) ? $webhook['events'] : json_decode($webhook['events'], true);
-                                            if ($events): 
-                                                foreach ($events as $event): ?>
-                                                    <span class="badge bg-light text-dark border me-1 mb-1"><?= h($event) ?></span>
+                                        <tr>
+                                            <td class="fw-bold"><?= h($webhook['name']) ?></td>
+                                            <td class="text-muted small"><?= h($webhook['url']) ?></td>
+                                            <td>
+                                                <?php
+                                                $events = is_array($webhook['events']) ? $webhook['events'] : json_decode($webhook['events'], true);
+                                                if ($events):
+                                                    foreach ($events as $event): ?>
+                                                        <span class="badge bg-light text-dark border me-1 mb-1"><?= h($event) ?></span>
                                                 <?php endforeach;
-                                            endif; ?>
-                                        </td>
-                                        <td>
-                                            <?php if ($webhook['enabled']): ?>
-                                                <span class="badge bg-success-light text-success"><?= h($mlSupport->translate('Active')) ?></span>
-                                            <?php else: ?>
-                                                <span class="badge bg-danger-light text-danger"><?= h($mlSupport->translate('Inactive')) ?></span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <form method="POST" onsubmit="return confirm('<?= h($mlSupport->translate('Are you sure you want to delete this webhook?')) ?>');">
-                                                    <?= getCsrfField() ?>
-                                                    <input type="hidden" name="action" value="delete_webhook">
-                                                    <input type="hidden" name="id" value="<?= h($webhook['id']) ?>">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0 shadow-sm">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                endif; ?>
+                                            </td>
+                                            <td>
+                                                <?php if ($webhook['enabled']): ?>
+                                                    <span class="badge bg-success-light text-success"><?= h($mlSupport->translate('Active')) ?></span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-danger-light text-danger"><?= h($mlSupport->translate('Inactive')) ?></span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <form method="POST" onsubmit="return confirm('<?= h($mlSupport->translate('Are you sure you want to delete this webhook?')) ?>');">
+                                                        <?= getCsrfField() ?>
+                                                        <input type="hidden" name="action" value="delete_webhook">
+                                                        <input type="hidden" name="id" value="<?= h($webhook['id']) ?>">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 shadow-sm">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     <?php endforeach; ?>
                                     <?php if (empty($webhooks)): ?>
-                                    <tr>
-                                        <td colspan="5" class="text-center py-4 text-muted">
-                                            <i class="fas fa-plug fa-2x mb-3 d-block"></i>
-                                            <?= h($mlSupport->translate('No webhooks configured yet.')) ?>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-muted">
+                                                <i class="fas fa-plug fa-2x mb-3 d-block"></i>
+                                                <?= h($mlSupport->translate('No webhooks configured yet.')) ?>
+                                            </td>
+                                        </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
@@ -499,10 +503,10 @@ require_once __DIR__ . '/admin_sidebar.php';
             <div class="modal-body p-4">
                 <h6 class="fw-bold text-muted mb-3 text-uppercase small"><?= h($mlSupport->translate('Payload Sent')) ?>:</h6>
                 <pre class="bg-light p-3 border-0 rounded shadow-sm mb-4"><code id="modalPayload" class="small"></code></pre>
-                
+
                 <h6 class="fw-bold text-muted mb-3 text-uppercase small"><?= h($mlSupport->translate('Response Received')) ?>:</h6>
                 <pre class="bg-light p-3 border-0 rounded shadow-sm mb-4"><code id="modalResponse" class="small"></code></pre>
-                
+
                 <div id="modalErrorContainer" class="mt-4" style="display:none;">
                     <h6 class="fw-bold text-danger mb-3 text-uppercase small"><?= h($mlSupport->translate('Error Message')) ?>:</h6>
                     <div class="alert alert-danger border-0 shadow-sm" id="modalError"></div>
@@ -513,34 +517,32 @@ require_once __DIR__ . '/admin_sidebar.php';
 </div>
 
 <script>
-const CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+    const CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?? '' ?>';
 
-function h(str) {
-    if (!str) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-function showLogDetail(log) {
-    document.getElementById('modalPayload').textContent = JSON.stringify(JSON.parse(log.payload), null, 2);
-    document.getElementById('modalResponse').textContent = log.response ? JSON.stringify(JSON.parse(log.response), null, 2) : 'No response recorded';
-    
-    if (log.error_message) {
-        document.getElementById('modalError').textContent = log.error_message;
-        document.getElementById('modalErrorContainer').style.display = 'block';
-    } else {
-        document.getElementById('modalErrorContainer').style.display = 'none';
+    function h(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
-    
-    var modal = new bootstrap.Modal(document.getElementById('logDetailModal'));
-    modal.show();
-}
+
+    function showLogDetail(log) {
+        document.getElementById('modalPayload').textContent = JSON.stringify(JSON.parse(log.payload), null, 2);
+        document.getElementById('modalResponse').textContent = log.response ? JSON.stringify(JSON.parse(log.response), null, 2) : 'No response recorded';
+
+        if (log.error_message) {
+            document.getElementById('modalError').textContent = log.error_message;
+            document.getElementById('modalErrorContainer').style.display = 'block';
+        } else {
+            document.getElementById('modalErrorContainer').style.display = 'none';
+        }
+
+        var modal = new bootstrap.Modal(document.getElementById('logDetailModal'));
+        modal.show();
+    }
 </script>
 
 <?php require_once __DIR__ . '/admin_footer.php'; ?>
-
-

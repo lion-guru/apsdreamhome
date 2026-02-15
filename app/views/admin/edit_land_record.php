@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch existing record
-$record = $db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
+$record = $db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = :id", ['id' => $id]);
 
 if (!$record) {
     header("Location: view_kisaan.php?error=" . urlencode("Record not found."));

@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $delete_id = intval($_POST['id']);
         
         // Execute the delete
-        $success_exec = $db->execute("DELETE FROM kisaan_land_management WHERE id = ?", [$delete_id]);
+        $success_exec = $db->execute("DELETE FROM kisaan_land_management WHERE id = :id", ['id' => $delete_id]);
 
         if ($success_exec) {
             // Add notification for audit log

@@ -13,28 +13,16 @@ try {
     // Include the database configuration
     require_once __DIR__ . '/config/config.php';
 
-    // Check if database constants are defined
-    if (!defined('DB_HOST') || !defined('DB_NAME') || !defined('DB_USER') || !defined('DB_PASS')) {
-        throw new Exception('Database configuration constants are not defined. Please check config.php');
-    }
+    // Get the singleton PDO instance from App core
+    $db = \App\Core\App::database();
+    $pdo = $db->getConnection();
 
-    // Create database connection with better error handling
-    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
-
-    $dbPassword = defined('DB_PASSWORD') ? DB_PASSWORD : (defined('DB_PASS') ? DB_PASS : '');
-    $pdo = new PDO($dsn, DB_USER, $dbPassword, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-    ]);
-
-    // Set timezone
+    // Set timezone (if not already set in singleton)
     $pdo->exec("SET time_zone = '+05:30';");
 
     // Initialize global $conn for MySQLi compatibility
     $con = getMysqliConnection();
     $conn = $con;
-
 } catch (PDOException $e) {
     // Log error and show generic message
     error_log('Database Connection Error: ' . $e->getMessage() . ' DSN: ' . $dsn);
@@ -65,16 +53,17 @@ try {
  * Get database connection (PDO)
  * @return PDO
  */
-function getPdoConnection() {
-    global $pdo;
-    return $pdo;
+function getPdoConnection()
+{
+    return \App\Core\App::database()->getConnection();
 }
 
 /**
  * Get database connection for mysqli compatibility
  * @return mysqli
  */
-function getMysqliConnection() {
+function getMysqliConnection()
+{
     static $mysqli_conn = null;
 
     if ($mysqli_conn === null) {
@@ -96,16 +85,21 @@ function getMysqliConnection() {
  * @param array $params
  * @return PDOStatement
  */
-function executeQuery($sql, $params = []) {
-    $pdo = getPdoConnection();
-    $stmt = $pdo->prepare($sql);
+function executeQuery($sql, $params = [])
+{
+    $db = \App\Core\App::database();
+
+    // Check if we should use named bindings for better security
+    // This is a bridge to allow the legacy executeQuery to work with named params
+    $stmt = $db->getConnection()->prepare($sql);
 
     if (!$stmt) {
-        throw new Exception("Failed to prepare statement: " . $pdo->errorInfo()[2]);
+        throw new Exception("Failed to prepare statement");
     }
 
     if (!$stmt->execute($params)) {
-        throw new Exception("Failed to execute statement: " . $stmt->errorInfo()[2]);
+        $error = $stmt->errorInfo();
+        throw new Exception("Failed to execute statement: " . ($error[2] ?? 'Unknown error'));
     }
 
     return $stmt;
@@ -118,7 +112,8 @@ function executeQuery($sql, $params = []) {
  * @param array $params
  * @return mysqli_stmt
  */
-function executeMysqliQuery($sql, $types = '', $params = []) {
+function executeMysqliQuery($sql, $types = '', $params = [])
+{
     $conn = getMysqliConnection();
     $stmt = $conn->prepare($sql);
 
@@ -136,4 +131,3 @@ function executeMysqliQuery($sql, $types = '', $params = []) {
 
     return $stmt;
 }
-?>

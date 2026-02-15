@@ -7,9 +7,7 @@
 // Database connection utility
 function getDatabaseConnection() {
     try {
-        require_once 'includes/db_connection.php';
-                global $con;
-        return $con;
+        return \App\Core\App::database()->getPdo();
     } catch (Exception $e) {
         error_log("Database connection failed: " . $e->getMessage());
         return null;
@@ -96,43 +94,39 @@ function sendEmail($to, $subject, $message, $from = 'noreply@apsdreamhome.com') 
 
 // Property search utility
 function searchProperties($filters = []) {
-    $conn = getMysqliConnection(); // Use the proper function directly
-    if (!$conn) return [];
-
+    $db = \App\Core\App::database();
     $sql = "SELECT * FROM properties WHERE status = 'active'";
     $params = [];
 
     if (!empty($filters['city'])) {
-        $sql .= " AND city = ?";
-        $params[] = $filters['city'];
+        $sql .= " AND city = :city";
+        $params['city'] = $filters['city'];
     }
 
     if (!empty($filters['property_type'])) {
-        $sql .= " AND property_type = ?";
-        $params[] = $filters['property_type'];
+        $sql .= " AND property_type = :property_type";
+        $params['property_type'] = $filters['property_type'];
     }
 
     if (!empty($filters['min_price'])) {
-        $sql .= " AND price >= ?";
-        $params[] = $filters['min_price'];
+        $sql .= " AND price >= :min_price";
+        $params['min_price'] = $filters['min_price'];
     }
 
     if (!empty($filters['max_price'])) {
-        $sql .= " AND price <= ?";
-        $params[] = $filters['max_price'];
+        $sql .= " AND price <= :max_price";
+        $params['max_price'] = $filters['max_price'];
     }
 
     if (!empty($filters['bedrooms'])) {
-        $sql .= " AND bedrooms >= ?";
-        $params[] = $filters['bedrooms'];
+        $sql .= " AND bedrooms >= :bedrooms";
+        $params['bedrooms'] = $filters['bedrooms'];
     }
 
     $sql .= " ORDER BY created_at DESC";
 
     try {
-        $stmt = $conn->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $db->fetchAll($sql, $params);
     } catch (Exception $e) {
         error_log("Property search error: " . $e->getMessage());
         return [];
@@ -154,13 +148,10 @@ function requireLogin() {
 function getCurrentUser() {
     if (!isLoggedIn()) return null;
 
-    $conn = getMysqliConnection(); // Use the proper function directly
-    if (!$conn) return null;
+    $db = \App\Core\App::database();
 
     try {
-        $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$_SESSION['user_id']]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $db->fetch("SELECT * FROM users WHERE id = :id", ['id' => $_SESSION['user_id']]);
     } catch (Exception $e) {
         error_log("Get current user error: " . $e->getMessage());
         return null;

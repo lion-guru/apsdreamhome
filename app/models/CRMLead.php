@@ -489,12 +489,12 @@ class CRMLead extends Model
     public function getAgentLeads($agent_id, $status = null)
     {
         try {
-            $where_conditions = ["l.assigned_to = ?"];
-            $params = [$agent_id];
+            $where_conditions = ["l.assigned_to = :agent_id"];
+            $params = [':agent_id' => $agent_id];
 
             if ($status) {
-                $where_conditions[] = "l.lead_status = ?";
-                $params[] = $status;
+                $where_conditions[] = "l.lead_status = :status";
+                $params[':status'] = $status;
             }
 
             $where_clause = implode(' AND ', $where_conditions);
@@ -512,7 +512,9 @@ class CRMLead extends Model
                         l.created_at DESC";
 
             $db = Database::getInstance();
-            return $db->query($sql, $params)->fetchAll();
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll();
         } catch (\Exception $e) {
             error_log('Agent leads fetch error: ' . $e->getMessage());
             return [];
@@ -529,13 +531,20 @@ class CRMLead extends Model
                 return false;
             }
 
-            $placeholders = str_repeat('?,', count($lead_ids) - 1) . '?';
-            $sql = "UPDATE {$this->table} SET lead_status = ?, updated_at = NOW() WHERE id IN ({$placeholders})";
+            $params = [':status' => $new_status];
+            $placeholders = [];
+            foreach ($lead_ids as $index => $id) {
+                $key = ":id{$index}";
+                $placeholders[] = $key;
+                $params[$key] = $id;
+            }
+            $placeholder_str = implode(',', $placeholders);
+
+            $sql = "UPDATE {$this->table} SET lead_status = :status, updated_at = NOW() WHERE id IN ({$placeholder_str})";
 
             $db = Database::getInstance();
-            $params = array_merge([$new_status], $lead_ids);
-            $stmt = $db->query($sql, $params);
-            $success = $stmt !== false;
+            $stmt = $db->prepare($sql);
+            $success = $stmt->execute($params);
 
             if ($success) {
                 // Log activity for each lead
@@ -563,11 +572,12 @@ class CRMLead extends Model
                     FROM {$this->table} l
                     LEFT JOIN users u ON l.assigned_to = u.id
                     WHERE l.lead_status IN ('new', 'contacted', 'qualified')
-                      AND (l.last_contact_date IS NULL OR l.last_contact_date <= DATE_SUB(NOW(), INTERVAL ? DAY))
+                      AND (l.last_contact_date IS NULL OR l.last_contact_date <= DATE_SUB(NOW(), INTERVAL :days DAY))
                     ORDER BY l.last_contact_date ASC, l.priority DESC";
 
             $db = Database::getInstance();
-            $stmt = $db->query($sql, [$days_overdue]);
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':days' => $days_overdue]);
             return $stmt ? $stmt->fetchAll() : [];
         } catch (\Exception $e) {
             error_log('Follow-up leads fetch error: ' . $e->getMessage());
@@ -583,10 +593,10 @@ class CRMLead extends Model
         try {
             $sql = "UPDATE {$this->table}
                     SET last_contact_date = NOW(), updated_at = NOW()
-                    WHERE id = ?";
+                    WHERE id = :id";
 
             $db = Database::getInstance();
-            $stmt = $db->query($sql, [$lead_id]);
+            $stmt = $db->query($sql, [':id' => $lead_id]);
             $success = $stmt !== false;
 
             if ($success && !empty($contact_notes)) {

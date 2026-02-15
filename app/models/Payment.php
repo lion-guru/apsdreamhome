@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Model;
 use App\Core\Database;
 use PDO;
+use Exception;
 
 /**
  * Payment Model
@@ -16,68 +17,269 @@ class Payment extends Model
     protected $primaryKey = 'id';
 
     /**
-     * Get all payments with filters
+     * Get dashboard statistics for accounting
      */
-    public function getAllPayments($filters = [])
+    public function getDashboardStats()
+    {
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+
+        $currentMonth = date('Y-m');
+
+        // 1. Get Monthly Revenue
+        $revenueQuery = "SELECT COALESCE(SUM(amount), 0) as total FROM payments 
+                         WHERE DATE_FORMAT(payment_date, '%Y-%m') = ? 
+                         AND (status = 'completed' OR status = 'success')";
+        $stmt = $conn->prepare($revenueQuery);
+        $stmt->execute([$currentMonth]);
+        $revenue = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        // 2. Get Monthly Expenses
+        // Assuming expenses table exists and follows similar pattern
+        $expenses = 0;
+        try {
+            $expensesQuery = "SELECT COALESCE(SUM(amount), 0) as total FROM expenses 
+                              WHERE DATE_FORMAT(expense_date, '%Y-%m') = ?";
+            $stmt = $conn->prepare($expensesQuery);
+            $stmt->execute([$currentMonth]);
+            $expenses = $stmt->fetchColumn();
+            $stmt->closeCursor();
+        } catch (Exception $e) {
+            // Ignore if expenses table doesn't exist
+        }
+
+        // 3. Get Pending Payments Count
+        $pendingQuery = "SELECT COUNT(*) as total FROM payments WHERE status = 'pending'";
+        $stmt = $conn->query($pendingQuery);
+        $pendingPayments = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        // Calculate Monthly Profit
+        $monthlyProfit = $revenue - $expenses;
+
+        return [
+            'monthly_revenue' => '₹' . number_format($revenue, 2),
+            'monthly_expenses' => '₹' . number_format($expenses, 2),
+            'pending_payments' => $pendingPayments,
+            'monthly_profit' => '₹' . number_format($monthlyProfit, 2)
+        ];
+    }
+
+    /**
+     * Record a new payment with related operations (transaction, booking update, notification)
+     */
+    public function recordPayment(array $data)
+    {
+        try {
+            $db = Database::getInstance();
+            $conn = $db->getConnection();
+            $conn->beginTransaction();
+
+            // Generate unique transaction ID
+            $transactionId = 'TXN' . time() . rand(1000, 9999);
+
+            // Insert payment record
+            $sql = "INSERT INTO payments (
+                        transaction_id, 
+                        customer_id, 
+                        amount, 
+                        payment_type,
+                        payment_method,
+                        notes,
+                        status,
+                        payment_date,
+                        created_by
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, CURDATE(), ?)";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([
+                $transactionId,
+                $data['customer_id'],
+                $data['amount'],
+                $data['payment_type'],
+                $data['payment_method'],
+                $data['description'] ?? '', // Map description to notes
+                $data['status'] ?? 'completed',
+                $_SESSION['admin_id'] ?? 1
+            ]);
+
+            $paymentId = $conn->lastInsertId();
+
+            // If this is a booking payment, update the booking status
+            if ($data['payment_type'] === 'booking' && !empty($data['booking_id'])) {
+                // First verify if booking_id column exists or update it if passed
+                // For now, assuming booking_id logic is handled if provided
+                // But we need to update the payment record with booking_id if it was passed separately
+                // The insert above didn't include booking_id. Let's update it.
+                $updatePaymentQuery = "UPDATE payments SET booking_id = ? WHERE id = ?";
+                $stmtUpd = $conn->prepare($updatePaymentQuery);
+                $stmtUpd->execute([$data['booking_id'], $paymentId]);
+
+                $updateBookingQuery = "UPDATE bookings SET 
+                                     status = 'confirmed',
+                                     updated_at = NOW()
+                                     WHERE id = ?";
+                $stmt = $conn->prepare($updateBookingQuery);
+                $stmt->execute([$data['booking_id']]);
+            }
+
+            // Create notification for the customer (if notifications table exists)
+            try {
+                $notificationMessage = "Your payment of ₹" . number_format($data['amount'], 2) . " has been received.";
+                $notificationLink = "payments/view.php?id=" . $paymentId;
+
+                $sqlNotif = "INSERT INTO notifications (
+                                user_id,
+                                type,
+                                title,
+                                message,
+                                link,
+                                created_at
+                            ) VALUES (?, 'payment', 'Payment Received', ?, ?, NOW())";
+
+                $stmtNotif = $conn->prepare($sqlNotif);
+                $stmtNotif->execute([$data['customer_id'], $notificationMessage, $notificationLink]);
+            } catch (Exception $e) {
+                // Ignore notification errors
+            }
+
+            $conn->commit();
+            return $paymentId;
+        } catch (Exception $e) {
+            if (isset($conn)) $conn->rollBack();
+            error_log("Payment::recordPayment error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get paginated payments for DataTables
+     */
+    public function getPaginatedPayments($start, $length, $search, $order, $filters = [])
     {
         $conditions = [];
         $params = [];
 
+        // Base query
+        $sql = "SELECT p.*, 
+                       c.name as customer_name, c.email as customer_email, c.phone as customer_mobile
+                FROM payments p
+                LEFT JOIN customers c ON p.customer_id = c.id";
+
+        // Search
+        if (!empty($search)) {
+            $conditions[] = "(p.transaction_id LIKE :search OR c.name LIKE :search OR c.phone LIKE :search OR p.amount LIKE :search)";
+            $params['search'] = "%$search%";
+        }
+
+        // Filters
         if (!empty($filters['status'])) {
             $conditions[] = "p.status = :status";
             $params['status'] = $filters['status'];
         }
-
-        if (!empty($filters['payment_method'])) {
-            $conditions[] = "p.payment_method = :payment_method";
-            $params['payment_method'] = $filters['payment_method'];
+        if (!empty($filters['type'])) {
+            $conditions[] = "p.payment_type = :payment_type";
+            $params['payment_type'] = $filters['type'];
+        }
+        if (!empty($filters['dateRange'])) {
+            $dates = explode(' - ', $filters['dateRange']);
+            if (count($dates) == 2) {
+                $dateFrom = date('Y-m-d', strtotime($dates[0]));
+                $dateTo = date('Y-m-d', strtotime($dates[1]));
+                $conditions[] = "DATE(p.payment_date) BETWEEN :date_from AND :date_to";
+                $params['date_from'] = $dateFrom;
+                $params['date_to'] = $dateTo;
+            }
         }
 
-        if (!empty($filters['user_id'])) {
-            $conditions[] = "p.user_id = :user_id";
-            $params['user_id'] = $filters['user_id'];
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(' AND ', $conditions);
         }
 
-        if (!empty($filters['property_id'])) {
-            $conditions[] = "p.property_id = :property_id";
-            $params['property_id'] = $filters['property_id'];
+        // Ordering
+        $columns = ['p.payment_date', 'p.transaction_id', 'c.name', 'p.payment_type', 'p.amount', 'p.status'];
+        if (isset($order['column']) && isset($columns[$order['column']])) {
+            $sql .= " ORDER BY " . $columns[$order['column']] . " " . ($order['dir'] === 'asc' ? 'ASC' : 'DESC');
+        } else {
+            $sql .= " ORDER BY p.payment_date DESC";
         }
 
-        if (!empty($filters['date_from'])) {
-            $conditions[] = "p.created_at >= :date_from";
-            $params['date_from'] = $filters['date_from'];
+        // Pagination
+        if ($length != -1) {
+            $sql .= " LIMIT :start, :length";
+            $params['start'] = (int)$start;
+            $params['length'] = (int)$length;
         }
-
-        if (!empty($filters['date_to'])) {
-            $conditions[] = "p.created_at <= :date_to";
-            $params['date_to'] = $filters['date_to'];
-        }
-
-        if (!empty($filters['min_amount'])) {
-            $conditions[] = "p.amount >= :min_amount";
-            $params['min_amount'] = $filters['min_amount'];
-        }
-
-        if (!empty($filters['max_amount'])) {
-            $conditions[] = "p.amount <= :max_amount";
-            $params['max_amount'] = $filters['max_amount'];
-        }
-
-        $whereClause = !empty($conditions) ? "WHERE " . implode(' AND ', $conditions) : "";
-
-        $sql = "
-            SELECT p.*, prop.title as property_title, prop.location as property_location,
-                   u.name as user_name, u.email as user_email, u.phone as user_phone
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            {$whereClause}
-            ORDER BY p.created_at DESC
-        ";
 
         $db = Database::getInstance();
-        $stmt = $db->query($sql, $params);
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        // Bind parameters
+        foreach ($params as $key => $value) {
+            $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue($key === 'start' || $key === 'length' ? $key : ":$key", $value, $type);
+        }
+
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get total payments count for DataTables
+     */
+    public function getTotalPaymentsCount($search = '', $filters = [])
+    {
+        $conditions = [];
+        $params = [];
+
+        $sql = "SELECT COUNT(*) as count 
+                FROM payments p
+                LEFT JOIN customers c ON p.customer_id = c.id";
+
+        // Search
+        if (!empty($search)) {
+            $conditions[] = "(p.transaction_id LIKE :search OR c.name LIKE :search OR c.mobile LIKE :search OR p.amount LIKE :search)";
+            $params['search'] = "%$search%";
+        }
+
+        // Filters
+        if (!empty($filters['status'])) {
+            $conditions[] = "p.status = :status";
+            $params['status'] = $filters['status'];
+        }
+        if (!empty($filters['type'])) {
+            $conditions[] = "p.payment_type = :payment_type";
+            $params['payment_type'] = $filters['type'];
+        }
+        if (!empty($filters['dateRange'])) {
+            $dates = explode(' - ', $filters['dateRange']);
+            if (count($dates) == 2) {
+                $dateFrom = date('Y-m-d', strtotime($dates[0]));
+                $dateTo = date('Y-m-d', strtotime($dates[1]));
+                $conditions[] = "DATE(p.payment_date) BETWEEN :date_from AND :date_to";
+                $params['date_from'] = $dateFrom;
+                $params['date_to'] = $dateTo;
+            }
+        }
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(' AND ', $conditions);
+        }
+
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            if ($key !== 'start' && $key !== 'length') {
+                $stmt->bindValue(":$key", $value);
+            }
+        }
+
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)['count'];
     }
 
     /**
@@ -85,39 +287,22 @@ class Payment extends Model
      */
     public function getPaymentById($id)
     {
-        $sql = "
-            SELECT p.*, prop.title as property_title, prop.location as property_location, prop.price as property_price,
-                   u.name as user_name, u.email as user_email, u.phone as user_phone,
-                   u.address as user_address, u.city as user_city, u.state as user_state
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            WHERE p.id = :id
-        ";
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
+        $sql = "SELECT p.*, 
+                       c.name as customer_name, c.email as customer_email, c.phone as customer_mobile,
+                       u.uname as created_by_name
+                FROM payments p 
+                LEFT JOIN customers c ON p.customer_id = c.id 
+                LEFT JOIN user u ON p.created_by = u.uid
+                WHERE p.id = :id";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Create new payment
-     */
-    public function createPayment($data)
-    {
-        $sql = "
-            INSERT INTO {$this->table} (
-                user_id, property_id, amount, payment_method, transaction_id,
-                gateway_response, status, notes, created_at, updated_at
-            ) VALUES (
-                :user_id, :property_id, :amount, :payment_method, :transaction_id,
-                :gateway_response, :status, :notes, NOW(), NOW()
-            )
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
-        return $this->db->lastInsertId();
     }
 
     /**
@@ -125,461 +310,64 @@ class Payment extends Model
      */
     public function updatePayment($id, $data)
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
-        $setParts = [];
-        $params = ['id' => $id];
+        $fields = [];
+        $params = [':id' => $id];
 
-        foreach ($data as $key => $value) {
-            if ($key !== 'id') {
-                $setParts[] = "{$key} = :{$key}";
-                $params[$key] = $value;
-            }
+        if (isset($data['customer_id'])) {
+            $fields[] = "customer_id = :customer_id";
+            $params[':customer_id'] = $data['customer_id'];
+        }
+        if (isset($data['amount'])) {
+            $fields[] = "amount = :amount";
+            $params[':amount'] = $data['amount'];
+        }
+        if (isset($data['payment_date'])) {
+            $fields[] = "payment_date = :payment_date";
+            $params[':payment_date'] = $data['payment_date'];
+        }
+        if (isset($data['payment_type'])) {
+            $fields[] = "payment_type = :payment_type";
+            $params[':payment_type'] = $data['payment_type'];
+        }
+        if (isset($data['transaction_id'])) {
+            $fields[] = "transaction_id = :transaction_id";
+            $params[':transaction_id'] = $data['transaction_id'];
+        }
+        if (isset($data['status'])) {
+            $fields[] = "status = :status";
+            $params[':status'] = $data['status'];
+        }
+        if (isset($data['description'])) {
+            $fields[] = "description = :description";
+            $params[':description'] = $data['description'];
         }
 
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
+        if (empty($fields)) {
+            return false;
+        }
 
-        $stmt = $this->db->prepare($sql);
+        $sql = "UPDATE payments SET " . implode(', ', $fields) . " WHERE id = :id";
+
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare($sql);
         return $stmt->execute($params);
     }
 
-    /**
-     * Update payment status
-     */
-    public function updatePaymentStatus($id, $status, $transactionId = null, $gatewayResponse = null)
+    public function deletePayment($id)
     {
-        $data = ['status' => $status];
-
-        if ($transactionId) {
-            $data['transaction_id'] = $transactionId;
-        }
-
-        if ($gatewayResponse) {
-            $data['gateway_response'] = $gatewayResponse;
-        }
-
-        return $this->updatePayment($id, $data);
-    }
-
-    /**
-     * Get payments by user
-     */
-    public function getPaymentsByUser($userId)
-    {
-        $sql = "
-            SELECT p.*, prop.title as property_title, prop.location as property_location
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            WHERE p.user_id = :user_id
-            ORDER BY p.created_at DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['user_id' => $userId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get payments by property
-     */
-    public function getPaymentsByProperty($propertyId)
-    {
-        $sql = "
-            SELECT p.*, u.name as user_name, u.email as user_email
-            FROM {$this->table} p
-            LEFT JOIN users u ON p.user_id = u.id
-            WHERE p.property_id = :property_id
-            ORDER BY p.created_at DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['property_id' => $propertyId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get payment statistics
-     */
-    public function getPaymentStatistics()
-    {
-        $stats = [];
-
-        // Payment status breakdown
-        $stmt = $this->db->prepare("
-            SELECT status, COUNT(*) as count, SUM(amount) as total_amount
-            FROM {$this->table}
-            GROUP BY status
-        ");
-        $stmt->execute();
-        $stats['by_status'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Payment method breakdown
-        $stmt = $this->db->prepare("
-            SELECT payment_method, COUNT(*) as count, SUM(amount) as total_amount
-            FROM {$this->table}
-            WHERE status = 'completed'
-            GROUP BY payment_method
-        ");
-        $stmt->execute();
-        $stats['by_method'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Monthly payments (last 12 months)
-        $stmt = $this->db->prepare("
-            SELECT DATE_FORMAT(created_at, '%Y-%m') as month,
-                   COUNT(*) as count,
-                   SUM(amount) as total_amount
-            FROM {$this->table}
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-            GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-            ORDER BY month
-        ");
-        $stmt->execute();
-        $stats['by_month'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Total revenue
-        $stmt = $this->db->prepare("
-            SELECT
-                SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue,
-                SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending_amount,
-                SUM(CASE WHEN status = 'failed' THEN amount ELSE 0 END) as failed_amount,
-                COUNT(*) as total_payments,
-                COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_payments,
-                COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_payments,
-                AVG(CASE WHEN status = 'completed' THEN amount END) as avg_payment
-            FROM {$this->table}
-        ");
-        $stmt->execute();
-        $stats['summary'] = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $stats;
-    }
-
-    /**
-     * Get pending payments
-     */
-    public function getPendingPayments()
-    {
-        $sql = "
-            SELECT p.*, prop.title as property_title, prop.location as property_location,
-                   u.name as user_name, u.email as user_email, u.phone as user_phone,
-                   DATEDIFF(NOW(), p.created_at) as days_pending
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            WHERE p.status = 'pending'
-            ORDER BY p.created_at ASC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get failed payments
-     */
-    public function getFailedPayments()
-    {
-        $sql = "
-            SELECT p.*, prop.title as property_title, prop.location as property_location,
-                   u.name as user_name, u.email as user_email, u.phone as user_phone
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            WHERE p.status = 'failed'
-            ORDER BY p.created_at DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get successful payments
-     */
-    public function getSuccessfulPayments($limit = null)
-    {
-        $sql = "
-            SELECT p.*, prop.title as property_title, prop.location as property_location,
-                   u.name as user_name, u.email as user_email
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            WHERE p.status = 'completed'
-            ORDER BY p.created_at DESC
-        ";
-
-        if ($limit) {
-            $sql .= " LIMIT :limit";
-        }
-
-        $stmt = $this->db->prepare($sql);
-
-        if ($limit) {
-            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        }
-
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get payment summary for dashboard
-     */
-    public function getPaymentSummary($days = 30)
-    {
-        $sql = "
-            SELECT
-                COUNT(*) as total_payments,
-                COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_payments,
-                COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_payments,
-                COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_payments,
-                SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_revenue,
-                SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending_amount,
-                AVG(CASE WHEN status = 'completed' THEN amount END) as avg_payment
-            FROM {$this->table}
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':days', $days, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get payments by date range
-     */
-    public function getPaymentsByDateRange($startDate, $endDate)
-    {
-        $sql = "
-            SELECT p.*, prop.title as property_title, u.name as user_name
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            WHERE DATE(p.created_at) BETWEEN :start_date AND :end_date
-            ORDER BY p.created_at DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'start_date' => $startDate,
-            'end_date' => $endDate
-        ]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get payments by amount range
-     */
-    public function getPaymentsByAmountRange($minAmount, $maxAmount)
-    {
-        $sql = "
-            SELECT p.*, prop.title as property_title, u.name as user_name
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            WHERE p.amount BETWEEN :min_amount AND :max_amount
-            ORDER BY p.amount DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'min_amount' => $minAmount,
-            'max_amount' => $maxAmount
-        ]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get top paying customers
-     */
-    public function getTopPayingCustomers($limit = 10)
-    {
-        $sql = "
-            SELECT u.id, u.name, u.email,
-                   COUNT(p.id) as payment_count,
-                   SUM(p.amount) as total_paid,
-                   AVG(p.amount) as avg_payment,
-                   MAX(p.created_at) as last_payment_date
-            FROM users u
-            JOIN {$this->table} p ON u.id = p.user_id
-            WHERE p.status = 'completed'
-            GROUP BY u.id, u.name, u.email
-            ORDER BY total_paid DESC
-            LIMIT :limit
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get payment trends
-     */
-    public function getPaymentTrends($days = 30)
-    {
-        $sql = "
-            SELECT
-                DATE(created_at) as date,
-                COUNT(*) as payment_count,
-                SUM(amount) as total_amount,
-                COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_count,
-                COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_count
-            FROM {$this->table}
-            WHERE created_at >= DATE_SUB(NOW(), INTERVAL :days DAY)
-            GROUP BY DATE(created_at)
-            ORDER BY date
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':days', $days, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get payment gateway statistics
-     */
-    public function getGatewayStatistics()
-    {
-        $sql = "
-            SELECT payment_method,
-                   COUNT(*) as total_transactions,
-                   COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_transactions,
-                   COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_transactions,
-                   SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as total_amount,
-                   ROUND(AVG(CASE WHEN status = 'completed' THEN amount END), 2) as avg_amount
-            FROM {$this->table}
-            GROUP BY payment_method
-            ORDER BY total_transactions DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Search payments
-     */
-    public function searchPayments($searchTerm, $filters = [])
-    {
-        $conditions = ["(u.name LIKE :search OR u.email LIKE :search OR prop.title LIKE :search OR p.transaction_id LIKE :search)"];
-        $params = ['search' => "%{$searchTerm}%"];
-
-        if (!empty($filters['status'])) {
-            $conditions[] = "p.status = :status";
-            $params['status'] = $filters['status'];
-        }
-
-        if (!empty($filters['payment_method'])) {
-            $conditions[] = "p.payment_method = :payment_method";
-            $params['payment_method'] = $filters['payment_method'];
-        }
-
-        if (!empty($filters['min_amount'])) {
-            $conditions[] = "p.amount >= :min_amount";
-            $params['min_amount'] = $filters['min_amount'];
-        }
-
-        if (!empty($filters['max_amount'])) {
-            $conditions[] = "p.amount <= :max_amount";
-            $params['max_amount'] = $filters['max_amount'];
-        }
-
-        $whereClause = "WHERE " . implode(' AND ', $conditions);
-
-        $sql = "
-            SELECT p.*, prop.title as property_title, u.name as user_name, u.email as user_email
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            {$whereClause}
-            ORDER BY
-                CASE
-                    WHEN u.name LIKE :search THEN 1
-                    WHEN prop.title LIKE :search THEN 2
-                    WHEN p.transaction_id LIKE :search THEN 3
-                    ELSE 4
-                END,
-                p.created_at DESC
-        ";
-
         $db = Database::getInstance();
-        $stmt = $db->query($sql, $params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare("DELETE FROM payments WHERE id = :id");
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 
     /**
-     * Get refund requests
+     * Get all payments (Legacy support if needed, but updated query)
      */
-    public function getRefundRequests()
+    public function getAllPayments($filters = [])
     {
-        $sql = "
-            SELECT p.*, prop.title as property_title, u.name as user_name, u.email as user_email,
-                   pr.reason, pr.requested_at, pr.status as refund_status
-            FROM {$this->table} p
-            LEFT JOIN properties prop ON p.property_id = prop.id
-            LEFT JOIN users u ON p.user_id = u.id
-            LEFT JOIN payment_refunds pr ON p.id = pr.payment_id
-            WHERE pr.id IS NOT NULL
-            ORDER BY pr.requested_at DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Process refund
-     */
-    public function processRefund($paymentId, $refundAmount, $reason)
-    {
-        $sql = "
-            INSERT INTO payment_refunds (payment_id, refund_amount, reason, status, processed_by, processed_at)
-            VALUES (:payment_id, :refund_amount, :reason, 'processed', :processed_by, NOW())
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
-            'payment_id' => $paymentId,
-            'refund_amount' => $refundAmount,
-            'reason' => $reason,
-            'processed_by' => $_SESSION['user_id'] ?? null
-        ]);
-    }
-
-    /**
-     * Get payment receipts
-     */
-    public function getPaymentReceipts($paymentId)
-    {
-        $sql = "
-            SELECT * FROM payment_receipts
-            WHERE payment_id = :payment_id
-            ORDER BY created_at DESC
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['payment_id' => $paymentId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Generate payment receipt
-     */
-    public function generateReceipt($paymentId, $receiptData)
-    {
-        $sql = "
-            INSERT INTO payment_receipts (payment_id, receipt_number, file_path, created_at)
-            VALUES (:payment_id, :receipt_number, :file_path, NOW())
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute($receiptData);
+        return $this->getPaginatedPayments(0, 1000, '', [], $filters);
     }
 }

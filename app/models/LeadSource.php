@@ -36,8 +36,8 @@ class LeadSource extends Model
     public function leads()
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM leads WHERE source = ?");
-        $stmt->execute([$this->name]);
+        $stmt = $db->prepare("SELECT * FROM leads WHERE source = :source");
+        $stmt->execute(['source' => $this->name]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $leads = [];

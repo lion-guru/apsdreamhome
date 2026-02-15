@@ -14,14 +14,9 @@ require_once 'src/Database/Database.php';
  * @return bool True if the table exists, false otherwise
  */
 function tableExists($tableName) {
-    $query = "SHOW TABLES LIKE ?";
-    $result = executeQuery($query, [$tableName]);
-    
-    if (!$result) {
-        return false;
-    }
-    
-    return $result->num_rows > 0;
+    $db = \App\Core\App::database();
+    $result = $db->fetch("SHOW TABLES LIKE :tableName", ['tableName' => $tableName]);
+    return !empty($result);
 }
 
 /**
@@ -35,14 +30,9 @@ function columnExists($tableName, $columnName) {
         return false;
     }
     
-    $query = "SHOW COLUMNS FROM `$tableName` LIKE ?";
-    $result = executeQuery($query, [$columnName]);
-    
-    if (!$result) {
-        return false;
-    }
-    
-    return $result->num_rows > 0;
+    $db = \App\Core\App::database();
+    $result = $db->fetch("SHOW COLUMNS FROM `$tableName` LIKE :columnName", ['columnName' => $columnName]);
+    return !empty($result);
 }
 
 /**
@@ -57,10 +47,14 @@ function addColumnIfNotExists($tableName, $columnName, $columnDefinition) {
         return true;
     }
     
-    $query = "ALTER TABLE `$tableName` ADD COLUMN `$columnName` $columnDefinition";
-    $result = executeQuery($query);
-    
-    return $result !== null && $result !== false;
+    try {
+        $db = \App\Core\App::database();
+        $db->query("ALTER TABLE `$tableName` ADD COLUMN `$columnName` $columnDefinition");
+        return true;
+    } catch (Exception $e) {
+        error_log("Error adding column $columnName to $tableName: " . $e->getMessage());
+        return false;
+    }
 }
 
 /**
@@ -74,10 +68,14 @@ function createTableIfNotExists($tableName, $tableDefinition) {
         return true;
     }
     
-    $query = "CREATE TABLE `$tableName` ($tableDefinition)";
-    $result = executeQuery($query);
-    
-    return $result !== null && $result !== false;
+    try {
+        $db = \App\Core\App::database();
+        $db->query("CREATE TABLE `$tableName` ($tableDefinition)");
+        return true;
+    } catch (Exception $e) {
+        error_log("Error creating table $tableName: " . $e->getMessage());
+        return false;
+    }
 }
 
 /**
@@ -95,16 +93,16 @@ function backupTable($tableName, $backupTableName = null) {
         $backupTableName = $tableName . '_backup_' . date('Ymd_His');
     }
     
-    // Drop the backup table if it already exists
-    if (tableExists($backupTableName)) {
-        $dropQuery = "DROP TABLE `$backupTableName`";
-        executeQuery($dropQuery);
+    try {
+        $db = \App\Core\App::database();
+        // Drop the backup table if it already exists
+        $db->query("DROP TABLE IF EXISTS `$backupTableName` text");
+        $db->query("CREATE TABLE `$backupTableName` AS SELECT * FROM `$tableName` text");
+        return true;
+    } catch (Exception $e) {
+        error_log("Error backing up table $tableName to $backupTableName: " . $e->getMessage());
+        return false;
     }
-    
-    $query = "CREATE TABLE `$backupTableName` AS SELECT * FROM `$tableName`";
-    $result = executeQuery($query);
-    
-    return $result !== null && $result !== false;
 }
 
 /**
@@ -180,28 +178,22 @@ function executeSqlFile($filePath) {
     }
     
     // Execute each statement
-    $connection = getMysqliConnection();
-    if (!$connection) {
-        error_log("Could not get database connection");
+    try {
+        $db = \App\Core\App::database();
+        $success = true;
+        foreach ($sqlPieces as $piece) {
+            $piece = trim($piece);
+            if (empty($piece)) {
+                continue;
+            }
+            
+            $db->query($piece);
+        }
+        return true;
+    } catch (Exception $e) {
+        error_log("Error executing SQL statement: " . $e->getMessage());
         return false;
     }
-    
-    $success = true;
-    foreach ($sqlPieces as $piece) {
-        $piece = trim($piece);
-        if (empty($piece)) {
-            continue;
-        }
-        
-        $result = $connection->query($piece);
-        if ($result === false) {
-            error_log("Error executing SQL statement: " . $connection->error);
-            error_log("Statement: " . $piece);
-            $success = false;
-        }
-    }
-    
-    return $success;
 }
 
 /**

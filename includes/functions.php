@@ -1,37 +1,18 @@
 <?php
 // Enhanced database connection function with logging and security
-function db_connect($retry_attempts = 3) {
-    $attempt = 0;
-    while ($attempt < $retry_attempts) {
-        try {
-            // Use persistent connection for better performance
-            $conn = mysqli_connect('p:' . DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-            if (!$conn) {
-                throw new Exception("Connection failed: " . mysqli_connect_error());
-            }
-
-            // Set connection parameters for security and performance
-            mysqli_set_charset($conn, 'utf8mb4');
-
-            // Enable strict mode to catch more potential errors
-            mysqli_query($conn, "SET sql_mode = 'STRICT_ALL_TABLES'");
-
-            return $conn;
-        } catch (Exception $e) {
-            error_log('Database connection attempt ' . ($attempt + 1) . ' failed: ' . $e->getMessage());
-            $attempt++;
-
-            // Exponential backoff
-            if ($attempt < $retry_attempts) {
-                usleep(pow(2, $attempt) * 100000); // Increases wait time between attempts
-            }
-        }
+function db_connect($retry_attempts = 3)
+{
+    try {
+        return \App\Core\App::database()->getPdo();
+    } catch (Exception $e) {
+        error_log('Database connection failed: ' . $e->getMessage());
+        return null;
     }
 }
 
 // Helper function to format file sizes
-function formatFileSize($bytes) {
+function formatFileSize($bytes)
+{
     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
     for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
@@ -42,7 +23,8 @@ function formatFileSize($bytes) {
 }
 
 // Helper function to get log level colors
-function getLogLevelColor($level) {
+function getLogLevelColor($level)
+{
     $colors = [
         'ERROR' => 'danger',
         'WARNING' => 'warning',
@@ -55,7 +37,8 @@ function getLogLevelColor($level) {
 }
 
 // Helper function to get role colors
-function getRoleColor($role) {
+function getRoleColor($role)
+{
     $colors = [
         'admin' => 'danger',
         'agent' => 'primary',
@@ -67,7 +50,8 @@ function getRoleColor($role) {
 }
 
 // Helper function to sanitize input
-function sanitize_input($data) {
+function sanitize_input($data)
+{
     if (is_array($data)) {
         return array_map('sanitize_input', $data);
     }
@@ -80,7 +64,8 @@ function sanitize_input($data) {
 
 // Helper function to generate CSRF token
 if (!function_exists('csrf_token')) {
-    function csrf_token() {
+    function csrf_token()
+    {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
@@ -90,20 +75,23 @@ if (!function_exists('csrf_token')) {
 
 // Helper function to validate CSRF token
 if (!function_exists('validate_csrf_token')) {
-    function validate_csrf_token($token) {
+    function validate_csrf_token($token)
+    {
         return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
     }
 }
 
 // Helper function to validate CSRF token (fallback)
 if (!function_exists('validateCSRFTokenFallback')) {
-    function validateCSRFTokenFallback($token, $action = 'general') {
+    function validateCSRFTokenFallback($token, $action = 'general')
+    {
         return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
     }
 }
 
 // Helper function to get user role name
-function getRoleName($role) {
+function getRoleName($role)
+{
     $roles = [
         'admin' => 'Administrator',
         'agent' => 'Real Estate Agent',
@@ -115,7 +103,8 @@ function getRoleName($role) {
 }
 
 // Helper function to get status color
-function getStatusColor($status) {
+function getStatusColor($status)
+{
     $colors = [
         'active' => 'success',
         'inactive' => 'secondary',
@@ -130,12 +119,14 @@ function getStatusColor($status) {
 }
 
 // Helper function to format currency
-function formatCurrency($amount, $currency = '₹') {
+function formatCurrency($amount, $currency = '₹')
+{
     return $currency . number_format($amount, 0, '.', ',');
 }
 
 // Helper function to get time ago
-function timeAgo($datetime) {
+function timeAgo($datetime)
+{
     $now = new DateTime();
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
@@ -152,7 +143,8 @@ function timeAgo($datetime) {
 }
 
 // Helper function to truncate text
-function truncateText($text, $length = 100) {
+function truncateText($text, $length = 100)
+{
     if (strlen($text) <= $length) {
         return $text;
     }
@@ -161,7 +153,8 @@ function truncateText($text, $length = 100) {
 }
 
 // Helper function to generate slug
-function createSlug($text) {
+function createSlug($text)
+{
     $text = strtolower($text);
     $text = preg_replace('/[^a-z0-9\-]/', '-', $text);
     $text = preg_replace('/-+/', '-', $text);
@@ -169,17 +162,20 @@ function createSlug($text) {
 }
 
 // Helper function to validate email
-function isValidEmail($email) {
+function isValidEmail($email)
+{
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
 // Helper function to validate phone number
-function isValidPhone($phone) {
+function isValidPhone($phone)
+{
     return preg_match('/^[0-9]{10,15}$/', $phone);
 }
 
 // Helper function to generate random password
-function generatePassword($length = 12) {
+function generatePassword($length = 12)
+{
     $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
     $password = '';
 
@@ -191,22 +187,26 @@ function generatePassword($length = 12) {
 }
 
 // Helper function to hash password
-function hashPassword($password) {
+function hashPassword($password)
+{
     return password_hash($password, PASSWORD_DEFAULT);
 }
 
 // Helper function to verify password
-function verifyPassword($password, $hash) {
+function verifyPassword($password, $hash)
+{
     return password_verify($password, $hash);
 }
 
 // Helper function to get user avatar
-function getUserAvatar($name, $size = 40) {
+function getUserAvatar($name, $size = 40)
+{
     return "https://ui-avatars.com/api/?name=" . urlencode($name) . "&size={$size}";
 }
 
 // Helper function to get property type icon
-function getPropertyTypeIcon($type) {
+function getPropertyTypeIcon($type)
+{
     $icons = [
         'apartment' => 'fas fa-building',
         'villa' => 'fas fa-home',
@@ -219,7 +219,8 @@ function getPropertyTypeIcon($type) {
 }
 
 // Helper function to get lead source color
-function getLeadSourceColor($source) {
+function getLeadSourceColor($source)
+{
     $colors = [
         'website' => 'primary',
         'phone' => 'success',
@@ -232,7 +233,8 @@ function getLeadSourceColor($source) {
 }
 
 // Helper function to get booking status color
-function getBookingStatusColor($status) {
+function getBookingStatusColor($status)
+{
     $colors = [
         'pending' => 'warning',
         'confirmed' => 'success',
@@ -244,12 +246,14 @@ function getBookingStatusColor($status) {
 }
 
 // Helper function to format date
-function formatDate($date, $format = 'M d, Y') {
+function formatDate($date, $format = 'M d, Y')
+{
     return date($format, strtotime($date));
 }
 
 // Helper function to get initials from name
-function getInitials($name) {
+function getInitials($name)
+{
     $parts = explode(' ', $name);
     $initials = '';
 
@@ -261,13 +265,14 @@ function getInitials($name) {
 }
 
 // Advanced input sanitization and validation
-function clean_input($data, $type = 'string', $options = []) {
+function clean_input($data, $type = 'string', $options = [])
+{
     // Remove whitespace
     $data = trim($data);
-    
+
     // Decode HTML entities to prevent double-encoding
     $data = htmlspecialchars_decode($data, ENT_QUOTES);
-    
+
     // Sanitize based on type
     switch ($type) {
         case 'email':
@@ -276,7 +281,7 @@ function clean_input($data, $type = 'string', $options = []) {
                 return false;
             }
             break;
-        
+
         case 'int':
             $data = filter_var($data, FILTER_SANITIZE_NUMBER_INT);
             $min = $options['min'] ?? PHP_INT_MIN;
@@ -287,80 +292,85 @@ function clean_input($data, $type = 'string', $options = []) {
                 return false;
             }
             break;
-        
+
         case 'float':
             $data = filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
             break;
-        
+
         case 'url':
             $data = filter_var($data, FILTER_SANITIZE_URL);
             if (!filter_var($data, FILTER_VALIDATE_URL)) {
                 return false;
             }
             break;
-        
+
         default: // string
             // Remove potentially dangerous characters
             $data = strip_tags($data);
             $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     }
-    
+
     return $data;
 }
 
 // Enhanced user authentication check with role verification
-function is_logged_in($required_role = null) {
+function is_logged_in($required_role = null)
+{
     if (!isset($_SESSION['user_id'])) {
         return false;
     }
-    
+
     // Optional role-based check
     if ($required_role !== null && $_SESSION['user_role'] !== $required_role) {
         return false;
     }
-    
+
     // Additional security checks
     $inactive_timeout = 1800; // 30 minutes
-    if (isset($_SESSION['last_activity']) && 
-        (time() - $_SESSION['last_activity']) > $inactive_timeout) {
+    if (
+        isset($_SESSION['last_activity']) &&
+        (time() - $_SESSION['last_activity']) > $inactive_timeout
+    ) {
         // Destroy session on timeout
         session_unset();
         session_destroy();
         return false;
     }
-    
+
     // Update last activity timestamp
     $_SESSION['last_activity'] = time();
-    
+
     return true;
 }
 
 // Advanced redirect with security and logging
-function redirect($url, $permanent = false, $log_redirect = true) {
+function redirect($url, $permanent = false, $log_redirect = true)
+{
     // Prevent open redirect vulnerabilities
     $allowed_hosts = ['apsdreamhomes.com', 'localhost'];
     $parsed_url = parse_url($url);
-    
+
     if (!in_array($parsed_url['host'] ?? 'localhost', $allowed_hosts)) {
         error_log('Potential open redirect attempt: ' . $url);
         $url = '/'; // Default to homepage
     }
-    
+
     // Log redirect for audit purposes
     if ($log_redirect) {
         error_log('Redirect: ' . $url . ' by user ' . ($_SESSION['user_id'] ?? 'guest'));
     }
-    
+
     // HTTP status code for redirect
     $status_code = $permanent ? 301 : 302;
-    
+
     header('Location: ' . $url, true, $status_code);
     exit();
 }
 
 // Backwards-compatible helper used by some admin pages
 if (!function_exists('redirectTo')) {
-    function redirectTo($url, $permanent = false) {
+    function redirectTo($url, $permanent = false)
+    {
         // Delegate to the central redirect helper
         redirect($url, $permanent);
     }
@@ -369,9 +379,10 @@ if (!function_exists('redirectTo')) {
 // CSRF token functions are now in security_functions.php for enhanced security
 
 // Get recent properties
-function get_recent_properties($limit = 6) {
-  global $conn;
-  $query = "
+function get_recent_properties($limit = 6)
+{
+    $db = \App\Core\App::database();
+    $query = "
     SELECT 
       p.id,
       p.title,
@@ -388,20 +399,15 @@ function get_recent_properties($limit = 6) {
       pi.image_path AS main_image
     FROM properties p
     LEFT JOIN property_images pi ON p.id = pi.property_id
-    ORDER BY p.created_at DESC LIMIT ?
+    ORDER BY p.created_at DESC LIMIT :limit
   ";
-  $stmt = $conn->prepare($query);
-  $stmt->bind_param('i', $limit);
-  $stmt->execute();
-  return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    return $db->fetchAll($query, ['limit' => (int)$limit]);
 }
 
 // Get property availability status
-function get_property_availability_status($conn, $property_id) {
-    $stmt = $conn->prepare("SELECT status FROM properties WHERE id = ?");
-    $stmt->bind_param('i', $property_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_assoc()['status'] ?? 'unknown';
+function get_property_availability_status($property_id)
+{
+    $db = \App\Core\App::database();
+    $result = $db->fetch("SELECT status FROM properties WHERE id = :id", ['id' => $property_id]);
+    return $result['status'] ?? 'unknown';
 }
-?>

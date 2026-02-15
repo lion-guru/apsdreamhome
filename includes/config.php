@@ -158,6 +158,23 @@ class AppConfig {
         return $value;
     }
 
+    // Convenience: return PDO connection
+    public function getPDOConnection() {
+        $db = $this->config['database'];
+        try {
+            $dsn = "mysql:host={$db['host']};dbname={$db['name']};charset={$db['charset']}";
+            $options = [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_EMULATE_PREPARES => false,
+            ];
+            return new \PDO($dsn, $db['user'], $db['pass'], $options);
+        } catch (\PDOException $e) {
+            error_log('PDO connection failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     // Legacy convenience: return mysqli connection (or null if unavailable)
     public function getDatabaseConnection() {
         $db = $this->config['database'];

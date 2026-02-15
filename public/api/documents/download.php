@@ -7,7 +7,7 @@ ini_set('display_errors', 1);
 require_once __DIR__ . '/../../../app/core/autoload.php';
 
 use App\Core\Http\Response;
-use App\Core\Database\Database;
+use App\Core\Database;
 
 // Set JSON content type
 header('Content-Type: application/json');
@@ -29,16 +29,13 @@ try {
     $db = Database::getInstance()->getConnection();
     
     // Prepare and execute query
-    $stmt = $db->prepare("SELECT * FROM documents WHERE id = ?");
-    $stmt->bind_param('i', $documentId);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt = $db->prepare("SELECT * FROM documents WHERE id = :id");
+    $stmt->execute([':id' => $documentId]);
+    $document = $stmt->fetch(\PDO::FETCH_ASSOC);
     
-    if ($result->num_rows === 0) {
+    if (!$document) {
         throw new Exception('Document not found', 404);
     }
-    
-    $document = $result->fetch_assoc();
     $filePath = null;
     
     // Determine file path based on storage method

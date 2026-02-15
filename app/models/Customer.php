@@ -16,6 +16,50 @@ class Customer extends Model
     protected $primaryKey = 'id';
 
     /**
+     * Search customers for AJAX/Select2
+     */
+    public function searchCustomers($search = '', $limit = 10, $offset = 0)
+    {
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+
+        $sql = "SELECT id, name, email, phone 
+                FROM customers 
+                WHERE (name LIKE :search OR email LIKE :search OR phone LIKE :search)
+                ORDER BY name ASC 
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $conn->prepare($sql);
+        $searchTerm = "%$search%";
+        $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $items = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $items[] = [
+                'id' => $row['id'],
+                'text' => $row['name'] . ' (' . ($row['phone'] ?? 'N/A') . ')'
+            ];
+        }
+
+        // Get total count
+        $sqlCount = "SELECT COUNT(*) as count 
+                     FROM customers 
+                     WHERE (name LIKE :search OR email LIKE :search OR phone LIKE :search)";
+        $stmtCount = $conn->prepare($sqlCount);
+        $stmtCount->bindValue(':search', $searchTerm, PDO::PARAM_STR);
+        $stmtCount->execute();
+        $totalCount = $stmtCount->fetch(PDO::FETCH_ASSOC)['count'];
+
+        return [
+            'items' => $items,
+            'total' => $totalCount
+        ];
+    }
+
+    /**
      * Get customer by ID with complete details
      */
     public function getCustomerById($id)

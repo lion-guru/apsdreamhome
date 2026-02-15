@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once '../includes/src/Database/Database.php';
-require_once '../includes/config.php';
+require_once '../app/bootstrap.php';
 
 // Input validation and sanitization
 $query = isset($_GET['query']) ? trim($_GET['query']) : '';
@@ -11,52 +10,69 @@ if (empty($query)) {
     exit;
 }
 
-// Prepare suggestions query with multiple search criteria
-$searchQuery = mysqli_real_escape_string($conn, $query);
+$db = \App\Core\App::database();
 $suggestions = [];
 
-// Search by location, property type, and name
-$sql = "SELECT 
-    id, 
-    name, 
-    location, 
-    property_type, 
-    price,
-    CASE 
-        WHEN location LIKE '%{$searchQuery}%' THEN 1
-        WHEN property_type LIKE '%{$searchQuery}%' THEN 2
-        WHEN name LIKE '%{$searchQuery}%' THEN 3
-        ELSE 4
-    END as relevance
-FROM properties
-WHERE 
-    location LIKE '%{$searchQuery}%' OR 
-    property_type LIKE '%{$searchQuery}%' OR 
-    name LIKE '%{$searchQuery}%'
-ORDER BY relevance, price
-LIMIT 10";
+try {
+    // Search by location, property type, and name using named bindings
+    $sql = "SELECT 
+        id, 
+        name, 
+        location, 
+        property_type, 
+        price,
+        CASE 
+            WHEN location LIKE :query1 THEN 1
+            WHEN property_type LIKE :query2 THEN 2
+            WHEN name LIKE :query3 THEN 3
+            ELSE 4
+        END as relevance
+    FROM properties
+    WHERE 
+        location LIKE :query4 OR 
+        property_type LIKE :query5 OR 
+        name LIKE :query6
+    ORDER BY relevance, price
+    LIMIT 10";
 
-$result = mysqli_query($conn, $sql);
-
-while ($row = mysqli_fetch_assoc($result)) {
-    $suggestions[] = [
-        'id' => $row['id'],
-        'value' => "{$row['name']} - {$row['location']}",
-        'label' => sprintf(
-            "%s (%s) - \u20b9%s", 
-            htmlspecialchars($row['name']), 
-            htmlspecialchars($row['location']), 
-            number_format($row['price'])
-        ),
-        'type' => htmlspecialchars($row['property_type'])
+    $searchTerm = "%$query%";
+    $params = [
+        'query1' => $searchTerm,
+        'query2' => $searchTerm,
+        'query3' => $searchTerm,
+        'query4' => $searchTerm,
+        'query5' => $searchTerm,
+        'query6' => $searchTerm
     ];
-}
 
-// Fallback to AI-powered suggestions if no direct matches
-if (empty($suggestions)) {
-    // Implement AI-powered suggestion logic using machine learning model
-    $aiSuggestions = getAIPropertySuggestions($query);
-    $suggestions = array_merge($suggestions, $aiSuggestions);
+    $rows = $db->fetch($sql, $params);
+
+    foreach ($rows as $row) {
+        $suggestions[] = [
+            'id' => $row['id'],
+            'value' => "{$row['name']} - {$row['location']}",
+            'label' => sprintf(
+                "%s (%s) - \u20b9%s", 
+                htmlspecialchars($row['name']), 
+                htmlspecialchars($row['location']), 
+                number_format($row['price'])
+            ),
+            'type' => htmlspecialchars($row['property_type'])
+        ];
+    }
+
+    // Fallback to AI-powered suggestions if no direct matches
+    if (empty($suggestions)) {
+        // Implement AI-powered suggestion logic using machine learning model
+        $aiSuggestions = getAIPropertySuggestions($query);
+        $suggestions = array_merge($suggestions, $aiSuggestions);
+    }
+
+    // Optional: Log search queries for future improvements
+    logSearchQuery($query, count($suggestions));
+
+} catch (Exception $e) {
+    error_log("Property suggestions error: " . $e->getMessage());
 }
 
 echo json_encode($suggestions);
@@ -78,16 +94,20 @@ function getAIPropertySuggestions($query) {
     return $aiSuggestions;
 }
 
-// Optional: Log search queries for future improvements
-logSearchQuery($query, count($suggestions));
-
 /**
  * Log search queries for analytics
  */
 function logSearchQuery($query, $resultsCount) {
-    global $conn;
-    $query = mysqli_real_escape_string($conn, $query);
-    $logSql = "INSERT INTO search_logs (query, results_count, searched_at) 
-               VALUES ('{$query}', {$resultsCount}, NOW())";
-    mysqli_query($conn, $logSql);
+    try {
+        $db = \App\Core\App::database();
+        $logSql = "INSERT INTO search_logs (query, results_count, searched_at) 
+                   VALUES (:query, :results_count, NOW())";
+        $db->execute($logSql, [
+            'query' => $query,
+            'results_count' => $resultsCount
+        ]);
+    } catch (Exception $e) {
+        error_log("Error logging search query: " . $e->getMessage());
+    }
 }
+?>
