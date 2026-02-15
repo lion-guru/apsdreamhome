@@ -36,16 +36,27 @@ if (isset($_POST['update_gata'])) {
                 $available_area += $area_edit_new;
                 
                 // Update site available area (Subtracting from site available area because more area is now in a gata?)
-                $db->execute("UPDATE site_master SET available_area = available_area - ? WHERE site_id = ?", [$area_edit_new, $site_id_edit]);
+                $db->execute("UPDATE site_master SET available_area = available_area - :area WHERE site_id = :site_id", [
+                    'area' => $area_edit_new,
+                    'site_id' => $site_id_edit
+                ]);
             } else if ($area_edit_type == 'subs_area') {
                 $area -= $area_edit_new;
                 $available_area -= $area_edit_new;
                 
                 // If we remove area from a gata, it goes back to the site's pool.
-                $db->execute("UPDATE site_master SET available_area = available_area + ? WHERE site_id = ?", [$area_edit_new, $site_id_edit]);
+                $db->execute("UPDATE site_master SET available_area = available_area + :area WHERE site_id = :site_id", [
+                    'area' => $area_edit_new,
+                    'site_id' => $site_id_edit
+                ]);
             }
 
-            $db->execute("UPDATE gata_master SET gata_no=?, area=?, available_area=? WHERE gata_id=?", [$gata_no, $area, $available_area, $gata_id]);
+            $db->execute("UPDATE gata_master SET gata_no = :gata_no, area = :area, available_area = :available_area WHERE gata_id = :gata_id", [
+                'gata_no' => $gata_no,
+                'area' => $area,
+                'available_area' => $available_area,
+                'gata_id' => $gata_id
+            ]);
 
             $db->commit();
             echo "<script>alert('Record Updated Successfully'); window.location.href='update_gata.php';</script>";

@@ -225,7 +225,16 @@ try {
                                 $address = $_POST['address'];
                                 $property_type = $_POST['property_type'];
 
-                                $db->execute("INSERT INTO properties (title, description, price, bedrooms, bathrooms, area, address, status, property_type_id, agent_id, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?, 'available', ?, 1, 0)", [$title, $description, $price, $bedrooms, $bathrooms, $area, $address, $property_type]);
+                                $db->execute("INSERT INTO properties (title, description, price, bedrooms, bathrooms, area, address, status, property_type_id, agent_id, is_featured) VALUES (:title, :description, :price, :bedrooms, :bathrooms, :area, :address, 'available', :property_type, 1, 0)", [
+                                    'title' => $title,
+                                    'description' => $description,
+                                    'price' => $price,
+                                    'bedrooms' => $bedrooms,
+                                    'bathrooms' => $bathrooms,
+                                    'area' => $area,
+                                    'address' => $address,
+                                    'property_type' => $property_type
+                                ]);
 
                                 echo '<div class="alert alert-success">Property added successfully!</div>';
                             } else {

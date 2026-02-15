@@ -29,24 +29,35 @@ if (isset($_POST['verify_action'])) {
         $reason = $_POST['reason'] ?? '';
 
         if ($type === 'banking') {
-            if ($db->execute("UPDATE banking_details SET verification_status = ?, verified_at = NOW() WHERE id = ?", [$status, $id])) {
-                $user_id = $db->fetch("SELECT user_id FROM banking_details WHERE id = ?", [$id])['user_id'];
+            if ($db->execute("UPDATE banking_details SET verification_status = :status, verified_at = NOW() WHERE id = :id", [
+                'status' => $status,
+                'id' => $id
+            ])) {
+                $user_id = $db->fetch("SELECT user_id FROM banking_details WHERE id = :id", ['id' => $id])['user_id'];
                 BankingSecurity::logAction($user_id, 'VERIFY_BANK_DETAILS', null, ['status' => $status], getAuthUserId(), 'admin');
                 $msg = "Banking verification updated.";
             } else {
                 $error = "Update failed.";
             }
         } elseif ($type === 'kyc') {
-            if ($db->execute("UPDATE kyc_details SET overall_status = ?, rejection_reason = ?, verified_at = NOW() WHERE id = ?", [$status, $reason, $id])) {
-                $user_id = $db->fetch("SELECT user_id FROM kyc_details WHERE id = ?", [$id])['user_id'];
+            if ($db->execute("UPDATE kyc_details SET overall_status = :status, rejection_reason = :reason, verified_at = NOW() WHERE id = :id", [
+                'status' => $status,
+                'reason' => $reason,
+                'id' => $id
+            ])) {
+                $user_id = $db->fetch("SELECT user_id FROM kyc_details WHERE id = :id", ['id' => $id])['user_id'];
                 BankingSecurity::logAction($user_id, 'VERIFY_KYC_DETAILS', null, ['status' => $status], getAuthUserId(), 'admin');
                 $msg = "KYC verification updated.";
             } else {
                 $error = "Update failed.";
             }
         } elseif ($type === 'document') {
-            if ($db->execute("UPDATE kyc_documents SET verification_status = ?, rejection_reason = ?, verified_at = NOW() WHERE id = ?", [$status, $reason, $id])) {
-                $row = $db->fetch("SELECT user_id, doc_type FROM kyc_documents WHERE id = ?", [$id]);
+            if ($db->execute("UPDATE kyc_documents SET verification_status = :status, rejection_reason = :reason, verified_at = NOW() WHERE id = :id", [
+                'status' => $status,
+                'reason' => $reason,
+                'id' => $id
+            ])) {
+                $row = $db->fetch("SELECT user_id, doc_type FROM kyc_documents WHERE id = :id", ['id' => $id]);
                 BankingSecurity::logAction($row['user_id'], 'VERIFY_KYC_DOCUMENT', null, ['status' => $status, 'doc_type' => $row['doc_type']], getAuthUserId(), 'admin');
                 $msg = "Document verification updated.";
             } else {

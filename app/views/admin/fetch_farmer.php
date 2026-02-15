@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Fetch Farmers AJAX handler
  */
@@ -14,8 +15,13 @@ if (!empty($_POST['sid'])) {
     $gata_id = SecurityUtility::sanitizeInput($_POST['sid'], 'int');
 
     $db = \App\Core\App::database();
-    $farmers = $db->fetchAll("SELECT kissan_id, k_name FROM kissan_master WHERE gata_a=? OR gata_b=? OR gata_c=? OR gata_d=?", [$gata_id, $gata_id, $gata_id, $gata_id]);
-    
+    $farmers = $db->fetchAll("SELECT kissan_id, k_name FROM kissan_master WHERE gata_a=:gata_a OR gata_b=:gata_b OR gata_c=:gata_c OR gata_d=:gata_d", [
+        'gata_a' => $gata_id,
+        'gata_b' => $gata_id,
+        'gata_c' => $gata_id,
+        'gata_d' => $gata_id
+    ]);
+
     if (count($farmers) > 0) {
         echo '<option value="">Select Farmer</option>';
         foreach ($farmers as $row2) {
@@ -30,8 +36,8 @@ if (!empty($_POST['site_id'])) {
     $site_id = SecurityUtility::sanitizeInput($_POST['site_id'], 'int');
 
     $db = \App\Core\App::database();
-    $farmers = $db->fetchAll("SELECT kissan_id, k_name FROM kissan_master WHERE site_id=?", [$site_id]);
-    
+    $farmers = $db->fetchAll("SELECT kissan_id, k_name FROM kissan_master WHERE site_id=:site_id", ['site_id' => $site_id]);
+
     if (count($farmers) > 0) {
         echo '<option value="">Select Farmer</option>';
         foreach ($farmers as $row3) {
@@ -41,5 +47,3 @@ if (!empty($_POST['site_id'])) {
         echo '<option value="">No Farmers found</option>';
     }
 }
-?>
-

@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db = \App\Core\App::database();
 
                 // Check if user exists
-                $user = $db->fetch("SELECT uid, uname, uemail FROM user WHERE uemail = ? AND status = 'active' LIMIT 1", [$email]);
+                $user = $db->fetch("SELECT uid, uname, uemail FROM user WHERE uemail = :email AND status = 'active' LIMIT 1", ['email' => $email]);
 
                 if ($user) {
                     // Generate secure reset token

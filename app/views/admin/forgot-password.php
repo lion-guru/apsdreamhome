@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Check if email exists in database
                 $db = \App\Core\App::database();
 
-                $admin = $db->fetchOne("SELECT * FROM admin WHERE email = ?", [$email]);
+                $admin = $db->fetchOne("SELECT * FROM admin WHERE email = :email", ['email' => $email]);
 
                  if ($admin) {
                     // Generate reset token
@@ -32,7 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $expiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
                     // Save token to database
-                    $db->execute("UPDATE admin SET reset_token = ?, reset_expiry = ? WHERE id = ?", [$token, $expiry, $admin['id']]);
+                    $db->execute("UPDATE admin SET reset_token = :token, reset_expiry = :expiry WHERE id = :id", [
+                        'token' => $token,
+                        'expiry' => $expiry,
+                        'id' => $admin['id']
+                    ]);
 
                     // In production, send email here
                     // For demo, just show success message

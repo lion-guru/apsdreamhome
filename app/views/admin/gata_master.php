@@ -31,10 +31,18 @@ if (isset($_POST['add_gata'])) {
                 $db->beginTransaction();
                 try {
                     // Insert Gata
-                    $db->execute("INSERT INTO gata_master (site_id, gata_no, area, available_area) VALUES (?, ?, ?, ?)", [$site_id, $gata_no, $area_gata, $area_gata]);
+                    $db->execute("INSERT INTO gata_master (site_id, gata_no, area, available_area) VALUES (:site_id, :gata_no, :area, :available_area)", [
+                        'site_id' => $site_id,
+                        'gata_no' => $gata_no,
+                        'area' => $area_gata,
+                        'available_area' => $area_gata
+                    ]);
 
                     // Update Site Available Area
-                    $db->execute("UPDATE site_master SET available_area = available_area - ? WHERE site_id = ?", [$area_gata, $site_id]);
+                    $db->execute("UPDATE site_master SET available_area = available_area - :area WHERE site_id = :site_id", [
+                        'area' => $area_gata,
+                        'site_id' => $site_id
+                    ]);
 
                     $db->commit();
                     $msg = "Gata details added successfully.";

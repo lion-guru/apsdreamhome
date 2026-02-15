@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Unified Authentication and Authorization System
  *
@@ -8,14 +9,16 @@ namespace App\Services\Legacy;
  * Consolidates functionality from legacy Auth and ApiAuth classes.
  */
 
-class Auth {
+class Auth
+{
     private static $instance = null;
     private $config;
     private $secretKey;
     private $algorithm = 'HS256';
     private $tokenExpiry = 86400; // 24 hours
 
-    private function __construct() {
+    private function __construct()
+    {
         // Load configuration
         if (class_exists('AppConfig')) {
             $this->config = AppConfig::getInstance();
@@ -27,7 +30,8 @@ class Auth {
         }
     }
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -41,7 +45,8 @@ class Auth {
      * @param string $password
      * @return string|false JWT token on success, false on failure
      */
-    public function login($email, $password) {
+    public function login($email, $password)
+    {
         $user = $this->getUserByEmail($email);
 
         if ($user && $user['status'] === 'active' && password_verify($password, $user['upass'])) {
@@ -57,7 +62,8 @@ class Auth {
      * @param string $token
      * @return array|false Decoded payload on success, false on failure
      */
-    public function validateToken($token) {
+    public function validateToken($token)
+    {
         try {
             $parts = explode('.', $token);
             if (count($parts) !== 3) {
@@ -96,7 +102,8 @@ class Auth {
      * @param array $user
      * @return string JWT token
      */
-    public function generateToken($user) {
+    public function generateToken($user)
+    {
         $header = json_encode(['typ' => 'JWT', 'alg' => $this->algorithm]);
         $payload = json_encode([
             'sub' => $user['uid'] ?? $user['id'],
@@ -118,14 +125,16 @@ class Auth {
     /**
      * Alias for generateToken (ApiAuth compatibility)
      */
-    public function generateJWT($user) {
+    public function generateJWT($user)
+    {
         return $this->generateToken($user);
     }
 
     /**
      * Check if a user is authenticated (via session or token)
      */
-    public function check() {
+    public function check()
+    {
         return $this->getCurrentUser() !== false;
     }
 
@@ -134,7 +143,8 @@ class Auth {
      *
      * @return array|false User payload or false
      */
-    public function getCurrentUser() {
+    public function getCurrentUser()
+    {
         // 1. Check Bearer token (JWT)
         $headers = $this->getAuthorizationHeader();
         if ($headers && preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
@@ -227,7 +237,8 @@ class Auth {
     /**
      * Get API Key from request headers
      */
-    private function getApiKeyFromRequest() {
+    private function getApiKeyFromRequest()
+    {
         $headers = array_change_key_case(getallheaders(), CASE_LOWER);
 
         if (isset($headers['x-api-key'])) {
@@ -244,7 +255,8 @@ class Auth {
     /**
      * Validate an API key
      */
-    public function validateApiKey($apiKey) {
+    public function validateApiKey($apiKey)
+    {
         $db = $this->getDb();
         if (!$db) return false;
 
@@ -255,15 +267,15 @@ class Auth {
                 SELECT u.*
                 FROM api_keys ak
                 JOIN user u ON ak.user_id = u.uid
-                WHERE ak.api_key = ?
+                WHERE ak.api_key = :api_key
                 AND ak.is_active = 1
                 AND (ak.expires_at IS NULL OR ak.expires_at > NOW())
                 AND u.status = 'active'
-            ", [$hashedApiKey])->fetch();
+            ", ['api_key' => $hashedApiKey])->fetch();
 
             if ($user) {
                 // Update last used
-                $db->execute("UPDATE api_keys SET last_used_at = NOW(), usage_count = usage_count + 1 WHERE api_key = ?", [$hashedApiKey]);
+                $db->execute("UPDATE api_keys SET last_used_at = NOW(), usage_count = usage_count + 1 WHERE api_key = :api_key", ['api_key' => $hashedApiKey]);
                 return $user;
             }
         } catch (\Exception $e) {
@@ -276,12 +288,13 @@ class Auth {
     /**
      * Update API key usage stats
      */
-    private function updateApiKeyUsage($hashedApiKey) {
+    private function updateApiKeyUsage($hashedApiKey)
+    {
         $db = $this->getDb();
         if (!$db) return;
 
         try {
-            $db->execute("UPDATE api_keys SET last_used_at = NOW(), usage_count = usage_count + 1 WHERE api_key = ?", [$hashedApiKey]);
+            $db->execute("UPDATE api_keys SET last_used_at = NOW(), usage_count = usage_count + 1 WHERE api_key = :api_key", ['api_key' => $hashedApiKey]);
         } catch (\Exception $e) {
             error_log('API Key usage update error: ' . $e->getMessage());
         }
@@ -290,14 +303,16 @@ class Auth {
     /**
      * Get database connection
      */
-    private function getDb() {
+    private function getDb()
+    {
         return \App\Core\App::database();
     }
 
     /**
      * Log a user in (sets session)
      */
-    public function loginWithSession($user) {
+    public function loginWithSession($user)
+    {
         if (session_status() === PHP_SESSION_NONE) {
             require_once __DIR__ . '/session_helpers.php';
             ensureSessionStarted();
@@ -314,7 +329,8 @@ class Auth {
     /**
      * Log a user out (clears session)
      */
-    public function logout() {
+    public function logout()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             require_once __DIR__ . '/session_helpers.php';
             ensureSessionStarted();
@@ -323,9 +339,14 @@ class Auth {
         $_SESSION = [];
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
             );
         }
         session_destroy();
@@ -335,7 +356,8 @@ class Auth {
     /**
      * Alias for getCurrentUser (ApiAuth compatibility)
      */
-    public function authenticate() {
+    public function authenticate()
+    {
         return $this->getCurrentUser();
     }
 
@@ -345,7 +367,8 @@ class Auth {
      * @param string|null $requiredRole
      * @return array User payload
      */
-    public function requireAuth($requiredRole = null) {
+    public function requireAuth($requiredRole = null)
+    {
         $user = $this->getCurrentUser();
 
         if (!$user) {
@@ -365,7 +388,8 @@ class Auth {
     /**
      * Helper to get user by email
      */
-    public function getUserByEmail($email) {
+    public function getUserByEmail($email)
+    {
         $db = $this->getDb();
 
         if (!$db) {
@@ -384,21 +408,24 @@ class Auth {
     /**
      * Base64Url Encoding
      */
-    private function base64UrlEncode($data) {
+    private function base64UrlEncode($data)
+    {
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
     }
 
     /**
      * Base64Url Decoding
      */
-    private function base64UrlDecode($data) {
+    private function base64UrlDecode($data)
+    {
         return base64_decode(str_replace(['-', '_'], ['+', '/'], $data));
     }
 
     /**
      * Get Authorization header
      */
-    private function getAuthorizationHeader() {
+    private function getAuthorizationHeader()
+    {
         $headers = null;
         if (isset($_SERVER['Authorization'])) {
             $headers = trim($_SERVER["Authorization"]);
@@ -417,7 +444,8 @@ class Auth {
     /**
      * Send error response
      */
-    private function sendErrorResponse($message, $code) {
+    private function sendErrorResponse($message, $code)
+    {
         http_response_code($code);
         header('Content-Type: application/json');
         echo json_encode(['error' => $message]);

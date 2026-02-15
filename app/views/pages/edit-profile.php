@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modernized Edit Profile
  * Allow users to update their personal information and password at APS Dream Homes
@@ -25,7 +26,12 @@ if (isset($_POST['update_basic'])) {
 
     if (!empty($name) && !empty($email)) {
         try {
-            $success = $db->query("UPDATE user SET uname = ?, uemail = ?, uphone = ? WHERE uid = ?", [$name, $email, $phone, $uid]);
+            $success = $db->query("UPDATE user SET uname = :name, uemail = :email, uphone = :phone WHERE uid = :uid", [
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'uid' => $uid
+            ]);
             if ($success) {
                 $msg = "Profile updated successfully!";
                 $_SESSION['name'] = $name;
@@ -49,11 +55,14 @@ if (isset($_POST['update_password'])) {
 
     if (!empty($old_pass) && !empty($new_pass) && $new_pass === $conf_pass) {
         try {
-            $user = $db->fetch("SELECT upassword FROM user WHERE uid = ?", [$uid]);
+            $user = $db->fetch("SELECT upassword FROM user WHERE uid = :uid", ['uid' => $uid]);
 
             if ($user && password_verify($old_pass, $user['upassword'])) {
                 $hashed_pass = password_hash($new_pass, PASSWORD_DEFAULT);
-                $success = $db->query("UPDATE user SET upassword = ? WHERE uid = ?", [$hashed_pass, $uid]);
+                $success = $db->query("UPDATE user SET upassword = :password WHERE uid = :uid", [
+                    'password' => $hashed_pass,
+                    'uid' => $uid
+                ]);
                 if ($success) {
                     $msg = "Password changed successfully!";
                 } else {
@@ -71,7 +80,7 @@ if (isset($_POST['update_password'])) {
 }
 
 // Fetch current user data
-$user_data = $db->fetch("SELECT * FROM user WHERE uid = ?", [$uid]);
+$user_data = $db->fetch("SELECT * FROM user WHERE uid = :uid", ['uid' => $uid]);
 
 if (!$user_data) {
     header("Location: login.php?error=user_not_found");
@@ -180,17 +189,34 @@ ob_start();
 </div>
 
 <style>
-.bg-light { background-color: #f8f9fa !important; }
-.form-control:focus {
-    box-shadow: none;
-    background-color: #f0f7ff !important;
-}
-.animate-fade-up { animation: fadeUp 0.6s ease forwards; opacity: 0; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        background-color: #f0f7ff !important;
+    }
+
+    .animate-fade-up {
+        animation: fadeUp 0.6s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
 
 <?php
 $content = ob_get_clean();
 require_once __DIR__ . '/../layouts/modern.php';
 ?>
-

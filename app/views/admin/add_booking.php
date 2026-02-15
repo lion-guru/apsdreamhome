@@ -28,7 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = $mlSupport->translate("Please fill in all required fields.");
         } else {
             try {
-                if ($db->execute("INSERT INTO bookings (property_id, customer_id, booking_date, amount, status) VALUES (?, ?, ?, ?, ?)", [$property_id, $customer_id, $booking_date, $amount, $status])) {
+                if ($db->execute("INSERT INTO bookings (property_id, customer_id, booking_date, amount, status) VALUES (:property_id, :customer_id, :booking_date, :amount, :status)", [
+                    'property_id' => $property_id,
+                    'customer_id' => $customer_id,
+                    'booking_date' => $booking_date,
+                    'amount' => $amount,
+                    'status' => $status
+                ])) {
                     // Add notification for audit log and customer
                     require_once ABSPATH . '/includes/notification_manager.php';
                     require_once ABSPATH . '/includes/email_service.php';
@@ -74,11 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Fetch properties for dropdown
 $status_available = 'available';
-$properties = $db->fetchAll("SELECT id, title FROM properties WHERE status = ? ORDER BY title", [$status_available]);
+$properties = $db->fetchAll("SELECT id, title FROM properties WHERE status = :status ORDER BY title", ['status' => $status_available]);
 
 // Fetch customers for dropdown
 $utype_customer = 'customer';
-$customers = $db->fetchAll("SELECT uid, uname FROM user WHERE utype = ? ORDER BY uname", [$utype_customer]);
+$customers = $db->fetchAll("SELECT uid, uname FROM user WHERE utype = :utype ORDER BY uname", ['utype' => $utype_customer]);
 
 $page_title = $mlSupport->translate("Add Booking");
 require_once ABSPATH . "/resources/views/admin/layouts/header.php";

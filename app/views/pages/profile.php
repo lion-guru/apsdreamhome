@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modernized User Profile
  * Displays and manages user profile information for APS Dream Homes
@@ -24,7 +25,10 @@ if (isset($_POST['insert'])) {
 
     if (!empty($content)) {
         try {
-            $success = $db->query("INSERT INTO feedback (uid, fdescription, status) VALUES (?, ?, '0')", [$uid, $content]);
+            $success = $db->query("INSERT INTO feedback (uid, fdescription, status) VALUES (:uid, :content, '0')", [
+                'uid' => $uid,
+                'content' => $content
+            ]);
             if ($success) {
                 $msg = "Feedback sent successfully!";
             } else {
@@ -40,7 +44,7 @@ if (isset($_POST['insert'])) {
 
 // Fetch user data from 'user' table (standardized for this project)
 try {
-    $user_data = $db->fetch("SELECT * FROM user WHERE uid = ?", [$uid]);
+    $user_data = $db->fetch("SELECT * FROM user WHERE uid = :uid", ['uid' => $uid]);
 } catch (Exception $e) {
     error_log('Profile data fetch error: ' . $e->getMessage());
 }
@@ -62,7 +66,7 @@ ob_start();
         <div class="col-md-8 d-flex align-items-center">
             <div class="position-relative me-4">
                 <img src="<?= !empty($user_data['uimage']) ? h($user_data['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($user_data['uname']) . '&size=120&background=1e3a8a&color=fff' ?>"
-                     alt="Profile" class="rounded-circle shadow border border-4 border-white" style="width:120px; height:120px; object-fit:cover;">
+                    alt="Profile" class="rounded-circle shadow border border-4 border-white" style="width:120px; height:120px; object-fit:cover;">
                 <span class="position-absolute bottom-0 end-0 bg-success border border-3 border-white rounded-circle p-2" title="Online"></span>
             </div>
             <div>
@@ -173,20 +177,48 @@ ob_start();
 </div>
 
 <style>
-.bg-primary-soft { background-color: rgba(30, 58, 138, 0.1); }
-.bg-success-soft { background-color: rgba(25, 135, 84, 0.1); }
-.bg-light { background-color: #f8f9fa !important; }
+    .bg-primary-soft {
+        background-color: rgba(30, 58, 138, 0.1);
+    }
 
-.transition-hover { transition: all 0.3s ease; }
-.transition-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; }
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
 
-.animate-fade-up { animation: fadeUp 0.6s ease forwards; opacity: 0; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
 
-.form-control:focus {
-    box-shadow: none;
-    background-color: #f0f7ff !important;
-}
+    .transition-hover {
+        transition: all 0.3s ease;
+    }
+
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .animate-fade-up {
+        animation: fadeUp 0.6s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        background-color: #f0f7ff !important;
+    }
 </style>
 
 <?php
