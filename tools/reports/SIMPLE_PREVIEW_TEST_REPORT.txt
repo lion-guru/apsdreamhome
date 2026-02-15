@@ -1,0 +1,40 @@
+🏠 APS Dream Home - SIMPLE PREVIEW TEST
+====================================
+
+1. 🌐 TESTING MAIN SITE
+=====================
+   🔄 Testing: http://localhost/apsdreamhome/
+   ✅ Success: 22255 bytes in 859.82ms
+   📄 Type: HTML page
+   📋 Title: APS Dream Home - Find Your Perfect Property
+   🔐 Contains login elements
+
+2. 🗄️ DATABASE CONNECTION
+======================
+   ✅ Database: Connected
+   ✅ Tables: 469
+
+3. 📁 KEY FILES CHECK
+===================
+   ✅ Main entry point
+   ✅ Apache config
+   ✅ Environment config
+
+4. 📋 PHP ERROR LOG
+==================
+   📄 Error Log: C:\xampp\php\logs\php_error_log
+   📝 Recent errors:
+   edirect URL: http://localhost/apsdreamhome/auth/google/callback
+[28-Jan-2026 19:08:00 UTC] Router::dispatch() - Method: GET, URI: /
+[28-Jan-2026 19:08:00 UTC] Router::dispatch() - Route found: yes
+
+
+5. 🎯 RECOMMENDATIONS
+==================
+   🟢 Main site is accessible
+   🌐 Open browser: http://localhost/apsdreamhome/
+   🎉 Application is working!
+
+🎉 SIMPLE PREVIEW TEST COMPLETED!
+================================
+Status: ✅ Working

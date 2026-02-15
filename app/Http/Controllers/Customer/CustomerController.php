@@ -41,10 +41,9 @@ class CustomerController extends Controller
 
         $data = [
             'page_title' => 'Customer Login - APS Dream Home',
-            'error' => $_SESSION['login_error'] ?? null
+            'error' => $this->getFlash('login_error')
         ];
 
-        unset($_SESSION['login_error']);
         $this->view('customers/login', $data);
     }
 
@@ -61,7 +60,7 @@ class CustomerController extends Controller
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            $_SESSION['login_error'] = 'Please enter both email and password.';
+            $this->setFlash('login_error', 'Please enter both email and password.');
             $this->redirect('/customer/login');
         }
 
@@ -81,7 +80,7 @@ class CustomerController extends Controller
 
             $this->redirect('/customer/dashboard');
         } else {
-            $_SESSION['login_error'] = 'Invalid email or password.';
+            $this->setFlash('login_error', 'Invalid email or password.');
             $this->redirect('/customer/login');
         }
     }
@@ -207,7 +206,7 @@ class CustomerController extends Controller
         $property = $this->customerModel->getPropertyDetails($propertyId, $customerId);
 
         if (!$property) {
-            $_SESSION['error'] = 'Property not found or not available.';
+            $this->setFlash('error', 'Property not found or not available.');
             $this->redirect('/customer/properties');
         }
 
@@ -292,10 +291,10 @@ class CustomerController extends Controller
 
         if ($isFavorited) {
             $this->customerModel->removeFromFavorites($customerId, $propertyId);
-            $_SESSION['success'] = 'Property removed from favorites.';
+            $this->setFlash('success', 'Property removed from favorites.');
         } else {
             $this->customerModel->addToFavorites($customerId, $propertyId);
-            $_SESSION['success'] = 'Property added to favorites.';
+            $this->setFlash('success', 'Property added to favorites.');
         }
 
         $this->redirect($_SERVER['HTTP_REFERER'] ?? '/customer/properties');
@@ -429,7 +428,7 @@ class CustomerController extends Controller
         $anonymous = isset($_POST['anonymous']) ? 1 : 0;
 
         if ($rating < 1 || $rating > 5) {
-            $_SESSION['error'] = 'Please provide a valid rating between 1 and 5.';
+            $this->setFlash('error', 'Please provide a valid rating between 1 and 5.');
             $this->redirect('/customer/property/' . $propertyId);
         }
 
@@ -440,9 +439,9 @@ class CustomerController extends Controller
         ]);
 
         if ($success) {
-            $_SESSION['success'] = 'Thank you for your review! It will be published after approval.';
+            $this->setFlash('success', 'Thank you for your review! It will be published after approval.');
         } else {
-            $_SESSION['error'] = 'Failed to submit review. Please try again.';
+            $this->setFlash('error', 'Failed to submit review. Please try again.');
         }
 
         $this->redirect('/customer/property/' . $propertyId);
@@ -492,10 +491,10 @@ class CustomerController extends Controller
         $success = $this->customerModel->updateCustomerProfile($customerId, $data);
 
         if ($success) {
-            $_SESSION['success'] = 'Profile updated successfully.';
+            $this->setFlash('success', 'Profile updated successfully.');
             $_SESSION['customer_name'] = $data['name'];
         } else {
-            $_SESSION['error'] = 'Failed to update profile. Please try again.';
+            $this->setFlash('error', 'Failed to update profile. Please try again.');
         }
 
         $this->redirect('/customer/profile');
@@ -568,9 +567,9 @@ class CustomerController extends Controller
         $success = $this->customerModel->createPropertyAlert($customerId, $data);
 
         if ($success) {
-            $_SESSION['success'] = 'Property alert created successfully.';
+            $this->setFlash('success', 'Property alert created successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to create alert. Please try again.';
+            $this->setFlash('error', 'Failed to create alert. Please try again.');
         }
 
         $this->redirect('/customer/alerts');
@@ -615,7 +614,7 @@ class CustomerController extends Controller
 
         if ($monthlyRate > 0) {
             $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $numInstallments)) /
-                   (pow(1 + $monthlyRate, $numInstallments) - 1);
+                (pow(1 + $monthlyRate, $numInstallments) - 1);
         } else {
             $emi = $loanAmount / $numInstallments;
         }
@@ -685,9 +684,9 @@ class CustomerController extends Controller
     /**
      * Middleware to check customer authentication
      */
-    private function middleware($type)
+    protected function middleware($middleware, array $options = [])
     {
-        if ($type === 'customer.auth' && !$this->isCustomerLoggedIn()) {
+        if ($middleware === 'customer.auth' && !$this->isCustomerLoggedIn()) {
             $this->redirect('/customer/login');
         }
     }
@@ -840,11 +839,11 @@ class CustomerController extends Controller
         $result = $this->customerModel->acceptAssociateInvitation($invitationId);
 
         if ($result['success']) {
-            $_SESSION['success'] = $result['message'] . ' Your associate code: ' . $result['associate_code'];
+            $this->setFlash('success', $result['message'] . ' Your associate code: ' . $result['associate_code']);
             $_SESSION['customer_role'] = 'associate'; // Update session role
             $this->redirect('/associate/dashboard');
         } else {
-            $_SESSION['error'] = $result['message'];
+            $this->setFlash('error', $result['message']);
             $this->redirect('/customer/associate-invitations');
         }
     }
@@ -887,9 +886,9 @@ class CustomerController extends Controller
         $result = $this->customerModel->sendAssociateInvitation($customerId, $sponsorId, $message);
 
         if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
+            $this->setFlash('success', $result['message']);
         } else {
-            $_SESSION['error'] = $result['message'];
+            $this->setFlash('error', $result['message']);
         }
 
         $this->redirect('/customer/become-associate');

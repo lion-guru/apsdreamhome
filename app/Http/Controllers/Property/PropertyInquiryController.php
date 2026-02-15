@@ -1,13 +1,19 @@
 <?php
+
 /**
  * Property Inquiry Controller
  * Handles property inquiries functionality
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Property;
 
-class PropertyInquiryController extends BaseController {
-    public function __construct() {
+use App\Http\Controllers\BaseController;
+use Exception;
+
+class PropertyInquiryController extends BaseController
+{
+    public function __construct()
+    {
         // Initialize data array for view rendering
         $this->data = [];
     }
@@ -15,9 +21,10 @@ class PropertyInquiryController extends BaseController {
     /**
      * Submit property inquiry (AJAX endpoint)
      */
-    public function submit() {
+    public function submit()
+    {
         // Validate CSRF token
-        if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
             http_response_code(403);
             echo json_encode(['success' => false, 'message' => 'CSRF token validation failed.']);
             return;
@@ -49,7 +56,7 @@ class PropertyInquiryController extends BaseController {
         }
 
         // If user is logged in, use their info
-        $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+        $user_id = $this->getCurrentUserId();
 
         // If not logged in, validate guest information
         if (!$user_id) {
@@ -60,7 +67,7 @@ class PropertyInquiryController extends BaseController {
             }
 
             // Basic email validation
-            if (!filter_var($guest_email, FILTER_VALIDATE_EMAIL)) {
+            if (!$this->validateEmail($guest_email)) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Please provide a valid email address']);
                 return;
@@ -91,7 +98,6 @@ class PropertyInquiryController extends BaseController {
             } else {
                 throw new Exception('Failed to create inquiry');
             }
-
         } catch (Exception $e) {
             error_log('Submit inquiry error: ' . $e->getMessage());
             http_response_code(500);
@@ -102,12 +108,10 @@ class PropertyInquiryController extends BaseController {
     /**
      * Display admin inquiries management page
      */
-    public function adminIndex() {
+    public function adminIndex()
+    {
         // Check if user is admin
-        if (!$this->isAdmin()) {
-            header('Location: ' . BASE_URL . 'login');
-            exit();
-        }
+        $this->requireAdmin();
 
         // Set page data
         $this->data['page_title'] = 'Property Inquiries - ' . APP_NAME;
@@ -145,26 +149,24 @@ class PropertyInquiryController extends BaseController {
     /**
      * View inquiry details (admin)
      */
-    public function view() {
+    public function details()
+    {
         // Check if user is admin
-        if (!$this->isAdmin()) {
-            header('Location: ' . BASE_URL . 'login');
-            exit();
-        }
+        $this->requireAdmin();
 
         $inquiry_id = (int)($_GET['id'] ?? 0);
 
         if (!$inquiry_id) {
-            header('Location: ' . BASE_URL . 'admin/inquiries');
-            exit();
+            $this->redirect('admin/inquiries');
+            return;
         }
 
         // Get inquiry details
         $this->data['inquiry'] = $this->getInquiryById($inquiry_id);
 
         if (!$this->data['inquiry']) {
-            header('Location: ' . BASE_URL . 'admin/inquiries');
-            exit();
+            $this->redirect('admin/inquiries');
+            return;
         }
 
         // Set page data
@@ -182,7 +184,8 @@ class PropertyInquiryController extends BaseController {
     /**
      * Update inquiry status (AJAX endpoint)
      */
-    public function updateStatus() {
+    public function updateStatus()
+    {
         // Check if user is admin
         if (!$this->isAdmin()) {
             http_response_code(401);
@@ -201,13 +204,12 @@ class PropertyInquiryController extends BaseController {
         }
 
         try {
-            $this->updateInquiryStatus($inquiry_id, $status, $response_message, $_SESSION['user_id']);
+            $this->updateInquiryStatus($inquiry_id, $status, $response_message, $this->getCurrentUserId());
 
             echo json_encode([
                 'success' => true,
                 'message' => 'Inquiry status updated successfully'
             ]);
-
         } catch (Exception $e) {
             error_log('Update inquiry status error: ' . $e->getMessage());
             http_response_code(500);
@@ -216,26 +218,18 @@ class PropertyInquiryController extends BaseController {
     }
 
     /**
-     * Check if user is admin
-     */
-    protected function isAdmin() {
-        return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
-    }
-
-    /**
      * Check if property exists
      */
-    private function propertyExists($property_id) {
+    private function propertyExists($property_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return false;
             }
 
-            $stmt = $pdo->prepare("SELECT id FROM properties WHERE id = ?");
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare("SELECT id FROM properties WHERE id = :property_id");
+            $stmt->execute(['property_id' => $property_id]);
             return $stmt->rowCount() > 0;
-
         } catch (Exception $e) {
             error_log('Property exists check error: ' . $e->getMessage());
             return false;
@@ -245,33 +239,32 @@ class PropertyInquiryController extends BaseController {
     /**
      * Create new inquiry
      */
-    private function createInquiry($data) {
+    private function createInquiry($data)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
 
             $sql = "
                 INSERT INTO property_inquiries
                 (property_id, user_id, guest_name, guest_email, guest_phone, subject, message, inquiry_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (:property_id, :user_id, :guest_name, :guest_email, :guest_phone, :subject, :message, :inquiry_type)
             ";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                $data['property_id'],
-                $data['user_id'],
-                $data['guest_name'],
-                $data['guest_email'],
-                $data['guest_phone'],
-                $data['subject'],
-                $data['message'],
-                $data['inquiry_type']
+                'property_id' => $data['property_id'],
+                'user_id' => $data['user_id'],
+                'guest_name' => $data['guest_name'],
+                'guest_email' => $data['guest_email'],
+                'guest_phone' => $data['guest_phone'],
+                'subject' => $data['subject'],
+                'message' => $data['message'],
+                'inquiry_type' => $data['inquiry_type']
             ]);
 
-            return $pdo->lastInsertId();
-
+            return $this->db->lastInsertId();
         } catch (Exception $e) {
             error_log('Create inquiry error: ' . $e->getMessage());
             throw $e;
@@ -281,7 +274,8 @@ class PropertyInquiryController extends BaseController {
     /**
      * Send inquiry notification email
      */
-    private function sendInquiryNotification($inquiry_id) {
+    private function sendInquiryNotification($inquiry_id)
+    {
         try {
             $emailNotification = new \App\Core\EmailNotification();
             return $emailNotification->sendInquiryNotification($inquiry_id);
@@ -294,10 +288,10 @@ class PropertyInquiryController extends BaseController {
     /**
      * Get inquiries for admin with filters
      */
-    private function getAdminInquiries($filters) {
+    private function getAdminInquiries($filters)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
@@ -306,31 +300,26 @@ class PropertyInquiryController extends BaseController {
 
             // Status filter
             if ($filters['status'] !== 'all') {
-                $where_conditions[] = "pi.status = ?";
-                $params[] = $filters['status'];
+                $where_conditions[] = "pi.status = :status";
+                $params['status'] = $filters['status'];
             }
 
             // Type filter
             if ($filters['type'] !== 'all') {
-                $where_conditions[] = "pi.inquiry_type = ?";
-                $params[] = $filters['type'];
+                $where_conditions[] = "pi.inquiry_type = :type";
+                $params['type'] = $filters['type'];
             }
 
             // Priority filter
             if ($filters['priority'] !== 'all') {
-                $where_conditions[] = "pi.priority = ?";
-                $params[] = $filters['priority'];
+                $where_conditions[] = "pi.priority = :priority";
+                $params['priority'] = $filters['priority'];
             }
 
             // Search filter
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(pi.subject LIKE ? OR pi.message LIKE ? OR pi.guest_name LIKE ? OR u.name LIKE ? OR u.email LIKE ?)";
-                $search_term = '%' . $filters['search'] . '%';
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
+                $where_conditions[] = "(pi.subject LIKE :search OR pi.message LIKE :search OR pi.guest_name LIKE :search OR u.name LIKE :search OR u.email LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
 
             $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
@@ -355,12 +344,21 @@ class PropertyInquiryController extends BaseController {
                 LEFT JOIN users u ON pi.user_id = u.id
                 {$where_clause}
                 {$order_clause}
-                LIMIT {$filters['per_page']} OFFSET " . (($filters['page'] - 1) * $filters['per_page']);
+                LIMIT :limit OFFSET :offset
+            ";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
+            $stmt = $this->db->prepare($sql);
+
+            // Bind named parameters
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+
+            $stmt->bindValue(':limit', (int)$filters['per_page'], \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
+
+            $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Admin inquiries query error: ' . $e->getMessage());
             return [];
@@ -370,10 +368,10 @@ class PropertyInquiryController extends BaseController {
     /**
      * Get total inquiries count for pagination
      */
-    private function getAdminTotalInquiries($filters) {
+    private function getAdminTotalInquiries($filters)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return 0;
             }
 
@@ -382,42 +380,36 @@ class PropertyInquiryController extends BaseController {
 
             // Status filter
             if ($filters['status'] !== 'all') {
-                $where_conditions[] = "pi.status = ?";
-                $params[] = $filters['status'];
+                $where_conditions[] = "pi.status = :status";
+                $params['status'] = $filters['status'];
             }
 
             // Type filter
             if ($filters['type'] !== 'all') {
-                $where_conditions[] = "pi.inquiry_type = ?";
-                $params[] = $filters['type'];
+                $where_conditions[] = "pi.inquiry_type = :type";
+                $params['type'] = $filters['type'];
             }
 
             // Priority filter
             if ($filters['priority'] !== 'all') {
-                $where_conditions[] = "pi.priority = ?";
-                $params[] = $filters['priority'];
+                $where_conditions[] = "pi.priority = :priority";
+                $params['priority'] = $filters['priority'];
             }
 
             // Search filter
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(pi.subject LIKE ? OR pi.message LIKE ? OR pi.guest_name LIKE ? OR u.name LIKE ? OR u.email LIKE ?)";
-                $search_term = '%' . $filters['search'] . '%';
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
-                $params[] = $search_term;
+                $where_conditions[] = "(pi.subject LIKE :search OR pi.message LIKE :search OR pi.guest_name LIKE :search OR u.name LIKE :search OR u.email LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
             }
 
             $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
 
             $sql = "SELECT COUNT(*) as total FROM property_inquiries pi JOIN properties p ON pi.property_id = p.id LEFT JOIN users u ON pi.user_id = u.id {$where_clause}";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             return (int)($result['total'] ?? 0);
-
         } catch (Exception $e) {
             error_log('Admin total inquiries query error: ' . $e->getMessage());
             return 0;
@@ -427,10 +419,10 @@ class PropertyInquiryController extends BaseController {
     /**
      * Get inquiry by ID
      */
-    private function getInquiryById($inquiry_id) {
+    private function getInquiryById($inquiry_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return null;
             }
 
@@ -446,13 +438,12 @@ class PropertyInquiryController extends BaseController {
                 FROM property_inquiries pi
                 JOIN properties p ON pi.property_id = p.id
                 LEFT JOIN users u ON pi.user_id = u.id
-                WHERE pi.id = ?
+                WHERE pi.id = :inquiry_id
             ";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$inquiry_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['inquiry_id' => $inquiry_id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Get inquiry by ID error: ' . $e->getMessage());
             return null;
@@ -462,19 +453,12 @@ class PropertyInquiryController extends BaseController {
     /**
      * Update inquiry status
      */
-    private function updateInquiryStatus($inquiry_id, $status, $response_message, $user_id) {
+    private function updateInquiryStatus($inquiry_id, $status, $response_message, $user_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
-
-            $update_data = [
-                'status' => $status,
-                'response_message' => $response_message,
-                'responded_at' => date('Y-m-d H:i:s'),
-                'responded_by' => $user_id
-            ];
 
             $sql = "
                 UPDATE property_inquiries
@@ -484,20 +468,17 @@ class PropertyInquiryController extends BaseController {
                 WHERE id = :inquiry_id
             ";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                ':status' => $status,
-                ':response_message' => $response_message,
-                ':responded_at' => $update_data['responded_at'],
-                ':responded_by' => $user_id,
-                ':inquiry_id' => $inquiry_id
+                'status' => $status,
+                'response_message' => $response_message,
+                'responded_at' => date('Y-m-d H:i:s'),
+                'responded_by' => $user_id,
+                'inquiry_id' => $inquiry_id
             ]);
-
         } catch (Exception $e) {
             error_log('Update inquiry status error: ' . $e->getMessage());
             throw $e;
         }
     }
 }
-
-?>

@@ -213,7 +213,7 @@ class Router {
             'admin/settings' => ['controller' => 'AdminController', 'action' => 'settings'],
             'admin/settings/save' => ['controller' => 'AdminController', 'action' => 'saveSettings'],
             'admin/inquiries' => ['controller' => 'PropertyInquiryController', 'action' => 'adminIndex'],
-            'admin/inquiries/view' => ['controller' => 'PropertyInquiryController', 'action' => 'view'],
+            'admin/inquiries/view' => ['controller' => 'PropertyInquiryController', 'action' => 'details'],
             'admin/inquiries/update-status' => ['controller' => 'PropertyInquiryController', 'action' => 'updateStatus'],
             'admin/reports' => ['controller' => 'AdminReportsController', 'action' => 'index'],
             'admin/reports/properties' => ['controller' => 'AdminReportsController', 'action' => 'properties'],

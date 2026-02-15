@@ -1,12 +1,17 @@
 <?php
+
 /**
  * Multi-Language Support Controller
  * Handles internationalization and localization
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Utility;
 
-class LanguageController extends BaseController {
+use App\Http\Controllers\BaseController;
+use Exception;
+
+class LanguageController extends BaseController
+{
 
     private $supported_languages = [
         'en' => [
@@ -76,7 +81,8 @@ class LanguageController extends BaseController {
     /**
      * Set user language preference
      */
-    public function setLanguage() {
+    public function setLanguage()
+    {
         $lang_code = $_GET['lang'] ?? $_POST['lang'] ?? '';
 
         if (empty($lang_code) || !isset($this->supported_languages[$lang_code])) {
@@ -98,16 +104,18 @@ class LanguageController extends BaseController {
     /**
      * Get current language
      */
-    public function getCurrentLanguage() {
+    public function getCurrentLanguage()
+    {
         return $_SESSION['user_language'] ??
-               $_COOKIE['user_language'] ??
-               $this->detectLanguage();
+            $_COOKIE['user_language'] ??
+            $this->detectLanguage();
     }
 
     /**
      * Auto-detect user language from browser
      */
-    private function detectLanguage() {
+    private function detectLanguage()
+    {
         $accept_language = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
 
         if (empty($accept_language)) {
@@ -138,7 +146,8 @@ class LanguageController extends BaseController {
     /**
      * Translate text
      */
-    public function translate($key, $parameters = []) {
+    public function translate($key, $parameters = [])
+    {
         $language = $this->getCurrentLanguage();
         $translations = $this->loadTranslations($language);
 
@@ -155,7 +164,8 @@ class LanguageController extends BaseController {
     /**
      * Load translations for language
      */
-    private function loadTranslations($language) {
+    private function loadTranslations($language)
+    {
         static $translations = [];
 
         if (isset($translations[$language])) {
@@ -178,7 +188,8 @@ class LanguageController extends BaseController {
     /**
      * Language selection interface
      */
-    public function languageSelector() {
+    public function languageSelector()
+    {
         $this->data['page_title'] = 'Select Language - ' . APP_NAME;
         $this->data['supported_languages'] = $this->supported_languages;
         $this->data['current_language'] = $this->getCurrentLanguage();
@@ -189,7 +200,8 @@ class LanguageController extends BaseController {
     /**
      * Translation management (admin)
      */
-    public function adminTranslations() {
+    public function adminTranslations()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -213,7 +225,8 @@ class LanguageController extends BaseController {
     /**
      * Export translations for editing
      */
-    public function exportTranslations() {
+    public function exportTranslations()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -255,7 +268,8 @@ class LanguageController extends BaseController {
     /**
      * Import translations from file
      */
-    public function importTranslations() {
+    public function importTranslations()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -298,7 +312,6 @@ class LanguageController extends BaseController {
 
             $this->setFlashMessage('success', "Successfully imported {$imported_count} translations");
             $this->redirect(BASE_URL . 'admin/translations');
-
         } catch (\Exception $e) {
             $this->setFlashMessage('error', 'Import failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'admin/translations');
@@ -308,7 +321,8 @@ class LanguageController extends BaseController {
     /**
      * Save individual translation
      */
-    private function saveTranslation($language, $key, $translation) {
+    private function saveTranslation($language, $key, $translation)
+    {
         try {
             $translation_file = __DIR__ . '/../languages/' . $language . '.php';
 
@@ -324,7 +338,6 @@ class LanguageController extends BaseController {
             // Save back to file
             $php_content = "<?php\nreturn " . var_export($translations, true) . ";\n";
             return file_put_contents($translation_file, $php_content) !== false;
-
         } catch (\Exception $e) {
             error_log('Translation save error: ' . $e->getMessage());
             return false;
@@ -334,7 +347,8 @@ class LanguageController extends BaseController {
     /**
      * Get available languages with stats
      */
-    private function getAvailableLanguages() {
+    private function getAvailableLanguages()
+    {
         $languages = [];
 
         foreach ($this->supported_languages as $code => $info) {
@@ -343,7 +357,7 @@ class LanguageController extends BaseController {
             if (file_exists($translation_file)) {
                 $translations = include $translation_file;
                 $total_keys = count($translations);
-                $completed_keys = count(array_filter($translations, function($value) {
+                $completed_keys = count(array_filter($translations, function ($value) {
                     return !empty($value) && $value !== $value; // Check if translated
                 }));
             } else {
@@ -365,7 +379,8 @@ class LanguageController extends BaseController {
     /**
      * Get translation statistics
      */
-    private function getTranslationStats() {
+    private function getTranslationStats()
+    {
         $english_translations = $this->loadTranslations('en');
         $total_keys = count($english_translations);
 
@@ -400,7 +415,8 @@ class LanguageController extends BaseController {
     /**
      * Generate missing translations report
      */
-    public function missingTranslations() {
+    public function missingTranslations()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -434,7 +450,8 @@ class LanguageController extends BaseController {
     /**
      * Auto-translate using external service (placeholder)
      */
-    public function autoTranslate() {
+    public function autoTranslate()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -462,7 +479,8 @@ class LanguageController extends BaseController {
     /**
      * Language pack management
      */
-    public function languagePacks() {
+    public function languagePacks()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -478,7 +496,8 @@ class LanguageController extends BaseController {
     /**
      * Create new language pack
      */
-    public function createLanguagePack() {
+    public function createLanguagePack()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -526,7 +545,8 @@ class LanguageController extends BaseController {
     /**
      * Delete language pack
      */
-    public function deleteLanguagePack() {
+    public function deleteLanguagePack()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -556,7 +576,8 @@ class LanguageController extends BaseController {
     /**
      * Get language-specific content
      */
-    public function getLocalizedContent() {
+    public function getLocalizedContent()
+    {
         header('Content-Type: application/json');
 
         $content_type = $_GET['type'] ?? '';
@@ -586,7 +607,8 @@ class LanguageController extends BaseController {
     /**
      * Get localized navigation
      */
-    private function getLocalizedNavigation($language) {
+    private function getLocalizedNavigation($language)
+    {
         return [
             'home' => $this->translate('nav_home'),
             'properties' => $this->translate('nav_properties'),
@@ -600,7 +622,8 @@ class LanguageController extends BaseController {
     /**
      * Get localized footer content
      */
-    private function getLocalizedFooter($language) {
+    private function getLocalizedFooter($language)
+    {
         return [
             'company_info' => $this->translate('footer_company_info'),
             'quick_links' => $this->translate('footer_quick_links'),
@@ -612,7 +635,8 @@ class LanguageController extends BaseController {
     /**
      * Get localized form labels
      */
-    private function getLocalizedForms($language) {
+    private function getLocalizedForms($language)
+    {
         return [
             'name' => $this->translate('form_name'),
             'email' => $this->translate('form_email'),
@@ -625,11 +649,12 @@ class LanguageController extends BaseController {
     /**
      * Language detection and redirection
      */
-    public function detectAndRedirect() {
+    public function detectAndRedirect()
+    {
         $detected_language = $this->detectLanguage();
 
         if ($detected_language !== $this->default_language) {
-            $this->setLanguage($detected_language);
+            $this->updateLanguageSessionAndCookie($detected_language);
         }
 
         $this->redirect(BASE_URL);
@@ -638,7 +663,8 @@ class LanguageController extends BaseController {
     /**
      * Get language statistics for analytics
      */
-    public function getLanguageStats() {
+    public function getLanguageStats()
+    {
         header('Content-Type: application/json');
 
         $stats = [];
@@ -660,17 +686,21 @@ class LanguageController extends BaseController {
     /**
      * Get language usage count
      */
-    private function getLanguageUsageCount($language) {
+    private function getLanguageUsageCount($language)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return 0;
+            }
 
-            $sql = "SELECT COUNT(*) as count FROM user_language_preferences WHERE language_code = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$language]);
+            $sql = "SELECT COUNT(*) as count FROM user_language_preferences WHERE language_code = :lang";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['lang' => $language]);
 
-            return (int)$stmt->fetch()['count'];
-
-        } catch (\Exception $e) {
+            $result = $stmt->fetch();
+            return $result ? (int)$result['count'] : 0;
+        } catch (Exception $e) {
+            error_log('Get language usage count error: ' . $e->getMessage());
             return 0;
         }
     }
@@ -678,7 +708,8 @@ class LanguageController extends BaseController {
     /**
      * Get language completion percentage
      */
-    private function getLanguageCompletion($language) {
+    private function getLanguageCompletion($language)
+    {
         $english_translations = $this->loadTranslations('en');
         $target_translations = $this->loadTranslations($language);
 
@@ -695,9 +726,10 @@ class LanguageController extends BaseController {
     }
 
     /**
-     * Set language (helper method)
+     * Set language in session and cookie (helper method)
      */
-    private function setLanguage($lang_code) {
+    private function updateLanguageSessionAndCookie($lang_code)
+    {
         $_SESSION['user_language'] = $lang_code;
         setcookie('user_language', $lang_code, time() + (30 * 24 * 60 * 60), '/');
     }

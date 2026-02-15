@@ -104,7 +104,7 @@
                                                 <option value="">स्रोत चुनें</option>
                                                 <?php foreach ($sources as $source): ?>
                                                     <option value="<?= $source['id'] ?>">
-                                                        <?= htmlspecialchars($source['source_name']) ?>
+                                                        <?= h($source['source_name']) ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -118,7 +118,7 @@
                                                 <option value="">स्टेटस चुनें</option>
                                                 <?php foreach ($statuses as $status): ?>
                                                     <option value="<?= $status['id'] ?>">
-                                                        <?= htmlspecialchars($status['status_name']) ?>
+                                                        <?= h($status['status_name']) ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -143,7 +143,7 @@
                                                 <option value="">यूजर चुनें</option>
                                                 <?php foreach ($users as $user): ?>
                                                     <option value="<?= $user['id'] ?>">
-                                                        <?= htmlspecialchars($user['name']) ?>
+                                                        <?= h($user['name']) ?>
                                                         (<?= $user['lead_count'] ?> लीड्स)
                                                     </option>
                                                 <?php endforeach; ?>

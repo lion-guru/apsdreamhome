@@ -1,0 +1,43 @@
+{
+    "scenarios": {
+        "baseline_load": {
+            "concurrent_users": 50,
+            "duration": 300,
+            "ramp_up": 60,
+            "endpoints": [
+                {"method": "GET", "url": "/", "weight": 40},
+                {"method": "GET", "url": "/properties.php", "weight": 30},
+                {"method": "GET", "url": "/about.php", "weight": 20},
+                {"method": "POST", "url": "/contact.php", "weight": 10}
+            ]
+        },
+        "peak_load": {
+            "concurrent_users": 200,
+            "duration": 600,
+            "ramp_up": 120,
+            "endpoints": [
+                {"method": "GET", "url": "/", "weight": 35},
+                {"method": "GET", "url": "/properties.php", "weight": 35},
+                {"method": "GET", "url": "/search.php", "weight": 20},
+                {"method": "POST", "url": "/login.php", "weight": 10}
+            ]
+        },
+        "stress_test": {
+            "concurrent_users": 500,
+            "duration": 300,
+            "ramp_up": 60,
+            "endpoints": [
+                {"method": "GET", "url": "/", "weight": 30},
+                {"method": "GET", "url": "/properties.php", "weight": 40},
+                {"method": "GET", "url": "/api/properties", "weight": 20},
+                {"method": "POST", "url": "/api/inquiry", "weight": 10}
+            ]
+        }
+    },
+    "thresholds": {
+        "max_response_time": 2.0,
+        "max_error_rate": 0.05,
+        "max_cpu_usage": 0.80,
+        "max_memory_usage": 0.85
+    }
+}

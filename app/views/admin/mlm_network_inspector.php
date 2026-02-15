@@ -63,7 +63,9 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="text-muted"><td colspan="4" class="text-center">Select a user to view agreements</td></tr>
+                                <tr class="text-muted">
+                                    <td colspan="4" class="text-center">Select a user to view agreements</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -150,7 +152,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
     async function searchUsers() {
         const query = document.getElementById('userSearch').value.trim();
         if (!query) return;
-        const response = await fetch('<?= BASE_URL ?>admin/network/search?query=' + encodeURIComponent(query));
+        const response = await fetch('<?= BASE_URL ?>admin/mlm-network/search?query=' + encodeURIComponent(query));
         const data = await response.json();
         if (data.success && data.data.length) {
             const user = data.data[0];
@@ -171,7 +173,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
         if (!state.selectedUser) return;
         const depth = document.getElementById('depthSelect').value;
         const rank = document.getElementById('rankSelect').value;
-        const response = await fetch(`<?= BASE_URL ?>admin/network/tree?user_id=${state.selectedUser.id}&depth=${depth}&rank=${encodeURIComponent(rank)}`);
+        const response = await fetch(`<?= BASE_URL ?>admin/mlm-network/tree?user_id=${state.selectedUser.id}&depth=${depth}&rank=${encodeURIComponent(rank)}`);
         const data = await response.json();
         if (data.success) {
             state.tree = data.data;
@@ -200,7 +202,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
         });
 
         container.innerHTML = '';
-        Object.keys(grouped).sort((a,b)=>a-b).forEach(level => {
+        Object.keys(grouped).sort((a, b) => a - b).forEach(level => {
             const row = document.createElement('div');
             row.className = 'd-flex flex-wrap justify-content-center gap-3 mb-3';
             grouped[level].forEach(node => {
@@ -224,7 +226,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
 
     async function loadAgreements() {
         if (!state.selectedUser) return;
-        const response = await fetch(`<?= BASE_URL ?>admin/network/agreements?user_id=${state.selectedUser.id}`);
+        const response = await fetch(`<?= BASE_URL ?>admin/mlm-network/agreements?user_id=${state.selectedUser.id}`);
         const data = await response.json();
         const tbody = document.querySelector('#agreementTable tbody');
         tbody.innerHTML = '';
@@ -267,7 +269,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
         const form = document.getElementById('agreementForm');
         const formData = new FormData(form);
         const id = formData.get('id');
-        const url = id ? '<?= BASE_URL ?>admin/network/agreements/update' : '<?= BASE_URL ?>admin/network/agreements/create';
+        const url = id ? '<?= BASE_URL ?>admin/mlm-network/agreements/update' : '<?= BASE_URL ?>admin/mlm-network/agreements/create';
         const response = await fetch(url, {
             method: 'POST',
             body: formData
@@ -296,9 +298,11 @@ require_once __DIR__ . '/../../includes/admin_header.php';
     async function triggerRebuild() {
         if (!state.selectedUser) return;
         if (!confirm('Rebuild network tree for this associate?')) return;
-        const response = await fetch('<?= BASE_URL ?>tools/rebuild_network.php', {
+        const response = await fetch('<?= BASE_URL ?>admin/mlm-network/rebuild', {
             method: 'POST',
-            body: new URLSearchParams({ user_id: state.selectedUser.id })
+            body: new URLSearchParams({
+                user_id: state.selectedUser.id
+            })
         });
         if (response.ok) {
             alert('Rebuild requested. Please refresh the tree.');
@@ -310,12 +314,16 @@ require_once __DIR__ . '/../../includes/admin_header.php';
     function exportTree(format) {
         if (!state.tree.length) return;
         if (format === 'csv') {
-            const rows = [['Name', 'Email', 'Rank', 'Level']];
+            const rows = [
+                ['Name', 'Email', 'Rank', 'Level']
+            ];
             state.tree.forEach(node => {
                 rows.push([node.name, node.email ?? '', node.rank_label ?? '', node.level ?? '']);
             });
             const csvContent = rows.map(row => row.map(value => '"' + String(value).replace('"', '""') + '"').join(',')).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csvContent], {
+                type: 'text/csv;charset=utf-8;'
+            });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `network_${state.selectedUser?.id ?? 'tree'}.csv`;
@@ -365,7 +373,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
             if (confirm('Delete this agreement?')) {
                 const formData = new FormData();
                 formData.append('id', id);
-                const response = await fetch('<?= BASE_URL ?>admin/network/agreements/delete', {
+                const response = await fetch('<?= BASE_URL ?>admin/mlm-network/agreements/delete', {
                     method: 'POST',
                     body: formData
                 });

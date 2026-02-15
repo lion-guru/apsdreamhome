@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Authentication Controller
  * Handles user login, registration, logout and session management
@@ -8,8 +9,10 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\BaseController;
 
-class AuthController extends BaseController {
-    public function __construct() {
+class AuthController extends BaseController
+{
+    public function __construct()
+    {
         // Initialize data array for view rendering
         $this->data = [];
     }
@@ -17,7 +20,8 @@ class AuthController extends BaseController {
     /**
      * Display login page
      */
-    public function login() {
+    public function login()
+    {
         // If already logged in, redirect to appropriate dashboard
         if (isset($_SESSION['user_id'])) {
             if ($_SESSION['user_role'] === 'admin') {
@@ -36,8 +40,8 @@ class AuthController extends BaseController {
         ];
 
         // Check for login error messages
-        $this->data['error'] = $_GET['error'] ?? '';
-        $this->data['success'] = $_GET['success'] ?? '';
+        $this->data['error'] = $this->getFlash('error');
+        $this->data['success'] = $this->getFlash('success');
 
         // Render the login page
         $this->render('auth/login');
@@ -46,14 +50,16 @@ class AuthController extends BaseController {
     /**
      * Handle login POST submissions (alias for processLogin)
      */
-    public function doLogin() {
+    public function doLogin()
+    {
         $this->processLogin();
     }
 
     /**
      * Process login form submission
      */
-    public function processLogin() {
+    public function processLogin()
+    {
         // Check if it's a POST request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect(BASE_URL . 'login');
@@ -67,13 +73,15 @@ class AuthController extends BaseController {
 
         // Validate input
         if (empty($email) || empty($password)) {
-            $this->redirect(BASE_URL . 'login?error=' . urlencode('Please fill in all fields'));
+            $this->setFlash('error', 'Please fill in all fields');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
         // Validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->redirect(BASE_URL . 'login?error=' . urlencode('Please enter a valid email address'));
+            $this->setFlash('error', 'Please enter a valid email address');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
@@ -105,14 +113,16 @@ class AuthController extends BaseController {
             }
         } else {
             // Login failed
-            $this->redirect(BASE_URL . 'login?error=' . urlencode('Invalid email or password'));
+            $this->setFlash('error', 'Invalid email or password');
+            $this->redirect(BASE_URL . 'login');
         }
     }
 
     /**
      * Display registration page
      */
-    public function register() {
+    public function register()
+    {
         // If already logged in, redirect to dashboard
         if (isset($_SESSION['user_id'])) {
             $this->redirect(BASE_URL . 'dashboard');
@@ -127,8 +137,8 @@ class AuthController extends BaseController {
         ];
 
         // Check for registration messages
-        $this->data['error'] = $_GET['error'] ?? '';
-        $this->data['success'] = $_GET['success'] ?? '';
+        $this->data['error'] = $this->getFlash('error');
+        $this->data['success'] = $this->getFlash('success');
 
         // Render the registration page
         $this->render('auth/register');
@@ -137,14 +147,16 @@ class AuthController extends BaseController {
     /**
      * Handle registration POST submissions (alias for processRegister)
      */
-    public function doRegister() {
+    public function doRegister()
+    {
         $this->processRegister();
     }
 
     /**
      * Process registration form submission
      */
-    public function processRegister() {
+    public function processRegister()
+    {
         // Check if it's a POST request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect(BASE_URL . 'register');
@@ -161,31 +173,36 @@ class AuthController extends BaseController {
 
         // Validate input
         if (empty($name) || empty($email) || empty($phone) || empty($password) || empty($confirm_password)) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Please fill in all fields'));
+            $this->setFlash('error', 'Please fill in all fields');
+            $this->redirect(BASE_URL . 'register');
             return;
         }
 
         // Validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Please enter a valid email address'));
+            $this->setFlash('error', 'Please enter a valid email address');
+            $this->redirect(BASE_URL . 'register');
             return;
         }
 
         // Validate password strength
         if (strlen($password) < 6) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Password must be at least 6 characters long'));
+            $this->setFlash('error', 'Password must be at least 6 characters long');
+            $this->redirect(BASE_URL . 'register');
             return;
         }
 
         // Check if passwords match
         if ($password !== $confirm_password) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Passwords do not match'));
+            $this->setFlash('error', 'Passwords do not match');
+            $this->redirect(BASE_URL . 'register');
             return;
         }
 
         // Check if email already exists
         if ($this->emailExists($email)) {
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('An account with this email already exists'));
+            $this->setFlash('error', 'An account with this email already exists');
+            $this->redirect(BASE_URL . 'register');
             return;
         }
 
@@ -208,17 +225,20 @@ class AuthController extends BaseController {
             ]);
 
             // Registration successful
-            $this->redirect(BASE_URL . 'login?success=' . urlencode('Registration successful! Please login with your credentials.'));
+            $this->setFlash('success', 'Registration successful! Please login with your credentials.');
+            $this->redirect(BASE_URL . 'login');
         } else {
             // Registration failed
-            $this->redirect(BASE_URL . 'register?error=' . urlencode('Registration failed. Please try again.'));
+            $this->setFlash('error', 'Registration failed. Please try again.');
+            $this->redirect(BASE_URL . 'register');
         }
     }
 
     /**
      * Logout user
      */
-    public function logout() {
+    public function logout()
+    {
         // Clear session data
         session_unset();
         session_destroy();
@@ -228,6 +248,12 @@ class AuthController extends BaseController {
             setcookie('remember_me', '', time() - 3600, '/');
         }
 
+        // Start a new session to show the flash message
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $this->setFlash('success', 'You have been logged out successfully.');
+
         // Redirect to home page
         $this->redirect(BASE_URL);
     }
@@ -235,14 +261,14 @@ class AuthController extends BaseController {
     /**
      * Authenticate user credentials
      */
-    private function authenticateUser($email, $password) {
+    private function authenticateUser($email, $password)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return false;
             }
 
-            $stmt = $pdo->prepare("
+            $stmt = $this->db->prepare("
                 SELECT id, name, email, phone, role, status, password
                 FROM users
                 WHERE email = ? AND status = 'active'
@@ -257,7 +283,6 @@ class AuthController extends BaseController {
             }
 
             return false;
-
         } catch (Exception $e) {
             error_log('Authentication error: ' . $e->getMessage());
             return false;
@@ -267,10 +292,10 @@ class AuthController extends BaseController {
     /**
      * Register a new user
      */
-    private function registerUser($user_data) {
+    private function registerUser($user_data)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return false;
             }
 
@@ -289,17 +314,16 @@ class AuthController extends BaseController {
                 'updated_at' => date('Y-m-d H:i:s')
             ];
 
-            $stmt = $pdo->prepare("
+            $stmt = $this->db->prepare("
                 INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (:name, :email, :phone, :password, :role, :status, :created_at, :updated_at)
             ");
 
-            if ($stmt->execute(array_values($user))) {
-                return $pdo->lastInsertId();
+            if ($stmt->execute($user)) {
+                return $this->db->lastInsertId();
             }
 
             return false;
-
         } catch (Exception $e) {
             error_log('Registration error: ' . $e->getMessage());
             return false;
@@ -309,19 +333,18 @@ class AuthController extends BaseController {
     /**
      * Check if email already exists
      */
-    private function emailExists($email) {
+    private function emailExists($email)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return false;
             }
 
-            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM users WHERE email = ?");
-            $stmt->execute([$email]);
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM users WHERE email = :email");
+            $stmt->execute(['email' => $email]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return (int)($result['count'] ?? 0) > 0;
-
         } catch (Exception $e) {
             error_log('Email check error: ' . $e->getMessage());
             return false;
@@ -331,7 +354,8 @@ class AuthController extends BaseController {
     /**
      * Hash password using Argon2ID (PHP 7.2+)
      */
-    private function hashPassword($password) {
+    private function hashPassword($password)
+    {
         return password_hash($password, PASSWORD_ARGON2ID, [
             'memory_cost' => 65536,
             'time_cost' => 4,
@@ -342,27 +366,27 @@ class AuthController extends BaseController {
     /**
      * Verify password against hash
      */
-    private function verifyPassword($password, $hash) {
+    private function verifyPassword($password, $hash)
+    {
         return password_verify($password, $hash);
     }
 
     /**
      * Update user's last login time
      */
-    private function updateLastLogin($user_id) {
+    private function updateLastLogin($user_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return;
             }
 
-            $stmt = $pdo->prepare("
+            $stmt = $this->db->prepare("
                 UPDATE users
                 SET last_login = NOW(), updated_at = NOW()
-                WHERE id = ?
+                WHERE id = :id
             ");
-            $stmt->execute([$user_id]);
-
+            $stmt->execute(['id' => $user_id]);
         } catch (Exception $e) {
             error_log('Last login update error: ' . $e->getMessage());
         }
@@ -371,7 +395,8 @@ class AuthController extends BaseController {
     /**
      * Set remember me cookie
      */
-    private function setRememberMeCookie($user_id) {
+    private function setRememberMeCookie($user_id)
+    {
         $token = bin2hex(random_bytes(32));
         $expiry = time() + (30 * 24 * 3600); // 30 days
 
@@ -380,7 +405,4 @@ class AuthController extends BaseController {
         // In production, store this token in database for validation
         // For now, we'll just set the cookie
     }
-
 }
-
-?>

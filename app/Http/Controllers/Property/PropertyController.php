@@ -47,8 +47,8 @@ class PropertyController extends BaseController {
     /**
      * Display individual property details
      */
-    public function show() {
-        $property_id = $_GET['id'] ?? null;
+    public function show($id = null) {
+        $property_id = $id ?? $_GET['id'] ?? null;
 
         if (!$property_id) {
             $this->show404();
@@ -105,8 +105,7 @@ class PropertyController extends BaseController {
      */
     private function getProperties($filters) {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
@@ -115,48 +114,48 @@ class PropertyController extends BaseController {
             $params = [];
 
             if (!empty($filters['type'])) {
-                $where_conditions[] = "p.property_type_id = (SELECT id FROM property_types WHERE name = ?)";
-                $params[] = $filters['type'];
+                $where_conditions[] = "p.property_type_id = (SELECT id FROM property_types WHERE name = :type)";
+                $params['type'] = $filters['type'];
             }
 
             if (!empty($filters['location'])) {
-                $where_conditions[] = "p.city LIKE ?";
-                $params[] = '%' . $filters['location'] . '%';
+                $where_conditions[] = "p.city LIKE :location";
+                $params['location'] = '%' . $filters['location'] . '%';
             }
 
             if (!empty($filters['city'])) {
-                $where_conditions[] = "p.city = ?";
-                $params[] = $filters['city'];
+                $where_conditions[] = "p.city = :city";
+                $params['city'] = $filters['city'];
             }
 
             if (!empty($filters['min_price'])) {
-                $where_conditions[] = "p.price >= ?";
-                $params[] = $filters['min_price'];
+                $where_conditions[] = "p.price >= :min_price";
+                $params['min_price'] = $filters['min_price'];
             }
 
             if (!empty($filters['max_price'])) {
-                $where_conditions[] = "p.price <= ?";
-                $params[] = $filters['max_price'];
+                $where_conditions[] = "p.price <= :max_price";
+                $params['max_price'] = $filters['max_price'];
             }
 
             if (!empty($filters['bedrooms'])) {
-                $where_conditions[] = "p.bedrooms >= ?";
-                $params[] = $filters['bedrooms'];
+                $where_conditions[] = "p.bedrooms >= :bedrooms";
+                $params['bedrooms'] = $filters['bedrooms'];
             }
 
             if (!empty($filters['bathrooms'])) {
-                $where_conditions[] = "p.bathrooms >= ?";
-                $params[] = $filters['bathrooms'];
+                $where_conditions[] = "p.bathrooms >= :bathrooms";
+                $params['bathrooms'] = $filters['bathrooms'];
             }
 
             if (!empty($filters['min_area'])) {
-                $where_conditions[] = "p.area_sqft >= ?";
-                $params[] = $filters['min_area'];
+                $where_conditions[] = "p.area_sqft >= :min_area";
+                $params['min_area'] = $filters['min_area'];
             }
 
             if (!empty($filters['max_area'])) {
-                $where_conditions[] = "p.area_sqft <= ?";
-                $params[] = $filters['max_area'];
+                $where_conditions[] = "p.area_sqft <= :max_area";
+                $params['max_area'] = $filters['max_area'];
             }
 
             if ($filters['featured']) {
@@ -210,11 +209,11 @@ class PropertyController extends BaseController {
                 LIMIT {$filters['per_page']} OFFSET {$offset}
             ";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Properties query error: ' . $e->getMessage());
             return [];
         }
@@ -225,8 +224,7 @@ class PropertyController extends BaseController {
      */
     private function getTotalProperties($filters) {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return 0;
             }
 
@@ -235,48 +233,48 @@ class PropertyController extends BaseController {
             $params = [];
 
             if (!empty($filters['type'])) {
-                $where_conditions[] = "p.property_type_id = (SELECT id FROM property_types WHERE name = ?)";
-                $params[] = $filters['type'];
+                $where_conditions[] = "p.property_type_id = (SELECT id FROM property_types WHERE name = :type)";
+                $params['type'] = $filters['type'];
             }
 
             if (!empty($filters['location'])) {
-                $where_conditions[] = "p.city LIKE ?";
-                $params[] = '%' . $filters['location'] . '%';
+                $where_conditions[] = "p.city LIKE :location";
+                $params['location'] = '%' . $filters['location'] . '%';
             }
 
             if (!empty($filters['city'])) {
-                $where_conditions[] = "p.city = ?";
-                $params[] = $filters['city'];
+                $where_conditions[] = "p.city = :city";
+                $params['city'] = $filters['city'];
             }
 
             if (!empty($filters['min_price'])) {
-                $where_conditions[] = "p.price >= ?";
-                $params[] = $filters['min_price'];
+                $where_conditions[] = "p.price >= :min_price";
+                $params['min_price'] = $filters['min_price'];
             }
 
             if (!empty($filters['max_price'])) {
-                $where_conditions[] = "p.price <= ?";
-                $params[] = $filters['max_price'];
+                $where_conditions[] = "p.price <= :max_price";
+                $params['max_price'] = $filters['max_price'];
             }
 
             if (!empty($filters['bedrooms'])) {
-                $where_conditions[] = "p.bedrooms >= ?";
-                $params[] = $filters['bedrooms'];
+                $where_conditions[] = "p.bedrooms >= :bedrooms";
+                $params['bedrooms'] = $filters['bedrooms'];
             }
 
             if (!empty($filters['bathrooms'])) {
-                $where_conditions[] = "p.bathrooms >= ?";
-                $params[] = $filters['bathrooms'];
+                $where_conditions[] = "p.bathrooms >= :bathrooms";
+                $params['bathrooms'] = $filters['bathrooms'];
             }
 
             if (!empty($filters['min_area'])) {
-                $where_conditions[] = "p.area_sqft >= ?";
-                $params[] = $filters['min_area'];
+                $where_conditions[] = "p.area_sqft >= :min_area";
+                $params['min_area'] = $filters['min_area'];
             }
 
             if (!empty($filters['max_area'])) {
-                $where_conditions[] = "p.area_sqft <= ?";
-                $params[] = $filters['max_area'];
+                $where_conditions[] = "p.area_sqft <= :max_area";
+                $params['max_area'] = $filters['max_area'];
             }
 
             if ($filters['featured']) {
@@ -286,13 +284,13 @@ class PropertyController extends BaseController {
             $where_clause = implode(' AND ', $where_conditions);
 
             $sql = "SELECT COUNT(*) as total FROM properties p WHERE {$where_clause}";
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             return (int)($result['total'] ?? 0);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Total properties query error: ' . $e->getMessage());
             return 0;
         }
@@ -303,12 +301,11 @@ class PropertyController extends BaseController {
      */
     private function getPropertyById($id) {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return null;
             }
 
-            $stmt = $pdo->prepare("
+            $stmt = $this->db->prepare("
                 SELECT
                     p.id,
                     p.title,
@@ -332,12 +329,12 @@ class PropertyController extends BaseController {
                 FROM properties p
                 LEFT JOIN users u ON p.created_by = u.id AND u.status = 'active'
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                WHERE p.id = ? AND p.status = 'available'
+                WHERE p.id = :id AND p.status = 'available'
             ");
-            $stmt->execute([$id]);
+            $stmt->execute(['id' => $id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Property query error: ' . $e->getMessage());
             return null;
         }
@@ -348,21 +345,20 @@ class PropertyController extends BaseController {
      */
     private function getPropertyImages($property_id) {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $pdo->prepare("
+            $stmt = $this->db->prepare("
                 SELECT image_path, is_primary, sort_order
                 FROM property_images
-                WHERE property_id = ?
+                WHERE property_id = :property_id
                 ORDER BY is_primary DESC, sort_order ASC
             ");
-            $stmt->execute([$property_id]);
+            $stmt->execute(['property_id' => $property_id]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Property images query error: ' . $e->getMessage());
             return [];
         }
@@ -373,12 +369,11 @@ class PropertyController extends BaseController {
      */
     private function getRelatedProperties($property) {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $pdo->prepare("
+            $stmt = $this->db->prepare("
                 SELECT
                     p.id,
                     p.title,
@@ -394,17 +389,21 @@ class PropertyController extends BaseController {
                      LIMIT 1) as main_image
                 FROM properties p
                 WHERE p.status = 'available'
-                  AND p.id != ?
-                  AND (p.city = ? OR p.property_type_id = (
-                      SELECT property_type_id FROM properties WHERE id = ?
+                  AND p.id != :id1
+                  AND (p.city = :city OR p.property_type_id = (
+                      SELECT property_type_id FROM properties WHERE id = :id2
                   ))
                 ORDER BY p.created_at DESC
                 LIMIT 4
             ");
-            $stmt->execute([$property['id'], $property['city'], $property['id']]);
+            $stmt->execute([
+                'id1' => $property['id'],
+                'city' => $property['city'],
+                'id2' => $property['id']
+            ]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Related properties query error: ' . $e->getMessage());
             return [];
         }
@@ -415,15 +414,14 @@ class PropertyController extends BaseController {
      */
     private function getPropertyTypes() {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $pdo->query("SELECT id, name FROM property_types ORDER BY name");
+            $stmt = $this->db->query("SELECT id, name FROM property_types ORDER BY name");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Property types query error: ' . $e->getMessage());
             return [];
         }
@@ -434,12 +432,11 @@ class PropertyController extends BaseController {
      */
     private function getLocations() {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $pdo->query("
+            $stmt = $this->db->query("
                 SELECT DISTINCT city, state
                 FROM properties
                 WHERE city IS NOT NULL AND city != '' AND status = 'available'
@@ -447,7 +444,7 @@ class PropertyController extends BaseController {
             ");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log('Locations query error: ' . $e->getMessage());
             return [];
         }

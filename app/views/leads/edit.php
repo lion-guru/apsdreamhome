@@ -8,7 +8,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/leads">लीड्स</a></li>
                     <li class="breadcrumb-item"><a href="/leads/<?= $lead['id'] ?>">
-                        <?= htmlspecialchars($lead['name']) ?>
+                        <?= h($lead['name']) ?>
                     </a></li>
                     <li class="breadcrumb-item active" aria-current="page">एडिट करें</li>
                 </ol>
@@ -50,7 +50,7 @@
                                                    class="form-control"
                                                    id="name"
                                                    name="name"
-                                                   value="<?= htmlspecialchars($lead['name']) ?>"
+                                                   value="<?= h($lead['name']) ?>"
                                                    required>
                                         </div>
 
@@ -62,7 +62,7 @@
                                                    class="form-control"
                                                    id="email"
                                                    name="email"
-                                                   value="<?= htmlspecialchars($lead['email']) ?>">
+                                                   value="<?= h($lead['email']) ?>">
                                         </div>
 
                                         <div class="form-group mb-3">
@@ -73,7 +73,7 @@
                                                    class="form-control"
                                                    id="phone"
                                                    name="phone"
-                                                   value="<?= htmlspecialchars($lead['phone']) ?>"
+                                                   value="<?= h($lead['phone']) ?>"
                                                    required
                                                    pattern="[0-9]{10}">
                                         </div>
@@ -86,7 +86,7 @@
                                                    class="form-control"
                                                    id="company"
                                                    name="company"
-                                                   value="<?= htmlspecialchars($lead['company'] ?? '') ?>">
+                                                   value="<?= h($lead['company'] ?? '') ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@
                                                 <?php foreach ($sources as $source): ?>
                                                     <option value="<?= $source['id'] ?>"
                                                             <?= $source['id'] == $lead['source'] ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($source['source_name']) ?>
+                                                        <?= h($source['source_name']) ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -125,7 +125,7 @@
                                                 <?php foreach ($statuses as $status): ?>
                                                     <option value="<?= $status['id'] ?>"
                                                             <?= $status['id'] == $lead['status'] ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($status['status_name']) ?>
+                                                        <?= h($status['status_name']) ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -151,7 +151,7 @@
                                                 <?php foreach ($users as $user): ?>
                                                     <option value="<?= $user['id'] ?>"
                                                             <?= $user['id'] == $lead['assigned_to'] ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($user['name']) ?>
+                                                        <?= h($user['name']) ?>
                                                         (<?= $user['lead_count'] ?> लीड्स)
                                                     </option>
                                                 <?php endforeach; ?>
@@ -176,7 +176,7 @@
                                                    class="form-control"
                                                    id="budget"
                                                    name="budget"
-                                                   value="<?= htmlspecialchars($lead['budget'] ?? '') ?>"
+                                                   value="<?= h($lead['budget'] ?? '') ?>"
                                                    placeholder="अपेक्षित बजट"
                                                    min="0"
                                                    step="10000">
@@ -203,7 +203,7 @@
                                                    class="form-control"
                                                    id="location_preference"
                                                    name="location_preference"
-                                                   value="<?= htmlspecialchars($lead['location_preference'] ?? '') ?>"
+                                                   value="<?= h($lead['location_preference'] ?? '') ?>"
                                                    placeholder="पसंदीदा लोकेशन">
                                         </div>
 
@@ -215,7 +215,7 @@
                                                       id="notes"
                                                       name="notes"
                                                       rows="2"
-                                                      placeholder="कोई अतिरिक्त जानकारी"><?= htmlspecialchars($lead['notes'] ?? '') ?></textarea>
+                                                      placeholder="कोई अतिरिक्त जानकारी"><?= h($lead['notes'] ?? '') ?></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -254,7 +254,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>क्या आप वाकई <strong><?= htmlspecialchars($lead['name']) ?></strong> को डिलीट करना चाहते हैं?</p>
+                <p>क्या आप वाकई <strong><?= h($lead['name']) ?></strong> को डिलीट करना चाहते हैं?</p>
                 <p class="text-danger">यह कार्रवाई वापस नहीं की जा सकती।</p>
             </div>
             <div class="modal-footer">

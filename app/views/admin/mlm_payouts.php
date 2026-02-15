@@ -191,7 +191,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                             <option value="">Select a quick note...</option>
                             <option value="Approved after verifying ledger entries.">Approved after verifying ledger entries.</option>
                             <option value="Approved – pending finance reconciliation.">Approved – pending finance reconciliation.</option>
-                            <option value="Rejected – discrepancies found, please review." >Rejected – discrepancies found, please review.</option>
+                            <option value="Rejected – discrepancies found, please review.">Rejected – discrepancies found, please review.</option>
                             <option value="Rejected – awaiting supporting documents from finance.">Rejected – awaiting supporting documents from finance.</option>
                         </select>
                     </div>
@@ -210,63 +210,73 @@ require_once __DIR__ . '/../../includes/admin_header.php';
 </div>
 
 <script>
-(function() {
-    const filtersForm = document.getElementById('batchFilters');
-    const resetFiltersBtn = document.getElementById('resetFilters');
-    const batchesTableBody = document.querySelector('#batchesTable tbody');
-    const batchLimit = document.getElementById('batchLimit');
-    const createForm = document.getElementById('createBatchForm');
-    const batchModal = new bootstrap.Modal(document.getElementById('batchDetailModal'));
-    const approveBtn = document.getElementById('approveBatchBtn');
-    const approvalModalElement = document.getElementById('approvalModal');
-    const approvalModal = approvalModalElement ? new bootstrap.Modal(approvalModalElement) : null;
-    const approvalForm = document.getElementById('approvalForm');
-    const approvalSummaryEl = document.getElementById('approvalModalSummary');
-    const approvalQuickNote = document.getElementById('approvalQuickNote');
-    const approvalNotesField = document.getElementById('approvalNotes');
-    const approvalSubmitBtn = document.getElementById('approvalSubmitBtn');
-    const exportBtn = document.getElementById('exportBatchBtn');
+    (function() {
+        const filtersForm = document.getElementById('batchFilters');
+        const resetFiltersBtn = document.getElementById('resetFilters');
+        const batchesTableBody = document.querySelector('#batchesTable tbody');
+        const batchLimit = document.getElementById('batchLimit');
+        const createForm = document.getElementById('createBatchForm');
+        const batchModal = new bootstrap.Modal(document.getElementById('batchDetailModal'));
+        const approveBtn = document.getElementById('approveBatchBtn');
+        const approvalModalElement = document.getElementById('approvalModal');
+        const approvalModal = approvalModalElement ? new bootstrap.Modal(approvalModalElement) : null;
+        const approvalForm = document.getElementById('approvalForm');
+        const approvalSummaryEl = document.getElementById('approvalModalSummary');
+        const approvalQuickNote = document.getElementById('approvalQuickNote');
+        const approvalNotesField = document.getElementById('approvalNotes');
+        const approvalSubmitBtn = document.getElementById('approvalSubmitBtn');
+        const exportBtn = document.getElementById('exportBatchBtn');
 
-    let currentBatchId = null;
-    let currentBatch = null;
+        let currentBatchId = null;
+        let currentBatch = null;
 
-    function formatCurrency(value) {
-        return '₹' + Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+        function formatCurrency(value) {
+            return '₹' + Number(value || 0).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
 
-    function statusBadge(status) {
-        const map = { pending_approval: 'warning', processing: 'primary', completed: 'success', cancelled: 'danger' };
-        return `<span class="badge bg-${map[status] || 'secondary'}">${status}</span>`;
-    }
+        function statusBadge(status) {
+            const map = {
+                pending_approval: 'warning',
+                processing: 'primary',
+                completed: 'success',
+                cancelled: 'danger'
+            };
+            return `<span class="badge bg-${map[status] || 'secondary'}">${status}</span>`;
+        }
 
-    function approvalsBadge(batch) {
-        const required = Number(batch.required_approvals ?? 1);
-        const approved = Number(batch.approval_count ?? 0);
-        const color = approved >= required ? 'success' : 'secondary';
-        return `<span class="badge bg-${color}">${approved}/${required}</span>`;
-    }
+        function approvalsBadge(batch) {
+            const required = Number(batch.required_approvals ?? 1);
+            const approved = Number(batch.approval_count ?? 0);
+            const color = approved >= required ? 'success' : 'secondary';
+            return `<span class="badge bg-${color}">${approved}/${required}</span>`;
+        }
 
-    function filtersQuery(extra = {}) {
-        const params = new URLSearchParams(new FormData(filtersForm));
-        Object.entries(extra).forEach(([key, value]) => params.set(key, value));
-        return params.toString();
-    }
+        function filtersQuery(extra = {}) {
+            const params = new URLSearchParams(new FormData(filtersForm));
+            Object.entries(extra).forEach(([key, value]) => params.set(key, value));
+            return params.toString();
+        }
 
-    function loadBatches() {
-        fetch('<?php echo BASE_URL; ?>admin/payouts/list?' + filtersQuery({ limit: batchLimit.value }))
-            .then(r => r.json())
-            .then(data => {
-                batchesTableBody.innerHTML = '';
-                if (!data.success || !data.records.length) {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = '<td colspan="8" class="text-center text-muted py-4">No payout batches found.</td>';
-                    batchesTableBody.appendChild(tr);
-                    return;
-                }
+        function loadBatches() {
+            fetch('<?php echo BASE_URL; ?>admin/mlm-payouts/list?' + filtersQuery({
+                    limit: batchLimit.value
+                }))
+                .then(r => r.json())
+                .then(data => {
+                    batchesTableBody.innerHTML = '';
+                    if (!data.success || !data.records.length) {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = '<td colspan="8" class="text-center text-muted py-4">No payout batches found.</td>';
+                        batchesTableBody.appendChild(tr);
+                        return;
+                    }
 
-                data.records.forEach(batch => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                    data.records.forEach(batch => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
                         <td>${batch.batch_reference}</td>
                         <td>${statusBadge(batch.status)}</td>
                         <td>${approvalsBadge(batch)}</td>
@@ -280,104 +290,109 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                                 <i class="fas fa-eye"></i>
                             </button>
                         </td>`;
-                    batchesTableBody.appendChild(tr);
+                        batchesTableBody.appendChild(tr);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Failed to load batches');
                 });
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Failed to load batches');
-            });
-    }
-
-    function formatDateTime(value) {
-        if (!value) return '—';
-        return new Date(value).toLocaleString();
-    }
-
-    filtersForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        loadBatches();
-    });
-
-    resetFiltersBtn.addEventListener('click', () => {
-        filtersForm.reset();
-        loadBatches();
-    });
-
-    batchLimit.addEventListener('change', loadBatches);
-
-    createForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(createForm);
-        fetch('<?php echo BASE_URL; ?>admin/payouts/create', {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                createForm.reset();
-                bootstrap.Modal.getInstance(document.getElementById('createBatchModal')).hide();
-                loadBatches();
-            } else {
-                alert(data.message || 'Failed to create batch');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Failed to create batch');
-        });
-    });
-
-    batchesTableBody.addEventListener('click', function(e) {
-        const button = e.target.closest('button[data-batch]');
-        if (!button) return;
-        currentBatchId = button.getAttribute('data-batch');
-        loadBatchDetails(currentBatchId);
-    });
-
-    if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
-            if (!currentBatchId) return;
-            const url = new URL('<?php echo BASE_URL; ?>admin/payouts/export');
-            url.searchParams.set('batch_id', currentBatchId);
-            url.searchParams.set('format', 'csv');
-            window.open(url.toString(), '_blank');
-        });
-    }
-
-    document.getElementById('approveBatchBtn').addEventListener('click', handleApprovalDecision);
-    document.getElementById('disburseBatchBtn').addEventListener('click', () => {
-        const reference = prompt('Enter disbursement reference (optional):');
-        const notes = prompt('Enter notes (optional):');
-        batchAction('disburse', { reference, notes });
-    });
-    document.getElementById('cancelBatchBtn').addEventListener('click', () => {
-        if (confirm('Are you sure you want to cancel this batch?')) {
-            const reason = prompt('Reason for cancellation (optional):');
-            batchAction('cancel', { reason });
         }
-    });
 
-    function loadBatchDetails(batchId) {
-        fetch('<?php echo BASE_URL; ?>admin/payouts/items?batch_id=' + batchId)
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) throw new Error(data.message || 'Failed to load batch items');
+        function formatDateTime(value) {
+            if (!value) return '—';
+            return new Date(value).toLocaleString();
+        }
 
-                currentBatch = data.batch;
-                renderBatchSummary(currentBatch);
-                updateApprovalButtonState();
+        filtersForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loadBatches();
+        });
 
-                const tableBody = document.querySelector('#batchItemsTable tbody');
-                tableBody.innerHTML = '';
-                if (!data.records.length) {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No items found.</td></tr>';
-                } else {
-                    data.records.forEach(item => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
+        resetFiltersBtn.addEventListener('click', () => {
+            filtersForm.reset();
+            loadBatches();
+        });
+
+        batchLimit.addEventListener('change', loadBatches);
+
+        createForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(createForm);
+            fetch('<?php echo BASE_URL; ?>admin/mlm-payouts/create', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        createForm.reset();
+                        bootstrap.Modal.getInstance(document.getElementById('createBatchModal')).hide();
+                        loadBatches();
+                    } else {
+                        alert(data.message || 'Failed to create batch');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Failed to create batch');
+                });
+        });
+
+        batchesTableBody.addEventListener('click', function(e) {
+            const button = e.target.closest('button[data-batch]');
+            if (!button) return;
+            currentBatchId = button.getAttribute('data-batch');
+            loadBatchDetails(currentBatchId);
+        });
+
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                if (!currentBatchId) return;
+                const url = new URL('<?php echo BASE_URL; ?>admin/mlm-payouts/export');
+                url.searchParams.set('batch_id', currentBatchId);
+                url.searchParams.set('format', 'csv');
+                window.open(url.toString(), '_blank');
+            });
+        }
+
+        document.getElementById('approveBatchBtn').addEventListener('click', handleApprovalDecision);
+        document.getElementById('disburseBatchBtn').addEventListener('click', () => {
+            const reference = prompt('Enter disbursement reference (optional):');
+            const notes = prompt('Enter notes (optional):');
+            batchAction('disburse', {
+                reference,
+                notes
+            });
+        });
+        document.getElementById('cancelBatchBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to cancel this batch?')) {
+                const reason = prompt('Reason for cancellation (optional):');
+                batchAction('cancel', {
+                    reason
+                });
+            }
+        });
+
+        function loadBatchDetails(batchId) {
+            fetch('<?php echo BASE_URL; ?>admin/mlm-payouts/items?batch_id=' + batchId)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.message || 'Failed to load batch items');
+
+                    currentBatch = data.batch;
+                    renderBatchSummary(currentBatch);
+                    updateApprovalButtonState();
+
+                    const tableBody = document.querySelector('#batchItemsTable tbody');
+                    tableBody.innerHTML = '';
+                    if (!data.records.length) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No items found.</td></tr>';
+                    } else {
+                        data.records.forEach(item => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
                             <td>${item.commission_id}</td>
                             <td>
                                 <div class="fw-semibold">${escapeHtml(item.beneficiary_name || 'N/A')}</div>
@@ -386,39 +401,39 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                             <td class="text-end">${formatCurrency(item.amount)}</td>
                             <td>${statusBadge(item.status)}</td>
                             <td>${formatDateTime(item.created_at)}</td>`;
-                        tableBody.appendChild(tr);
-                    });
-                }
-                batchModal.show();
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Failed to load batch details');
-                currentBatch = null;
-                updateApprovalButtonState();
-            });
-    }
-
-    function renderBatchSummary(batch) {
-        const summaryEl = document.getElementById('batchSummary');
-        if (!batch) {
-            summaryEl.innerHTML = '<div class="alert alert-warning">Batch summary unavailable.</div>';
-            return;
+                            tableBody.appendChild(tr);
+                        });
+                    }
+                    batchModal.show();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Failed to load batch details');
+                    currentBatch = null;
+                    updateApprovalButtonState();
+                });
         }
 
-        const required = Number(batch.required_approvals ?? 1);
-        const approved = Number(batch.approval_count ?? 0);
-        const statusHtml = `${statusBadge(batch.status)} <span class="ms-2">${approvalsBadge(batch)}</span>`;
+        function renderBatchSummary(batch) {
+            const summaryEl = document.getElementById('batchSummary');
+            if (!batch) {
+                summaryEl.innerHTML = '<div class="alert alert-warning">Batch summary unavailable.</div>';
+                return;
+            }
 
-        let approvalsHtml = '<p class="text-muted mb-0">No approvals recorded yet.</p>';
-        if (Array.isArray(batch.approvals) && batch.approvals.length) {
-            approvalsHtml = '<ul class="list-group list-group-flush">' + batch.approvals.map(record => {
-                const state = statusBadge(record.status);
-                const name = escapeHtml(record.approver_name || ('User #' + record.approver_user_id));
-                const email = escapeHtml(record.approver_email || '');
-                const note = record.notes ? `<div class="small text-muted">${escapeHtml(record.notes)}</div>` : '';
-                const date = record.updated_at || record.created_at;
-                return `<li class="list-group-item d-flex justify-content-between align-items-start">
+            const required = Number(batch.required_approvals ?? 1);
+            const approved = Number(batch.approval_count ?? 0);
+            const statusHtml = `${statusBadge(batch.status)} <span class="ms-2">${approvalsBadge(batch)}</span>`;
+
+            let approvalsHtml = '<p class="text-muted mb-0">No approvals recorded yet.</p>';
+            if (Array.isArray(batch.approvals) && batch.approvals.length) {
+                approvalsHtml = '<ul class="list-group list-group-flush">' + batch.approvals.map(record => {
+                    const state = statusBadge(record.status);
+                    const name = escapeHtml(record.approver_name || ('User #' + record.approver_user_id));
+                    const email = escapeHtml(record.approver_email || '');
+                    const note = record.notes ? `<div class="small text-muted">${escapeHtml(record.notes)}</div>` : '';
+                    const date = record.updated_at || record.created_at;
+                    return `<li class="list-group-item d-flex justify-content-between align-items-start">
                     <div>
                         <div class="fw-semibold">${name}</div>
                         ${email ? `<div class="small text-muted">${email}</div>` : ''}
@@ -429,10 +444,10 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                         <div class="small text-muted">${date ? formatDateTime(date) : ''}</div>
                     </div>
                 </li>`;
-            }).join('') + '</ul>';
-        }
+                }).join('') + '</ul>';
+            }
 
-        summaryEl.innerHTML = `
+            summaryEl.innerHTML = `
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
@@ -465,132 +480,140 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                     ${approvalsHtml}
                 </div>
             </div>`;
-    }
-
-    function handleApprovalDecision() {
-        if (!currentBatchId || !currentBatch || !approvalModal) return;
-        if (currentBatch.status !== 'pending_approval') {
-            alert('Batch is not awaiting approvals.');
-            return;
         }
 
-        approvalForm.reset();
-        document.getElementById('decisionApprove').checked = true;
-        approvalNotesField.value = '';
-        if (approvalQuickNote) {
-            approvalQuickNote.value = '';
-        }
-        approvalSubmitBtn.disabled = false;
+        function handleApprovalDecision() {
+            if (!currentBatchId || !currentBatch || !approvalModal) return;
+            if (currentBatch.status !== 'pending_approval') {
+                alert('Batch is not awaiting approvals.');
+                return;
+            }
 
-        const required = Number(currentBatch.required_approvals ?? 1);
-        const approved = Number(currentBatch.approval_count ?? 0);
-        const remaining = Math.max(required - approved, 0);
-        const reference = escapeHtml(currentBatch.batch_reference || '#' + currentBatch.id);
+            approvalForm.reset();
+            document.getElementById('decisionApprove').checked = true;
+            approvalNotesField.value = '';
+            if (approvalQuickNote) {
+                approvalQuickNote.value = '';
+            }
+            approvalSubmitBtn.disabled = false;
 
-        approvalSummaryEl.innerHTML = `
+            const required = Number(currentBatch.required_approvals ?? 1);
+            const approved = Number(currentBatch.approval_count ?? 0);
+            const remaining = Math.max(required - approved, 0);
+            const reference = escapeHtml(currentBatch.batch_reference || '#' + currentBatch.id);
+
+            approvalSummaryEl.innerHTML = `
             <div class="fw-semibold">Batch ${reference}</div>
             <div>Approvals recorded: <strong>${approved}</strong> / ${required}</div>
             <div>Remaining approvals required: <strong>${remaining}</strong></div>
         `;
 
-        approvalModal.show();
-        setTimeout(() => approvalNotesField?.focus(), 200);
-    }
+            approvalModal.show();
+            setTimeout(() => approvalNotesField?.focus(), 200);
+        }
 
-    function updateApprovalButtonState() {
-        if (!approveBtn) return;
-        const isPending = !!(currentBatch && currentBatch.status === 'pending_approval');
-        approveBtn.disabled = !isPending;
-        approveBtn.classList.toggle('btn-outline-primary', isPending);
-        approveBtn.classList.toggle('btn-outline-secondary', !isPending);
-    }
+        function updateApprovalButtonState() {
+            if (!approveBtn) return;
+            const isPending = !!(currentBatch && currentBatch.status === 'pending_approval');
+            approveBtn.disabled = !isPending;
+            approveBtn.classList.toggle('btn-outline-primary', isPending);
+            approveBtn.classList.toggle('btn-outline-secondary', !isPending);
+        }
 
-    function batchAction(action, extra = {}, callbacks = {}) {
-        if (!currentBatchId) return Promise.resolve();
-        const formData = new FormData();
-        formData.append('batch_id', currentBatchId);
-        Object.entries(extra).forEach(([key, value]) => {
-            if (value !== null && value !== undefined && value !== '') {
-                formData.append(key, value);
-            }
-        });
-
-        return fetch('<?php echo BASE_URL; ?>admin/payouts/' + action, {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                loadBatches();
-                loadBatchDetails(currentBatchId);
-                if (typeof callbacks.onSuccess === 'function') {
-                    callbacks.onSuccess(data);
-                }
-            } else {
-                alert(data.message || 'Action failed');
-                if (typeof callbacks.onError === 'function') {
-                    callbacks.onError(data);
-                }
-            }
-            return data;
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Action failed');
-            if (typeof callbacks.onError === 'function') {
-                callbacks.onError(err);
-            }
-            throw err;
-        })
-        .finally(() => {
-            if (typeof callbacks.onFinally === 'function') {
-                callbacks.onFinally();
-            }
-        });
-    }
-
-    function escapeHtml(str) {
-        if (str === null || str === undefined) return '';
-        return String(str).replace(/[&<>"]+/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[s]);
-    }
-
-    if (approvalForm) {
-        approvalForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            if (!currentBatchId) return;
-
-            const formData = new FormData(approvalForm);
-            const decision = formData.get('decision') || 'approved';
-            const notes = (approvalNotesField.value || '').trim();
-
-            approvalSubmitBtn.disabled = true;
-            batchAction('approve', { decision, notes }, {
-                onSuccess: () => {
-                    approvalModal?.hide();
-                },
-                onFinally: () => {
-                    approvalSubmitBtn.disabled = false;
+        function batchAction(action, extra = {}, callbacks = {}) {
+            if (!currentBatchId) return Promise.resolve();
+            const formData = new FormData();
+            formData.append('batch_id', currentBatchId);
+            Object.entries(extra).forEach(([key, value]) => {
+                if (value !== null && value !== undefined && value !== '') {
+                    formData.append(key, value);
                 }
             });
-        });
-    }
 
-    if (approvalQuickNote) {
-        approvalQuickNote.addEventListener('change', () => {
-            const note = approvalQuickNote.value;
-            if (!note) return;
-            const existing = approvalNotesField.value.trim();
-            approvalNotesField.value = existing ? `${existing}\n${note}` : note;
-            approvalNotesField.focus();
-            approvalQuickNote.value = '';
-        });
-    }
+            return fetch('<?php echo BASE_URL; ?>admin/mlm-payouts/' + action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        loadBatches();
+                        loadBatchDetails(currentBatchId);
+                        if (typeof callbacks.onSuccess === 'function') {
+                            callbacks.onSuccess(data);
+                        }
+                    } else {
+                        alert(data.message || 'Action failed');
+                        if (typeof callbacks.onError === 'function') {
+                            callbacks.onError(data);
+                        }
+                    }
+                    return data;
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Action failed');
+                    if (typeof callbacks.onError === 'function') {
+                        callbacks.onError(err);
+                    }
+                    throw err;
+                })
+                .finally(() => {
+                    if (typeof callbacks.onFinally === 'function') {
+                        callbacks.onFinally();
+                    }
+                });
+        }
 
-    loadBatches();
-    updateApprovalButtonState();
-})();
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"]+/g, s => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;'
+            })[s]);
+        }
+
+        if (approvalForm) {
+            approvalForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                if (!currentBatchId) return;
+
+                const formData = new FormData(approvalForm);
+                const decision = formData.get('decision') || 'approved';
+                const notes = (approvalNotesField.value || '').trim();
+
+                approvalSubmitBtn.disabled = true;
+                batchAction('approve', {
+                    decision,
+                    notes
+                }, {
+                    onSuccess: () => {
+                        approvalModal?.hide();
+                    },
+                    onFinally: () => {
+                        approvalSubmitBtn.disabled = false;
+                    }
+                });
+            });
+        }
+
+        if (approvalQuickNote) {
+            approvalQuickNote.addEventListener('change', () => {
+                const note = approvalQuickNote.value;
+                if (!note) return;
+                const existing = approvalNotesField.value.trim();
+                approvalNotesField.value = existing ? `${existing}\n${note}` : note;
+                approvalNotesField.focus();
+                approvalQuickNote.value = '';
+            });
+        }
+
+        loadBatches();
+        updateApprovalButtonState();
+    })();
 </script>
 
 <?php

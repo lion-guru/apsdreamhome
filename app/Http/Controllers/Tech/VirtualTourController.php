@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Virtual Tour & AR Controller
  * Handles 3D virtual tours and augmented reality features
@@ -7,17 +8,20 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use Exception;
 
-class VirtualTourController extends BaseController {
+class VirtualTourController extends BaseController
+{
 
     /**
      * Display virtual tour interface
      */
-    public function index($property_id) {
+    public function index($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
-            $this->setFlashMessage('error', 'Property not found');
+            $this->setFlash('error', 'Property not found');
             $this->redirect(BASE_URL . 'properties');
             return;
         }
@@ -33,7 +37,8 @@ class VirtualTourController extends BaseController {
     /**
      * Get virtual tour data for property
      */
-    public function getTourData($property_id) {
+    public function getTourData($property_id)
+    {
         header('Content-Type: application/json');
 
         $tour_data = $this->getVirtualTourData($property_id);
@@ -47,7 +52,8 @@ class VirtualTourController extends BaseController {
     /**
      * Upload 360° images for virtual tour
      */
-    public function uploadPanorama() {
+    public function uploadPanorama()
+    {
         header('Content-Type: application/json');
 
         if (!$this->isLoggedIn() || !$this->isAdmin()) {
@@ -76,7 +82,6 @@ class VirtualTourController extends BaseController {
             } else {
                 sendJsonResponse(['success' => false, 'error' => $upload_result['error']], 400);
             }
-
         } catch (\Exception $e) {
             error_log('Panorama upload error: ' . $e->getMessage());
             sendJsonResponse(['success' => false, 'error' => 'Upload failed'], 500);
@@ -86,7 +91,8 @@ class VirtualTourController extends BaseController {
     /**
      * AR furniture placement
      */
-    public function arFurniture() {
+    public function arFurniture()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
@@ -114,13 +120,16 @@ class VirtualTourController extends BaseController {
     /**
      * Get property details
      */
-    private function getPropertyDetails($property_id) {
+    private function getPropertyDetails($property_id)
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = ? AND status = 'available'");
-            $stmt->execute([$property_id]);
+            if (!$this->db) {
+                return null;
+            }
+            $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :propertyId AND status = 'available'");
+            $stmt->execute(['propertyId' => $property_id]);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Property fetch error: ' . $e->getMessage());
             return null;
         }
@@ -129,26 +138,29 @@ class VirtualTourController extends BaseController {
     /**
      * Get virtual tour data
      */
-    private function getVirtualTourData($property_id) {
+    private function getVirtualTourData($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             // Get panorama images
-            $sql = "SELECT * FROM property_panoramas WHERE property_id = ? ORDER BY panorama_type, created_at";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $sql = "SELECT * FROM property_panoramas WHERE property_id = :propertyId ORDER BY panorama_type, created_at";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
             $panoramas = $stmt->fetchAll();
 
             // Get floor plan data
-            $sql = "SELECT * FROM property_floor_plans WHERE property_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $sql = "SELECT * FROM property_floor_plans WHERE property_id = :propertyId";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
             $floor_plans = $stmt->fetchAll();
 
             // Get room dimensions and hotspots
-            $sql = "SELECT * FROM property_hotspots WHERE property_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $sql = "SELECT * FROM property_hotspots WHERE property_id = :propertyId";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
             $hotspots = $stmt->fetchAll();
 
             return [
@@ -157,8 +169,7 @@ class VirtualTourController extends BaseController {
                 'hotspots' => $hotspots,
                 'property_id' => $property_id
             ];
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Virtual tour data error: ' . $e->getMessage());
             return [];
         }
@@ -167,7 +178,8 @@ class VirtualTourController extends BaseController {
     /**
      * Upload panorama image
      */
-    private function uploadPanoramaImage($file, $property_id, $panorama_type) {
+    private function uploadPanoramaImage($file, $property_id, $panorama_type)
+    {
         try {
             // Validate file
             if ($file['error'] !== UPLOAD_ERR_OK) {
@@ -211,7 +223,6 @@ class VirtualTourController extends BaseController {
             } else {
                 return ['success' => false, 'error' => 'Failed to save file'];
             }
-
         } catch (\Exception $e) {
             error_log('Panorama upload error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Upload failed'];
@@ -221,17 +232,24 @@ class VirtualTourController extends BaseController {
     /**
      * Save panorama data to database
      */
-    private function savePanoramaData($property_id, $file_path, $panorama_type) {
+    private function savePanoramaData($property_id, $file_path, $panorama_type)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO property_panoramas (property_id, panorama_type, file_path, thumbnail_path, created_at)
-                    VALUES (?, ?, ?, ?, NOW())";
+                    VALUES (:propertyId, :type, :path, :thumb, NOW())";
 
-            $stmt = $pdo->prepare($sql);
-            return $stmt->execute([$property_id, $panorama_type, $file_path, str_replace('.jpg', '_thumb.jpg', $file_path)]);
-
-        } catch (\Exception $e) {
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                'propertyId' => $property_id,
+                'type' => $panorama_type,
+                'path' => $file_path,
+                'thumb' => str_replace('.jpg', '_thumb.jpg', $file_path)
+            ]);
+        } catch (Exception $e) {
             error_log('Panorama save error: ' . $e->getMessage());
             return false;
         }
@@ -240,7 +258,8 @@ class VirtualTourController extends BaseController {
     /**
      * Create thumbnail for panorama
      */
-    private function createThumbnail($source_path, $thumb_path) {
+    private function createThumbnail($source_path, $thumb_path)
+    {
         try {
             // Get image dimensions
             list($width, $height) = getimagesize($source_path);
@@ -283,7 +302,6 @@ class VirtualTourController extends BaseController {
             imagedestroy($thumbnail);
 
             return $thumb_path;
-
         } catch (\Exception $e) {
             error_log('Thumbnail creation error: ' . $e->getMessage());
             return $source_path;
@@ -293,13 +311,16 @@ class VirtualTourController extends BaseController {
     /**
      * Check if AR is enabled (device capability detection)
      */
-    private function isAREnabled() {
+    private function isAREnabled()
+    {
         // In production, this would detect device capabilities
         // For now, return true if user agent supports AR
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         $ar_supported_devices = [
-            'iPhone', 'iPad', 'Android'
+            'iPhone',
+            'iPad',
+            'Android'
         ];
 
         foreach ($ar_supported_devices as $device) {
@@ -314,7 +335,8 @@ class VirtualTourController extends BaseController {
     /**
      * Process AR furniture placement
      */
-    private function processARFurniture($room_data) {
+    private function processARFurniture($room_data)
+    {
         // Simulate AR furniture placement processing
         // In production, this would use AR libraries
 
@@ -329,7 +351,8 @@ class VirtualTourController extends BaseController {
     /**
      * Generate AR markers for room
      */
-    private function generateARMarkers($room_data) {
+    private function generateARMarkers($room_data)
+    {
         // Generate AR markers for furniture placement
         // This would typically use AR marker generation libraries
 
@@ -350,7 +373,8 @@ class VirtualTourController extends BaseController {
     /**
      * Get furniture catalog for AR
      */
-    private function getFurnitureCatalog() {
+    private function getFurnitureCatalog()
+    {
         return [
             'living_room' => [
                 ['id' => 1, 'name' => 'Sofa Set', 'model' => 'sofa.glb', 'price' => 45000],
@@ -372,7 +396,8 @@ class VirtualTourController extends BaseController {
     /**
      * Admin - Manage virtual tours
      */
-    public function adminManageTours() {
+    public function adminManageTours()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -389,9 +414,12 @@ class VirtualTourController extends BaseController {
     /**
      * Get properties with virtual tours
      */
-    private function getPropertiesWithTours() {
+    private function getPropertiesWithTours()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT p.id, p.title, p.city, p.state,
                            COUNT(pp.id) as panorama_count,
@@ -402,10 +430,9 @@ class VirtualTourController extends BaseController {
                     GROUP BY p.id, p.title, p.city, p.state
                     ORDER BY panorama_count DESC, p.created_at DESC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Properties with tours error: ' . $e->getMessage());
             return [];
         }
@@ -414,7 +441,8 @@ class VirtualTourController extends BaseController {
     /**
      * Create floor plan hotspots
      */
-    public function createHotspots($property_id) {
+    public function createHotspots($property_id)
+    {
         if (!$this->isAdmin()) {
             sendJsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
         }
@@ -449,26 +477,28 @@ class VirtualTourController extends BaseController {
     /**
      * Save hotspot data
      */
-    private function saveHotspotData($property_id, $hotspot_data) {
+    private function saveHotspotData($property_id, $hotspot_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO property_hotspots (property_id, room_name, x, y, z, hotspot_type, linked_room, description, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                    VALUES (:propertyId, :roomName, :x, :y, :z, :type, :linkedRoom, :description, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             return $stmt->execute([
-                $property_id,
-                $hotspot_data['room_name'] ?? '',
-                $hotspot_data['x'] ?? 0,
-                $hotspot_data['y'] ?? 0,
-                $hotspot_data['z'] ?? 0,
-                $hotspot_data['hotspot_type'] ?? 'navigation',
-                $hotspot_data['linked_room'] ?? null,
-                $hotspot_data['description'] ?? ''
+                'propertyId' => $property_id,
+                'roomName' => $hotspot_data['room_name'] ?? '',
+                'x' => $hotspot_data['x'] ?? 0,
+                'y' => $hotspot_data['y'] ?? 0,
+                'z' => $hotspot_data['z'] ?? 0,
+                'type' => $hotspot_data['hotspot_type'] ?? 'navigation',
+                'linkedRoom' => $hotspot_data['linked_room'] ?? null,
+                'description' => $hotspot_data['description'] ?? ''
             ]);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Hotspot save error: ' . $e->getMessage());
             return false;
         }
@@ -477,17 +507,19 @@ class VirtualTourController extends BaseController {
     /**
      * Get hotspot data
      */
-    private function getHotspotData($property_id) {
+    private function getHotspotData($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
-            $sql = "SELECT * FROM property_hotspots WHERE property_id = ? ORDER BY room_name, created_at";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $sql = "SELECT * FROM property_hotspots WHERE property_id = :propertyId ORDER BY room_name, created_at";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Hotspot fetch error: ' . $e->getMessage());
             return [];
         }

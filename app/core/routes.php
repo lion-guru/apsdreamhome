@@ -31,39 +31,62 @@ Route::post('/commissions/approve', 'CommissionController@approve');
 Route::get('/commissions/payout', 'CommissionController@processPayout');
 
 // Admin Routes
+Route::get('/admin', 'AdminController@index');
+Route::get('/admin/dashboard', 'AdminController@index');
+Route::get('/admin/users', 'AdminController@users');
+Route::get('/admin/properties', 'AdminController@properties');
+Route::get('/admin/properties/create', 'AdminController@createProperty');
+Route::get('/admin/associates', 'AdminController@associates');
+Route::get('/admin/customers', 'AdminController@customers');
+Route::get('/admin/bookings', 'AdminController@bookings');
+Route::get('/admin/employees', 'AdminController@employees');
+Route::get('/admin/settings', 'AdminController@settings');
+
+// Visit Management
+Route::get('/admin/visits', 'Admin\VisitController@index');
+Route::get('/admin/visits/create', 'Admin\VisitController@create');
+Route::post('/admin/visits/store', 'Admin\VisitController@store');
+Route::post('/admin/visits/update-status/{id}', 'Admin\VisitController@updateStatus');
+
+// EMI Management
+Route::get('/admin/emi', 'Admin\EMIController@index');
+Route::get('/admin/emi/show/{id}', 'Admin\EMIController@show');
+Route::post('/admin/emi/store', 'Admin\EMIController@store');
+Route::post('/admin/emi/pay', 'Admin\EMIController@pay');
+
+// MLM Admin Routes
 Route::get('/admin/mlm', 'AdminController@mlmDashboard');
 Route::get('/admin/commissions', 'AdminController@commissions');
 Route::get('/admin/network', 'AdminController@network');
-Route::get('/admin/mlm/analytics', 'AdminAnalyticsController@index');
-Route::get('/admin/mlm/analytics/data', 'AdminAnalyticsController@data');
-Route::get('/admin/mlm/analytics/ledger', 'AdminAnalyticsController@ledger');
-Route::get('/admin/mlm/analytics/export', 'AdminAnalyticsController@export');
-Route::get('/admin/network/inspector', 'AdminNetworkController@index');
-Route::get('/admin/network/search', 'AdminNetworkController@searchUsers');
-Route::get('/admin/network/tree', 'AdminNetworkController@networkTree');
-Route::get('/admin/network/agreements', 'AdminNetworkController@listAgreements');
-Route::post('/admin/network/agreements/create', 'AdminNetworkController@createAgreement');
-Route::post('/admin/network/agreements/update', 'AdminNetworkController@updateAgreement');
-Route::post('/admin/network/agreements/delete', 'AdminNetworkController@deleteAgreement');
-Route::post('/admin/network/rebuild', 'AdminNetworkController@rebuildNetwork');
-Route::get('/admin/payouts', 'AdminPayoutController@index');
-Route::get('/admin/payouts/list', 'AdminPayoutController@list');
-Route::get('/admin/payouts/export', 'AdminPayoutController@export');
-Route::post('/admin/payouts/create', 'AdminPayoutController@create');
-Route::post('/admin/payouts/approve', 'AdminPayoutController@approve');
-Route::post('/admin/payouts/disburse', 'AdminPayoutController@disburse');
-Route::post('/admin/payouts/cancel', 'AdminPayoutController@cancel');
-Route::get('/admin/payouts/items', 'AdminPayoutController@items');
-Route::get('/admin/engagement/metrics', 'AdminEngagementController@metrics');
-Route::get('/admin/engagement/leaderboard', 'AdminEngagementController@leaderboard');
-Route::get('/admin/engagement/goals', 'AdminEngagementController@goals');
-Route::get('/admin/engagement/goal-details', 'AdminEngagementController@goalDetails');
-Route::get('/admin/engagement/notifications', 'AdminEngagementController@notificationFeed');
-Route::get('/admin/engagement/preferences', 'AdminEngagementController@notificationPreferences');
-Route::post('/admin/engagement/goals/create', 'AdminEngagementController@createGoal');
-Route::post('/admin/engagement/goals/update', 'AdminEngagementController@updateGoal');
-Route::post('/admin/engagement/goals/progress', 'AdminEngagementController@recordGoalProgress');
-Route::post('/admin/engagement/goals/status', 'AdminEngagementController@updateGoalStatus');
-Route::post('/admin/engagement/notifications/mark-read', 'AdminEngagementController@markNotificationRead');
-Route::post('/admin/engagement/notifications/mark-all-read', 'AdminEngagementController@markAllNotificationsRead');
-?>
+Route::get('/admin/mlm/analytics', 'Admin\AnalyticsController@index');
+Route::get('/admin/mlm/analytics/data', 'Admin\AnalyticsController@data');
+Route::get('/admin/mlm/analytics/ledger', 'Admin\AnalyticsController@ledger');
+Route::get('/admin/mlm/analytics/export', 'Admin\AnalyticsController@export');
+Route::get('/admin/network/inspector', 'Admin\NetworkController@index');
+Route::get('/admin/network/search', 'Admin\NetworkController@searchUsers');
+Route::get('/admin/network/tree', 'Admin\NetworkController@networkTree');
+Route::get('/admin/network/agreements', 'Admin\NetworkController@listAgreements');
+Route::post('/admin/network/agreements/create', 'Admin\NetworkController@createAgreement');
+Route::post('/admin/network/agreements/update', 'Admin\NetworkController@updateAgreement');
+Route::post('/admin/network/agreements/delete', 'Admin\NetworkController@deleteAgreement');
+Route::post('/admin/network/rebuild', 'Admin\NetworkController@rebuildNetwork');
+Route::get('/admin/payouts', 'Admin\PayoutController@index');
+Route::get('/admin/payouts/list', 'Admin\PayoutController@list');
+Route::get('/admin/payouts/export', 'Admin\PayoutController@export');
+Route::post('/admin/payouts/create', 'Admin\PayoutController@create');
+Route::post('/admin/payouts/approve', 'Admin\PayoutController@approve');
+Route::post('/admin/payouts/disburse', 'Admin\PayoutController@disburse');
+Route::post('/admin/payouts/cancel', 'Admin\PayoutController@cancel');
+Route::get('/admin/payouts/items', 'Admin\PayoutController@items');
+Route::get('/admin/engagement/metrics', 'Admin\EngagementController@metrics');
+Route::get('/admin/engagement/leaderboard', 'Admin\EngagementController@leaderboard');
+Route::get('/admin/engagement/goals', 'Admin\EngagementController@goals');
+Route::get('/admin/engagement/goal-details', 'Admin\EngagementController@goalDetails');
+Route::get('/admin/engagement/notifications', 'Admin\EngagementController@notificationFeed');
+Route::get('/admin/engagement/preferences', 'Admin\EngagementController@notificationPreferences');
+Route::post('/admin/engagement/goals/create', 'Admin\EngagementController@createGoal');
+Route::post('/admin/engagement/goals/update', 'Admin\EngagementController@updateGoal');
+Route::post('/admin/engagement/goals/progress', 'Admin\EngagementController@recordGoalProgress');
+Route::post('/admin/engagement/goals/status', 'Admin\EngagementController@updateGoalStatus');
+Route::post('/admin/engagement/notifications/mark-read', 'Admin\EngagementController@markNotificationRead');
+Route::post('/admin/engagement/notifications/mark-all-read', 'Admin\EngagementController@markAllNotificationsRead');

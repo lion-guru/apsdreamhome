@@ -1,12 +1,18 @@
 <?php
+
 /**
  * Advanced Payment Controller
  * Handles multiple payment gateways and advanced payment features
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Payment;
 
-class AdvancedPaymentController extends BaseController {
+use App\Http\Controllers\BaseController;
+use Exception;
+use PDO;
+
+class AdvancedPaymentController extends BaseController
+{
 
     private $payment_gateways = [
         'razorpay' => [
@@ -34,7 +40,8 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Payment gateway selection page
      */
-    public function gatewaySelection() {
+    public function gatewaySelection()
+    {
         $this->data['page_title'] = 'Choose Payment Method - ' . APP_NAME;
         $this->data['gateways'] = $this->getEnabledGateways();
         $this->data['order_details'] = $_SESSION['payment_order'] ?? [];
@@ -50,19 +57,20 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Process payment with selected gateway
      */
-    public function processPayment() {
+    public function processPayment()
+    {
         try {
             $gateway = $_POST['gateway'] ?? '';
             $payment_method = $_POST['payment_method'] ?? '';
 
             if (!$this->isValidGateway($gateway)) {
-                $this->setFlashMessage('error', 'Invalid payment gateway selected');
+                $this->setFlash('error', 'Invalid payment gateway selected');
                 $this->redirect(BASE_URL . 'payment/gateway-selection');
                 return;
             }
 
             if (!$this->isValidPaymentMethod($gateway, $payment_method)) {
-                $this->setFlashMessage('error', 'Invalid payment method for selected gateway');
+                $this->setFlash('error', 'Invalid payment method for selected gateway');
                 $this->redirect(BASE_URL . 'payment/gateway-selection');
                 return;
             }
@@ -78,12 +86,11 @@ class AdvancedPaymentController extends BaseController {
                 case 'payu':
                     return $this->processPayUPayment($payment_method);
                 default:
-                    throw new \Exception('Unsupported payment gateway');
+                    throw new Exception('Unsupported payment gateway');
             }
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Payment processing error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Payment processing failed: ' . $e->getMessage());
+            $this->setFlash('error', 'Payment processing failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
     }
@@ -91,12 +98,17 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Process Razorpay payment
      */
-    private function processRazorpayPayment($payment_method) {
+    private function processRazorpayPayment($payment_method)
+    {
         try {
             // Initialize Razorpay
             $razorpay = new \App\Core\RazorpayGateway();
 
-            $order_data = $_SESSION['payment_order'];
+            $order_data = $_SESSION['payment_order'] ?? [];
+            if (empty($order_data)) {
+                throw new Exception('Order data not found');
+            }
+
             $payment_data = [
                 'amount' => $order_data['amount'] * 100, // Convert to paise
                 'currency' => 'INR',
@@ -110,9 +122,8 @@ class AdvancedPaymentController extends BaseController {
             $this->data['razorpay_order'] = $razorpay_order;
             $this->data['gateway'] = 'razorpay';
             $this->render('payment/razorpay_checkout');
-
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', 'Razorpay payment initialization failed');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Razorpay payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
     }
@@ -120,15 +131,20 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Process PayPal payment
      */
-    private function processPayPalPayment($payment_method) {
+    private function processPayPalPayment($payment_method)
+    {
         try {
             $paypal = new \App\Core\PayPalGateway();
 
-            $order_data = $_SESSION['payment_order'];
+            $order_data = $_SESSION['payment_order'] ?? [];
+            if (empty($order_data)) {
+                throw new Exception('Order data not found');
+            }
+
             $payment_data = [
                 'amount' => $order_data['amount'],
                 'currency' => 'USD',
-                'description' => $order_data['description'],
+                'description' => $order_data['description'] ?? '',
                 'payment_method' => $payment_method
             ];
 
@@ -139,9 +155,8 @@ class AdvancedPaymentController extends BaseController {
                 header('Location: ' . $paypal_response['approval_url']);
                 exit;
             }
-
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', 'PayPal payment initialization failed');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'PayPal payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
     }
@@ -149,16 +164,21 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Process Stripe payment
      */
-    private function processStripePayment($payment_method) {
+    private function processStripePayment($payment_method)
+    {
         try {
             $stripe = new \App\Core\StripeGateway();
 
-            $order_data = $_SESSION['payment_order'];
+            $order_data = $_SESSION['payment_order'] ?? [];
+            if (empty($order_data)) {
+                throw new Exception('Order data not found');
+            }
+
             $payment_data = [
                 'amount' => $order_data['amount'] * 100, // Convert to cents
                 'currency' => 'inr',
                 'payment_method' => $payment_method,
-                'description' => $order_data['description']
+                'description' => $order_data['description'] ?? ''
             ];
 
             $payment_intent = $stripe->createPaymentIntent($payment_data);
@@ -167,9 +187,8 @@ class AdvancedPaymentController extends BaseController {
             $this->data['client_secret'] = $payment_intent['client_secret'];
             $this->data['gateway'] = 'stripe';
             $this->render('payment/stripe_checkout');
-
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', 'Stripe payment initialization failed');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Stripe payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
     }
@@ -177,14 +196,19 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Process PayU payment
      */
-    private function processPayUPayment($payment_method) {
+    private function processPayUPayment($payment_method)
+    {
         try {
             $payu = new \App\Core\PayUGateway();
 
-            $order_data = $_SESSION['payment_order'];
+            $order_data = $_SESSION['payment_order'] ?? [];
+            if (empty($order_data)) {
+                throw new Exception('Order data not found');
+            }
+
             $payment_data = [
                 'amount' => $order_data['amount'],
-                'productinfo' => $order_data['description'],
+                'productinfo' => $order_data['description'] ?? '',
                 'firstname' => $_SESSION['user_name'] ?? 'Customer',
                 'email' => $_SESSION['user_email'] ?? '',
                 'phone' => $_SESSION['user_phone'] ?? '',
@@ -198,9 +222,8 @@ class AdvancedPaymentController extends BaseController {
                 header('Location: ' . $payu_response['payment_url']);
                 exit;
             }
-
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', 'PayU payment initialization failed');
+        } catch (Exception $e) {
+            $this->setFlash('error', 'PayU payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
     }
@@ -208,7 +231,8 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Handle payment success callback
      */
-    public function paymentSuccess() {
+    public function paymentSuccess()
+    {
         try {
             $gateway = $_GET['gateway'] ?? '';
             $payment_id = $_GET['payment_id'] ?? '';
@@ -239,7 +263,6 @@ class AdvancedPaymentController extends BaseController {
             $this->data['order_id'] = $order_id;
 
             $this->render('payment/success');
-
         } catch (\Exception $e) {
             error_log('Payment success handling error: ' . $e->getMessage());
             $this->data['error'] = $e->getMessage();
@@ -250,7 +273,8 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Handle payment failure callback
      */
-    public function paymentFailed() {
+    public function paymentFailed()
+    {
         try {
             $gateway = $_GET['gateway'] ?? '';
             $order_id = $_GET['order_id'] ?? '';
@@ -267,7 +291,6 @@ class AdvancedPaymentController extends BaseController {
             $this->data['error_message'] = 'Payment was cancelled or failed';
 
             $this->render('payment/failed');
-
         } catch (\Exception $e) {
             error_log('Payment failure handling error: ' . $e->getMessage());
             $this->render('payment/error');
@@ -277,7 +300,8 @@ class AdvancedPaymentController extends BaseController {
     /**
      * EMI Calculator
      */
-    public function emiCalculator() {
+    public function emiCalculator()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $principal = (float)($_POST['principal'] ?? 0);
             $interest_rate = (float)($_POST['interest_rate'] ?? 0);
@@ -302,8 +326,9 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Get enabled payment gateways
      */
-    private function getEnabledGateways() {
-        return array_filter($this->payment_gateways, function($gateway) {
+    private function getEnabledGateways()
+    {
+        return array_filter($this->payment_gateways, function ($gateway) {
             return $gateway['enabled'];
         });
     }
@@ -311,21 +336,24 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Validate payment gateway
      */
-    private function isValidGateway($gateway) {
+    private function isValidGateway($gateway)
+    {
         return isset($this->payment_gateways[$gateway]) && $this->payment_gateways[$gateway]['enabled'];
     }
 
     /**
      * Validate payment method for gateway
      */
-    private function isValidPaymentMethod($gateway, $payment_method) {
+    private function isValidPaymentMethod($gateway, $payment_method)
+    {
         return in_array($payment_method, $this->payment_gateways[$gateway]['supports']);
     }
 
     /**
      * Verify payment with gateway
      */
-    private function verifyPayment($gateway, $payment_id, $order_id) {
+    private function verifyPayment($gateway, $payment_id, $order_id)
+    {
         try {
             switch ($gateway) {
                 case 'razorpay':
@@ -352,17 +380,23 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Update order status
      */
-    private function updateOrderStatus($order_id, $status, $transaction_id = null) {
+    private function updateOrderStatus($order_id, $status, $transaction_id = null)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
-            $sql = "UPDATE orders SET status = ?, transaction_id = ?, updated_at = NOW() WHERE order_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$status, $transaction_id, $order_id]);
+            $sql = "UPDATE orders SET status = :status, transaction_id = :transaction_id, updated_at = NOW() WHERE order_id = :order_id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                'status' => $status,
+                'transaction_id' => $transaction_id,
+                'order_id' => $order_id
+            ]);
 
             return true;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Order status update error: ' . $e->getMessage());
             return false;
         }
@@ -371,13 +405,13 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Send payment confirmation email
      */
-    private function sendPaymentConfirmation($order_id) {
+    private function sendPaymentConfirmation($order_id)
+    {
         try {
             $emailNotification = new \App\Core\EmailNotification();
             $emailNotification->sendPaymentConfirmation($order_id);
 
             return true;
-
         } catch (\Exception $e) {
             error_log('Payment confirmation email error: ' . $e->getMessage());
             return false;
@@ -387,7 +421,8 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Calculate EMI
      */
-    private function calculateEMI($principal, $annual_interest_rate, $tenure_years) {
+    private function calculateEMI($principal, $annual_interest_rate, $tenure_years)
+    {
         $monthly_rate = $annual_interest_rate / (12 * 100);
         $tenure_months = $tenure_years * 12;
 
@@ -395,7 +430,7 @@ class AdvancedPaymentController extends BaseController {
             $monthly_emi = $principal / $tenure_months;
         } else {
             $monthly_emi = $principal * $monthly_rate * pow(1 + $monthly_rate, $tenure_months) /
-                          (pow(1 + $monthly_rate, $tenure_months) - 1);
+                (pow(1 + $monthly_rate, $tenure_months) - 1);
         }
 
         $total_amount = $monthly_emi * $tenure_months;
@@ -414,25 +449,28 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Get payment history
      */
-    public function paymentHistory() {
+    public function paymentHistory()
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
         }
 
-        $user_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['user_id'] ?? null;
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                throw new Exception('Database connection failed');
+            }
 
             $sql = "SELECT o.*, p.title as property_title, p.city, p.state
                     FROM orders o
                     LEFT JOIN properties p ON o.property_id = p.id
-                    WHERE o.user_id = ?
+                    WHERE o.user_id = :user_id
                     ORDER BY o.created_at DESC";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$user_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['user_id' => $user_id]);
 
             $payments = $stmt->fetchAll();
 
@@ -440,10 +478,9 @@ class AdvancedPaymentController extends BaseController {
             $this->data['payments'] = $payments;
 
             $this->render('payment/history');
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Payment history error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Failed to load payment history');
+            $this->setFlash('error', 'Failed to load payment history');
             $this->redirect(BASE_URL . 'dashboard');
         }
     }
@@ -451,29 +488,35 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Download payment receipt
      */
-    public function downloadReceipt($order_id) {
+    public function downloadReceipt($order_id)
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
         }
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                throw new Exception('Database connection failed');
+            }
 
             $sql = "SELECT o.*, p.title as property_title, p.city, p.state,
                            u.name as customer_name, u.email as customer_email
                     FROM orders o
                     LEFT JOIN properties p ON o.property_id = p.id
                     LEFT JOIN users u ON o.user_id = u.id
-                    WHERE o.order_id = ? AND o.user_id = ?";
+                    WHERE o.order_id = :order_id AND o.user_id = :user_id";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$order_id, $_SESSION['user_id']]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                'order_id' => $order_id,
+                'user_id' => $_SESSION['user_id']
+            ]);
 
             $payment = $stmt->fetch();
 
             if (!$payment) {
-                $this->setFlashMessage('error', 'Payment receipt not found');
+                $this->setFlash('error', 'Payment receipt not found');
                 $this->redirect(BASE_URL . 'payment/history');
                 return;
             }
@@ -493,10 +536,9 @@ class AdvancedPaymentController extends BaseController {
             // In production, generate actual PDF
             $this->data['receipt_data'] = $receipt_data;
             $this->render('payment/receipt');
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Receipt download error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Failed to generate receipt');
+            $this->setFlash('error', 'Failed to generate receipt');
             $this->redirect(BASE_URL . 'payment/history');
         }
     }
@@ -504,14 +546,17 @@ class AdvancedPaymentController extends BaseController {
     /**
      * Admin - Payment analytics
      */
-    public function adminPaymentAnalytics() {
+    public function adminPaymentAnalytics()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
         }
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                throw new Exception('Database connection failed');
+            }
 
             // Payment trends
             $sql = "SELECT DATE_FORMAT(created_at, '%Y-%m') as month,
@@ -524,7 +569,7 @@ class AdvancedPaymentController extends BaseController {
                     ORDER BY month DESC
                     LIMIT 12";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $payment_trends = $stmt->fetchAll();
 
             // Payment methods distribution
@@ -533,7 +578,7 @@ class AdvancedPaymentController extends BaseController {
                     WHERE status = 'completed'
                     GROUP BY payment_method";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $payment_methods = $stmt->fetchAll();
 
             // Gateway performance
@@ -543,7 +588,7 @@ class AdvancedPaymentController extends BaseController {
                     WHERE status = 'completed'
                     GROUP BY gateway";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $gateway_performance = $stmt->fetchAll();
 
             $this->data['page_title'] = 'Payment Analytics - ' . APP_NAME;
@@ -552,10 +597,9 @@ class AdvancedPaymentController extends BaseController {
             $this->data['gateway_performance'] = $gateway_performance;
 
             $this->render('admin/payment_analytics');
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Payment analytics error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Failed to load payment analytics');
+            $this->setFlash('error', 'Failed to load payment analytics');
             $this->redirect(BASE_URL . 'admin');
         }
     }

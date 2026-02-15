@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Associate Plot Selling Controller
  * Complete system for associates to sell plots through MLM
@@ -7,22 +8,29 @@
 namespace App\Http\Controllers\Associate;
 
 use App\Http\Controllers\BaseController;
+use Exception;
+use PDO;
 
-class AssociatePlotSellingController extends BaseController {
+class AssociatePlotSellingController extends BaseController
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
     /**
      * Associate Plot Inventory Dashboard
      */
-    public function plotInventory() {
-        global $pdo;
+    public function plotInventory()
+    {
+        if (!$this->db) {
+            return;
+        }
 
         $associate_id = $_SESSION['associate_id'] ?? null;
         if (!$associate_id) {
-            $this->redirect('/login');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
@@ -38,11 +46,11 @@ class AssociatePlotSellingController extends BaseController {
                        c.price_per_sqft, c.total_plots, c.available_plots
                 FROM plots p
                 JOIN colonies c ON p.colony_id = c.id
-                WHERE p.allocated_to = ? AND p.status IN ('available', 'allocated')
+                WHERE p.allocated_to = :associateId AND p.status IN ('available', 'allocated')
                 ORDER BY c.name, p.plot_number
             ";
-            $stmt = $pdo->prepare($allocated_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($allocated_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $allocated_plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Get general available plots (not allocated yet)
@@ -55,7 +63,7 @@ class AssociatePlotSellingController extends BaseController {
                 ORDER BY c.name, p.plot_number
                 LIMIT 50
             ";
-            $stmt = $pdo->prepare($available_query);
+            $stmt = $this->db->prepare($available_query);
             $stmt->execute();
             $available_plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -66,14 +74,13 @@ class AssociatePlotSellingController extends BaseController {
                 FROM plots p
                 JOIN colonies c ON p.colony_id = c.id
                 LEFT JOIN plot_sales ps ON p.id = ps.plot_id
-                WHERE p.allocated_to = ? AND p.status = 'sold'
+                WHERE p.allocated_to = :associateId AND p.status = 'sold'
                 ORDER BY ps.sale_date DESC
                 LIMIT 20
             ";
-            $stmt = $pdo->prepare($sold_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($sold_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $sold_plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Associate plot inventory error: ' . $e->getMessage());
         }
@@ -108,12 +115,15 @@ class AssociatePlotSellingController extends BaseController {
     /**
      * Real-time Commission Calculator
      */
-    public function commissionCalculator() {
-        global $pdo;
+    public function commissionCalculator()
+    {
+        if (!$this->db) {
+            return;
+        }
 
         $associate_id = $_SESSION['associate_id'] ?? null;
         if (!$associate_id) {
-            $this->redirect('/login');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
@@ -123,17 +133,16 @@ class AssociatePlotSellingController extends BaseController {
 
         try {
             // Get associate level
-            $level_query = "SELECT current_level FROM associates WHERE id = ?";
-            $stmt = $pdo->prepare($level_query);
-            $stmt->execute([$associate_id]);
+            $level_query = "SELECT current_level FROM associates WHERE id = :associateId";
+            $stmt = $this->db->prepare($level_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $associate_level = $stmt->fetchColumn() ?: 1;
 
             // Get commission structure
-            $commission_query = "SELECT * FROM associate_levels WHERE level_number <= ? ORDER BY level_number";
-            $stmt = $pdo->prepare($commission_query);
-            $stmt->execute([$associate_level]);
+            $commission_query = "SELECT * FROM associate_levels WHERE level_number <= :associateLevel ORDER BY level_number";
+            $stmt = $this->db->prepare($commission_query);
+            $stmt->execute(['associateLevel' => $associate_level]);
             $commission_rates = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Commission calculator error: ' . $e->getMessage());
         }
@@ -178,12 +187,15 @@ class AssociatePlotSellingController extends BaseController {
     /**
      * Plot Sales Analytics for Associates
      */
-    public function salesAnalytics() {
-        global $pdo;
+    public function salesAnalytics()
+    {
+        if (!$this->db) {
+            return;
+        }
 
         $associate_id = $_SESSION['associate_id'] ?? null;
         if (!$associate_id) {
-            $this->redirect('/login');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
@@ -202,10 +214,10 @@ class AssociatePlotSellingController extends BaseController {
             $total_query = "
                 SELECT COUNT(*) as total_sales, SUM(commission_earned) as total_commission
                 FROM plot_sales
-                WHERE associate_id = ?
+                WHERE associate_id = :associateId
             ";
-            $stmt = $pdo->prepare($total_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($total_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $total_data = $stmt->fetch(PDO::FETCH_ASSOC);
             $analytics['total_sales'] = $total_data['total_sales'] ?: 0;
             $analytics['total_commission'] = $total_data['total_commission'] ?: 0;
@@ -216,12 +228,12 @@ class AssociatePlotSellingController extends BaseController {
                        COUNT(*) as sales_count,
                        SUM(commission_earned) as monthly_commission
                 FROM plot_sales
-                WHERE associate_id = ? AND sale_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                WHERE associate_id = :associateId AND sale_date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
                 GROUP BY DATE_FORMAT(sale_date, '%Y-%m')
                 ORDER BY month
             ";
-            $stmt = $pdo->prepare($monthly_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($monthly_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $analytics['monthly_sales'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Top performing colonies
@@ -231,13 +243,13 @@ class AssociatePlotSellingController extends BaseController {
                 FROM plot_sales ps
                 JOIN plots p ON ps.plot_id = p.id
                 JOIN colonies c ON p.colony_id = c.id
-                WHERE ps.associate_id = ?
+                WHERE ps.associate_id = :associateId
                 GROUP BY c.id, c.name
                 ORDER BY sales_count DESC
                 LIMIT 5
             ";
-            $stmt = $pdo->prepare($colonies_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($colonies_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $analytics['top_colonies'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Performance metrics
@@ -259,7 +271,6 @@ class AssociatePlotSellingController extends BaseController {
             }
             $analytics['performance_metrics']['achievement_percentage'] =
                 ($current_month_commission / $analytics['performance_metrics']['monthly_target']) * 100;
-
         } catch (Exception $e) {
             error_log('Sales analytics error: ' . $e->getMessage());
         }
@@ -273,12 +284,15 @@ class AssociatePlotSellingController extends BaseController {
     /**
      * Customer Referral System
      */
-    public function customerReferrals() {
-        global $pdo;
+    public function customerReferrals()
+    {
+        if (!$this->db) {
+            return;
+        }
 
         $associate_id = $_SESSION['associate_id'] ?? null;
         if (!$associate_id) {
-            $this->redirect('/login');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
@@ -302,22 +316,27 @@ class AssociatePlotSellingController extends BaseController {
                     INSERT INTO customer_referrals
                     (associate_id, customer_name, customer_phone, customer_email,
                      preferred_location, budget_range, plot_type, notes, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (:associateId, :customerName, :customerPhone, :customerEmail,
+                     :preferredLocation, :budgetRange, :plotType, :notes, :status, :createdAt)
                 ";
-                $stmt = $pdo->prepare($insert_query);
+                $stmt = $this->db->prepare($insert_query);
                 $stmt->execute([
-                    $referral_data['associate_id'], $referral_data['customer_name'],
-                    $referral_data['customer_phone'], $referral_data['customer_email'],
-                    $referral_data['preferred_location'], $referral_data['budget_range'],
-                    $referral_data['plot_type'], $referral_data['notes'],
-                    $referral_data['status'], $referral_data['created_at']
+                    'associateId' => $referral_data['associate_id'],
+                    'customerName' => $referral_data['customer_name'],
+                    'customerPhone' => $referral_data['customer_phone'],
+                    'customerEmail' => $referral_data['customer_email'],
+                    'preferredLocation' => $referral_data['preferred_location'],
+                    'budgetRange' => $referral_data['budget_range'],
+                    'plotType' => $referral_data['plot_type'],
+                    'notes' => $referral_data['notes'],
+                    'status' => $referral_data['status'],
+                    'createdAt' => $referral_data['created_at']
                 ]);
 
-                $_SESSION['success_message'] = 'Referral submitted successfully!';
-                $this->redirect('/associate/referrals');
-
+                $this->setFlash('success', 'Referral submitted successfully!');
+                $this->redirect(BASE_URL . 'associate/referrals');
             } catch (Exception $e) {
-                $_SESSION['error_message'] = 'Error submitting referral: ' . $e->getMessage();
+                $this->setFlash('error', 'Error submitting referral: ' . $e->getMessage());
             }
         }
 
@@ -326,13 +345,12 @@ class AssociatePlotSellingController extends BaseController {
         try {
             $referrals_query = "
                 SELECT * FROM customer_referrals
-                WHERE associate_id = ?
+                WHERE associate_id = :associateId
                 ORDER BY created_at DESC
             ";
-            $stmt = $pdo->prepare($referrals_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($referrals_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $referrals = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Referrals fetch error: ' . $e->getMessage());
         }
@@ -346,12 +364,15 @@ class AssociatePlotSellingController extends BaseController {
     /**
      * Plot Booking & Hold System
      */
-    public function plotBooking() {
-        global $pdo;
+    public function plotBooking()
+    {
+        if (!$this->db) {
+            return;
+        }
 
         $associate_id = $_SESSION['associate_id'] ?? null;
         if (!$associate_id) {
-            $this->redirect('/login');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
@@ -365,9 +386,9 @@ class AssociatePlotSellingController extends BaseController {
                 $notes = $_POST['notes'] ?? '';
 
                 // Check if plot is available
-                $check_query = "SELECT status, allocated_to FROM plots WHERE id = ?";
-                $stmt = $pdo->prepare($check_query);
-                $stmt->execute([$plot_id]);
+                $check_query = "SELECT status, allocated_to FROM plots WHERE id = :plotId";
+                $stmt = $this->db->prepare($check_query);
+                $stmt->execute(['plotId' => $plot_id]);
                 $plot = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if (!$plot || $plot['status'] !== 'available') {
@@ -391,27 +412,31 @@ class AssociatePlotSellingController extends BaseController {
                     INSERT INTO plot_bookings
                     (associate_id, plot_id, customer_name, customer_phone, booking_type,
                      status, expires_at, notes, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (:associateId, :plotId, :customerName, :customerPhone, :bookingType,
+                     :status, :expiresAt, :notes, :createdAt)
                 ";
-                $stmt = $pdo->prepare($insert_query);
+                $stmt = $this->db->prepare($insert_query);
                 $stmt->execute([
-                    $booking_data['associate_id'], $booking_data['plot_id'],
-                    $booking_data['customer_name'], $booking_data['customer_phone'],
-                    $booking_data['booking_type'], $booking_data['status'],
-                    $booking_data['expires_at'], $booking_data['notes'],
-                    $booking_data['created_at']
+                    'associateId' => $booking_data['associate_id'],
+                    'plotId' => $booking_data['plot_id'],
+                    'customerName' => $booking_data['customer_name'],
+                    'customerPhone' => $booking_data['customer_phone'],
+                    'bookingType' => $booking_data['booking_type'],
+                    'status' => $booking_data['status'],
+                    'expiresAt' => $booking_data['expires_at'],
+                    'notes' => $booking_data['notes'],
+                    'createdAt' => $booking_data['created_at']
                 ]);
 
                 // Update plot status
-                $update_query = "UPDATE plots SET status = ? WHERE id = ?";
-                $stmt = $pdo->prepare($update_query);
-                $stmt->execute([$booking_type === 'book' ? 'booked' : 'on_hold', $plot_id]);
+                $update_query = "UPDATE plots SET status = :status WHERE id = :plotId";
+                $stmt = $this->db->prepare($update_query);
+                $stmt->execute(['status' => ($booking_type === 'book' ? 'booked' : 'on_hold'), 'plotId' => $plot_id]);
 
-                $_SESSION['success_message'] = 'Plot ' . $booking_type . 'ed successfully!';
-                $this->redirect('/associate/plot-booking');
-
+                $this->setFlash('success', 'Plot ' . $booking_type . 'ed successfully!');
+                $this->redirect(BASE_URL . 'associate/plot-booking');
             } catch (Exception $e) {
-                $_SESSION['error_message'] = 'Error booking plot: ' . $e->getMessage();
+                $this->setFlash('error', 'Error booking plot: ' . $e->getMessage());
             }
         }
 
@@ -424,13 +449,12 @@ class AssociatePlotSellingController extends BaseController {
                 FROM plot_bookings pb
                 JOIN plots p ON pb.plot_id = p.id
                 JOIN colonies c ON p.colony_id = c.id
-                WHERE pb.associate_id = ?
+                WHERE pb.associate_id = :associateId
                 ORDER BY pb.created_at DESC
             ";
-            $stmt = $pdo->prepare($bookings_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($bookings_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Bookings fetch error: ' . $e->getMessage());
         }
@@ -443,14 +467,13 @@ class AssociatePlotSellingController extends BaseController {
                        c.price_per_sqft
                 FROM plots p
                 JOIN colonies c ON p.colony_id = c.id
-                WHERE p.status = 'available' AND p.allocated_to = ?
+                WHERE p.status = 'available' AND p.allocated_to = :associateId
                 ORDER BY c.name, p.plot_number
                 LIMIT 50
             ";
-            $stmt = $pdo->prepare($plots_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($plots_query);
+            $stmt->execute(['associateId' => $associate_id]);
             $available_plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Available plots fetch error: ' . $e->getMessage());
         }
@@ -465,47 +488,52 @@ class AssociatePlotSellingController extends BaseController {
     /**
      * Release/Cancel Plot Booking
      */
-    public function releaseBooking($booking_id) {
-        global $pdo;
+    public function releaseBooking($booking_id)
+    {
+        if (!$this->db) {
+            return;
+        }
 
         $associate_id = $_SESSION['associate_id'] ?? null;
         if (!$associate_id) {
-            $this->redirect('/login');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
         try {
-            // Get booking details
-            $booking_query = "
-                SELECT pb.*, p.id as plot_id
-                FROM plot_bookings pb
-                JOIN plots p ON pb.plot_id = p.id
-                WHERE pb.id = ? AND pb.associate_id = ?
-            ";
-            $stmt = $pdo->prepare($booking_query);
-            $stmt->execute([$booking_id, $associate_id]);
+            // Get booking details to verify ownership and get plot_id
+            $booking_query = "SELECT plot_id FROM plot_bookings WHERE id = :bookingId AND associate_id = :associateId";
+            $stmt = $this->db->prepare($booking_query);
+            $stmt->execute(['bookingId' => $booking_id, 'associateId' => $associate_id]);
             $booking = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$booking) {
-                throw new Exception('Booking not found or not authorized');
+                throw new Exception('Booking not found or unauthorized');
             }
 
+            // Start transaction
+            $this->db->beginTransaction();
+
             // Update booking status
-            $update_booking = "UPDATE plot_bookings SET status = 'cancelled' WHERE id = ?";
-            $stmt = $pdo->prepare($update_booking);
-            $stmt->execute([$booking_id]);
+            $update_booking = "UPDATE plot_bookings SET status = 'released', released_at = NOW() WHERE id = :bookingId";
+            $stmt = $this->db->prepare($update_booking);
+            $stmt->execute(['bookingId' => $booking_id]);
 
-            // Release plot back to available
-            $update_plot = "UPDATE plots SET status = 'available' WHERE id = ?";
-            $stmt = $pdo->prepare($update_plot);
-            $stmt->execute([$booking['plot_id']]);
+            // Update plot status back to available
+            $update_plot = "UPDATE plots SET status = 'available' WHERE id = :plotId";
+            $stmt = $this->db->prepare($update_plot);
+            $stmt->execute(['plotId' => $booking['plot_id']]);
 
-            $_SESSION['success_message'] = 'Plot booking released successfully!';
-            $this->redirect('/associate/plot-booking');
+            $this->db->commit();
 
+            $this->setFlash('success', 'Booking released successfully');
         } catch (Exception $e) {
-            $_SESSION['error_message'] = 'Error releasing booking: ' . $e->getMessage();
-            $this->redirect('/associate/plot-booking');
+            if ($this->db && $this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            $this->setFlash('error', 'Error releasing booking: ' . $e->getMessage());
         }
+
+        $this->redirect(BASE_URL . 'associate/plot-booking');
     }
 }

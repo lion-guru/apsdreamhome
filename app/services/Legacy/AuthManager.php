@@ -1,0 +1,332 @@
+<?php
+
+namespace App\Services\Legacy;
+/**
+ * User Authentication and Management System
+ * Complete user registration, login, and profile management
+ */
+
+class AuthManager {
+    const ROLE_SUPERADMIN = 'superadmin';
+    const ROLE_ADMIN = 'admin';
+    const ROLE_ASSOCIATE = 'associate';
+    const ROLE_CUSTOMER = 'customer';
+    const ROLE_GUEST = 'guest';
+
+    private $db;
+    private $logger;
+    private $propertyAI;
+
+    public function __construct($db = null, $logger = null) {
+        $this->db = $db ?: \App\Core\App::database();
+        $this->logger = $logger;
+        $this->propertyAI = new PropertyAI($this->db);
+    }
+
+    /**
+     * User registration
+     */
+    public function register($data) {
+        // Validate input
+        if (!$this->validateRegistrationData($data)) {
+            return ['success' => false, 'message' => 'Invalid registration data'];
+        }
+
+        // Check if user already exists
+        if ($this->userExists($data['email'], $data['username'])) {
+            return ['success' => false, 'message' => 'User already exists with this email or username'];
+        }
+
+        // Hash password
+        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+
+        // Insert user
+        $sql = "INSERT INTO user (uname, uemail, upass, utype, uphone, job_role)
+                VALUES (?, ?, ?, ?, ?, ?)";
+
+        $role = $data['role'] ?? '3'; // Default to Associate/User type
+        $job_role = $data['job_role'] ?? 'Associate';
+
+        try {
+            $this->db->execute($sql, [
+                $data['username'],
+                $data['email'],
+                $hashedPassword,
+                $role,
+                $data['phone'],
+                $job_role
+            ]);
+
+            $userId = $this->db->lastInsertId();
+
+            // Send welcome email
+            $this->sendWelcomeEmail($data['email'], $data['full_name']);
+
+            // Start session
+            $_SESSION['user_id'] = $userId;
+            $_SESSION['username'] = $data['username'];
+            $_SESSION['full_name'] = $data['full_name'];
+            $_SESSION['role'] = $role;
+
+            if ($this->logger) {
+                $this->logger->log("User registered: {$data['username']} (ID: $userId)", 'info', 'auth');
+            }
+
+            return ['success' => true, 'message' => 'Registration successful', 'user_id' => $userId];
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->log("Registration failed: " . $e->getMessage(), 'error', 'auth');
+            }
+            return ['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * User login
+     */
+    public function login($email, $password) {
+        $sql = "SELECT uid, uname, upass, utype, job_role
+                FROM user WHERE uemail = ?";
+
+        try {
+            $user = $this->db->fetch($sql, [$email]);
+
+            if (!$user) {
+                return ['success' => false, 'message' => 'Invalid email or password'];
+            }
+
+            // Verify password
+            if (!password_verify($password, $user['upass'])) {
+                return ['success' => false, 'message' => 'Invalid email or password'];
+            }
+
+            // Start session
+            $_SESSION['user_id'] = $user['uid'];
+            $_SESSION['username'] = $user['uname'];
+            $_SESSION['full_name'] = $user['uname'];
+            $_SESSION['role'] = $user['utype'];
+
+            if ($this->logger) {
+                $this->logger->log("User logged in: {$user['uname']} (ID: {$user['uid']})", 'info', 'auth');
+            }
+
+            return ['success' => true, 'message' => 'Login successful', 'user' => $user];
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->log("Login failed: " . $e->getMessage(), 'error', 'auth');
+            }
+            return ['success' => false, 'message' => 'Login failed: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Send welcome email
+     */
+    private function sendWelcomeEmail($email, $name) {
+        $emailManager = new EmailService();
+        $emailManager->send('welcome_user', ['name' => $name], $email, $name);
+    }
+
+    /**
+     * Validate registration data
+     */
+    private function validateRegistrationData($data) {
+        if (empty($data['username']) || strlen($data['username']) < 3) {
+            return false;
+        }
+
+        if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+
+        if (empty($data['password']) || strlen($data['password']) < 6) {
+            return false;
+        }
+
+        if (empty($data['full_name']) || strlen($data['full_name']) < 2) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if user exists
+     */
+    private function userExists($email, $username) {
+        $sql = "SELECT uid FROM user WHERE uemail = ? OR uname = ?";
+        try {
+            $user = $this->db->fetch($sql, [$email, $username]);
+            return !empty($user);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Update last login time
+     */
+    private function updateLastLogin($userId) {
+        // user table does not have updated_at or last_login column in the export
+        // skipping for now to avoid errors, or could use join_date if needed
+    }
+
+    /**
+     * Logout user
+     */
+    public function logout() {
+        $userId = $_SESSION['user_id'] ?? null;
+        $username = $_SESSION['username'] ?? 'unknown';
+
+        // Clear session
+        session_unset();
+        session_destroy();
+
+        if ($this->logger && $userId) {
+            $this->logger->log("User logged out: $username (ID: $userId)", 'info', 'auth');
+        }
+
+        return ['success' => true, 'message' => 'Logged out successfully'];
+    }
+
+    /**
+     * Get current user
+     */
+    public function getCurrentUser() {
+        if (!isset($_SESSION['user_id'])) {
+            return null;
+        }
+
+        $sql = "SELECT uid, uname, uemail, uphone, utype, uimage, job_role
+                FROM user WHERE uid = ?";
+
+        try {
+            return $this->db->fetch($sql, [$_SESSION['user_id']]);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Update user profile
+     */
+    public function updateProfile($userId, $data) {
+        $sql = "UPDATE user SET uname = ?, uphone = ? WHERE uid = ?";
+        try {
+            $this->db->execute($sql, [$data['full_name'], $data['phone'], $userId]);
+
+            // Update session data
+            $_SESSION['full_name'] = $data['full_name'];
+
+            if ($this->logger) {
+                $this->logger->log("User profile updated: ID $userId", 'info', 'auth');
+            }
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Change password
+     */
+    public function changePassword($userId, $currentPassword, $newPassword) {
+        // Get current password hash
+        $sql = "SELECT upass FROM user WHERE uid = ?";
+        try {
+            $user = $this->db->fetch($sql, [$userId]);
+
+            if (!$user) {
+                return ['success' => false, 'message' => 'User not found'];
+            }
+
+            // Verify current password
+            if (!password_verify($currentPassword, $user['upass'])) {
+                return ['success' => false, 'message' => 'Current password is incorrect'];
+            }
+
+            // Hash new password
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            // Update password
+            $sql = "UPDATE user SET upass = ? WHERE uid = ?";
+            $this->db->execute($sql, [$hashedPassword, $userId]);
+
+            if ($this->logger) {
+                $this->logger->log("Password changed for user ID: $userId", 'info', 'auth');
+            }
+
+            return ['success' => true, 'message' => 'Password changed successfully'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Failed to change password: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get user by ID
+     */
+    public function getUserById($userId) {
+        $sql = "SELECT uid, uname, uemail, uphone, utype, join_date
+                FROM user WHERE uid = ?";
+
+        try {
+            return $this->db->fetch($sql, [$userId]);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get user by email
+     */
+    public function getUserByEmail($email) {
+        $sql = "SELECT * FROM user WHERE uemail = ?";
+
+        try {
+            return $this->db->fetch($sql, [$email]);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get users with pagination
+     */
+    public function getUsers($filters = [], $limit = 20, $offset = 0) {
+        $sql = "SELECT uid, uname, uemail, uphone, utype, join_date
+                FROM user WHERE 1=1";
+
+        $params = [];
+
+        if (!empty($filters['role'])) {
+            $sql .= " AND utype = ?";
+            $params[] = $filters['role'];
+        }
+
+        if (!empty($filters['search'])) {
+            $search = "%" . $filters['search'] . "%";
+            $sql .= " AND (uname LIKE ? OR uemail LIKE ?)";
+            $params[] = $search;
+            $params[] = $search;
+        }
+
+        $sql .= " ORDER BY join_date DESC";
+
+        if ($limit > 0) {
+            $sql .= " LIMIT ?";
+            $params[] = (int)$limit;
+        }
+
+        if ($offset > 0) {
+            $sql .= " OFFSET ?";
+            $params[] = (int)$offset;
+        }
+
+        try {
+            return $this->db->fetchAll($sql, $params);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+}
+?>

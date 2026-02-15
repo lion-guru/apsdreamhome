@@ -50,13 +50,11 @@ class HomeControllerSimple extends BaseController {
      */
     private function getFeaturedProperties() {
         try {
-            // Use global PDO connection instead of model dependency
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $pdo->prepare("
+            $stmt = $this->db->prepare("
                 SELECT
                     p.id,
                     p.title,
@@ -86,7 +84,7 @@ class HomeControllerSimple extends BaseController {
                 LIMIT 12
             ");
             $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Featured properties query error: ' . $e->getMessage());
             return [];
@@ -98,12 +96,11 @@ class HomeControllerSimple extends BaseController {
      */
     private function getLocations() {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $location_stmt = $pdo->prepare("
+            $location_stmt = $this->db->prepare("
                 SELECT
                     city,
                     state,
@@ -119,7 +116,7 @@ class HomeControllerSimple extends BaseController {
             ");
 
             $location_stmt->execute();
-            $raw_locations = $location_stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $raw_locations = $location_stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Group locations by state for better organization
             $locations = [];
@@ -146,12 +143,11 @@ class HomeControllerSimple extends BaseController {
      */
     private function getCompanyStats() {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return $this->getDefaultStats();
             }
 
-            $company_stmt = $pdo->prepare("
+            $company_stmt = $this->db->prepare("
                 SELECT
                     (SELECT COUNT(*) FROM properties WHERE status IN ('available', 'sold')) as total_properties,
                     (SELECT COUNT(*) FROM properties WHERE status = 'sold') as sold_properties,
@@ -161,7 +157,7 @@ class HomeControllerSimple extends BaseController {
             ");
 
             $company_stmt->execute();
-            $company_data = $company_stmt->fetch(\PDO::FETCH_ASSOC);
+            $company_data = $company_stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($company_data) {
                 return [

@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Controllers\User;
+namespace App\Http\Controllers\User;
 
-use App\Core\Controller;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Property;
 use App\Models\Project;
 use App\Models\Enquiry;
 
-class DashboardController extends Controller {
+class DashboardController extends Controller
+{
     private $userModel;
     private $propertyModel;
     private $projectModel;
     private $enquiryModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->userModel = new User();
         $this->propertyModel = new Property();
@@ -22,18 +24,19 @@ class DashboardController extends Controller {
         $this->enquiryModel = new Enquiry();
     }
 
-    public function index() {
+    public function index()
+    {
         $userId = $_SESSION['user_id'];
-        
+
         // Get user data
         $user = $this->userModel->getUserById($userId);
-        
+
         // Get user's saved properties
         $savedProperties = $this->propertyModel->getUserSavedProperties($userId);
-        
+
         // Get user's enquiries
         $enquiries = $this->enquiryModel->getUserEnquiries($userId);
-        
+
         // Get recent properties for recommendations
         $recentProperties = $this->propertyModel->getRecentProperties(4);
 
@@ -48,48 +51,44 @@ class DashboardController extends Controller {
         $this->view('user/dashboard', $data);
     }
 
-    public function profile() {
+    public function profile()
+    {
         $userId = $_SESSION['user_id'];
         $user = $this->userModel->getUserById($userId);
 
         $data = [
             'title' => 'My Profile - APS Dream Home',
             'user' => $user,
-            'error' => $_SESSION['profile_error'] ?? null,
-            'success' => $_SESSION['profile_success'] ?? null
+            'error' => $this->getFlash('error'),
+            'success' => $this->getFlash('success')
         ];
-        
-        // Clear messages after displaying
-        unset($_SESSION['profile_error']);
-        unset($_SESSION['profile_success']);
 
         $this->view('user/profile', $data);
     }
 
-    public function settings() {
+    public function settings()
+    {
         $userId = $_SESSION['user_id'];
         $user = $this->userModel->getUserById($userId);
 
         $data = [
             'title' => 'Settings - APS Dream Home',
             'user' => $user,
-            'success' => $_SESSION['settings_success'] ?? null,
-            'error' => $_SESSION['settings_error'] ?? null
+            'success' => $this->getFlash('success'),
+            'error' => $this->getFlash('error')
         ];
-
-        unset($_SESSION['settings_success']);
-        unset($_SESSION['settings_error']);
 
         $this->view('user/settings', $data);
     }
 
-    public function notifications() {
+    public function notifications()
+    {
         $userId = $_SESSION['user_id'];
-        
+
         // Fetch notifications from model (assuming a Notification model exists or using User model)
         // For now, let's just use dummy data if the model isn't ready
-        $notifications = []; 
-        
+        $notifications = [];
+
         $data = [
             'title' => 'Notifications - APS Dream Home',
             'notifications' => $notifications
@@ -98,15 +97,17 @@ class DashboardController extends Controller {
         $this->view('user/notifications', $data);
     }
 
-    public function updateProfile() {
+    public function updateProfile()
+    {
         // Validate CSRF token
         if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            $_SESSION['profile_error'] = 'Invalid request. Please try again.';
+            $this->setFlash('error', 'Invalid request. Please try again.');
             $this->redirect('/dashboard/profile');
+            return;
         }
 
         $userId = $_SESSION['user_id'];
-        
+
         // Get and validate input
         $name = trim($_POST['name'] ?? '');
         $phone = trim($_POST['phone'] ?? '');
@@ -116,8 +117,9 @@ class DashboardController extends Controller {
         $zipcode = trim($_POST['zipcode'] ?? '');
 
         if (!$name || strlen($name) < 2) {
-            $_SESSION['profile_error'] = 'Please enter a valid name (at least 2 characters).';
+            $this->setFlash('error', 'Please enter a valid name (at least 2 characters).');
             $this->redirect('/dashboard/profile');
+            return;
         }
 
         $updateData = [
@@ -132,26 +134,28 @@ class DashboardController extends Controller {
 
         try {
             $result = $this->userModel->updateUser($userId, $updateData);
-            
+
             if ($result) {
                 // Update session name
                 $_SESSION['user_name'] = $name;
-                $_SESSION['profile_success'] = 'Profile updated successfully!';
+                $this->setFlash('success', 'Profile updated successfully!');
             } else {
-                $_SESSION['profile_error'] = 'Failed to update profile. Please try again.';
+                $this->setFlash('error', 'Failed to update profile. Please try again.');
             }
         } catch (Exception $e) {
-            $_SESSION['profile_error'] = 'An error occurred while updating your profile.';
+            $this->setFlash('error', 'An error occurred while updating your profile.');
         }
 
         $this->redirect('/dashboard/profile');
     }
 
-    public function changePassword() {
+    public function changePassword()
+    {
         // Validate CSRF token
         if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            $_SESSION['profile_error'] = 'Invalid request. Please try again.';
+            $this->setFlash('error', 'Invalid request. Please try again.');
             $this->redirect('/dashboard/profile');
+            return;
         }
 
         $userId = $_SESSION['user_id'];
@@ -163,41 +167,45 @@ class DashboardController extends Controller {
         $user = $this->userModel->getUserById($userId);
 
         if (!password_verify($currentPassword, $user['password'])) {
-            $_SESSION['profile_error'] = 'Current password is incorrect.';
+            $this->setFlash('error', 'Current password is incorrect.');
             $this->redirect('/dashboard/profile');
+            return;
         }
 
         if (!$newPassword || strlen($newPassword) < 6) {
-            $_SESSION['profile_error'] = 'New password must be at least 6 characters long.';
+            $this->setFlash('error', 'New password must be at least 6 characters long.');
             $this->redirect('/dashboard/profile');
+            return;
         }
 
         if ($newPassword !== $confirmPassword) {
-            $_SESSION['profile_error'] = 'New passwords do not match.';
+            $this->setFlash('error', 'New passwords do not match.');
             $this->redirect('/dashboard/profile');
+            return;
         }
 
         // Update password
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        
+
         try {
             $result = $this->userModel->updatePassword($userId, $hashedPassword);
-            
+
             if ($result) {
-                $_SESSION['profile_success'] = 'Password changed successfully!';
+                $this->setFlash('success', 'Password changed successfully!');
             } else {
-                $_SESSION['profile_error'] = 'Failed to change password. Please try again.';
+                $this->setFlash('error', 'Failed to change password. Please try again.');
             }
         } catch (Exception $e) {
-            $_SESSION['profile_error'] = 'An error occurred while changing your password.';
+            $this->setFlash('error', 'An error occurred while changing your password.');
         }
 
         $this->redirect('/dashboard/profile');
     }
 
-    public function savedProperties() {
+    public function savedProperties()
+    {
         $userId = $_SESSION['user_id'];
-        
+
         // Get user's saved properties with details
         $savedProperties = $this->propertyModel->getUserSavedProperties($userId);
 
@@ -209,9 +217,10 @@ class DashboardController extends Controller {
         $this->view('user/saved-properties', $data);
     }
 
-    public function saveProperty() {
+    public function saveProperty()
+    {
         // Validate CSRF token
-        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
             echo json_encode(['success' => false, 'message' => 'Invalid request.']);
             return;
         }
@@ -226,7 +235,7 @@ class DashboardController extends Controller {
 
         try {
             $result = $this->propertyModel->savePropertyForUser($userId, $propertyId);
-            
+
             if ($result) {
                 echo json_encode(['success' => true, 'message' => 'Property saved successfully!']);
             } else {
@@ -237,9 +246,10 @@ class DashboardController extends Controller {
         }
     }
 
-    public function unsaveProperty() {
+    public function unsaveProperty()
+    {
         // Validate CSRF token
-        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
             echo json_encode(['success' => false, 'message' => 'Invalid request.']);
             return;
         }
@@ -254,7 +264,7 @@ class DashboardController extends Controller {
 
         try {
             $result = $this->propertyModel->unsavePropertyForUser($userId, $propertyId);
-            
+
             if ($result) {
                 echo json_encode(['success' => true, 'message' => 'Property removed from saved list!']);
             } else {
@@ -265,9 +275,10 @@ class DashboardController extends Controller {
         }
     }
 
-    public function enquiries() {
+    public function enquiries()
+    {
         $userId = $_SESSION['user_id'];
-        
+
         // Get user's enquiries
         $enquiries = $this->enquiryModel->getUserEnquiries($userId);
 
@@ -279,15 +290,16 @@ class DashboardController extends Controller {
         $this->view('user/enquiries', $data);
     }
 
-    public function submitEnquiry() {
+    public function submitEnquiry()
+    {
         // Validate CSRF token
-        if (!$this->validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
             echo json_encode(['success' => false, 'message' => 'Invalid request.']);
             return;
         }
 
         $userId = $_SESSION['user_id'];
-        
+
         // Get and validate input
         $propertyId = intval($_POST['property_id'] ?? 0);
         $projectId = intval($_POST['project_id'] ?? 0);
@@ -316,7 +328,7 @@ class DashboardController extends Controller {
 
         try {
             $enquiryId = $this->enquiryModel->createEnquiry($enquiryData);
-            
+
             if ($enquiryId) {
                 echo json_encode(['success' => true, 'message' => 'Enquiry submitted successfully! We will get back to you soon.']);
             } else {
@@ -325,9 +337,5 @@ class DashboardController extends Controller {
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'An error occurred while submitting your enquiry.']);
         }
-    }
-
-    private function validateCsrfToken($token) {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
     }
 }

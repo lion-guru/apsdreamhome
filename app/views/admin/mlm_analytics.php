@@ -1,11 +1,3 @@
-<?php
-/**
- * MLM Analytics Dashboard (Phase 2)
- */
-
-require_once __DIR__ . '/../../includes/admin_header.php';
-?>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" integrity="sha512-Dxr7n0ANKPO/tUMGAfJOyrUo9qeycGQ21MCH2RKDWEUtNdz/BPZt6r9Ga6IpiObOqYkbKx2+Y8Oob+ST3VkOSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <div class="container-fluid py-4">
@@ -15,7 +7,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
             <p class="text-muted mb-0">Real-time visibility into commission performance, payout stages, and referrer impact.</p>
         </div>
         <div>
-            <a href="<?php echo BASE_URL; ?>admin/mlm/analytics/export?format=csv" class="btn btn-outline-primary" id="exportCsvBtn">
+            <a href="<?php echo BASE_URL; ?>admin/mlm-analytics/export?format=csv" class="btn btn-outline-primary" id="exportCsvBtn">
                 <i class="fas fa-file-export me-2"></i> Export CSV
             </a>
         </div>
@@ -211,128 +203,142 @@ require_once __DIR__ . '/../../includes/admin_header.php';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js" integrity="sha512-OMoNlsLwDyZaG0/1q/sEem2sr7WzMwP2KVd8UQ0BXpDE2NZkJqcMl3DB3diEFyPZ8s9tfwGBrnrZ0H/Tyuod3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha256-Qomr90oCbGyF/F7fs/3Gzdh0dX8GZFODdgNpTi27Czk=" crossorigin="anonymous"></script>
 <script>
-(function() {
-    const form = document.getElementById('filtersForm');
-    const resetBtn = document.getElementById('resetFilters');
-    const dateFrom = document.getElementById('date_from');
-    const dateTo = document.getElementById('date_to');
-    const timelineGroup = document.getElementById('timelineGroup');
-    const ledgerLimit = document.getElementById('ledgerLimit');
-    const exportBtn = document.getElementById('exportCsvBtn');
+    (function() {
+        const form = document.getElementById('filtersForm');
+        const resetBtn = document.getElementById('resetFilters');
+        const dateFrom = document.getElementById('date_from');
+        const dateTo = document.getElementById('date_to');
+        const timelineGroup = document.getElementById('timelineGroup');
+        const ledgerLimit = document.getElementById('ledgerLimit');
+        const exportBtn = document.getElementById('exportCsvBtn');
 
-    const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-    const levelCtx = document.getElementById('levelChart').getContext('2d');
-    let timelineChart, levelChart;
+        const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+        const levelCtx = document.getElementById('levelChart').getContext('2d');
+        let timelineChart, levelChart;
 
-    flatpickr([dateFrom, dateTo], { dateFormat: 'Y-m-d' });
+        flatpickr([dateFrom, dateTo], {
+            dateFormat: 'Y-m-d'
+        });
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        fetchAll();
-    });
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetchAll();
+        });
 
-    resetBtn.addEventListener('click', function() {
-        document.getElementById('status').value = 'pending,approved,paid';
-        document.getElementById('commission_type').value = '';
-        dateFrom.value = '<?php echo date('Y-m-01'); ?>';
-        dateTo.value = '<?php echo date('Y-m-d'); ?>';
-        fetchAll();
-    });
+        resetBtn.addEventListener('click', function() {
+            document.getElementById('status').value = 'pending,approved,paid';
+            document.getElementById('commission_type').value = '';
+            dateFrom.value = '<?php echo date('Y-m-01'); ?>';
+            dateTo.value = '<?php echo date('Y-m-d'); ?>';
+            fetchAll();
+        });
 
-    timelineGroup.addEventListener('change', fetchAll);
-    ledgerLimit.addEventListener('change', loadLedger);
+        timelineGroup.addEventListener('change', fetchAll);
+        ledgerLimit.addEventListener('change', loadLedger);
 
-    exportBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const query = new URLSearchParams(new FormData(form));
-        window.location = '<?php echo BASE_URL; ?>admin/mlm/analytics/export?format=csv&' + query.toString();
-    });
+        exportBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const query = new URLSearchParams(new FormData(form));
+            window.location = '<?php echo BASE_URL; ?>admin/mlm-analytics/export?format=csv&' + query.toString();
+        });
 
-    function fetchAll() {
-        loadSummary();
-        loadTables();
-        loadCharts();
-        loadLedger();
-    }
+        function fetchAll() {
+            loadSummary();
+            loadTables();
+            loadCharts();
+            loadLedger();
+        }
 
-    function filtersQuery(extra = {}) {
-        const params = new URLSearchParams(new FormData(form));
-        params.set('group_by', timelineGroup.value);
-        Object.entries(extra).forEach(([key, value]) => params.set(key, value));
-        return params.toString();
-    }
+        function filtersQuery(extra = {}) {
+            const params = new URLSearchParams(new FormData(form));
+            params.set('group_by', timelineGroup.value);
+            Object.entries(extra).forEach(([key, value]) => params.set(key, value));
+            return params.toString();
+        }
 
-    function loadSummary() {
-        fetch('<?php echo BASE_URL; ?>admin/mlm/analytics/data?' + filtersQuery())
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) throw new Error(data.error || 'Failed to load summary');
+        function loadSummary() {
+            fetch('<?php echo BASE_URL; ?>admin/mlm-analytics/data?' + filtersQuery())
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.error || 'Failed to load summary');
 
-                const totals = { pending: 0, approved: 0, paid: 0 };
-                data.summary.forEach(row => {
-                    totals[row.status] = parseFloat(row.total_amount);
-                });
-                const total = Object.values(totals).reduce((a, b) => a + b, 0);
+                    const totals = {
+                        pending: 0,
+                        approved: 0,
+                        paid: 0
+                    };
+                    data.summary.forEach(row => {
+                        totals[row.status] = parseFloat(row.total_amount);
+                    });
+                    const total = Object.values(totals).reduce((a, b) => a + b, 0);
 
-                document.getElementById('totalCommission').innerText = formatCurrency(total);
-                document.getElementById('pendingCommission').innerText = formatCurrency(totals.pending || 0);
-                document.getElementById('approvedCommission').innerText = formatCurrency(totals.approved || 0);
-                document.getElementById('paidCommission').innerText = formatCurrency(totals.paid || 0);
-            })
-            .catch(showError);
-    }
+                    document.getElementById('totalCommission').innerText = formatCurrency(total);
+                    document.getElementById('pendingCommission').innerText = formatCurrency(totals.pending || 0);
+                    document.getElementById('approvedCommission').innerText = formatCurrency(totals.approved || 0);
+                    document.getElementById('paidCommission').innerText = formatCurrency(totals.paid || 0);
+                })
+                .catch(showError);
+        }
 
-    function loadCharts() {
-        fetch('<?php echo BASE_URL; ?>admin/mlm/analytics/data?' + filtersQuery())
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) throw new Error(data.error || 'Failed to load charts');
+        function loadCharts() {
+            fetch('<?php echo BASE_URL; ?>admin/mlm-analytics/data?' + filtersQuery())
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.error || 'Failed to load charts');
 
-                const labels = data.timeline.map(item => item.bucket);
-                const amounts = data.timeline.map(item => item.total_amount);
+                    const labels = data.timeline.map(item => item.bucket);
+                    const amounts = data.timeline.map(item => item.total_amount);
 
-                if (timelineChart) timelineChart.destroy();
-                timelineChart = new Chart(timelineCtx, {
-                    type: 'line',
-                    data: {
-                        labels,
-                        datasets: [{
-                            label: 'Commission Amount',
-                            data: amounts,
-                            borderColor: '#0d6efd',
-                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                            tension: 0.3,
-                            fill: true,
-                        }]
-                    },
-                    options: { scales: { y: { beginAtZero: true } } }
-                });
+                    if (timelineChart) timelineChart.destroy();
+                    timelineChart = new Chart(timelineCtx, {
+                        type: 'line',
+                        data: {
+                            labels,
+                            datasets: [{
+                                label: 'Commission Amount',
+                                data: amounts,
+                                borderColor: '#0d6efd',
+                                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                                tension: 0.3,
+                                fill: true,
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
 
-                const levelLabels = data.level_breakdown.map(item => 'Level ' + item.level);
-                const levelAmounts = data.level_breakdown.map(item => item.total_amount);
+                    const levelLabels = data.level_breakdown.map(item => 'Level ' + item.level);
+                    const levelAmounts = data.level_breakdown.map(item => item.total_amount);
 
-                if (levelChart) levelChart.destroy();
-                levelChart = new Chart(levelCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: levelLabels,
-                        datasets: [{
-                            data: levelAmounts,
-                            backgroundColor: ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#fd7e14', '#20c997']
-                        }]
-                    }
-                });
-            })
-            .catch(showError);
-    }
+                    if (levelChart) levelChart.destroy();
+                    levelChart = new Chart(levelCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: levelLabels,
+                            datasets: [{
+                                data: levelAmounts,
+                                backgroundColor: ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#fd7e14', '#20c997']
+                            }]
+                        }
+                    });
+                })
+                .catch(showError);
+        }
 
-    function loadTables() {
-        fetch('<?php echo BASE_URL; ?>admin/mlm/analytics/data?' + filtersQuery({ limit: 8 }))
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) throw new Error(data.error || 'Failed to load tables');
+        function loadTables() {
+            fetch('<?php echo BASE_URL; ?>admin/mlm-analytics/data?' + filtersQuery({
+                    limit: 8
+                }))
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.error || 'Failed to load tables');
 
-                populateTable('beneficiariesTable', data.top_beneficiaries, row => `
+                    populateTable('beneficiariesTable', data.top_beneficiaries, row => `
                     <td>
                         <div class="fw-semibold">${escapeHtml(row.name)}</div>
                         <div class="text-muted small">${escapeHtml(row.email)}</div>
@@ -342,7 +348,7 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                     <td class="text-end">${formatCurrency(row.total_pending)}</td>
                 `);
 
-                populateTable('referrersTable', data.top_referrers, row => `
+                    populateTable('referrersTable', data.top_referrers, row => `
                     <td>
                         <div class="fw-semibold">${escapeHtml(row.name)}</div>
                         <div class="text-muted small">${escapeHtml(row.email)}</div>
@@ -350,17 +356,19 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                     <td class="text-end">${row.direct_referrals ?? 0}</td>
                     <td class="text-end">${formatCurrency(row.total_amount)}</td>
                 `);
-            })
-            .catch(showError);
-    }
+                })
+                .catch(showError);
+        }
 
-    function loadLedger() {
-        fetch('<?php echo BASE_URL; ?>admin/mlm/analytics/ledger?' + filtersQuery({ limit: ledgerLimit.value }))
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) throw new Error(data.error || 'Failed to load ledger');
+        function loadLedger() {
+            fetch('<?php echo BASE_URL; ?>admin/mlm-analytics/ledger?' + filtersQuery({
+                    limit: ledgerLimit.value
+                }))
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) throw new Error(data.error || 'Failed to load ledger');
 
-                populateTable('ledgerTable', data.records, row => `
+                    populateTable('ledgerTable', data.records, row => `
                     <td>${row.id}</td>
                     <td>
                         <div class="fw-semibold">${escapeHtml(row.beneficiary_name ?? 'N/A')}</div>
@@ -376,62 +384,71 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                     <td><span class="badge bg-${statusColor(row.status)}">${escapeHtml(row.status)}</span></td>
                     <td>${formatDateTime(row.created_at)}</td>
                 `);
-            })
-            .catch(showError);
-    }
-
-    function populateTable(tableId, data, rowTemplate) {
-        const tbody = document.querySelector(`#${tableId} tbody`);
-        if (!tbody) return;
-        tbody.innerHTML = '';
-
-        if (!data || data.length === 0) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="6" class="text-center text-muted py-4">No data for selected filters</td>';
-            tbody.appendChild(tr);
-            return;
+                })
+                .catch(showError);
         }
 
-        data.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = rowTemplate(item);
-            tbody.appendChild(tr);
-        });
-    }
+        function populateTable(tableId, data, rowTemplate) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-    function formatCurrency(value) {
-        return '₹' + Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+            if (!data || data.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="6" class="text-center text-muted py-4">No data for selected filters</td>';
+                tbody.appendChild(tr);
+                return;
+            }
 
-    function formatDateTime(value) {
-        if (!value) return '—';
-        return new Date(value).toLocaleString();
-    }
-
-    function statusColor(status) {
-        switch (status) {
-            case 'paid': return 'success';
-            case 'approved': return 'primary';
-            case 'pending': return 'warning';
-            case 'cancelled': return 'secondary';
-            default: return 'light';
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = rowTemplate(item);
+                tbody.appendChild(tr);
+            });
         }
-    }
 
-    function escapeHtml(str) {
-        if (str === null || str === undefined) return '';
-        return String(str).replace(/[&<>"]+/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[s]);
-    }
+        function formatCurrency(value) {
+            return '₹' + Number(value || 0).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
 
-    function showError(err) {
-        console.error(err);
-        alert('Failed to load analytics data. Check console for details.');
-    }
+        function formatDateTime(value) {
+            if (!value) return '—';
+            return new Date(value).toLocaleString();
+        }
 
-    fetchAll();
-})();
+        function statusColor(status) {
+            switch (status) {
+                case 'paid':
+                    return 'success';
+                case 'approved':
+                    return 'primary';
+                case 'pending':
+                    return 'warning';
+                case 'cancelled':
+                    return 'secondary';
+                default:
+                    return 'light';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"]+/g, s => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;'
+            })[s]);
+        }
+
+        function showError(err) {
+            console.error(err);
+            alert('Failed to load analytics data. Check console for details.');
+        }
+
+        fetchAll();
+    })();
 </script>
-
-<?php
-require_once __DIR__ . '/../../includes/admin_footer.php';
-?>

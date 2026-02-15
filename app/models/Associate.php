@@ -23,19 +23,15 @@ class Associate extends Model
         $sql = "
             SELECT a.*, u.name as user_name, u.email as user_email, u.phone as user_phone,
                    u.city as user_city, u.state as user_state, u.pincode as user_pincode,
-                   s.name as sponsor_name, s.email as sponsor_email,
-                   COUNT(down.associate_id) as downline_count,
-                   COALESCE(SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END), 0) as total_earnings,
-                   COUNT(CASE WHEN p.status = 'completed' THEN 1 END) as total_sales
+                   su.name as sponsor_name, su.email as sponsor_email,
+                   (SELECT COUNT(*) FROM associates WHERE sponsor_id = a.associate_id) as downline_count,
+                   (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE associate_id = a.associate_id AND status = 'completed') as total_earnings,
+                   (SELECT COUNT(*) FROM payments WHERE associate_id = a.associate_id AND status = 'completed') as total_sales
             FROM {$this->table} a
             LEFT JOIN users u ON a.user_id = u.id
             LEFT JOIN associates s ON a.sponsor_id = s.associate_id
-            LEFT JOIN associates down ON down.sponsor_id = a.associate_id OR down.sponsor_id IN (
-                SELECT sub.associate_id FROM associates sub WHERE sub.sponsor_id = a.associate_id
-            )
-            LEFT JOIN payments p ON a.associate_id = p.associate_id
+            LEFT JOIN users su ON s.user_id = su.id
             WHERE a.associate_id = :id
-            GROUP BY a.associate_id
         ";
 
         $db = Database::getInstance();
@@ -140,12 +136,10 @@ class Associate extends Model
     {
         $sql = "
             SELECT a.*, u.name, u.email, u.phone, u.city, u.state,
-                   COUNT(down.associate_id) as direct_downline,
-                   COALESCE(SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END), 0) as team_earnings
+                   (SELECT COUNT(*) FROM associates WHERE sponsor_id = a.associate_id) as direct_downline,
+                   (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE associate_id = a.associate_id AND status = 'completed') as team_earnings
             FROM {$this->table} a
             JOIN users u ON a.user_id = u.id
-            LEFT JOIN associates down ON down.sponsor_id = a.associate_id
-            LEFT JOIN payments p ON a.associate_id = p.associate_id
             WHERE a.sponsor_id = :associate_id
         ";
 
@@ -156,7 +150,7 @@ class Associate extends Model
             $params['level'] = $level;
         }
 
-        $sql .= " GROUP BY a.associate_id ORDER BY a.level, a.joining_date";
+        $sql .= " ORDER BY a.level, a.joining_date";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -412,15 +406,13 @@ class Associate extends Model
 
         $sql = "
             SELECT a.*, u.name, u.email, u.phone, u.city, u.state,
-                   COUNT(p.id) as total_sales,
-                   SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END) as total_earnings,
-                   MAX(p.created_at) as last_sale_date,
+                   (SELECT COUNT(*) FROM payments WHERE associate_id = a.associate_id) as total_sales,
+                   (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE associate_id = a.associate_id AND status = 'completed') as total_earnings,
+                   (SELECT MAX(created_at) FROM payments WHERE associate_id = a.associate_id) as last_sale_date,
                    DATEDIFF(NOW(), a.joining_date) as days_in_system
             FROM associates a
             JOIN users u ON a.user_id = u.id
-            LEFT JOIN payments p ON a.associate_id = p.associate_id
             WHERE a.sponsor_id = :associate_id {$levelCondition}
-            GROUP BY a.associate_id
             ORDER BY a.joining_date DESC
         ";
 
@@ -573,16 +565,14 @@ class Associate extends Model
 
         $sql = "
             SELECT a.*, u.name, u.email, u.phone, u.city, u.state,
-                   s.name as sponsor_name,
-                   COUNT(down.associate_id) as downline_count,
-                   COALESCE(SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END), 0) as total_earnings
+                   su.name as sponsor_name,
+                   (SELECT COUNT(*) FROM associates WHERE sponsor_id = a.associate_id) as downline_count,
+                   (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE associate_id = a.associate_id AND status = 'completed') as total_earnings
             FROM associates a
             LEFT JOIN users u ON a.user_id = u.id
             LEFT JOIN associates s ON a.sponsor_id = s.associate_id
-            LEFT JOIN associates down ON down.sponsor_id = a.associate_id
-            LEFT JOIN payments p ON a.associate_id = p.associate_id
+            LEFT JOIN users su ON s.user_id = su.id
             {$whereClause}
-            GROUP BY a.associate_id
             ORDER BY a.joining_date DESC
             LIMIT {$offset}, {$limit}
         ";
@@ -607,25 +597,18 @@ class Associate extends Model
 
         $sql = "
             SELECT a.*, u.name, u.email, u.phone, u.city, u.state,
-                   COUNT(CASE WHEN direct.aid IS NOT NULL THEN 1 END) as direct_downline_count,
-                   COUNT(CASE WHEN indirect.aid IS NOT NULL THEN 1 END) as indirect_downline_count,
-                   COALESCE(SUM(CASE WHEN p.status = 'completed' THEN p.amount ELSE 0 END), 0) as total_team_sales,
-                   COALESCE(SUM(CASE WHEN ac.commission_amount IS NOT NULL THEN ac.commission_amount ELSE 0 END), 0) as total_commissions_earned,
-                   COALESCE(AVG(CASE WHEN p.status = 'completed' THEN p.amount END), 0) as avg_sale_value,
-                   MAX(p.created_at) as last_sale_date,
+                   (SELECT COUNT(*) FROM associates WHERE sponsor_id = a.associate_id) as direct_downline_count,
+                   (SELECT COUNT(*) FROM associates WHERE sponsor_id IN (SELECT associate_id FROM associates WHERE sponsor_id = a.associate_id)) as indirect_downline_count,
+                   (SELECT COALESCE(SUM(p_sub.amount), 0) FROM payments p_sub WHERE p_sub.associate_id = a.associate_id AND p_sub.status = 'completed') as total_team_sales,
+                   (SELECT COALESCE(SUM(ac_sub.commission_amount), 0) FROM associate_commissions ac_sub WHERE ac_sub.associate_id = a.associate_id) as total_commissions_earned,
+                   (SELECT COALESCE(AVG(p_sub.amount), 0) FROM payments p_sub WHERE p_sub.associate_id = a.associate_id AND p_sub.status = 'completed') as avg_sale_value,
+                   (SELECT MAX(p_sub.created_at) FROM payments p_sub WHERE p_sub.associate_id = a.associate_id) as last_sale_date,
                    DATEDIFF(NOW(), a.joining_date) as days_in_system,
                    (SELECT COUNT(*) FROM associates sub WHERE sub.sponsor_id = a.associate_id) as personal_recruits,
                    (SELECT COALESCE(SUM(amount), 0) FROM payments sp WHERE sp.associate_id = a.associate_id AND sp.status = 'completed') as personal_sales
             FROM associates a
             JOIN users u ON a.user_id = u.id
-            LEFT JOIN associates direct ON direct.sponsor_id = a.associate_id AND direct.level = a.level + 1
-            LEFT JOIN associates indirect ON indirect.sponsor_id IN (
-                SELECT sub.associate_id FROM associates sub WHERE sub.sponsor_id = a.associate_id
-            ) AND indirect.level > a.level + 1
-            LEFT JOIN payments p ON a.associate_id = p.associate_id
-            LEFT JOIN associate_commissions ac ON a.associate_id = ac.associate_id
             WHERE a.sponsor_id = :associate_id {$levelCondition}
-            GROUP BY a.associate_id
             ORDER BY a.level, a.joining_date DESC
         ";
 
@@ -803,8 +786,10 @@ class Associate extends Model
 
         $currentRank = 'Bronze';
         foreach ($rankRequirements as $rank => $req) {
-            if ($currentVolume['personal_volume'] >= $req['min_personal'] &&
-                $currentVolume['direct_recruits'] >= $req['min_direct']) {
+            if (
+                $currentVolume['personal_volume'] >= $req['min_personal'] &&
+                $currentVolume['direct_recruits'] >= $req['min_direct']
+            ) {
                 $currentRank = $rank;
             } else {
                 break;
@@ -871,13 +856,14 @@ class Associate extends Model
         $sql = "
             SELECT c.*, p.amount as sale_amount, p.created_at as sale_date,
                    prop.title as property_title, u.name as customer_name,
-                   down.name as downline_name, down.level as downline_level,
+                   down_u.name as downline_name, down.level as downline_level,
                    down.associate_code as downline_code
             FROM associate_commissions c
             JOIN payments p ON c.payment_id = p.id
             LEFT JOIN properties prop ON p.property_id = prop.id
             LEFT JOIN users u ON p.user_id = u.id
             LEFT JOIN associates down ON c.downline_associate_id = down.associate_id
+            LEFT JOIN users down_u ON down.user_id = down_u.id
             {$whereClause}
             ORDER BY c.created_at DESC
         ";
@@ -894,17 +880,20 @@ class Associate extends Model
     {
         $funnel = [];
 
+        // Subquery for team member user IDs (direct + level 2)
+        $teamUserIdsSql = "
+            SELECT u.id FROM users u
+            JOIN associates a ON u.id = a.user_id
+            WHERE a.sponsor_id = :associate_id OR a.sponsor_id IN (
+                SELECT associate_id FROM associates WHERE sponsor_id = :associate_id
+            )
+        ";
+
         // Total leads in team
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as total_leads
             FROM leads l
-            WHERE l.assigned_to IN (
-                SELECT u.id FROM users u
-                JOIN associates a ON u.id = a.user_id
-                WHERE a.sponsor_id = :associate_id OR a.sponsor_id IN (
-                    SELECT associate_id FROM associates WHERE sponsor_id = :associate_id
-                )
-            )
+            WHERE l.assigned_to IN ($teamUserIdsSql)
         ");
         $stmt->execute(['associate_id' => $associateId]);
         $funnel['total_leads'] = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total_leads'];
@@ -913,13 +902,7 @@ class Associate extends Model
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as total_bookings
             FROM bookings b
-            WHERE b.agent_id IN (
-                SELECT u.id FROM users u
-                JOIN associates a ON u.id = a.user_id
-                WHERE a.sponsor_id = :associate_id OR a.sponsor_id IN (
-                    SELECT associate_id FROM associates WHERE sponsor_id = :associate_id
-                )
-            )
+            WHERE b.agent_id IN ($teamUserIdsSql)
         ");
         $stmt->execute(['associate_id' => $associateId]);
         $funnel['total_bookings'] = (int)$stmt->fetch(PDO::FETCH_ASSOC)['total_bookings'];

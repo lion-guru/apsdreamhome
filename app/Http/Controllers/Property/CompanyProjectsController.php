@@ -1,27 +1,33 @@
 <?php
+
 /**
  * Company Projects Controller
  * Handles company projects and portfolio display
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Property;
 
-class CompanyProjectsController extends BaseController {
+use App\Http\Controllers\BaseController;
+use Exception;
+use PDO;
 
-    public function __construct() {
+class CompanyProjectsController extends BaseController
+{
+
+    public function __construct()
+    {
         parent::__construct();
     }
 
     /**
      * Display company projects portfolio
      */
-    public function index() {
-        global $pdo;
-
+    public function index()
+    {
         // Get company projects from database
         $company_projects = [];
         try {
-            if (isset($pdo) && $pdo) {
+            if ($this->db) {
                 $projects_query = "
                     SELECT
                         cp.*,
@@ -36,7 +42,7 @@ class CompanyProjectsController extends BaseController {
                     GROUP BY cp.id
                     ORDER BY cp.created_at DESC
                 ";
-                $stmt = $pdo->prepare($projects_query);
+                $stmt = $this->db->prepare($projects_query);
                 $stmt->execute();
                 $company_projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
@@ -71,19 +77,18 @@ class CompanyProjectsController extends BaseController {
     /**
      * Get project details by ID
      */
-    public function projectDetails($projectId) {
-        global $pdo;
-
+    public function projectDetails($projectId)
+    {
         try {
-            if (isset($pdo) && $pdo) {
+            if ($this->db) {
                 $project_query = "
                     SELECT cp.*, p.*
                     FROM company_projects cp
                     LEFT JOIN properties p ON cp.property_id = p.id
-                    WHERE cp.id = ?
+                    WHERE cp.id = :projectId
                 ";
-                $stmt = $pdo->prepare($project_query);
-                $stmt->execute([$projectId]);
+                $stmt = $this->db->prepare($project_query);
+                $stmt->execute(['projectId' => $projectId]);
                 $project = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($project) {
@@ -108,24 +113,27 @@ class CompanyProjectsController extends BaseController {
     /**
      * Filter projects by status/type
      */
-    public function filterProjects() {
-        global $pdo;
-
+    public function filterProjects()
+    {
         $filter = $_GET['filter'] ?? 'all';
         $type = $_GET['type'] ?? 'all';
 
         try {
+            if (!$this->db) {
+                throw new Exception("Database connection failed");
+            }
+
             $where_conditions = [];
             $params = [];
 
             if ($filter !== 'all') {
-                $where_conditions[] = "cp.status = ?";
-                $params[] = $filter;
+                $where_conditions[] = "cp.status = :filter";
+                $params['filter'] = $filter;
             }
 
             if ($type !== 'all') {
-                $where_conditions[] = "cp.project_type = ?";
-                $params[] = $type;
+                $where_conditions[] = "cp.project_type = :type";
+                $params['type'] = $type;
             }
 
             $where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
@@ -138,7 +146,7 @@ class CompanyProjectsController extends BaseController {
                 ORDER BY cp.created_at DESC
             ";
 
-            $stmt = $pdo->prepare($projects_query);
+            $stmt = $this->db->prepare($projects_query);
             $stmt->execute($params);
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -148,7 +156,6 @@ class CompanyProjectsController extends BaseController {
                 'projects' => $projects,
                 'count' => count($projects)
             ]);
-
         } catch (Exception $e) {
             header('Content-Type: application/json');
             echo json_encode([

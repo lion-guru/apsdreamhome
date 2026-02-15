@@ -1,7 +1,3 @@
-<?php
-require_once __DIR__ . '/../../includes/admin_header.php';
-?>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" integrity="sha512-Dxr7n0ANKPO/tUMGAfJOyrUo9qeycGQ21MCH2RKDWEUtNdz/BPZt6r9Ga6IpiObOqYkbKx2+Y8Oob+ST3VkOSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <div class="container-fluid py-4" id="engagementDashboard">
@@ -15,111 +11,111 @@ require_once __DIR__ . '/../../includes/admin_header.php';
         </div>
     </div>
 
-<!-- Goal Create/Edit Modal -->
-<div class="modal fade" id="goalModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="goalModalTitle">Create Goal</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="goalForm">
-                <div class="modal-body">
-                    <input type="hidden" name="goal_id" id="goalIdField">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label" for="goalType">Goal Type</label>
-                            <select class="form-select" name="goal_type" id="goalType" required>
-                                <option value="sales">Sales</option>
-                                <option value="recruits">Recruits</option>
-                                <option value="commission">Commission</option>
-                                <option value="custom">Custom</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" for="goalScope">Scope</label>
-                            <select class="form-select" name="scope" id="goalScope" required>
-                                <option value="individual">Individual</option>
-                                <option value="team">Team</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4" id="goalUserGroup">
-                            <label class="form-label" for="goalUserId">Associate ID</label>
-                            <input type="number" min="1" class="form-control" name="user_id" id="goalUserId" placeholder="User ID">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" for="goalTargetValue">Target Value</label>
-                            <input type="number" step="0.01" min="0" class="form-control" name="target_value" id="goalTargetValue" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" for="goalTargetUnits">Units</label>
-                            <input type="text" class="form-control" name="target_units" id="goalTargetUnits" placeholder="e.g. INR, recruits">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" for="goalStatus">Status</label>
-                            <select class="form-select" name="status" id="goalStatus">
-                                <option value="active">Active</option>
-                                <option value="draft">Draft</option>
-                                <option value="completed">Completed</option>
-                                <option value="expired">Expired</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="goalStartDate">Start Date</label>
-                            <input type="text" class="form-control" name="start_date" id="goalStartDate" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="goalEndDate">End Date</label>
-                            <input type="text" class="form-control" name="end_date" id="goalEndDate" required>
+    <!-- Goal Create/Edit Modal -->
+    <div class="modal fade" id="goalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="goalModalTitle">Create Goal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="goalForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="goal_id" id="goalIdField">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label" for="goalType">Goal Type</label>
+                                <select class="form-select" name="goal_type" id="goalType" required>
+                                    <option value="sales">Sales</option>
+                                    <option value="recruits">Recruits</option>
+                                    <option value="commission">Commission</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="goalScope">Scope</label>
+                                <select class="form-select" name="scope" id="goalScope" required>
+                                    <option value="individual">Individual</option>
+                                    <option value="team">Team</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4" id="goalUserGroup">
+                                <label class="form-label" for="goalUserId">Associate ID</label>
+                                <input type="number" min="1" class="form-control" name="user_id" id="goalUserId" placeholder="User ID">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="goalTargetValue">Target Value</label>
+                                <input type="number" step="0.01" min="0" class="form-control" name="target_value" id="goalTargetValue" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="goalTargetUnits">Units</label>
+                                <input type="text" class="form-control" name="target_units" id="goalTargetUnits" placeholder="e.g. INR, recruits">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="goalStatus">Status</label>
+                                <select class="form-select" name="status" id="goalStatus">
+                                    <option value="active">Active</option>
+                                    <option value="draft">Draft</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="expired">Expired</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="goalStartDate">Start Date</label>
+                                <input type="text" class="form-control" name="start_date" id="goalStartDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="goalEndDate">End Date</label>
+                                <input type="text" class="form-control" name="end_date" id="goalEndDate" required>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="goalSubmitBtn">Save Goal</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="goalSubmitBtn">Save Goal</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Goal Progress Modal -->
-<div class="modal fade" id="goalProgressModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Log Goal Progress</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Goal Progress Modal -->
+    <div class="modal fade" id="goalProgressModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Log Goal Progress</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="goalProgressForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="goal_id" id="progressGoalId">
+                        <div class="mb-3">
+                            <label class="form-label" for="progressDate">Checkpoint Date</label>
+                            <input type="date" class="form-control" id="progressDate" name="checkpoint_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="progressActual">Actual Value</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="progressActual" name="actual_value" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="progressPercentage">Completion % (optional)</label>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control" id="progressPercentage" name="percentage_complete" placeholder="Automatically calculated if empty">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="progressNotes">Notes</label>
+                            <textarea class="form-control" id="progressNotes" name="notes" rows="3" placeholder="What changed?"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success" id="progressSubmitBtn">Save Progress</button>
+                    </div>
+                </form>
             </div>
-            <form id="goalProgressForm">
-                <div class="modal-body">
-                    <input type="hidden" name="goal_id" id="progressGoalId">
-                    <div class="mb-3">
-                        <label class="form-label" for="progressDate">Checkpoint Date</label>
-                        <input type="date" class="form-control" id="progressDate" name="checkpoint_date" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="progressActual">Actual Value</label>
-                        <input type="number" step="0.01" min="0" class="form-control" id="progressActual" name="actual_value" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="progressPercentage">Completion % (optional)</label>
-                        <input type="number" step="0.01" min="0" max="100" class="form-control" id="progressPercentage" name="percentage_complete" placeholder="Automatically calculated if empty">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="progressNotes">Notes</label>
-                        <textarea class="form-control" id="progressNotes" name="notes" rows="3" placeholder="What changed?"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success" id="progressSubmitBtn">Save Progress</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 
     <div class="card mb-4">
         <div class="card-body">
@@ -290,237 +286,272 @@ require_once __DIR__ . '/../../includes/admin_header.php';
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js" integrity="sha512-OMoNlsLwDyZaG0/1q/sEem2sr7WzMwP2KVd8UQ0BXpDE2NZkJqcMl3DB3diEFyPZ8s9tfwGBrnrZ0H/Tyuod3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-(function() {
-    const form = document.getElementById('filtersForm');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const resetBtn = document.getElementById('resetFilters');
-    const metricsFrom = document.getElementById('metricsFrom');
-    const metricsTo = document.getElementById('metricsTo');
-    const rankLabel = document.getElementById('rankLabel');
-    const leaderboardMetric = document.getElementById('leaderboardMetric');
-    const notificationsUser = document.getElementById('notificationsUser');
-    const goalsTable = document.getElementById('goalsTable').querySelector('tbody');
-    const goalTimelineList = document.getElementById('goalTimelineList');
-    const goalTimelineEmpty = document.getElementById('goalTimelineEmpty');
-    const leaderboardTable = document.getElementById('leaderboardTable').querySelector('tbody');
-    const notifList = document.getElementById('notifList');
-    const notifEmpty = document.getElementById('notifEmpty');
-    const notifMeta = document.getElementById('notifMeta');
-    const markAllNotificationsBtn = document.getElementById('markAllNotifications');
-    const leaderboardMeta = document.getElementById('leaderboardMeta');
-    const goalsCount = document.getElementById('goalsCount');
-    const openCreateGoalBtn = document.getElementById('openCreateGoal');
-    const goalModalEl = document.getElementById('goalModal');
-    const goalModal = goalModalEl ? new bootstrap.Modal(goalModalEl) : null;
-    const goalForm = document.getElementById('goalForm');
-    const goalSubmitBtn = document.getElementById('goalSubmitBtn');
-    const goalIdField = document.getElementById('goalIdField');
-    const goalTypeField = document.getElementById('goalType');
-    const goalUserIdField = document.getElementById('goalUserId');
-    const goalTargetValueField = document.getElementById('goalTargetValue');
-    const goalTargetUnitsField = document.getElementById('goalTargetUnits');
-    const goalStatusField = document.getElementById('goalStatus');
-    const goalStartDateField = document.getElementById('goalStartDate');
-    const goalEndDateField = document.getElementById('goalEndDate');
-    const openEditGoalBtn = document.getElementById('openEditGoal');
-    const openProgressModalBtn = document.getElementById('openProgressModal');
-    const goalProgressModalEl = document.getElementById('goalProgressModal');
-    const goalProgressModal = goalProgressModalEl ? new bootstrap.Modal(goalProgressModalEl) : null;
-    const goalProgressForm = document.getElementById('goalProgressForm');
-    const progressGoalIdField = document.getElementById('progressGoalId');
-    const progressSubmitBtn = document.getElementById('progressSubmitBtn');
-    const progressDateField = document.getElementById('progressDate');
-    const progressActualField = document.getElementById('progressActual');
-    const progressPercentField = document.getElementById('progressPercentage');
-    const progressNotesField = document.getElementById('progressNotes');
-    const goalModalTitle = document.getElementById('goalModalTitle');
-    const goalTableSelectedClass = 'table-primary';
-    let selectedGoal = null;
-    let cachedGoals = [];
-    const goalScopedUserGroup = document.getElementById('goalUserGroup');
-    const goalScopeField = document.getElementById('goalScope');
+    (function() {
+        const form = document.getElementById('filtersForm');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const resetBtn = document.getElementById('resetFilters');
+        const metricsFrom = document.getElementById('metricsFrom');
+        const metricsTo = document.getElementById('metricsTo');
+        const rankLabel = document.getElementById('rankLabel');
+        const leaderboardMetric = document.getElementById('leaderboardMetric');
+        const notificationsUser = document.getElementById('notificationsUser');
+        const goalsTable = document.getElementById('goalsTable').querySelector('tbody');
+        const goalTimelineList = document.getElementById('goalTimelineList');
+        const goalTimelineEmpty = document.getElementById('goalTimelineEmpty');
+        const leaderboardTable = document.getElementById('leaderboardTable').querySelector('tbody');
+        const notifList = document.getElementById('notifList');
+        const notifEmpty = document.getElementById('notifEmpty');
+        const notifMeta = document.getElementById('notifMeta');
+        const markAllNotificationsBtn = document.getElementById('markAllNotifications');
+        const leaderboardMeta = document.getElementById('leaderboardMeta');
+        const goalsCount = document.getElementById('goalsCount');
+        const openCreateGoalBtn = document.getElementById('openCreateGoal');
+        const goalModalEl = document.getElementById('goalModal');
+        const goalModal = goalModalEl ? new bootstrap.Modal(goalModalEl) : null;
+        const goalForm = document.getElementById('goalForm');
+        const goalSubmitBtn = document.getElementById('goalSubmitBtn');
+        const goalIdField = document.getElementById('goalIdField');
+        const goalTypeField = document.getElementById('goalType');
+        const goalUserIdField = document.getElementById('goalUserId');
+        const goalTargetValueField = document.getElementById('goalTargetValue');
+        const goalTargetUnitsField = document.getElementById('goalTargetUnits');
+        const goalStatusField = document.getElementById('goalStatus');
+        const goalStartDateField = document.getElementById('goalStartDate');
+        const goalEndDateField = document.getElementById('goalEndDate');
+        const openEditGoalBtn = document.getElementById('openEditGoal');
+        const openProgressModalBtn = document.getElementById('openProgressModal');
+        const goalProgressModalEl = document.getElementById('goalProgressModal');
+        const goalProgressModal = goalProgressModalEl ? new bootstrap.Modal(goalProgressModalEl) : null;
+        const goalProgressForm = document.getElementById('goalProgressForm');
+        const progressGoalIdField = document.getElementById('progressGoalId');
+        const progressSubmitBtn = document.getElementById('progressSubmitBtn');
+        const progressDateField = document.getElementById('progressDate');
+        const progressActualField = document.getElementById('progressActual');
+        const progressPercentField = document.getElementById('progressPercentage');
+        const progressNotesField = document.getElementById('progressNotes');
+        const goalModalTitle = document.getElementById('goalModalTitle');
+        const goalTableSelectedClass = 'table-primary';
+        let selectedGoal = null;
+        let cachedGoals = [];
+        const goalScopedUserGroup = document.getElementById('goalUserGroup');
+        const goalScopeField = document.getElementById('goalScope');
 
-    flatpickr([metricsFrom, metricsTo], { dateFormat: 'Y-m-d' });
-    if (goalForm) {
-        flatpickr('#goalStartDate', { dateFormat: 'Y-m-d' });
-        flatpickr('#goalEndDate', { dateFormat: 'Y-m-d' });
-    }
+        flatpickr([metricsFrom, metricsTo], {
+            dateFormat: 'Y-m-d'
+        });
+        if (goalForm) {
+            flatpickr('#goalStartDate', {
+                dateFormat: 'Y-m-d'
+            });
+            flatpickr('#goalEndDate', {
+                dateFormat: 'Y-m-d'
+            });
+        }
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        fetchAll();
-    });
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetchAll();
+        });
 
-    refreshBtn.addEventListener('click', fetchAll);
+        refreshBtn.addEventListener('click', fetchAll);
 
-    if (markAllNotificationsBtn) {
-        markAllNotificationsBtn.addEventListener('click', function() {
-            const userId = parseInt(notificationsUser.value, 10);
-            if (!userId || markAllNotificationsBtn.disabled) {
-                return;
+        if (markAllNotificationsBtn) {
+            markAllNotificationsBtn.addEventListener('click', function() {
+                const userId = parseInt(notificationsUser.value, 10);
+                if (!userId || markAllNotificationsBtn.disabled) {
+                    return;
+                }
+                markAllNotificationsBtn.disabled = true;
+                markAllNotificationsBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Marking...';
+                markAllNotifications(userId)
+                    .then(() => loadNotifications())
+                    .catch(err => {
+                        console.error(err);
+                        alert(err.message || 'Failed to mark all notifications read');
+                    })
+                    .finally(() => {
+                        markAllNotificationsBtn.innerHTML = '<i class="fas fa-check-double"></i> Mark All Read';
+                    });
+            });
+        }
+
+        resetBtn.addEventListener('click', () => {
+            metricsFrom.value = '<?php echo date('Y-m-01'); ?>';
+            metricsTo.value = '<?php echo date('Y-m-d'); ?>';
+            rankLabel.value = '';
+            leaderboardMetric.value = 'sales_monthly';
+            notificationsUser.value = '';
+            fetchAll();
+        });
+
+        goalsTable.addEventListener('click', function(e) {
+            const button = e.target.closest('[data-goal-id]');
+            if (!button) return;
+            const goalId = parseInt(button.dataset.goalId, 10);
+            const action = button.dataset.action;
+
+            if (action === 'details') {
+                selectGoalRow(button.closest('tr'), goalId);
+                loadGoalDetails(goalId);
+            } else if (action === 'complete' || action === 'cancel') {
+                const status = action === 'complete' ? 'completed' : 'cancelled';
+                if (confirm(`Mark goal #${goalId} as ${status}?`)) {
+                    updateGoalStatus(goalId, status);
+                }
             }
-            markAllNotificationsBtn.disabled = true;
-            markAllNotificationsBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Marking...';
-            markAllNotifications(userId)
-                .then(() => loadNotifications())
+        });
+
+        if (openCreateGoalBtn && goalModal) {
+            openCreateGoalBtn.addEventListener('click', () => {
+                selectedGoal = null;
+                goalForm.reset();
+                goalIdField.value = '';
+                goalModalTitle.innerText = 'Create Goal';
+                goalScopeField.value = 'individual';
+                handleScopeChange();
+                goalStatusField.value = 'active';
+                goalModal.show();
+            });
+        }
+
+        if (openEditGoalBtn && goalModal) {
+            openEditGoalBtn.addEventListener('click', () => {
+                if (!selectedGoal) return;
+                populateGoalForm(selectedGoal);
+                goalModalTitle.innerText = `Edit Goal #${selectedGoal.id}`;
+                goalModal.show();
+            });
+        }
+
+        if (openProgressModalBtn && goalProgressModal) {
+            openProgressModalBtn.addEventListener('click', () => {
+                if (!selectedGoal) return;
+                goalProgressForm.reset();
+                progressGoalIdField.value = selectedGoal.id;
+                progressDateField.value = new Date().toISOString().slice(0, 10);
+                goalProgressModal.show();
+            });
+        }
+
+        if (goalModal) {
+            goalScopeField.addEventListener('change', handleScopeChange);
+
+            goalForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveGoal();
+            });
+        }
+
+        if (goalProgressModal) {
+            goalProgressForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                recordProgress();
+            });
+        }
+
+        function fetchAll() {
+            loadMetrics();
+            loadLeaderboard();
+            loadGoals();
+            loadNotifications();
+        }
+
+        function handleScopeChange() {
+            if (goalScopeField.value === 'individual') {
+                goalScopedUserGroup.classList.remove('d-none');
+            } else {
+                goalScopedUserGroup.classList.add('d-none');
+            }
+        }
+
+        function loadMetrics() {
+            const params = new URLSearchParams();
+            if (metricsFrom.value) params.set('from', metricsFrom.value);
+            if (metricsTo.value) params.set('to', metricsTo.value);
+            if (rankLabel.value) params.set('rank_label', rankLabel.value);
+            params.set('limit', '200');
+
+            fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/metrics?' + params.toString())
+                .then(r => r.json())
+                .then(({
+                    success,
+                    records
+                }) => {
+                    if (!success) throw new Error('Failed to load metrics');
+                    if (!records || records.length === 0) {
+                        updateMetricCards({
+                            sales: 0,
+                            commission: 0,
+                            recruits: 0,
+                            team: 0
+                        });
+                        return;
+                    }
+
+                    let sales = 0,
+                        commission = 0,
+                        recruits = 0,
+                        teamSum = 0;
+                    records.forEach(row => {
+                        sales += parseFloat(row.sales_amount || 0);
+                        commission += parseFloat(row.commissions_amount || 0);
+                        recruits += parseInt(row.recruits_count || 0, 10);
+                        teamSum += parseInt(row.active_team_count || 0, 10);
+                    });
+                    const team = teamSum / records.length;
+                    updateMetricCards({
+                        sales,
+                        commission,
+                        recruits,
+                        team
+                    });
+                })
                 .catch(err => {
                     console.error(err);
-                    alert(err.message || 'Failed to mark all notifications read');
-                })
-                .finally(() => {
-                    markAllNotificationsBtn.innerHTML = '<i class="fas fa-check-double"></i> Mark All Read';
+                    updateMetricCards({
+                        sales: 0,
+                        commission: 0,
+                        recruits: 0,
+                        team: 0
+                    });
                 });
-        });
-    }
-
-    resetBtn.addEventListener('click', () => {
-        metricsFrom.value = '<?php echo date('Y-m-01'); ?>';
-        metricsTo.value = '<?php echo date('Y-m-d'); ?>';
-        rankLabel.value = '';
-        leaderboardMetric.value = 'sales_monthly';
-        notificationsUser.value = '';
-        fetchAll();
-    });
-
-    goalsTable.addEventListener('click', function(e) {
-        const button = e.target.closest('[data-goal-id]');
-        if (!button) return;
-        const goalId = parseInt(button.dataset.goalId, 10);
-        const action = button.dataset.action;
-
-        if (action === 'details') {
-            selectGoalRow(button.closest('tr'), goalId);
-            loadGoalDetails(goalId);
-        } else if (action === 'complete' || action === 'cancel') {
-            const status = action === 'complete' ? 'completed' : 'cancelled';
-            if (confirm(`Mark goal #${goalId} as ${status}?`)) {
-                updateGoalStatus(goalId, status);
-            }
         }
-    });
 
-    if (openCreateGoalBtn && goalModal) {
-        openCreateGoalBtn.addEventListener('click', () => {
-            selectedGoal = null;
-            goalForm.reset();
-            goalIdField.value = '';
-            goalModalTitle.innerText = 'Create Goal';
-            goalScopeField.value = 'individual';
-            handleScopeChange();
-            goalStatusField.value = 'active';
-            goalModal.show();
-        });
-    }
-
-    if (openEditGoalBtn && goalModal) {
-        openEditGoalBtn.addEventListener('click', () => {
-            if (!selectedGoal) return;
-            populateGoalForm(selectedGoal);
-            goalModalTitle.innerText = `Edit Goal #${selectedGoal.id}`;
-            goalModal.show();
-        });
-    }
-
-    if (openProgressModalBtn && goalProgressModal) {
-        openProgressModalBtn.addEventListener('click', () => {
-            if (!selectedGoal) return;
-            goalProgressForm.reset();
-            progressGoalIdField.value = selectedGoal.id;
-            progressDateField.value = new Date().toISOString().slice(0, 10);
-            goalProgressModal.show();
-        });
-    }
-
-    if (goalModal) {
-        goalScopeField.addEventListener('change', handleScopeChange);
-
-        goalForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveGoal();
-        });
-    }
-
-    if (goalProgressModal) {
-        goalProgressForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            recordProgress();
-        });
-    }
-
-    function fetchAll() {
-        loadMetrics();
-        loadLeaderboard();
-        loadGoals();
-        loadNotifications();
-    }
-
-    function handleScopeChange() {
-        if (goalScopeField.value === 'individual') {
-            goalScopedUserGroup.classList.remove('d-none');
-        } else {
-            goalScopedUserGroup.classList.add('d-none');
+        function updateMetricCards({
+            sales,
+            commission,
+            recruits,
+            team
+        }) {
+            document.getElementById('cardSales').innerText = formatCurrency(sales);
+            document.getElementById('cardCommission').innerText = formatCurrency(commission);
+            document.getElementById('cardRecruits').innerText = recruits.toLocaleString('en-IN');
+            document.getElementById('cardTeam').innerText = team.toFixed(1);
         }
-    }
 
-    function loadMetrics() {
-        const params = new URLSearchParams();
-        if (metricsFrom.value) params.set('from', metricsFrom.value);
-        if (metricsTo.value) params.set('to', metricsTo.value);
-        if (rankLabel.value) params.set('rank_label', rankLabel.value);
-        params.set('limit', '200');
+        function loadLeaderboard() {
+            const params = new URLSearchParams();
+            params.set('metric_type', leaderboardMetric.value);
+            params.set('limit', '20');
 
-        fetch('<?php echo BASE_URL; ?>admin/engagement/metrics?' + params.toString())
-            .then(r => r.json())
-            .then(({ success, records }) => {
-                if (!success) throw new Error('Failed to load metrics');
-                if (!records || records.length === 0) {
-                    updateMetricCards({ sales: 0, commission: 0, recruits: 0, team: 0 });
-                    return;
-                }
-
-                let sales = 0, commission = 0, recruits = 0, teamSum = 0;
-                records.forEach(row => {
-                    sales += parseFloat(row.sales_amount || 0);
-                    commission += parseFloat(row.commissions_amount || 0);
-                    recruits += parseInt(row.recruits_count || 0, 10);
-                    teamSum += parseInt(row.active_team_count || 0, 10);
-                });
-                const team = teamSum / records.length;
-                updateMetricCards({ sales, commission, recruits, team });
-            })
-            .catch(err => {
-                console.error(err);
-                updateMetricCards({ sales: 0, commission: 0, recruits: 0, team: 0 });
-            });
-    }
-
-    function updateMetricCards({ sales, commission, recruits, team }) {
-        document.getElementById('cardSales').innerText = formatCurrency(sales);
-        document.getElementById('cardCommission').innerText = formatCurrency(commission);
-        document.getElementById('cardRecruits').innerText = recruits.toLocaleString('en-IN');
-        document.getElementById('cardTeam').innerText = team.toFixed(1);
-    }
-
-    function loadLeaderboard() {
-        const params = new URLSearchParams();
-        params.set('metric_type', leaderboardMetric.value);
-        params.set('limit', '20');
-
-        fetch('<?php echo BASE_URL; ?>admin/engagement/leaderboard?' + params.toString())
-            .then(r => r.json())
-            .then(({ success, data }) => {
-                if (!success) throw new Error('Failed to load leaderboard');
-                leaderboardTable.innerHTML = '';
-                const records = data.records || [];
-                if (records.length === 0) {
-                    leaderboardMeta.innerText = 'No snapshot available';
-                    leaderboardTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-3">No leaderboard data</td></tr>';
-                    return;
-                }
-                leaderboardMeta.innerText = 'Snapshot: ' + data.snapshot_date;
-                records.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+            fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/leaderboard?' + params.toString())
+                .then(r => r.json())
+                .then(({
+                    success,
+                    data
+                }) => {
+                    if (!success) throw new Error('Failed to load leaderboard');
+                    leaderboardTable.innerHTML = '';
+                    const records = data.records || [];
+                    if (records.length === 0) {
+                        leaderboardMeta.innerText = 'No snapshot available';
+                        leaderboardTable.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-3">No leaderboard data</td></tr>';
+                        return;
+                    }
+                    leaderboardMeta.innerText = 'Snapshot: ' + data.snapshot_date;
+                    records.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
                         <td>${row.rank_position}</td>
                         <td>
                             <div class="fw-semibold">${escapeHtml(row.user_name || 'Associate')}</div>
@@ -528,54 +559,56 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                         </td>
                         <td class="text-end">${Number(row.metric_value || 0).toLocaleString('en-IN')}</td>
                     `;
-                    leaderboardTable.appendChild(tr);
+                        leaderboardTable.appendChild(tr);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    leaderboardMeta.innerText = 'Error loading leaderboard';
+                    leaderboardTable.innerHTML = '<tr><td colspan="3" class="text-center text-danger py-3">Failed to load leaderboard</td></tr>';
                 });
-            })
-            .catch(err => {
-                console.error(err);
-                leaderboardMeta.innerText = 'Error loading leaderboard';
-                leaderboardTable.innerHTML = '<tr><td colspan="3" class="text-center text-danger py-3">Failed to load leaderboard</td></tr>';
-            });
-    }
+        }
 
-    function loadGoals() {
-        const params = new URLSearchParams();
-        params.set('status', 'active');
-        params.set('limit', '100');
+        function loadGoals() {
+            const params = new URLSearchParams();
+            params.set('status', 'active');
+            params.set('limit', '100');
 
-        const previouslySelectedId = selectedGoal ? selectedGoal.id : null;
-        toggleGoalActions(false);
+            const previouslySelectedId = selectedGoal ? selectedGoal.id : null;
+            toggleGoalActions(false);
 
-        fetch('<?php echo BASE_URL; ?>admin/engagement/goals?' + params.toString())
-            .then(r => r.json())
-            .then(({ success, records }) => {
-                if (!success) throw new Error('Failed to load goals');
-                goalsTable.innerHTML = '';
-                cachedGoals = (records || []).map(goal => {
-                    const id = Number(goal.id);
-                    return {
-                        ...goal,
-                        id,
-                        target_value: goal.target_value !== null ? Number(goal.target_value) : 0,
-                        percentage_complete: goal.percentage_complete !== undefined && goal.percentage_complete !== null
-                            ? Number(goal.percentage_complete)
-                            : null,
-                    };
-                });
+            fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/goals?' + params.toString())
+                .then(r => r.json())
+                .then(({
+                    success,
+                    records
+                }) => {
+                    if (!success) throw new Error('Failed to load goals');
+                    goalsTable.innerHTML = '';
+                    cachedGoals = (records || []).map(goal => {
+                        const id = Number(goal.id);
+                        return {
+                            ...goal,
+                            id,
+                            target_value: goal.target_value !== null ? Number(goal.target_value) : 0,
+                            percentage_complete: goal.percentage_complete !== undefined && goal.percentage_complete !== null ?
+                                Number(goal.percentage_complete) : null,
+                        };
+                    });
 
-                if (cachedGoals.length === 0) {
-                    selectedGoal = null;
-                    goalsCount.innerText = '0 goals';
-                    goalsTable.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No active goals</td></tr>';
-                    return;
-                }
+                    if (cachedGoals.length === 0) {
+                        selectedGoal = null;
+                        goalsCount.innerText = '0 goals';
+                        goalsTable.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No active goals</td></tr>';
+                        return;
+                    }
 
-                goalsCount.innerText = cachedGoals.length + ' goals';
-                cachedGoals.forEach(goal => {
-                    const progress = calculateGoalProgress(goal);
-                    const tr = document.createElement('tr');
-                    tr.dataset.goalRow = goal.id;
-                    tr.innerHTML = `
+                    goalsCount.innerText = cachedGoals.length + ' goals';
+                    cachedGoals.forEach(goal => {
+                        const progress = calculateGoalProgress(goal);
+                        const tr = document.createElement('tr');
+                        tr.dataset.goalRow = goal.id;
+                        tr.innerHTML = `
                         <td>
                             <div class="fw-semibold text-capitalize">${escapeHtml(goal.goal_type)}</div>
                             <div class="text-muted small">${goal.start_date} → ${goal.end_date}</div>
@@ -599,223 +632,232 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                             </div>
                         </td>
                     `;
-                    goalsTable.appendChild(tr);
-                });
+                        goalsTable.appendChild(tr);
+                    });
 
-                if (previouslySelectedId) {
-                    const restoredGoal = cachedGoals.find(goal => goal.id === previouslySelectedId);
-                    if (restoredGoal) {
-                        const row = goalsTable.querySelector(`[data-goal-row="${restoredGoal.id}"]`);
-                        selectGoalRow(row, restoredGoal.id);
-                        loadGoalDetails(restoredGoal.id);
-                    } else {
-                        selectedGoal = null;
-                        toggleGoalActions(false);
+                    if (previouslySelectedId) {
+                        const restoredGoal = cachedGoals.find(goal => goal.id === previouslySelectedId);
+                        if (restoredGoal) {
+                            const row = goalsTable.querySelector(`[data-goal-row="${restoredGoal.id}"]`);
+                            selectGoalRow(row, restoredGoal.id);
+                            loadGoalDetails(restoredGoal.id);
+                        } else {
+                            selectedGoal = null;
+                            toggleGoalActions(false);
+                            goalTimelineEmpty.classList.remove('d-none');
+                            goalTimelineList.classList.add('d-none');
+                            goalTimelineEmpty.innerText = 'Select a goal to view progress.';
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    goalsCount.innerText = '0 goals';
+                    goalsTable.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3">Failed to load goals</td></tr>';
+                });
+        }
+
+        function loadGoalDetails(goalId) {
+            const params = new URLSearchParams();
+            params.set('goal_id', goalId);
+
+            fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/goal-details?' + params.toString())
+                .then(r => r.json())
+                .then(({
+                    success,
+                    data
+                }) => {
+                    if (!success) throw new Error('Failed to load goal details');
+
+                    const progress = data.progress || [];
+                    const events = data.events || [];
+
+                    goalTimelineList.innerHTML = '';
+                    if (progress.length === 0 && events.length === 0) {
                         goalTimelineEmpty.classList.remove('d-none');
                         goalTimelineList.classList.add('d-none');
-                        goalTimelineEmpty.innerText = 'Select a goal to view progress.';
+                        goalTimelineEmpty.innerText = 'No progress or events recorded yet.';
+                        return;
                     }
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                goalsCount.innerText = '0 goals';
-                goalsTable.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3">Failed to load goals</td></tr>';
-            });
-    }
 
-    function loadGoalDetails(goalId) {
-        const params = new URLSearchParams();
-        params.set('goal_id', goalId);
+                    goalTimelineEmpty.classList.add('d-none');
+                    goalTimelineList.classList.remove('d-none');
 
-        fetch('<?php echo BASE_URL; ?>admin/engagement/goal-details?' + params.toString())
-            .then(r => r.json())
-            .then(({ success, progress, events }) => {
-                if (!success) throw new Error('Failed to load goal details');
+                    progress.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.innerHTML = `<strong>${item.checkpoint_date}</strong>: ${item.percentage_complete.toFixed(1)}% (${formatCurrency(item.actual_value)})`;
+                        goalTimelineList.appendChild(li);
+                    });
 
-                goalTimelineList.innerHTML = '';
-                if ((!progress || progress.length === 0) && (!events || events.length === 0)) {
+                    events.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.innerHTML = `<span class="badge bg-info me-2 text-uppercase">${escapeHtml(item.event_type)}</span>${escapeHtml(item.event_message)}<br><small class="text-muted">${item.created_at}</small>`;
+                        goalTimelineList.appendChild(li);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
                     goalTimelineEmpty.classList.remove('d-none');
                     goalTimelineList.classList.add('d-none');
-                    goalTimelineEmpty.innerText = 'No progress or events recorded yet.';
-                    return;
-                }
-
-                goalTimelineEmpty.classList.add('d-none');
-                goalTimelineList.classList.remove('d-none');
-
-                progress.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.innerHTML = `<strong>${item.checkpoint_date}</strong>: ${item.percentage_complete.toFixed(1)}% (${formatCurrency(item.actual_value)})`;
-                    goalTimelineList.appendChild(li);
+                    goalTimelineEmpty.innerText = 'Failed to load goal timeline.';
                 });
-
-                events.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.innerHTML = `<span class="badge bg-info me-2 text-uppercase">${escapeHtml(item.event_type)}</span>${escapeHtml(item.event_message)}<br><small class="text-muted">${item.created_at}</small>`;
-                    goalTimelineList.appendChild(li);
-                });
-            })
-            .catch(err => {
-                console.error(err);
-                goalTimelineEmpty.classList.remove('d-none');
-                goalTimelineList.classList.add('d-none');
-                goalTimelineEmpty.innerText = 'Failed to load goal timeline.';
-            });
-    }
-
-    function saveGoal() {
-        goalSubmitBtn.disabled = true;
-        const formData = new FormData(goalForm);
-
-        const endpoint = formData.get('goal_id') ? 'update' : 'create';
-
-        fetch(`<?php echo BASE_URL; ?>admin/engagement/goals/${endpoint}`, {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => r.json())
-        .then(response => {
-            if (!response.success) {
-                throw new Error(response.message || 'Failed to create goal');
-            }
-            goalModal.hide();
-            fetchAll();
-            alert(messageForGoalSave(response, endpoint));
-        })
-        .catch(err => {
-            console.error(err);
-            alert(err.message);
-        })
-        .finally(() => {
-            goalSubmitBtn.disabled = false;
-        });
-    }
-
-    function messageForGoalSave(response, endpoint) {
-        if (endpoint === 'create') {
-            return 'Goal created successfully (ID ' + response.goal_id + ').';
-        }
-        return 'Goal updated successfully.';
-    }
-
-    function recordProgress() {
-        progressSubmitBtn.disabled = true;
-        const formData = new FormData(goalProgressForm);
-
-        fetch('<?php echo BASE_URL; ?>admin/engagement/goals/progress', {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => r.json())
-        .then(response => {
-            if (!response.success) {
-                throw new Error(response.message || 'Failed to record progress');
-            }
-            goalProgressModal.hide();
-            if (selectedGoal) {
-                loadGoalDetails(selectedGoal.id);
-            }
-            fetchAll();
-        })
-        .catch(err => {
-            console.error(err);
-            alert(err.message);
-        })
-        .finally(() => {
-            progressSubmitBtn.disabled = false;
-        });
-    }
-
-    function updateGoalStatus(goalId, status) {
-        const formData = new FormData();
-        formData.append('goal_id', goalId);
-        formData.append('status', status);
-
-        fetch('<?php echo BASE_URL; ?>admin/engagement/goals/status', {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => r.json())
-        .then(response => {
-            if (!response.success) {
-                throw new Error(response.message || 'Failed to update goal');
-            }
-            fetchAll();
-        })
-        .catch(err => {
-            console.error(err);
-            alert(err.message);
-        });
-    }
-
-    notifList.addEventListener('click', function(e) {
-        const button = e.target.closest('[data-action="mark-notification-read"]');
-        if (!button) return;
-        const notificationId = parseInt(button.dataset.notificationId, 10);
-        const userId = parseInt(notificationsUser.value, 10);
-        if (!notificationId || !userId) return;
-
-        button.disabled = true;
-        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-
-        markNotificationRead(notificationId, userId)
-            .then(() => loadNotifications())
-            .catch(err => {
-                console.error(err);
-                alert(err.message || 'Failed to mark notification read');
-            });
-    });
-
-    function loadNotifications() {
-        const userId = parseInt(notificationsUser.value, 10);
-        if (!userId) {
-            notifMeta.innerText = 'Awaiting user ID';
-            notifEmpty.classList.remove('d-none');
-            notifList.classList.add('d-none');
-            if (markAllNotificationsBtn) {
-                markAllNotificationsBtn.disabled = true;
-            }
-            return;
         }
 
-        const params = new URLSearchParams();
-        params.set('user_id', userId);
-        params.set('limit', '20');
+        function saveGoal() {
+            goalSubmitBtn.disabled = true;
+            const formData = new FormData(goalForm);
 
-        fetch('<?php echo BASE_URL; ?>admin/engagement/notifications?' + params.toString())
-            .then(r => r.json())
-            .then(({ success, records }) => {
-                if (!success) throw new Error('Failed to load notifications');
+            const endpoint = formData.get('goal_id') ? 'update' : 'create';
 
-                notifMeta.innerText = `Showing latest ${records.length} events for #${userId}`;
-                notifList.innerHTML = '';
-
-                if (!records || records.length === 0) {
-                    notifEmpty.classList.remove('d-none');
-                    notifList.classList.add('d-none');
-                    notifEmpty.innerText = 'No recent notifications for this associate.';
-                    if (markAllNotificationsBtn) {
-                        markAllNotificationsBtn.disabled = true;
+            fetch(`<?php echo BASE_URL; ?>admin/mlm-engagement/goals/${endpoint}`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(response => {
+                    if (!response.success) {
+                        throw new Error(response.message || 'Failed to create goal');
                     }
-                    return;
-                }
+                    goalModal.hide();
+                    fetchAll();
+                    alert(messageForGoalSave(response, endpoint));
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert(err.message);
+                })
+                .finally(() => {
+                    goalSubmitBtn.disabled = false;
+                });
+        }
 
-                notifEmpty.classList.add('d-none');
-                notifList.classList.remove('d-none');
+        function messageForGoalSave(response, endpoint) {
+            if (endpoint === 'create') {
+                return 'Goal created successfully (ID ' + response.goal_id + ').';
+            }
+            return 'Goal updated successfully.';
+        }
 
-                const unreadCount = records.reduce((count, item) => item.read_at ? count : count + 1, 0);
+        function recordProgress() {
+            progressSubmitBtn.disabled = true;
+            const formData = new FormData(goalProgressForm);
+
+            fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/goals/progress', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(response => {
+                    if (!response.success) {
+                        throw new Error(response.message || 'Failed to record progress');
+                    }
+                    goalProgressModal.hide();
+                    if (selectedGoal) {
+                        loadGoalDetails(selectedGoal.id);
+                    }
+                    fetchAll();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert(err.message);
+                })
+                .finally(() => {
+                    progressSubmitBtn.disabled = false;
+                });
+        }
+
+        function updateGoalStatus(goalId, status) {
+            const formData = new FormData();
+            formData.append('goal_id', goalId);
+            formData.append('status', status);
+
+            fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/goals/status', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(response => {
+                    if (!response.success) {
+                        throw new Error(response.message || 'Failed to update goal');
+                    }
+                    fetchAll();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert(err.message);
+                });
+        }
+
+        notifList.addEventListener('click', function(e) {
+            const button = e.target.closest('[data-action="mark-notification-read"]');
+            if (!button) return;
+            const notificationId = parseInt(button.dataset.notificationId, 10);
+            const userId = parseInt(notificationsUser.value, 10);
+            if (!notificationId || !userId) return;
+
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+            markNotificationRead(notificationId, userId)
+                .then(() => loadNotifications())
+                .catch(err => {
+                    console.error(err);
+                    alert(err.message || 'Failed to mark notification read');
+                });
+        });
+
+        function loadNotifications() {
+            const userId = parseInt(notificationsUser.value, 10);
+            if (!userId) {
+                notifMeta.innerText = 'Awaiting user ID';
+                notifEmpty.classList.remove('d-none');
+                notifList.classList.add('d-none');
                 if (markAllNotificationsBtn) {
-                    markAllNotificationsBtn.disabled = unreadCount === 0;
+                    markAllNotificationsBtn.disabled = true;
                 }
+                return;
+            }
 
-                records.forEach(item => {
-                    const li = document.createElement('li');
-                    const isRead = !!item.read_at;
-                    li.className = 'list-group-item';
-                    li.innerHTML = `
+            const params = new URLSearchParams();
+            params.set('user_id', userId);
+            params.set('limit', '20');
+
+            fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/notifications?' + params.toString())
+                .then(r => r.json())
+                .then(({
+                    success,
+                    records
+                }) => {
+                    if (!success) throw new Error('Failed to load notifications');
+
+                    notifMeta.innerText = `Showing latest ${records.length} events for #${userId}`;
+                    notifList.innerHTML = '';
+
+                    if (!records || records.length === 0) {
+                        notifEmpty.classList.remove('d-none');
+                        notifList.classList.add('d-none');
+                        notifEmpty.innerText = 'No recent notifications for this associate.';
+                        if (markAllNotificationsBtn) {
+                            markAllNotificationsBtn.disabled = true;
+                        }
+                        return;
+                    }
+
+                    notifEmpty.classList.add('d-none');
+                    notifList.classList.remove('d-none');
+
+                    const unreadCount = records.reduce((count, item) => item.read_at ? count : count + 1, 0);
+                    if (markAllNotificationsBtn) {
+                        markAllNotificationsBtn.disabled = unreadCount === 0;
+                    }
+
+                    records.forEach(item => {
+                        const li = document.createElement('li');
+                        const isRead = !!item.read_at;
+                        li.className = 'list-group-item';
+                        li.innerHTML = `
                         <div class="d-flex justify-content-between align-items-start gap-3">
                             <div class="flex-grow-1">
                                 <div class="fw-semibold">${escapeHtml(item.title)}</div>
@@ -835,139 +877,141 @@ require_once __DIR__ . '/../../includes/admin_header.php';
                             </div>
                         </div>
                     `;
-                    notifList.appendChild(li);
+                        notifList.appendChild(li);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    notifMeta.innerText = 'Error loading notifications';
+                    notifEmpty.classList.remove('d-none');
+                    notifList.classList.add('d-none');
+                    notifEmpty.innerText = 'Unable to load notifications for this associate.';
+                    if (markAllNotificationsBtn) {
+                        markAllNotificationsBtn.disabled = true;
+                    }
                 });
-            })
-            .catch(err => {
-                console.error(err);
-                notifMeta.innerText = 'Error loading notifications';
-                notifEmpty.classList.remove('d-none');
-                notifList.classList.add('d-none');
-                notifEmpty.innerText = 'Unable to load notifications for this associate.';
-                if (markAllNotificationsBtn) {
-                    markAllNotificationsBtn.disabled = true;
-                }
+        }
+
+        function markNotificationRead(notificationId, userId) {
+            const formData = new FormData();
+            formData.append('id', notificationId);
+            formData.append('user_id', userId);
+
+            return fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/notifications/mark-read', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(response => {
+                    if (!response.success) {
+                        throw new Error(response.message || 'Failed to mark notification read');
+                    }
+                    return response;
+                });
+        }
+
+        function markAllNotifications(userId) {
+            const formData = new FormData();
+            formData.append('user_id', userId);
+
+            return fetch('<?php echo BASE_URL; ?>admin/mlm-engagement/notifications/mark-all-read', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(response => {
+                    if (!response.success) {
+                        throw new Error(response.message || 'Failed to mark notifications read');
+                    }
+                    return response;
+                });
+        }
+
+        function calculateGoalProgress(goal) {
+            if (goal.status === 'completed') return 100;
+            if (typeof goal.percentage_complete === 'number') {
+                return Math.max(0, Math.min(100, Number(goal.percentage_complete)));
+            }
+            if (!goal.target_value || Number(goal.target_value) === 0) return 0;
+            if (goal.progress_summary && typeof goal.progress_summary.percentage_complete === 'number') {
+                return Math.max(0, Math.min(100, Number(goal.progress_summary.percentage_complete)));
+            }
+            return 0;
+        }
+
+        function formatUnits(value, units) {
+            const formatted = Number(value || 0).toLocaleString('en-IN');
+            if (!units) return formatted;
+            return `${formatted} ${units}`;
+        }
+
+        function populateGoalForm(goal) {
+            goalForm.reset();
+            goalIdField.value = goal.id;
+            goalTypeField.value = goal.goal_type;
+            goalScopeField.value = goal.scope;
+            handleScopeChange();
+            goalUserIdField.value = goal.user_id || '';
+            goalTargetValueField.value = goal.target_value;
+            goalTargetUnitsField.value = goal.target_units || '';
+            goalStatusField.value = goal.status;
+            goalStartDateField.value = goal.start_date;
+            goalEndDateField.value = goal.end_date;
+        }
+
+        function selectGoalRow(row, goalId) {
+            goalsTable.querySelectorAll('tr').forEach(tr => tr.classList.remove(goalTableSelectedClass));
+            if (row) {
+                row.classList.add(goalTableSelectedClass);
+            }
+            selectedGoal = cachedGoals.find(goal => goal.id === goalId) || null;
+            toggleGoalActions(!!selectedGoal);
+        }
+
+        function toggleGoalActions(enabled) {
+            if (!openEditGoalBtn || !openProgressModalBtn) return;
+            openEditGoalBtn.disabled = !enabled;
+            openProgressModalBtn.disabled = !enabled;
+        }
+
+        function formatCurrency(value) {
+            return '₹' + Number(value || 0).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             });
-    }
+        }
 
-    function markNotificationRead(notificationId, userId) {
-        const formData = new FormData();
-        formData.append('notification_id', notificationId);
-        formData.append('user_id', userId);
+        function formatDateTime(value) {
+            if (!value) return '—';
+            return new Date(value).toLocaleString();
+        }
 
-        return fetch('<?php echo BASE_URL; ?>admin/engagement/notifications/mark-read', {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => r.json())
-        .then(response => {
-            if (!response.success) {
-                throw new Error(response.message || 'Failed to mark notification read');
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            } [char]));
+        }
+
+        function statusColor(status) {
+            switch (status) {
+                case 'active':
+                    return 'primary';
+                case 'completed':
+                    return 'success';
+                case 'expired':
+                    return 'secondary';
+                case 'cancelled':
+                    return 'dark';
+                default:
+                    return 'warning';
             }
-            return response;
-        });
-    }
-
-    function markAllNotifications(userId) {
-        const formData = new FormData();
-        formData.append('user_id', userId);
-
-        return fetch('<?php echo BASE_URL; ?>admin/engagement/notifications/mark-all-read', {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => r.json())
-        .then(response => {
-            if (!response.success) {
-                throw new Error(response.message || 'Failed to mark notifications read');
-            }
-            return response;
-        });
-    }
-
-    function calculateGoalProgress(goal) {
-        if (goal.status === 'completed') return 100;
-        if (typeof goal.percentage_complete === 'number') {
-            return Math.max(0, Math.min(100, Number(goal.percentage_complete)));
         }
-        if (!goal.target_value || Number(goal.target_value) === 0) return 0;
-        if (goal.progress_summary && typeof goal.progress_summary.percentage_complete === 'number') {
-            return Math.max(0, Math.min(100, Number(goal.progress_summary.percentage_complete)));
-        }
-        return 0;
-    }
 
-    function formatUnits(value, units) {
-        const formatted = Number(value || 0).toLocaleString('en-IN');
-        if (!units) return formatted;
-        return `${formatted} ${units}`;
-    }
-
-    function populateGoalForm(goal) {
-        goalForm.reset();
-        goalIdField.value = goal.id;
-        goalTypeField.value = goal.goal_type;
-        goalScopeField.value = goal.scope;
-        handleScopeChange();
-        goalUserIdField.value = goal.user_id || '';
-        goalTargetValueField.value = goal.target_value;
-        goalTargetUnitsField.value = goal.target_units || '';
-        goalStatusField.value = goal.status;
-        goalStartDateField.value = goal.start_date;
-        goalEndDateField.value = goal.end_date;
-    }
-
-    function selectGoalRow(row, goalId) {
-        goalsTable.querySelectorAll('tr').forEach(tr => tr.classList.remove(goalTableSelectedClass));
-        if (row) {
-            row.classList.add(goalTableSelectedClass);
-        }
-        selectedGoal = cachedGoals.find(goal => goal.id === goalId) || null;
-        toggleGoalActions(!!selectedGoal);
-    }
-
-    function toggleGoalActions(enabled) {
-        if (!openEditGoalBtn || !openProgressModalBtn) return;
-        openEditGoalBtn.disabled = !enabled;
-        openProgressModalBtn.disabled = !enabled;
-    }
-
-    let cachedGoals = [];
-
-    function formatCurrency(value) {
-        return '₹' + Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    function formatDateTime(value) {
-        if (!value) return '—';
-        return new Date(value).toLocaleString();
-    }
-
-    function escapeHtml(str) {
-        if (str === null || str === undefined) return '';
-        return String(str).replace(/[&<>"']/g, char => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        }[char]));
-    }
-
-    function statusColor(status) {
-        switch (status) {
-            case 'active': return 'primary';
-            case 'completed': return 'success';
-            case 'expired': return 'secondary';
-            case 'cancelled': return 'dark';
-            default: return 'warning';
-        }
-    }
-
-    fetchAll();
-})();
+        fetchAll();
+    })();
 </script>
-
-<?php
-require_once __DIR__ . '/../../includes/admin_footer.php';
-?>

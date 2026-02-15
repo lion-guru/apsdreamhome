@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Property Favorite Controller
  * Handles property favorites functionality
@@ -6,23 +7,26 @@
 
 namespace App\Controllers;
 
-class PropertyFavoriteController extends BaseController {
+class PropertyFavoriteController extends BaseController
+{
     protected $pdo;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         // Initialize data array for view rendering
         $this->data = [];
-        
+
         // Initialize database connection
         require_once '../../../includes/db_connection.php';
-                global $con;
+        global $con;
         $this->pdo = $con;
     }
 
     /**
      * Toggle property favorite status (AJAX endpoint)
      */
-    public function toggle() {
+    public function toggle()
+    {
         // Check if user is logged in
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
@@ -67,7 +71,6 @@ class PropertyFavoriteController extends BaseController {
                 'message' => $message,
                 'is_favorited' => $is_favorited
             ]);
-
         } catch (Exception $e) {
             error_log('Favorite toggle error: ' . $e->getMessage());
             http_response_code(500);
@@ -78,7 +81,8 @@ class PropertyFavoriteController extends BaseController {
     /**
      * Get user's favorite properties
      */
-    public function index() {
+    public function index()
+    {
         // Check if user is logged in
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . 'login');
@@ -102,7 +106,8 @@ class PropertyFavoriteController extends BaseController {
     /**
      * Remove favorite (AJAX endpoint)
      */
-    public function remove() {
+    public function remove()
+    {
         // Check if user is logged in
         if (!isset($_SESSION['user_id'])) {
             http_response_code(401);
@@ -131,16 +136,16 @@ class PropertyFavoriteController extends BaseController {
     /**
      * Check if property is favorited by user
      */
-    private function isFavorited($user_id, $property_id) {
+    private function isFavorited($user_id, $property_id)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 return false;
             }
 
-            $stmt = $this->pdo->prepare("SELECT id FROM property_favorites WHERE user_id = ? AND property_id = ?");
-            $stmt->execute([$user_id, $property_id]);
+            $stmt = $this->db->prepare("SELECT id FROM property_favorites WHERE user_id = :user_id AND property_id = :property_id");
+            $stmt->execute(['user_id' => $user_id, 'property_id' => $property_id]);
             return $stmt->rowCount() > 0;
-
         } catch (Exception $e) {
             error_log('Check favorite error: ' . $e->getMessage());
             return false;
@@ -150,15 +155,15 @@ class PropertyFavoriteController extends BaseController {
     /**
      * Add property to favorites
      */
-    private function addFavorite($user_id, $property_id) {
+    private function addFavorite($user_id, $property_id)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
 
-            $stmt = $this->pdo->prepare("INSERT INTO property_favorites (user_id, property_id) VALUES (?, ?)");
-            $stmt->execute([$user_id, $property_id]);
-
+            $stmt = $this->db->prepare("INSERT INTO property_favorites (user_id, property_id) VALUES (:user_id, :property_id)");
+            $stmt->execute(['user_id' => $user_id, 'property_id' => $property_id]);
         } catch (Exception $e) {
             error_log('Add favorite error: ' . $e->getMessage());
             throw $e;
@@ -168,15 +173,15 @@ class PropertyFavoriteController extends BaseController {
     /**
      * Remove property from favorites
      */
-    private function removeFavorite($user_id, $property_id) {
+    private function removeFavorite($user_id, $property_id)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
 
-            $stmt = $this->pdo->prepare("DELETE FROM property_favorites WHERE user_id = ? AND property_id = ?");
-            $stmt->execute([$user_id, $property_id]);
-
+            $stmt = $this->db->prepare("DELETE FROM property_favorites WHERE user_id = :user_id AND property_id = :property_id");
+            $stmt->execute(['user_id' => $user_id, 'property_id' => $property_id]);
         } catch (Exception $e) {
             error_log('Remove favorite error: ' . $e->getMessage());
             throw $e;
@@ -186,16 +191,16 @@ class PropertyFavoriteController extends BaseController {
     /**
      * Check if property exists
      */
-    private function propertyExists($property_id) {
+    private function propertyExists($property_id)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 return false;
             }
 
-            $stmt = $this->pdo->prepare("SELECT id FROM properties WHERE id = ? AND status = 'available'");
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare("SELECT id FROM properties WHERE id = :id AND status = 'available'");
+            $stmt->execute(['id' => $property_id]);
             return $stmt->rowCount() > 0;
-
         } catch (Exception $e) {
             error_log('Property exists check error: ' . $e->getMessage());
             return false;
@@ -205,7 +210,8 @@ class PropertyFavoriteController extends BaseController {
     /**
      * Get user's favorite properties with details
      */
-    private function getUserFavorites($user_id) {
+    private function getUserFavorites($user_id)
+    {
         try {
             if (!$this->pdo) {
                 return [];
@@ -235,12 +241,9 @@ class PropertyFavoriteController extends BaseController {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$user_id]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Get user favorites error: ' . $e->getMessage());
             return [];
         }
     }
 }
-
-?>

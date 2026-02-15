@@ -1,21 +1,27 @@
 <?php
+
 /**
  * Metaverse Integration Controller
  * Handles VR property showrooms, virtual property development, and metaverse features
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Tech;
 
-class MetaverseController extends BaseController {
+use App\Http\Controllers\BaseController;
+use Exception;
+
+class MetaverseController extends BaseController
+{
 
     /**
      * VR property showroom
      */
-    public function vrShowroom($property_id) {
+    public function vrShowroom($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
-            $this->setFlashMessage('error', 'Property not found');
+            $this->setFlash('error', 'Property not found');
             $this->redirect(BASE_URL . 'properties');
             return;
         }
@@ -32,7 +38,8 @@ class MetaverseController extends BaseController {
     /**
      * Virtual property development
      */
-    public function virtualDevelopment() {
+    public function virtualDevelopment()
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -43,10 +50,10 @@ class MetaverseController extends BaseController {
             $virtual_property_id = $this->createVirtualProperty($development_data);
 
             if ($virtual_property_id) {
-                $this->setFlashMessage('success', 'Virtual property created successfully');
+                $this->setFlash('success', 'Virtual property created successfully');
                 $this->redirect(BASE_URL . 'metaverse/virtual-property/' . $virtual_property_id);
             } else {
-                $this->setFlashMessage('error', 'Failed to create virtual property');
+                $this->setFlash('error', 'Failed to create virtual property');
             }
         }
 
@@ -60,7 +67,8 @@ class MetaverseController extends BaseController {
     /**
      * 3D collaborative spaces
      */
-    public function collaborativeSpace($space_id = null) {
+    public function collaborativeSpace($space_id = null)
+    {
         if (!$space_id) {
             $spaces = $this->getUserCollaborativeSpaces();
             $this->data['spaces'] = $spaces;
@@ -70,7 +78,7 @@ class MetaverseController extends BaseController {
             $space = $this->getCollaborativeSpace($space_id);
 
             if (!$space) {
-                $this->setFlashMessage('error', 'Collaborative space not found');
+                $this->setFlash('error', 'Collaborative space not found');
                 $this->redirect(BASE_URL . 'metaverse/collaborative-spaces');
                 return;
             }
@@ -86,7 +94,8 @@ class MetaverseController extends BaseController {
     /**
      * Virtual property marketplace
      */
-    public function virtualMarketplace() {
+    public function virtualMarketplace()
+    {
         $virtual_properties = $this->getVirtualPropertiesForSale();
         $market_stats = $this->getVirtualMarketStats();
 
@@ -100,7 +109,8 @@ class MetaverseController extends BaseController {
     /**
      * Metaverse events and gatherings
      */
-    public function virtualEvents() {
+    public function virtualEvents()
+    {
         $upcoming_events = $this->getUpcomingVirtualEvents();
         $past_events = $this->getPastVirtualEvents();
 
@@ -114,7 +124,8 @@ class MetaverseController extends BaseController {
     /**
      * NFT property ownership
      */
-    public function nftOwnership($property_id) {
+    public function nftOwnership($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $nft_data = $this->getNFTData($property_id);
 
@@ -128,7 +139,8 @@ class MetaverseController extends BaseController {
     /**
      * Virtual reality property tours
      */
-    public function vrTours() {
+    public function vrTours()
+    {
         $featured_tours = $this->getFeaturedVRTours();
         $tour_categories = $this->getTourCategories();
 
@@ -142,7 +154,8 @@ class MetaverseController extends BaseController {
     /**
      * Metaverse analytics dashboard
      */
-    public function metaverseAnalytics() {
+    public function metaverseAnalytics()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -164,7 +177,8 @@ class MetaverseController extends BaseController {
     /**
      * API - Get VR property data
      */
-    public function apiVRData($property_id) {
+    public function apiVRData($property_id)
+    {
         header('Content-Type: application/json');
 
         $vr_data = $this->getVRData($property_id);
@@ -178,7 +192,8 @@ class MetaverseController extends BaseController {
     /**
      * API - Create virtual property
      */
-    public function apiCreateVirtualProperty() {
+    public function apiCreateVirtualProperty()
+    {
         header('Content-Type: application/json');
 
         if (!$this->isLoggedIn()) {
@@ -203,7 +218,8 @@ class MetaverseController extends BaseController {
     /**
      * API - Join collaborative space
      */
-    public function apiJoinSpace() {
+    public function apiJoinSpace()
+    {
         header('Content-Type: application/json');
 
         if (!$this->isLoggedIn()) {
@@ -229,13 +245,17 @@ class MetaverseController extends BaseController {
     /**
      * Get property details
      */
-    private function getPropertyDetails($property_id) {
+    private function getPropertyDetails($property_id)
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = ?");
-            $stmt->execute([$property_id]);
+            if (!$this->db) {
+                return null;
+            }
+            $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :id");
+            $stmt->execute(['id' => $property_id]);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Property details fetch error: ' . $e->getMessage());
             return null;
         }
     }
@@ -243,13 +263,16 @@ class MetaverseController extends BaseController {
     /**
      * Get VR data for property
      */
-    private function getVRData($property_id) {
+    private function getVRData($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
-            $sql = "SELECT * FROM vr_property_data WHERE property_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $sql = "SELECT * FROM vr_property_data WHERE property_id = :propertyId";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             $vr_data = $stmt->fetch();
 
@@ -259,8 +282,7 @@ class MetaverseController extends BaseController {
             }
 
             return $vr_data;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('VR data fetch error: ' . $e->getMessage());
             return [];
         }
@@ -269,7 +291,8 @@ class MetaverseController extends BaseController {
     /**
      * Generate VR data for property
      */
-    private function generateVRData($property_id) {
+    private function generateVRData($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         return [
@@ -309,29 +332,32 @@ class MetaverseController extends BaseController {
     /**
      * Create virtual property
      */
-    private function createVirtualProperty($property_data) {
+    private function createVirtualProperty($property_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO virtual_properties (
                 name, description, property_type, area_sqft, location,
                 base_price, virtual_environment, created_by, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            ) VALUES (:name, :description, :propertyType, :area, :location, :price, :environment, :createdBy, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $property_data['name'],
-                $property_data['description'],
-                $property_data['property_type'],
-                $property_data['area_sqft'],
-                $property_data['location'],
-                $property_data['base_price'],
-                $property_data['environment'],
-                $_SESSION['user_id']
+                'name' => $property_data['name'],
+                'description' => $property_data['description'],
+                'propertyType' => $property_data['property_type'],
+                'area' => $property_data['area_sqft'],
+                'location' => $property_data['location'],
+                'price' => $property_data['base_price'],
+                'environment' => $property_data['environment'],
+                'createdBy' => $_SESSION['user_id']
             ]);
 
             if ($success) {
-                $virtual_property_id = $pdo->lastInsertId();
+                $virtual_property_id = $this->db->lastInsertId();
 
                 // Generate initial VR data
                 $this->generateInitialVRData($virtual_property_id, $property_data);
@@ -340,8 +366,7 @@ class MetaverseController extends BaseController {
             }
 
             return false;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Virtual property creation error: ' . $e->getMessage());
             return false;
         }
@@ -350,7 +375,8 @@ class MetaverseController extends BaseController {
     /**
      * Generate initial VR data for virtual property
      */
-    private function generateInitialVRData($virtual_property_id, $property_data) {
+    private function generateInitialVRData($virtual_property_id, $property_data)
+    {
         $initial_scenes = [
             'entrance' => [
                 'name' => 'Main Entrance',
@@ -373,25 +399,27 @@ class MetaverseController extends BaseController {
     /**
      * Save VR scene data
      */
-    private function saveVRScene($virtual_property_id, $scene_id, $scene_data) {
+    private function saveVRScene($virtual_property_id, $scene_id, $scene_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO virtual_property_scenes (
                 virtual_property_id, scene_id, scene_name, environment,
                 skybox_url, created_at
-            ) VALUES (?, ?, ?, ?, ?, NOW())";
+            ) VALUES (:virtualPropertyId, :sceneId, :sceneName, :environment, :skyboxUrl, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             return $stmt->execute([
-                $virtual_property_id,
-                $scene_id,
-                $scene_data['name'],
-                $scene_data['environment'],
-                $scene_data['skybox']
+                'virtualPropertyId' => $virtual_property_id,
+                'sceneId' => $scene_id,
+                'sceneName' => $scene_data['name'],
+                'environment' => $scene_data['environment'],
+                'skyboxUrl' => $scene_data['skybox']
             ]);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('VR scene save error: ' . $e->getMessage());
             return false;
         }
@@ -400,7 +428,8 @@ class MetaverseController extends BaseController {
     /**
      * Get virtual templates
      */
-    private function getVirtualTemplates() {
+    private function getVirtualTemplates()
+    {
         return [
             'modern_apartment' => [
                 'name' => 'Modern Apartment',
@@ -426,7 +455,8 @@ class MetaverseController extends BaseController {
     /**
      * Get virtual environments
      */
-    private function getVirtualEnvironments() {
+    private function getVirtualEnvironments()
+    {
         return [
             'urban_city' => [
                 'name' => 'Urban City',
@@ -452,25 +482,28 @@ class MetaverseController extends BaseController {
     /**
      * Get user collaborative spaces
      */
-    private function getUserCollaborativeSpaces() {
+    private function getUserCollaborativeSpaces()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $user_id = $_SESSION['user_id'];
 
             $sql = "SELECT cs.*, COUNT(csp.user_id) as participant_count
                     FROM collaborative_spaces cs
                     LEFT JOIN collaborative_space_participants csp ON cs.id = csp.space_id
-                    WHERE cs.created_by = ? OR csp.user_id = ?
+                    WHERE cs.created_by = :createdBy OR csp.user_id = :userId
                     GROUP BY cs.id
                     ORDER BY cs.created_at DESC";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$user_id, $user_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['createdBy' => $user_id, 'userId' => $user_id]);
 
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('User collaborative spaces fetch error: ' . $e->getMessage());
             return [];
         }
     }
@@ -478,17 +511,20 @@ class MetaverseController extends BaseController {
     /**
      * Get collaborative space details
      */
-    private function getCollaborativeSpace($space_id) {
+    private function getCollaborativeSpace($space_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return null;
+            }
 
-            $sql = "SELECT * FROM collaborative_spaces WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$space_id]);
+            $sql = "SELECT * FROM collaborative_spaces WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['id' => $space_id]);
 
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Collaborative space details fetch error: ' . $e->getMessage());
             return null;
         }
     }
@@ -496,22 +532,25 @@ class MetaverseController extends BaseController {
     /**
      * Get space participants
      */
-    private function getSpaceParticipants($space_id) {
+    private function getSpaceParticipants($space_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT csp.*, u.name, u.avatar
                     FROM collaborative_space_participants csp
                     LEFT JOIN users u ON csp.user_id = u.id
-                    WHERE csp.space_id = ?
+                    WHERE csp.space_id = :spaceId
                     ORDER BY csp.joined_at";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$space_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['spaceId' => $space_id]);
 
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Space participants fetch error: ' . $e->getMessage());
             return [];
         }
     }
@@ -519,14 +558,17 @@ class MetaverseController extends BaseController {
     /**
      * Join collaborative space
      */
-    private function joinCollaborativeSpace($space_id, $user_id, $avatar) {
+    private function joinCollaborativeSpace($space_id, $user_id, $avatar)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return ['success' => false, 'message' => 'Database connection failed'];
+            }
 
             // Check if already a participant
-            $sql = "SELECT id FROM collaborative_space_participants WHERE space_id = ? AND user_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$space_id, $user_id]);
+            $sql = "SELECT id FROM collaborative_space_participants WHERE space_id = :spaceId AND user_id = :userId";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['spaceId' => $space_id, 'userId' => $user_id]);
             $existing = $stmt->fetch();
 
             if ($existing) {
@@ -539,10 +581,14 @@ class MetaverseController extends BaseController {
 
             // Add as participant
             $sql = "INSERT INTO collaborative_space_participants (space_id, user_id, avatar, joined_at)
-                    VALUES (?, ?, ?, NOW())";
+                    VALUES (:spaceId, :userId, :avatar, NOW())";
 
-            $stmt = $pdo->prepare($sql);
-            $success = $stmt->execute([$space_id, $user_id, $avatar]);
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute([
+                'spaceId' => $space_id,
+                'userId' => $user_id,
+                'avatar' => $avatar
+            ]);
 
             if ($success) {
                 return [
@@ -553,8 +599,7 @@ class MetaverseController extends BaseController {
             }
 
             return ['success' => false, 'message' => 'Failed to join space'];
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Space join error: ' . $e->getMessage());
             return ['success' => false, 'message' => 'Join failed'];
         }
@@ -563,9 +608,12 @@ class MetaverseController extends BaseController {
     /**
      * Get virtual properties for marketplace
      */
-    private function getVirtualPropertiesForSale() {
+    private function getVirtualPropertiesForSale()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT vp.*, u.name as creator_name
                     FROM virtual_properties vp
@@ -573,10 +621,10 @@ class MetaverseController extends BaseController {
                     WHERE vp.is_for_sale = 1 AND vp.status = 'active'
                     ORDER BY vp.created_at DESC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Virtual properties marketplace fetch error: ' . $e->getMessage());
             return [];
         }
     }
@@ -584,7 +632,8 @@ class MetaverseController extends BaseController {
     /**
      * Get virtual market statistics
      */
-    private function getVirtualMarketStats() {
+    private function getVirtualMarketStats()
+    {
         return [
             'total_virtual_properties' => 1247,
             'properties_for_sale' => 89,
@@ -597,7 +646,8 @@ class MetaverseController extends BaseController {
     /**
      * Get upcoming virtual events
      */
-    private function getUpcomingVirtualEvents() {
+    private function getUpcomingVirtualEvents()
+    {
         return [
             [
                 'id' => 1,
@@ -623,7 +673,8 @@ class MetaverseController extends BaseController {
     /**
      * Get past virtual events
      */
-    private function getPastVirtualEvents() {
+    private function getPastVirtualEvents()
+    {
         return [
             [
                 'id' => 3,
@@ -640,17 +691,20 @@ class MetaverseController extends BaseController {
     /**
      * Get NFT data for property
      */
-    private function getNFTData($property_id) {
+    private function getNFTData($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return null;
+            }
 
-            $sql = "SELECT * FROM property_nfts WHERE property_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $sql = "SELECT * FROM property_nfts WHERE property_id = :propertyId";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('NFT data fetch error: ' . $e->getMessage());
             return null;
         }
     }
@@ -658,7 +712,8 @@ class MetaverseController extends BaseController {
     /**
      * Get featured VR tours
      */
-    private function getFeaturedVRTours() {
+    private function getFeaturedVRTours()
+    {
         return [
             [
                 'id' => 1,
@@ -684,7 +739,8 @@ class MetaverseController extends BaseController {
     /**
      * Get tour categories
      */
-    private function getTourCategories() {
+    private function getTourCategories()
+    {
         return [
             'residential' => ['name' => 'Residential Properties', 'count' => 245],
             'commercial' => ['name' => 'Commercial Spaces', 'count' => 89],
@@ -696,7 +752,8 @@ class MetaverseController extends BaseController {
     /**
      * Get VR engagement metrics
      */
-    private function getVREngagementMetrics() {
+    private function getVREngagementMetrics()
+    {
         return [
             'total_vr_tours' => 445,
             'avg_session_duration' => '8.5 minutes',
@@ -709,7 +766,8 @@ class MetaverseController extends BaseController {
     /**
      * Get virtual property sales data
      */
-    private function getVirtualPropertySales() {
+    private function getVirtualPropertySales()
+    {
         return [
             'total_sales' => 156,
             'total_volume' => 4500000,
@@ -722,7 +780,8 @@ class MetaverseController extends BaseController {
     /**
      * Get metaverse event statistics
      */
-    private function getMetaverseEventStats() {
+    private function getMetaverseEventStats()
+    {
         return [
             'total_events' => 67,
             'total_attendees' => 15420,
@@ -735,7 +794,8 @@ class MetaverseController extends BaseController {
     /**
      * Get NFT marketplace statistics
      */
-    private function getNFTMarketplaceStats() {
+    private function getNFTMarketplaceStats()
+    {
         return [
             'total_nfts' => 2341,
             'properties_tokenized' => 893,
@@ -748,7 +808,8 @@ class MetaverseController extends BaseController {
     /**
      * Create collaborative space
      */
-    public function createCollaborativeSpace() {
+    public function createCollaborativeSpace()
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -764,7 +825,7 @@ class MetaverseController extends BaseController {
             ];
 
             if (empty($space_data['name'])) {
-                $this->setFlashMessage('error', 'Space name is required');
+                $this->setFlash('error', 'Space name is required');
                 $this->redirect(BASE_URL . 'metaverse/create-space');
                 return;
             }
@@ -772,10 +833,10 @@ class MetaverseController extends BaseController {
             $space_id = $this->createSpace($space_data);
 
             if ($space_id) {
-                $this->setFlashMessage('success', 'Collaborative space created successfully');
+                $this->setFlash('success', 'Collaborative space created successfully');
                 $this->redirect(BASE_URL . 'metaverse/collaborative-space/' . $space_id);
             } else {
-                $this->setFlashMessage('error', 'Failed to create collaborative space');
+                $this->setFlash('error', 'Failed to create collaborative space');
             }
         }
 
@@ -788,27 +849,30 @@ class MetaverseController extends BaseController {
     /**
      * Create collaborative space in database
      */
-    private function createSpace($space_data) {
+    private function createSpace($space_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO collaborative_spaces (
                 name, description, max_participants, environment,
                 is_public, created_by, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+            ) VALUES (:name, :description, :maxParticipants, :environment, :isPublic, :createdBy, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $space_data['name'],
-                $space_data['description'],
-                $space_data['max_participants'],
-                $space_data['environment'],
-                $space_data['is_public'],
-                $_SESSION['user_id']
+                'name' => $space_data['name'],
+                'description' => $space_data['description'],
+                'maxParticipants' => $space_data['max_participants'],
+                'environment' => $space_data['environment'],
+                'isPublic' => $space_data['is_public'],
+                'createdBy' => $_SESSION['user_id']
             ]);
 
             if ($success) {
-                $space_id = $pdo->lastInsertId();
+                $space_id = $this->db->lastInsertId();
 
                 // Add creator as first participant
                 $this->joinCollaborativeSpace($space_id, $_SESSION['user_id'], 'host');
@@ -817,8 +881,7 @@ class MetaverseController extends BaseController {
             }
 
             return false;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Space creation error: ' . $e->getMessage());
             return false;
         }
@@ -827,7 +890,8 @@ class MetaverseController extends BaseController {
     /**
      * Get space environments
      */
-    private function getSpaceEnvironments() {
+    private function getSpaceEnvironments()
+    {
         return [
             'modern_office' => [
                 'name' => 'Modern Office',
@@ -859,11 +923,12 @@ class MetaverseController extends BaseController {
     /**
      * Virtual property customization
      */
-    public function customizeVirtualProperty($virtual_property_id) {
+    public function customizeVirtualProperty($virtual_property_id)
+    {
         $virtual_property = $this->getVirtualProperty($virtual_property_id);
 
         if (!$virtual_property) {
-            $this->setFlashMessage('error', 'Virtual property not found');
+            $this->setFlash('error', 'Virtual property not found');
             $this->redirect(BASE_URL . 'metaverse/virtual-marketplace');
             return;
         }
@@ -872,7 +937,7 @@ class MetaverseController extends BaseController {
             $customization_data = $_POST;
             $this->applyCustomization($virtual_property_id, $customization_data);
 
-            $this->setFlashMessage('success', 'Virtual property customized successfully');
+            $this->setFlash('success', 'Virtual property customized successfully');
             $this->redirect(BASE_URL . 'metaverse/virtual-property/' . $virtual_property_id);
         }
 
@@ -886,21 +951,24 @@ class MetaverseController extends BaseController {
     /**
      * Get virtual property details
      */
-    private function getVirtualProperty($virtual_property_id) {
+    private function getVirtualProperty($virtual_property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return null;
+            }
 
             $sql = "SELECT vp.*, u.name as creator_name
                     FROM virtual_properties vp
                     LEFT JOIN users u ON vp.created_by = u.id
-                    WHERE vp.id = ?";
+                    WHERE vp.id = :id";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$virtual_property_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['id' => $virtual_property_id]);
 
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Virtual property details fetch error: ' . $e->getMessage());
             return null;
         }
     }
@@ -908,7 +976,8 @@ class MetaverseController extends BaseController {
     /**
      * Get customization options
      */
-    private function getCustomizationOptions() {
+    private function getCustomizationOptions()
+    {
         return [
             'colors' => [
                 'walls' => ['White', 'Beige', 'Light Gray', 'Cream'],
@@ -935,22 +1004,24 @@ class MetaverseController extends BaseController {
     /**
      * Apply customization to virtual property
      */
-    private function applyCustomization($virtual_property_id, $customization_data) {
+    private function applyCustomization($virtual_property_id, $customization_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO virtual_property_customizations (
                 virtual_property_id, customization_data, applied_by, created_at
-            ) VALUES (?, ?, ?, NOW())";
+            ) VALUES (:virtualPropertyId, :customizationData, :appliedBy, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             return $stmt->execute([
-                $virtual_property_id,
-                json_encode($customization_data),
-                $_SESSION['user_id']
+                'virtualPropertyId' => $virtual_property_id,
+                'customizationData' => json_encode($customization_data),
+                'appliedBy' => $_SESSION['user_id']
             ]);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Customization apply error: ' . $e->getMessage());
             return false;
         }
@@ -959,7 +1030,8 @@ class MetaverseController extends BaseController {
     /**
      * Metaverse social features
      */
-    public function socialHub() {
+    public function socialHub()
+    {
         $active_users = $this->getActiveMetaverseUsers();
         $social_activities = $this->getSocialActivities();
         $user_avatars = $this->getUserAvatars();
@@ -975,7 +1047,8 @@ class MetaverseController extends BaseController {
     /**
      * Get active metaverse users
      */
-    private function getActiveMetaverseUsers() {
+    private function getActiveMetaverseUsers()
+    {
         return [
             ['id' => 1, 'name' => 'John Doe', 'avatar' => '/avatars/john.jpg', 'location' => 'VR Showroom', 'status' => 'Exploring properties'],
             ['id' => 2, 'name' => 'Jane Smith', 'avatar' => '/avatars/jane.jpg', 'location' => 'Collaborative Space', 'status' => 'In meeting'],
@@ -986,7 +1059,8 @@ class MetaverseController extends BaseController {
     /**
      * Get social activities
      */
-    private function getSocialActivities() {
+    private function getSocialActivities()
+    {
         return [
             ['type' => 'property_view', 'user' => 'John Doe', 'property' => 'Luxury Villa', 'timestamp' => date('Y-m-d H:i:s', time() - 300)],
             ['type' => 'space_joined', 'user' => 'Jane Smith', 'space' => 'Design Meeting Room', 'timestamp' => date('Y-m-d H:i:s', time() - 600)],
@@ -997,7 +1071,8 @@ class MetaverseController extends BaseController {
     /**
      * Get user avatars
      */
-    private function getUserAvatars() {
+    private function getUserAvatars()
+    {
         return [
             'default' => ['name' => 'Default Avatar', 'preview' => '/avatars/default.jpg'],
             'professional' => ['name' => 'Professional', 'preview' => '/avatars/professional.jpg'],
@@ -1009,7 +1084,8 @@ class MetaverseController extends BaseController {
     /**
      * Virtual economy and currency
      */
-    public function virtualEconomy() {
+    public function virtualEconomy()
+    {
         $economy_data = [
             'virtual_currency' => 'VRC (Virtual Real Estate Coin)',
             'exchange_rate' => '1 VRC = ₹100',
@@ -1031,7 +1107,8 @@ class MetaverseController extends BaseController {
     /**
      * Metaverse education and training
      */
-    public function metaverseAcademy() {
+    public function metaverseAcademy()
+    {
         $courses = [
             'vr_basics' => [
                 'title' => 'VR Navigation Basics',
@@ -1065,7 +1142,8 @@ class MetaverseController extends BaseController {
     /**
      * Virtual property investment portfolio
      */
-    public function investmentPortfolio() {
+    public function investmentPortfolio()
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -1084,7 +1162,8 @@ class MetaverseController extends BaseController {
     /**
      * Get user virtual portfolio
      */
-    private function getUserVirtualPortfolio() {
+    private function getUserVirtualPortfolio()
+    {
         return [
             'total_investment' => 150000,
             'current_value' => 185000,
@@ -1101,7 +1180,8 @@ class MetaverseController extends BaseController {
     /**
      * Get market performance data
      */
-    private function getMarketPerformance() {
+    private function getMarketPerformance()
+    {
         return [
             'market_index' => 'VREI (Virtual Real Estate Index)',
             'current_value' => 125.67,

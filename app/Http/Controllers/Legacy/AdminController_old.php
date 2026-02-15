@@ -193,11 +193,11 @@ class AdminController extends Controller {
                 $this->adminService->updateSetting($key, $value);
             }
 
-            $_SESSION['success'] = 'Settings updated successfully!';
+            $this->setFlash('success', 'Settings updated successfully!');
             $this->redirect('/admin/settings');
 
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
             $this->redirect('/admin/settings');
         }
     }
@@ -222,9 +222,9 @@ class AdminController extends Controller {
     public function createBackup() {
         try {
             $backupFile = $this->adminService->createBackup();
-            $_SESSION['success'] = 'Database backup created: ' . basename($backupFile);
+            $this->setFlash('success', 'Database backup created: ' . basename($backupFile));
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Backup failed: ' . $e->getMessage();
+            $this->setFlash('error', 'Backup failed: ' . $e->getMessage());
         }
 
         $this->redirect('/admin/database');
@@ -256,9 +256,9 @@ class AdminController extends Controller {
     public function clearCache() {
         try {
             $this->adminService->clearCache();
-            $_SESSION['success'] = 'Cache cleared successfully!';
+            $this->setFlash('success', 'Cache cleared successfully!');
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Failed to clear cache: ' . $e->getMessage();
+            $this->setFlash('error', 'Failed to clear cache: ' . $e->getMessage());
         }
 
         $this->redirect('/admin/dashboard');
@@ -291,7 +291,7 @@ class AdminController extends Controller {
             exit;
 
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Export failed: ' . $e->getMessage();
+            $this->setFlash('error', 'Export failed: ' . $e->getMessage());
             $this->redirect('/admin/' . $type);
         }
     }
@@ -309,7 +309,7 @@ class AdminController extends Controller {
             $password = trim($_POST['password'] ?? '');
 
             if (empty($email) || empty($password)) {
-                $_SESSION['error'] = 'Please enter both email and password';
+                $this->setFlash('error', 'Please enter both email and password');
                 header('Location: admin.php');
                 exit();
             }
@@ -328,17 +328,17 @@ class AdminController extends Controller {
                 $_SESSION['role'] = $demo_users[$email]['role'];
                 $_SESSION['email'] = $email;
 
-                $_SESSION['success'] = 'Login successful! Welcome to APS Dream Home.';
+                $this->setFlash('success', 'Login successful! Welcome to APS Dream Home.');
                 header('Location: admin.php');
                 exit();
             } else {
-                $_SESSION['error'] = 'Invalid email or password';
+                $this->setFlash('error', 'Invalid email or password');
                 header('Location: admin.php');
                 exit();
             }
 
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Authentication failed. Please try again.';
+            $this->setFlash('error', 'Authentication failed. Please try again.');
             header('Location: admin.php');
             exit();
         }
@@ -428,9 +428,9 @@ class AdminController extends Controller {
         $employeeId = $employeeModel->createEmployee($data);
 
         if ($employeeId) {
-            $_SESSION['success'] = 'Employee created successfully.';
+            $this->setFlash('success', 'Employee created successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to create employee. Please try again.';
+            $this->setFlash('error', 'Failed to create employee. Please try again.');
         }
 
         $this->redirect('/admin/employees');
@@ -445,7 +445,7 @@ class AdminController extends Controller {
         $employee = $employeeModel->getEmployeeById($employeeId);
 
         if (!$employee) {
-            $_SESSION['error'] = 'Employee not found.';
+            $this->setFlash('error', 'Employee not found.');
             $this->redirect('/admin/employees');
         }
 
@@ -480,7 +480,7 @@ class AdminController extends Controller {
         $employee = $employeeModel->getEmployeeById($employeeId);
 
         if (!$employee) {
-            $_SESSION['error'] = 'Employee not found.';
+            $this->setFlash('error', 'Employee not found.');
             $this->redirect('/admin/employees');
         }
 
@@ -528,9 +528,9 @@ class AdminController extends Controller {
         $success = $employeeModel->updateEmployee($employeeId, $data);
 
         if ($success) {
-            $_SESSION['success'] = 'Employee updated successfully.';
+            $this->setFlash('success', 'Employee updated successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to update employee. Please try again.';
+            $this->setFlash('error', 'Failed to update employee. Please try again.');
         }
 
         $this->redirect('/admin/employees');
@@ -551,9 +551,9 @@ class AdminController extends Controller {
         $success = $employeeModel->deactivateEmployee($employeeId, $reason);
 
         if ($success) {
-            $_SESSION['success'] = 'Employee deactivated successfully.';
+            $this->setFlash('success', 'Employee deactivated successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to deactivate employee. Please try again.';
+            $this->setFlash('error', 'Failed to deactivate employee. Please try again.');
         }
 
         $this->redirect('/admin/employees');
@@ -568,9 +568,9 @@ class AdminController extends Controller {
         $success = $employeeModel->reactivateEmployee($employeeId);
 
         if ($success) {
-            $_SESSION['success'] = 'Employee reactivated successfully.';
+            $this->setFlash('success', 'Employee reactivated successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to reactivate employee. Please try again.';
+            $this->setFlash('error', 'Failed to reactivate employee. Please try again.');
         }
 
         $this->redirect('/admin/employees');
@@ -603,9 +603,9 @@ class AdminController extends Controller {
         $success = $employeeModel->createEmployeeTask($data);
 
         if ($success) {
-            $_SESSION['success'] = 'Task assigned successfully.';
+            $this->setFlash('success', 'Task assigned successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to assign task. Please try again.';
+            $this->setFlash('error', 'Failed to assign task. Please try again.');
         }
 
         $this->redirect('/admin/employee/' . $employeeId);
@@ -624,16 +624,16 @@ class AdminController extends Controller {
         $newPassword = $_POST['new_password'] ?? '';
 
         if (strlen($newPassword) < 6) {
-            $_SESSION['error'] = 'Password must be at least 6 characters long.';
+            $this->setFlash('error', 'Password must be at least 6 characters long.');
             $this->redirect('/admin/employee/' . $employeeId);
         }
 
         $success = $employeeModel->updateEmployeePassword($employeeId, $newPassword);
 
         if ($success) {
-            $_SESSION['success'] = 'Employee password updated successfully.';
+            $this->setFlash('success', 'Employee password updated successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to update password. Please try again.';
+            $this->setFlash('error', 'Failed to update password. Please try again.');
         }
 
         $this->redirect('/admin/employee/' . $employeeId);
@@ -690,9 +690,9 @@ class AdminController extends Controller {
         $result = $this->createMLMPlanInDatabase($planData);
 
         if ($result['success']) {
-            $_SESSION['success'] = 'MLM Plan created successfully!';
+            $this->setFlash('success', 'MLM Plan created successfully!');
         } else {
-            $_SESSION['error'] = 'Failed to create MLM plan: ' . $result['message'];
+            $this->setFlash('error', 'Failed to create MLM plan: ' . $result['message']);
         }
 
         $this->redirect('/admin/mlm-plan-builder');
@@ -1032,9 +1032,9 @@ class AdminController extends Controller {
         $projectId = $projectModel->createProject($data);
 
         if ($projectId) {
-            $_SESSION['success'] = 'Project created successfully.';
+            $this->setFlash('success', 'Project created successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to create project. Please try again.';
+            $this->setFlash('error', 'Failed to create project. Please try again.');
         }
 
         $this->redirect('/admin/projects');
@@ -1049,7 +1049,7 @@ class AdminController extends Controller {
         $project = $projectModel->getProjectById($projectId);
 
         if (!$project) {
-            $_SESSION['error'] = 'Project not found.';
+            $this->setFlash('error', 'Project not found.');
             $this->redirect('/admin/projects');
         }
 
@@ -1075,7 +1075,7 @@ class AdminController extends Controller {
         $project = $projectModel->getProjectById($projectId);
 
         if (!$project) {
-            $_SESSION['error'] = 'Project not found.';
+            $this->setFlash('error', 'Project not found.');
             $this->redirect('/admin/projects');
         }
 
@@ -1155,9 +1155,9 @@ class AdminController extends Controller {
         $success = $projectModel->updateProject($projectId, $data);
 
         if ($success) {
-            $_SESSION['success'] = 'Project updated successfully.';
+            $this->setFlash('success', 'Project updated successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to update project. Please try again.';
+            $this->setFlash('error', 'Failed to update project. Please try again.');
         }
 
         $this->redirect('/admin/projects');
@@ -1176,9 +1176,9 @@ class AdminController extends Controller {
         $success = $projectModel->deleteProject($projectId);
 
         if ($success) {
-            $_SESSION['success'] = 'Project deleted successfully.';
+            $this->setFlash('success', 'Project deleted successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to delete project. Please try again.';
+            $this->setFlash('error', 'Failed to delete project. Please try again.');
         }
 
         $this->redirect('/admin/projects');

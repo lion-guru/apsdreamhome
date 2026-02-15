@@ -1,0 +1,14 @@
+# APS Dream Homes - Robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /config.php
+Disallow: /cache/
+Disallow: /logs/
+Disallow: /uploads/
+Disallow: /*.php$
+Disallow: /*.sql$
+Disallow: /*.log$
+
+Sitemap: http:///sitemap.xml

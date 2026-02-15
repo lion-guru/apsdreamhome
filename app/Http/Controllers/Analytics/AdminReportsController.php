@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Reports Controller
  * Handles admin reports and analytics functionality
@@ -8,8 +9,11 @@ namespace App\Http\Controllers\Analytics;
 
 use App\Http\Controllers\BaseController;
 
-class AdminReportsController extends BaseController {
-    public function __construct() {
+class AdminReportsController extends BaseController
+{
+    public function __construct()
+    {
+        parent::__construct();
         // Initialize data array for view rendering
         $this->data = [];
     }
@@ -17,7 +21,8 @@ class AdminReportsController extends BaseController {
     /**
      * Display admin reports dashboard
      */
-    public function index() {
+    public function index()
+    {
         // Check if user is admin
         if (!$this->isAdmin()) {
             $this->redirect('login');
@@ -50,7 +55,8 @@ class AdminReportsController extends BaseController {
     /**
      * Display property performance reports
      */
-    public function properties() {
+    public function properties()
+    {
         // Check if user is admin
         if (!$this->isAdmin()) {
             $this->redirect('login');
@@ -88,7 +94,8 @@ class AdminReportsController extends BaseController {
     /**
      * Display user analytics reports
      */
-    public function users() {
+    public function users()
+    {
         // Check if user is admin
         if (!$this->isAdmin()) {
             $this->redirect('login');
@@ -124,7 +131,8 @@ class AdminReportsController extends BaseController {
     /**
      * Display financial reports
      */
-    public function financial() {
+    public function financial()
+    {
         // Check if user is admin
         if (!$this->isAdmin()) {
             $this->redirect('login');
@@ -159,7 +167,8 @@ class AdminReportsController extends BaseController {
     /**
      * Display inquiry analytics
      */
-    public function inquiries() {
+    public function inquiries()
+    {
         // Check if user is admin
         if (!$this->isAdmin()) {
             $this->redirect('login');
@@ -196,7 +205,8 @@ class AdminReportsController extends BaseController {
     /**
      * Export report data (AJAX endpoint)
      */
-    public function export() {
+    public function export()
+    {
         // Check if user is admin
         if (!$this->isAdmin()) {
             http_response_code(401);
@@ -237,7 +247,6 @@ class AdminReportsController extends BaseController {
             } else {
                 echo json_encode(['success' => true, 'data' => $data]);
             }
-
         } catch (\Exception $e) {
             error_log('Export report error: ' . $e->getMessage());
             http_response_code(500);
@@ -246,41 +255,34 @@ class AdminReportsController extends BaseController {
     }
 
     /**
-     * Check if user is admin
-     */
-    protected function isAdmin() {
-        return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
-    }
-
-    /**
      * Get overview statistics for dashboard
      */
-    private function getOverviewStats() {
+    private function getOverviewStats()
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return $this->getDefaultOverviewStats();
             }
 
             $stats = [];
 
             // Total properties
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM properties WHERE status = 'available'");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM properties WHERE status = 'available'");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_properties'] = (int)($result['total'] ?? 0);
 
             // Total users
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM users WHERE status = 'active'");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM users WHERE status = 'active'");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_users'] = (int)($result['total'] ?? 0);
 
             // Total inquiries (last 30 days)
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM property_inquiries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM property_inquiries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_inquiries'] = (int)($result['total'] ?? 0);
 
             // Total favorites
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM property_favorites");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM property_favorites");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_favorites'] = (int)($result['total'] ?? 0);
 
@@ -291,7 +293,6 @@ class AdminReportsController extends BaseController {
             $stats['conversion_rate'] = 0;
 
             return $stats;
-
         } catch (\Exception $e) {
             error_log('Overview stats query error: ' . $e->getMessage());
             return $this->getDefaultOverviewStats();
@@ -301,7 +302,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get default overview stats when database is unavailable
      */
-    private function getDefaultOverviewStats() {
+    private function getDefaultOverviewStats()
+    {
         return [
             'total_properties' => 0,
             'total_users' => 0,
@@ -315,7 +317,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get recent activities for dashboard
      */
-    private function getRecentActivities() {
+    private function getRecentActivities()
+    {
         return [
             ['type' => 'inquiry', 'action' => 'new', 'title' => 'New property inquiry', 'time' => '2 hours ago', 'user' => 'John Doe'],
             ['type' => 'favorite', 'action' => 'added', 'title' => 'Property favorited', 'time' => '4 hours ago', 'user' => 'Jane Smith'],
@@ -327,9 +330,9 @@ class AdminReportsController extends BaseController {
     /**
      * Get top performing properties
      */
-    private function getTopPerformingProperties($filters = []) {
-        global $pdo;
-        if (!$pdo) {
+    private function getTopPerformingProperties($filters = [])
+    {
+        if (!$this->db) {
             return [
                 ['id' => 1, 'title' => 'Luxury Villa in City Center', 'views' => 150, 'favorites' => 25, 'inquiries' => 12],
                 ['id' => 2, 'title' => 'Modern Apartment Complex', 'views' => 120, 'favorites' => 18, 'inquiries' => 8],
@@ -343,27 +346,27 @@ class AdminReportsController extends BaseController {
     /**
      * Get user engagement metrics
      */
-    private function getUserEngagementMetrics() {
+    private function getUserEngagementMetrics()
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return $this->getDefaultUserMetrics();
             }
 
             $metrics = [];
 
             // Active users (last 30 days)
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM users WHERE last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $metrics['active_users'] = (int)($result['total'] ?? 0);
 
             // New registrations (last 30 days)
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $metrics['new_registrations'] = (int)($result['total'] ?? 0);
 
             // Users with favorites
-            $stmt = $pdo->query("SELECT COUNT(DISTINCT user_id) as total FROM property_favorites");
+            $stmt = $this->db->query("SELECT COUNT(DISTINCT user_id) as total FROM property_favorites");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $metrics['users_with_favorites'] = (int)($result['total'] ?? 0);
 
@@ -371,7 +374,6 @@ class AdminReportsController extends BaseController {
             $metrics['avg_session_duration'] = '5m 30s';
 
             return $metrics;
-
         } catch (\Exception $e) {
             error_log('User metrics query error: ' . $e->getMessage());
             return $this->getDefaultUserMetrics();
@@ -381,7 +383,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get default user metrics
      */
-    private function getDefaultUserMetrics() {
+    private function getDefaultUserMetrics()
+    {
         return [
             'active_users' => 0,
             'new_registrations' => 0,
@@ -393,7 +396,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get property performance statistics
      */
-    private function getPropertyPerformanceStats($filters) {
+    private function getPropertyPerformanceStats($filters)
+    {
         // Implementation would include detailed property analytics
         return [
             'total_views' => 0,
@@ -407,7 +411,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get property trends data
      */
-    private function getPropertyTrends($filters) {
+    private function getPropertyTrends($filters)
+    {
         // Implementation would include trend analysis over time
         return [
             ['date' => '2024-01-01', 'views' => 100, 'favorites' => 15, 'inquiries' => 8],
@@ -419,7 +424,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get user analytics statistics
      */
-    private function getUserAnalyticsStats($filters) {
+    private function getUserAnalyticsStats($filters)
+    {
         // Implementation would include detailed user analytics
         return [
             'total_users' => 0,
@@ -432,7 +438,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get user growth data
      */
-    private function getUserGrowthData($filters) {
+    private function getUserGrowthData($filters)
+    {
         // Implementation would include user growth trends
         return [
             ['month' => 'Jan', 'registrations' => 25, 'active' => 20],
@@ -444,7 +451,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get user activity data
      */
-    private function getUserActivityData($filters) {
+    private function getUserActivityData($filters)
+    {
         // Implementation would include user activity metrics
         return [
             ['activity' => 'Property Views', 'count' => 1500],
@@ -457,7 +465,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get revenue data
      */
-    private function getRevenueData($filters) {
+    private function getRevenueData($filters)
+    {
         // Implementation would include actual revenue data
         return [
             ['month' => 'Jan', 'revenue' => 50000, 'commission' => 2500],
@@ -469,7 +478,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get commission data
      */
-    private function getCommissionData($filters) {
+    private function getCommissionData($filters)
+    {
         // Implementation would include commission tracking
         return [
             ['agent' => 'Agent A', 'properties_sold' => 5, 'commission' => 15000],
@@ -481,7 +491,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get expense data
      */
-    private function getExpenseData($filters) {
+    private function getExpenseData($filters)
+    {
         // Implementation would include expense tracking
         return [
             ['category' => 'Marketing', 'amount' => 15000],
@@ -493,7 +504,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get profit/loss data
      */
-    private function getProfitLossData($filters) {
+    private function getProfitLossData($filters)
+    {
         // Implementation would calculate P&L
         return [
             'total_revenue' => 185000,
@@ -506,27 +518,27 @@ class AdminReportsController extends BaseController {
     /**
      * Get inquiry analytics statistics
      */
-    private function getInquiryAnalyticsStats($filters) {
+    private function getInquiryAnalyticsStats($filters)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return $this->getDefaultInquiryStats();
             }
 
             $stats = [];
 
             // Total inquiries
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM property_inquiries");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM property_inquiries");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_inquiries'] = (int)($result['total'] ?? 0);
 
             // New inquiries (last 30 days)
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM property_inquiries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM property_inquiries WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['new_inquiries'] = (int)($result['total'] ?? 0);
 
             // Response rate
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM property_inquiries WHERE status IN ('responded', 'closed')");
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM property_inquiries WHERE status IN ('responded', 'closed')");
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $responded = (int)($result['total'] ?? 0);
 
@@ -536,7 +548,6 @@ class AdminReportsController extends BaseController {
             $stats['avg_response_time'] = '4.2 hours';
 
             return $stats;
-
         } catch (\Exception $e) {
             error_log('Inquiry stats query error: ' . $e->getMessage());
             return $this->getDefaultInquiryStats();
@@ -546,7 +557,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get default inquiry statistics
      */
-    private function getDefaultInquiryStats() {
+    private function getDefaultInquiryStats()
+    {
         return [
             'total_inquiries' => 0,
             'new_inquiries' => 0,
@@ -558,7 +570,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get inquiry trends
      */
-    private function getInquiryTrends($filters) {
+    private function getInquiryTrends($filters)
+    {
         // Implementation would include inquiry trends over time
         return [
             ['date' => '2024-01-01', 'inquiries' => 15, 'responses' => 12],
@@ -570,7 +583,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get response time data
      */
-    private function getResponseTimeData($filters) {
+    private function getResponseTimeData($filters)
+    {
         // Implementation would include response time analytics
         return [
             ['range' => '0-2 hours', 'count' => 45],
@@ -584,7 +598,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get agent performance data
      */
-    private function getAgentPerformanceData($filters) {
+    private function getAgentPerformanceData($filters)
+    {
         // Implementation would include agent performance metrics
         return [
             ['agent' => 'Agent A', 'inquiries_assigned' => 25, 'responses' => 23, 'avg_response_time' => '3.5h'],
@@ -596,7 +611,8 @@ class AdminReportsController extends BaseController {
     /**
      * Export data to CSV format
      */
-    private function exportToCSV($data, $report_type) {
+    private function exportToCSV($data, $report_type)
+    {
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $report_type . '_report_' . date('Y-m-d') . '.csv"');
 
@@ -619,7 +635,8 @@ class AdminReportsController extends BaseController {
     /**
      * Get activity color for timeline
      */
-    private function getActivityColor($type) {
+    private function getActivityColor($type)
+    {
         $colors = [
             'inquiry' => 'warning',
             'favorite' => 'danger',
@@ -629,5 +646,3 @@ class AdminReportsController extends BaseController {
         return $colors[$type] ?? 'secondary';
     }
 }
-
-?>

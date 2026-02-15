@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mobile API Controller
  * Provides REST API endpoints for mobile applications
@@ -7,24 +8,27 @@
 
 namespace App\Http\Controllers\Api;
 
-class MobileApiController {
-    protected $pdo;
-    
-    public function __construct() {
-        // Mobile API controller - no view rendering needed
-        require_once '../../../includes/db_connection.php';
-        $this->pdo = getMysqliConnection();
-        
-        if (!$this->pdo) {
+use App\Http\Controllers\BaseController;
+use Exception;
+use PDO;
+
+class MobileApiController extends BaseController
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        if (!$this->db) {
             error_log('MobileApiController: Failed to initialize database connection');
-            throw new \Exception('Database connection failed');
         }
     }
 
     /**
      * API endpoint for mobile app - Get properties with pagination and filters
      */
-    public function properties() {
+    public function properties()
+    {
         $this->setCorsHeaders();
 
         try {
@@ -71,7 +75,6 @@ class MobileApiController {
             ];
 
             echo json_encode($response);
-
         } catch (\Exception $e) {
             $this->handleApiError($e, 'Properties API error');
         }
@@ -80,7 +83,8 @@ class MobileApiController {
     /**
      * Set CORS headers for API endpoints
      */
-    private function setCorsHeaders() {
+    private function setCorsHeaders()
+    {
         header('Content-Type: application/json');
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
@@ -97,7 +101,8 @@ class MobileApiController {
     /**
      * Handle API errors consistently
      */
-    private function handleApiError($exception, $context = 'API Error') {
+    private function handleApiError($exception, $context = 'API Error')
+    {
         error_log($context . ': ' . $exception->getMessage());
 
         http_response_code(500);
@@ -112,7 +117,8 @@ class MobileApiController {
     /**
      * API endpoint for mobile app - Get single property details
      */
-    public function property($id) {
+    public function property($id)
+    {
         $this->setCorsHeaders();
 
         try {
@@ -139,7 +145,6 @@ class MobileApiController {
             ];
 
             echo json_encode($response);
-
         } catch (\Exception $e) {
             $this->handleApiError($e, 'Single Property API error');
         }
@@ -148,7 +153,8 @@ class MobileApiController {
     /**
      * API endpoint for mobile app - Submit property inquiry
      */
-    public function submitInquiry() {
+    public function submitInquiry()
+    {
         $this->setCorsHeaders();
 
         try {
@@ -192,7 +198,6 @@ class MobileApiController {
                     'error' => 'Failed to submit inquiry'
                 ]);
             }
-
         } catch (\Exception $e) {
             $this->handleApiError($e, 'Inquiry Submission API error');
         }
@@ -201,7 +206,8 @@ class MobileApiController {
     /**
      * API endpoint for mobile app - Toggle property favorite
      */
-    public function toggleFavorite() {
+    public function toggleFavorite()
+    {
         $this->setCorsHeaders();
 
         try {
@@ -250,7 +256,6 @@ class MobileApiController {
                 'message' => $message,
                 'is_favorited' => $is_favorited
             ]);
-
         } catch (Exception $e) {
             $this->handleApiError($e, 'Toggle Favorite API error');
         }
@@ -259,7 +264,8 @@ class MobileApiController {
     /**
      * API endpoint for mobile app - Get user's favorite properties
      */
-    public function userFavorites() {
+    public function userFavorites()
+    {
         $this->setCorsHeaders();
 
         try {
@@ -280,7 +286,6 @@ class MobileApiController {
                 'success' => true,
                 'data' => $favorites
             ]);
-
         } catch (Exception $e) {
             $this->handleApiError($e, 'User Favorites API error');
         }
@@ -289,7 +294,8 @@ class MobileApiController {
     /**
      * API endpoint for mobile app - Get property types for filter dropdown
      */
-    public function propertyTypes() {
+    public function propertyTypes()
+    {
         $this->setCorsHeaders();
 
         try {
@@ -299,7 +305,6 @@ class MobileApiController {
                 'success' => true,
                 'data' => $property_types
             ]);
-
         } catch (Exception $e) {
             $this->handleApiError($e, 'Property Types API error');
         }
@@ -308,7 +313,8 @@ class MobileApiController {
     /**
      * API endpoint for mobile app - Get cities for filter dropdown
      */
-    public function cities() {
+    public function cities()
+    {
         $this->setCorsHeaders();
 
         try {
@@ -318,7 +324,6 @@ class MobileApiController {
                 'success' => true,
                 'data' => $cities
             ]);
-
         } catch (Exception $e) {
             $this->handleApiError($e, 'Cities API error');
         }
@@ -327,9 +332,10 @@ class MobileApiController {
     /**
      * Get properties with filters for mobile API
      */
-    public function getPropertiesWithFilters($filters, $limit, $offset) {
+    public function getPropertiesWithFilters($filters, $limit, $offset)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 return [];
             }
 
@@ -356,38 +362,49 @@ class MobileApiController {
 
             // Apply filters
             if (isset($filters['property_type'])) {
-                $sql .= " AND p.property_type_id = ?";
-                $params[] = $filters['property_type'];
+                $sql .= " AND p.property_type_id = :propertyType";
+                $params['propertyType'] = $filters['property_type'];
             }
 
             if (isset($filters['city'])) {
-                $sql .= " AND p.city LIKE ?";
-                $params[] = '%' . $filters['city'] . '%';
+                $sql .= " AND p.city LIKE :city";
+                $params['city'] = '%' . $filters['city'] . '%';
             }
 
             if (isset($filters['min_price'])) {
-                $sql .= " AND p.price >= ?";
-                $params[] = $filters['min_price'];
+                $sql .= " AND p.price >= :minPrice";
+                $params['minPrice'] = $filters['min_price'];
             }
 
             if (isset($filters['max_price'])) {
-                $sql .= " AND p.price <= ?";
-                $params[] = $filters['max_price'];
+                $sql .= " AND p.price <= :maxPrice";
+                $params['maxPrice'] = $filters['max_price'];
             }
 
             if (isset($filters['featured']) && $filters['featured']) {
                 $sql .= " AND p.featured = 1";
             }
 
-            $sql .= " ORDER BY p.featured DESC, p.created_at DESC LIMIT ? OFFSET ?";
-            $params[] = $limit;
-            $params[] = $offset;
+            $sql .= " ORDER BY p.featured DESC, p.created_at DESC LIMIT :limit OFFSET :offset";
+            $params['limit'] = (int)$limit;
+            $params['offset'] = (int)$offset;
 
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
+            $stmt = $this->db->prepare($sql);
 
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            // Bind limit and offset as integers specifically to avoid issues with some PDO drivers
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
 
+            // Bind other parameters
+            foreach ($params as $key => $value) {
+                if ($key !== 'limit' && $key !== 'offset') {
+                    $stmt->bindValue(':' . $key, $value);
+                }
+            }
+
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Get properties with filters error: ' . $e->getMessage());
             return [];
@@ -397,9 +414,10 @@ class MobileApiController {
     /**
      * Get property by ID
      */
-    private function getPropertyById($id) {
+    private function getPropertyById($id)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 return null;
             }
 
@@ -410,14 +428,13 @@ class MobileApiController {
                     pt.icon as property_type_icon
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                WHERE p.id = ? AND p.status = 'available'
+                WHERE p.id = :id AND p.status = 'available'
             ";
 
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['id' => $id]);
 
-            return $stmt->fetch(\PDO::FETCH_ASSOC);
-
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Get property by ID error: ' . $e->getMessage());
             return null;
@@ -427,17 +444,17 @@ class MobileApiController {
     /**
      * Get property images
      */
-    private function getPropertyImages($property_id) {
+    private function getPropertyImages($property_id)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $this->pdo->prepare("SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC");
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare("SELECT * FROM property_images WHERE property_id = :propertyId ORDER BY is_primary DESC, sort_order ASC");
+            $stmt->execute(['propertyId' => $property_id]);
 
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Get property images error: ' . $e->getMessage());
             return [];
@@ -447,17 +464,17 @@ class MobileApiController {
     /**
      * Get property features
      */
-    private function getPropertyFeatures($property_id) {
+    private function getPropertyFeatures($property_id)
+    {
         try {
-            if (!$this->pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $this->pdo->prepare("SELECT * FROM property_features WHERE property_id = ? ORDER BY feature_category, feature_name");
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare("SELECT * FROM property_features WHERE property_id = :propertyId ORDER BY feature_category, feature_name");
+            $stmt->execute(['propertyId' => $property_id]);
 
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Get property features error: ' . $e->getMessage());
             return [];
@@ -467,10 +484,10 @@ class MobileApiController {
     /**
      * Create inquiry
      */
-    private function createInquiry($data) {
+    private function createInquiry($data)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return false;
             }
 
@@ -478,28 +495,27 @@ class MobileApiController {
                 INSERT INTO property_inquiries (
                     property_id, guest_name, guest_email, guest_phone,
                     subject, message, inquiry_type, status, priority, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                ) VALUES (:propertyId, :name, :email, :phone, :subject, :message, :inquiryType, :status, :priority, NOW())
             ";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([
-                $data['property_id'],
-                $data['name'],
-                $data['email'],
-                $data['phone'],
-                $data['subject'] ?? 'Property Inquiry',
-                $data['message'],
-                $data['inquiry_type'] ?? 'general',
-                'new',
-                $data['priority'] ?? 'medium'
+                'propertyId' => $data['property_id'],
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'subject' => $data['subject'] ?? 'Property Inquiry',
+                'message' => $data['message'],
+                'inquiryType' => $data['inquiry_type'] ?? 'general',
+                'status' => 'new',
+                'priority' => $data['priority'] ?? 'medium'
             ]);
 
             if ($result) {
-                return $pdo->lastInsertId();
+                return $this->db->lastInsertId();
             }
 
             return false;
-
         } catch (Exception $e) {
             error_log('Create inquiry error: ' . $e->getMessage());
             return false;
@@ -509,17 +525,16 @@ class MobileApiController {
     /**
      * Check if property is favorited by user
      */
-    private function isFavorited($user_id, $property_id) {
+    private function isFavorited($user_id, $property_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return false;
             }
 
-            $stmt = $pdo->prepare("SELECT id FROM property_favorites WHERE user_id = ? AND property_id = ?");
-            $stmt->execute([$user_id, $property_id]);
+            $stmt = $this->db->prepare("SELECT id FROM property_favorites WHERE user_id = :userId AND property_id = :propertyId");
+            $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
             return $stmt->rowCount() > 0;
-
         } catch (Exception $e) {
             error_log('Check favorite error: ' . $e->getMessage());
             return false;
@@ -529,16 +544,15 @@ class MobileApiController {
     /**
      * Add property to favorites
      */
-    private function addFavorite($user_id, $property_id) {
+    private function addFavorite($user_id, $property_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
 
-            $stmt = $pdo->prepare("INSERT INTO property_favorites (user_id, property_id) VALUES (?, ?)");
-            $stmt->execute([$user_id, $property_id]);
-
+            $stmt = $this->db->prepare("INSERT INTO property_favorites (user_id, property_id) VALUES (:userId, :propertyId)");
+            $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
         } catch (Exception $e) {
             error_log('Add favorite error: ' . $e->getMessage());
             throw $e;
@@ -548,16 +562,15 @@ class MobileApiController {
     /**
      * Remove property from favorites
      */
-    private function removeFavorite($user_id, $property_id) {
+    private function removeFavorite($user_id, $property_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 throw new Exception('Database connection not available');
             }
 
-            $stmt = $pdo->prepare("DELETE FROM property_favorites WHERE user_id = ? AND property_id = ?");
-            $stmt->execute([$user_id, $property_id]);
-
+            $stmt = $this->db->prepare("DELETE FROM property_favorites WHERE user_id = :userId AND property_id = :propertyId");
+            $stmt->execute(['userId' => $user_id, 'propertyId' => $property_id]);
         } catch (Exception $e) {
             error_log('Remove favorite error: ' . $e->getMessage());
             throw $e;
@@ -567,17 +580,16 @@ class MobileApiController {
     /**
      * Check if property exists
      */
-    private function propertyExists($property_id) {
+    private function propertyExists($property_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return false;
             }
 
-            $stmt = $pdo->prepare("SELECT id FROM properties WHERE id = ? AND status = 'available'");
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare("SELECT id FROM properties WHERE id = :propertyId AND status = 'available'");
+            $stmt->execute(['propertyId' => $property_id]);
             return $stmt->rowCount() > 0;
-
         } catch (Exception $e) {
             error_log('Property exists check error: ' . $e->getMessage());
             return false;
@@ -587,10 +599,10 @@ class MobileApiController {
     /**
      * Get user's favorite properties
      */
-    private function getUserFavorites($user_id) {
+    private function getUserFavorites($user_id)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
@@ -611,14 +623,13 @@ class MobileApiController {
                 FROM property_favorites pf
                 JOIN properties p ON pf.property_id = p.id
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                WHERE pf.user_id = ?
+                WHERE pf.user_id = :userId
                 ORDER BY pf.created_at DESC
             ";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$user_id]);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['userId' => $user_id]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Get user favorites error: ' . $e->getMessage());
             return [];
@@ -628,16 +639,15 @@ class MobileApiController {
     /**
      * Get property types for mobile filters
      */
-    public function getPropertyTypes() {
+    public function getPropertyTypes()
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $pdo->query("SELECT id, name, icon FROM property_types WHERE status = 'active' ORDER BY name");
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
+            $stmt = $this->db->query("SELECT id, name, icon FROM property_types WHERE status = 'active' ORDER BY name");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             error_log('Get property types error: ' . $e->getMessage());
             return [];
@@ -647,16 +657,15 @@ class MobileApiController {
     /**
      * Get available cities for mobile filters
      */
-    private function getAvailableCities() {
+    private function getAvailableCities()
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return [];
             }
 
-            $stmt = $pdo->query("SELECT DISTINCT city FROM properties WHERE status = 'available' AND city IS NOT NULL ORDER BY city");
-            return $stmt->fetchAll(\PDO::FETCH_COLUMN);
-
+            $stmt = $this->db->query("SELECT DISTINCT city FROM properties WHERE status = 'available' AND city IS NOT NULL ORDER BY city");
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
             error_log('Get available cities error: ' . $e->getMessage());
             return [];
@@ -666,10 +675,10 @@ class MobileApiController {
     /**
      * Get properties count for pagination
      */
-    private function getPropertiesCount($filters) {
+    private function getPropertiesCount($filters)
+    {
         try {
-            global $pdo;
-            if (!$pdo) {
+            if (!$this->db) {
                 return 0;
             }
 
@@ -678,40 +687,37 @@ class MobileApiController {
 
             // Apply filters
             if (isset($filters['property_type'])) {
-                $sql .= " AND property_type_id = ?";
-                $params[] = $filters['property_type'];
+                $sql .= " AND property_type_id = :propertyType";
+                $params['propertyType'] = $filters['property_type'];
             }
 
             if (isset($filters['city'])) {
-                $sql .= " AND city LIKE ?";
-                $params[] = '%' . $filters['city'] . '%';
+                $sql .= " AND city LIKE :city";
+                $params['city'] = '%' . $filters['city'] . '%';
             }
 
             if (isset($filters['min_price'])) {
-                $sql .= " AND price >= ?";
-                $params[] = $filters['min_price'];
+                $sql .= " AND price >= :minPrice";
+                $params['minPrice'] = $filters['min_price'];
             }
 
             if (isset($filters['max_price'])) {
-                $sql .= " AND price <= ?";
-                $params[] = $filters['max_price'];
+                $sql .= " AND price <= :maxPrice";
+                $params['maxPrice'] = $filters['max_price'];
             }
 
             if (isset($filters['featured']) && $filters['featured']) {
                 $sql .= " AND featured = 1";
             }
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
 
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int)($result['count'] ?? 0);
-
         } catch (Exception $e) {
             error_log('Get properties count error: ' . $e->getMessage());
             return 0;
         }
     }
 }
-
-?>

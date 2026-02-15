@@ -53,7 +53,8 @@ if (!isset($_SESSION['last_regeneration'])) {
 }
 
 // Include configuration
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/db_connection.php';
+$pdo = getPdoConnection();
 
 // Check if user is logged in
 if (!isset($_SESSION['auser'])) {
@@ -70,11 +71,9 @@ try {
     }
 
     // Get user details
-    $stmt = $conn->prepare("SELECT name, email, status FROM employees WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $user = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
+    $stmt = $pdo->prepare("SELECT name, email, status FROM employees WHERE id = :user_id");
+    $stmt->execute(['user_id' => $user_id]);
+    $user = $stmt->fetch();
 
     if (!$user) {
         throw new Exception('User not found');
@@ -82,33 +81,24 @@ try {
 
     // Get user roles
     $roles = [];
-    $stmt = $conn->prepare("SELECT r.name FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
+    $stmt = $pdo->prepare("SELECT r.name FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = :user_id");
+    $stmt->execute(['user_id' => $user_id]);
+    while ($row = $stmt->fetch()) {
         $roles[] = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
     }
-    $stmt->close();
 
     // Get user permissions
     $permissions = [];
-    $stmt = $conn->prepare("SELECT p.action FROM user_roles ur JOIN role_permissions rp ON ur.role_id = rp.role_id JOIN permissions p ON rp.permission_id = p.id WHERE ur.user_id = ?");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
+    $stmt = $pdo->prepare("SELECT p.action FROM user_roles ur JOIN role_permissions rp ON ur.role_id = rp.role_id JOIN permissions p ON rp.permission_id = p.id WHERE ur.user_id = :user_id");
+    $stmt->execute(['user_id' => $user_id]);
+    while ($row = $stmt->fetch()) {
         $permissions[] = htmlspecialchars($row['action'], ENT_QUOTES, 'UTF-8');
     }
-    $stmt->close();
 
     // Get notifications
-    $stmt = $conn->prepare("SELECT type, message, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 20");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $notifications = $stmt->get_result();
-    $stmt->close();
-
+    $stmt = $pdo->prepare("SELECT type, message, created_at FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 20");
+    $stmt->execute(['user_id' => $user_id]);
+    $notifications = $stmt->fetchAll();
 } catch (Exception $e) {
     error_log('Error in self_service_portal.php: ' . $e->getMessage());
     $_SESSION['error'] = 'An error occurred. Please try again later.';
@@ -118,21 +108,23 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Self-Service Portal</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
-          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
 </head>
+
 <body>
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Welcome, <?= htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8') ?></h2>
             <a href="/logout.php" class="btn btn-outline-danger">Logout</a>
         </div>
-        
+
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="mb-0">Profile Information</h5>
@@ -140,8 +132,8 @@ try {
             <div class="card-body">
                 <p><strong>Email:</strong> <?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?></p>
                 <p><strong>Status:</strong> <span class="badge bg-<?= $user['status'] === 'active' ? 'success' : 'secondary' ?>">
-                    <?= htmlspecialchars(ucfirst($user['status']), ENT_QUOTES, 'UTF-8') ?>
-                </span></p>
+                        <?= htmlspecialchars(ucfirst($user['status']), ENT_QUOTES, 'UTF-8') ?>
+                    </span></p>
             </div>
         </div>
 
@@ -191,9 +183,9 @@ try {
                 <a href="/notifications.php" class="btn btn-sm btn-outline-primary">View All</a>
             </div>
             <div class="card-body">
-                <?php if ($notifications->num_rows > 0): ?>
+                <?php if (count($notifications) > 0): ?>
                     <div class="list-group">
-                        <?php while ($notification = $notifications->fetch_assoc()): ?>
+                        <?php foreach ($notifications as $notification): ?>
                             <div class="list-group-item">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1"><?= htmlspecialchars($notification['type'], ENT_QUOTES, 'UTF-8') ?></h6>
@@ -201,7 +193,7 @@ try {
                                 </div>
                                 <p class="mb-1"><?= htmlspecialchars($notification['message'], ENT_QUOTES, 'UTF-8') ?></p>
                             </div>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </div>
                 <?php else: ?>
                     <p class="text-muted mb-0">No notifications found.</p>
@@ -210,8 +202,9 @@ try {
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
-            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>

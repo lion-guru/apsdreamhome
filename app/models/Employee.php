@@ -268,8 +268,8 @@ class Employee extends Model
 
         $whereClause = !empty($conditions) ? "WHERE " . implode(' AND ', $conditions) : "";
 
-        $offset = ($filters['page'] - 1) * $filters['per_page'];
-        $limit = $filters['per_page'];
+        $offset = (int)(($filters['page'] ?? 1) - 1) * (int)($filters['per_page'] ?? 10);
+        $limit = (int)($filters['per_page'] ?? 10);
 
         $sql = "
             SELECT e.*, u.name, u.email, u.phone, u.profile_image, u.status as user_status,
@@ -282,11 +282,16 @@ class Employee extends Model
             LEFT JOIN departments d ON e.department_id = d.id
             {$whereClause}
             ORDER BY e.joining_date DESC
-            LIMIT {$offset}, {$limit}
+            LIMIT :offset, :limit
         ";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

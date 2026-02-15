@@ -1,32 +1,32 @@
 <?php
+
 /**
  * CRM Lead Management Controller
  * Handles lead management and customer relationship operations
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\CRM;
 
-class CRMController extends BaseController {
+use App\Http\Controllers\BaseController;
+
+class CRMController extends BaseController
+{
 
     private $crmLead;
 
-    public function __construct() {
+    public function __construct()
+    {
+        parent::__construct();
         $this->crmLead = new \App\Models\CRMLead();
     }
 
     /**
      * Main CRM dashboard
      */
-    public function index() {
-        if (!$this->isLoggedIn()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        // Check if user is admin or agent
-        if (!$this->isAdmin() && !isset($_SESSION['user_role'])) {
-            $this->setFlashMessage('error', 'Access denied');
-            $this->redirect(BASE_URL . 'dashboard');
+    public function index()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -45,9 +45,10 @@ class CRMController extends BaseController {
     /**
      * Display all leads with filtering
      */
-    public function leads() {
-        if (!$this->isLoggedIn() || (!$this->isAdmin() && !isset($_SESSION['user_role']))) {
-            $this->redirect(BASE_URL . 'login');
+    public function leads()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -76,9 +77,10 @@ class CRMController extends BaseController {
     /**
      * Create new lead
      */
-    public function createLead() {
-        if (!$this->isLoggedIn()) {
-            $this->redirect(BASE_URL . 'login');
+    public function createLead()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -99,7 +101,7 @@ class CRMController extends BaseController {
             // Validate required fields
             if (empty($lead_data['customer_name']) || empty($lead_data['customer_email'])) {
                 $this->setFlashMessage('error', 'Customer name and email are required');
-                $this->redirect(BASE_URL . 'crm/leads/create');
+                $this->redirect('crm/leads/create');
                 return;
             }
 
@@ -110,13 +112,13 @@ class CRMController extends BaseController {
 
                 // Redirect to lead details or leads list
                 if (isset($_POST['save_and_continue'])) {
-                    $this->redirect(BASE_URL . 'crm/leads/' . $lead_id . '/edit');
+                    $this->redirect('crm/leads/' . $lead_id . '/edit');
                 } else {
-                    $this->redirect(BASE_URL . 'crm/leads');
+                    $this->redirect('crm/leads');
                 }
             } else {
                 $this->setFlashMessage('error', 'Failed to create lead');
-                $this->redirect(BASE_URL . 'crm/leads/create');
+                $this->redirect('crm/leads/create');
             }
         }
 
@@ -130,16 +132,17 @@ class CRMController extends BaseController {
     /**
      * View lead details
      */
-    public function viewLead($lead_id) {
-        if (!$this->isLoggedIn()) {
-            $this->redirect(BASE_URL . 'login');
+    public function viewLead($lead_id)
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
         $lead = $this->crmLead->getLead($lead_id);
         if (!$lead) {
             $this->setFlashMessage('error', 'Lead not found');
-            $this->redirect(BASE_URL . 'crm/leads');
+            $this->redirect('crm/leads');
             return;
         }
 
@@ -157,16 +160,17 @@ class CRMController extends BaseController {
     /**
      * Edit lead
      */
-    public function editLead($lead_id) {
-        if (!$this->isLoggedIn()) {
-            $this->redirect(BASE_URL . 'login');
+    public function editLead($lead_id)
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
         $lead = $this->crmLead->getLead($lead_id);
         if (!$lead) {
             $this->setFlashMessage('error', 'Lead not found');
-            $this->redirect(BASE_URL . 'crm/leads');
+            $this->redirect('crm/leads');
             return;
         }
 
@@ -189,7 +193,7 @@ class CRMController extends BaseController {
 
             if ($success) {
                 $this->setFlashMessage('success', 'Lead updated successfully');
-                $this->redirect(BASE_URL . 'crm/leads/' . $lead_id);
+                $this->redirect('crm/leads/' . $lead_id);
             } else {
                 $this->setFlashMessage('error', 'Failed to update lead');
             }
@@ -207,9 +211,10 @@ class CRMController extends BaseController {
     /**
      * Assign lead to agent
      */
-    public function assignLead($lead_id) {
-        if (!$this->isLoggedIn() || !$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+    public function assignLead($lead_id)
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -218,7 +223,7 @@ class CRMController extends BaseController {
 
             if (empty($agent_id)) {
                 $this->setFlashMessage('error', 'Please select an agent');
-                $this->redirect(BASE_URL . 'crm/leads/' . $lead_id . '/assign');
+                $this->redirect('crm/leads/' . $lead_id . '/assign');
                 return;
             }
 
@@ -226,10 +231,10 @@ class CRMController extends BaseController {
 
             if ($success) {
                 $this->setFlashMessage('success', 'Lead assigned successfully');
-                $this->redirect(BASE_URL . 'crm/leads/' . $lead_id);
+                $this->redirect('crm/leads/' . $lead_id);
             } else {
                 $this->setFlashMessage('error', 'Failed to assign lead');
-                $this->redirect(BASE_URL . 'crm/leads/' . $lead_id . '/assign');
+                $this->redirect('crm/leads/' . $lead_id . '/assign');
             }
         }
 
@@ -246,9 +251,10 @@ class CRMController extends BaseController {
     /**
      * Update lead status
      */
-    public function updateLeadStatus($lead_id) {
-        if (!$this->isLoggedIn()) {
-            $this->redirect(BASE_URL . 'login');
+    public function updateLeadStatus($lead_id)
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -258,7 +264,7 @@ class CRMController extends BaseController {
 
             if (empty($new_status)) {
                 $this->setFlashMessage('error', 'Please select a status');
-                $this->redirect(BASE_URL . 'crm/leads/' . $lead_id . '/status');
+                $this->redirect('crm/leads/' . $lead_id . '/status');
                 return;
             }
 
@@ -266,10 +272,10 @@ class CRMController extends BaseController {
 
             if ($success) {
                 $this->setFlashMessage('success', 'Lead status updated successfully');
-                $this->redirect(BASE_URL . 'crm/leads/' . $lead_id);
+                $this->redirect('crm/leads/' . $lead_id);
             } else {
                 $this->setFlashMessage('error', 'Failed to update lead status');
-                $this->redirect(BASE_URL . 'crm/leads/' . $lead_id . '/status');
+                $this->redirect('crm/leads/' . $lead_id . '/status');
             }
         }
 
@@ -285,9 +291,10 @@ class CRMController extends BaseController {
     /**
      * Lead analytics dashboard
      */
-    public function analytics() {
-        if (!$this->isLoggedIn() || !$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+    public function analytics()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -306,9 +313,10 @@ class CRMController extends BaseController {
     /**
      * Agent leads dashboard
      */
-    public function myLeads() {
+    public function myLeads()
+    {
         if (!$this->isLoggedIn()) {
-            $this->redirect(BASE_URL . 'login');
+            $this->redirect('login');
             return;
         }
 
@@ -326,9 +334,10 @@ class CRMController extends BaseController {
     /**
      * Bulk operations on leads
      */
-    public function bulkActions() {
-        if (!$this->isLoggedIn() || !$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+    public function bulkActions()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -338,7 +347,7 @@ class CRMController extends BaseController {
 
             if (empty($action) || empty($lead_ids)) {
                 $this->setFlashMessage('error', 'Please select action and leads');
-                $this->redirect(BASE_URL . 'crm/leads');
+                $this->redirect('crm/leads');
                 return;
             }
 
@@ -378,7 +387,7 @@ class CRMController extends BaseController {
                 $this->setFlashMessage('error', 'Bulk operation failed');
             }
 
-            $this->redirect(BASE_URL . 'crm/leads');
+            $this->redirect('crm/leads');
         }
 
         $this->data['page_title'] = 'Bulk Operations - ' . APP_NAME;
@@ -390,9 +399,10 @@ class CRMController extends BaseController {
     /**
      * Export leads
      */
-    public function exportLeads() {
-        if (!$this->isLoggedIn() || !$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+    public function exportLeads()
+    {
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
             return;
         }
 
@@ -419,18 +429,18 @@ class CRMController extends BaseController {
             }
         } else {
             $this->setFlashMessage('error', 'Export failed');
-            $this->redirect(BASE_URL . 'crm/leads');
+            $this->redirect('crm/leads');
         }
     }
 
     /**
      * Get active agents for assignment
      */
-    private function getActiveAgents() {
+    private function getActiveAgents()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name");
-            return $stmt->fetchAll();
+            $stmt = $this->db->query("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name");
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
@@ -439,7 +449,8 @@ class CRMController extends BaseController {
     /**
      * Get lead sources
      */
-    private function getLeadSources() {
+    private function getLeadSources()
+    {
         return [
             'website' => 'Website',
             'referral' => 'Referral',
@@ -453,7 +464,8 @@ class CRMController extends BaseController {
     /**
      * Get budget ranges
      */
-    private function getBudgetRanges() {
+    private function getBudgetRanges()
+    {
         return [
             'under_10L' => 'Under ₹10 Lakhs',
             '10L_25L' => '₹10L - ₹25L',
@@ -467,7 +479,8 @@ class CRMController extends BaseController {
     /**
      * Get lead statuses
      */
-    private function getLeadStatuses() {
+    private function getLeadStatuses()
+    {
         return [
             'new' => 'New',
             'contacted' => 'Contacted',

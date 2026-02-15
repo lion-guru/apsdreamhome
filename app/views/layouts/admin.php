@@ -82,6 +82,16 @@
                     </a>
                 </li>
                 <li class="nav-item mb-1">
+                    <a href="/admin/mlm-analytics" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-analytics') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-chart-pie me-2"></i>MLM Analytics
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="/admin/mlm-engagement" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-engagement') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-handshake me-2"></i>MLM Engagement
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
                     <a href="/admin/customers" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/customers') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-users me-2"></i>Customers
                     </a>

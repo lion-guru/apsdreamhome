@@ -1,12 +1,17 @@
 <?php
+
 /**
  * Blockchain Property Verification Controller
  * Handles blockchain-based property verification and ownership tracking
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Tech;
 
-class BlockchainController extends BaseController {
+use App\Controllers\BaseController;
+use Exception;
+
+class BlockchainController extends BaseController
+{
 
     private $blockchain_config = [
         'network' => 'polygon', // Polygon for lower fees
@@ -18,7 +23,8 @@ class BlockchainController extends BaseController {
     /**
      * Property verification dashboard
      */
-    public function verificationDashboard() {
+    public function verificationDashboard()
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -38,11 +44,12 @@ class BlockchainController extends BaseController {
     /**
      * Verify property ownership on blockchain
      */
-    public function verifyProperty($property_id) {
+    public function verifyProperty($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
-            $this->setFlashMessage('error', 'Property not found');
+            $this->setFlash('error', 'Property not found');
             $this->redirect(BASE_URL . 'blockchain/dashboard');
             return;
         }
@@ -51,10 +58,10 @@ class BlockchainController extends BaseController {
             $verification_result = $this->initiatePropertyVerification($property_id, $_POST);
 
             if ($verification_result['success']) {
-                $this->setFlashMessage('success', 'Property verification initiated successfully');
+                $this->setFlash('success', 'Property verification initiated successfully');
                 $this->redirect(BASE_URL . 'blockchain/verification/' . $property_id);
             } else {
-                $this->setFlashMessage('error', $verification_result['error']);
+                $this->setFlash('error', $verification_result['error']);
             }
         }
 
@@ -70,12 +77,13 @@ class BlockchainController extends BaseController {
     /**
      * View blockchain certificate
      */
-    public function viewCertificate($property_id) {
+    public function viewCertificate($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $verification = $this->getPropertyVerification($property_id);
 
         if (!$verification || $verification['blockchain_status'] !== 'verified') {
-            $this->setFlashMessage('error', 'Property verification not found or not verified');
+            $this->setFlash('error', 'Property verification not found or not verified');
             $this->redirect(BASE_URL . 'blockchain/dashboard');
             return;
         }
@@ -90,7 +98,8 @@ class BlockchainController extends BaseController {
     /**
      * Blockchain transaction history
      */
-    public function transactionHistory($property_id) {
+    public function transactionHistory($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $transactions = $this->getBlockchainTransactions($property_id);
 
@@ -104,7 +113,8 @@ class BlockchainController extends BaseController {
     /**
      * Admin - Blockchain network management
      */
-    public function adminBlockchain() {
+    public function adminBlockchain()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -123,7 +133,8 @@ class BlockchainController extends BaseController {
     /**
      * API - Get property verification status
      */
-    public function apiVerificationStatus($property_id) {
+    public function apiVerificationStatus($property_id)
+    {
         header('Content-Type: application/json');
 
         $verification = $this->getPropertyVerification($property_id);
@@ -138,7 +149,8 @@ class BlockchainController extends BaseController {
     /**
      * API - Verify document authenticity
      */
-    public function apiVerifyDocument() {
+    public function apiVerifyDocument()
+    {
         header('Content-Type: application/json');
 
         $document_hash = $_POST['document_hash'] ?? '';
@@ -159,24 +171,29 @@ class BlockchainController extends BaseController {
     /**
      * Get user properties for verification
      */
-    private function getUserPropertiesForVerification() {
+    private function getUserPropertiesForVerification()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $user_id = $_SESSION['user_id'];
 
             $sql = "SELECT p.*, pv.blockchain_status, pv.verification_date
                     FROM properties p
                     LEFT JOIN property_verifications pv ON p.id = pv.property_id
-                    WHERE p.created_by = ? OR p.agent_id = ?
+                    WHERE p.created_by = :userId OR p.agent_id = :agentId
                     ORDER BY p.created_at DESC";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$user_id, $user_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                'userId' => $user_id,
+                'agentId' => $user_id
+            ]);
 
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('User properties fetch error: ' . $e->getMessage());
             return [];
         }
@@ -185,9 +202,12 @@ class BlockchainController extends BaseController {
     /**
      * Get verification requests
      */
-    private function getVerificationRequests() {
+    private function getVerificationRequests()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT pv.*, p.title as property_title, p.city,
                            u.name as requested_by_name
@@ -197,10 +217,9 @@ class BlockchainController extends BaseController {
                     WHERE pv.blockchain_status IN ('pending', 'processing')
                     ORDER BY pv.requested_date DESC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Verification requests fetch error: ' . $e->getMessage());
             return [];
         }
@@ -209,9 +228,12 @@ class BlockchainController extends BaseController {
     /**
      * Get blockchain statistics
      */
-    private function getBlockchainStats() {
+    private function getBlockchainStats()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT
                         COUNT(*) as total_verifications,
@@ -221,10 +243,9 @@ class BlockchainController extends BaseController {
                         AVG(verification_fee) as avg_fee
                     FROM property_verifications";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -232,13 +253,16 @@ class BlockchainController extends BaseController {
     /**
      * Get property details
      */
-    private function getPropertyDetails($property_id) {
+    private function getPropertyDetails($property_id)
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = ?");
-            $stmt->execute([$property_id]);
+            if (!$this->db) {
+                return null;
+            }
+            $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :id");
+            $stmt->execute(['id' => $property_id]);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
@@ -246,22 +270,24 @@ class BlockchainController extends BaseController {
     /**
      * Get property verification data
      */
-    private function getPropertyVerification($property_id) {
+    private function getPropertyVerification($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return null;
+            }
 
             $sql = "SELECT pv.*, p.title, u.name as verified_by_name
                     FROM property_verifications pv
                     LEFT JOIN properties p ON pv.property_id = p.id
                     LEFT JOIN users u ON pv.verified_by = u.id
-                    WHERE pv.property_id = ?";
+                    WHERE pv.property_id = :propertyId";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Property verification fetch error: ' . $e->getMessage());
             return null;
         }
@@ -270,7 +296,8 @@ class BlockchainController extends BaseController {
     /**
      * Initiate property verification on blockchain
      */
-    private function initiatePropertyVerification($property_id, $verification_data) {
+    private function initiatePropertyVerification($property_id, $verification_data)
+    {
         try {
             // Generate property document hash
             $document_hash = $this->generatePropertyDocumentHash($property_id, $verification_data);
@@ -295,7 +322,6 @@ class BlockchainController extends BaseController {
             }
 
             return ['success' => false, 'error' => 'Failed to save verification record'];
-
         } catch (\Exception $e) {
             error_log('Property verification error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Verification failed'];
@@ -305,7 +331,8 @@ class BlockchainController extends BaseController {
     /**
      * Generate property document hash
      */
-    private function generatePropertyDocumentHash($property_id, $verification_data) {
+    private function generatePropertyDocumentHash($property_id, $verification_data)
+    {
         // Combine all property documents and data for hashing
         $property = $this->getPropertyDetails($property_id);
         $documents = $this->getPropertyDocuments($property_id);
@@ -324,7 +351,8 @@ class BlockchainController extends BaseController {
     /**
      * Get property documents for hashing
      */
-    private function getPropertyDocuments($property_id) {
+    private function getPropertyDocuments($property_id)
+    {
         // In production, this would fetch actual property documents
         return [
             'title_deed' => 'document_hash_1',
@@ -336,7 +364,8 @@ class BlockchainController extends BaseController {
     /**
      * Prepare blockchain transaction
      */
-    private function prepareBlockchainTransaction($property_id, $document_hash) {
+    private function prepareBlockchainTransaction($property_id, $document_hash)
+    {
         try {
             // In production, this would interact with actual blockchain network
             // For now, return simulated transaction
@@ -353,7 +382,6 @@ class BlockchainController extends BaseController {
                 'gas_used' => rand(100000, 500000),
                 'confirmation_time' => rand(10, 60) // seconds
             ];
-
         } catch (\Exception $e) {
             error_log('Blockchain transaction error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Transaction failed'];
@@ -363,36 +391,38 @@ class BlockchainController extends BaseController {
     /**
      * Save verification record to database
      */
-    private function saveVerificationRecord($property_id, $document_hash, $tx_hash) {
+    private function saveVerificationRecord($property_id, $document_hash, $tx_hash)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO property_verifications (
                 property_id, document_hash, blockchain_hash, transaction_hash,
                 blockchain_status, verification_fee, requested_by, requested_date
-            ) VALUES (?, ?, ?, ?, 'pending', 0.01, ?, NOW())
+            ) VALUES (:propertyId, :docHash, :bcHash, :txHash, 'pending', 0.01, :requestedBy, NOW())
             ON DUPLICATE KEY UPDATE
                 blockchain_hash = VALUES(blockchain_hash),
                 transaction_hash = VALUES(transaction_hash),
                 blockchain_status = 'pending',
                 updated_date = NOW()";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $property_id,
-                $document_hash,
-                $document_hash,
-                $tx_hash,
-                $_SESSION['user_id']
+                'propertyId' => $property_id,
+                'docHash' => $document_hash,
+                'bcHash' => $document_hash,
+                'txHash' => $tx_hash,
+                'requestedBy' => $_SESSION['user_id']
             ]);
 
             if ($success) {
-                return $pdo->lastInsertId();
+                return $this->db->lastInsertId();
             }
 
             return false;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Verification record save error: ' . $e->getMessage());
             return false;
         }
@@ -401,22 +431,24 @@ class BlockchainController extends BaseController {
     /**
      * Get blockchain transactions for property
      */
-    private function getBlockchainTransactions($property_id) {
+    private function getBlockchainTransactions($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT bt.*, p.title
                     FROM blockchain_transactions bt
                     LEFT JOIN properties p ON bt.property_id = p.id
-                    WHERE bt.property_id = ?
+                    WHERE bt.property_id = :propertyId
                     ORDER BY bt.created_at DESC";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Blockchain transactions fetch error: ' . $e->getMessage());
             return [];
         }
@@ -425,7 +457,8 @@ class BlockchainController extends BaseController {
     /**
      * Verify document authenticity on blockchain
      */
-    private function verifyDocumentOnBlockchain($document_hash, $property_id) {
+    private function verifyDocumentOnBlockchain($document_hash, $property_id)
+    {
         try {
             // Check if document exists on blockchain
             $blockchain_verification = $this->queryBlockchain($document_hash);
@@ -438,7 +471,6 @@ class BlockchainController extends BaseController {
                 'transaction_hash' => $blockchain_verification['tx_hash'] ?? null,
                 'is_authentic' => $blockchain_verification['exists']
             ];
-
         } catch (\Exception $e) {
             error_log('Document verification error: ' . $e->getMessage());
             return ['exists_on_blockchain' => false, 'is_authentic' => false];
@@ -448,7 +480,8 @@ class BlockchainController extends BaseController {
     /**
      * Query blockchain for document verification
      */
-    private function queryBlockchain($document_hash) {
+    private function queryBlockchain($document_hash)
+    {
         // In production, this would query the actual blockchain network
         // For now, return simulated verification
 
@@ -470,7 +503,8 @@ class BlockchainController extends BaseController {
     /**
      * Get network statistics
      */
-    private function getNetworkStats() {
+    private function getNetworkStats()
+    {
         return [
             'total_transactions' => 15420,
             'verified_properties' => 8934,
@@ -484,9 +518,12 @@ class BlockchainController extends BaseController {
     /**
      * Get pending verifications (admin)
      */
-    private function getPendingVerifications() {
+    private function getPendingVerifications()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT pv.*, p.title, p.city, u.name as requested_by
                     FROM property_verifications pv
@@ -495,10 +532,9 @@ class BlockchainController extends BaseController {
                     WHERE pv.blockchain_status = 'pending'
                     ORDER BY pv.requested_date ASC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -506,19 +542,27 @@ class BlockchainController extends BaseController {
     /**
      * Admin - Process pending verification
      */
-    public function processVerification($verification_id) {
+    public function processVerification($verification_id)
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
         }
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                $this->setFlash('error', 'Database connection failed');
+                $this->redirect(BASE_URL . 'admin/blockchain');
+                return;
+            }
 
             // Update verification status to processing
-            $sql = "UPDATE property_verifications SET blockchain_status = 'processing', processed_by = ?, processed_date = NOW() WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $success = $stmt->execute([$_SESSION['user_id'], $verification_id]);
+            $sql = "UPDATE property_verifications SET blockchain_status = 'processing', processed_by = :processedBy, processed_date = NOW() WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute([
+                'processedBy' => $_SESSION['user_id'],
+                'id' => $verification_id
+            ]);
 
             if ($success) {
                 // In production, trigger actual blockchain verification
@@ -528,18 +572,20 @@ class BlockchainController extends BaseController {
                 // Mark as verified (in demo, 90% success rate)
                 $final_status = rand(1, 10) <= 9 ? 'verified' : 'failed';
 
-                $sql = "UPDATE property_verifications SET blockchain_status = ?, verification_date = NOW() WHERE id = ?";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([$final_status, $verification_id]);
+                $sql = "UPDATE property_verifications SET blockchain_status = :status, verification_date = NOW() WHERE id = :id";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    'status' => $final_status,
+                    'id' => $verification_id
+                ]);
 
-                $this->setFlashMessage('success', 'Verification processed successfully');
+                $this->setFlash('success', 'Verification processed successfully');
             } else {
-                $this->setFlashMessage('error', 'Failed to process verification');
+                $this->setFlash('error', 'Failed to process verification');
             }
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Verification processing error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Verification processing failed');
+            $this->setFlash('error', 'Verification processing failed');
         }
 
         $this->redirect(BASE_URL . 'admin/blockchain');
@@ -548,12 +594,13 @@ class BlockchainController extends BaseController {
     /**
      * Generate blockchain certificate PDF
      */
-    public function generateCertificate($property_id) {
+    public function generateCertificate($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $verification = $this->getPropertyVerification($property_id);
 
         if (!$verification || $verification['blockchain_status'] !== 'verified') {
-            $this->setFlashMessage('error', 'Property not verified on blockchain');
+            $this->setFlash('error', 'Property not verified on blockchain');
             $this->redirect(BASE_URL . 'blockchain/dashboard');
             return;
         }
@@ -575,10 +622,9 @@ class BlockchainController extends BaseController {
             // For now, redirect to certificate view
             $this->data['certificate_data'] = $certificate_data;
             $this->render('blockchain/certificate_pdf');
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Certificate generation error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Certificate generation failed');
+            $this->setFlash('error', 'Certificate generation failed');
             $this->redirect(BASE_URL . 'blockchain/certificate/' . $property_id);
         }
     }
@@ -586,7 +632,8 @@ class BlockchainController extends BaseController {
     /**
      * Blockchain explorer integration
      */
-    public function blockchainExplorer($property_id) {
+    public function blockchainExplorer($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $verification = $this->getPropertyVerification($property_id);
 
@@ -609,7 +656,8 @@ class BlockchainController extends BaseController {
     /**
      * Get blockchain explorer URL
      */
-    private function getExplorerURL($transaction_hash) {
+    private function getExplorerURL($transaction_hash)
+    {
         $base_urls = [
             'polygon' => 'https://polygonscan.com/tx/',
             'ethereum' => 'https://etherscan.io/tx/',
@@ -622,7 +670,8 @@ class BlockchainController extends BaseController {
     /**
      * Smart contract interaction
      */
-    public function smartContract() {
+    public function smartContract()
+    {
         $contract_info = [
             'name' => 'Property Registry Contract',
             'address' => $this->blockchain_config['contract_address'],
@@ -644,7 +693,8 @@ class BlockchainController extends BaseController {
     /**
      * NFT property certificates
      */
-    public function nftCertificates() {
+    public function nftCertificates()
+    {
         $nft_properties = $this->getNFTVerifiedProperties();
 
         $this->data['page_title'] = 'NFT Property Certificates - ' . APP_NAME;
@@ -656,9 +706,12 @@ class BlockchainController extends BaseController {
     /**
      * Get NFT verified properties
      */
-    private function getNFTVerifiedProperties() {
+    private function getNFTVerifiedProperties()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT p.*, pv.nft_token_id, pv.nft_metadata
                     FROM properties p
@@ -666,9 +719,8 @@ class BlockchainController extends BaseController {
                     WHERE pv.blockchain_status = 'verified' AND pv.nft_token_id IS NOT NULL
                     ORDER BY pv.verification_date DESC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
         } catch (\Exception $e) {
             return [];
         }
@@ -677,11 +729,12 @@ class BlockchainController extends BaseController {
     /**
      * Property ownership transfer on blockchain
      */
-    public function transferOwnership($property_id) {
+    public function transferOwnership($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
-            $this->setFlashMessage('error', 'Property not found');
+            $this->setFlash('error', 'Property not found');
             $this->redirect(BASE_URL . 'properties');
             return;
         }
@@ -691,7 +744,7 @@ class BlockchainController extends BaseController {
             $transfer_reason = $_POST['transfer_reason'] ?? '';
 
             if (empty($new_owner_address)) {
-                $this->setFlashMessage('error', 'New owner blockchain address required');
+                $this->setFlash('error', 'New owner blockchain address required');
                 $this->redirect(BASE_URL . 'blockchain/transfer/' . $property_id);
                 return;
             }
@@ -699,10 +752,10 @@ class BlockchainController extends BaseController {
             $transfer_result = $this->initiateOwnershipTransfer($property_id, $new_owner_address, $transfer_reason);
 
             if ($transfer_result['success']) {
-                $this->setFlashMessage('success', 'Ownership transfer initiated successfully');
+                $this->setFlash('success', 'Ownership transfer initiated successfully');
                 $this->redirect(BASE_URL . 'blockchain/transactions/' . $property_id);
             } else {
-                $this->setFlashMessage('error', $transfer_result['error']);
+                $this->setFlash('error', $transfer_result['error']);
             }
         }
 
@@ -715,7 +768,8 @@ class BlockchainController extends BaseController {
     /**
      * Initiate ownership transfer on blockchain
      */
-    private function initiateOwnershipTransfer($property_id, $new_owner_address, $reason) {
+    private function initiateOwnershipTransfer($property_id, $new_owner_address, $reason)
+    {
         try {
             // In production, this would create a blockchain transaction for ownership transfer
             $transfer_tx = [
@@ -729,7 +783,6 @@ class BlockchainController extends BaseController {
             $this->logOwnershipTransfer($property_id, $new_owner_address, $transfer_tx['tx_hash'], $reason);
 
             return $transfer_tx;
-
         } catch (\Exception $e) {
             error_log('Ownership transfer error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Transfer failed'];
@@ -739,22 +792,24 @@ class BlockchainController extends BaseController {
     /**
      * Log ownership transfer
      */
-    private function logOwnershipTransfer($property_id, $new_owner, $tx_hash, $reason) {
+    private function logOwnershipTransfer($property_id, $new_owner, $tx_hash, $reason)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO ownership_transfers (property_id, previous_owner, new_owner, transfer_reason, blockchain_tx_hash, created_at)
-                    VALUES (?, ?, ?, ?, ?, NOW())";
+                    VALUES (:propertyId, :prevOwner, :newOwner, :reason, :txHash, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             return $stmt->execute([
-                $property_id,
-                $_SESSION['user_id'],
-                $new_owner,
-                $reason,
-                $tx_hash
+                'propertyId' => $property_id,
+                'prevOwner' => $_SESSION['user_id'],
+                'newOwner' => $new_owner,
+                'reason' => $reason,
+                'txHash' => $tx_hash
             ]);
-
         } catch (\Exception $e) {
             error_log('Ownership transfer log error: ' . $e->getMessage());
             return false;
@@ -764,7 +819,8 @@ class BlockchainController extends BaseController {
     /**
      * Property provenance and history
      */
-    public function propertyProvenance($property_id) {
+    public function propertyProvenance($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $ownership_history = $this->getOwnershipHistory($property_id);
         $document_history = $this->getDocumentHistory($property_id);
@@ -780,23 +836,25 @@ class BlockchainController extends BaseController {
     /**
      * Get ownership history
      */
-    private function getOwnershipHistory($property_id) {
+    private function getOwnershipHistory($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT ot.*, u.name as previous_owner_name,
                            nu.name as new_owner_name
                     FROM ownership_transfers ot
                     LEFT JOIN users u ON ot.previous_owner = u.id
                     LEFT JOIN users nu ON ot.new_owner = nu.blockchain_address
-                    WHERE ot.property_id = ?
+                    WHERE ot.property_id = :propertyId
                     ORDER BY ot.created_at DESC";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-
         } catch (\Exception $e) {
             return [];
         }
@@ -805,21 +863,23 @@ class BlockchainController extends BaseController {
     /**
      * Get document history
      */
-    private function getDocumentHistory($property_id) {
+    private function getDocumentHistory($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT dh.*, u.name as uploaded_by_name
                     FROM document_history dh
                     LEFT JOIN users u ON dh.uploaded_by = u.id
-                    WHERE dh.property_id = ?
+                    WHERE dh.property_id = :propertyId
                     ORDER BY dh.uploaded_date DESC";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-
         } catch (\Exception $e) {
             return [];
         }
@@ -828,7 +888,8 @@ class BlockchainController extends BaseController {
     /**
      * Blockchain analytics dashboard
      */
-    public function blockchainAnalytics() {
+    public function blockchainAnalytics()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -850,7 +911,8 @@ class BlockchainController extends BaseController {
     /**
      * Get verification trends
      */
-    private function getVerificationTrends() {
+    private function getVerificationTrends()
+    {
         return [
             ['month' => '2024-01', 'verifications' => 45, 'success_rate' => 95],
             ['month' => '2024-02', 'verifications' => 67, 'success_rate' => 97],
@@ -862,7 +924,8 @@ class BlockchainController extends BaseController {
     /**
      * Get network performance metrics
      */
-    private function getNetworkPerformance() {
+    private function getNetworkPerformance()
+    {
         return [
             'avg_confirmation_time' => '42 seconds',
             'network_uptime' => '99.9%',
@@ -875,7 +938,8 @@ class BlockchainController extends BaseController {
     /**
      * Get gas fee analysis
      */
-    private function getGasFeeAnalysis() {
+    private function getGasFeeAnalysis()
+    {
         return [
             'total_fees_paid' => '₹25,430',
             'avg_fee_per_transaction' => '₹165',
@@ -887,16 +951,19 @@ class BlockchainController extends BaseController {
     /**
      * Get total property value secured on blockchain
      */
-    private function getPropertyValueSecured() {
+    private function getPropertyValueSecured()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return ['total_value' => 0, 'properties_verified' => 0];
+            }
 
             $sql = "SELECT SUM(p.price) as total_value
                     FROM properties p
                     LEFT JOIN property_verifications pv ON p.id = pv.property_id
                     WHERE pv.blockchain_status = 'verified'";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $result = $stmt->fetch();
 
             return [
@@ -904,7 +971,6 @@ class BlockchainController extends BaseController {
                 'properties_verified' => 8934,
                 'avg_property_value' => '₹1.4 crores'
             ];
-
         } catch (\Exception $e) {
             return ['total_value' => 0, 'properties_verified' => 0];
         }
@@ -913,7 +979,8 @@ class BlockchainController extends BaseController {
     /**
      * Verify property documents before blockchain submission
      */
-    public function documentVerification($property_id) {
+    public function documentVerification($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $documents = $this->getPropertyDocuments($property_id);
 
@@ -927,7 +994,8 @@ class BlockchainController extends BaseController {
     /**
      * API - Submit documents for blockchain verification
      */
-    public function apiSubmitDocuments() {
+    public function apiSubmitDocuments()
+    {
         header('Content-Type: application/json');
 
         $property_id = $_POST['property_id'] ?? '';
@@ -949,20 +1017,26 @@ class BlockchainController extends BaseController {
     /**
      * Store document hashes for verification
      */
-    private function storeDocumentHashes($property_id, $document_hashes) {
+    private function storeDocumentHashes($property_id, $document_hashes)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             foreach ($document_hashes as $document_type => $hash) {
                 $sql = "INSERT INTO document_verifications (property_id, document_type, document_hash, created_at)
-                        VALUES (?, ?, ?, NOW())";
+                        VALUES (:propertyId, :docType, :docHash, NOW())";
 
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([$property_id, $document_type, $hash]);
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    'propertyId' => $property_id,
+                    'docType' => $document_type,
+                    'docHash' => $hash
+                ]);
             }
 
             return true;
-
         } catch (\Exception $e) {
             error_log('Document hash storage error: ' . $e->getMessage());
             return false;
@@ -972,14 +1046,15 @@ class BlockchainController extends BaseController {
     /**
      * Digital signature for property documents
      */
-    public function digitalSignature($property_id) {
+    public function digitalSignature($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $signature_data = $_POST['signature'] ?? '';
 
             if (empty($signature_data)) {
-                $this->setFlashMessage('error', 'Digital signature required');
+                $this->setFlash('error', 'Digital signature required');
                 $this->redirect(BASE_URL . 'blockchain/signature/' . $property_id);
                 return;
             }
@@ -987,10 +1062,10 @@ class BlockchainController extends BaseController {
             $signature_result = $this->processDigitalSignature($property_id, $signature_data);
 
             if ($signature_result['success']) {
-                $this->setFlashMessage('success', 'Digital signature applied successfully');
+                $this->setFlash('success', 'Digital signature applied successfully');
                 $this->redirect(BASE_URL . 'blockchain/verify/' . $property_id);
             } else {
-                $this->setFlashMessage('error', $signature_result['error']);
+                $this->setFlash('error', $signature_result['error']);
             }
         }
 
@@ -1003,28 +1078,31 @@ class BlockchainController extends BaseController {
     /**
      * Process digital signature
      */
-    private function processDigitalSignature($property_id, $signature_data) {
+    private function processDigitalSignature($property_id, $signature_data)
+    {
         try {
+            if (!$this->db) {
+                return ['success' => false, 'error' => 'Database connection failed'];
+            }
+
             // In production, this would verify and apply digital signatures
             // For now, simulate signature processing
 
             $signature_hash = hash('sha256', $signature_data . $property_id . time());
 
             // Store signature
-            global $pdo;
             $sql = "INSERT INTO digital_signatures (property_id, signature_hash, signature_data, signed_by, created_at)
-                    VALUES (?, ?, ?, ?, NOW())";
+                    VALUES (:propertyId, :sigHash, :sigData, :signedBy, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $property_id,
-                $signature_hash,
-                $signature_data,
-                $_SESSION['user_id']
+                'propertyId' => $property_id,
+                'sigHash' => $signature_hash,
+                'sigData' => $signature_data,
+                'signedBy' => $_SESSION['user_id']
             ]);
 
             return ['success' => $success];
-
         } catch (\Exception $e) {
             error_log('Digital signature error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Signature processing failed'];
@@ -1034,7 +1112,8 @@ class BlockchainController extends BaseController {
     /**
      * Property fraud detection using blockchain
      */
-    public function fraudDetection() {
+    public function fraudDetection()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -1053,7 +1132,8 @@ class BlockchainController extends BaseController {
     /**
      * Get fraud alerts
      */
-    private function getFraudAlerts() {
+    private function getFraudAlerts()
+    {
         return [
             [
                 'type' => 'duplicate_property',
@@ -1075,7 +1155,8 @@ class BlockchainController extends BaseController {
     /**
      * Get suspicious activities
      */
-    private function getSuspiciousActivities() {
+    private function getSuspiciousActivities()
+    {
         return [
             'multiple_registrations' => 23,
             'unusual_ip_activity' => 12,
