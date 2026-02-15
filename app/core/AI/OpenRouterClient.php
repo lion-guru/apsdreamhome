@@ -2,14 +2,17 @@
 
 namespace App\Core\AI;
 
-class OpenRouterClient {
+class OpenRouterClient
+{
     private string $apiKey;
     private string $model;
-    public function __construct(?string $apiKey = null, ?string $model = null) {
+    public function __construct(?string $apiKey = null, ?string $model = null)
+    {
         $this->apiKey = $apiKey ?? (getenv('OPENROUTER_API_KEY') ?: '');
         $this->model = $model ?? (getenv('OPENROUTER_MODEL') ?: 'qwen/qwen3-coder:free');
     }
-    public function chat(string $system, string $user): array {
+    public function chat(string $system, string $user): array
+    {
         if ($this->apiKey === '') {
             return ['ok' => false, 'error' => 'missing_api_key'];
         }
@@ -20,11 +23,13 @@ class OpenRouterClient {
                 ['role' => 'user', 'content' => $user],
             ],
         ];
-        $ch = curl_init('https://api.openrouter.ai/v1/chat/completions');
+        $ch = curl_init('https://openrouter.ai/api/v1/chat/completions');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Authorization: Bearer ' . $this->apiKey,
             'Content-Type: application/json',
+            'HTTP-Referer: http://localhost/apsdreamhome',
+            'X-Title: APS Dream Home',
         ]);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
@@ -42,4 +47,3 @@ class OpenRouterClient {
         return ['ok' => false, 'error' => is_string($resp) ? $resp : 'request_failed'];
     }
 }
-

@@ -1,19 +1,29 @@
 <?php
+
 /**
  * Advanced Analytics Controller
  * Provides comprehensive business intelligence and reporting
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Analytics;
 
-class AdvancedAnalyticsController extends BaseController {
+use App\Http\Controllers\BaseController;
+
+class AdvancedAnalyticsController extends BaseController
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * Main analytics dashboard
      */
-    public function dashboard() {
+    public function dashboard()
+    {
         if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+            $this->redirect('login');
             return;
         }
 
@@ -33,9 +43,10 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Property performance analytics
      */
-    public function propertyAnalytics() {
+    public function propertyAnalytics()
+    {
         if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+            $this->redirect('login');
             return;
         }
 
@@ -50,9 +61,10 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * User behavior analytics
      */
-    public function userAnalytics() {
+    public function userAnalytics()
+    {
         if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+            $this->redirect('login');
             return;
         }
 
@@ -67,9 +79,10 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Financial analytics
      */
-    public function financialAnalytics() {
+    public function financialAnalytics()
+    {
         if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+            $this->redirect('login');
             return;
         }
 
@@ -84,9 +97,10 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * MLM network analytics
      */
-    public function mlmAnalytics() {
+    public function mlmAnalytics()
+    {
         if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+            $this->redirect('login');
             return;
         }
 
@@ -101,7 +115,8 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * API - Get real-time analytics data
      */
-    public function apiGetRealtimeData() {
+    public function apiGetRealtimeData()
+    {
         header('Content-Type: application/json');
 
         if (!$this->isAdmin()) {
@@ -120,10 +135,9 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Get comprehensive analytics data
      */
-    private function getComprehensiveAnalytics() {
+    private function getComprehensiveAnalytics()
+    {
         try {
-            global $pdo;
-
             $data = [];
 
             // Overview metrics
@@ -151,7 +165,6 @@ class AdvancedAnalyticsController extends BaseController {
             $data['property_performance'] = $this->getPropertyPerformanceMetrics();
 
             return $data;
-
         } catch (\Exception $e) {
             error_log('Comprehensive analytics error: ' . $e->getMessage());
             return [];
@@ -161,10 +174,9 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Get property-specific analytics
      */
-    private function getPropertyAnalytics() {
+    private function getPropertyAnalytics()
+    {
         try {
-            global $pdo;
-
             $data = [];
 
             // Property distribution by type
@@ -175,7 +187,7 @@ class AdvancedAnalyticsController extends BaseController {
                     GROUP BY p.property_type_id, pt.name
                     ORDER BY count DESC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $data['type_distribution'] = $stmt->fetchAll();
 
             // Price distribution
@@ -188,7 +200,6 @@ class AdvancedAnalyticsController extends BaseController {
             $data['property_age'] = $this->getPropertyAgeAnalysis();
 
             return $data;
-
         } catch (\Exception $e) {
             error_log('Property analytics error: ' . $e->getMessage());
             return [];
@@ -198,10 +209,9 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Get user behavior analytics
      */
-    private function getUserAnalytics() {
+    private function getUserAnalytics()
+    {
         try {
-            global $pdo;
-
             $data = [];
 
             // User registration trends
@@ -211,7 +221,7 @@ class AdvancedAnalyticsController extends BaseController {
                     GROUP BY DATE(created_at)
                     ORDER BY date";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $data['registration_trends'] = $stmt->fetchAll();
 
             // User activity analysis
@@ -224,7 +234,6 @@ class AdvancedAnalyticsController extends BaseController {
             $data['retention_metrics'] = $this->getUserRetentionMetrics();
 
             return $data;
-
         } catch (\Exception $e) {
             error_log('User analytics error: ' . $e->getMessage());
             return [];
@@ -234,10 +243,9 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Get financial analytics
      */
-    private function getFinancialAnalytics() {
+    private function getFinancialAnalytics()
+    {
         try {
-            global $pdo;
-
             $data = [];
 
             // Revenue trends
@@ -248,7 +256,7 @@ class AdvancedAnalyticsController extends BaseController {
                     GROUP BY DATE_FORMAT(created_at, '%Y-%m')
                     ORDER BY month";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $data['revenue_trends'] = $stmt->fetchAll();
 
             // Commission payouts
@@ -261,7 +269,6 @@ class AdvancedAnalyticsController extends BaseController {
             $data['profit_margins'] = $this->getProfitMarginAnalysis();
 
             return $data;
-
         } catch (\Exception $e) {
             error_log('Financial analytics error: ' . $e->getMessage());
             return [];
@@ -271,7 +278,8 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Get MLM network analytics
      */
-    private function getMLMAnalytics() {
+    private function getMLMAnalytics()
+    {
         try {
             $associateMLM = new \App\Models\AssociateMLM();
             $chatbot = new \App\Models\AIChatbot();
@@ -294,7 +302,6 @@ class AdvancedAnalyticsController extends BaseController {
             $data['chatbot_stats'] = $chatbot->getChatbotStats();
 
             return $data;
-
         } catch (\Exception $e) {
             error_log('MLM analytics error: ' . $e->getMessage());
             return [];
@@ -304,10 +311,9 @@ class AdvancedAnalyticsController extends BaseController {
     /**
      * Get real-time analytics data
      */
-    private function getRealtimeAnalytics() {
+    private function getRealtimeAnalytics()
+    {
         try {
-            global $pdo;
-
             $data = [];
 
             // Current active users (last 5 minutes)
@@ -315,31 +321,30 @@ class AdvancedAnalyticsController extends BaseController {
                     FROM user_activity
                     WHERE last_activity >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
 
-            $stmt = $pdo->query($sql);
-            $data['active_users'] = (int)$stmt->fetch()['active_users'];
+            $stmt = $this->db->query($sql);
+            $data['active_users'] = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['active_users'];
 
             // Properties viewed today
             $sql = "SELECT COUNT(*) as views_today FROM property_views WHERE DATE(view_date) = CURDATE()";
-            $stmt = $pdo->query($sql);
-            $data['property_views_today'] = (int)$stmt->fetch()['views_today'];
+            $stmt = $this->db->query($sql);
+            $data['property_views_today'] = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['views_today'];
 
             // Inquiries today
             $sql = "SELECT COUNT(*) as inquiries_today FROM property_inquiries WHERE DATE(created_at) = CURDATE()";
-            $stmt = $pdo->query($sql);
-            $data['inquiries_today'] = (int)$stmt->fetch()['inquiries_today'];
+            $stmt = $this->db->query($sql);
+            $data['inquiries_today'] = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['inquiries_today'];
 
             // Revenue today
             $sql = "SELECT SUM(amount) as revenue_today FROM transactions WHERE DATE(created_at) = CURDATE()";
-            $stmt = $pdo->query($sql);
-            $data['revenue_today'] = (float)($stmt->fetch()['revenue_today'] ?? 0);
+            $stmt = $this->db->query($sql);
+            $data['revenue_today'] = (float)($stmt->fetch(\PDO::FETCH_ASSOC)['revenue_today'] ?? 0);
 
             // Chatbot conversations today
             $sql = "SELECT COUNT(*) as chatbot_today FROM chatbot_conversations WHERE DATE(created_at) = CURDATE()";
-            $stmt = $pdo->query($sql);
-            $data['chatbot_conversations_today'] = (int)$stmt->fetch()['chatbot_today'];
+            $stmt = $this->db->query($sql);
+            $data['chatbot_conversations_today'] = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['chatbot_today'];
 
             return $data;
-
         } catch (\Exception $e) {
             error_log('Realtime analytics error: ' . $e->getMessage());
             return [];
@@ -347,75 +352,75 @@ class AdvancedAnalyticsController extends BaseController {
     }
 
     // Helper methods for data collection
-    private function getTotalProperties() {
+    private function getTotalProperties()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM properties");
-            return (int)$stmt->fetch()['total'];
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM properties");
+            return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    private function getActiveProperties() {
+    private function getActiveProperties()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as active FROM properties WHERE status = 'available'");
-            return (int)$stmt->fetch()['active'];
+            $stmt = $this->db->query("SELECT COUNT(*) as active FROM properties WHERE status = 'available'");
+            return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['active'];
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    private function getTotalUsers() {
+    private function getTotalUsers()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
-            return (int)$stmt->fetch()['total'];
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM users");
+            return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    private function getActiveUsers() {
+    private function getActiveUsers()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
-            return (int)$stmt->fetch()['active'];
+            $stmt = $this->db->query("SELECT COUNT(*) as active FROM users WHERE status = 'active'");
+            return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['active'];
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    private function getTotalInquiries() {
+    private function getTotalInquiries()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM property_inquiries");
-            return (int)$stmt->fetch()['total'];
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM property_inquiries");
+            return (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total'];
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    private function getTotalRevenue() {
+    private function getTotalRevenue()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT SUM(amount) as total FROM transactions");
-            return (float)($stmt->fetch()['total'] ?? 0);
+            $stmt = $this->db->query("SELECT SUM(amount) as total FROM transactions");
+            return (float)($stmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0);
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    private function getConversionRate() {
+    private function getConversionRate()
+    {
         try {
-            global $pdo;
             // Calculate conversion rate (inquiries to sales)
-            $stmt = $pdo->query("SELECT COUNT(*) as total_inquiries FROM property_inquiries");
-            $total_inquiries = (int)$stmt->fetch()['total_inquiries'];
+            $stmt = $this->db->query("SELECT COUNT(*) as total_inquiries FROM property_inquiries");
+            $total_inquiries = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total_inquiries'];
 
-            $stmt = $pdo->query("SELECT COUNT(*) as total_sales FROM transactions WHERE status = 'completed'");
-            $total_sales = (int)$stmt->fetch()['total_sales'];
+            $stmt = $this->db->query("SELECT COUNT(*) as total_sales FROM transactions WHERE status = 'completed'");
+            $total_sales = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total_sales'];
 
             return $total_inquiries > 0 ? round(($total_sales / $total_inquiries) * 100, 2) : 0;
         } catch (\Exception $e) {
@@ -423,17 +428,18 @@ class AdvancedAnalyticsController extends BaseController {
         }
     }
 
-    private function getAveragePropertyPrice() {
+    private function getAveragePropertyPrice()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT AVG(price) as avg_price FROM properties WHERE status = 'available'");
-            return (float)($stmt->fetch()['avg_price'] ?? 0);
+            $stmt = $this->db->query("SELECT AVG(price) as avg_price FROM properties WHERE status = 'available'");
+            return (float)($stmt->fetch(\PDO::FETCH_ASSOC)['avg_price'] ?? 0);
         } catch (\Exception $e) {
             return 0;
         }
     }
 
-    private function getGrowthTrends() {
+    private function getGrowthTrends()
+    {
         // Placeholder - would implement actual growth trend calculation
         return [
             ['month' => '2024-01', 'properties' => 150, 'users' => 300, 'revenue' => 1500000],
@@ -442,9 +448,9 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getTopPerformingLocations() {
+    private function getTopPerformingLocations()
+    {
         try {
-            global $pdo;
             $sql = "SELECT city, state, COUNT(*) as property_count, AVG(price) as avg_price
                     FROM properties
                     WHERE status = 'available'
@@ -452,14 +458,15 @@ class AdvancedAnalyticsController extends BaseController {
                     ORDER BY property_count DESC
                     LIMIT 10";
 
-            $stmt = $pdo->query($sql);
-            return $stmt->fetchAll();
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
     }
 
-    private function getUserEngagementMetrics() {
+    private function getUserEngagementMetrics()
+    {
         // Placeholder - would implement actual engagement metrics
         return [
             'avg_session_duration' => '4.5 minutes',
@@ -469,7 +476,8 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getPropertyPerformanceMetrics() {
+    private function getPropertyPerformanceMetrics()
+    {
         // Placeholder - would implement actual property performance metrics
         return [
             'avg_days_on_market' => 45,
@@ -479,9 +487,9 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getPriceDistribution() {
+    private function getPriceDistribution()
+    {
         try {
-            global $pdo;
             $sql = "SELECT
                         CASE
                             WHEN price < 1000000 THEN 'Under ₹10L'
@@ -496,16 +504,16 @@ class AdvancedAnalyticsController extends BaseController {
                     GROUP BY price_range
                     ORDER BY MIN(price)";
 
-            $stmt = $pdo->query($sql);
-            return $stmt->fetchAll();
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
     }
 
-    private function getLocationPerformance() {
+    private function getLocationPerformance()
+    {
         try {
-            global $pdo;
             $sql = "SELECT city, state,
                            COUNT(*) as properties,
                            AVG(price) as avg_price,
@@ -516,16 +524,16 @@ class AdvancedAnalyticsController extends BaseController {
                     ORDER BY properties DESC
                     LIMIT 15";
 
-            $stmt = $pdo->query($sql);
-            return $stmt->fetchAll();
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
     }
 
-    private function getPropertyAgeAnalysis() {
+    private function getPropertyAgeAnalysis()
+    {
         try {
-            global $pdo;
             $sql = "SELECT
                         CASE
                             WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 'Last 30 days'
@@ -540,14 +548,15 @@ class AdvancedAnalyticsController extends BaseController {
                     GROUP BY age_group
                     ORDER BY MIN(created_at)";
 
-            $stmt = $pdo->query($sql);
-            return $stmt->fetchAll();
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
     }
 
-    private function getUserActivityAnalysis() {
+    private function getUserActivityAnalysis()
+    {
         // Placeholder - would implement actual user activity analysis
         return [
             'daily_active_users' => 150,
@@ -558,23 +567,24 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getGeographicDistribution() {
+    private function getGeographicDistribution()
+    {
         try {
-            global $pdo;
             $sql = "SELECT state, COUNT(*) as user_count
                     FROM users
                     GROUP BY state
                     ORDER BY user_count DESC
                     LIMIT 10";
 
-            $stmt = $pdo->query($sql);
-            return $stmt->fetchAll();
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
     }
 
-    private function getUserRetentionMetrics() {
+    private function getUserRetentionMetrics()
+    {
         // Placeholder - would implement actual retention metrics
         return [
             'day_1_retention' => '85%',
@@ -584,7 +594,8 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getCommissionAnalysis() {
+    private function getCommissionAnalysis()
+    {
         // Placeholder - would implement actual commission analysis
         return [
             'total_commission_paid' => 250000,
@@ -594,7 +605,8 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getPaymentMethodAnalysis() {
+    private function getPaymentMethodAnalysis()
+    {
         // Placeholder - would implement actual payment method analysis
         return [
             ['method' => 'Credit Card', 'count' => 450, 'amount' => 2250000],
@@ -603,7 +615,8 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getProfitMarginAnalysis() {
+    private function getProfitMarginAnalysis()
+    {
         // Placeholder - would implement actual profit margin analysis
         return [
             'avg_margin' => '12%',
@@ -613,9 +626,9 @@ class AdvancedAnalyticsController extends BaseController {
         ];
     }
 
-    private function getMLMNetworkOverview() {
+    private function getMLMNetworkOverview()
+    {
         try {
-            global $pdo;
             $sql = "SELECT
                         COUNT(*) as total_associates,
                         SUM(total_commission) as total_earnings,
@@ -623,29 +636,30 @@ class AdvancedAnalyticsController extends BaseController {
                         COUNT(CASE WHEN status = 'active' THEN 1 END) as active_associates
                     FROM associate_mlm";
 
-            $stmt = $pdo->query($sql);
-            return $stmt->fetch();
+            $stmt = $this->db->query($sql);
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
     }
 
-    private function getMLMLevelDistribution() {
+    private function getMLMLevelDistribution()
+    {
         try {
-            global $pdo;
             $sql = "SELECT level, COUNT(*) as count
                     FROM associate_mlm
                     GROUP BY level
                     ORDER BY level";
 
-            $stmt = $pdo->query($sql);
-            return $stmt->fetchAll();
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
             return [];
         }
     }
 
-    private function getMLMCommissionTrends() {
+    private function getMLMCommissionTrends()
+    {
         // Placeholder - would implement actual MLM commission trends
         return [
             ['month' => '2024-01', 'commission' => 45000],

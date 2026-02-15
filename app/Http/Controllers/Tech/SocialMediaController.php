@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Social Media Integration Controller
  * Handles social media sharing, authentication, and viral marketing
@@ -7,17 +8,20 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use Exception;
 
-class SocialMediaController extends BaseController {
+class SocialMediaController extends BaseController
+{
 
     /**
      * Social media sharing for properties
      */
-    public function shareProperty($property_id) {
+    public function shareProperty($property_id)
+    {
         $property = $this->getPropertyForSharing($property_id);
 
         if (!$property) {
-            $this->setFlashMessage('error', 'Property not found');
+            $this->setFlash('error', 'Property not found');
             $this->redirect(BASE_URL . 'properties');
             return;
         }
@@ -42,7 +46,8 @@ class SocialMediaController extends BaseController {
     /**
      * Generate social media posts
      */
-    public function generatePost() {
+    public function generatePost()
+    {
         header('Content-Type: application/json');
 
         $post_type = $_POST['post_type'] ?? '';
@@ -63,9 +68,10 @@ class SocialMediaController extends BaseController {
     /**
      * Social media login/authentication
      */
-    public function socialLogin($provider) {
+    public function socialLogin($provider)
+    {
         if (!in_array($provider, ['facebook', 'google', 'twitter', 'linkedin'])) {
-            $this->setFlashMessage('error', 'Invalid social provider');
+            $this->setFlash('error', 'Invalid social provider');
             $this->redirect(BASE_URL . 'login');
             return;
         }
@@ -77,7 +83,7 @@ class SocialMediaController extends BaseController {
             header('Location: ' . $auth_url);
             exit;
         } else {
-            $this->setFlashMessage('error', 'Social login configuration error');
+            $this->setFlash('error', 'Social login configuration error');
             $this->redirect(BASE_URL . 'login');
         }
     }
@@ -85,27 +91,28 @@ class SocialMediaController extends BaseController {
     /**
      * Handle social media OAuth callback
      */
-    public function socialCallback($provider) {
+    public function socialCallback($provider)
+    {
         try {
             $auth_code = $_GET['code'] ?? '';
             $state = $_GET['state'] ?? '';
 
             if (empty($auth_code)) {
-                throw new \Exception('Authorization code not received');
+                throw new Exception('Authorization code not received');
             }
 
             // Exchange code for access token
             $access_token = $this->getAccessToken($provider, $auth_code);
 
             if (!$access_token) {
-                throw new \Exception('Failed to get access token');
+                throw new Exception('Failed to get access token');
             }
 
             // Get user profile information
             $user_profile = $this->getUserProfile($provider, $access_token);
 
             if (!$user_profile) {
-                throw new \Exception('Failed to get user profile');
+                throw new Exception('Failed to get user profile');
             }
 
             // Check if user exists or create new user
@@ -120,12 +127,11 @@ class SocialMediaController extends BaseController {
             // Save social media connection
             $this->saveSocialConnection($user['id'], $provider, $user_profile['social_id']);
 
-            $this->setFlashMessage('success', 'Successfully logged in with ' . ucfirst($provider));
+            $this->setFlash('success', 'Successfully logged in with ' . ucfirst($provider));
             $this->redirect(BASE_URL . 'dashboard');
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Social login error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Social login failed: ' . $e->getMessage());
+            $this->setFlash('error', 'Social login failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'login');
         }
     }
@@ -133,7 +139,8 @@ class SocialMediaController extends BaseController {
     /**
      * Get social media analytics
      */
-    public function socialAnalytics() {
+    public function socialAnalytics()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -156,13 +163,16 @@ class SocialMediaController extends BaseController {
     /**
      * Get property for sharing
      */
-    private function getPropertyForSharing($property_id) {
+    private function getPropertyForSharing($property_id)
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = ? AND status = 'available'");
-            $stmt->execute([$property_id]);
+            if (!$this->db) {
+                return null;
+            }
+            $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :propertyId AND status = 'available'");
+            $stmt->execute(['propertyId' => $property_id]);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
@@ -170,7 +180,8 @@ class SocialMediaController extends BaseController {
     /**
      * Generate property description for social media
      */
-    private function generatePropertyDescription($property) {
+    private function generatePropertyDescription($property)
+    {
         $description = [];
 
         if (!empty($property['bedrooms'])) {
@@ -193,7 +204,8 @@ class SocialMediaController extends BaseController {
     /**
      * Get property image for sharing
      */
-    private function getPropertyImage($property_id) {
+    private function getPropertyImage($property_id)
+    {
         // Return the first property image or default image
         return BASE_URL . 'assets/images/properties/property_' . $property_id . '_1.jpg';
     }
@@ -201,7 +213,8 @@ class SocialMediaController extends BaseController {
     /**
      * Get social platforms configuration
      */
-    private function getSocialPlatforms() {
+    private function getSocialPlatforms()
+    {
         return [
             'facebook' => [
                 'name' => 'Facebook',
@@ -245,7 +258,8 @@ class SocialMediaController extends BaseController {
     /**
      * Generate social media post content
      */
-    private function generateSocialPost($post_type, $platform) {
+    private function generateSocialPost($post_type, $platform)
+    {
         $templates = [
             'property_sale' => [
                 'facebook' => "🏠 Amazing {property_type} for sale!\n\n{description}\n💰 {price}\n📍 {location}\n\nView details: {url}",
@@ -270,25 +284,26 @@ class SocialMediaController extends BaseController {
     /**
      * Get OAuth URL for social provider
      */
-    private function getOAuthURL($provider) {
+    private function getOAuthURL($provider)
+    {
         $redirect_uri = urlencode(BASE_URL . 'social/callback/' . $provider);
 
         switch ($provider) {
             case 'facebook':
                 return "https://www.facebook.com/v18.0/dialog/oauth?client_id=" .
-                       env('FACEBOOK_APP_ID', '') . "&redirect_uri={$redirect_uri}&scope=email,public_profile";
+                    env('FACEBOOK_APP_ID', '') . "&redirect_uri={$redirect_uri}&scope=email,public_profile";
 
             case 'google':
                 return "https://accounts.google.com/o/oauth2/v2/auth?client_id=" .
-                       env('GOOGLE_CLIENT_ID', '') . "&redirect_uri={$redirect_uri}&response_type=code&scope=email%20profile";
+                    env('GOOGLE_CLIENT_ID', '') . "&redirect_uri={$redirect_uri}&response_type=code&scope=email%20profile";
 
             case 'twitter':
                 return "https://twitter.com/i/oauth2/authorize?client_id=" .
-                       env('TWITTER_CLIENT_ID', '') . "&redirect_uri={$redirect_uri}&response_type=code&scope=users.read%20tweet.read";
+                    env('TWITTER_CLIENT_ID', '') . "&redirect_uri={$redirect_uri}&response_type=code&scope=users.read%20tweet.read";
 
             case 'linkedin':
                 return "https://www.linkedin.com/oauth/v2/authorization?client_id=" .
-                       env('LINKEDIN_CLIENT_ID', '') . "&redirect_uri={$redirect_uri}&response_type=code&scope=r_liteprofile%20r_emailaddress";
+                    env('LINKEDIN_CLIENT_ID', '') . "&redirect_uri={$redirect_uri}&response_type=code&scope=r_liteprofile%20r_emailaddress";
 
             default:
                 return null;
@@ -298,7 +313,8 @@ class SocialMediaController extends BaseController {
     /**
      * Exchange authorization code for access token
      */
-    private function getAccessToken($provider, $auth_code) {
+    private function getAccessToken($provider, $auth_code)
+    {
         // In production, implement actual token exchange
         // For now, return mock token
         return 'mock_access_token_' . time();
@@ -307,7 +323,8 @@ class SocialMediaController extends BaseController {
     /**
      * Get user profile from social provider
      */
-    private function getUserProfile($provider, $access_token) {
+    private function getUserProfile($provider, $access_token)
+    {
         // In production, make API calls to get user profile
         // For now, return mock profile data
 
@@ -323,13 +340,16 @@ class SocialMediaController extends BaseController {
     /**
      * Find existing user or create new one
      */
-    private function findOrCreateUser($profile, $provider) {
+    private function findOrCreateUser($profile, $provider)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return null;
+            }
 
             // Check if user exists with this email
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-            $stmt->execute([$profile['email']]);
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+            $stmt->execute(['email' => $profile['email']]);
             $existing_user = $stmt->fetch();
 
             if ($existing_user) {
@@ -338,25 +358,24 @@ class SocialMediaController extends BaseController {
 
             // Create new user
             $sql = "INSERT INTO users (name, email, password, role, status, created_at)
-                    VALUES (?, ?, ?, 'user', 'active', NOW())";
+                    VALUES (:name, :email, :password, 'user', 'active', NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $profile['name'],
-                $profile['email'],
-                password_hash(uniqid(), PASSWORD_DEFAULT) // Random password for social login
+                'name' => $profile['name'],
+                'email' => $profile['email'],
+                'password' => password_hash(uniqid(), PASSWORD_DEFAULT) // Random password for social login
             ]);
 
             if ($success) {
-                $user_id = $pdo->lastInsertId();
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-                $stmt->execute([$user_id]);
+                $user_id = $this->db->lastInsertId();
+                $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :userId");
+                $stmt->execute(['userId' => $user_id]);
                 return $stmt->fetch();
             }
 
             return null;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Social user creation error: ' . $e->getMessage());
             return null;
         }
@@ -365,18 +384,24 @@ class SocialMediaController extends BaseController {
     /**
      * Save social media connection
      */
-    private function saveSocialConnection($user_id, $provider, $social_id) {
+    private function saveSocialConnection($user_id, $provider, $social_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO social_connections (user_id, provider, social_id, created_at)
-                    VALUES (?, ?, ?, NOW())
+                    VALUES (:userId, :provider, :socialId, NOW())
                     ON DUPLICATE KEY UPDATE updated_at = NOW()";
 
-            $stmt = $pdo->prepare($sql);
-            return $stmt->execute([$user_id, $provider, $social_id]);
-
-        } catch (\Exception $e) {
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                'userId' => $user_id,
+                'provider' => $provider,
+                'socialId' => $social_id
+            ]);
+        } catch (Exception $e) {
             error_log('Social connection save error: ' . $e->getMessage());
             return false;
         }
@@ -385,9 +410,12 @@ class SocialMediaController extends BaseController {
     /**
      * Get sharing statistics
      */
-    private function getSharingStats() {
+    private function getSharingStats()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT platform, COUNT(*) as shares,
                            COUNT(DISTINCT property_id) as unique_properties
@@ -395,10 +423,9 @@ class SocialMediaController extends BaseController {
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                     GROUP BY platform";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -406,19 +433,21 @@ class SocialMediaController extends BaseController {
     /**
      * Get social login statistics
      */
-    private function getSocialLoginStats() {
+    private function getSocialLoginStats()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT provider, COUNT(*) as logins
                     FROM social_logins
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                     GROUP BY provider";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -426,26 +455,28 @@ class SocialMediaController extends BaseController {
     /**
      * Calculate viral coefficient
      */
-    private function calculateViralCoefficient() {
+    private function calculateViralCoefficient()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return 0;
+            }
 
             // Get new users in last 30 days
             $sql = "SELECT COUNT(*) as new_users FROM users
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $new_users = (int)$stmt->fetch()['new_users'];
 
             // Get social shares in last 30 days
             $sql = "SELECT COUNT(*) as total_shares FROM social_shares
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $total_shares = (int)$stmt->fetch()['total_shares'];
 
             // Viral coefficient = (invites sent) / (new users acquired)
             return $new_users > 0 ? round($total_shares / $new_users, 2) : 0;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }
@@ -453,9 +484,12 @@ class SocialMediaController extends BaseController {
     /**
      * Get top shared properties
      */
-    private function getTopSharedProperties() {
+    private function getTopSharedProperties()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT p.id, p.title, p.city, COUNT(s.id) as share_count
                     FROM properties p
@@ -465,10 +499,9 @@ class SocialMediaController extends BaseController {
                     ORDER BY share_count DESC
                     LIMIT 10";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -476,9 +509,12 @@ class SocialMediaController extends BaseController {
     /**
      * Get social referrals
      */
-    private function getSocialReferrals() {
+    private function getSocialReferrals()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT referrer_user_id, COUNT(*) as referral_count,
                            COUNT(CASE WHEN status = 'completed' THEN 1 END) as successful_referrals
@@ -488,10 +524,9 @@ class SocialMediaController extends BaseController {
                     ORDER BY referral_count DESC
                     LIMIT 20";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -499,11 +534,14 @@ class SocialMediaController extends BaseController {
     /**
      * Track social share
      */
-    public function trackShare() {
+    public function trackShare()
+    {
         header('Content-Type: application/json');
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                sendJsonResponse(['success' => false, 'error' => 'Database connection failed'], 500);
+            }
 
             $share_data = [
                 'property_id' => $_POST['property_id'] ?? null,
@@ -518,23 +556,22 @@ class SocialMediaController extends BaseController {
             }
 
             $sql = "INSERT INTO social_shares (property_id, platform, user_id, ip_address, user_agent, created_at)
-                    VALUES (?, ?, ?, ?, ?, NOW())";
+                    VALUES (:propertyId, :platform, :userId, :ipAddress, :userAgent, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $share_data['property_id'],
-                $share_data['platform'],
-                $share_data['user_id'],
-                $share_data['ip_address'],
-                $share_data['user_agent']
+                'propertyId' => $share_data['property_id'],
+                'platform' => $share_data['platform'],
+                'userId' => $share_data['user_id'],
+                'ipAddress' => $share_data['ip_address'],
+                'userAgent' => $share_data['user_agent']
             ]);
 
             sendJsonResponse([
                 'success' => $success,
                 'message' => 'Share tracked successfully'
             ]);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Social share tracking error: ' . $e->getMessage());
             sendJsonResponse(['success' => false, 'error' => 'Tracking failed'], 500);
         }
@@ -543,7 +580,8 @@ class SocialMediaController extends BaseController {
     /**
      * Generate referral link
      */
-    public function generateReferralLink() {
+    public function generateReferralLink()
+    {
         if (!$this->isLoggedIn()) {
             sendJsonResponse(['success' => false, 'error' => 'Login required'], 401);
         }
@@ -563,14 +601,16 @@ class SocialMediaController extends BaseController {
     /**
      * Generate unique referral code
      */
-    private function generateReferralCode($user_id) {
+    private function generateReferralCode($user_id)
+    {
         return 'REF' . strtoupper(substr(md5($user_id . time()), 0, 8));
     }
 
     /**
      * Track referral visit
      */
-    public function trackReferral() {
+    public function trackReferral()
+    {
         $referral_code = $_GET['ref'] ?? '';
 
         if (empty($referral_code)) {
@@ -578,29 +618,30 @@ class SocialMediaController extends BaseController {
         }
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                return;
+            }
 
             // Find referrer user
-            $sql = "SELECT user_id FROM user_referrals WHERE referral_code = ? AND status = 'active'";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$referral_code]);
+            $sql = "SELECT user_id FROM user_referrals WHERE referral_code = :code AND status = 'active'";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['code' => $referral_code]);
             $referral = $stmt->fetch();
 
             if ($referral) {
                 // Log referral visit
                 $sql = "INSERT INTO referral_visits (referral_code, referrer_user_id, visitor_ip, user_agent, created_at)
-                        VALUES (?, ?, ?, ?, NOW())";
+                        VALUES (:code, :userId, :ip, :userAgent, NOW())";
 
-                $stmt = $pdo->prepare($sql);
+                $stmt = $this->db->prepare($sql);
                 $stmt->execute([
-                    $referral_code,
-                    $referral['user_id'],
-                    $_SERVER['REMOTE_ADDR'] ?? '',
-                    $_SERVER['HTTP_USER_AGENT'] ?? ''
+                    'code' => $referral_code,
+                    'userId' => $referral['user_id'],
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                    'userAgent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
                 ]);
             }
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Referral tracking error: ' . $e->getMessage());
         }
     }
@@ -608,7 +649,8 @@ class SocialMediaController extends BaseController {
     /**
      * Get social media trends
      */
-    public function getSocialTrends() {
+    public function getSocialTrends()
+    {
         header('Content-Type: application/json');
 
         $trends = [
@@ -627,19 +669,27 @@ class SocialMediaController extends BaseController {
     /**
      * Get popular hashtags
      */
-    private function getPopularHashtags() {
+    private function getPopularHashtags()
+    {
         return [
-            '#RealEstate', '#PropertyForSale', '#DreamHome',
-            '#HomeSweetHome', '#PropertyInvestment', '#APSDreamHome'
+            '#RealEstate',
+            '#PropertyForSale',
+            '#DreamHome',
+            '#HomeSweetHome',
+            '#PropertyInvestment',
+            '#APSDreamHome'
         ];
     }
 
     /**
      * Get trending properties
      */
-    private function getTrendingProperties() {
+    private function getTrendingProperties()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT p.id, p.title, p.city, COUNT(s.id) as shares,
                            COUNT(f.id) as favorites
@@ -652,10 +702,9 @@ class SocialMediaController extends BaseController {
                     ORDER BY (shares + favorites) DESC
                     LIMIT 10";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }
@@ -663,7 +712,8 @@ class SocialMediaController extends BaseController {
     /**
      * Get viral content
      */
-    private function getViralContent() {
+    private function getViralContent()
+    {
         return [
             'viral_properties' => $this->getTrendingProperties(),
             'top_sharers' => $this->getTopSharers(),
@@ -674,7 +724,8 @@ class SocialMediaController extends BaseController {
     /**
      * Get engagement metrics
      */
-    private function getEngagementMetrics() {
+    private function getEngagementMetrics()
+    {
         return [
             'avg_shares_per_property' => 5.2,
             'avg_likes_per_post' => 12.8,
@@ -686,9 +737,12 @@ class SocialMediaController extends BaseController {
     /**
      * Get top sharers
      */
-    private function getTopSharers() {
+    private function getTopSharers()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT u.name, COUNT(s.id) as shares
                     FROM users u
@@ -698,10 +752,9 @@ class SocialMediaController extends BaseController {
                     ORDER BY shares DESC
                     LIMIT 10";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
     }

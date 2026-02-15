@@ -63,6 +63,21 @@ class Controller {
      * @var array
      */
     protected $middleware = [];
+
+    /**
+     * Register middleware for the controller
+     *
+     * @param string $middleware The middleware name
+     * @param array $options Options (only, except)
+     * @return void
+     */
+    protected function middleware($middleware, array $options = [])
+    {
+        $this->middleware[] = [
+            'middleware' => $middleware,
+            'options' => $options
+        ];
+    }
     
     /**
      * Controller constructor

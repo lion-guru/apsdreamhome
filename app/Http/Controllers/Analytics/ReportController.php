@@ -2,23 +2,30 @@
 
 namespace App\Http\Controllers\Analytics;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Services\ReportService;
 
-class ReportController extends Controller {
+class ReportController extends BaseController
+{
     private $reportService;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
+
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+            return;
+        }
+
         $this->reportService = new ReportService();
-        $this->requireLogin();
-        $this->requireAdmin();
     }
 
     /**
      * Display reports dashboard
      */
-    public function index() {
+    public function index()
+    {
         $this->view('reports/index', [
             'title' => 'Reports Dashboard'
         ]);
@@ -27,21 +34,22 @@ class ReportController extends Controller {
     /**
      * Generate sales report
      */
-    public function sales() {
+    public function sales()
+    {
         $filters = [
             'start_date' => $_GET['start_date'] ?? date('Y-m-01'),
             'end_date' => $_GET['end_date'] ?? date('Y-m-t')
         ];
 
         $report = $this->reportService->generateSalesReport($filters);
-        
+
         // Export to CSV if requested
         if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             $filename = 'sales-report-' . date('Y-m-d') . '.csv';
             $this->reportService->exportToCsv($report, $filename);
             return;
         }
-        
+
         $this->view('reports/sales', [
             'title' => 'Sales Report',
             'report' => $report,
@@ -52,7 +60,8 @@ class ReportController extends Controller {
     /**
      * Generate property report
      */
-    public function properties() {
+    public function properties()
+    {
         $filters = [
             'location' => $_GET['location'] ?? null,
             'min_price' => !empty($_GET['min_price']) ? (float)$_GET['min_price'] : null,
@@ -60,14 +69,14 @@ class ReportController extends Controller {
         ];
 
         $report = $this->reportService->generatePropertyReport($filters);
-        
+
         // Export to CSV if requested
         if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             $filename = 'property-report-' . date('Y-m-d') . '.csv';
             $this->reportService->exportToCsv($report, $filename);
             return;
         }
-        
+
         $this->view('reports/properties', [
             'title' => 'Property Report',
             'report' => $report,
@@ -78,7 +87,8 @@ class ReportController extends Controller {
     /**
      * Generate user activity report
      */
-    public function userActivity() {
+    public function userActivity()
+    {
         $filters = [
             'start_date' => $_GET['start_date'] ?? date('Y-m-01'),
             'end_date' => $_GET['end_date'] ?? date('Y-m-d'),
@@ -88,20 +98,20 @@ class ReportController extends Controller {
         ];
 
         $report = $this->reportService->generateUserActivityReport($filters);
-        
+
         // Get total count for pagination
         $totalUsers = $this->getTotalUsers($filters);
         $perPage = 20;
         $totalPages = ceil($totalUsers / $perPage);
-        
+
         // Export to CSV if requested
         if (isset($_GET['export']) && $_GET['export'] === 'csv') {
             $filename = 'user-activity-report-' . date('Y-m-d') . '.csv';
             $this->reportService->exportToCsv($report, $filename);
             return;
         }
-        
-        $this->view('reports/user_activity', [
+
+        $this->render('reports/user_activity', [
             'title' => 'User Activity Report',
             'report' => $report,
             'filters' => $filters,
@@ -112,36 +122,37 @@ class ReportController extends Controller {
             ]
         ]);
     }
-    
+
     /**
      * Get total number of users for pagination
      */
-    private function getTotalUsers(array $filters) {
+    private function getTotalUsers(array $filters)
+    {
         $db = \App\Core\Database::getInstance();
-        
+
         $query = "SELECT COUNT(DISTINCT u.id) as total 
                  FROM users u
                  LEFT JOIN property_views v ON u.id = v.user_id
                  LEFT JOIN contacts c ON u.id = c.user_id
                  WHERE 1=1";
-        
+
         $params = [];
-        
+
         if (!empty($filters['start_date'])) {
             $query .= " AND (v.visited_at >= ? OR c.created_at >= ?)";
             $params[] = $filters['start_date'];
             $params[] = $filters['start_date'];
         }
-        
+
         if (!empty($filters['end_date'])) {
             $query .= " AND (v.visited_at <= ? OR c.created_at <= ?)";
             $params[] = $filters['end_date'] . ' 23:59:59';
             $params[] = $filters['end_date'] . ' 23:59:59';
         }
-        
+
         $stmt = $db->query($query, $params);
         $result = $stmt->fetch();
-        
+
         return $result ? (int)$result['total'] : 0;
     }
 }

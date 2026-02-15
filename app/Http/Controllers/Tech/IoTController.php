@@ -1,21 +1,27 @@
 <?php
+
 /**
  * IoT Smart Home Controller
  * Handles IoT device integration and smart home features
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Tech;
 
-class IoTController extends BaseController {
+use App\Controllers\BaseController;
+use Exception;
+
+class IoTController extends BaseController
+{
 
     /**
      * Smart home dashboard for properties
      */
-    public function smartHomeDashboard($property_id) {
+    public function smartHomeDashboard($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
-            $this->setFlashMessage('error', 'Property not found');
+            $this->setFlash('error', 'Property not found');
             $this->redirect(BASE_URL . 'properties');
             return;
         }
@@ -34,7 +40,8 @@ class IoTController extends BaseController {
     /**
      * IoT device management
      */
-    public function manageDevices() {
+    public function manageDevices()
+    {
         if (!$this->isLoggedIn() || (!$this->isAdmin() && !isset($_SESSION['user_role']))) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -57,11 +64,12 @@ class IoTController extends BaseController {
     /**
      * IoT device control interface
      */
-    public function deviceControl($device_id) {
+    public function deviceControl($device_id)
+    {
         $device = $this->getIoTDevice($device_id);
 
         if (!$device) {
-            $this->setFlashMessage('error', 'Device not found');
+            $this->setFlash('error', 'Device not found');
             $this->redirect(BASE_URL . 'iot/devices');
             return;
         }
@@ -82,11 +90,12 @@ class IoTController extends BaseController {
     /**
      * Smart home automation rules
      */
-    public function automationRules($property_id) {
+    public function automationRules($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
-            $this->setFlashMessage('error', 'Property not found');
+            $this->setFlash('error', 'Property not found');
             $this->redirect(BASE_URL . 'properties');
             return;
         }
@@ -107,7 +116,8 @@ class IoTController extends BaseController {
     /**
      * Energy monitoring dashboard
      */
-    public function energyMonitoring($property_id) {
+    public function energyMonitoring($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $energy_data = $this->getEnergyData($property_id);
 
@@ -121,7 +131,8 @@ class IoTController extends BaseController {
     /**
      * Security system monitoring
      */
-    public function securityMonitoring($property_id) {
+    public function securityMonitoring($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
         $security_data = $this->getSecurityData($property_id);
 
@@ -135,7 +146,8 @@ class IoTController extends BaseController {
     /**
      * API - Get IoT device status
      */
-    public function apiDeviceStatus($device_id) {
+    public function apiDeviceStatus($device_id)
+    {
         header('Content-Type: application/json');
 
         $device = $this->getIoTDevice($device_id);
@@ -152,7 +164,8 @@ class IoTController extends BaseController {
     /**
      * API - Control IoT device
      */
-    public function apiControlDevice() {
+    public function apiControlDevice()
+    {
         header('Content-Type: application/json');
 
         $input = json_decode(file_get_contents('php://input'), true);
@@ -172,7 +185,8 @@ class IoTController extends BaseController {
     /**
      * API - Get energy consumption data
      */
-    public function apiEnergyData($property_id) {
+    public function apiEnergyData($property_id)
+    {
         header('Content-Type: application/json');
 
         $timeframe = $_GET['timeframe'] ?? '24h';
@@ -188,11 +202,14 @@ class IoTController extends BaseController {
     /**
      * Get property details
      */
-    private function getPropertyDetails($property_id) {
+    private function getPropertyDetails($property_id)
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = ? AND status = 'available'");
-            $stmt->execute([$property_id]);
+            if (!$this->db) {
+                return null;
+            }
+            $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :id AND status = 'available'");
+            $stmt->execute(['id' => $property_id]);
             return $stmt->fetch();
         } catch (\Exception $e) {
             error_log('Property fetch error: ' . $e->getMessage());
@@ -203,21 +220,23 @@ class IoTController extends BaseController {
     /**
      * Get IoT devices for property
      */
-    private function getIoTDevices($property_id) {
+    private function getIoTDevices($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT d.*, dt.name as device_type_name, dt.icon, dt.category
                     FROM iot_devices d
                     LEFT JOIN iot_device_types dt ON d.device_type_id = dt.id
-                    WHERE d.property_id = ? AND d.status = 'active'
+                    WHERE d.property_id = :propertyId AND d.status = 'active'
                     ORDER BY dt.category, d.device_name";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-
         } catch (\Exception $e) {
             error_log('IoT devices fetch error: ' . $e->getMessage());
             return [];
@@ -227,7 +246,8 @@ class IoTController extends BaseController {
     /**
      * Get smart features for property
      */
-    private function getSmartFeatures($property_id) {
+    private function getSmartFeatures($property_id)
+    {
         return [
             'energy_management' => true,
             'security_system' => true,
@@ -242,45 +262,50 @@ class IoTController extends BaseController {
     /**
      * Add IoT device
      */
-    private function addIoTDevice($device_data) {
+    private function addIoTDevice($device_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return;
+            }
 
             $sql = "INSERT INTO iot_devices (
                 property_id, device_type_id, device_name, device_id, mac_address,
                 ip_address, location, status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
+            ) VALUES (:propertyId, :deviceTypeId, :deviceName, :deviceId, :macAddress, :ipAddress, :location, 'active', NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $device_data['property_id'],
-                $device_data['device_type_id'],
-                $device_data['device_name'],
-                $device_data['device_id'] ?? null,
-                $device_data['mac_address'] ?? null,
-                $device_data['ip_address'] ?? null,
-                $device_data['location'] ?? null
+                'propertyId' => $device_data['property_id'],
+                'deviceTypeId' => $device_data['device_type_id'],
+                'deviceName' => $device_data['device_name'],
+                'deviceId' => $device_data['device_id'] ?? null,
+                'macAddress' => $device_data['mac_address'] ?? null,
+                'ipAddress' => $device_data['ip_address'] ?? null,
+                'location' => $device_data['location'] ?? null
             ]);
 
             if ($success) {
-                $this->setFlashMessage('success', 'IoT device added successfully');
+                $this->setFlash('success', 'IoT device added successfully');
                 $this->redirect(BASE_URL . 'iot/devices');
             } else {
-                $this->setFlashMessage('error', 'Failed to add IoT device');
+                $this->setFlash('error', 'Failed to add IoT device');
             }
-
         } catch (\Exception $e) {
             error_log('IoT device add error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Failed to add IoT device');
+            $this->setFlash('error', 'Failed to add IoT device');
         }
     }
 
     /**
      * Get all IoT devices (admin)
      */
-    private function getAllIoTDevices() {
+    private function getAllIoTDevices()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT d.*, p.title as property_title, p.city,
                            dt.name as device_type_name
@@ -289,9 +314,8 @@ class IoTController extends BaseController {
                     LEFT JOIN iot_device_types dt ON d.device_type_id = dt.id
                     ORDER BY d.created_at DESC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-
         } catch (\Exception $e) {
             error_log('All IoT devices fetch error: ' . $e->getMessage());
             return [];
@@ -301,7 +325,8 @@ class IoTController extends BaseController {
     /**
      * Get device types
      */
-    private function getDeviceTypes() {
+    private function getDeviceTypes()
+    {
         return [
             'smart_lights' => ['name' => 'Smart Lights', 'icon' => 'fas fa-lightbulb', 'category' => 'lighting'],
             'smart_thermostat' => ['name' => 'Smart Thermostat', 'icon' => 'fas fa-temperature-half', 'category' => 'climate'],
@@ -319,22 +344,24 @@ class IoTController extends BaseController {
     /**
      * Get IoT device details
      */
-    private function getIoTDevice($device_id) {
+    private function getIoTDevice($device_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return null;
+            }
 
             $sql = "SELECT d.*, p.title as property_title, p.city,
                            dt.name as device_type_name, dt.icon, dt.category
                     FROM iot_devices d
                     LEFT JOIN properties p ON d.property_id = p.id
                     LEFT JOIN iot_device_types dt ON d.device_type_id = dt.id
-                    WHERE d.id = ?";
+                    WHERE d.id = :id";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$device_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['id' => $device_id]);
 
             return $stmt->fetch();
-
         } catch (\Exception $e) {
             error_log('IoT device fetch error: ' . $e->getMessage());
             return null;
@@ -344,7 +371,8 @@ class IoTController extends BaseController {
     /**
      * Control IoT device
      */
-    private function controlIoTDevice($device_id, $command_data) {
+    private function controlIoTDevice($device_id, $command_data)
+    {
         try {
             // In production, this would communicate with actual IoT devices
             // For now, we'll simulate the control and log the action
@@ -367,7 +395,6 @@ class IoTController extends BaseController {
             ];
 
             return true;
-
         } catch (\Exception $e) {
             error_log('IoT device control error: ' . $e->getMessage());
             return false;
@@ -377,7 +404,8 @@ class IoTController extends BaseController {
     /**
      * Get device status
      */
-    private function getDeviceStatus($device_id) {
+    private function getDeviceStatus($device_id)
+    {
         // In production, this would query the actual device status
         // For now, return simulated status
 
@@ -395,7 +423,8 @@ class IoTController extends BaseController {
     /**
      * Get simulated device response
      */
-    private function getSimulatedDeviceResponse($device, $command_data) {
+    private function getSimulatedDeviceResponse($device, $command_data)
+    {
         switch ($command_data['command']) {
             case 'turn_on':
                 return ['power_state' => 'on'];
@@ -417,22 +446,24 @@ class IoTController extends BaseController {
     /**
      * Log device control action
      */
-    private function logDeviceControl($device_id, $command_data) {
+    private function logDeviceControl($device_id, $command_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO iot_device_logs (device_id, command, parameters, response, user_id, created_at)
-                    VALUES (?, ?, ?, ?, ?, NOW())";
+                    VALUES (:deviceId, :command, :parameters, :response, :userId, NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             return $stmt->execute([
-                $device_id,
-                $command_data['command'],
-                json_encode($command_data),
-                json_encode($this->getSimulatedDeviceResponse(null, $command_data)),
-                $_SESSION['user_id'] ?? null
+                'deviceId' => $device_id,
+                'command' => $command_data['command'],
+                'parameters' => json_encode($command_data),
+                'response' => json_encode($this->getSimulatedDeviceResponse(null, $command_data)),
+                'userId' => $_SESSION['user_id'] ?? null
             ]);
-
         } catch (\Exception $e) {
             error_log('Device control log error: ' . $e->getMessage());
             return false;
@@ -442,22 +473,27 @@ class IoTController extends BaseController {
     /**
      * Get device history
      */
-    private function getDeviceHistory($device_id, $limit = 50) {
+    private function getDeviceHistory($device_id, $limit = 50)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT dl.*, u.name as user_name
                     FROM iot_device_logs dl
                     LEFT JOIN users u ON dl.user_id = u.id
-                    WHERE dl.device_id = ?
+                    WHERE dl.device_id = :deviceId
                     ORDER BY dl.created_at DESC
-                    LIMIT ?";
+                    LIMIT :limit";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$device_id, $limit]);
+            $stmt = $this->db->prepare($sql);
+            // PDO doesn't always handle LIMIT with named parameters well unless bindValue is used with PDO::PARAM_INT
+            // However, in this project's Database class, it might be handled differently.
+            // Let's use positional for LIMIT if necessary, or just bind it as string which usually works in MySQL.
+            $stmt->execute(['deviceId' => $device_id, 'limit' => (int)$limit]);
 
             return $stmt->fetchAll();
-
         } catch (\Exception $e) {
             error_log('Device history fetch error: ' . $e->getMessage());
             return [];
@@ -467,52 +503,56 @@ class IoTController extends BaseController {
     /**
      * Create automation rule
      */
-    private function createAutomationRule($property_id, $rule_data) {
+    private function createAutomationRule($property_id, $rule_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return;
+            }
 
             $sql = "INSERT INTO iot_automation_rules (
                 property_id, rule_name, trigger_condition, action_command,
                 is_active, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, 1, NOW(), NOW())";
+            ) VALUES (:propertyId, :ruleName, :triggerCondition, :actionCommand, 1, NOW(), NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $property_id,
-                $rule_data['rule_name'],
-                json_encode($rule_data['trigger_condition']),
-                json_encode($rule_data['action_command'])
+                'propertyId' => $property_id,
+                'ruleName' => $rule_data['rule_name'],
+                'triggerCondition' => json_encode($rule_data['trigger_condition']),
+                'actionCommand' => json_encode($rule_data['action_command'])
             ]);
 
             if ($success) {
-                $this->setFlashMessage('success', 'Automation rule created successfully');
+                $this->setFlash('success', 'Automation rule created successfully');
                 $this->redirect(BASE_URL . 'iot/automation/' . $property_id);
             } else {
-                $this->setFlashMessage('error', 'Failed to create automation rule');
+                $this->setFlash('error', 'Failed to create automation rule');
             }
-
         } catch (\Exception $e) {
             error_log('Automation rule creation error: ' . $e->getMessage());
-            $this->setFlashMessage('error', 'Failed to create automation rule');
+            $this->setFlash('error', 'Failed to create automation rule');
         }
     }
 
     /**
      * Get automation rules for property
      */
-    private function getAutomationRules($property_id) {
+    private function getAutomationRules($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT * FROM iot_automation_rules
-                    WHERE property_id = ?
+                    WHERE property_id = :propertyId
                     ORDER BY created_at DESC";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-
         } catch (\Exception $e) {
             error_log('Automation rules fetch error: ' . $e->getMessage());
             return [];
@@ -522,7 +562,8 @@ class IoTController extends BaseController {
     /**
      * Get energy consumption data
      */
-    private function getEnergyData($property_id, $timeframe = '24h') {
+    private function getEnergyData($property_id, $timeframe = '24h')
+    {
         // In production, this would fetch real energy meter data
         // For now, return simulated data
 
@@ -551,7 +592,8 @@ class IoTController extends BaseController {
     /**
      * Get security monitoring data
      */
-    private function getSecurityData($property_id) {
+    private function getSecurityData($property_id)
+    {
         return [
             'system_status' => 'armed',
             'last_motion' => date('Y-m-d H:i:s', time() - rand(300, 3600)),
@@ -567,7 +609,8 @@ class IoTController extends BaseController {
     /**
      * Admin - IoT analytics
      */
-    public function iotAnalytics() {
+    public function iotAnalytics()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -589,9 +632,12 @@ class IoTController extends BaseController {
     /**
      * Get device statistics
      */
-    private function getDeviceStats() {
+    private function getDeviceStats()
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $sql = "SELECT
                         COUNT(*) as total_devices,
@@ -600,9 +646,8 @@ class IoTController extends BaseController {
                         COUNT(DISTINCT property_id) as properties_with_iot
                     FROM iot_devices";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetch();
-
         } catch (\Exception $e) {
             return [];
         }
@@ -611,7 +656,8 @@ class IoTController extends BaseController {
     /**
      * Get energy savings statistics
      */
-    private function getEnergySavingsStats() {
+    private function getEnergySavingsStats()
+    {
         return [
             'total_savings' => 125000, // ₹1.25 lakhs
             'avg_monthly_savings' => 8500, // per property
@@ -627,7 +673,8 @@ class IoTController extends BaseController {
     /**
      * Get automation efficiency
      */
-    private function getAutomationEfficiency() {
+    private function getAutomationEfficiency()
+    {
         return [
             'automation_rules' => 245,
             'avg_execution_time' => '0.8 seconds',
@@ -639,7 +686,8 @@ class IoTController extends BaseController {
     /**
      * Get security incidents
      */
-    private function getSecurityIncidents() {
+    private function getSecurityIncidents()
+    {
         return [
             'total_incidents' => 12,
             'false_alarms' => 3,
@@ -652,7 +700,8 @@ class IoTController extends BaseController {
     /**
      * Smart home compatibility checker
      */
-    public function compatibilityCheck() {
+    public function compatibilityCheck()
+    {
         header('Content-Type: application/json');
 
         $property_specs = json_decode(file_get_contents('php://input'), true);
@@ -672,7 +721,8 @@ class IoTController extends BaseController {
     /**
      * Check smart home compatibility
      */
-    private function checkSmartHomeCompatibility($property_specs) {
+    private function checkSmartHomeCompatibility($property_specs)
+    {
         $compatibility_score = 0;
         $recommendations = [];
         $required_upgrades = [];
@@ -735,7 +785,8 @@ class IoTController extends BaseController {
     /**
      * Estimate smart home installation cost
      */
-    private function estimateSmartHomeCost($compatibility_score, $property_specs) {
+    private function estimateSmartHomeCost($compatibility_score, $property_specs)
+    {
         $base_cost = 50000; // Base smart home setup cost
 
         if ($compatibility_score < 60) {
@@ -762,7 +813,8 @@ class IoTController extends BaseController {
     /**
      * Smart home device catalog
      */
-    public function deviceCatalog() {
+    public function deviceCatalog()
+    {
         $catalog = [
             'lighting' => [
                 'smart_bulbs' => ['price' => 2500, 'features' => ['Color changing', 'Voice control', 'Energy monitoring']],
@@ -793,7 +845,8 @@ class IoTController extends BaseController {
     /**
      * IoT device integration API
      */
-    public function apiDeviceIntegration() {
+    public function apiDeviceIntegration()
+    {
         header('Content-Type: application/json');
 
         $action = $_GET['action'] ?? '';
@@ -819,7 +872,8 @@ class IoTController extends BaseController {
     /**
      * Register new IoT device
      */
-    private function registerIoTDevice() {
+    private function registerIoTDevice()
+    {
         $device_data = json_decode(file_get_contents('php://input'), true);
 
         // Validate device data
@@ -838,7 +892,8 @@ class IoTController extends BaseController {
     /**
      * Handle device heartbeat
      */
-    private function deviceHeartbeat() {
+    private function deviceHeartbeat()
+    {
         $device_id = $_GET['device_id'] ?? '';
         $status = $_GET['status'] ?? 'online';
 
@@ -859,7 +914,8 @@ class IoTController extends BaseController {
     /**
      * Send command to IoT device
      */
-    private function sendDeviceCommand() {
+    private function sendDeviceCommand()
+    {
         $command_data = json_decode(file_get_contents('php://input'), true);
 
         // In production, this would send commands to actual devices
@@ -873,7 +929,8 @@ class IoTController extends BaseController {
     /**
      * Get device sensor data
      */
-    private function getDeviceData() {
+    private function getDeviceData()
+    {
         $device_id = $_GET['device_id'] ?? '';
         $data_type = $_GET['type'] ?? 'current';
 
@@ -895,14 +952,16 @@ class IoTController extends BaseController {
     /**
      * Update device status in database
      */
-    private function updateDeviceStatus($device_id, $status) {
+    private function updateDeviceStatus($device_id, $status)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
-            $sql = "UPDATE iot_devices SET status = ?, last_seen = NOW() WHERE device_id = ?";
-            $stmt = $pdo->prepare($sql);
-            return $stmt->execute([$status, $device_id]);
-
+            $sql = "UPDATE iot_devices SET status = :status, last_seen = NOW() WHERE device_id = :deviceId";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute(['status' => $status, 'deviceId' => $device_id]);
         } catch (\Exception $e) {
             error_log('Device status update error: ' . $e->getMessage());
             return false;
@@ -912,7 +971,8 @@ class IoTController extends BaseController {
     /**
      * Smart home demo/trial
      */
-    public function demo() {
+    public function demo()
+    {
         $demo_features = [
             'virtual_tour' => '3D property tour with AR furniture placement',
             'smart_lighting' => 'Automated lighting control and scheduling',
@@ -931,7 +991,8 @@ class IoTController extends BaseController {
     /**
      * Get IoT market trends and insights
      */
-    public function marketInsights() {
+    public function marketInsights()
+    {
         $insights = [
             'market_growth' => [
                 'global_market_size' => '₹15,000 crores',
@@ -966,7 +1027,8 @@ class IoTController extends BaseController {
     /**
      * IoT service packages
      */
-    public function servicePackages() {
+    public function servicePackages()
+    {
         $packages = [
             'basic' => [
                 'name' => 'Smart Home Basic',
@@ -1000,7 +1062,8 @@ class IoTController extends BaseController {
     /**
      * IoT installation and setup guide
      */
-    public function installationGuide() {
+    public function installationGuide()
+    {
         $guide_steps = [
             'planning' => [
                 'title' => 'Planning & Assessment',
@@ -1049,7 +1112,8 @@ class IoTController extends BaseController {
     /**
      * IoT troubleshooting and support
      */
-    public function troubleshooting() {
+    public function troubleshooting()
+    {
         $troubleshooting_guide = [
             'connectivity_issues' => [
                 'title' => 'Device Connectivity Issues',
@@ -1092,7 +1156,8 @@ class IoTController extends BaseController {
     /**
      * Smart home ROI calculator
      */
-    public function roiCalculator() {
+    public function roiCalculator()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
@@ -1116,7 +1181,8 @@ class IoTController extends BaseController {
     /**
      * Calculate smart home ROI
      */
-    private function calculateROI($property_value, $investment_cost, $monthly_savings) {
+    private function calculateROI($property_value, $investment_cost, $monthly_savings)
+    {
         $annual_savings = $monthly_savings * 12;
         $property_value_increase = $property_value * 0.15; // 15% value increase
 

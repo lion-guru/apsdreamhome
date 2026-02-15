@@ -13,6 +13,7 @@ class AssociateMLMController extends BaseController {
     private $associateMLM;
 
     public function __construct() {
+        parent::__construct();
         $this->associateMLM = new \App\Models\AssociateMLM();
     }
 

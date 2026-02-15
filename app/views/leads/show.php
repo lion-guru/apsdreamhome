@@ -8,7 +8,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/leads">लीड्स</a></li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        <?= htmlspecialchars($lead['name']) ?>
+                        <?= h($lead['name']) ?>
                     </li>
                 </ol>
             </nav>
@@ -28,21 +28,21 @@
                                 </div>
                                 <div>
                                     <h2 class="mb-1">
-                                        <?= htmlspecialchars($lead['name']) ?>
+                                        <?= h($lead['name']) ?>
                                         <?php if ($lead['company']): ?>
                                             <small class="text-muted">
-                                                - <?= htmlspecialchars($lead['company']) ?>
+                                                - <?= h($lead['company']) ?>
                                             </small>
                                         <?php endif; ?>
                                     </h2>
                                     <div class="lead-badges mb-2">
                                         <span class="badge badge-<?= $this->getStatusBadgeClass($lead['status']) ?> mr-2">
                                             <i class="fas fa-tag mr-1"></i>
-                                            <?= htmlspecialchars($lead['status_name']) ?>
+                                            <?= h($lead['status_name']) ?>
                                         </span>
                                         <span class="badge badge-<?= $this->getPriorityBadgeClass($lead['priority']) ?>">
                                             <i class="fas fa-exclamation-circle mr-1"></i>
-                                            <?= htmlspecialchars($lead['priority_name']) ?>
+                                            <?= h($lead['priority_name']) ?>
                                         </span>
                                     </div>
                                     <p class="text-muted mb-0">
@@ -68,10 +68,10 @@
                                         <a class="dropdown-item" href="/leads/<?= $lead['id'] ?>/edit">
                                             <i class="fas fa-edit mr-2"></i>एडिट करें
                                         </a>
-                                        <a class="dropdown-item" href="mailto:<?= htmlspecialchars($lead['email']) ?>">
+                                        <a class="dropdown-item" href="mailto:<?= h($lead['email']) ?>">
                                             <i class="fas fa-envelope mr-2"></i>ईमेल भेजें
                                         </a>
-                                        <a class="dropdown-item" href="tel:<?= htmlspecialchars($lead['phone']) ?>">
+                                        <a class="dropdown-item" href="tel:<?= h($lead['phone']) ?>">
                                             <i class="fas fa-phone mr-2"></i>कॉल करें
                                         </a>
                                         <div class="dropdown-divider"></div>
@@ -104,7 +104,7 @@
                             <div class="info-item mb-3">
                                 <label class="text-muted small">पूरा नाम</label>
                                 <div class="font-weight-bold">
-                                    <?= htmlspecialchars($lead['name']) ?>
+                                    <?= h($lead['name']) ?>
                                 </div>
                             </div>
                         </div>
@@ -113,8 +113,8 @@
                                 <label class="text-muted small">ईमेल पता</label>
                                 <div class="font-weight-bold">
                                     <?php if ($lead['email']): ?>
-                                        <a href="mailto:<?= htmlspecialchars($lead['email']) ?>">
-                                            <?= htmlspecialchars($lead['email']) ?>
+                                        <a href="mailto:<?= h($lead['email']) ?>">
+                                            <?= h($lead['email']) ?>
                                         </a>
                                     <?php else: ?>
                                         <span class="text-muted">उपलब्ध नहीं</span>
@@ -126,9 +126,9 @@
                             <div class="info-item mb-3">
                                 <label class="text-muted small">फोन नंबर</label>
                                 <div class="font-weight-bold">
-                                    <a href="tel:<?= htmlspecialchars($lead['phone']) ?>">
+                                    <a href="tel:<?= h($lead['phone']) ?>">
                                         <i class="fas fa-phone mr-1"></i>
-                                        <?= htmlspecialchars($lead['phone']) ?>
+                                        <?= h($lead['phone']) ?>
                                     </a>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                 <label class="text-muted small">कंपनी</label>
                                 <div class="font-weight-bold">
                                     <?php if ($lead['company']): ?>
-                                        <?= htmlspecialchars($lead['company']) ?>
+                                        <?= h($lead['company']) ?>
                                     <?php else: ?>
                                         <span class="text-muted">उपलब्ध नहीं</span>
                                     <?php endif; ?>
@@ -150,7 +150,7 @@
                                 <label class="text-muted small">लीड स्रोत</label>
                                 <div class="font-weight-bold">
                                     <i class="fas fa-bullhorn mr-1 text-info"></i>
-                                    <?= htmlspecialchars($lead['source_name']) ?>
+                                    <?= h($lead['source_name']) ?>
                                 </div>
                             </div>
                         </div>
@@ -160,7 +160,7 @@
                                 <div class="font-weight-bold">
                                     <?php if ($lead['assigned_user_name']): ?>
                                         <i class="fas fa-user mr-1 text-success"></i>
-                                        <?= htmlspecialchars($lead['assigned_user_name']) ?>
+                                        <?= h($lead['assigned_user_name']) ?>
                                     <?php else: ?>
                                         <span class="text-muted">कोई असाइन नहीं</span>
                                     <?php endif; ?>
@@ -190,7 +190,7 @@
                                     <label class="text-muted small">आवश्यकताएं</label>
                                     <div class="font-weight-bold">
                                         <?php if ($lead['requirements']): ?>
-                                            <?= nl2br(htmlspecialchars($lead['requirements'])) ?>
+                                            <?= nl2br(h($lead['requirements'])) ?>
                                         <?php else: ?>
                                             <span class="text-muted">उपलब्ध नहीं</span>
                                         <?php endif; ?>
@@ -238,9 +238,9 @@
                                             <div class="timeline-content">
                                                 <div class="d-flex justify-content-between align-items-start">
                                                     <div>
-                                                        <strong><?= htmlspecialchars($activity['activity_name']) ?></strong>
+                                                        <strong><?= h($activity['activity_name']) ?></strong>
                                                         <?php if ($activity['notes']): ?>
-                                                            <br><small><?= htmlspecialchars($activity['notes']) ?></small>
+                                                            <br><small><?= h($activity['notes']) ?></small>
                                                         <?php endif; ?>
                                                     </div>
                                                     <small class="text-muted">
@@ -249,7 +249,7 @@
                                                 </div>
                                                 <div class="mt-2">
                                                     <small class="text-muted">
-                                                        द्वारा: <?= htmlspecialchars($activity['user_name']) ?>
+                                                        द्वारा: <?= h($activity['user_name']) ?>
                                                     </small>
                                                 </div>
                                             </div>
@@ -274,13 +274,13 @@
                                     <?php foreach ($notes as $note): ?>
                                         <div class="note-item">
                                             <div class="note-header">
-                                                <strong><?= htmlspecialchars($note['user_name']) ?></strong>
+                                                <strong><?= h($note['user_name']) ?></strong>
                                                 <small class="text-muted">
                                                     <?= date('d M Y, h:i A', strtotime($note['created_at'])) ?>
                                                 </small>
                                             </div>
                                             <div class="note-content">
-                                                <?= nl2br(htmlspecialchars($note['note'])) ?>
+                                                <?= nl2br(h($note['note'])) ?>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -344,10 +344,10 @@
                         <button class="btn btn-info" onclick="addNote()">
                             <i class="fas fa-sticky-note mr-2"></i>नोट जोड़ें
                         </button>
-                        <a href="mailto:<?= htmlspecialchars($lead['email']) ?>" class="btn btn-success">
+                        <a href="mailto:<?= h($lead['email']) ?>" class="btn btn-success">
                             <i class="fas fa-envelope mr-2"></i>ईमेल भेजें
                         </a>
-                        <a href="tel:<?= htmlspecialchars($lead['phone']) ?>" class="btn btn-warning">
+                        <a href="tel:<?= h($lead['phone']) ?>" class="btn btn-warning">
                             <i class="fas fa-phone mr-2"></i>कॉल करें
                         </a>
                     </div>
@@ -378,7 +378,7 @@
                                 <div class="timeline-marker bg-info"></div>
                                 <div class="timeline-content">
                                     <small class="text-muted">
-                                        असाइन किया गया: <?= htmlspecialchars($lead['assigned_user_name']) ?>
+                                        असाइन किया गया: <?= h($lead['assigned_user_name']) ?>
                                     </small>
                                 </div>
                             </div>
@@ -388,7 +388,7 @@
                                 <div class="timeline-marker bg-warning"></div>
                                 <div class="timeline-content">
                                     <small class="text-muted">
-                                        अंतिम गतिविधि: <?= htmlspecialchars($activities[0]['activity_name']) ?>
+                                        अंतिम गतिविधि: <?= h($activities[0]['activity_name']) ?>
                                     </small>
                                 </div>
                             </div>

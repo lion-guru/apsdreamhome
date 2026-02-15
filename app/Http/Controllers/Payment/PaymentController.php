@@ -69,7 +69,7 @@ class PaymentController extends Controller {
                 // Save payment record to database
                 $this->savePaymentRecord($payment, $propertyId);
                 
-                $_SESSION['success'] = 'Payment successful! Your purchase is complete.';
+                $this->setFlash('success', 'Payment successful! Your purchase is complete.');
                 $this->redirect('/payments/success?payment_id=' . $payment['payment_id']);
                 return;
             }
@@ -77,7 +77,7 @@ class PaymentController extends Controller {
             throw new \Exception('Payment processing failed');
             
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Payment failed: ' . $e->getMessage();
+            $this->setFlash('error', 'Payment failed: ' . $e->getMessage());
             $this->redirect("/properties/$propertyId/payment");
         }
     }
@@ -102,7 +102,7 @@ class PaymentController extends Controller {
             ]);
             
         } catch (\Exception $e) {
-            $_SESSION['error'] = 'Invalid payment reference';
+            $this->setFlash('error', 'Invalid payment reference');
             $this->redirect('/');
         }
     }
@@ -111,28 +111,29 @@ class PaymentController extends Controller {
      * Save payment record to database
      */
     private function savePaymentRecord(array $payment, int $propertyId) {
-        $db = \App\Core\Database::getInstance();
-        
         $query = "
             INSERT INTO payments (
                 payment_id, user_id, property_id, amount, 
                 currency, status, payment_method, 
                 transaction_id, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ) VALUES (:payment_id, :user_id, :property_id, :amount, 
+                :currency, :status, :payment_method, 
+                :transaction_id, NOW())
         ";
         
         $params = [
-            $payment['payment_id'],
-            $_SESSION['user_id'],
-            $propertyId,
-            $payment['amount'] / 100, // Convert back to normal amount
-            $payment['currency'],
-            $payment['status'],
-            $payment['payment_method'] ?? 'card',
-            $payment['transaction_id'] ?? null
+            ':payment_id' => $payment['payment_id'],
+            ':user_id' => $_SESSION['user_id'],
+            ':property_id' => $propertyId,
+            ':amount' => $payment['amount'] / 100, // Convert back to normal amount
+            ':currency' => $payment['currency'],
+            ':status' => $payment['status'],
+            ':payment_method' => $payment['payment_method'] ?? 'card',
+            ':transaction_id' => $payment['transaction_id'] ?? null
         ];
         
-        $db->query($query, $params);
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
         
         // Update property status to sold
         $this->propertyService->updateProperty($propertyId, ['status' => 'sold']);
@@ -171,47 +172,43 @@ class PaymentController extends Controller {
      * Handle successful payment webhook
      */
     private function handlePaymentSucceeded(array $paymentIntent) {
-        // Update payment status in database
-        $db = \App\Core\Database::getInstance();
-        
         $query = "
             UPDATE payments 
             SET status = 'succeeded',
-                payment_method = ?,
-                transaction_id = ?,
+                payment_method = :payment_method,
+                transaction_id = :transaction_id,
                 updated_at = NOW()
-            WHERE payment_id = ?
+            WHERE payment_id = :payment_id
         ";
         
         $params = [
-            $paymentIntent['payment_method_types'][0] ?? 'card',
-            $paymentIntent['id'],
-            $paymentIntent['id']
+            ':payment_method' => $paymentIntent['payment_method_types'][0] ?? 'card',
+            ':transaction_id' => $paymentIntent['id'],
+            ':payment_id' => $paymentIntent['id']
         ];
         
-        $db->query($query, $params);
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
     }
     
     /**
      * Handle failed payment webhook
      */
     private function handlePaymentFailed(array $paymentIntent) {
-        // Update payment status in database
-        $db = \App\Core\Database::getInstance();
-        
         $query = "
             UPDATE payments 
             SET status = 'failed',
-                failure_message = ?,
+                failure_message = :failure_message,
                 updated_at = NOW()
-            WHERE payment_id = ?
+            WHERE payment_id = :payment_id
         ";
         
         $params = [
-            $paymentIntent['last_payment_error']['message'] ?? 'Payment failed',
-            $paymentIntent['id']
+            ':failure_message' => $paymentIntent['last_payment_error']['message'] ?? 'Payment failed',
+            ':payment_id' => $paymentIntent['id']
         ];
         
-        $db->query($query, $params);
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
     }
 }

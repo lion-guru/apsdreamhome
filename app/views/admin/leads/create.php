@@ -1,0 +1,275 @@
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-user-tie mr-2"></i>
+                नया लीड बनाएं
+            </h1>
+            <a href="/admin/leads" class="btn btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>सभी लीड्स देखें
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Lead Creation Form -->
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-plus mr-2"></i>लीड जानकारी दर्ज करें
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/admin/leads" id="leadForm">
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-md-6">
+                            <div class="card border-left-primary">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-info-circle mr-2"></i>बेसिक जानकारी
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <label for="name" class="form-label">
+                                            पूरा नाम <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text"
+                                            class="form-control"
+                                            id="name"
+                                            name="name"
+                                            required
+                                            placeholder="लीड का पूरा नाम">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="email" class="form-label">
+                                            ईमेल पता
+                                        </label>
+                                        <input type="email"
+                                            class="form-control"
+                                            id="email"
+                                            name="email"
+                                            placeholder="ईमेल पता">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="phone" class="form-label">
+                                            फोन नंबर <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="tel"
+                                            class="form-control"
+                                            id="phone"
+                                            name="phone"
+                                            required
+                                            placeholder="मोबाइल नंबर"
+                                            pattern="[0-9]{10}">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="company" class="form-label">
+                                            कंपनी/ऑर्गेनाइजेशन
+                                        </label>
+                                        <input type="text"
+                                            class="form-control"
+                                            id="company"
+                                            name="company"
+                                            placeholder="कंपनी का नाम">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lead Details -->
+                        <div class="col-md-6">
+                            <div class="card border-left-success">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-success">
+                                        <i class="fas fa-chart-line mr-2"></i>लीड डिटेल्स
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <label for="source" class="form-label">
+                                            लीड स्रोत <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-control" id="source" name="source" required>
+                                            <option value="">स्रोत चुनें</option>
+                                            <?php foreach ($sources as $source): ?>
+                                                <option value="<?= $source['id'] ?>">
+                                                    <?= htmlspecialchars($source['source_name']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="status" class="form-label">
+                                            स्टेटस <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-control" id="status" name="status" required>
+                                            <option value="">स्टेटस चुनें</option>
+                                            <?php foreach ($statuses as $status): ?>
+                                                <option value="<?= $status['id'] ?>">
+                                                    <?= htmlspecialchars($status['status_name']) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="priority" class="form-label">
+                                            प्रायोरिटी
+                                        </label>
+                                        <select class="form-control" id="priority" name="priority">
+                                            <option value="low">कम</option>
+                                            <option value="medium" selected>मध्यम</option>
+                                            <option value="high">उच्च</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="assigned_to" class="form-label">
+                                            असाइन करें
+                                        </label>
+                                        <select class="form-control" id="assigned_to" name="assigned_to">
+                                            <option value="">यूजर चुनें</option>
+                                            <?php foreach ($users as $user): ?>
+                                                <option value="<?= $user['id'] ?>">
+                                                    <?= htmlspecialchars($user['name']) ?>
+                                                    (<?= $user['lead_count'] ?> लीड्स)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Financial & Requirements -->
+                            <div class="card border-left-warning mt-3">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-warning">
+                                        <i class="fas fa-rupee-sign mr-2"></i>वित्तीय जानकारी
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <label for="budget" class="form-label">
+                                            बजट (₹)
+                                        </label>
+                                        <input type="number"
+                                            class="form-control"
+                                            id="budget"
+                                            name="budget"
+                                            placeholder="अपेक्षित बजट"
+                                            min="0"
+                                            step="10000">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="requirements" class="form-label">
+                                            आवश्यकताएं
+                                        </label>
+                                        <textarea class="form-control"
+                                            id="requirements"
+                                            name="requirements"
+                                            rows="3"
+                                            placeholder="लीड की आवश्यकताओं का विवरण"></textarea>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="notes" class="form-label">
+                                            अतिरिक्त नोट्स
+                                        </label>
+                                        <textarea class="form-control"
+                                            id="notes"
+                                            name="notes"
+                                            rows="2"
+                                            placeholder="कोई अतिरिक्त जानकारी"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save mr-2"></i>लीड बनाएं
+                            </button>
+                            <a href="/admin/leads" class="btn btn-secondary btn-lg ml-3">
+                                <i class="fas fa-times mr-2"></i>रद्द करें
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 2px solid #e3e6f0;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn {
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .required {
+        color: #dc3545;
+    }
+
+    .priority-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+</style>

@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers\CRM;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Services\CleanLeadService;
 use App\Services\EmailService;
 
-class LeadController extends Controller {
+class LeadController extends BaseController
+{
     private $leadService;
     private $emailService;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
+
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+            return;
+        }
+
+        $this->layout = 'layouts/admin';
+
         $this->leadService = new CleanLeadService();
         $this->emailService = new EmailService();
     }
@@ -19,7 +29,8 @@ class LeadController extends Controller {
     /**
      * Display a listing of leads
      */
-    public function index() {
+    public function index()
+    {
         $filters = [
             'search' => $_GET['search'] ?? null,
             'status' => $_GET['status'] ?? null,
@@ -37,20 +48,21 @@ class LeadController extends Controller {
         $sources = $this->leadService->getSources();
         $statuses = $this->leadService->getStatuses();
 
-        $this->view('leads/index', [
-            'title' => 'Lead Management',
-            'leads' => $leads,
-            'filters' => $filters,
-            'leadStats' => $leadStats,
-            'sources' => $sources,
-            'statuses' => $statuses
-        ]);
+        $this->data['title'] = 'Lead Management';
+        $this->data['leads'] = $leads;
+        $this->data['filters'] = $filters;
+        $this->data['leadStats'] = $leadStats;
+        $this->data['sources'] = $sources;
+        $this->data['statuses'] = $statuses;
+
+        $this->render('admin/leads');
     }
 
     /**
      * Display the specified lead
      */
-    public function show($id) {
+    public function show($id)
+    {
         $lead = $this->leadService->getLeadById($id);
 
         if (!$lead) {
@@ -62,35 +74,37 @@ class LeadController extends Controller {
         $notes = $this->leadService->getLeadNotes($id);
         $files = $this->leadService->getLeadFiles($id);
 
-        $this->view('leads/show', [
-            'title' => 'Lead: ' . $lead['name'],
-            'lead' => $lead,
-            'activities' => $activities,
-            'notes' => $notes,
-            'files' => $files
-        ]);
+        $this->data['title'] = 'Lead: ' . $lead['name'];
+        $this->data['lead'] = $lead;
+        $this->data['activities'] = $activities;
+        $this->data['notes'] = $notes;
+        $this->data['files'] = $files;
+
+        $this->render('admin/leads/show');
     }
 
     /**
      * Show the form for creating a new lead
      */
-    public function create() {
+    public function create()
+    {
         $sources = $this->leadService->getSources();
         $statuses = $this->leadService->getStatuses();
         $users = $this->leadService->getAssignableUsers();
 
-        $this->view('leads/create', [
-            'title' => 'Create New Lead',
-            'sources' => $sources,
-            'statuses' => $statuses,
-            'users' => $users
-        ]);
+        $this->data['title'] = 'Create New Lead';
+        $this->data['sources'] = $sources;
+        $this->data['statuses'] = $statuses;
+        $this->data['users'] = $users;
+
+        $this->render('admin/leads/create');
     }
 
     /**
      * Store a newly created lead
      */
-    public function store() {
+    public function store()
+    {
         try {
             $data = [
                 'name' => $_POST['name'] ?? '',
@@ -113,24 +127,24 @@ class LeadController extends Controller {
                 // Send welcome email
                 $this->emailService->sendLeadWelcomeEmail($data['email'], $data['name']);
 
-                $_SESSION['success'] = 'Lead created successfully!';
-                $this->redirect('/leads/' . $leadId);
+                $this->setFlash('success', 'Lead created successfully!');
+                $this->redirect('admin/leads/' . $leadId);
                 return;
             }
 
             throw new \Exception('Failed to create lead');
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
             $_SESSION['form_data'] = $_POST;
-            $this->redirect('/leads/create');
+            $this->redirect('admin/leads/create');
         }
     }
 
     /**
      * Show the form for editing a lead
      */
-    public function edit($id) {
+    public function edit($id)
+    {
         $lead = $this->leadService->getLeadById($id);
 
         if (!$lead) {
@@ -148,19 +162,20 @@ class LeadController extends Controller {
         $statuses = $this->leadService->getStatuses();
         $users = $this->leadService->getAssignableUsers();
 
-        $this->view('leads/edit', [
-            'title' => 'Edit Lead: ' . $lead['name'],
-            'lead' => $lead,
-            'sources' => $sources,
-            'statuses' => $statuses,
-            'users' => $users
-        ]);
+        $this->data['title'] = 'Edit Lead: ' . $lead['name'];
+        $this->data['lead'] = $lead;
+        $this->data['sources'] = $sources;
+        $this->data['statuses'] = $statuses;
+        $this->data['users'] = $users;
+
+        $this->render('admin/leads/edit');
     }
 
     /**
      * Update the specified lead
      */
-    public function update($id) {
+    public function update($id)
+    {
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -192,24 +207,24 @@ class LeadController extends Controller {
             $result = $this->leadService->updateLead($id, $data);
 
             if ($result) {
-                $_SESSION['success'] = 'Lead updated successfully!';
-                $this->redirect('/leads/' . $id);
+                $this->setFlash('success', 'Lead updated successfully!');
+                $this->redirect('admin/leads/' . $id);
                 return;
             }
 
             throw new \Exception('Failed to update lead');
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
             $_SESSION['form_data'] = $_POST;
-            $this->redirect("/leads/$id/edit");
+            $this->redirect("admin/leads/$id/edit");
         }
     }
 
     /**
      * Add activity to lead
      */
-    public function addActivity($id) {
+    public function addActivity($id)
+    {
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -229,22 +244,46 @@ class LeadController extends Controller {
             $activityId = $this->leadService->addActivity($data);
 
             if ($activityId) {
-                $_SESSION['success'] = 'Activity added successfully!';
+                $this->setFlash('success', 'Activity added successfully!');
             } else {
-                $_SESSION['error'] = 'Failed to add activity';
+                $this->setFlash('error', 'Failed to add activity');
             }
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
         }
 
-        $this->redirect('/leads/' . $id);
+        $this->redirect('admin/leads/' . $id);
+    }
+
+    /**
+     * Delete lead
+     */
+    public function destroy($id)
+    {
+        try {
+            $result = $this->leadService->deleteLead($id);
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => $result,
+                'message' => $result ? 'Lead deleted successfully' : 'Failed to delete lead'
+            ]);
+            exit;
+        } catch (\Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+            exit;
+        }
     }
 
     /**
      * Add note to lead
      */
-    public function addNote($id) {
+    public function addNote($id)
+    {
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -262,22 +301,22 @@ class LeadController extends Controller {
             $noteId = $this->leadService->addNote($data);
 
             if ($noteId) {
-                $_SESSION['success'] = 'Note added successfully!';
+                $this->setFlash('success', 'Note added successfully!');
             } else {
-                $_SESSION['error'] = 'Failed to add note';
+                $this->setFlash('error', 'Failed to add note');
             }
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
         }
 
-        $this->redirect('/leads/' . $id);
+        $this->redirect('admin/leads/' . $id);
     }
 
     /**
      * Assign lead to user
      */
-    public function assign($id) {
+    public function assign($id)
+    {
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -295,22 +334,22 @@ class LeadController extends Controller {
             $result = $this->leadService->assignLead($id, $assignedTo);
 
             if ($result) {
-                $_SESSION['success'] = 'Lead assigned successfully!';
+                $this->setFlash('success', 'Lead assigned successfully!');
             } else {
-                $_SESSION['error'] = 'Failed to assign lead';
+                $this->setFlash('error', 'Failed to assign lead');
             }
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
         }
 
-        $this->redirect('/leads/' . $id);
+        $this->redirect('admin/leads/' . $id);
     }
 
     /**
      * Convert lead to customer
      */
-    public function convert($id) {
+    public function convert($id)
+    {
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -322,23 +361,23 @@ class LeadController extends Controller {
             $customerId = $this->leadService->convertToCustomer($id);
 
             if ($customerId) {
-                $_SESSION['success'] = 'Lead converted to customer successfully!';
-                $this->redirect('/customers/' . $customerId);
+                $this->setFlash('success', 'Lead converted to customer successfully!');
+                $this->redirect('admin/customers');
                 return;
             }
 
             throw new \Exception('Failed to convert lead');
-
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
-            $this->redirect('/leads/' . $id);
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('admin/leads/' . $id);
         }
     }
 
     /**
      * Display lead reports
      */
-    public function reports() {
+    public function reports()
+    {
         $reportType = $_GET['type'] ?? 'summary';
         $dateRange = [
             'start' => $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')),
@@ -347,18 +386,19 @@ class LeadController extends Controller {
 
         $report = $this->leadService->generateReport($reportType, $dateRange);
 
-        $this->view('leads/reports', [
-            'title' => 'Lead Reports',
-            'report' => $report,
-            'reportType' => $reportType,
-            'dateRange' => $dateRange
-        ]);
+        $this->data['title'] = 'Lead Reports';
+        $this->data['report'] = $report;
+        $this->data['reportType'] = $reportType;
+        $this->data['dateRange'] = $dateRange;
+
+        $this->render('admin/leads/reports');
     }
 
     /**
      * Check if user can edit lead
      */
-    private function canEditLead($lead) {
+    private function canEditLead($lead)
+    {
         // Admin can edit all leads
         if ($this->isAdmin()) {
             return true;

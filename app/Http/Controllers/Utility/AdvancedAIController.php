@@ -1,17 +1,24 @@
 <?php
+
 /**
  * Advanced AI Controller
  * Handles machine learning, price prediction, and intelligent recommendations
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Utility;
 
-class AdvancedAIController extends BaseController {
+use App\Http\Controllers\BaseController;
+use PDO;
+use Exception;
+
+class AdvancedAIController extends BaseController
+{
 
     /**
      * AI-powered property price prediction
      */
-    public function pricePrediction($property_id = null) {
+    public function pricePrediction($property_id = null)
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
@@ -48,7 +55,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Automated property valuation
      */
-    public function automatedValuation($property_id) {
+    public function automatedValuation($property_id)
+    {
         $property = $this->getPropertyDetails($property_id);
 
         if (!$property) {
@@ -69,7 +77,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Intelligent property recommendations
      */
-    public function smartRecommendations() {
+    public function smartRecommendations()
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -88,7 +97,8 @@ class AdvancedAIController extends BaseController {
     /**
      * AI-powered market analysis
      */
-    public function marketAnalysis() {
+    public function marketAnalysis()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -110,7 +120,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Machine learning model training
      */
-    public function modelTraining() {
+    public function modelTraining()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -139,7 +150,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Predict property price using AI
      */
-    private function predictPropertyPrice($prediction_data) {
+    private function predictPropertyPrice($prediction_data)
+    {
         try {
             // AI/ML algorithm for price prediction
             $base_price = $prediction_data['current_price'] ?? 0;
@@ -180,7 +192,6 @@ class AdvancedAIController extends BaseController {
                 'accuracy' => 87.5, // Based on historical performance
                 'next_update' => date('Y-m-d H:i:s', strtotime('+24 hours'))
             ];
-
         } catch (\Exception $e) {
             error_log('Price prediction error: ' . $e->getMessage());
             return ['error' => 'Prediction failed'];
@@ -190,7 +201,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate location multiplier for price prediction
      */
-    private function calculateLocationMultiplier($location) {
+    private function calculateLocationMultiplier($location)
+    {
         // Based on historical data and market trends
         $location_multipliers = [
             'mumbai' => 1.8,
@@ -209,7 +221,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate feature multiplier for price prediction
      */
-    private function calculateFeatureMultiplier($prediction_data) {
+    private function calculateFeatureMultiplier($prediction_data)
+    {
         $multiplier = 1.0;
 
         // Bedroom multiplier
@@ -234,22 +247,28 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate market multiplier for price prediction
      */
-    private function calculateMarketMultiplier() {
+    private function calculateMarketMultiplier()
+    {
         // Based on current market conditions
         $market_conditions = $this->getCurrentMarketConditions();
 
         switch ($market_conditions['trend']) {
-            case 'bull': return 1.15; // Rising market
-            case 'bear': return 0.90; // Declining market
-            case 'stable': return 1.02; // Stable market
-            default: return 1.0;
+            case 'bull':
+                return 1.15; // Rising market
+            case 'bear':
+                return 0.90; // Declining market
+            case 'stable':
+                return 1.02; // Stable market
+            default:
+                return 1.0;
         }
     }
 
     /**
      * Calculate seasonal multiplier for price prediction
      */
-    private function calculateSeasonalMultiplier() {
+    private function calculateSeasonalMultiplier()
+    {
         $month = date('n');
 
         // Seasonal trends (Indian real estate)
@@ -274,7 +293,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Predict price movement
      */
-    private function predictPriceMovement($prediction_data) {
+    private function predictPriceMovement($prediction_data)
+    {
         // Simulate price movement prediction
         $movements = ['upward', 'downward', 'stable'];
         $movement = $movements[array_rand($movements)];
@@ -306,7 +326,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate automated property valuation
      */
-    private function calculateAutomatedValuation($property) {
+    private function calculateAutomatedValuation($property)
+    {
         try {
             // Comprehensive valuation algorithm
             $base_value = $property['price'];
@@ -343,7 +364,6 @@ class AdvancedAIController extends BaseController {
                 ],
                 'last_updated' => date('Y-m-d H:i:s')
             ];
-
         } catch (\Exception $e) {
             error_log('Automated valuation error: ' . $e->getMessage());
             return ['error' => 'Valuation calculation failed'];
@@ -353,7 +373,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate location value
      */
-    private function calculateLocationValue($city, $state) {
+    private function calculateLocationValue($city, $state)
+    {
         $location_scores = [
             'mumbai_maharashtra' => 1500000,
             'delhi_delhi' => 1200000,
@@ -371,7 +392,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Assess property condition
      */
-    private function assessPropertyCondition($property) {
+    private function assessPropertyCondition($property)
+    {
         $condition_score = 0;
 
         // Age factor (newer properties get higher scores)
@@ -391,7 +413,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Analyze comparable properties
      */
-    private function analyzeComparableProperties($property) {
+    private function analyzeComparableProperties($property)
+    {
         // Simulate comparable analysis
         $comparables_count = rand(8, 15);
         $avg_comparable_price = $property['price'] * (0.9 + (rand(0, 20) / 100));
@@ -402,7 +425,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate income potential
      */
-    private function calculateIncomePotential($property) {
+    private function calculateIncomePotential($property)
+    {
         // Rental yield calculation
         $monthly_rent = $property['price'] * 0.003; // 0.3% monthly yield
         $annual_income = $monthly_rent * 12;
@@ -413,7 +437,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Generate smart recommendations for user
      */
-    private function generateSmartRecommendations($user_id) {
+    private function generateSmartRecommendations($user_id)
+    {
         try {
             // Get user preferences and behavior
             $user_preferences = $this->getUserPreferences($user_id);
@@ -431,7 +456,6 @@ class AdvancedAIController extends BaseController {
                 'user_preferences' => $user_preferences,
                 'confidence_scores' => $this->calculateRecommendationConfidence($scored_recommendations)
             ];
-
         } catch (\Exception $e) {
             error_log('Smart recommendations error: ' . $e->getMessage());
             return [];
@@ -441,17 +465,20 @@ class AdvancedAIController extends BaseController {
     /**
      * Get user preferences
      */
-    private function getUserPreferences($user_id) {
+    private function getUserPreferences($user_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
-            $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$user_id]);
+            $sql = "SELECT * FROM user_preferences WHERE user_id = :userId";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['userId' => $user_id]);
 
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Get user preferences error: ' . $e->getMessage());
             return [];
         }
     }
@@ -459,9 +486,12 @@ class AdvancedAIController extends BaseController {
     /**
      * Analyze user behavior
      */
-    private function analyzeUserBehavior($user_id) {
+    private function analyzeUserBehavior($user_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             // Analyze user's property views, searches, and interactions
             $sql = "SELECT
@@ -471,14 +501,14 @@ class AdvancedAIController extends BaseController {
                         GROUP_CONCAT(DISTINCT property_type) as viewed_types
                     FROM property_views pv
                     LEFT JOIN properties p ON pv.property_id = p.id
-                    WHERE pv.user_id = ? AND pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+                    WHERE pv.user_id = :userId AND pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$user_id]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['userId' => $user_id]);
 
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Analyze user behavior error: ' . $e->getMessage());
             return [];
         }
     }
@@ -486,9 +516,12 @@ class AdvancedAIController extends BaseController {
     /**
      * Find matching properties
      */
-    private function findMatchingProperties($preferences, $behavior) {
+    private function findMatchingProperties($preferences, $behavior)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return [];
+            }
 
             $where_conditions = ["p.status = 'available'"];
             $params = [];
@@ -496,9 +529,13 @@ class AdvancedAIController extends BaseController {
             // Filter by user's preferred cities
             if (!empty($behavior['viewed_cities'])) {
                 $cities = explode(',', $behavior['viewed_cities']);
-                $city_placeholders = str_repeat('?,', count($cities) - 1) . '?';
-                $where_conditions[] = "p.city IN ({$city_placeholders})";
-                $params = array_merge($params, $cities);
+                $city_placeholders = [];
+                foreach ($cities as $index => $city) {
+                    $placeholder = "city" . $index;
+                    $city_placeholders[] = ":" . $placeholder;
+                    $params[$placeholder] = $city;
+                }
+                $where_conditions[] = "p.city IN (" . implode(',', $city_placeholders) . ")";
             }
 
             // Filter by price range
@@ -506,8 +543,9 @@ class AdvancedAIController extends BaseController {
                 $price_range = $behavior['avg_viewed_price'];
                 $min_price = $price_range * 0.7;
                 $max_price = $price_range * 1.3;
-                $where_conditions[] = "p.price BETWEEN ? AND ?";
-                $params = array_merge($params, [$min_price, $max_price]);
+                $where_conditions[] = "p.price BETWEEN :minPrice AND :maxPrice";
+                $params['minPrice'] = $min_price;
+                $params['maxPrice'] = $max_price;
             }
 
             $where_clause = implode(' AND ', $where_conditions);
@@ -519,12 +557,12 @@ class AdvancedAIController extends BaseController {
                     ORDER BY p.featured DESC, p.created_at DESC
                     LIMIT 50";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
 
             return $stmt->fetchAll();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Find matching properties error: ' . $e->getMessage());
             return [];
         }
     }
@@ -532,13 +570,16 @@ class AdvancedAIController extends BaseController {
     /**
      * Score recommendations based on user preferences
      */
-    private function scoreRecommendations($properties, $preferences) {
+    private function scoreRecommendations($properties, $preferences)
+    {
         foreach ($properties as &$property) {
             $score = 0;
 
             // Location match score
-            if (isset($preferences['preferred_cities']) &&
-                in_array($property['city'], explode(',', $preferences['preferred_cities']))) {
+            if (
+                isset($preferences['preferred_cities']) &&
+                in_array($property['city'], explode(',', $preferences['preferred_cities']))
+            ) {
                 $score += 30;
             }
 
@@ -549,8 +590,10 @@ class AdvancedAIController extends BaseController {
             }
 
             // Property type match score
-            if (isset($preferences['property_types']) &&
-                in_array($property['property_type'], explode(',', $preferences['property_types']))) {
+            if (
+                isset($preferences['property_types']) &&
+                in_array($property['property_type'], explode(',', $preferences['property_types']))
+            ) {
                 $score += 20;
             }
 
@@ -563,7 +606,7 @@ class AdvancedAIController extends BaseController {
         }
 
         // Sort by recommendation score
-        usort($properties, function($a, $b) {
+        usort($properties, function ($a, $b) {
             return $b['recommendation_score'] <=> $a['recommendation_score'];
         });
 
@@ -573,7 +616,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate feature match score
      */
-    private function calculateFeatureMatchScore($property, $preferences) {
+    private function calculateFeatureMatchScore($property, $preferences)
+    {
         $score = 0;
 
         // Bedroom preference match
@@ -605,7 +649,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Check budget match
      */
-    private function checkBudgetMatch($property_price, $budget_range) {
+    private function checkBudgetMatch($property_price, $budget_range)
+    {
         $budget_ranges = [
             'under_10L' => [0, 1000000],
             '10L_25L' => [1000000, 2500000],
@@ -626,7 +671,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Generate recommendation explanations
      */
-    private function generateRecommendationExplanations($recommendations) {
+    private function generateRecommendationExplanations($recommendations)
+    {
         $explanations = [];
 
         foreach (array_slice($recommendations, 0, 5) as $index => $property) {
@@ -651,7 +697,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Calculate recommendation confidence
      */
-    private function calculateRecommendationConfidence($recommendations) {
+    private function calculateRecommendationConfidence($recommendations)
+    {
         $confidence_scores = [];
 
         foreach ($recommendations as $property) {
@@ -671,7 +718,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Analyze price trends
      */
-    private function analyzePriceTrends() {
+    private function analyzePriceTrends()
+    {
         return [
             'overall_trend' => 'upward',
             'trend_percentage' => 8.5,
@@ -692,7 +740,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Forecast demand
      */
-    private function forecastDemand() {
+    private function forecastDemand()
+    {
         return [
             'next_quarter_demand' => 'high',
             'predicted_increase' => 18.5,
@@ -709,7 +758,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Identify investment opportunities
      */
-    private function identifyInvestmentOpportunities() {
+    private function identifyInvestmentOpportunities()
+    {
         return [
             'high_roi_areas' => [
                 ['area' => 'Whitefield, Bangalore', 'expected_roi' => 22.5, 'timeframe' => '2 years'],
@@ -731,7 +781,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Assess market risks
      */
-    private function assessMarketRisks() {
+    private function assessMarketRisks()
+    {
         return [
             'overall_risk_level' => 'moderate',
             'risk_factors' => [
@@ -752,7 +803,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Train machine learning models
      */
-    private function trainMLModels() {
+    private function trainMLModels()
+    {
         try {
             // Simulate ML model training
             $models = [
@@ -771,7 +823,6 @@ class AdvancedAIController extends BaseController {
                 'training_time' => rand(30, 120) . ' seconds',
                 'models' => $models
             ];
-
         } catch (\Exception $e) {
             error_log('ML model training error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Training failed'];
@@ -781,7 +832,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Get model statistics
      */
-    private function getModelStatistics() {
+    private function getModelStatistics()
+    {
         return [
             'total_models' => 4,
             'active_models' => 4,
@@ -798,7 +850,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Get current market conditions
      */
-    private function getCurrentMarketConditions() {
+    private function getCurrentMarketConditions()
+    {
         return [
             'trend' => 'bull', // bull, bear, stable
             'confidence' => 78.5,
@@ -811,7 +864,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Get market trends data
      */
-    private function getMarketTrends() {
+    private function getMarketTrends()
+    {
         return [
             'price_growth' => 8.5,
             'demand_increase' => 12.3,
@@ -824,7 +878,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Get prediction accuracy
      */
-    private function getPredictionAccuracy() {
+    private function getPredictionAccuracy()
+    {
         return [
             'overall_accuracy' => 87.5,
             'price_prediction' => 89.2,
@@ -837,13 +892,17 @@ class AdvancedAIController extends BaseController {
     /**
      * Get property details
      */
-    private function getPropertyDetails($property_id) {
+    private function getPropertyDetails($property_id)
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = ?");
-            $stmt->execute([$property_id]);
+            if (!$this->db) {
+                return null;
+            }
+            $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :propertyId");
+            $stmt->execute(['propertyId' => $property_id]);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Get property details error: ' . $e->getMessage());
             return null;
         }
     }
@@ -851,17 +910,20 @@ class AdvancedAIController extends BaseController {
     /**
      * Get property prediction
      */
-    private function getPropertyPrediction($property_id) {
+    private function getPropertyPrediction($property_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return null;
+            }
 
-            $sql = "SELECT * FROM ai_predictions WHERE property_id = ? ORDER BY created_at DESC LIMIT 1";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$property_id]);
+            $sql = "SELECT * FROM ai_predictions WHERE property_id = :propertyId ORDER BY created_at DESC LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetch();
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('Get property prediction error: ' . $e->getMessage());
             return null;
         }
     }
@@ -869,7 +931,8 @@ class AdvancedAIController extends BaseController {
     /**
      * Get recommendation engine details
      */
-    private function getRecommendationEngine() {
+    private function getRecommendationEngine()
+    {
         return [
             'algorithm' => 'Collaborative Filtering + Content-Based',
             'data_sources' => ['User behavior', 'Property features', 'Market trends', 'Social signals'],

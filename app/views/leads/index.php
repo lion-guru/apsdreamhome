@@ -52,7 +52,7 @@
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <input type="text" class="form-control" name="search" placeholder="Search leads..."
-                           value="<?php echo htmlspecialchars($data['filters']['search'] ?? ''); ?>">
+                           value="<?php echo h($data['filters']['search'] ?? ''); ?>">
                 </div>
                 <div class="col-md-2">
                     <select class="form-select" name="status">
@@ -143,7 +143,7 @@
                         <div class="card lead-card h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="card-title mb-0"><?php echo htmlspecialchars($lead['name']); ?></h5>
+                                    <h5 class="card-title mb-0"><?php echo h($lead['name']); ?></h5>
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                             <i class="fas fa-ellipsis-v"></i>
@@ -173,10 +173,10 @@
                                 </div>
 
                                 <p class="card-text text-muted mb-2">
-                                    <i class="fas fa-envelope me-1"></i><?php echo htmlspecialchars($lead['email']); ?>
+                                    <i class="fas fa-envelope me-1"></i><?php echo h($lead['email']); ?>
                                 </p>
                                 <p class="card-text text-muted mb-2">
-                                    <i class="fas fa-phone me-1"></i><?php echo htmlspecialchars($lead['phone']); ?>
+                                    <i class="fas fa-phone me-1"></i><?php echo h($lead['phone']); ?>
                                 </p>
                                 <p class="card-text text-muted mb-3">
                                     <i class="fas fa-tag me-1"></i><?php echo ucfirst($lead['source']); ?>
@@ -201,7 +201,7 @@
                                     </small>
                                     <?php if (!empty($lead['assigned_user_name'])): ?>
                                         <small class="text-muted">
-                                            <i class="fas fa-user me-1"></i><?php echo htmlspecialchars($lead['assigned_user_name']); ?>
+                                            <i class="fas fa-user me-1"></i><?php echo h($lead['assigned_user_name']); ?>
                                         </small>
                                     <?php endif; ?>
                                 </div>

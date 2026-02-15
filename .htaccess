@@ -2,6 +2,10 @@
     RewriteEngine On
     # RewriteBase removed to support dynamic folder names in XAMPP
 
+    # EXCEPTION: For /admin, we want to use the modern router even if the folder exists
+    # This prevents Apache from serving the legacy admin directory directly
+    RewriteRule ^admin/?$ public/index.php [L]
+
     # Serve existing files/directories directly
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d

@@ -1,17 +1,23 @@
 <?php
+
 /**
  * Advanced Security Controller
  * Handles quantum-resistant encryption, advanced threat detection, and security features
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Tech;
 
-class AdvancedSecurityController extends BaseController {
+use App\Http\Controllers\BaseController;
+use Exception;
+
+class AdvancedSecurityController extends BaseController
+{
 
     /**
      * Advanced security dashboard
      */
-    public function securityDashboard() {
+    public function securityDashboard()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -33,7 +39,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Quantum-resistant cryptography
      */
-    public function quantumCryptography() {
+    public function quantumCryptography()
+    {
         $crypto_data = [
             'current_algorithms' => $this->getCurrentAlgorithms(),
             'quantum_resistant_solutions' => $this->getQuantumResistantSolutions(),
@@ -50,7 +57,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Advanced threat detection
      */
-    public function threatDetection() {
+    public function threatDetection()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -72,7 +80,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Zero-trust security architecture
      */
-    public function zeroTrust() {
+    public function zeroTrust()
+    {
         $zero_trust_data = [
             'architecture_overview' => $this->getArchitectureOverview(),
             'access_policies' => $this->getAccessPolicies(),
@@ -89,7 +98,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Blockchain security features
      */
-    public function blockchainSecurity() {
+    public function blockchainSecurity()
+    {
         $blockchain_security = [
             'decentralized_identity' => $this->getDecentralizedIdentity(),
             'secure_transactions' => $this->getSecureTransactions(),
@@ -106,7 +116,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * AI-powered security monitoring
      */
-    public function aiSecurity() {
+    public function aiSecurity()
+    {
         $ai_security_data = [
             'anomaly_detection' => $this->getAnomalyDetection(),
             'behavioral_analysis' => $this->getBehavioralAnalysis(),
@@ -123,7 +134,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Multi-factor authentication enhancement
      */
-    public function mfaEnhancement() {
+    public function mfaEnhancement()
+    {
         $mfa_data = [
             'current_mfa_methods' => $this->getCurrentMFAMethods(),
             'advanced_authentication' => $this->getAdvancedAuthentication(),
@@ -140,7 +152,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Data privacy and GDPR compliance
      */
-    public function dataPrivacy() {
+    public function dataPrivacy()
+    {
         $privacy_data = [
             'gdpr_compliance' => $this->getGDPRCompliance(),
             'data_protection' => $this->getDataProtection(),
@@ -157,7 +170,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get threat intelligence data
      */
-    private function getThreatIntelligence() {
+    private function getThreatIntelligence()
+    {
         return [
             'threat_level' => 'Low',
             'recent_incidents' => 23,
@@ -178,7 +192,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get security metrics
      */
-    private function getSecurityMetrics() {
+    private function getSecurityMetrics()
+    {
         return [
             'system_uptime' => '99.99%',
             'security_incidents' => 0,
@@ -191,7 +206,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get vulnerability assessment
      */
-    private function getVulnerabilityAssessment() {
+    private function getVulnerabilityAssessment()
+    {
         return [
             'vulnerability_score' => '2.1/10',
             'critical_vulnerabilities' => 0,
@@ -205,7 +221,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get incident response data
      */
-    private function getIncidentResponse() {
+    private function getIncidentResponse()
+    {
         return [
             'incident_response_time' => '4.2 seconds',
             'false_positive_rate' => '0.3%',
@@ -218,7 +235,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get current encryption algorithms
      */
-    private function getCurrentAlgorithms() {
+    private function getCurrentAlgorithms()
+    {
         return [
             'aes_256' => [
                 'algorithm' => 'AES-256',
@@ -244,7 +262,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get quantum-resistant solutions
      */
-    private function getQuantumResistantSolutions() {
+    private function getQuantumResistantSolutions()
+    {
         return [
             'crystals_kyber' => [
                 'algorithm' => 'CRYSTALS-Kyber',
@@ -284,7 +303,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get migration timeline
      */
-    private function getMigrationTimeline() {
+    private function getMigrationTimeline()
+    {
         return [
             'q3_2024' => [
                 'completed' => 'Assessment of current cryptographic systems',
@@ -307,7 +327,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get implementation status
      */
-    private function getImplementationStatus() {
+    private function getImplementationStatus()
+    {
         return [
             'algorithms_implemented' => '2/4',
             'systems_migrated' => '45%',
@@ -320,7 +341,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get real-time threats
      */
-    private function getRealTimeThreats() {
+    private function getRealTimeThreats()
+    {
         return [
             'active_threats' => 3,
             'threat_types' => [
@@ -335,7 +357,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get threat patterns
      */
-    private function getThreatPatterns() {
+    private function getThreatPatterns()
+    {
         return [
             'attack_vectors' => [
                 'web_application' => ['frequency' => '45%', 'success_rate' => '0.1%'],
@@ -355,7 +378,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get AI detection capabilities
      */
-    private function getAIDetection() {
+    private function getAIDetection()
+    {
         return [
             'anomaly_detection_accuracy' => '97.8%',
             'false_positive_rate' => '0.2%',
@@ -372,7 +396,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get response automation
      */
-    private function getResponseAutomation() {
+    private function getResponseAutomation()
+    {
         return [
             'automated_responses' => '89%',
             'manual_interventions' => '11%',
@@ -390,7 +415,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get architecture overview
      */
-    private function getArchitectureOverview() {
+    private function getArchitectureOverview()
+    {
         return [
             'core_principles' => [
                 'never_trust_always_verify' => 'All access requests must be authenticated and authorized',
@@ -410,7 +436,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get access policies
      */
-    private function getAccessPolicies() {
+    private function getAccessPolicies()
+    {
         return [
             'policy_types' => [
                 'role_based_access' => 'Access based on user roles and responsibilities',
@@ -430,7 +457,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get continuous verification
      */
-    private function getContinuousVerification() {
+    private function getContinuousVerification()
+    {
         return [
             'verification_methods' => [
                 'multi_factor_authentication' => 'Enhanced MFA with behavioral biometrics',
@@ -450,7 +478,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get implementation progress
      */
-    private function getImplementationProgress() {
+    private function getImplementationProgress()
+    {
         return [
             'planning_completed' => '100%',
             'infrastructure_deployed' => '85%',
@@ -464,7 +493,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get decentralized identity
      */
-    private function getDecentralizedIdentity() {
+    private function getDecentralizedIdentity()
+    {
         return [
             'did_implementation' => [
                 'decentralized_identifiers' => 'Implemented for all users',
@@ -484,7 +514,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get secure transactions
      */
-    private function getSecureTransactions() {
+    private function getSecureTransactions()
+    {
         return [
             'transaction_security' => [
                 'quantum_secure_signatures' => 'Post-quantum digital signatures',
@@ -504,7 +535,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get audit trails
      */
-    private function getAuditTrails() {
+    private function getAuditTrails()
+    {
         return [
             'comprehensive_logging' => [
                 'all_user_actions' => 'Every user interaction logged',
@@ -524,7 +556,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get consensus mechanisms
      */
-    private function getConsensusMechanisms() {
+    private function getConsensusMechanisms()
+    {
         return [
             'proof_of_stake' => [
                 'mechanism' => 'Proof of Stake (PoS)',
@@ -550,7 +583,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get anomaly detection
      */
-    private function getAnomalyDetection() {
+    private function getAnomalyDetection()
+    {
         return [
             'detection_accuracy' => '97.8%',
             'false_positive_rate' => '0.2%',
@@ -572,7 +606,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get behavioral analysis
      */
-    private function getBehavioralAnalysis() {
+    private function getBehavioralAnalysis()
+    {
         return [
             'user_behavior_models' => [
                 'login_patterns' => 'Time-based and location-based login analysis',
@@ -592,7 +627,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get predictive security
      */
-    private function getPredictiveSecurity() {
+    private function getPredictiveSecurity()
+    {
         return [
             'threat_prediction' => [
                 'accuracy' => '89.5%',
@@ -612,7 +648,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get automated response
      */
-    private function getAutomatedResponse() {
+    private function getAutomatedResponse()
+    {
         return [
             'response_automation_rate' => '89%',
             'response_categories' => [
@@ -633,7 +670,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get current MFA methods
      */
-    private function getCurrentMFAMethods() {
+    private function getCurrentMFAMethods()
+    {
         return [
             'sms_authentication' => [
                 'method' => 'SMS Authentication',
@@ -665,7 +703,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get advanced authentication
      */
-    private function getAdvancedAuthentication() {
+    private function getAdvancedAuthentication()
+    {
         return [
             'biometric_authentication' => [
                 'fingerprint' => 'Implemented',
@@ -691,7 +730,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get biometric integration
      */
-    private function getBiometricIntegration() {
+    private function getBiometricIntegration()
+    {
         return [
             'biometric_standards' => [
                 'fido2' => 'Fast IDentity Online 2.0 certified',
@@ -711,7 +751,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get adaptive authentication
      */
-    private function getAdaptiveAuthentication() {
+    private function getAdaptiveAuthentication()
+    {
         return [
             'risk_based_adaptation' => [
                 'low_risk' => 'Single factor authentication',
@@ -737,7 +778,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get GDPR compliance status
      */
-    private function getGDPRCompliance() {
+    private function getGDPRCompliance()
+    {
         return [
             'compliance_status' => '100% compliant',
             'last_audit' => date('Y-m-d', strtotime('-30 days')),
@@ -751,7 +793,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get data protection measures
      */
-    private function getDataProtection() {
+    private function getDataProtection()
+    {
         return [
             'encryption_standards' => [
                 'data_at_rest' => 'AES-256 encryption',
@@ -777,7 +820,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get privacy by design
      */
-    private function getPrivacyByDesign() {
+    private function getPrivacyByDesign()
+    {
         return [
             'design_principles' => [
                 'proactive_privacy' => 'Privacy considerations from design phase',
@@ -797,7 +841,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get user consent management
      */
-    private function getUserConsentManagement() {
+    private function getUserConsentManagement()
+    {
         return [
             'consent_collection' => [
                 'granular_consent' => 'Purpose-specific consent collection',
@@ -817,7 +862,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Advanced security training
      */
-    public function securityTraining() {
+    public function securityTraining()
+    {
         $training_programs = [
             'cybersecurity_basics' => [
                 'title' => 'Cybersecurity Fundamentals',
@@ -858,7 +904,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security research and development
      */
-    public function securityResearch() {
+    public function securityResearch()
+    {
         $research_projects = [
             'post_quantum_cryptography' => [
                 'title' => 'Post-Quantum Cryptography Implementation',
@@ -899,7 +946,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security partnerships and collaborations
      */
-    public function securityPartnerships() {
+    public function securityPartnerships()
+    {
         $partnerships = [
             'cybersecurity_firms' => [
                 'palo_alto_networks' => [
@@ -948,7 +996,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security compliance and auditing
      */
-    public function complianceAuditing() {
+    public function complianceAuditing()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -970,7 +1019,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get regulatory compliance status
      */
-    private function getRegulatoryCompliance() {
+    private function getRegulatoryCompliance()
+    {
         return [
             'gdpr' => ['status' => 'Compliant', 'last_audit' => '2024-09-15', 'next_audit' => '2025-03-15'],
             'ccpa' => ['status' => 'Compliant', 'last_audit' => '2024-08-20', 'next_audit' => '2025-02-20'],
@@ -983,7 +1033,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get security audits
      */
-    private function getSecurityAudits() {
+    private function getSecurityAudits()
+    {
         return [
             'internal_audits' => [
                 'frequency' => 'Monthly',
@@ -1011,7 +1062,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get compliance monitoring
      */
-    private function getComplianceMonitoring() {
+    private function getComplianceMonitoring()
+    {
         return [
             'real_time_monitoring' => [
                 'data_access_monitoring' => 'Continuous monitoring of data access',
@@ -1031,7 +1083,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get certification status
      */
-    private function getCertificationStatus() {
+    private function getCertificationStatus()
+    {
         return [
             'security_certifications' => [
                 'iso_27001' => ['status' => 'Certified', 'scope' => 'Information Security Management'],
@@ -1050,7 +1103,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security incident response
      */
-    public function incidentResponse() {
+    public function incidentResponse()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -1072,7 +1126,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get incident response plan
      */
-    private function getIncidentResponsePlan() {
+    private function getIncidentResponsePlan()
+    {
         return [
             'response_framework' => [
                 'nist_csf' => 'NIST Cybersecurity Framework',
@@ -1093,7 +1148,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get recent security incidents
      */
-    private function getRecentIncidents() {
+    private function getRecentIncidents()
+    {
         return [
             'total_incidents' => 23,
             'resolved_incidents' => 23,
@@ -1110,7 +1166,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get response effectiveness
      */
-    private function getResponseEffectiveness() {
+    private function getResponseEffectiveness()
+    {
         return [
             'detection_rate' => '99.7%',
             'response_time' => '4.2 seconds',
@@ -1123,7 +1180,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Get lessons learned
      */
-    private function getLessonsLearned() {
+    private function getLessonsLearned()
+    {
         return [
             'improved_detection' => [
                 'lesson' => 'Enhanced AI models reduced false positives by 40%',
@@ -1146,7 +1204,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * API - Get security status
      */
-    public function apiSecurityStatus() {
+    public function apiSecurityStatus()
+    {
         header('Content-Type: application/json');
 
         $security_status = [
@@ -1167,7 +1226,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * API - Report security incident
      */
-    public function apiReportIncident() {
+    public function apiReportIncident()
+    {
         header('Content-Type: application/json');
 
         $incident_data = json_decode(file_get_contents('php://input'), true);
@@ -1188,26 +1248,29 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Create security incident record
      */
-    private function createSecurityIncident($incident_data) {
+    private function createSecurityIncident($incident_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $sql = "INSERT INTO security_incidents (
                 incident_type, severity, description, reported_by,
                 affected_systems, status, created_at
-            ) VALUES (?, ?, ?, ?, ?, 'reported', NOW())";
+            ) VALUES (:type, :severity, :description, :reportedBy, :affectedSystems, 'reported', NOW())";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $incident_data['type'],
-                $incident_data['severity'],
-                $incident_data['description'],
-                $_SESSION['user_id'] ?? null,
-                json_encode($incident_data['affected_systems'] ?? [])
+                'type' => $incident_data['type'],
+                'severity' => $incident_data['severity'],
+                'description' => $incident_data['description'],
+                'reportedBy' => $_SESSION['user_id'] ?? null,
+                'affectedSystems' => json_encode($incident_data['affected_systems'] ?? [])
             ]);
 
             if ($success) {
-                $incident_id = $pdo->lastInsertId();
+                $incident_id = $this->db->lastInsertId();
 
                 // Trigger automated response
                 $this->triggerAutomatedResponse($incident_id, $incident_data);
@@ -1216,8 +1279,7 @@ class AdvancedSecurityController extends BaseController {
             }
 
             return false;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Security incident creation error: ' . $e->getMessage());
             return false;
         }
@@ -1226,7 +1288,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Trigger automated response to incident
      */
-    private function triggerAutomatedResponse($incident_id, $incident_data) {
+    private function triggerAutomatedResponse($incident_id, $incident_data)
+    {
         // In production, this would trigger automated security responses
         // For now, simulate the response
 
@@ -1246,7 +1309,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security performance benchmarks
      */
-    public function performanceBenchmarks() {
+    public function performanceBenchmarks()
+    {
         $benchmark_data = [
             'encryption_performance' => [
                 'aes_256' => ['throughput' => '1.2 GB/s', 'latency' => '2.3ms'],
@@ -1274,7 +1338,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security ROI calculator
      */
-    public function roiCalculator() {
+    public function roiCalculator()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
@@ -1300,7 +1365,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Calculate security ROI
      */
-    private function calculateSecurityROI($investment_data) {
+    private function calculateSecurityROI($investment_data)
+    {
         $security_investment = $investment_data['security_investment'] ?? 5000000;
         $timeframe = $investment_data['timeframe'] ?? 3; // years
 
@@ -1345,7 +1411,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security roadmap
      */
-    public function securityRoadmap() {
+    public function securityRoadmap()
+    {
         $roadmap_data = [
             '2024' => [
                 'q3' => 'Complete quantum-resistant cryptography migration',
@@ -1374,7 +1441,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security case studies
      */
-    public function caseStudies() {
+    public function caseStudies()
+    {
         $case_studies = [
             'quantum_cryptography_implementation' => [
                 'title' => 'Quantum-Resistant Cryptography Migration',
@@ -1411,7 +1479,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security resources and tools
      */
-    public function resources() {
+    public function resources()
+    {
         $resources = [
             'security_tools' => [
                 'vulnerability_scanner' => 'Automated vulnerability scanning tool',
@@ -1442,7 +1511,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security innovation and research
      */
-    public function innovation() {
+    public function innovation()
+    {
         $innovation_projects = [
             'quantum_security_protocols' => [
                 'title' => 'Quantum-Secure Communication Protocols',
@@ -1476,7 +1546,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security awards and recognition
      */
-    public function awards() {
+    public function awards()
+    {
         $awards_data = [
             'received_awards' => [
                 'cybersecurity_excellence' => [
@@ -1523,7 +1594,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security future vision
      */
-    public function futureVision() {
+    public function futureVision()
+    {
         $vision_data = [
             '2030_security_landscape' => [
                 'quantum_computing_threats' => 'Universal quantum computers break current encryption',
@@ -1554,7 +1626,8 @@ class AdvancedSecurityController extends BaseController {
     /**
      * Security API endpoints
      */
-    public function apiSecurityEndpoints() {
+    public function apiSecurityEndpoints()
+    {
         header('Content-Type: application/json');
 
         $endpoints = [

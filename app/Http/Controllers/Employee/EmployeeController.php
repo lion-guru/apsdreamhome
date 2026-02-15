@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Employee;
 use App\Models\Admin;
 
@@ -10,7 +10,7 @@ use App\Models\Admin;
  * Employee Controller
  * Handles all employee management operations including CRUD, attendance, tasks, and performance
  */
-class EmployeeController extends Controller
+class EmployeeController extends BaseController
 {
     private $employeeModel;
     private $adminModel;
@@ -19,11 +19,16 @@ class EmployeeController extends Controller
     {
         parent::__construct();
 
-        // Check if employee/admin is logged in for protected routes
-        $this->middleware('employee.auth');
-
         $this->employeeModel = new Employee();
         $this->adminModel = new Admin();
+    }
+
+    /**
+     * Check if employee is logged in
+     */
+    protected function isEmployeeLoggedIn()
+    {
+        return isset($_SESSION['employee_id']);
     }
 
     /**
@@ -33,16 +38,13 @@ class EmployeeController extends Controller
     {
         // If already logged in, redirect to dashboard
         if ($this->isEmployeeLoggedIn()) {
-            $this->redirect('/employee/dashboard');
+            $this->redirect('employee/dashboard');
         }
 
-        $data = [
-            'page_title' => 'Employee Login - APS Dream Home',
-            'error' => $_SESSION['login_error'] ?? null
-        ];
+        $this->data['page_title'] = 'Employee Login - APS Dream Home';
+        $this->data['error'] = $this->getFlash('login_error');
 
-        unset($_SESSION['login_error']);
-        $this->view('employees/login', $data);
+        $this->render('employees/login');
     }
 
     /**
@@ -51,15 +53,15 @@ class EmployeeController extends Controller
     public function authenticate()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/employee/login');
+            $this->redirect('employee/login');
         }
 
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            $_SESSION['login_error'] = 'Please enter both email and password.';
-            $this->redirect('/employee/login');
+            $this->setFlash('login_error', 'Please enter both email and password.');
+            $this->redirect('employee/login');
         }
 
         $employee = $this->employeeModel->getEmployeeByEmail($email);
@@ -77,10 +79,10 @@ class EmployeeController extends Controller
                 'last_login' => date('Y-m-d H:i:s')
             ]);
 
-            $this->redirect('/employee/dashboard');
+            $this->redirect('employee/dashboard');
         } else {
-            $_SESSION['login_error'] = 'Invalid email or password.';
-            $this->redirect('/employee/login');
+            $this->setFlash('login_error', 'Invalid email or password.');
+            $this->redirect('employee/login');
         }
     }
 
@@ -95,7 +97,7 @@ class EmployeeController extends Controller
         unset($_SESSION['employee_role']);
         unset($_SESSION['employee_department']);
 
-        $this->redirect('/employee/login');
+        $this->redirect('employee/login');
     }
 
     /**
@@ -124,15 +126,13 @@ class EmployeeController extends Controller
         // Get this week's performance
         $weeklyPerformance = $this->employeeModel->getEmployeePerformance($employeeId, 'week');
 
-        $data = [
-            'employee' => $employee,
-            'dashboard_data' => $dashboardData,
-            'today_tasks_count' => count($todayTasks),
-            'weekly_performance' => $weeklyPerformance,
-            'page_title' => 'Employee Dashboard - APS Dream Home'
-        ];
+        $this->data['employee'] = $employee;
+        $this->data['dashboard_data'] = $dashboardData;
+        $this->data['today_tasks_count'] = count($todayTasks);
+        $this->data['weekly_performance'] = $weeklyPerformance;
+        $this->data['page_title'] = 'Employee Dashboard - APS Dream Home';
 
-        $this->view('employees/dashboard', $data);
+        $this->render('employees/dashboard');
     }
 
     /**
@@ -148,15 +148,13 @@ class EmployeeController extends Controller
         $tasks = $this->employeeModel->getEmployeeTasks($employeeId, ['per_page' => 10]);
         $attendance = $this->employeeModel->getEmployeeAttendance($employeeId, ['per_page' => 10]);
 
-        $data = [
-            'employee' => $employee,
-            'activities' => $activities,
-            'tasks' => $tasks,
-            'attendance' => $attendance,
-            'page_title' => 'My Profile - APS Dream Home'
-        ];
+        $this->data['employee'] = $employee;
+        $this->data['activities'] = $activities;
+        $this->data['tasks'] = $tasks;
+        $this->data['attendance'] = $attendance;
+        $this->data['page_title'] = 'My Profile - APS Dream Home';
 
-        $this->view('employees/profile', $data);
+        $this->render('employees/profile');
     }
 
     /**
@@ -165,7 +163,7 @@ class EmployeeController extends Controller
     public function updateProfile()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/employee/profile');
+            $this->redirect('employee/profile');
         }
 
         $employeeId = $_SESSION['employee_id'];
@@ -184,13 +182,13 @@ class EmployeeController extends Controller
         $success = $this->employeeModel->updateEmployee($employeeId, $data);
 
         if ($success) {
-            $_SESSION['success'] = 'Profile updated successfully.';
+            $this->setFlash('success', 'Profile updated successfully.');
             $_SESSION['employee_name'] = $data['name'];
         } else {
-            $_SESSION['error'] = 'Failed to update profile. Please try again.';
+            $this->setFlash('error', 'Failed to update profile. Please try again.');
         }
 
-        $this->redirect('/employee/profile');
+        $this->redirect('employee/profile');
     }
 
     /**
@@ -217,13 +215,11 @@ class EmployeeController extends Controller
 
         $tasks = $this->employeeModel->getEmployeeTasks($employeeId, $filters);
 
-        $data = [
-            'tasks' => $tasks,
-            'filters' => $filters,
-            'page_title' => 'My Tasks - APS Dream Home'
-        ];
+        $this->data['tasks'] = $tasks;
+        $this->data['filters'] = $filters;
+        $this->data['page_title'] = 'My Tasks - APS Dream Home';
 
-        $this->view('employees/tasks', $data);
+        $this->render('employees/tasks');
     }
 
     /**
@@ -232,7 +228,7 @@ class EmployeeController extends Controller
     public function updateTask($taskId)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/employee/tasks');
+            $this->redirect('employee/tasks');
         }
 
         $employeeId = $_SESSION['employee_id'];
@@ -251,12 +247,12 @@ class EmployeeController extends Controller
         $success = $this->employeeModel->updateEmployeeTask($taskId, $data);
 
         if ($success) {
-            $_SESSION['success'] = 'Task updated successfully.';
+            $this->setFlash('success', 'Task updated successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to update task. Please try again.';
+            $this->setFlash('error', 'Failed to update task. Please try again.');
         }
 
-        $this->redirect('/employee/tasks');
+        $this->redirect('employee/tasks');
     }
 
     /**
@@ -276,32 +272,30 @@ class EmployeeController extends Controller
 
         // Calculate attendance statistics
         $totalDays = count($attendance);
-        $presentDays = count(array_filter($attendance, function($a) {
+        $presentDays = count(array_filter($attendance, function ($a) {
             return $a['status'] === 'present';
         }));
-        $absentDays = count(array_filter($attendance, function($a) {
+        $absentDays = count(array_filter($attendance, function ($a) {
             return $a['status'] === 'absent';
         }));
-        $lateDays = count(array_filter($attendance, function($a) {
+        $lateDays = count(array_filter($attendance, function ($a) {
             return $a['status'] === 'late';
         }));
 
         $attendanceRate = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 2) : 0;
 
-        $data = [
-            'attendance' => $attendance,
-            'filters' => $filters,
-            'stats' => [
-                'total_days' => $totalDays,
-                'present_days' => $presentDays,
-                'absent_days' => $absentDays,
-                'late_days' => $lateDays,
-                'attendance_rate' => $attendanceRate
-            ],
-            'page_title' => 'My Attendance - APS Dream Home'
+        $this->data['attendance'] = $attendance;
+        $this->data['filters'] = $filters;
+        $this->data['stats'] = [
+            'total_days' => $totalDays,
+            'present_days' => $presentDays,
+            'absent_days' => $absentDays,
+            'late_days' => $lateDays,
+            'attendance_rate' => $attendanceRate
         ];
+        $this->data['page_title'] = 'My Attendance - APS Dream Home';
 
-        $this->view('employees/attendance', $data);
+        $this->render('employees/attendance');
     }
 
     /**
@@ -310,7 +304,7 @@ class EmployeeController extends Controller
     public function recordAttendance()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/employee/dashboard');
+            $this->redirect('employee/dashboard');
         }
 
         $employeeId = $_SESSION['employee_id'];
@@ -328,7 +322,7 @@ class EmployeeController extends Controller
 
         if ($action === 'check_in') {
             if ($existingAttendance && $existingAttendance['check_in']) {
-                $_SESSION['error'] = 'Already checked in today.';
+                $this->setFlash('error', 'Already checked in today.');
             } else {
                 $success = $this->employeeModel->recordAttendance($employeeId, [
                     'check_in' => date('Y-m-d H:i:s'),
@@ -338,16 +332,16 @@ class EmployeeController extends Controller
                 ]);
 
                 if ($success) {
-                    $_SESSION['success'] = 'Checked in successfully.';
+                    $this->setFlash('success', 'Checked in successfully.');
                 } else {
-                    $_SESSION['error'] = 'Failed to check in. Please try again.';
+                    $this->setFlash('error', 'Failed to check in. Please try again.');
                 }
             }
         } elseif ($action === 'check_out') {
             if (!$existingAttendance || !$existingAttendance['check_in']) {
-                $_SESSION['error'] = 'Please check in first.';
+                $this->setFlash('error', 'Please check in first.');
             } elseif ($existingAttendance['check_out']) {
-                $_SESSION['error'] = 'Already checked out today.';
+                $this->setFlash('error', 'Already checked out today.');
             } else {
                 $success = $this->employeeModel->recordAttendance($employeeId, [
                     'check_out' => date('Y-m-d H:i:s'),
@@ -357,14 +351,14 @@ class EmployeeController extends Controller
                 ]);
 
                 if ($success) {
-                    $_SESSION['success'] = 'Checked out successfully.';
+                    $this->setFlash('success', 'Checked out successfully.');
                 } else {
-                    $_SESSION['error'] = 'Failed to check out. Please try again.';
+                    $this->setFlash('error', 'Failed to check out. Please try again.');
                 }
             }
         }
 
-        $this->redirect('/employee/dashboard');
+        $this->redirect('employee/dashboard');
     }
 
     /**
@@ -386,14 +380,12 @@ class EmployeeController extends Controller
         $leaves = $this->employeeModel->getEmployeeLeaves($employeeId, $filters);
         $leaveTypes = $this->employeeModel->getLeaveTypes();
 
-        $data = [
-            'leaves' => $leaves,
-            'leave_types' => $leaveTypes,
-            'filters' => $filters,
-            'page_title' => 'My Leaves - APS Dream Home'
-        ];
+        $this->data['leaves'] = $leaves;
+        $this->data['leave_types'] = $leaveTypes;
+        $this->data['filters'] = $filters;
+        $this->data['page_title'] = 'My Leaves - APS Dream Home';
 
-        $this->view('employees/leaves', $data);
+        $this->render('employees/leaves');
     }
 
     /**
@@ -402,7 +394,7 @@ class EmployeeController extends Controller
     public function applyLeave()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/employee/leaves');
+            $this->redirect('employee/leaves');
         }
 
         $employeeId = $_SESSION['employee_id'];
@@ -416,8 +408,8 @@ class EmployeeController extends Controller
         ];
 
         // Calculate number of days
-        $startDate = new DateTime($data['start_date']);
-        $endDate = new DateTime($data['end_date']);
+        $startDate = new \DateTime($data['start_date']);
+        $endDate = new \DateTime($data['end_date']);
         $interval = $startDate->diff($endDate);
         $data['total_days'] = $interval->days + 1;
 
@@ -434,22 +426,22 @@ class EmployeeController extends Controller
 
         $stmt = $this->db->prepare($sql);
         $success = $stmt->execute([
-            'employee_id' => $employeeId,
-            'leave_type_id' => $data['leave_type_id'],
-            'start_date' => $data['start_date'],
-            'end_date' => $data['end_date'],
-            'total_days' => $data['total_days'],
-            'reason' => $data['reason'],
-            'status' => $data['status']
+            ':employee_id' => $employeeId,
+            ':leave_type_id' => $data['leave_type_id'],
+            ':start_date' => $data['start_date'],
+            ':end_date' => $data['end_date'],
+            ':total_days' => $data['total_days'],
+            ':reason' => $data['reason'],
+            ':status' => $data['status']
         ]);
 
         if ($success) {
-            $_SESSION['success'] = 'Leave application submitted successfully.';
+            $this->setFlash('success', 'Leave application submitted successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to submit leave application. Please try again.';
+            $this->setFlash('error', 'Failed to submit leave application. Please try again.');
         }
 
-        $this->redirect('/employee/leaves');
+        $this->redirect('employee/leaves');
     }
 
     /**
@@ -471,14 +463,12 @@ class EmployeeController extends Controller
         $documents = $this->employeeModel->getEmployeeDocuments($employeeId, $filters);
         $documentTypes = $this->employeeModel->getDocumentTypes();
 
-        $data = [
-            'documents' => $documents,
-            'document_types' => $documentTypes,
-            'filters' => $filters,
-            'page_title' => 'My Documents - APS Dream Home'
-        ];
+        $this->data['documents'] = $documents;
+        $this->data['document_types'] = $documentTypes;
+        $this->data['filters'] = $filters;
+        $this->data['page_title'] = 'My Documents - APS Dream Home';
 
-        $this->view('employees/documents', $data);
+        $this->render('employees/documents');
     }
 
     /**
@@ -502,13 +492,11 @@ class EmployeeController extends Controller
 
         $activities = $this->employeeModel->getEmployeeActivities($employeeId, $filters);
 
-        $data = [
-            'activities' => $activities,
-            'filters' => $filters,
-            'page_title' => 'My Activities - APS Dream Home'
-        ];
+        $this->data['activities'] = $activities;
+        $this->data['filters'] = $filters;
+        $this->data['page_title'] = 'My Activities - APS Dream Home';
 
-        $this->view('employees/activities', $data);
+        $this->render('employees/activities');
     }
 
     /**
@@ -523,14 +511,12 @@ class EmployeeController extends Controller
         $quarterlyPerformance = $this->employeeModel->getEmployeePerformance($employeeId, 'quarter');
         $yearlyPerformance = $this->employeeModel->getEmployeePerformance($employeeId, 'year');
 
-        $data = [
-            'monthly_performance' => $monthlyPerformance,
-            'quarterly_performance' => $quarterlyPerformance,
-            'yearly_performance' => $yearlyPerformance,
-            'page_title' => 'My Performance - APS Dream Home'
-        ];
+        $this->data['monthly_performance'] = $monthlyPerformance;
+        $this->data['quarterly_performance'] = $quarterlyPerformance;
+        $this->data['yearly_performance'] = $yearlyPerformance;
+        $this->data['page_title'] = 'My Performance - APS Dream Home';
 
-        $this->view('employees/performance', $data);
+        $this->render('employees/performance');
     }
 
     /**
@@ -542,12 +528,10 @@ class EmployeeController extends Controller
 
         $salaryHistory = $this->employeeModel->getEmployeeSalaryHistory($employeeId);
 
-        $data = [
-            'salary_history' => $salaryHistory,
-            'page_title' => 'Salary History - APS Dream Home'
-        ];
+        $this->data['salary_history'] = $salaryHistory;
+        $this->data['page_title'] = 'Salary History - APS Dream Home';
 
-        $this->view('employees/salary_history', $data);
+        $this->render('employees/salary_history');
     }
 
     /**
@@ -559,12 +543,10 @@ class EmployeeController extends Controller
 
         $reportingStructure = $this->employeeModel->getReportingStructure($employeeId);
 
-        $data = [
-            'reporting_structure' => $reportingStructure,
-            'page_title' => 'Reporting Structure - APS Dream Home'
-        ];
+        $this->data['reporting_structure'] = $reportingStructure;
+        $this->data['page_title'] = 'Reporting Structure - APS Dream Home';
 
-        $this->view('employees/reporting_structure', $data);
+        $this->render('employees/reporting_structure');
     }
 
     /**
@@ -573,7 +555,7 @@ class EmployeeController extends Controller
     public function changePassword()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/employee/profile');
+            $this->redirect('employee/profile');
         }
 
         $employeeId = $_SESSION['employee_id'];
@@ -584,46 +566,38 @@ class EmployeeController extends Controller
         // Validate current password
         $employee = $this->employeeModel->getEmployeeById($employeeId);
         if (!password_verify($currentPassword, $employee['password'])) {
-            $_SESSION['error'] = 'Current password is incorrect.';
-            $this->redirect('/employee/profile');
+            $this->setFlash('error', 'Current password is incorrect.');
+            $this->redirect('employee/profile');
         }
 
         // Validate new password
         if (strlen($newPassword) < 6) {
-            $_SESSION['error'] = 'New password must be at least 6 characters long.';
-            $this->redirect('/employee/profile');
+            $this->setFlash('error', 'New password must be at least 6 characters long.');
+            $this->redirect('employee/profile');
         }
 
         if ($newPassword !== $confirmPassword) {
-            $_SESSION['error'] = 'New password and confirmation do not match.';
-            $this->redirect('/employee/profile');
+            $this->setFlash('error', 'New password and confirmation do not match.');
+            $this->redirect('employee/profile');
         }
 
         $success = $this->employeeModel->updateEmployeePassword($employeeId, $newPassword);
 
         if ($success) {
-            $_SESSION['success'] = 'Password changed successfully.';
+            $this->setFlash('success', 'Password changed successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to change password. Please try again.';
+            $this->setFlash('error', 'Failed to change password. Please try again.');
         }
 
-        $this->redirect('/employee/profile');
-    }
-
-    /**
-     * Helper method to check if employee is logged in
-     */
-    private function isEmployeeLoggedIn()
-    {
-        return isset($_SESSION['employee_id']);
+        $this->redirect('employee/profile');
     }
 
     /**
      * Middleware to check employee authentication
      */
-    private function middleware($type)
+    protected function middleware($middleware, array $options = [])
     {
-        if ($type === 'employee.auth' && !$this->isEmployeeLoggedIn()) {
+        if ($middleware === 'employee.auth' && !$this->isEmployeeLoggedIn()) {
             $this->redirect('/employee/login');
         }
     }

@@ -16,14 +16,14 @@
                             <input type="date"
                                    name="start_date"
                                    class="form-control"
-                                   value="<?= htmlspecialchars($_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'))) ?>">
+                                   value="<?= h($_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'))) ?>">
                             <div class="input-group-prepend input-group-append">
                                 <span class="input-group-text">से</span>
                             </div>
                             <input type="date"
                                    name="end_date"
                                    class="form-control"
-                                   value="<?= htmlspecialchars($_GET['end_date'] ?? date('Y-m-d')) ?>">
+                                   value="<?= h($_GET['end_date'] ?? date('Y-m-d')) ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="submit">
                                     <i class="fas fa-filter"></i>
@@ -299,7 +299,7 @@
                                         <?php foreach ($report['source_performance'] as $source): ?>
                                             <tr>
                                                 <td>
-                                                    <strong><?= htmlspecialchars($source['source_name']) ?></strong>
+                                                    <strong><?= h($source['source_name']) ?></strong>
                                                 </td>
                                                 <td><?= $source['total_leads'] ?></td>
                                                 <td><?= $source['converted_leads'] ?></td>

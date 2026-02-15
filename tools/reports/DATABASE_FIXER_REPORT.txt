@@ -1,0 +1,30 @@
+🏠 APS Dream Home - SIMPLE DATABASE FIXER
+=======================================
+
+1. 🔍 CHECKING .env FILE
+======================
+   ✅ .env file found
+   📋 Database settings:
+      Host: 127.0.0.1
+      Name: not set
+      User: not set
+      Pass: not set
+
+2. 🗄️ TESTING DATABASE CONNECTION
+===============================
+   ❌ Error: No connection could be made because the target machine actively refused it
+
+3. 🏆 STATUS
+===========
+   🔴 DATABASE: FAILED
+   🔴 PROJECT: NEEDS SETUP
+
+   🔧 To fix:
+   1. Open phpMyAdmin
+   2. Create database 'apsdreamhome'
+   3. Update .env with correct credentials
+   4. Run this script again
+
+🎉 DATABASE FIXER COMPLETED!
+===========================
+Status: ❌ NEEDS MANUAL SETUP

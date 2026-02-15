@@ -42,13 +42,13 @@ $webRoutes = [
             '/payment/cancel/{id}' => 'PaymentController@cancel',
 
             // Error page tests
-            '/test/error/404' => 'App\Controllers\ErrorTestController@test404',
-            '/test/error/500' => 'App\Controllers\ErrorTestController@test500',
-            '/test/error/403' => 'App\Controllers\ErrorTestController@test403',
-            '/test/error/401' => 'App\Controllers\ErrorTestController@test401',
-            '/test/error/400' => 'App\Controllers\ErrorTestController@test400',
-            '/test/error/generic' => 'App\Controllers\ErrorTestController@testGeneric',
-            '/test/error/exception' => 'App\Controllers\ErrorTestController@testException',
+            '/test/error/404' => 'Utility\ErrorTestController@test404',
+            '/test/error/500' => 'Utility\ErrorTestController@test500',
+            '/test/error/403' => 'Utility\ErrorTestController@test403',
+            '/test/error/401' => 'Utility\ErrorTestController@test401',
+            '/test/error/400' => 'Utility\ErrorTestController@test400',
+            '/test/error/generic' => 'Utility\ErrorTestController@testGeneric',
+            '/test/error/exception' => 'Utility\ErrorTestController@testException',
         ],
 
         'POST' => [

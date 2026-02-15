@@ -15,6 +15,75 @@ class PageController extends BaseController {
     }
 
     /**
+     * Display homepage
+     */
+    public function index() {
+        // Set page data
+        $this->data['page_title'] = 'Home - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL]
+        ];
+
+        // Get featured properties
+        $this->data['featured_properties'] = $this->getFeaturedProperties();
+
+        // Get locations for search dropdown
+        $this->data['locations'] = $this->getLocations();
+
+        // Get company statistics
+        $this->data['company_stats'] = $this->getCompanyStats();
+
+        // Render the homepage
+        $this->render('pages/homepage_new');
+    }
+
+    /**
+     * Get featured properties for homepage
+     */
+    private function getFeaturedProperties() {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    p.*, 
+                    (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as primary_image
+                FROM properties p 
+                WHERE p.is_featured = 1 AND p.status = 'active'
+                ORDER BY p.created_at DESC 
+                LIMIT 6
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get locations for search dropdown
+     */
+    private function getLocations() {
+        try {
+            $stmt = $this->db->prepare("SELECT DISTINCT city FROM properties WHERE status = 'active' ORDER BY city ASC");
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get company statistics
+     */
+    private function getCompanyStats() {
+        return [
+            'total_properties' => 1200,
+            'happy_clients' => 850,
+            'years_experience' => 15,
+            'awards_won' => 25
+        ];
+    }
+
+    /**
      * Display About page
      */
     public function about() {

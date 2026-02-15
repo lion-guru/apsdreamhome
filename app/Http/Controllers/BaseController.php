@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Core\Controller as CoreController;
@@ -9,16 +10,132 @@ class BaseController extends CoreController
     protected $data = [];
     protected $models = [];
     protected $layout = 'layouts/base';
+    protected $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
+        $this->db = \App\Models\Database::getInstance();
         $this->loadModels();
+        // Ensure CSRF token is initialized
+        $this->getCsrfToken();
+    }
+
+    /**
+     * Validate CSRF token from request
+     */
+    public function validateCsrfToken($token = null): bool
+    {
+        if ($token === null) {
+            $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+        }
+        return $this->verifyCsrfToken($token);
+    }
+
+    /**
+     * CSRF token utilities
+     */
+    protected function getCsrfToken(): string
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    protected function verifyCsrfToken(?string $token): bool
+    {
+        return isset($_SESSION['csrf_token']) && is_string($token) && hash_equals($_SESSION['csrf_token'], $token);
+    }
+
+    /**
+     * Set flash message
+     */
+    protected function setFlash(string $type, string $message): void
+    {
+        $_SESSION[$type] = $message;
+    }
+
+    /**
+     * Get flash message
+     */
+    protected function getFlash(string $type): ?string
+    {
+        if (isset($_SESSION[$type])) {
+            $message = $_SESSION[$type];
+            unset($_SESSION[$type]);
+            return $message;
+        }
+        return null;
+    }
+
+    /**
+     * Require user to be logged in
+     */
+    public function requireLogin(): void
+    {
+        if (!$this->isLoggedIn()) {
+            if ($this->isAjaxRequest()) {
+                $this->json(['error' => 'Authentication required'], 401);
+            } else {
+                $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+                $this->redirect('login');
+                return;
+            }
+        }
+    }
+
+    /**
+     * Check if user is logged in
+     */
+    protected function isLoggedIn(): bool
+    {
+        if (isset($_SESSION['user_id']) || isset($_SESSION['auser']) || isset($_SESSION['associate_id']) || isset($_SESSION['admin_logged_in'])) {
+            return true;
+        }
+
+        if (isset($this->auth)) {
+            if (method_exists($this->auth, 'isLoggedIn')) {
+                return $this->auth->isLoggedIn();
+            }
+            if (method_exists($this->auth, 'check')) {
+                return $this->auth->check();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if current user is an associate
+     */
+    public function isAssociateLoggedIn(): bool
+    {
+        return isset($_SESSION['associate_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'associate');
+    }
+
+    /**
+     * Require user to be an admin
+     */
+    public function requireAdmin(): void
+    {
+        if (!$this->isAdmin()) {
+            if ($this->isAjaxRequest()) {
+                $this->json(['error' => 'Admin access required'], 403);
+            } else {
+                $this->forbidden();
+            }
+        }
     }
 
     /**
      * Load all available models for easy access
      */
-    protected function loadModels() {
+    protected function loadModels()
+    {
         $modelFiles = [
             'User' => '../models/User.php',
             'Property' => '../models/Property.php',
@@ -47,7 +164,8 @@ class BaseController extends CoreController
         }
     }
 
-    protected function getViewsBasePath(): string {
+    protected function getViewsBasePath(): string
+    {
         if (defined('APP_ROOT')) {
             return APP_ROOT . 'app/views/';
         }
@@ -58,14 +176,56 @@ class BaseController extends CoreController
     /**
      * Get model instance
      */
-    public function model($modelName) {
+    public function model($modelName)
+    {
         return $this->models[$modelName] ?? null;
+    }
+
+    /**
+     * Check if current user is an admin
+     */
+    public function isAdmin(): bool
+    {
+        if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin') {
+            return true;
+        }
+
+        if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+            return true;
+        }
+
+        if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+            return true;
+        }
+
+        // Fallback to auth instance if session role is not set
+        if (isset($this->auth)) {
+            if (method_exists($this->auth, 'isAdmin') && $this->auth->isAdmin()) {
+                return true;
+            }
+            if (method_exists($this->auth, 'user')) {
+                $user = $this->auth->user();
+                return $user && isset($user->role) && $user->role === 'admin';
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Redirect to a specific path
+     */
+    public function redirect($path, $statusCode = 302)
+    {
+        header("Location: " . BASE_URL . $path);
+        exit;
     }
 
     /**
      * Render view with data, falling back to legacy renderer when core session utilities are unavailable
      */
-    public function render($view, $data = [], $layout = null) {
+    public function render($view, $data = [], $layout = null)
+    {
         $data = array_merge($this->data, $data);
         $this->data = $data;
         $layout = $layout ?? $this->layout;
@@ -104,14 +264,16 @@ class BaseController extends CoreController
     /**
      * Render error page
      */
-    public function renderError($message) {
+    public function renderError($message)
+    {
         return $this->notFound($message);
     }
 
     /**
      * Get base URL
      */
-    public function getBaseUrl() {
+    public function getBaseUrl()
+    {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
         $host = $_SERVER['HTTP_HOST'];
         $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
@@ -119,52 +281,51 @@ class BaseController extends CoreController
     }
 
     /**
-     * Check if current user is admin
-     */
-    public function isAdmin() {
-        return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
-    }
-
-    /**
      * Check if current user is associate
      */
-    public function isAssociate() {
+    public function isAssociate()
+    {
         return isset($_SESSION['associate_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'associate');
     }
 
     /**
      * Get current user ID
      */
-    public function getCurrentUserId() {
+    public function getCurrentUserId()
+    {
         return $_SESSION['user_id'] ?? null;
     }
 
     /**
      * Get current associate ID
      */
-    public function getCurrentAssociateId() {
+    public function getCurrentAssociateId()
+    {
         return $_SESSION['associate_id'] ?? null;
     }
 
     /**
      * Send a 403 Forbidden response
      */
-    public function forbidden($message = 'Forbidden') {
+    public function forbidden($message = 'Forbidden')
+    {
         return parent::forbidden($message);
     }
 
     /**
      * Check if request is AJAX
      */
-    public function isAjaxRequest() {
+    public function isAjaxRequest()
+    {
         return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
 
     /**
      * Set flash message for next request
      */
-    protected function setFlashMessage($type, $message) {
+    protected function setFlashMessage($type, $message)
+    {
         $_SESSION['flash_message'] = [
             'type' => $type,
             'message' => $message
@@ -174,7 +335,8 @@ class BaseController extends CoreController
     /**
      * Get flash message if exists
      */
-    protected function getFlashMessage() {
+    protected function getFlashMessage()
+    {
         if (isset($_SESSION['flash_message'])) {
             $message = $_SESSION['flash_message'];
             unset($_SESSION['flash_message']);
@@ -184,26 +346,10 @@ class BaseController extends CoreController
     }
 
     /**
-     * Generate CSRF token
-     */
-    protected function generateCSRFToken() {
-        if (!isset($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        }
-        return $_SESSION['csrf_token'];
-    }
-
-    /**
-     * Validate CSRF token
-     */
-    protected function validateCSRFToken($token) {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-    }
-
-    /**
      * Handle file upload
      */
-    protected function handleFileUpload($file, $allowedTypes = [], $maxSize = 5242880) {
+    protected function handleFileUpload($file, $allowedTypes = [], $maxSize = 5242880)
+    {
         if (!isset($file['tmp_name']) || empty($file['tmp_name'])) {
             return ['success' => false, 'error' => 'No file uploaded'];
         }
@@ -238,7 +384,8 @@ class BaseController extends CoreController
     /**
      * Sanitize input data
      */
-    protected function sanitizeInput($data) {
+    protected function sanitizeInput($data)
+    {
         if (is_array($data)) {
             return array_map([$this, 'sanitizeInput'], $data);
         }
@@ -248,35 +395,40 @@ class BaseController extends CoreController
     /**
      * Validate email address
      */
-    protected function validateEmail($email) {
+    protected function validateEmail($email)
+    {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
     /**
      * Validate phone number
      */
-    protected function validatePhone($phone) {
+    protected function validatePhone($phone)
+    {
         return preg_match('/^[0-9]{10,15}$/', $phone);
     }
 
     /**
      * Format currency
      */
-    protected function formatCurrency($amount, $currency = '₹') {
+    protected function formatCurrency($amount, $currency = '₹')
+    {
         return $currency . number_format($amount, 0, '.', ',');
     }
 
     /**
      * Format date
      */
-    protected function formatDate($date, $format = 'd M Y') {
+    protected function formatDate($date, $format = 'd M Y')
+    {
         return date($format, strtotime($date));
     }
 
     /**
      * Get user IP address
      */
-    protected function getUserIP() {
+    protected function getUserIP()
+    {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             return $_SERVER['HTTP_CLIENT_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -289,7 +441,8 @@ class BaseController extends CoreController
     /**
      * Log user activity
      */
-    protected function logActivity($action, $details = '') {
+    protected function logActivity($action, $details = '')
+    {
         $logData = [
             'user_id' => $this->getCurrentUserId(),
             'associate_id' => $this->getCurrentAssociateId(),
@@ -302,21 +455,20 @@ class BaseController extends CoreController
 
         // Log to database if activity logging table exists
         try {
-            global $pdo;
-            if ($pdo) {
-                $stmt = $pdo->prepare("
-                    INSERT INTO user_activity_logs
+            if ($this->db) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO user_activity_logs 
                     (user_id, associate_id, action, details, ip_address, user_agent, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    VALUES (:userId, :associateId, :action, :details, :ipAddress, :userAgent, :createdAt)
                 ");
                 $stmt->execute([
-                    $logData['user_id'],
-                    $logData['associate_id'],
-                    $logData['action'],
-                    $logData['details'],
-                    $logData['ip_address'],
-                    $logData['user_agent'],
-                    $logData['created_at']
+                    'userId' => $logData['user_id'],
+                    'associateId' => $logData['associate_id'],
+                    'action' => $logData['action'],
+                    'details' => $logData['details'],
+                    'ipAddress' => $logData['ip_address'],
+                    'userAgent' => $logData['user_agent'],
+                    'createdAt' => $logData['created_at']
                 ]);
             }
         } catch (Exception $e) {
@@ -327,7 +479,8 @@ class BaseController extends CoreController
     /**
      * Check if feature is enabled
      */
-    protected function isFeatureEnabled($feature) {
+    protected function isFeatureEnabled($feature)
+    {
         $enabledFeatures = [
             'mlm' => true,
             'ai_chatbot' => true,
@@ -346,7 +499,8 @@ class BaseController extends CoreController
     /**
      * Get system configuration
      */
-    protected function getConfig($key, $default = null) {
+    protected function getConfig($key, $default = null)
+    {
         $config = [
             'app_name' => 'APS Dream Home',
             'app_version' => '2.0.0',

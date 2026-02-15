@@ -1,12 +1,18 @@
 <?php
+
 /**
  * Payment Gateway Integration Controller
  * Complete payment processing system for APS Dream Home
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Payment;
 
-class PaymentGatewayController extends BaseController {
+use App\Http\Controllers\BaseController;
+use Exception;
+use PDO;
+
+class PaymentGatewayController extends BaseController
+{
 
     private $gateway_config = [
         'razorpay' => [
@@ -27,7 +33,8 @@ class PaymentGatewayController extends BaseController {
         ]
     ];
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->createPaymentTables();
     }
@@ -35,8 +42,11 @@ class PaymentGatewayController extends BaseController {
     /**
      * Create payment related tables
      */
-    private function createPaymentTables() {
-        global $pdo;
+    private function createPaymentTables()
+    {
+        if (!$this->db) {
+            return;
+        }
 
         // Payment transactions table
         $sql = "CREATE TABLE IF NOT EXISTS payment_transactions (
@@ -63,7 +73,7 @@ class PaymentGatewayController extends BaseController {
             FOREIGN KEY (plot_id) REFERENCES plots(id) ON DELETE SET NULL
         )";
 
-        $pdo->query($sql);
+        $this->db->query($sql);
 
         // Payment gateway logs
         $sql = "CREATE TABLE IF NOT EXISTS payment_gateway_logs (
@@ -80,7 +90,7 @@ class PaymentGatewayController extends BaseController {
             FOREIGN KEY (transaction_id) REFERENCES payment_transactions(transaction_id) ON DELETE CASCADE
         )";
 
-        $pdo->query($sql);
+        $this->db->query($sql);
 
         // Commission payouts tracking
         $sql = "CREATE TABLE IF NOT EXISTS commission_payouts (
@@ -100,15 +110,14 @@ class PaymentGatewayController extends BaseController {
             FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
-        $pdo->query($sql);
+        $this->db->query($sql);
     }
 
     /**
      * Process payment for plot booking
      */
-    public function processPayment() {
-        global $pdo;
-
+    public function processPayment()
+    {
         if (!isset($_POST['submit_payment'])) {
             $this->render('payment/payment_form', [
                 'page_title' => 'Payment Gateway - Secure Payment'
@@ -117,15 +126,19 @@ class PaymentGatewayController extends BaseController {
         }
 
         try {
+            if (!$this->db) {
+                throw new Exception('Database connection failed');
+            }
+
             // Get payment details
             $payment_data = [
                 'amount' => floatval($_POST['amount']),
-                'customer_name' => $_POST['customer_name'],
-                'customer_email' => $_POST['customer_email'],
-                'customer_phone' => $_POST['customer_phone'],
-                'plot_id' => intval($_POST['plot_id']),
-                'payment_type' => $_POST['payment_type'],
-                'gateway' => $_POST['gateway']
+                'customer_name' => $_POST['customer_name'] ?? '',
+                'customer_email' => $_POST['customer_email'] ?? '',
+                'customer_phone' => $_POST['customer_phone'] ?? '',
+                'plot_id' => intval($_POST['plot_id'] ?? 0),
+                'payment_type' => $_POST['payment_type'] ?? '',
+                'gateway' => $_POST['gateway'] ?? ''
             ];
 
             // Validate payment data
@@ -140,16 +153,16 @@ class PaymentGatewayController extends BaseController {
             $insert_sql = "
                 INSERT INTO payment_transactions
                 (transaction_id, plot_id, payment_type, amount, payment_method, payment_status, created_at)
-                VALUES (?, ?, ?, ?, ?, 'pending', NOW())
+                VALUES (:transaction_id, :plot_id, :payment_type, :amount, :payment_method, 'pending', NOW())
             ";
 
-            $stmt = $pdo->prepare($insert_sql);
+            $stmt = $this->db->prepare($insert_sql);
             $stmt->execute([
-                $transaction_id,
-                $payment_data['plot_id'],
-                $payment_data['payment_type'],
-                $payment_data['amount'],
-                $payment_data['gateway']
+                'transaction_id' => $transaction_id,
+                'plot_id' => $payment_data['plot_id'],
+                'payment_type' => $payment_data['payment_type'],
+                'amount' => $payment_data['amount'],
+                'payment_method' => $payment_data['gateway']
             ]);
 
             // Process payment based on gateway
@@ -157,40 +170,42 @@ class PaymentGatewayController extends BaseController {
 
             if ($payment_result['success']) {
                 // Update payment status
-                $update_sql = "UPDATE payment_transactions SET payment_status = 'completed', gateway_response = ?, payment_date = NOW() WHERE transaction_id = ?";
-                $stmt = $pdo->prepare($update_sql);
-                $stmt->execute([json_encode($payment_result), $transaction_id]);
+                $update_sql = "UPDATE payment_transactions SET payment_status = 'completed', gateway_response = :response, payment_date = NOW() WHERE transaction_id = :transaction_id";
+                $stmt = $this->db->prepare($update_sql);
+                $stmt->execute([
+                    'response' => json_encode($payment_result),
+                    'transaction_id' => $transaction_id
+                ]);
 
                 // Process commission if payment is successful
                 $this->processCommission($transaction_id, $payment_data['plot_id']);
 
-                $_SESSION['payment_success'] = [
-                    'transaction_id' => $transaction_id,
-                    'amount' => $payment_data['amount'],
-                    'message' => 'Payment processed successfully!'
-                ];
-
-                $this->redirect('/payment/success');
+                $this->setFlash('success', 'Payment processed successfully! Transaction ID: ' . $transaction_id);
+                $this->redirect(BASE_URL . 'payment/success');
             } else {
                 // Update payment status as failed
-                $update_sql = "UPDATE payment_transactions SET payment_status = 'failed', failure_reason = ? WHERE transaction_id = ?";
-                $stmt = $pdo->prepare($update_sql);
-                $stmt->execute([$payment_result['error'], $transaction_id]);
+                $update_sql = "UPDATE payment_transactions SET payment_status = 'failed', failure_reason = :reason WHERE transaction_id = :transaction_id";
+                $stmt = $this->db->prepare($update_sql);
+                $stmt->execute([
+                    'reason' => $payment_result['error'],
+                    'transaction_id' => $transaction_id
+                ]);
 
-                $_SESSION['payment_error'] = $payment_result['error'];
-                $this->redirect('/payment/failed');
+                $this->setFlash('error', $payment_result['error']);
+                $this->redirect(BASE_URL . 'payment/failed');
             }
-
         } catch (Exception $e) {
-            $_SESSION['payment_error'] = 'Payment processing failed: ' . $e->getMessage();
-            $this->redirect('/payment/failed');
+            error_log('Payment processing error: ' . $e->getMessage());
+            $this->setFlash('error', 'Payment processing failed: ' . $e->getMessage());
+            $this->redirect(BASE_URL . 'payment/failed');
         }
     }
 
     /**
      * Process payment through selected gateway
      */
-    private function processGatewayPayment($payment_data, $transaction_id) {
+    private function processGatewayPayment($payment_data, $transaction_id)
+    {
         switch ($payment_data['gateway']) {
             case 'razorpay':
                 return $this->processRazorpayPayment($payment_data, $transaction_id);
@@ -206,7 +221,8 @@ class PaymentGatewayController extends BaseController {
     /**
      * Process Razorpay payment
      */
-    private function processRazorpayPayment($payment_data, $transaction_id) {
+    private function processRazorpayPayment($payment_data, $transaction_id)
+    {
         // Razorpay integration code
         // This would integrate with actual Razorpay API
         return [
@@ -219,7 +235,8 @@ class PaymentGatewayController extends BaseController {
     /**
      * Process PayU payment
      */
-    private function processPayuPayment($payment_data, $transaction_id) {
+    private function processPayuPayment($payment_data, $transaction_id)
+    {
         // PayU integration code
         return [
             'success' => true,
@@ -231,7 +248,8 @@ class PaymentGatewayController extends BaseController {
     /**
      * Process PhonePe payment
      */
-    private function processPhonePePayment($payment_data, $transaction_id) {
+    private function processPhonePePayment($payment_data, $transaction_id)
+    {
         // PhonePe integration code
         return [
             'success' => true,
@@ -243,8 +261,11 @@ class PaymentGatewayController extends BaseController {
     /**
      * Process commission distribution
      */
-    private function processCommission($transaction_id, $plot_id) {
-        global $pdo;
+    private function processCommission($transaction_id, $plot_id)
+    {
+        if (!$this->db) {
+            return;
+        }
 
         try {
             // Get plot and associate details
@@ -252,10 +273,10 @@ class PaymentGatewayController extends BaseController {
                 SELECT p.*, ps.associate_id, ps.sale_price
                 FROM plots p
                 JOIN plot_sales ps ON p.id = ps.plot_id
-                WHERE ps.transaction_id = ?
+                WHERE ps.transaction_id = :transaction_id
             ";
-            $stmt = $pdo->prepare($plot_query);
-            $stmt->execute([$transaction_id]);
+            $stmt = $this->db->prepare($plot_query);
+            $stmt->execute(['transaction_id' => $transaction_id]);
             $plot_data = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$plot_data) {
@@ -264,7 +285,7 @@ class PaymentGatewayController extends BaseController {
 
             // Get MLM level structure
             $level_query = "SELECT * FROM associate_levels ORDER BY level_number";
-            $levels = $pdo->query($level_query)->fetchAll(PDO::FETCH_ASSOC);
+            $levels = $this->db->query($level_query)->fetchAll(PDO::FETCH_ASSOC);
 
             $associate_id = $plot_data['associate_id'];
             $sale_amount = $plot_data['sale_price'];
@@ -277,13 +298,16 @@ class PaymentGatewayController extends BaseController {
                     $insert_commission = "
                         INSERT INTO commission_payouts
                         (associate_id, transaction_id, payout_amount, payout_status, created_at)
-                        VALUES (?, ?, ?, 'pending', NOW())
+                        VALUES (:associate_id, :transaction_id, :amount, 'pending', NOW())
                     ";
-                    $stmt = $pdo->prepare($insert_commission);
-                    $stmt->execute([$associate_id, $transaction_id, $commission_amount]);
+                    $stmt = $this->db->prepare($insert_commission);
+                    $stmt->execute([
+                        'associate_id' => $associate_id,
+                        'transaction_id' => $transaction_id,
+                        'amount' => $commission_amount
+                    ]);
                 }
             }
-
         } catch (Exception $e) {
             error_log('Commission processing error: ' . $e->getMessage());
         }
@@ -292,14 +316,9 @@ class PaymentGatewayController extends BaseController {
     /**
      * Payment success page
      */
-    public function paymentSuccess() {
-        if (!isset($_SESSION['payment_success'])) {
-            $this->redirect('/');
-            return;
-        }
-
-        $payment_data = $_SESSION['payment_success'];
-        unset($_SESSION['payment_success']);
+    public function paymentSuccess()
+    {
+        $payment_data = $this->getFlash('success');
 
         $this->render('payment/success', [
             'payment_data' => $payment_data,
@@ -310,9 +329,9 @@ class PaymentGatewayController extends BaseController {
     /**
      * Payment failed page
      */
-    public function paymentFailed() {
-        $error_message = $_SESSION['payment_error'] ?? 'Payment processing failed';
-        unset($_SESSION['payment_error']);
+    public function paymentFailed()
+    {
+        $error_message = $this->getFlash('error') ?? 'Payment processing failed';
 
         $this->render('payment/failed', [
             'error_message' => $error_message,
@@ -323,12 +342,17 @@ class PaymentGatewayController extends BaseController {
     /**
      * Payment history for associates
      */
-    public function paymentHistory() {
-        global $pdo;
+    public function paymentHistory()
+    {
+        if (!$this->db) {
+            $this->setFlash('error', 'Database connection failed');
+            $this->redirect(BASE_URL);
+            return;
+        }
 
         $associate_id = $_SESSION['associate_id'] ?? null;
         if (!$associate_id) {
-            $this->redirect('/login');
+            $this->redirect(BASE_URL . 'login');
             return;
         }
 
@@ -339,15 +363,15 @@ class PaymentGatewayController extends BaseController {
                 FROM payment_transactions pt
                 JOIN plots p ON pt.plot_id = p.id
                 JOIN colonies c ON p.colony_id = c.id
-                WHERE pt.associate_id = ?
+                WHERE pt.associate_id = :associate_id
                 ORDER BY pt.created_at DESC
             ";
-            $stmt = $pdo->prepare($payments_query);
-            $stmt->execute([$associate_id]);
+            $stmt = $this->db->prepare($payments_query);
+            $stmt->execute(['associate_id' => $associate_id]);
             $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (Exception $e) {
             error_log('Payment history error: ' . $e->getMessage());
+            $this->setFlash('error', 'Failed to retrieve payment history');
         }
 
         $this->render('payment/history', [

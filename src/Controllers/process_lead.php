@@ -3,7 +3,8 @@ require_once __DIR__ . '/includes/db_settings.php';
 require_once __DIR__ . '/includes/notification_manager.php';
 
 // Helper functions
-function sendResponse($response, $isAjax) {
+function sendResponse($response, $isAjax)
+{
     if ($isAjax) {
         header('Content-Type: application/json');
         echo json_encode($response);
@@ -17,7 +18,8 @@ function sendResponse($response, $isAjax) {
     exit;
 }
 
-function send_notification($data) {
+function send_notification($data)
+{
     try {
         $notification = new NotificationManager();
         return $notification->send($data);
@@ -35,8 +37,8 @@ $response = [
 ];
 
 // Check if it's an AJAX request
-$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 // Validate and sanitize input
 $name = htmlspecialchars(trim($_POST['name'] ?? ''), ENT_QUOTES, 'UTF-8');
@@ -72,8 +74,9 @@ if (!$property_id || $property_id <= 0) {
 }
 
 // Get database connection
-$conn = get_db_connection();
-if (!$conn) {
+require_once __DIR__ . '/../../includes/db_connection.php';
+$pdo = getPdoConnection();
+if (!$pdo) {
     $response['message'] = 'Database connection failed';
     sendResponse($response, $isAjax);
 }
@@ -82,38 +85,56 @@ if (!$conn) {
 
 try {
     // Begin transaction
-    $conn->begin_transaction();
+    $pdo->beginTransaction();
 
     // Insert into leads table
-    $stmt = $conn->prepare("INSERT INTO leads (name, email, phone, source, status, notes) VALUES (?, ?, ?, 'property_inquiry', 'new', ?)");
-    $stmt->bind_param('ssss', $name, $email, $phone, $message);
-    $stmt->execute();
-    $lead_id = $conn->insert_id;
+    $stmt = $pdo->prepare("INSERT INTO leads (name, email, phone, source, status, notes) VALUES (:name, :email, :phone, 'property_inquiry', 'new', :notes)");
+    $stmt->execute([
+        'name' => $name,
+        'email' => $email,
+        'phone' => $phone,
+        'notes' => $message
+    ]);
+    $lead_id = $pdo->lastInsertId();
 
     // Create customer if doesn't exist
-    $stmt = $conn->prepare("INSERT IGNORE INTO customers (name, email, phone, created_at) VALUES (?, ?, ?, NOW())");
-    $stmt->bind_param('sss', $name, $email, $phone);
-    $stmt->execute();
-    $customer_id = $conn->insert_id ?: $conn->query("SELECT id FROM customers WHERE email = '$email' LIMIT 1")->fetch_object()->id;
+    $stmt = $pdo->prepare("INSERT IGNORE INTO customers (name, email, phone, created_at) VALUES (:name, :email, :phone, NOW())");
+    $stmt->execute([
+        'name' => $name,
+        'email' => $email,
+        'phone' => $phone
+    ]);
+    $customer_id = $pdo->lastInsertId();
+
+    if (!$customer_id) {
+        $stmt = $pdo->prepare("SELECT id FROM customers WHERE email = :email LIMIT 1");
+        $stmt->execute(['email' => $email]);
+        $customer_id = $stmt->fetchColumn();
+    }
 
     // Link lead to property
-    $stmt = $conn->prepare("INSERT INTO customer_journeys (customer_id, lead_id, property_id, interaction_type, notes) VALUES (?, ?, ?, 'inquiry', ?)");
-    $stmt->bind_param('iiis', $customer_id, $lead_id, $property_id, $message);
-    $stmt->execute();
+    $stmt = $pdo->prepare("INSERT INTO customer_journeys (customer_id, lead_id, property_id, interaction_type, notes) VALUES (:customer_id, :lead_id, :property_id, 'inquiry', :notes)");
+    $stmt->execute([
+        'customer_id' => $customer_id,
+        'lead_id' => $lead_id,
+        'property_id' => $property_id,
+        'notes' => $message
+    ]);
 
     // Auto-assign to agent based on property
-    $stmt = $conn->prepare("SELECT owner_id, title FROM properties WHERE id = ?");
-    $stmt->bind_param('i', $property_id);
-    $stmt->execute();
-    $property_result = $stmt->get_result()->fetch_object();
+    $stmt = $pdo->prepare("SELECT owner_id, title FROM properties WHERE id = :property_id");
+    $stmt->execute(['property_id' => $property_id]);
+    $property_result = $stmt->fetch(PDO::FETCH_OBJ);
     $agent_id = $property_result->owner_id ?? null;
     $property_title = $property_result->title ?? 'Unknown Property';
-    
+
     if ($agent_id) {
-        $stmt = $conn->prepare("UPDATE leads SET assigned_to = ? WHERE id = ?");
-        $stmt->bind_param('ii', $agent_id, $lead_id);
-        $stmt->execute();
-        
+        $stmt = $pdo->prepare("UPDATE leads SET assigned_to = :agent_id WHERE id = :lead_id");
+        $stmt->execute([
+            'agent_id' => $agent_id,
+            'lead_id' => $lead_id
+        ]);
+
         // Send notification to agent
         $notification_data = [
             'type' => 'new_lead',
@@ -124,22 +145,22 @@ try {
         ];
         send_notification($notification_data);
     }
-    
+
     // Commit transaction
-    $conn->commit();
-    
+    $pdo->commit();
+
     // Send success response
     $response['success'] = true;
     $response['message'] = 'Thank you for your inquiry. Our agent will contact you soon!';
     sendResponse($response, $isAjax);
     header('Location: ' . $_SERVER['HTTP_REFERER'] . '?success=1');
     exit;
-
 } catch (Exception $e) {
     // Rollback on error
-    $conn->rollback();
+    if (isset($pdo)) {
+        $pdo->rollBack();
+    }
     error_log("Lead processing error: " . $e->getMessage());
     header('Location: ' . $_SERVER['HTTP_REFERER'] . '?error=system_error');
     exit;
 }
-?>

@@ -166,11 +166,11 @@ class PageController extends Controller {
             // Here you would typically save to database and send email
             // For now, just redirect with success message
 
-            $_SESSION['success'] = 'Thank you for contacting us! We will get back to you soon.';
+            $this->setFlash('success', 'Thank you for contacting us! We will get back to you soon.');
             $this->redirect('/contact');
 
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
             $_SESSION['form_data'] = $_POST;
             $this->redirect('/contact');
         }
@@ -188,10 +188,10 @@ class PageController extends Controller {
             }
 
             // Here you would typically save to database
-            $_SESSION['success'] = 'Thank you for subscribing to our newsletter!';
+            $this->setFlash('success', 'Thank you for subscribing to our newsletter!');
 
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
         }
 
         $this->redirect('/');

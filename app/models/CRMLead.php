@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CRM Lead Management Model
  * Handles customer relationship management and lead tracking
@@ -7,7 +8,8 @@
 use App\Models\Model;
 use App\Core\Database;
 
-class CRMLead extends Model {
+class CRMLead extends Model
+{
     protected static string $table = 'crm_leads';
 
     /**
@@ -34,29 +36,35 @@ class CRMLead extends Model {
     /**
      * Create new lead
      */
-    public function createLead($lead_data) {
+    public function createLead($lead_data)
+    {
         try {
             $sql = "INSERT INTO {$this->table} (
                 customer_name, customer_email, customer_phone, customer_city,
                 lead_source, lead_status, property_interest, budget_range,
                 preferred_contact_time, notes, assigned_to, priority,
                 created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            ) VALUES (
+                :customer_name, :customer_email, :customer_phone, :customer_city,
+                :lead_source, :lead_status, :property_interest, :budget_range,
+                :preferred_contact_time, :notes, :assigned_to, :priority,
+                NOW(), NOW()
+            )";
 
             $stmt = $this->db->prepare($sql);
             $success = $stmt->execute([
-                $lead_data['customer_name'],
-                $lead_data['customer_email'],
-                $lead_data['customer_phone'],
-                $lead_data['customer_city'] ?? null,
-                $lead_data['lead_source'] ?? self::SOURCE_WEBSITE,
-                $lead_data['lead_status'] ?? self::STATUS_NEW,
-                $lead_data['property_interest'] ?? null,
-                $lead_data['budget_range'] ?? null,
-                $lead_data['preferred_contact_time'] ?? null,
-                $lead_data['notes'] ?? null,
-                $lead_data['assigned_to'] ?? null,
-                $lead_data['priority'] ?? 'medium'
+                ':customer_name' => $lead_data['customer_name'],
+                ':customer_email' => $lead_data['customer_email'],
+                ':customer_phone' => $lead_data['customer_phone'],
+                ':customer_city' => $lead_data['customer_city'] ?? null,
+                ':lead_source' => $lead_data['lead_source'] ?? self::SOURCE_WEBSITE,
+                ':lead_status' => $lead_status = $lead_data['lead_status'] ?? self::STATUS_NEW,
+                ':property_interest' => $lead_data['property_interest'] ?? null,
+                ':budget_range' => $lead_data['budget_range'] ?? null,
+                ':preferred_contact_time' => $lead_data['preferred_contact_time'] ?? null,
+                ':notes' => $lead_data['notes'] ?? null,
+                ':assigned_to' => $lead_data['assigned_to'] ?? null,
+                ':priority' => $lead_data['priority'] ?? 'medium'
             ]);
 
             if ($success) {
@@ -69,7 +77,6 @@ class CRMLead extends Model {
             }
 
             return false;
-
         } catch (\Exception $e) {
             error_log('Lead creation error: ' . $e->getMessage());
             return false;
@@ -79,21 +86,31 @@ class CRMLead extends Model {
     /**
      * Update lead information
      */
-    public function updateLead($lead_id, $update_data) {
+    public function updateLead($lead_id, $update_data)
+    {
         try {
             $allowed_fields = [
-                'customer_name', 'customer_email', 'customer_phone', 'customer_city',
-                'lead_source', 'lead_status', 'property_interest', 'budget_range',
-                'preferred_contact_time', 'notes', 'assigned_to', 'priority'
+                'customer_name',
+                'customer_email',
+                'customer_phone',
+                'customer_city',
+                'lead_source',
+                'lead_status',
+                'property_interest',
+                'budget_range',
+                'preferred_contact_time',
+                'notes',
+                'assigned_to',
+                'priority'
             ];
 
             $update_fields = [];
-            $params = [];
+            $params = [':id' => $lead_id];
 
             foreach ($allowed_fields as $field) {
                 if (isset($update_data[$field])) {
-                    $update_fields[] = "{$field} = ?";
-                    $params[] = $update_data[$field];
+                    $update_fields[] = "{$field} = :{$field}";
+                    $params[":{$field}"] = $update_data[$field];
                 }
             }
 
@@ -101,8 +118,7 @@ class CRMLead extends Model {
                 return false;
             }
 
-            $params[] = $lead_id;
-            $sql = "UPDATE {$this->table} SET " . implode(', ', $update_fields) . ", updated_at = NOW() WHERE id = ?";
+            $sql = "UPDATE {$this->table} SET " . implode(', ', $update_fields) . ", updated_at = NOW() WHERE id = :id";
 
             $stmt = $this->db->prepare($sql);
             $success = $stmt->execute($params);
@@ -117,7 +133,6 @@ class CRMLead extends Model {
             }
 
             return false;
-
         } catch (\Exception $e) {
             error_log('Lead update error: ' . $e->getMessage());
             return false;
@@ -127,20 +142,20 @@ class CRMLead extends Model {
     /**
      * Get lead by ID
      */
-    public function getLead($lead_id) {
+    public function getLead($lead_id)
+    {
         try {
             $sql = "SELECT l.*, u.name as assigned_agent_name, u.email as assigned_agent_email,
                            a.name as associate_name
                     FROM {$this->table} l
                     LEFT JOIN users u ON l.assigned_to = u.id
                     LEFT JOIN users a ON l.created_by_associate = a.id
-                    WHERE l.id = ?";
+                    WHERE l.id = :id";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$lead_id]);
+            $stmt->execute([':id' => $lead_id]);
 
             return $stmt->fetch();
-
         } catch (\Exception $e) {
             error_log('Lead fetch error: ' . $e->getMessage());
             return null;
@@ -150,46 +165,50 @@ class CRMLead extends Model {
     /**
      * Get leads with filters and pagination
      */
-    public function getLeads($filters = [], $page = 1, $per_page = 20) {
+    public function getLeads($filters = [], $page = 1, $per_page = 20)
+    {
         try {
             $where_conditions = [];
             $params = [];
+
+            $page = (int)($filters['page'] ?? $page);
+            $per_page = (int)($filters['per_page'] ?? $per_page);
             $offset = ($page - 1) * $per_page;
 
             // Status filter
             if (isset($filters['status']) && !empty($filters['status'])) {
-                $where_conditions[] = "l.lead_status = ?";
-                $params[] = $filters['status'];
+                $where_conditions[] = "l.lead_status = :status";
+                $params[':status'] = $filters['status'];
             }
 
             // Source filter
             if (isset($filters['source']) && !empty($filters['source'])) {
-                $where_conditions[] = "l.lead_source = ?";
-                $params[] = $filters['source'];
+                $where_conditions[] = "l.lead_source = :source";
+                $params[':source'] = $filters['source'];
             }
 
             // Agent filter
             if (isset($filters['assigned_to']) && !empty($filters['assigned_to'])) {
-                $where_conditions[] = "l.assigned_to = ?";
-                $params[] = $filters['assigned_to'];
+                $where_conditions[] = "l.assigned_to = :assigned_to";
+                $params[':assigned_to'] = $filters['assigned_to'];
             }
 
             // Search filter
             if (isset($filters['search']) && !empty($filters['search'])) {
                 $search_term = '%' . $filters['search'] . '%';
-                $where_conditions[] = "(l.customer_name LIKE ? OR l.customer_email LIKE ? OR l.customer_phone LIKE ?)";
-                $params = array_merge($params, [$search_term, $search_term, $search_term]);
+                $where_conditions[] = "(l.customer_name LIKE :search OR l.customer_email LIKE :search OR l.customer_phone LIKE :search)";
+                $params[':search'] = $search_term;
             }
 
             // Date range filter
             if (isset($filters['date_from']) && !empty($filters['date_from'])) {
-                $where_conditions[] = "l.created_at >= ?";
-                $params[] = $filters['date_from'];
+                $where_conditions[] = "l.created_at >= :date_from";
+                $params[':date_from'] = $filters['date_from'];
             }
 
             if (isset($filters['date_to']) && !empty($filters['date_to'])) {
-                $where_conditions[] = "l.created_at <= ?";
-                $params[] = $filters['date_to'];
+                $where_conditions[] = "l.created_at <= :date_to";
+                $params[':date_to'] = $filters['date_to'];
             }
 
             $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
@@ -206,19 +225,32 @@ class CRMLead extends Model {
                             WHEN 'low' THEN 3
                         END,
                         l.created_at DESC
-                    LIMIT ? OFFSET ?";
+                    LIMIT :limit OFFSET :offset";
 
-            $params[] = $per_page;
-            $db = Database::getInstance();
-            $stmt = $db->query($sql, $params);
+            $stmt = $this->db->prepare($sql);
+
+            // Bind all filter parameters
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
+
+            // Bind pagination as integers
+            $stmt->bindValue(':limit', $per_page, \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+
+            $stmt->execute();
             $leads = $stmt->fetchAll();
 
             // Get total count
             $count_sql = "SELECT COUNT(*) as total FROM {$this->table} l {$where_clause}";
-            $count_params = array_slice($params, 0, -2);
+            $count_stmt = $this->db->prepare($count_sql);
 
-            $db = Database::getInstance();
-            $count_stmt = $db->query($count_sql, $count_params);
+            // Bind filter parameters for count query
+            foreach ($params as $key => $value) {
+                $count_stmt->bindValue($key, $value);
+            }
+
+            $count_stmt->execute();
             $total_count = (int)$count_stmt->fetch()['total'];
 
             return [
@@ -230,7 +262,6 @@ class CRMLead extends Model {
                     'total_count' => $total_count
                 ]
             ];
-
         } catch (\Exception $e) {
             error_log('Leads fetch error: ' . $e->getMessage());
             return ['leads' => [], 'pagination' => []];
@@ -240,12 +271,15 @@ class CRMLead extends Model {
     /**
      * Assign lead to agent
      */
-    public function assignLead($lead_id, $agent_id) {
+    public function assignLead($lead_id, $agent_id)
+    {
         try {
-            $db = Database::getInstance();
-            $sql = "UPDATE {$this->table} SET assigned_to = ?, updated_at = NOW() WHERE id = ?";
-            $stmt = $db->query($sql, [$agent_id, $lead_id]);
-            $success = $stmt !== false;
+            $sql = "UPDATE {$this->table} SET assigned_to = :agent_id, updated_at = NOW() WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute([
+                ':agent_id' => $agent_id,
+                ':id' => $lead_id
+            ]);
 
             if ($success) {
                 $this->logLeadActivity($lead_id, 'assigned', "Assigned to agent ID: {$agent_id}");
@@ -253,7 +287,6 @@ class CRMLead extends Model {
             }
 
             return false;
-
         } catch (\Exception $e) {
             error_log('Lead assignment error: ' . $e->getMessage());
             return false;
@@ -263,12 +296,15 @@ class CRMLead extends Model {
     /**
      * Update lead status
      */
-    public function updateLeadStatus($lead_id, $new_status, $notes = '') {
+    public function updateLeadStatus($lead_id, $new_status, $notes = '')
+    {
         try {
-            $db = Database::getInstance();
-            $sql = "UPDATE {$this->table} SET lead_status = ?, updated_at = NOW() WHERE id = ?";
-            $stmt = $db->query($sql, [$new_status, $lead_id]);
-            $success = $stmt !== false;
+            $sql = "UPDATE {$this->table} SET lead_status = :status, updated_at = NOW() WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute([
+                ':status' => $new_status,
+                ':id' => $lead_id
+            ]);
 
             if ($success) {
                 $this->logLeadActivity($lead_id, 'status_changed', "Status changed to: {$new_status}" . ($notes ? " - {$notes}" : ""));
@@ -276,7 +312,6 @@ class CRMLead extends Model {
             }
 
             return false;
-
         } catch (\Exception $e) {
             error_log('Lead status update error: ' . $e->getMessage());
             return false;
@@ -286,16 +321,20 @@ class CRMLead extends Model {
     /**
      * Log lead activity
      */
-    private function logLeadActivity($lead_id, $activity_type, $description) {
+    private function logLeadActivity($lead_id, $activity_type, $description)
+    {
         try {
-            $db = Database::getInstance();
             $sql = "INSERT INTO crm_lead_activities (lead_id, activity_type, description, created_by, created_at)
-                    VALUES (?, ?, ?, ?, NOW())";
+                    VALUES (:lead_id, :activity_type, :description, :created_by, NOW())";
 
             $created_by = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
-            $stmt = $db->query($sql, [$lead_id, $activity_type, $description, $created_by]);
-            return $stmt !== false;
-
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                ':lead_id' => $lead_id,
+                ':activity_type' => $activity_type,
+                ':description' => $description,
+                ':created_by' => $created_by
+            ]);
         } catch (\Exception $e) {
             error_log('Lead activity logging error: ' . $e->getMessage());
             return false;
@@ -305,18 +344,18 @@ class CRMLead extends Model {
     /**
      * Get lead activities
      */
-    public function getLeadActivities($lead_id) {
+    public function getLeadActivities($lead_id)
+    {
         try {
-            $db = Database::getInstance();
             $sql = "SELECT la.*, u.name as created_by_name
                     FROM crm_lead_activities la
                     LEFT JOIN users u ON la.created_by = u.id
-                    WHERE la.lead_id = ?
+                    WHERE la.lead_id = :id
                     ORDER BY la.created_at DESC";
 
-            $stmt = $db->query($sql, [$lead_id]);
-            return $stmt ? $stmt->fetchAll() : [];
-
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id' => $lead_id]);
+            return $stmt->fetchAll();
         } catch (\Exception $e) {
             error_log('Lead activities fetch error: ' . $e->getMessage());
             return [];
@@ -326,7 +365,8 @@ class CRMLead extends Model {
     /**
      * Calculate lead score based on various factors
      */
-    public function calculateLeadScore($lead_id) {
+    public function calculateLeadScore($lead_id)
+    {
         try {
             $lead = $this->getLead($lead_id);
             if (!$lead) {
@@ -397,21 +437,20 @@ class CRMLead extends Model {
     /**
      * Get lead statistics for dashboard
      */
-    public function getLeadStats() {
+    public function getLeadStats()
+    {
         try {
-            global $pdo;
-
             $stats = [];
 
             // Total leads by status
             $sql = "SELECT lead_status, COUNT(*) as count FROM {$this->table} GROUP BY lead_status";
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $status_distribution = $stmt->fetchAll();
             $stats['status_distribution'] = $status_distribution;
 
             // Total leads by source
             $sql = "SELECT lead_source, COUNT(*) as count FROM {$this->table} GROUP BY lead_source";
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $source_distribution = $stmt->fetchAll();
             $stats['source_distribution'] = $source_distribution;
 
@@ -428,17 +467,16 @@ class CRMLead extends Model {
 
             // Average lead score
             $sql = "SELECT AVG(lead_score) as avg_score FROM {$this->table} WHERE lead_score > 0";
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $stats['avg_lead_score'] = (float)($stmt->fetch()['avg_score'] ?? 0);
 
             // Recent activity (last 7 days)
             $sql = "SELECT COUNT(*) as recent_leads FROM {$this->table}
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $stats['recent_leads'] = (int)$stmt->fetch()['recent_leads'];
 
             return $stats;
-
         } catch (\Exception $e) {
             error_log('Lead stats error: ' . $e->getMessage());
             return [];
@@ -448,7 +486,8 @@ class CRMLead extends Model {
     /**
      * Get leads assigned to specific agent
      */
-    public function getAgentLeads($agent_id, $status = null) {
+    public function getAgentLeads($agent_id, $status = null)
+    {
         try {
             $where_conditions = ["l.assigned_to = ?"];
             $params = [$agent_id];
@@ -474,7 +513,6 @@ class CRMLead extends Model {
 
             $db = Database::getInstance();
             return $db->query($sql, $params)->fetchAll();
-
         } catch (\Exception $e) {
             error_log('Agent leads fetch error: ' . $e->getMessage());
             return [];
@@ -484,7 +522,8 @@ class CRMLead extends Model {
     /**
      * Bulk update lead status
      */
-    public function bulkUpdateStatus($lead_ids, $new_status) {
+    public function bulkUpdateStatus($lead_ids, $new_status)
+    {
         try {
             if (empty($lead_ids)) {
                 return false;
@@ -507,7 +546,6 @@ class CRMLead extends Model {
             }
 
             return false;
-
         } catch (\Exception $e) {
             error_log('Bulk status update error: ' . $e->getMessage());
             return false;
@@ -517,7 +555,8 @@ class CRMLead extends Model {
     /**
      * Get leads requiring follow-up
      */
-    public function getFollowUpLeads($days_overdue = 3) {
+    public function getFollowUpLeads($days_overdue = 3)
+    {
         try {
             $sql = "SELECT l.*, u.name as assigned_agent_name,
                            DATEDIFF(NOW(), l.last_contact_date) as days_since_contact
@@ -530,7 +569,6 @@ class CRMLead extends Model {
             $db = Database::getInstance();
             $stmt = $db->query($sql, [$days_overdue]);
             return $stmt ? $stmt->fetchAll() : [];
-
         } catch (\Exception $e) {
             error_log('Follow-up leads fetch error: ' . $e->getMessage());
             return [];
@@ -540,7 +578,8 @@ class CRMLead extends Model {
     /**
      * Update last contact date
      */
-    public function updateLastContact($lead_id, $contact_notes = '') {
+    public function updateLastContact($lead_id, $contact_notes = '')
+    {
         try {
             $sql = "UPDATE {$this->table}
                     SET last_contact_date = NOW(), updated_at = NOW()
@@ -555,7 +594,6 @@ class CRMLead extends Model {
             }
 
             return $success;
-
         } catch (\Exception $e) {
             error_log('Last contact update error: ' . $e->getMessage());
             return false;
@@ -565,10 +603,9 @@ class CRMLead extends Model {
     /**
      * Get lead conversion funnel
      */
-    public function getConversionFunnel() {
+    public function getConversionFunnel()
+    {
         try {
-            global $pdo;
-
             $sql = "SELECT
                         COUNT(CASE WHEN lead_status = 'new' THEN 1 END) as new_leads,
                         COUNT(CASE WHEN lead_status = 'contacted' THEN 1 END) as contacted_leads,
@@ -579,9 +616,8 @@ class CRMLead extends Model {
                         COUNT(CASE WHEN lead_status = 'closed_lost' THEN 1 END) as lost_leads
                     FROM {$this->table}";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             return $stmt->fetch();
-
         } catch (\Exception $e) {
             error_log('Conversion funnel error: ' . $e->getMessage());
             return [];
@@ -591,10 +627,9 @@ class CRMLead extends Model {
     /**
      * Get agent performance metrics
      */
-    public function getAgentPerformance($agent_id, $date_range = 30) {
+    public function getAgentPerformance($agent_id, $date_range = 30)
+    {
         try {
-            global $pdo;
-
             $sql = "SELECT
                         COUNT(*) as total_leads,
                         COUNT(CASE WHEN lead_status = 'closed_won' THEN 1 END) as won_leads,
@@ -602,11 +637,13 @@ class CRMLead extends Model {
                         AVG(DATEDIFF(CLOSE_DATE, created_at)) as avg_conversion_time,
                         SUM(CASE WHEN lead_status = 'closed_won' THEN estimated_value ELSE 0 END) as total_value_won
                     FROM {$this->table}
-                    WHERE assigned_to = ?
-                      AND created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)";
+                    WHERE assigned_to = :agent_id
+                      AND created_at >= DATE_SUB(NOW(), INTERVAL :date_range DAY)";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$agent_id, $date_range]);
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':agent_id', $agent_id);
+            $stmt->bindValue(':date_range', $date_range, \PDO::PARAM_INT);
+            $stmt->execute();
 
             $performance = $stmt->fetch();
 
@@ -616,7 +653,6 @@ class CRMLead extends Model {
             $performance['conversion_rate'] = $total_leads > 0 ? round(($won_leads / $total_leads) * 100, 2) : 0;
 
             return $performance;
-
         } catch (\Exception $e) {
             error_log('Agent performance error: ' . $e->getMessage());
             return [];
@@ -626,7 +662,8 @@ class CRMLead extends Model {
     /**
      * Export leads to CSV/Excel
      */
-    public function exportLeads($format = 'csv', $filters = []) {
+    public function exportLeads($format = 'csv', $filters = [])
+    {
         try {
             $leads_data = $this->getLeads($filters, 1, 10000); // Get all leads for export
 
@@ -670,7 +707,6 @@ class CRMLead extends Model {
             }
 
             return $export_data;
-
         } catch (\Exception $e) {
             error_log('Leads export error: ' . $e->getMessage());
             return false;
@@ -680,10 +716,9 @@ class CRMLead extends Model {
     /**
      * Get lead source analysis
      */
-    public function getSourceAnalysis() {
+    public function getSourceAnalysis()
+    {
         try {
-            global $pdo;
-
             $sql = "SELECT
                         lead_source,
                         COUNT(*) as total_leads,
@@ -694,7 +729,7 @@ class CRMLead extends Model {
                     GROUP BY lead_source
                     ORDER BY total_leads DESC";
 
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $source_analysis = $stmt->fetchAll();
 
             // Calculate conversion rates
@@ -704,7 +739,6 @@ class CRMLead extends Model {
             }
 
             return $source_analysis;
-
         } catch (\Exception $e) {
             error_log('Source analysis error: ' . $e->getMessage());
             return [];
@@ -714,12 +748,12 @@ class CRMLead extends Model {
     /**
      * Delete lead (soft delete)
      */
-    public function deleteLead($lead_id) {
+    public function deleteLead($lead_id)
+    {
         try {
-            $sql = "UPDATE {$this->table} SET deleted_at = NOW(), updated_at = NOW() WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            return $stmt->execute([$lead_id]);
-
+            $sql = "UPDATE {$this->table} SET deleted_at = NOW(), updated_at = NOW() WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([':id' => $lead_id]);
         } catch (\Exception $e) {
             error_log('Lead deletion error: ' . $e->getMessage());
             return false;

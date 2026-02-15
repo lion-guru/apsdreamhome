@@ -408,6 +408,16 @@ class Route
             $controller = $this->namespace . '\\' . $controller;
         }
         
+        // Add default controller namespace if not present and not absolute
+        if (!str_contains($controller, '\\') || 
+            (str_starts_with($controller, 'Admin\\') || str_starts_with($controller, 'Associate\\') || str_starts_with($controller, 'Api\\'))) {
+            $controller = 'App\\Http\\Controllers\\' . ltrim($controller, '\\');
+        }
+        
+        if (!class_exists($controller)) {
+            throw new \RuntimeException("Controller class {$controller} not found.");
+        }
+        
         $controllerInstance = new $controller();
         
         return call_user_func_array([$controllerInstance, $method], $parameters);

@@ -86,7 +86,7 @@ class PropertyController extends Controller {
             $propertyId = $this->propertyService->createProperty($data);
             
             if ($propertyId) {
-                $_SESSION['success'] = 'Property added successfully!';
+                $this->setFlash('success', 'Property added successfully!');
                 $this->redirect('/properties/' . $propertyId);
                 return;
             }
@@ -94,7 +94,7 @@ class PropertyController extends Controller {
             throw new \Exception('Failed to create property');
             
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
             $_SESSION['form_data'] = $_POST;
             $this->redirect('/properties/create');
         }
@@ -160,7 +160,7 @@ class PropertyController extends Controller {
             $result = $this->propertyService->updateProperty($id, $data);
             
             if ($result) {
-                $_SESSION['success'] = 'Property updated successfully!';
+                $this->setFlash('success', 'Property updated successfully!');
                 $this->redirect('/properties/' . $id);
                 return;
             }
@@ -168,7 +168,7 @@ class PropertyController extends Controller {
             throw new \Exception('Failed to update property');
             
         } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+            $this->setFlash('error', $e->getMessage());
             $_SESSION['form_data'] = $_POST;
             $this->redirect("/properties/$id/edit");
         }
@@ -196,10 +196,10 @@ class PropertyController extends Controller {
         $result = $this->propertyService->deleteProperty($id);
         
         if ($result) {
-            $_SESSION['success'] = 'Property deleted successfully!';
+            $this->setFlash('success', 'Property deleted successfully!');
             $this->redirect('/properties');
         } else {
-            $_SESSION['error'] = 'Failed to delete property';
+            $this->setFlash('error', 'Failed to delete property');
             $this->redirect("/properties/$id");
         }
     }

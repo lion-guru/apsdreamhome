@@ -1,17 +1,23 @@
 <?php
+
 /**
  * Quantum Computing Integration Controller
  * Handles quantum computing optimization and advanced algorithms
  */
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Tech;
 
-class QuantumComputingController extends BaseController {
+use App\Http\Controllers\BaseController;
+use Exception;
+
+class QuantumComputingController extends BaseController
+{
 
     /**
      * Quantum property optimization
      */
-    public function propertyOptimization() {
+    public function propertyOptimization()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -21,9 +27,9 @@ class QuantumComputingController extends BaseController {
             $optimization_result = $this->runQuantumOptimization($_POST);
 
             if ($optimization_result['success']) {
-                $this->setFlashMessage('success', 'Quantum optimization completed successfully');
+                $this->setFlash('success', 'Quantum optimization completed successfully');
             } else {
-                $this->setFlashMessage('error', $optimization_result['error']);
+                $this->setFlash('error', $optimization_result['error']);
             }
 
             $this->redirect(BASE_URL . 'admin/quantum/optimization');
@@ -40,7 +46,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum portfolio optimization
      */
-    public function portfolioOptimization() {
+    public function portfolioOptimization()
+    {
         if (!$this->isLoggedIn()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -53,10 +60,10 @@ class QuantumComputingController extends BaseController {
             $optimization_result = $this->optimizePortfolio($portfolio_data, $_POST);
 
             if ($optimization_result['success']) {
-                $this->setFlashMessage('success', 'Portfolio optimized using quantum algorithms');
+                $this->setFlash('success', 'Portfolio optimized using quantum algorithms');
                 $this->data['optimization_result'] = $optimization_result;
             } else {
-                $this->setFlashMessage('error', $optimization_result['error']);
+                $this->setFlash('error', $optimization_result['error']);
             }
         }
 
@@ -69,7 +76,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum risk assessment
      */
-    public function riskAssessment() {
+    public function riskAssessment()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -91,7 +99,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum machine learning training
      */
-    public function quantumML() {
+    public function quantumML()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -101,9 +110,9 @@ class QuantumComputingController extends BaseController {
             $training_result = $this->trainQuantumML($_POST);
 
             if ($training_result['success']) {
-                $this->setFlashMessage('success', 'Quantum ML training completed');
+                $this->setFlash('success', 'Quantum ML training completed');
             } else {
-                $this->setFlashMessage('error', $training_result['error']);
+                $this->setFlash('error', $training_result['error']);
             }
 
             $this->redirect(BASE_URL . 'admin/quantum/ml');
@@ -120,7 +129,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum cryptography for secure transactions
      */
-    public function quantumCryptography() {
+    public function quantumCryptography()
+    {
         $security_features = [
             'quantum_key_distribution' => $this->getQKDStatus(),
             'quantum_resistant_encryption' => $this->getQREStatus(),
@@ -136,7 +146,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Run quantum optimization algorithm
      */
-    private function runQuantumOptimization($optimization_data) {
+    private function runQuantumOptimization($optimization_data)
+    {
         try {
             // Simulate quantum optimization process
             $optimization_problem = [
@@ -158,7 +169,6 @@ class QuantumComputingController extends BaseController {
                 'classical_comparison' => $quantum_result['classical_time'] / $quantum_result['execution_time'],
                 'results' => $quantum_result['optimal_solution']
             ];
-
         } catch (\Exception $e) {
             error_log('Quantum optimization error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Optimization failed'];
@@ -168,7 +178,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Simulate quantum algorithm execution
      */
-    private function simulateQuantumAlgorithm($problem) {
+    private function simulateQuantumAlgorithm($problem)
+    {
         // Simulate quantum computing process
         $circuits_used = rand(10, 100);
         $execution_time = rand(50, 500) / 1000; // milliseconds
@@ -190,7 +201,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Optimize investment portfolio using quantum algorithms
      */
-    private function optimizePortfolio($portfolio_data, $optimization_params) {
+    private function optimizePortfolio($portfolio_data, $optimization_params)
+    {
         try {
             $portfolio_size = count($portfolio_data['assets'] ?? []);
             $risk_tolerance = $optimization_params['risk_tolerance'] ?? 'medium';
@@ -206,7 +218,6 @@ class QuantumComputingController extends BaseController {
                 'quantum_advantage' => $quantum_optimization['quantum_advantage'],
                 'rebalancing_suggestions' => $quantum_optimization['rebalancing']
             ];
-
         } catch (\Exception $e) {
             error_log('Portfolio optimization error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Optimization failed'];
@@ -216,7 +227,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Run quantum portfolio optimization
      */
-    private function runQuantumPortfolioOptimization($portfolio, $risk_tolerance) {
+    private function runQuantumPortfolioOptimization($portfolio, $risk_tolerance)
+    {
         $assets = $portfolio['assets'] ?? [];
         $total_assets = count($assets);
 
@@ -248,7 +260,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Assess market risks using quantum algorithms
      */
-    private function assessMarketRisks() {
+    private function assessMarketRisks()
+    {
         return [
             'overall_risk_score' => rand(25, 75),
             'risk_factors' => [
@@ -268,7 +281,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Assess property-specific risks
      */
-    private function assessPropertyRisks() {
+    private function assessPropertyRisks()
+    {
         return [
             'location_risks' => [
                 'flood_prone' => ['risk' => 'low', 'quantum_probability' => '12%'],
@@ -286,7 +300,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Assess financial risks
      */
-    private function assessFinancialRisks() {
+    private function assessFinancialRisks()
+    {
         return [
             'interest_rate_risk' => ['level' => 'medium', 'quantum_forecast' => '+0.5% in 6 months'],
             'currency_risk' => ['level' => 'low', 'quantum_forecast' => '±2% fluctuation'],
@@ -298,7 +313,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get quantum risk models
      */
-    private function getQuantumRiskModels() {
+    private function getQuantumRiskModels()
+    {
         return [
             'monte_carlo_quantum' => [
                 'name' => 'Quantum Monte Carlo',
@@ -324,7 +340,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Train quantum machine learning models
      */
-    private function trainQuantumML($training_data) {
+    private function trainQuantumML($training_data)
+    {
         try {
             $model_type = $training_data['model_type'] ?? 'hybrid_quantum_classical';
             $dataset_size = $training_data['dataset_size'] ?? 10000;
@@ -343,7 +360,6 @@ class QuantumComputingController extends BaseController {
                 'success' => true,
                 'training_result' => $training_result
             ];
-
         } catch (\Exception $e) {
             error_log('Quantum ML training error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Training failed'];
@@ -353,7 +369,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get quantum ML statistics
      */
-    private function getQuantumMLStats() {
+    private function getQuantumMLStats()
+    {
         return [
             'total_models' => 8,
             'active_models' => 6,
@@ -371,7 +388,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get quantum key distribution status
      */
-    private function getQKDStatus() {
+    private function getQKDStatus()
+    {
         return [
             'status' => 'active',
             'keys_generated' => 15420,
@@ -384,7 +402,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get quantum resistant encryption status
      */
-    private function getQREStatus() {
+    private function getQREStatus()
+    {
         return [
             'algorithm' => 'CRYSTALS-Kyber',
             'security_level' => 'Level 5',
@@ -397,7 +416,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get secure communication channels
      */
-    private function getSecureChannels() {
+    private function getSecureChannels()
+    {
         return [
             'quantum_secure_channels' => 45,
             'hybrid_classical_quantum' => 23,
@@ -409,7 +429,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get optimization statistics
      */
-    private function getOptimizationStats() {
+    private function getOptimizationStats()
+    {
         return [
             'total_optimizations' => 234,
             'quantum_optimizations' => 156,
@@ -422,13 +443,16 @@ class QuantumComputingController extends BaseController {
     /**
      * Get user portfolio data
      */
-    private function getUserPortfolio($user_id) {
+    private function getUserPortfolio($user_id)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return $this->createDefaultPortfolio($user_id);
+            }
 
-            $sql = "SELECT * FROM user_portfolios WHERE user_id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$user_id]);
+            $sql = "SELECT * FROM user_portfolios WHERE user_id = :userId";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute(['userId' => $user_id]);
 
             $portfolio = $stmt->fetch();
 
@@ -438,8 +462,8 @@ class QuantumComputingController extends BaseController {
             }
 
             return $portfolio;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log('User portfolio fetch error: ' . $e->getMessage());
             return $this->createDefaultPortfolio($user_id);
         }
     }
@@ -447,7 +471,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Create default portfolio for user
      */
-    private function createDefaultPortfolio($user_id) {
+    private function createDefaultPortfolio($user_id)
+    {
         return [
             'user_id' => $user_id,
             'total_value' => 1000000,
@@ -464,7 +489,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing dashboard
      */
-    public function quantumDashboard() {
+    public function quantumDashboard()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -486,7 +512,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get quantum system status
      */
-    private function getQuantumSystemStatus() {
+    private function getQuantumSystemStatus()
+    {
         return [
             'quantum_processor' => 'IBM Quantum Eagle',
             'qubits_available' => 127,
@@ -499,7 +526,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get computing resources
      */
-    private function getComputingResources() {
+    private function getComputingResources()
+    {
         return [
             'quantum_cloud_access' => true,
             'classical_processors' => 64,
@@ -512,7 +540,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get algorithm performance metrics
      */
-    private function getAlgorithmPerformance() {
+    private function getAlgorithmPerformance()
+    {
         return [
             'grover_algorithm' => ['speedup' => '√N', 'applications' => 'Search, Optimization'],
             'shor_algorithm' => ['speedup' => 'Exponential', 'applications' => 'Factoring, Cryptography'],
@@ -524,7 +553,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get research progress
      */
-    private function getResearchProgress() {
+    private function getResearchProgress()
+    {
         return [
             'error_correction' => ['progress' => 78, 'milestone' => 'Surface Code Implementation'],
             'quantum_advantage' => ['progress' => 65, 'milestone' => 'Commercial Applications'],
@@ -536,7 +566,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum algorithm simulator
      */
-    public function algorithmSimulator() {
+    public function algorithmSimulator()
+    {
         $algorithms = [
             'grover' => [
                 'name' => 'Grover\'s Algorithm',
@@ -570,7 +601,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Simulate quantum algorithm execution
      */
-    public function simulateAlgorithm() {
+    public function simulateAlgorithm()
+    {
         header('Content-Type: application/json');
 
         $algorithm = $_POST['algorithm'] ?? '';
@@ -591,7 +623,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Run algorithm simulation
      */
-    private function runAlgorithmSimulation($algorithm, $problem_size) {
+    private function runAlgorithmSimulation($algorithm, $problem_size)
+    {
         // Simulate quantum algorithm execution
         $classical_time = $this->calculateClassicalTime($algorithm, $problem_size);
         $quantum_time = $this->calculateQuantumTime($algorithm, $problem_size);
@@ -611,7 +644,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Calculate classical computation time
      */
-    private function calculateClassicalTime($algorithm, $problem_size) {
+    private function calculateClassicalTime($algorithm, $problem_size)
+    {
         switch ($algorithm) {
             case 'grover':
                 return $problem_size * 0.001; // milliseconds
@@ -627,7 +661,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Calculate quantum computation time
      */
-    private function calculateQuantumTime($algorithm, $problem_size) {
+    private function calculateQuantumTime($algorithm, $problem_size)
+    {
         switch ($algorithm) {
             case 'grover':
                 return sqrt($problem_size) * 0.001; // milliseconds
@@ -643,7 +678,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum error correction
      */
-    public function errorCorrection() {
+    public function errorCorrection()
+    {
         $error_correction_data = [
             'surface_code' => [
                 'name' => 'Surface Code',
@@ -674,7 +710,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum advantage demonstration
      */
-    public function quantumAdvantage() {
+    public function quantumAdvantage()
+    {
         $advantage_examples = [
             'portfolio_optimization' => [
                 'problem' => 'Optimize 100-asset portfolio',
@@ -708,7 +745,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing research
      */
-    public function research() {
+    public function research()
+    {
         $research_areas = [
             'quantum_error_correction' => [
                 'title' => 'Quantum Error Correction',
@@ -742,7 +780,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing ethics and governance
      */
-    public function ethics() {
+    public function ethics()
+    {
         $ethical_considerations = [
             'data_privacy' => [
                 'concern' => 'Quantum computing could break current encryption',
@@ -775,7 +814,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing education
      */
-    public function education() {
+    public function education()
+    {
         $courses = [
             'quantum_basics' => [
                 'title' => 'Quantum Computing Fundamentals',
@@ -809,7 +849,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing industry partnerships
      */
-    public function partnerships() {
+    public function partnerships()
+    {
         $partners = [
             'ibm_quantum' => [
                 'name' => 'IBM Quantum',
@@ -843,7 +884,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing ROI calculator
      */
-    public function roiCalculator() {
+    public function roiCalculator()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
@@ -867,7 +909,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Calculate quantum computing ROI
      */
-    private function calculateQuantumROI($investment, $timeframe, $application) {
+    private function calculateQuantumROI($investment, $timeframe, $application)
+    {
         $quantum_cost = $investment * 0.3; // 30% for quantum infrastructure
         $classical_cost = $investment * 0.7; // 70% for classical systems
 
@@ -906,7 +949,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing future roadmap
      */
-    public function roadmap() {
+    public function roadmap()
+    {
         $roadmap_timeline = [
             '2024' => [
                 'q3' => 'Quantum advantage demonstration in portfolio optimization',
@@ -935,7 +979,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing performance benchmarks
      */
-    public function benchmarks() {
+    public function benchmarks()
+    {
         $benchmark_data = [
             'current_systems' => [
                 'ibm_eagle' => ['qubits' => 127, 'performance' => 89.5, 'applications' => 'Optimization'],
@@ -958,7 +1003,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing integration API
      */
-    public function apiQuantumIntegration() {
+    public function apiQuantumIntegration()
+    {
         header('Content-Type: application/json');
 
         $action = $_GET['action'] ?? '';
@@ -984,7 +1030,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Run quantum optimization via API
      */
-    private function runQuantumOptimizationAPI() {
+    private function runQuantumOptimizationAPI()
+    {
         $optimization_data = json_decode(file_get_contents('php://input'), true);
 
         if (!$optimization_data) {
@@ -1002,7 +1049,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Train quantum model via API
      */
-    private function trainQuantumModelAPI() {
+    private function trainQuantumModelAPI()
+    {
         $training_data = json_decode(file_get_contents('php://input'), true);
 
         if (!$training_data) {
@@ -1020,7 +1068,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Assess quantum risk via API
      */
-    private function assessQuantumRiskAPI() {
+    private function assessQuantumRiskAPI()
+    {
         $risk_data = json_decode(file_get_contents('php://input'), true);
 
         if (!$risk_data) {
@@ -1047,7 +1096,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Get quantum system status via API
      */
-    private function getQuantumSystemStatusAPI() {
+    private function getQuantumSystemStatusAPI()
+    {
         $status = [
             'quantum_processor_status' => 'online',
             'qubits_available' => 127,
@@ -1065,7 +1115,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing cost analysis
      */
-    public function costAnalysis() {
+    public function costAnalysis()
+    {
         $cost_data = [
             'quantum_cloud_costs' => [
                 'ibm_quantum' => ['per_qubit_hour' => '₹150', 'minimum_commitment' => '₹50,000/month'],
@@ -1094,7 +1145,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing security implications
      */
-    public function securityImplications() {
+    public function securityImplications()
+    {
         $security_analysis = [
             'current_encryption_vulnerability' => [
                 'rsa_2048' => ['vulnerable' => true, 'quantum_time' => '2-3 years'],
@@ -1122,7 +1174,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing environmental impact
      */
-    public function environmentalImpact() {
+    public function environmentalImpact()
+    {
         $environmental_data = [
             'energy_consumption' => [
                 'quantum_computer' => ['power' => '25 kW', 'cooling' => '50 kW', 'total' => '75 kW'],
@@ -1150,7 +1203,8 @@ class QuantumComputingController extends BaseController {
     /**
      * Quantum computing job creation and skills
      */
-    public function skillsDevelopment() {
+    public function skillsDevelopment()
+    {
         $skills_data = [
             'emerging_roles' => [
                 'quantum_algorithm_developer' => ['demand' => 'high', 'salary_range' => '₹15-35 LPA'],

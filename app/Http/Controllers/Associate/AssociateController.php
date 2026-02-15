@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Associate;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Associate;
 use App\Models\Admin;
 use App\Services\AdminService;
@@ -11,7 +11,7 @@ use App\Services\AdminService;
  * Associate Controller
  * Handles all associate panel operations including login, team management, business view, and payouts
  */
-class AssociateController extends Controller
+class AssociateController extends BaseController
 {
     private $associateModel;
     private $adminModel;
@@ -20,9 +20,6 @@ class AssociateController extends Controller
     public function __construct()
     {
         parent::__construct();
-
-        // Check if associate is logged in for protected routes
-        $this->middleware('associate.auth');
 
         $this->associateModel = new Associate();
         $this->adminModel = new Admin();
@@ -41,10 +38,9 @@ class AssociateController extends Controller
 
         $data = [
             'page_title' => 'Associate Login - APS Dream Home',
-            'error' => $_SESSION['login_error'] ?? null
+            'error' => $this->getFlash('login_error')
         ];
 
-        unset($_SESSION['login_error']);
         $this->view('associates/login', $data);
     }
 
@@ -61,7 +57,7 @@ class AssociateController extends Controller
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            $_SESSION['login_error'] = 'Please enter both email and password.';
+            $this->setFlash('login_error', 'Please enter both email and password.');
             $this->redirect('/associate/login');
         }
 
@@ -81,7 +77,7 @@ class AssociateController extends Controller
 
             $this->redirect('/associate/dashboard');
         } else {
-            $_SESSION['login_error'] = 'Invalid email or password.';
+            $this->setFlash('login_error', 'Invalid email or password.');
             $this->redirect('/associate/login');
         }
     }
@@ -182,7 +178,7 @@ class AssociateController extends Controller
 
         // Get top performing team members
         $topPerformers = $this->associateModel->getTeamMembers($associateId);
-        usort($topPerformers, function($a, $b) {
+        usort($topPerformers, function ($a, $b) {
             return $b['total_earnings'] <=> $a['total_earnings'];
         });
         $topPerformers = array_slice($topPerformers, 0, 10);
@@ -279,12 +275,12 @@ class AssociateController extends Controller
         $minPayout = 1000;
 
         if ($amount < $minPayout) {
-            $_SESSION['error'] = "Minimum payout amount is ₹{$minPayout}";
+            $this->setFlash('error', "Minimum payout amount is ₹{$minPayout}");
             $this->redirect('/associate/payouts');
         }
 
         if ($amount > $availableBalance) {
-            $_SESSION['error'] = "Insufficient balance. Available: ₹{$availableBalance}";
+            $this->setFlash('error', "Insufficient balance. Available: ₹{$availableBalance}");
             $this->redirect('/associate/payouts');
         }
 
@@ -292,9 +288,9 @@ class AssociateController extends Controller
         $success = $this->associateModel->requestPayout($associateId, $amount, $paymentMethod, $accountDetails);
 
         if ($success) {
-            $_SESSION['success'] = 'Payout request submitted successfully. You will be notified once processed.';
+            $this->setFlash('success', 'Payout request submitted successfully. You will be notified once processed.');
         } else {
-            $_SESSION['error'] = 'Failed to submit payout request. Please try again.';
+            $this->setFlash('error', 'Failed to submit payout request. Please try again.');
         }
 
         $this->redirect('/associate/payouts');
@@ -339,9 +335,9 @@ class AssociateController extends Controller
         $success = $this->associateModel->updateAssociate($associateId, $data);
 
         if ($success) {
-            $_SESSION['success'] = 'Profile updated successfully.';
+            $this->setFlash('success', 'Profile updated successfully.');
         } else {
-            $_SESSION['error'] = 'Failed to update profile. Please try again.';
+            $this->setFlash('error', 'Failed to update profile. Please try again.');
         }
 
         $this->redirect('/associate/profile');
@@ -396,9 +392,9 @@ class AssociateController extends Controller
         $success = $this->associateModel->updateKYCStatus($associateId, 'pending', $kycDocuments);
 
         if ($success) {
-            $_SESSION['success'] = 'KYC documents submitted successfully. Verification is pending.';
+            $this->setFlash('success', 'KYC documents submitted successfully. Verification is pending.');
         } else {
-            $_SESSION['error'] = 'Failed to submit KYC documents. Please try again.';
+            $this->setFlash('error', 'Failed to submit KYC documents. Please try again.');
         }
 
         $this->redirect('/associate/kyc');
@@ -462,19 +458,11 @@ class AssociateController extends Controller
     }
 
     /**
-     * Helper method to check if associate is logged in
-     */
-    private function isAssociateLoggedIn()
-    {
-        return isset($_SESSION['associate_id']);
-    }
-
-    /**
      * Middleware to check associate authentication
      */
-    private function middleware($type)
+    protected function middleware($middleware, array $options = [])
     {
-        if ($type === 'associate.auth' && !$this->isAssociateLoggedIn()) {
+        if ($middleware === 'associate.auth' && !$this->isAssociateLoggedIn()) {
             $this->redirect('/associate/login');
         }
     }

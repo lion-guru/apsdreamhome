@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Progressive Web App Controller
  * Handles PWA features, offline support, and mobile optimization
@@ -7,13 +8,16 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use Exception;
 
-class PWAController extends BaseController {
+class PWAController extends BaseController
+{
 
     /**
      * PWA manifest.json generator
      */
-    public function manifest() {
+    public function manifest()
+    {
         header('Content-Type: application/manifest+json');
 
         $manifest = [
@@ -135,7 +139,8 @@ class PWAController extends BaseController {
     /**
      * Service Worker registration and caching
      */
-    public function serviceWorker() {
+    public function serviceWorker()
+    {
         header('Content-Type: application/javascript');
 
         $sw_content = $this->generateServiceWorker();
@@ -147,7 +152,8 @@ class PWAController extends BaseController {
     /**
      * Generate service worker content
      */
-    private function generateServiceWorker() {
+    private function generateServiceWorker()
+    {
         return "
 const CACHE_NAME = 'aps-dream-home-v1';
 const STATIC_CACHE_URLS = [
@@ -423,14 +429,16 @@ function removeOfflineMessage(id) {
     /**
      * Offline page for PWA
      */
-    public function offline() {
+    public function offline()
+    {
         $this->data['page_title'] = 'Offline - ' . APP_NAME;
 
         // Don't use layout for offline page to avoid dependencies
         ob_start();
-        ?>
+?>
         <!DOCTYPE html>
         <html lang="en">
+
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -448,22 +456,26 @@ function removeOfflineMessage(id) {
                     justify-content: center;
                     align-items: center;
                 }
+
                 .offline-icon {
                     font-size: 5rem;
                     margin-bottom: 2rem;
                     opacity: 0.8;
                 }
+
                 .offline-message {
                     font-size: 1.5rem;
                     margin-bottom: 1rem;
                 }
+
                 .offline-subtitle {
                     opacity: 0.8;
                     margin-bottom: 2rem;
                 }
+
                 .retry-btn {
-                    background: rgba(255,255,255,0.2);
-                    border: 2px solid rgba(255,255,255,0.3);
+                    background: rgba(255, 255, 255, 0.2);
+                    border: 2px solid rgba(255, 255, 255, 0.3);
                     color: white;
                     padding: 15px 30px;
                     border-radius: 25px;
@@ -471,13 +483,15 @@ function removeOfflineMessage(id) {
                     display: inline-block;
                     transition: all 0.3s ease;
                 }
+
                 .retry-btn:hover {
-                    background: rgba(255,255,255,0.3);
+                    background: rgba(255, 255, 255, 0.3);
                     text-decoration: none;
                     color: white;
                 }
             </style>
         </head>
+
         <body>
             <div>
                 <div class="offline-icon">📱</div>
@@ -494,15 +508,17 @@ function removeOfflineMessage(id) {
                 });
             </script>
         </body>
+
         </html>
-        <?php
+<?php
         echo ob_get_clean();
     }
 
     /**
      * Push notification subscription
      */
-    public function subscribeNotifications() {
+    public function subscribeNotifications()
+    {
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -527,28 +543,30 @@ function removeOfflineMessage(id) {
     /**
      * Save push notification subscription
      */
-    private function savePushSubscription($subscription) {
+    private function savePushSubscription($subscription)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             $user_id = $_SESSION['user_id'] ?? null;
 
             $sql = "INSERT INTO push_subscriptions (user_id, endpoint, p256dh_key, auth_key, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, NOW(), NOW())
+                    VALUES (:userId, :endpoint, :p256dh, :auth, NOW(), NOW())
                     ON DUPLICATE KEY UPDATE
                     p256dh_key = VALUES(p256dh_key),
                     auth_key = VALUES(auth_key),
                     updated_at = NOW()";
 
-            $stmt = $pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             return $stmt->execute([
-                $user_id,
-                $subscription['endpoint'],
-                $subscription['keys']['p256dh'] ?? '',
-                $subscription['keys']['auth'] ?? ''
+                'userId' => $user_id,
+                'endpoint' => $subscription['endpoint'],
+                'p256dh' => $subscription['keys']['p256dh'] ?? '',
+                'auth' => $subscription['keys']['auth'] ?? ''
             ]);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Push subscription save error: ' . $e->getMessage());
             return false;
         }
@@ -557,7 +575,8 @@ function removeOfflineMessage(id) {
     /**
      * Send push notification (admin function)
      */
-    public function sendPushNotification() {
+    public function sendPushNotification()
+    {
         if (!$this->isAdmin()) {
             sendJsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
         }
@@ -583,13 +602,16 @@ function removeOfflineMessage(id) {
     /**
      * Broadcast notification to all subscribers
      */
-    private function broadcastNotification($notification_data) {
+    private function broadcastNotification($notification_data)
+    {
         try {
-            global $pdo;
+            if (!$this->db) {
+                return false;
+            }
 
             // Get all active subscriptions
             $sql = "SELECT * FROM push_subscriptions WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $stmt = $pdo->query($sql);
+            $stmt = $this->db->query($sql);
             $subscriptions = $stmt->fetchAll();
 
             $sent_count = 0;
@@ -601,8 +623,7 @@ function removeOfflineMessage(id) {
             }
 
             return $sent_count > 0;
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Notification broadcast error: ' . $e->getMessage());
             return false;
         }
@@ -611,7 +632,8 @@ function removeOfflineMessage(id) {
     /**
      * PWA installation prompt
      */
-    public function installPrompt() {
+    public function installPrompt()
+    {
         $this->data['page_title'] = 'Install App - ' . APP_NAME;
 
         $this->render('pwa/install_prompt');
@@ -620,7 +642,8 @@ function removeOfflineMessage(id) {
     /**
      * Get PWA statistics
      */
-    public function getPWAStats() {
+    public function getPWAStats()
+    {
         header('Content-Type: application/json');
 
         if (!$this->isAdmin()) {
@@ -643,12 +666,15 @@ function removeOfflineMessage(id) {
     /**
      * Get install prompt statistics
      */
-    private function getInstallPromptStats() {
+    private function getInstallPromptStats()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM pwa_install_prompts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            if (!$this->db) {
+                return 0;
+            }
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM pwa_install_prompts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }
@@ -656,12 +682,15 @@ function removeOfflineMessage(id) {
     /**
      * Get installation statistics
      */
-    private function getInstallationStats() {
+    private function getInstallationStats()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM pwa_installations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            if (!$this->db) {
+                return 0;
+            }
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM pwa_installations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }
@@ -669,12 +698,15 @@ function removeOfflineMessage(id) {
     /**
      * Get push subscription statistics
      */
-    private function getPushSubscriptionStats() {
+    private function getPushSubscriptionStats()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM push_subscriptions WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            if (!$this->db) {
+                return 0;
+            }
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM push_subscriptions WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }
@@ -682,12 +714,15 @@ function removeOfflineMessage(id) {
     /**
      * Get offline usage statistics
      */
-    private function getOfflineUsageStats() {
+    private function getOfflineUsageStats()
+    {
         try {
-            global $pdo;
-            $stmt = $pdo->query("SELECT COUNT(*) as total FROM offline_actions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            if (!$this->db) {
+                return 0;
+            }
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM offline_actions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }
@@ -695,27 +730,33 @@ function removeOfflineMessage(id) {
     /**
      * Log PWA install prompt shown
      */
-    public function logInstallPrompt() {
+    public function logInstallPrompt()
+    {
         header('Content-Type: application/json');
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                sendJsonResponse(['success' => false, 'error' => 'Database connection failed'], 500);
+            }
 
             $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
             $platform = $this->detectPlatform($user_agent);
 
             $sql = "INSERT INTO pwa_install_prompts (user_agent, platform, ip_address, created_at)
-                    VALUES (?, ?, ?, NOW())";
+                    VALUES (:ua, :platform, :ip, NOW())";
 
-            $stmt = $pdo->prepare($sql);
-            $success = $stmt->execute([$user_agent, $platform, $_SERVER['REMOTE_ADDR'] ?? '']);
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute([
+                'ua' => $user_agent,
+                'platform' => $platform,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? ''
+            ]);
 
             sendJsonResponse([
                 'success' => $success,
                 'message' => 'Install prompt logged'
             ]);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Install prompt logging error: ' . $e->getMessage());
             sendJsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
         }
@@ -724,27 +765,33 @@ function removeOfflineMessage(id) {
     /**
      * Log PWA installation
      */
-    public function logInstallation() {
+    public function logInstallation()
+    {
         header('Content-Type: application/json');
 
         try {
-            global $pdo;
+            if (!$this->db) {
+                sendJsonResponse(['success' => false, 'error' => 'Database connection failed'], 500);
+            }
 
             $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
             $platform = $this->detectPlatform($user_agent);
 
             $sql = "INSERT INTO pwa_installations (user_agent, platform, ip_address, created_at)
-                    VALUES (?, ?, ?, NOW())";
+                    VALUES (:ua, :platform, :ip, NOW())";
 
-            $stmt = $pdo->prepare($sql);
-            $success = $stmt->execute([$user_agent, $platform, $_SERVER['REMOTE_ADDR'] ?? '']);
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute([
+                'ua' => $user_agent,
+                'platform' => $platform,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? ''
+            ]);
 
             sendJsonResponse([
                 'success' => $success,
                 'message' => 'Installation logged'
             ]);
-
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log('Installation logging error: ' . $e->getMessage());
             sendJsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
         }
@@ -753,7 +800,8 @@ function removeOfflineMessage(id) {
     /**
      * Detect platform from user agent
      */
-    private function detectPlatform($user_agent) {
+    private function detectPlatform($user_agent)
+    {
         if (strpos($user_agent, 'Android') !== false) {
             return 'Android';
         } elseif (strpos($user_agent, 'iPhone') !== false || strpos($user_agent, 'iPad') !== false) {

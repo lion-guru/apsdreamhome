@@ -46,7 +46,7 @@ class AuthController extends Controller {
 
             // Validate input
             if (empty($email) || empty($password)) {
-                $_SESSION['error'] = 'Please enter both email and password';
+                $this->setFlash('error', 'Please enter both email and password');
                 header('Location: /login');
                 exit;
             }
@@ -74,10 +74,10 @@ class AuthController extends Controller {
                     }
                     exit;
                 } else {
-                    $_SESSION['error'] = 'Your account is not active. Please contact support.';
+                    $this->setFlash('error', 'Your account is not active. Please contact support.');
                 }
             } else {
-                $_SESSION['error'] = 'Invalid email or password';
+                $this->setFlash('error', 'Invalid email or password');
             }
 
             header('Location: /login');
@@ -165,7 +165,7 @@ class AuthController extends Controller {
                         );
 
                         if ($emailSent) {
-                            $_SESSION['success'] = 'Registration successful! Please check your email to verify your account.';
+                            $this->setFlash('success', 'Registration successful! Please check your email to verify your account.');
                             header('Location: /login');
                             exit;
                         } else {
@@ -181,7 +181,7 @@ class AuthController extends Controller {
 
             // If there are errors, store them and redirect back
             if (!empty($errors)) {
-                $_SESSION['error'] = implode('<br>', $errors);
+                $this->setFlash('error', implode('<br>', $errors));
                 $_SESSION['form_data'] = [
                     'username' => $username,
                     'email' => $email,
@@ -226,7 +226,7 @@ class AuthController extends Controller {
         $token = $_GET['token'] ?? '';
         
         if (empty($token)) {
-            $_SESSION['error'] = 'Invalid verification link';
+            $this->setFlash('error', 'Invalid verification link');
             header('Location: /login');
             exit;
         }
@@ -247,14 +247,14 @@ class AuthController extends Controller {
                     // Delete the verification token
                     $verification->delete();
                     
-                    $_SESSION['success'] = 'Email verified successfully! You can now login.';
+                    $this->setFlash('success', 'Email verified successfully! You can now login.');
                     header('Location: /login');
                     exit;
                 }
             }
         }
         
-        $_SESSION['error'] = 'Invalid or expired verification link';
+        $this->setFlash('error', 'Invalid or expired verification link');
         header('Location: /login');
         exit;
     }
@@ -271,7 +271,7 @@ class AuthController extends Controller {
         $email = trim($_POST['email'] ?? '');
         
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['error'] = 'Please provide a valid email address';
+            $this->setFlash('error', 'Please provide a valid email address');
             header('Location: /login');
             exit;
         }
@@ -280,7 +280,7 @@ class AuthController extends Controller {
         
         if ($user) {
             if ($user->status === 'active' && $user->email_verified_at) {
-                $_SESSION['error'] = 'Your email is already verified. Please login.';
+                $this->setFlash('error', 'Your email is already verified. Please login.');
             } else {
                 // Create and send new verification email
                 $token = EmailVerification::createToken($user->id);
@@ -294,17 +294,17 @@ class AuthController extends Controller {
                     );
                     
                     if ($emailSent) {
-                        $_SESSION['success'] = 'Verification email sent! Please check your inbox.';
+                        $this->setFlash('success', 'Verification email sent! Please check your inbox.');
                     } else {
-                        $_SESSION['error'] = 'Failed to send verification email. Please try again later.';
+                        $this->setFlash('error', 'Failed to send verification email. Please try again later.');
                     }
                 } else {
-                    $_SESSION['error'] = 'Failed to create verification token. Please try again.';
+                    $this->setFlash('error', 'Failed to create verification token. Please try again.');
                 }
             }
         } else {
             // For security, don't reveal if the email exists or not
-            $_SESSION['success'] = 'If an account exists with this email, a verification link has been sent.';
+            $this->setFlash('success', 'If an account exists with this email, a verification link has been sent.');
         }
         
         header('Location: /login');

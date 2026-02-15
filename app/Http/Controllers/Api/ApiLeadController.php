@@ -11,7 +11,6 @@ use App\Models\LeadTag;
 use App\Models\LeadStatus;
 use App\Models\LeadSource;
 use App\Models\User;
-use App\Services\LeadService;
 
 /**
  * API Lead Controller - Custom Framework Version
@@ -19,12 +18,7 @@ use App\Services\LeadService;
  */
 class ApiLeadController extends Controller
 {
-    private $leadService;
-
-    public function __construct()
-    {
-        $this->leadService = new LeadService();
-    }
+    public function __construct() {}
 
     /**
      * Get all leads with filtering and pagination
@@ -59,7 +53,7 @@ class ApiLeadController extends Controller
             // Format response
             $response = [
                 'success' => true,
-                'data' => array_map(function($lead) {
+                'data' => array_map(function ($lead) {
                     return $this->formatLeadData($lead);
                 }, $paginatedLeads),
                 'pagination' => [
@@ -73,7 +67,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to fetch leads: ' . $e->getMessage(), 500);
         }
@@ -122,7 +115,7 @@ class ApiLeadController extends Controller
             }
 
             // Log activity
-            $this->logActivity($lead->id, 'lead_created', 'Lead created', [
+            $this->logLeadActivity($lead->id, 'lead_created', 'Lead created', [
                 'assigned_to' => $lead->assigned_to,
                 'status' => $lead->status,
             ]);
@@ -134,7 +127,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response, 201);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to create lead: ' . $e->getMessage(), 500);
         }
@@ -161,7 +153,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to fetch lead: ' . $e->getMessage(), 500);
         }
@@ -202,7 +193,7 @@ class ApiLeadController extends Controller
             }
 
             // Log activity
-            $this->logActivity($lead->id, 'lead_updated', 'Lead updated');
+            $this->logLeadActivity($lead->id, 'lead_updated', 'Lead updated');
 
             $response = [
                 'success' => true,
@@ -211,7 +202,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to update lead: ' . $e->getMessage(), 500);
         }
@@ -233,7 +223,7 @@ class ApiLeadController extends Controller
             $this->authorize($lead);
 
             // Log activity before deleting
-            $this->logActivity($lead->id, 'lead_deleted', 'Lead deleted');
+            $this->logLeadActivity($lead->id, 'lead_deleted', 'Lead deleted');
 
             // Delete lead
             $lead->delete();
@@ -244,7 +234,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to delete lead: ' . $e->getMessage(), 500);
         }
@@ -281,7 +270,7 @@ class ApiLeadController extends Controller
             $note->save();
 
             // Log activity
-            $this->logActivity($lead->id, 'note_added', 'Note added');
+            $this->logLeadActivity($lead->id, 'note_added', 'Note added');
 
             $response = [
                 'success' => true,
@@ -296,7 +285,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to add note: ' . $e->getMessage(), 500);
         }
@@ -355,7 +343,7 @@ class ApiLeadController extends Controller
             $leadFile->save();
 
             // Log activity
-            $this->logActivity($lead->id, 'file_uploaded', 'File uploaded');
+            $this->logLeadActivity($lead->id, 'file_uploaded', 'File uploaded');
 
             $response = [
                 'success' => true,
@@ -371,7 +359,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to upload file: ' . $e->getMessage(), 500);
         }
@@ -417,7 +404,7 @@ class ApiLeadController extends Controller
                 }
 
                 // Log activity
-                $this->logActivity($lead->id, 'status_changed', 'Status changed', [
+                $this->logLeadActivity($lead->id, 'status_changed', 'Status changed', [
                     'from' => $oldStatus,
                     'to' => $newStatus,
                 ]);
@@ -430,7 +417,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to update status: ' . $e->getMessage(), 500);
         }
@@ -476,7 +462,7 @@ class ApiLeadController extends Controller
                 }
 
                 // Log activity
-                $this->logActivity($lead->id, 'assigned', 'Lead assigned', [
+                $this->logLeadActivity($lead->id, 'assigned', 'Lead assigned', [
                     'from' => $oldUserId,
                     'to' => $newUserId,
                 ]);
@@ -489,7 +475,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to assign lead: ' . $e->getMessage(), 500);
         }
@@ -501,8 +486,6 @@ class ApiLeadController extends Controller
     public function getStats()
     {
         try {
-            $currentUser = $this->getCurrentUser();
-
             // Get total leads count
             $totalLeads = count(Lead::all());
 
@@ -529,7 +512,7 @@ class ApiLeadController extends Controller
             // Get recent activities (last 10)
             $recentActivities = [];
             $activities = LeadActivity::all();
-            usort($activities, function($a, $b) {
+            usort($activities, function ($a, $b) {
                 return strtotime($b->created_at ?? '2020-01-01') - strtotime($a->created_at ?? '2020-01-01');
             });
             $recentActivities = array_slice($activities, 0, 10);
@@ -545,7 +528,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to fetch statistics: ' . $e->getMessage(), 500);
         }
@@ -568,7 +550,6 @@ class ApiLeadController extends Controller
             ];
 
             $this->jsonResponse($response);
-
         } catch (\Exception $e) {
             $this->jsonError('Failed to fetch lookup data: ' . $e->getMessage(), 500);
         }
@@ -583,25 +564,25 @@ class ApiLeadController extends Controller
 
         // Apply search filter
         if ($search) {
-            $leads = array_filter($leads, function($lead) use ($search) {
+            $leads = array_filter($leads, function ($lead) use ($search) {
                 return stripos($lead->first_name, $search) !== false ||
-                       stripos($lead->last_name, $search) !== false ||
-                       stripos($lead->email, $search) !== false ||
-                       stripos($lead->phone, $search) !== false ||
-                       stripos($lead->company, $search) !== false;
+                    stripos($lead->last_name, $search) !== false ||
+                    stripos($lead->email, $search) !== false ||
+                    stripos($lead->phone, $search) !== false ||
+                    stripos($lead->company, $search) !== false;
             });
         }
 
         // Apply status filter
         if ($status) {
-            $leads = array_filter($leads, function($lead) use ($status) {
+            $leads = array_filter($leads, function ($lead) use ($status) {
                 return $lead->status === $status;
             });
         }
 
         // Apply source filter
         if ($source) {
-            $leads = array_filter($leads, function($lead) use ($source) {
+            $leads = array_filter($leads, function ($lead) use ($source) {
                 return $lead->source === $source;
             });
         }
@@ -609,15 +590,15 @@ class ApiLeadController extends Controller
         // Apply assignment filter
         if ($assignedTo) {
             if ($assignedTo === 'me') {
-                $leads = array_filter($leads, function($lead) use ($currentUser) {
+                $leads = array_filter($leads, function ($lead) use ($currentUser) {
                     return $lead->assigned_to == $currentUser->id;
                 });
             } elseif ($assignedTo === 'unassigned') {
-                $leads = array_filter($leads, function($lead) {
+                $leads = array_filter($leads, function ($lead) {
                     return empty($lead->assigned_to);
                 });
             } else {
-                $leads = array_filter($leads, function($lead) use ($assignedTo) {
+                $leads = array_filter($leads, function ($lead) use ($assignedTo) {
                     return $lead->assigned_to == $assignedTo;
                 });
             }
@@ -625,7 +606,7 @@ class ApiLeadController extends Controller
 
         // Apply tag filter
         if ($tag) {
-            $leads = array_filter($leads, function($lead) use ($tag) {
+            $leads = array_filter($leads, function ($lead) use ($tag) {
                 // This would need a more complex query to check tags
                 // For now, return all leads (simplified)
                 return true;
@@ -634,19 +615,19 @@ class ApiLeadController extends Controller
 
         // Apply date filters
         if ($dateFrom) {
-            $leads = array_filter($leads, function($lead) use ($dateFrom) {
+            $leads = array_filter($leads, function ($lead) use ($dateFrom) {
                 return strtotime($lead->created_at ?? '2020-01-01') >= strtotime($dateFrom);
             });
         }
 
         if ($dateTo) {
-            $leads = array_filter($leads, function($lead) use ($dateTo) {
+            $leads = array_filter($leads, function ($lead) use ($dateTo) {
                 return strtotime($lead->created_at ?? '2020-01-01') <= strtotime($dateTo);
             });
         }
 
         // Apply sorting
-        usort($leads, function($a, $b) use ($sortField, $sortDirection) {
+        usort($leads, function ($a, $b) use ($sortField, $sortDirection) {
             $valueA = $a->$sortField ?? '';
             $valueB = $b->$sortField ?? '';
 
@@ -706,9 +687,8 @@ class ApiLeadController extends Controller
      */
     private function getLeadNotes($leadId)
     {
-        $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_notes WHERE lead_id = ? ORDER BY created_at DESC");
-        $stmt->execute([$leadId]);
+        $stmt = $this->db->prepare("SELECT * FROM lead_notes WHERE lead_id = :lead_id ORDER BY created_at DESC");
+        $stmt->execute(['lead_id' => $leadId]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $notes = [];
@@ -724,9 +704,8 @@ class ApiLeadController extends Controller
      */
     private function getLeadActivities($leadId)
     {
-        $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_activities WHERE lead_id = ? ORDER BY created_at DESC");
-        $stmt->execute([$leadId]);
+        $stmt = $this->db->prepare("SELECT * FROM lead_activities WHERE lead_id = :lead_id ORDER BY created_at DESC");
+        $stmt->execute(['lead_id' => $leadId]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $activities = [];
@@ -742,9 +721,8 @@ class ApiLeadController extends Controller
      */
     private function getLeadFiles($leadId)
     {
-        $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_files WHERE lead_id = ? ORDER BY created_at DESC");
-        $stmt->execute([$leadId]);
+        $stmt = $this->db->prepare("SELECT * FROM lead_files WHERE lead_id = :lead_id ORDER BY created_at DESC");
+        $stmt->execute(['lead_id' => $leadId]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $files = [];
@@ -776,7 +754,7 @@ class ApiLeadController extends Controller
     /**
      * Log activity for a lead
      */
-    private function logActivity($leadId, $activityType, $description, $metadata = [])
+    private function logLeadActivity($leadId, $activityType, $description, $metadata = [])
     {
         $currentUser = $this->getCurrentUser();
 

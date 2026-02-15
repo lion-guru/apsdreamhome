@@ -1,0 +1,76 @@
+🏠 APS Dream Home - LIVE PREVIEW TEST
+===================================
+
+1. 🌐 APACHE SERVER CHECK
+========================
+   ❌ Apache: Not running or not found
+   💡 Start Apache from XAMPP Control Panel
+
+2. 🗄️ MYSQL SERVER CHECK
+========================
+   ❌ MySQL: Not running or not found
+   💡 Start MySQL from XAMPP Control Panel
+
+3. 🔗 DATABASE CONNECTION TEST
+=============================
+   ✅ Database: Connected successfully
+   ✅ Tables: 469 found
+   ✅ Schema: 469 tables
+
+4. 🐘 PHP FUNCTIONALITY TEST
+========================
+   ✅ PHP Version: 8.2.12
+   ✅ Memory Limit: 512M
+   ✅ Max Execution Time: 0
+   ✅ File Uploads: Enabled
+
+5. 📁 PROJECT FILES CHECK
+======================
+   ❌ Main entry point
+   ❌ Bootstrap
+   ❌ Application core
+   ❌ Web routes
+   ❌ Apache config
+   ❌ Environment config
+
+6. 🌐 URL ACCESSIBILITY TEST
+==========================
+   🔄 Testing: Main Site
+   📍 URL: http://localhost/apsdreamhome/
+   ✅ Success: 22255 bytes in 510.5ms
+   📄 Type: HTML page
+
+   🔄 Testing: Login Page
+   📍 URL: http://localhost/apsdreamhome/login
+   ❌ Failed: file_get_contents(http://localhost/apsdreamhome/login): Failed to open stream: HTTP request failed! HTTP/1.1 500 Internal Server Error
+
+
+   🔄 Testing: Admin Panel
+   📍 URL: http://localhost/apsdreamhome/admin
+   ✅ Success: 1020 bytes in 60.03ms
+   📄 Type: HTML page
+
+   🔄 Testing: Dashboard
+   📍 URL: http://localhost/apsdreamhome/dashboard
+   ❌ Failed: file_get_contents(http://localhost/apsdreamhome/dashboard): Failed to open stream: HTTP request failed! HTTP/1.1 404 Not Found
+
+
+7. 🚀 XAMPP SERVICES CHECK
+========================
+   ❌ Apache: Not running
+   ❌ MySQL: Not running
+
+8. 🎯 FINAL RECOMMENDATIONS
+========================
+   🔴 SERVICES: Some services not running
+   🔧 STEPS TO FIX:
+   1. Open XAMPP Control Panel
+   2. Start Apache service
+   3. Start MySQL service
+   4. Try accessing http://localhost/apsdreamhome/
+
+🎉 LIVE PREVIEW TEST COMPLETED!
+===============================
+Generated: 2026-01-28 20:07:25
+Project: APS Dream Home
+Status: ❌ Needs setup

@@ -1,0 +1,87 @@
+🏠 APS Dream Home - URL ACCESS TEST
+===================================
+
+🔄 Testing: Main Site
+📍 URL: http://localhost/apsdreamhome/
+✅ SUCCESS: 22255 bytes in 745.56ms
+📄 Type: HTML page
+📋 Title: APS Dream Home - Find Your Perfect Property
+🎉 Contains APS Dream Home branding
+📝 First few lines:
+   Line 1:         <!DOCTYPE html>
+   Line 2:         <html lang="en">
+   Line 3:         <head>
+   Line 4:             <meta charset="UTF-8">
+   Line 5:             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+--------------------------------------------------
+
+🔄 Testing: Login Page
+📍 URL: http://localhost/apsdreamhome/login
+✅ SUCCESS: 17721 bytes in 621.02ms
+📄 Type: HTML page
+📋 Title: Login - APS Dream Home
+🎉 Contains APS Dream Home branding
+📝 First few lines:
+   Line 1:         <!DOCTYPE html>
+   Line 2:         <html lang="en">
+   Line 3:         <head>
+   Line 4:             <meta charset="UTF-8">
+   Line 5:             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+--------------------------------------------------
+
+🔄 Testing: Admin Panel
+📍 URL: http://localhost/apsdreamhome/admin
+✅ SUCCESS: 1020 bytes in 34.17ms
+📄 Type: HTML page
+📋 Title: Index of /apsdreamhome/admin
+📝 First few lines:
+   Line 1: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+   Line 2: <html>
+   Line 3:  <head>
+   Line 4:   <title>Index of /apsdreamhome/admin</title>
+   Line 5:  </head>
+
+--------------------------------------------------
+
+🔄 Testing: User Dashboard
+📍 URL: http://localhost/apsdreamhome/dashboard
+✅ SUCCESS: 295 bytes in 518.59ms
+📄 Type: HTML page
+📋 Title: 404 Not Found
+📝 First few lines:
+   Line 1: <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+   Line 2: <html><head>
+   Line 3: <title>404 Not Found</title>
+   Line 4: </head><body>
+   Line 5: <h1>Not Found</h1>
+
+--------------------------------------------------
+
+🔧 APACHE SERVICE CHECK
+======================
+❌ Apache: Not running
+💡 Start Apache from XAMPP Control Panel
+
+🗄️ MYSQL SERVICE CHECK
+====================
+❌ MySQL: Not running
+💡 Start MySQL from XAMPP Control Panel
+
+🔗 DATABASE CONNECTION TEST
+=============================
+✅ Database: Connected
+✅ Tables: 469
+
+🎯 RECOMMENDATIONS
+==================
+🔴 SERVICES: Some services not running
+🔧 STEPS TO FIX:
+1. Open XAMPP Control Panel
+2. Start Apache service
+3. Start MySQL service
+4. Try accessing http://localhost/apsdreamhome/
+
+🎉 URL ACCESS TEST COMPLETED!
+===============================
