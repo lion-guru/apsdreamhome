@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modernized Investor Dashboard
  * Professional design for APS Dream Homes Investors
@@ -16,7 +17,7 @@ $db = \App\Core\App::database();
 $uid = $_SESSION['uid'];
 
 // Fetch investor profile
-$investor = $db->fetch("SELECT * FROM user WHERE uid = ? AND utype = 'investor'", [$uid]);
+$investor = $db->fetch("SELECT * FROM user WHERE uid = :uid AND utype = 'investor'", ['uid' => $uid]);
 
 if (!$investor) {
     header("Location: login.php?error=investor_not_found");
@@ -33,10 +34,10 @@ $stats = [
 
 try {
     // Count investments
-    $stats['investments'] = $db->query("SELECT COUNT(*) FROM properties WHERE owner_id = ? AND type = 'investment'", [$uid])->fetchColumn();
+    $stats['investments'] = $db->query("SELECT COUNT(*) FROM properties WHERE owner_id = :uid AND type = 'investment'", ['uid' => $uid])->fetchColumn();
 
-    // Count unread notifications
-    $stats['messages'] = $db->query("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0", [$uid])->fetchColumn();
+    // Unread Notifications count
+    $stats['messages'] = $db->query("SELECT COUNT(*) FROM notifications WHERE user_id = :uid AND is_read = 0", ['uid' => $uid])->fetchColumn();
 } catch (Exception $e) {
     error_log('Investor Dashboard stats error: ' . $e->getMessage());
 }
@@ -51,8 +52,8 @@ ob_start();
     <div class="row mb-4 animate-fade-up">
         <div class="col-md-8 d-flex align-items-center">
             <div class="position-relative me-4">
-                <img src="<?= !empty($investor['uimage']) ? h($investor['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($investor['uname']) . '&size=100&background=1e3a8a&color=fff' ?>" 
-                     alt="Profile" class="rounded-circle shadow-sm border border-3 border-white" style="width:100px; height:100px; object-fit:cover;">
+                <img src="<?= !empty($investor['uimage']) ? h($investor['uimage']) : 'https://ui-avatars.com/api/?name=' . urlencode($investor['uname']) . '&size=100&background=1e3a8a&color=fff' ?>"
+                    alt="Profile" class="rounded-circle shadow-sm border border-3 border-white" style="width:100px; height:100px; object-fit:cover;">
                 <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-2" title="Online"></span>
             </div>
             <div>
@@ -118,7 +119,7 @@ ob_start();
                         </div>
                         <h5 class="mb-0 fw-bold">Portfolio AI</h5>
                     </div>
-                    
+
                     <div class="ai-chat-box bg-light-blue p-3 rounded-4 mb-4" style="min-height: 150px;">
                         <p class="small mb-0"><i class="fas fa-sparkles text-warning me-2"></i>Analysis complete! Based on current market trends in <strong>Gorakhpur</strong>, your residential holdings are expected to appreciate by 8.5% over the next quarter.</p>
                         <hr class="my-3 opacity-10">
@@ -185,28 +186,64 @@ ob_start();
 </div>
 
 <style>
-.bg-primary-soft { background-color: rgba(30, 58, 138, 0.1); }
-.bg-success-soft { background-color: rgba(25, 135, 84, 0.1); }
-.bg-warning-soft { background-color: rgba(255, 193, 7, 0.1); }
-.bg-danger-soft { background-color: rgba(220, 53, 69, 0.1); }
-.bg-info-soft { background-color: rgba(13, 202, 240, 0.1); }
-.bg-light-blue { background-color: #f0f7ff; }
+    .bg-primary-soft {
+        background-color: rgba(30, 58, 138, 0.1);
+    }
 
-.transition-hover { transition: all 0.3s ease; }
-.transition-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; }
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
 
-.animate-fade-up { animation: fadeUp 0.6s ease forwards; opacity: 0; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .bg-warning-soft {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+
+    .bg-danger-soft {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .bg-info-soft {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
+
+    .bg-light-blue {
+        background-color: #f0f7ff;
+    }
+
+    .transition-hover {
+        transition: all 0.3s ease;
+    }
+
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .animate-fade-up {
+        animation: fadeUp 0.6s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
 
 <script>
-function handleAIChat() {
-    alert('AI Analysis re-triggered. Fetching latest market data for your portfolio...');
-}
+    function handleAIChat() {
+        alert('AI Analysis re-triggered. Fetching latest market data for your portfolio...');
+    }
 </script>
 
 <?php
 $content = ob_get_clean();
 require_once __DIR__ . '/../layouts/modern.php';
 ?>
-

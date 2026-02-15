@@ -37,8 +37,8 @@ class LeadStatus extends Model
     public static function find($id)
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_statuses WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $db->prepare("SELECT * FROM lead_statuses WHERE id = :id");
+        $stmt->execute(['id' => $id]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $result ? new static($result) : null;
     }
@@ -47,8 +47,8 @@ class LeadStatus extends Model
     public function leads()
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM leads WHERE status = ?");
-        $stmt->execute([$this->name]);
+        $stmt = $db->prepare("SELECT * FROM leads WHERE status = :status");
+        $stmt->execute(['status' => $this->name]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $leads = [];
@@ -65,8 +65,8 @@ class LeadStatus extends Model
     public function statusHistory()
     {
         $db = \App\Models\Database::getInstance();
-        $stmt = $db->prepare("SELECT * FROM lead_status_history WHERE status_id = ?");
-        $stmt->execute([$this->id]);
+        $stmt = $db->prepare("SELECT * FROM lead_status_history WHERE status_id = :status_id");
+        $stmt->execute(['status_id' => $this->id]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $histories = [];

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * APS Dream Home - Forgot Password
  * Allows users to request password reset
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $expires_at = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
                     // Delete any existing tokens for this email
-                    $db->delete('password_resets', 'email = ?', [$email]);
+                    $db->delete('password_resets', 'email = :email', ['email' => $email]);
 
                     // Insert new reset token
                     $db->insert('password_resets', [
@@ -88,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,6 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="row justify-content-center">
@@ -231,24 +234,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <?php if ($message): ?>
-                    <div class="alert alert-<?php echo $message_type === 'success' ? 'success' : ($message_type === 'info' ? 'info' : 'danger'); ?>">
-                        <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : ($message_type === 'info' ? 'info-circle' : 'exclamation-triangle'); ?> me-2"></i>
-                        <?php echo h($message); ?>
-                    </div>
+                        <div class="alert alert-<?php echo $message_type === 'success' ? 'success' : ($message_type === 'info' ? 'info' : 'danger'); ?>">
+                            <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : ($message_type === 'info' ? 'info-circle' : 'exclamation-triangle'); ?> me-2"></i>
+                            <?php echo h($message); ?>
+                        </div>
                     <?php endif; ?>
 
                     <?php if (!$email_sent): ?>
-                    <form method="POST" action="">
-                        <?php echo getCsrfField(); ?>
-                        <div class="form-floating">
-                            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email address">
-                            <label for="email">Email Address</label>
-                        </div>
+                        <form method="POST" action="">
+                            <?php echo getCsrfField(); ?>
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email address">
+                                <label for="email">Email Address</label>
+                            </div>
 
-                        <button type="submit" class="btn btn-reset w-100">
-                            <i class="fas fa-paper-plane me-2"></i>Send Reset Instructions
-                        </button>
-                    </form>
+                            <button type="submit" class="btn btn-reset w-100">
+                                <i class="fas fa-paper-plane me-2"></i>Send Reset Instructions
+                            </button>
+                        </form>
                     <?php endif; ?>
 
                     <div class="forgot-footer">
@@ -270,4 +273,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['inquiry_id']) && is_n
     } else {
         $inquiry_id = intval($_POST['inquiry_id']);
         // Fetch inquiry
-        $inquiry = $db->fetchOne('SELECT * FROM contact WHERE id = ?', [$inquiry_id]);
+        $inquiry = $db->fetchOne('SELECT * FROM contact WHERE id = :id', ['id' => $inquiry_id]);
 
         if ($inquiry) {
             // Insert as lead

@@ -67,6 +67,11 @@
                     </a>
                 </li>
                 <li class="nav-item mb-1">
+                    <a href="/admin/about" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/about') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-info-circle me-2"></i>About Us
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
                     <a href="/admin/users" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/users') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-users me-2"></i>Users
                     </a>

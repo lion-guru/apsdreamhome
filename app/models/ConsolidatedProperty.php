@@ -16,16 +16,56 @@ class ConsolidatedProperty extends UnifiedModel
     protected static $table = 'properties';
 
     protected $fillable = [
-        'title', 'description', 'property_type_id', 'property_category', 'price',
-        'address', 'city', 'state', 'postal_code', 'country',
-        'bedrooms', 'bathrooms', 'area_sqft', 'land_area', 'land_area_unit',
-        'year_built', 'parking_spaces', 'garage_spaces', 'floors', 'floor_number',
-        'furnishing', 'condition', 'orientation', 'view', 'amenities', 'features',
-        'images', 'virtual_tour', 'video_url', 'latitude', 'longitude', 'agent_id',
-        'developer_id', 'project_id', 'status', 'hot_offer',
-        'created_by', 'updated_by', 'listing_type', 'listing_date',
-        'expiry_date', 'views', 'likes', 'shares', 'meta_title', 'meta_description',
-        'meta_keywords', 'slug', 'created_at', 'updated_at'
+        'title',
+        'description',
+        'property_type_id',
+        'property_category',
+        'price',
+        'address',
+        'city',
+        'state',
+        'postal_code',
+        'country',
+        'bedrooms',
+        'bathrooms',
+        'area_sqft',
+        'land_area',
+        'land_area_unit',
+        'year_built',
+        'parking_spaces',
+        'garage_spaces',
+        'floors',
+        'floor_number',
+        'furnishing',
+        'condition',
+        'orientation',
+        'view',
+        'amenities',
+        'features',
+        'images',
+        'virtual_tour',
+        'video_url',
+        'latitude',
+        'longitude',
+        'agent_id',
+        'developer_id',
+        'project_id',
+        'status',
+        'hot_offer',
+        'created_by',
+        'updated_by',
+        'listing_type',
+        'listing_date',
+        'expiry_date',
+        'views',
+        'likes',
+        'shares',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'slug',
+        'created_at',
+        'updated_at'
     ];
 
     /**
@@ -193,12 +233,12 @@ class ConsolidatedProperty extends UnifiedModel
         if (!empty($filters['location'])) {
             $query->where('city', 'like', '%' . $filters['location'] . '%');
         }
-        
+
         // Handle property type filtering
         if (!empty($filters['property_type'])) {
             // Get property type ID from name
             $db = new \Database();
-            $typeResult = $db->fetchOne("SELECT id FROM property_types WHERE name = ? AND status = 'active'", [$filters['property_type']]);
+            $typeResult = $db->fetchOne("SELECT id FROM property_types WHERE name = :name AND status = 'active'", ['name' => $filters['property_type']]);
             if ($typeResult) {
                 $query->where('property_type_id', '=', $typeResult['id']);
             }
@@ -306,12 +346,12 @@ class ConsolidatedProperty extends UnifiedModel
             if (($p->status ?? '') === 'available') $stats['active']++;
             if (!empty($p->hot_offer)) $stats['featured']++;
             if (($p->status ?? '') === 'sold') $stats['sold']++;
-            
+
             // Get property type name from property_type_id
             $type = 'unknown';
             if (!empty($p->property_type_id)) {
                 $db = new \Database();
-                $typeResult = $db->fetchOne("SELECT name FROM property_types WHERE id = ?", [$p->property_type_id]);
+                $typeResult = $db->fetchOne("SELECT name FROM property_types WHERE id = :id", ['id' => $p->property_type_id]);
                 $type = $typeResult['name'] ?? 'unknown';
             }
             $stats['by_type'][$type] = ($stats['by_type'][$type] ?? 0) + 1;

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * APS Dream Home - AI Integration with OpenRouter
  * Advanced AI features for property valuation, customer support, and business intelligence
@@ -12,12 +13,14 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', 'https://apsdreamhomes.com');
 }
 
-class AIDreamHome {
+class AIDreamHome
+{
     private $api_key;
     private $base_url = 'https://openrouter.ai/api/v1';
     private $model;
 
-    public function __construct($api_key = null, $model = null) {
+    public function __construct($api_key = null, $model = null)
+    {
         // Use configuration values if not provided
         global $config;
 
@@ -32,7 +35,8 @@ class AIDreamHome {
     /**
      * Generate AI-powered property description
      */
-    public function generatePropertyDescription($property_data) {
+    public function generatePropertyDescription($property_data)
+    {
         $prompt = "Create an engaging, professional property description for:
         Type: {$property_data['type']}
         Location: {$property_data['location']}
@@ -49,7 +53,8 @@ class AIDreamHome {
     /**
      * AI-powered property valuation
      */
-    public function estimatePropertyValue($property_data) {
+    public function estimatePropertyValue($property_data)
+    {
         $prompt = "Analyze this property and provide a realistic market value estimate in INR:
         Type: {$property_data['type']}
         Location: {$property_data['location']}
@@ -68,7 +73,8 @@ class AIDreamHome {
     /**
      * Customer support chatbot responses
      */
-    public function generateChatbotResponse($user_query, $context = []) {
+    public function generateChatbotResponse($user_query, $context = [])
+    {
         $context_str = '';
         if (!empty($context)) {
             $context_str = "Context: " . implode(', ', $context) . "\n";
@@ -86,7 +92,8 @@ class AIDreamHome {
     /**
      * Generate property recommendations
      */
-    public function getPropertyRecommendations($user_preferences) {
+    public function getPropertyRecommendations($user_preferences)
+    {
         $prompt = "Based on these user preferences, recommend 3-5 properties:
         Budget: {$user_preferences['budget']}
         Property Type: {$user_preferences['type']}
@@ -102,7 +109,8 @@ class AIDreamHome {
     /**
      * Market analysis and trends
      */
-    public function analyzeMarketTrends($location, $property_type) {
+    public function analyzeMarketTrends($location, $property_type)
+    {
         $prompt = "Provide a market analysis for {$property_type} properties in {$location}:
         - Current average prices
         - Price trends over the last year
@@ -119,7 +127,8 @@ class AIDreamHome {
     /**
      * Generate investment insights
      */
-    public function getInvestmentInsights($property_data) {
+    public function getInvestmentInsights($property_data)
+    {
         $prompt = "Analyze this property as an investment opportunity:
         Location: {$property_data['location']}
         Property Type: {$property_data['type']}
@@ -140,7 +149,8 @@ class AIDreamHome {
     /**
      * Generate content for marketing
      */
-    public function generateMarketingContent($content_type, $property_data = []) {
+    public function generateMarketingContent($content_type, $property_data = [])
+    {
         switch ($content_type) {
             case 'social_media':
                 $prompt = "Create an engaging social media post for this property:
@@ -170,7 +180,8 @@ class AIDreamHome {
     /**
      * Call OpenRouter API
      */
-    private function callOpenRouter($prompt, $max_tokens = 150) {
+    private function callOpenRouter($prompt, $max_tokens = 150)
+    {
         $data = [
             'model' => $this->model,
             'messages' => [
@@ -234,7 +245,8 @@ class AIDreamHome {
      * @param string $location
      * @return array|string
      */
-    public function getMarketTrends($location) {
+    public function getMarketTrends($location)
+    {
         return $this->analyzeMarketTrends($location, 'Residential');
     }
 
@@ -244,10 +256,11 @@ class AIDreamHome {
      * @param int $property_id
      * @return array|string
      */
-    public function getPropertyInsights($property_id) {
+    public function getPropertyInsights($property_id)
+    {
         $db = \App\Core\App::database();
-        
-        $property = $db->fetch("SELECT * FROM properties WHERE id = ?", [$property_id]);
+
+        $property = $db->fetch("SELECT * FROM properties WHERE id = :id", ['id' => $property_id]);
 
         if (!$property) {
             return ['error' => 'Property not found'];
@@ -268,7 +281,8 @@ class AIDreamHome {
     /**
      * Log AI interactions for analytics
      */
-    private function logInteraction($type, $input, $output) {
+    private function logInteraction($type, $input, $output)
+    {
         $log_file = __DIR__ . '/../logs/ai_interactions.log';
         $log_entry = [
             'timestamp' => date('Y-m-d H:i:s'),
@@ -284,7 +298,8 @@ class AIDreamHome {
     /**
      * Get AI usage statistics
      */
-    public function getUsageStats() {
+    public function getUsageStats()
+    {
         $log_file = __DIR__ . '/../logs/ai_interactions.log';
 
         if (!file_exists($log_file)) {
@@ -311,7 +326,8 @@ class AIDreamHome {
 /**
  * Quick property description generator
  */
-function generateAIPropertyDescription($property_data) {
+function generateAIPropertyDescription($property_data)
+{
     global $config;
     $ai = new AIDreamHome(
         $config['ai']['api_key'] ?? null,
@@ -324,7 +340,8 @@ function generateAIPropertyDescription($property_data) {
 /**
  * Quick property valuation
  */
-function getAIPropertyValuation($property_data) {
+function getAIPropertyValuation($property_data)
+{
     global $config;
     $ai = new AIDreamHome(
         $config['ai']['api_key'] ?? null,
@@ -337,7 +354,8 @@ function getAIPropertyValuation($property_data) {
 /**
  * AI chatbot response
  */
-function getAIChatbotResponse($user_query, $context = []) {
+function getAIChatbotResponse($user_query, $context = [])
+{
     global $config;
     $ai = new AIDreamHome(
         $config['ai']['api_key'] ?? null,
@@ -350,7 +368,8 @@ function getAIChatbotResponse($user_query, $context = []) {
 /**
  * Property recommendations
  */
-function getAIPropertyRecommendations($user_preferences) {
+function getAIPropertyRecommendations($user_preferences)
+{
     global $config;
     $ai = new AIDreamHome(
         $config['ai']['api_key'] ?? null,
@@ -359,4 +378,3 @@ function getAIPropertyRecommendations($user_preferences) {
     $result = $ai->getPropertyRecommendations($user_preferences);
     return $result['success'] ?? $result['error'] ?? 'AI service unavailable';
 }
-

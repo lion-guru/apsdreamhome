@@ -26,22 +26,117 @@ class EMIController extends BaseController
     }
 
     /**
+     * Get EMI statistics for dashboard
+     */
+    public function stats()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $stats = $this->emiModel->getStats();
+            echo json_encode([
+                'success' => true,
+                'data' => $stats
+            ]);
+        } catch (\Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Pay an EMI installment
+     */
+    public function pay()
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $data = $_POST;
+
+            // Basic validation
+            if (empty($data['installment_id']) || empty($data['payment_date']) || empty($data['payment_method'])) {
+                throw new \Exception('Missing required fields');
+            }
+
+            $paymentId = $this->emiModel->recordInstallmentPayment($data);
+
+            if ($paymentId) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Payment recorded successfully',
+                    'payment_id' => $paymentId
+                ]);
+            } else {
+                throw new \Exception('Failed to record payment');
+            }
+        } catch (\Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Get EMI plans for DataTables AJAX
+     */
+    public function list()
+    {
+        header('Content-Type: application/json');
+
+        $params = [
+            'draw' => (int)($_POST['draw'] ?? 1),
+            'start' => (int)($_POST['start'] ?? 0),
+            'length' => (int)($_POST['length'] ?? 10),
+            'search' => $_POST['search']['value'] ?? '',
+            'orderColumn' => (int)($_POST['order'][0]['column'] ?? 0),
+            'orderDir' => $_POST['order'][0]['dir'] ?? 'DESC'
+        ];
+
+        // Column mapping for DataTables
+        $columns = ['c.name', 'p.title', 'ep.total_amount', 'ep.emi_amount', 'ep.tenure_months', 'ep.start_date', 'ep.status'];
+        $params['orderBy'] = $columns[$params['orderColumn']] ?? 'ep.id';
+
+        try {
+            $result = $this->emiModel->getFilteredPlans($params);
+
+            echo json_encode([
+                'draw' => $params['draw'],
+                'recordsTotal' => $result['totalRecords'],
+                'recordsFiltered' => $result['filteredRecords'],
+                'data' => $result['data']
+            ]);
+        } catch (\Exception $e) {
+            echo json_encode([
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * Display all EMI plans
      */
     public function index()
     {
-        $sql = "SELECT e.*, u.name as customer_name, b.booking_date 
-                FROM emi_plans e
-                JOIN customers c ON e.customer_id = c.id
-                JOIN users u ON c.user_id = u.id
-                JOIN bookings b ON e.booking_id = b.id
-                ORDER BY e.created_at DESC";
+        $params = [
+            'start' => 0,
+            'length' => 100, // Show more on main page
+            'orderBy' => 'ep.created_at',
+            'orderDir' => 'DESC'
+        ];
 
-        $stmt = $this->db->query($sql);
-        $plans = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $this->emiModel->getFilteredPlans($params);
 
         $this->render('admin/emi/index', [
-            'plans' => $plans,
+            'plans' => $result['data'],
             'page_title' => 'EMI Plans Management'
         ]);
     }
@@ -51,27 +146,19 @@ class EMIController extends BaseController
      */
     public function show($id)
     {
-        $sql = "SELECT e.*, u.name as customer_name, u.email, u.phone, b.total_amount as booking_total
-                FROM emi_plans e
-                JOIN customers c ON e.customer_id = c.id
-                JOIN users u ON c.user_id = u.id
-                JOIN bookings b ON e.booking_id = b.id
-                WHERE e.id = ?";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$id]);
-        $plan = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $plan = $this->emiModel->getPlanDetails($id);
 
         if (!$plan) {
+            $this->setFlash('error', 'EMI Plan not found');
             $this->redirect('admin/emi');
             return;
         }
 
-        $payments = $this->emiModel ? $this->emiModel->getSchedule($id) : [];
+        $installments = $this->emiModel->getInstallments($id);
 
         $this->render('admin/emi/show', [
             'plan' => $plan,
-            'payments' => $payments,
+            'installments' => $installments,
             'page_title' => 'EMI Plan Details'
         ]);
     }
@@ -81,43 +168,52 @@ class EMIController extends BaseController
      */
     public function store()
     {
-        $data = $_POST;
+        header('Content-Type: application/json');
 
-        // Validate basic data
-        if (empty($data['booking_id']) || empty($data['tenure_months'])) {
-            $this->redirect('admin/emi');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
             return;
         }
 
-        $result = $this->emiModel ? $this->emiModel->save($data) : false;
+        try {
+            $data = $_POST;
 
-        if ($result) {
-            $this->redirect('admin/emi');
-        } else {
-            $this->redirect('admin/emi');
+            // Validate required fields
+            $requiredFields = [
+                'customer_id',
+                'property_id',
+                'total_amount',
+                'interest_rate',
+                'tenure_months',
+                'down_payment',
+                'start_date'
+            ];
+
+            foreach ($requiredFields as $field) {
+                if (!isset($data[$field]) || empty($data[$field])) {
+                    throw new \Exception("$field is required");
+                }
+            }
+
+            $result = $this->emiModel->createPlan($data);
+
+            if ($result['success']) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'EMI plan created successfully',
+                    'data' => [
+                        'emi_plan_id' => $result['emi_plan_id'],
+                        'emi_amount' => $result['emi_amount']
+                    ]
+                ]);
+            } else {
+                throw new \Exception('Failed to create EMI plan');
+            }
+        } catch (\Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to create EMI plan: ' . $e->getMessage()
+            ]);
         }
-    }
-
-    /**
-     * Record a payment for an EMI
-     */
-    public function pay()
-    {
-        $data = $_POST;
-
-        if (empty($data['emi_plan_id']) || empty($data['amount'])) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Missing data']);
-            exit;
-        }
-
-        $result = $this->emiModel ? $this->emiModel->recordPayment($data) : false;
-
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => $result,
-            'message' => $result ? 'Payment recorded successfully' : 'Failed to record payment'
-        ]);
-        exit;
     }
 }

@@ -1,53 +1,36 @@
 <?php
+
 /**
  * Associate Permissions System
  * Functions for checking and managing associate permissions
  */
 
-// Initialize database connection if not already done
-if (!isset($GLOBALS['conn'])) {
-    require_once __DIR__ . '/../includes/config.php';
-    $config = AppConfig::getInstance();
-    $GLOBALS['conn'] = $config->getDatabaseConnection();
-
-    // Check if connection is successful
-    if ($GLOBALS['conn']->connect_error) {
-        error_log("Database connection failed in associate_permissions.php: " . $GLOBALS['conn']->connect_error);
-    }
-}
+// Initialize database connection
+$db = \App\Core\App::database();
 
 /**
  * Check if associate has permission for a specific module and action
  */
-function hasPermission($associate_id, $module, $permission_type = 'read') {
-    global $conn;
-
-    // Check if connection is available
-    if (!$conn || $conn->connect_error) {
-        error_log("Database connection not available in hasPermission");
-        return checkLevelBasedPermission($associate_id, $module, $permission_type);
-    }
+function hasPermission($associate_id, $module, $permission_type = 'read')
+{
+    $db = \App\Core\App::database();
 
     try {
         $query = "SELECT is_allowed FROM associate_permissions
-                  WHERE associate_id = ? AND module_name = ? AND permission_type = ?";
+                  WHERE associate_id = :associate_id AND module_name = :module AND permission_type = :permission_type";
 
-        $stmt = $conn->prepare($query);
-        if (!$stmt) {
-            return checkLevelBasedPermission($associate_id, $module, $permission_type);
-        }
+        $result = $db->fetch($query, [
+            'associate_id' => $associate_id,
+            'module' => $module,
+            'permission_type' => $permission_type
+        ], false);
 
-        $stmt->bind_param("iss", $associate_id, $module, $permission_type);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            return (bool) $result->fetch_assoc()['is_allowed'];
+        if ($result) {
+            return (bool) $result['is_allowed'];
         }
 
         // If no specific permission found, check level-based permissions
         return checkLevelBasedPermission($associate_id, $module, $permission_type);
-
     } catch (Exception $e) {
         error_log("Error checking permission: " . $e->getMessage());
         return checkLevelBasedPermission($associate_id, $module, $permission_type);
@@ -57,29 +40,16 @@ function hasPermission($associate_id, $module, $permission_type = 'read') {
 /**
  * Check permissions based on associate level
  */
-function checkLevelBasedPermission($associate_id, $module, $permission_type) {
-    global $conn;
-
-    // Check if connection is available
-    if (!$conn || $conn->connect_error) {
-        error_log("Database connection not available in checkLevelBasedPermission");
-        return false;
-    }
+function checkLevelBasedPermission($associate_id, $module, $permission_type)
+{
+    $db = \App\Core\App::database();
 
     try {
-        $query = "SELECT current_level FROM mlm_agents WHERE id = ?";
-        $stmt = $conn->prepare($query);
+        $query = "SELECT current_level FROM mlm_agents WHERE id = :associate_id";
+        $row = $db->fetch($query, ['associate_id' => $associate_id], false);
 
-        if (!$stmt) {
-            return false;
-        }
-
-        $stmt->bind_param("i", $associate_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $level = $result->fetch_assoc()['current_level'];
+        if ($row) {
+            $level = $row['current_level'];
 
             // Define level-based permissions
             $level_permissions = [
@@ -149,7 +119,6 @@ function checkLevelBasedPermission($associate_id, $module, $permission_type) {
         }
 
         return false;
-
     } catch (Exception $e) {
         error_log("Error checking level-based permission: " . $e->getMessage());
         return false;
@@ -159,37 +128,22 @@ function checkLevelBasedPermission($associate_id, $module, $permission_type) {
 /**
  * Get all permissions for an associate
  */
-function getAssociatePermissions($associate_id) {
-    global $conn;
-
-    // Check if connection is available
-    if (!$conn || $conn->connect_error) {
-        error_log("Database connection not available in getAssociatePermissions");
-        return [];
-    }
+function getAssociatePermissions($associate_id)
+{
+    $db = \App\Core\App::database();
 
     try {
         $query = "SELECT module_name, permission_type, is_allowed
-                  FROM associate_permissions WHERE associate_id = ?";
+                  FROM associate_permissions WHERE associate_id = :associate_id";
 
-        $stmt = $conn->prepare($query);
-
-        if (!$stmt) {
-            return [];
-        }
-
-        $stmt->bind_param("i", $associate_id);
-        $stmt->execute();
+        $results = $db->fetch($query, ['associate_id' => $associate_id]);
 
         $permissions = [];
-        $result = $stmt->get_result();
-
-        while ($row = $result->fetch_assoc()) {
+        foreach ($results as $row) {
             $permissions[$row['module_name']][$row['permission_type']] = (bool) $row['is_allowed'];
         }
 
         return $permissions;
-
     } catch (Exception $e) {
         error_log("Error getting associate permissions: " . $e->getMessage());
         return [];
@@ -199,31 +153,24 @@ function getAssociatePermissions($associate_id) {
 /**
  * Update associate permission
  */
-function updateAssociatePermission($associate_id, $module, $permission_type, $is_allowed) {
-    global $conn;
-
-    // Check if connection is available
-    if (!$conn || $conn->connect_error) {
-        error_log("Database connection not available in updateAssociatePermission");
-        return false;
-    }
+function updateAssociatePermission($associate_id, $module, $permission_type, $is_allowed)
+{
+    $db = \App\Core\App::database();
 
     try {
         $query = "INSERT INTO associate_permissions (associate_id, module_name, permission_type, is_allowed)
-                  VALUES (?, ?, ?, ?)
-                  ON DUPLICATE KEY UPDATE is_allowed = ?, updated_at = CURRENT_TIMESTAMP";
+                  VALUES (:associate_id, :module, :permission_type, :is_allowed)
+                  ON DUPLICATE KEY UPDATE is_allowed = :is_allowed_update, updated_at = CURRENT_TIMESTAMP";
 
-        $stmt = $conn->prepare($query);
-
-        if (!$stmt) {
-            return false;
-        }
-
-        $stmt->bind_param("issii", $associate_id, $module, $permission_type, $is_allowed, $is_allowed);
-        $stmt->execute();
+        $db->execute($query, [
+            'associate_id' => $associate_id,
+            'module' => $module,
+            'permission_type' => $permission_type,
+            'is_allowed' => $is_allowed,
+            'is_allowed_update' => $is_allowed
+        ]);
 
         return true;
-
     } catch (Exception $e) {
         error_log("Error updating associate permission: " . $e->getMessage());
         return false;
@@ -233,21 +180,24 @@ function updateAssociatePermission($associate_id, $module, $permission_type, $is
 /**
  * Check if associate can access a specific page/module
  */
-function canAccessModule($associate_id, $module) {
+function canAccessModule($associate_id, $module)
+{
     return hasPermission($associate_id, $module, 'read');
 }
 
 /**
  * Check if associate can perform an action on a module
  */
-function canPerformAction($associate_id, $module, $action = 'read') {
+function canPerformAction($associate_id, $module, $action = 'read')
+{
     return hasPermission($associate_id, $module, $action);
 }
 
 /**
  * Get accessible modules for an associate
  */
-function getAccessibleModules($associate_id) {
+function getAccessibleModules($associate_id)
+{
     $modules = [
         'dashboard' => 'Dashboard',
         'customers' => 'Customers',
@@ -272,7 +222,8 @@ function getAccessibleModules($associate_id) {
 /**
  * Initialize permissions for new associate
  */
-function initializeAssociatePermissions($associate_id) {
+function initializeAssociatePermissions($associate_id)
+{
     $default_modules = [
         ['module_name' => 'dashboard', 'permission_type' => 'read', 'is_allowed' => true],
         ['module_name' => 'customers', 'permission_type' => 'read', 'is_allowed' => true],
@@ -282,42 +233,32 @@ function initializeAssociatePermissions($associate_id) {
     ];
 
     foreach ($default_modules as $permission) {
-        updateAssociatePermission($associate_id, $permission['module_name'],
-                                $permission['permission_type'], $permission['is_allowed']);
+        updateAssociatePermission(
+            $associate_id,
+            $permission['module_name'],
+            $permission['permission_type'],
+            $permission['is_allowed']
+        );
     }
 }
 
 /**
  * Check if associate is admin (highest level)
  */
-function isAssociateAdmin($associate_id) {
-    global $conn;
-
-    // Check if connection is available
-    if (!$conn || $conn->connect_error) {
-        error_log("Database connection not available in isAssociateAdmin");
-        return false;
-    }
+function isAssociateAdmin($associate_id)
+{
+    $db = \App\Core\App::database();
 
     try {
-        $query = "SELECT current_level FROM mlm_agents WHERE id = ?";
-        $stmt = $conn->prepare($query);
+        $query = "SELECT current_level FROM mlm_agents WHERE id = :associate_id";
+        $row = $db->fetch($query, ['associate_id' => $associate_id], false);
 
-        if (!$stmt) {
-            return false;
-        }
-
-        $stmt->bind_param("i", $associate_id);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $level = $result->fetch_assoc()['current_level'];
+        if ($row) {
+            $level = $row['current_level'];
             return in_array($level, ['Vice President', 'President', 'Site Manager']);
         }
 
         return false;
-
     } catch (Exception $e) {
         error_log("Error checking admin status: " . $e->getMessage());
         return false;
@@ -327,7 +268,8 @@ function isAssociateAdmin($associate_id) {
 /**
  * Get associate level hierarchy
  */
-function getAssociateLevelHierarchy() {
+function getAssociateLevelHierarchy()
+{
     return [
         'Associate' => 1,
         'Sr. Associate' => 2,
@@ -342,14 +284,15 @@ function getAssociateLevelHierarchy() {
 /**
  * Check if associate can manage other associates
  */
-function canManageAssociates($associate_id) {
+function canManageAssociates($associate_id)
+{
     return canPerformAction($associate_id, 'team_management', 'write');
 }
 
 /**
  * Check if associate can manage commissions
  */
-function canManageCommissions($associate_id) {
+function canManageCommissions($associate_id)
+{
     return canPerformAction($associate_id, 'commission_management', 'write');
 }
-?>

@@ -102,15 +102,15 @@ class BaseApiController extends BaseController
 
         try {
             $db = \App\Core\App::database();
-            $sql = "SELECT * FROM api_keys WHERE api_key = ? AND status = 'active' LIMIT 1";
-            $keyData = $db->fetch($sql, [$apiKey]);
+            $sql = "SELECT * FROM api_keys WHERE api_key = :api_key AND status = 'active' LIMIT 1";
+            $keyData = $db->fetch($sql, ['api_key' => $apiKey]);
 
             if (!$keyData) {
                 return $this->jsonError('Invalid or revoked API Key', 401);
             }
 
             // Update last used timestamp
-            $db->execute("UPDATE api_keys SET last_used_at = CURRENT_TIMESTAMP WHERE id = ?", [$keyData['id']]);
+            $db->execute("UPDATE api_keys SET last_used_at = CURRENT_TIMESTAMP WHERE id = :id", ['id' => $keyData['id']]);
 
             // Store key data for later use if needed
             $this->request()->set('api_key_data', $keyData);

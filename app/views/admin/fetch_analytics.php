@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Fetch Analytics AJAX handler
  */
@@ -23,8 +24,8 @@ $active_users = $total_users;
 $roles = ['admin', 'superadmin', 'associate', 'user', 'builder', 'agent', 'employee', 'customer'];
 $users_by_role = [];
 foreach ($roles as $role) {
-    $row_role = $db->fetchOne("SELECT COUNT(*) as cnt FROM user WHERE utype = ?", [$role]);
-    $users_by_role[$role] = (int)($row_role['cnt'] ?? 0);
+    $row_role = $db->fetchOne("SELECT COUNT(*) as cnt FROM user WHERE utype = :role", ['role' => $role]);
+    $users_by_role[$role] = (int)$row_role['cnt'];
 }
 
 // Total properties
@@ -48,7 +49,7 @@ echo json_encode([
     'users_by_role' => $users_by_role,
     'total_properties' => (int)$total_properties,
     'total_bookings' => (int)$total_bookings,
-    'recent_logins' => array_map(function($row) {
+    'recent_logins' => array_map(function ($row) {
         return [
             'name' => h($row['name']),
             'email' => h($row['email']),
@@ -56,11 +57,10 @@ echo json_encode([
             'last_login' => h($row['last_login'])
         ];
     }, $recent_logins),
-    'bookings_over_time' => array_map(function($row) {
+    'bookings_over_time' => array_map(function ($row) {
         return [
             'month' => h($row['month']),
             'cnt' => (int)$row['cnt']
         ];
     }, array_reverse($bookings_over_time))
 ]);
-?>

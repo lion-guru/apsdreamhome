@@ -4,12 +4,16 @@ require_once __DIR__ . '/../config/config.php';
 
 /**
  * Get company commission share percent
- * @param mysqli $con
+ * @param PDO|null $db
  * @return float
  */
-function getCompanySharePercent($con) {
-    $res = $con->query("SELECT share_percent FROM mlm_company_share LIMIT 1");
-    if ($row = $res->fetch_assoc()) {
+function getCompanySharePercent($db = null)
+{
+    if ($db === null) {
+        $db = \App\Core\App::database();
+    }
+    $row = $db->fetch("SELECT share_percent FROM mlm_company_share LIMIT 1");
+    if ($row) {
         return floatval($row['share_percent']);
     }
     return 25.0; // Default
@@ -17,16 +21,22 @@ function getCompanySharePercent($con) {
 
 /**
  * Get commission percent for a given level (1-based)
- * @param mysqli $con
+ * @param PDO|null $db
  * @param int $level
  * @return float
  */
-function getLevelCommissionPercent($con, $level) {
-    $stmt = $con->prepare("SELECT percent FROM mlm_commission_settings WHERE level=?");
-    $stmt->bind_param('i', $level);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    if ($row = $res->fetch_assoc()) {
+function getLevelCommissionPercent($db, $level = null)
+{
+    // Handle case where $db is passed as level (backward compatibility)
+    if (!is_object($db) && $level === null) {
+        $level = $db;
+        $db = \App\Core\App::database();
+    } elseif ($db === null) {
+        $db = \App\Core\App::database();
+    }
+
+    $row = $db->fetch("SELECT percent FROM mlm_commission_settings WHERE level = :level", ['level' => $level]);
+    if ($row) {
         return floatval($row['percent']);
     }
     return 0.0;
@@ -34,25 +44,31 @@ function getLevelCommissionPercent($con, $level) {
 
 /**
  * Calculate commission distribution for a transaction.
- * @param mysqli $con
+ * @param PDO|null $db
  * @param int $associate_id (who made the sale)
  * @param float $amount (total transaction amount)
  * @return array (level => commission_amount)
  */
-function calculateCommissionDistribution($con, $associate_id, $amount) {
-    $company_share = getCompanySharePercent($con);
+function calculateCommissionDistribution($db, $associate_id = null, $amount = null)
+{
+    // Handle case where $db is passed as associate_id (backward compatibility)
+    if (!is_object($db) && $associate_id !== null && $amount === null) {
+        $amount = $associate_id;
+        $associate_id = $db;
+        $db = \App\Core\App::database();
+    } elseif ($db === null) {
+        $db = \App\Core\App::database();
+    }
+
+    $company_share = getCompanySharePercent($db);
     $total_commission = ($company_share / 100.0) * $amount;
     $distribution = [];
     $current_id = $associate_id;
     for ($level = 1; $level <= 10; $level++) {
-        $percent = getLevelCommissionPercent($con, $level);
+        $percent = getLevelCommissionPercent($db, $level);
         if ($percent <= 0) break;
         // Find upline at this level
-        $stmt = $con->prepare("SELECT parent_id FROM associates WHERE id=?");
-        $stmt->bind_param('i', $current_id);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $row = $res->fetch_assoc();
+        $row = $db->fetch("SELECT parent_id FROM associates WHERE id = :id", ['id' => $current_id]);
         if (!$row || !$row['parent_id']) break;
         $upline_id = $row['parent_id'];
         $commission = ($percent / 100.0) * $total_commission;

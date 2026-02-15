@@ -25,7 +25,7 @@ if (isset($_POST['add_gata'])) {
             $error = "Please provide valid inputs.";
         } else {
             // Check available area in site
-            $site_data = $db->fetchOne("SELECT available_area FROM site_master WHERE site_id = ?", [$site_id]);
+            $site_data = $db->fetchOne("SELECT available_area FROM site_master WHERE site_id = :site_id", ['site_id' => $site_id]);
 
             if ($site_data && $area_gata <= $site_data['available_area']) {
                 $db->beginTransaction();
@@ -60,6 +60,7 @@ if (isset($_POST['add_gata'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -69,6 +70,7 @@ if (isset($_POST['add_gata'])) {
     <link rel="stylesheet" href="<?php echo get_asset_url('css/style.css', 'css'); ?>">
     <link rel="stylesheet" href="<?php echo get_asset_url('css/font-awesome.min.css', 'css'); ?>">
 </head>
+
 <body>
     <?php include(ABSPATH . "/includes/templates/header.php"); ?>
 
@@ -134,4 +136,5 @@ if (isset($_POST['add_gata'])) {
     <script src="<?php echo get_asset_url('js/bootstrap.min.js', 'js'); ?>"></script>
     <script src="<?php echo get_asset_url('js/script.js', 'js'); ?>"></script>
 </body>
+
 </html>

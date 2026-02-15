@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Enhanced Security Property Booking API Endpoint
  * Handles property booking requests with authentication and validation
@@ -97,8 +98,10 @@ if (!isset($_SESSION['last_regeneration'])) {
 }
 
 // Session timeout check
-if (isset($_SESSION['last_activity']) &&
-    (time() - $_SESSION['last_activity']) > 3600) { // 1 hour timeout
+if (
+    isset($_SESSION['last_activity']) &&
+    (time() - $_SESSION['last_activity']) > 3600
+) { // 1 hour timeout
     session_unset();
     session_destroy();
     logSecurityEvent('Booking API Session Timeout', [
@@ -160,7 +163,8 @@ if ($current_time - $rate_limit_data['first_request'] < $time_window) {
 $rate_limit_data['last_request'] = $current_time;
 
 // Security event logging function
-function logSecurityEvent($event, $context = []) {
+function logSecurityEvent($event, $context = [])
+{
     static $logFile = null;
 
     if ($logFile === null) {
@@ -203,7 +207,8 @@ function logSecurityEvent($event, $context = []) {
 }
 
 // Secure response function
-function sendSecurityResponse($status_code, $message, $data = null) {
+function sendSecurityResponse($status_code, $message, $data = null)
+{
     http_response_code($status_code);
 
     $response = [
@@ -228,7 +233,8 @@ function sendSecurityResponse($status_code, $message, $data = null) {
 }
 
 // Enhanced input validation and sanitization
-function validateInput($input, $type = 'string', $max_length = null, $required = true) {
+function validateInput($input, $type = 'string', $max_length = null, $required = true)
+{
     if ($input === null) {
         if ($required) {
             return false;
@@ -274,7 +280,6 @@ function validateInput($input, $type = 'string', $max_length = null, $required =
             }
             break;
         case 'phone':
-            $input = filter_var($input, FILTER_SANITIZE_STRING);
             // Remove all non-digit characters except + and spaces
             $input = preg_replace('/[^\d+\s]/', '', $input);
             if (strlen($input) < 10 || strlen($input) > 15) {
@@ -283,7 +288,7 @@ function validateInput($input, $type = 'string', $max_length = null, $required =
             break;
         case 'string':
         default:
-            $input = filter_var($input, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+            $input = htmlspecialchars(strip_tags($input), ENT_QUOTES, 'UTF-8');
             break;
     }
 
@@ -295,7 +300,8 @@ function validateInput($input, $type = 'string', $max_length = null, $required =
 }
 
 // Validate request headers
-function validateRequestHeaders() {
+function validateRequestHeaders()
+{
     $content_type = $_SERVER['CONTENT_TYPE'] ?? '';
     $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
@@ -316,7 +322,8 @@ function validateRequestHeaders() {
 }
 
 // Validate authentication token
-function validateAuthToken() {
+function validateAuthToken()
+{
     $headers = getallheaders();
     $auth_header = $headers['Authorization'] ?? $headers['authorization'] ?? '';
 
@@ -475,55 +482,45 @@ try {
     }
 
     // Load required files and get database connection
-    require_once __DIR__ . '/../includes/config.php';
-
-    // Get database connection
-    global $conn;
-    if (!$conn) {
-        logSecurityEvent('Database Connection Failed in Booking API', [
-            'ip_address' => $ip_address,
-            'user_id' => $user['id'] ?? 'UNKNOWN'
-        ]);
-        sendSecurityResponse(500, 'Database connection error.');
-    }
+    require_once __DIR__ . '/../app/bootstrap.php';
+    $db = \App\Core\App::database();
 
     // Verify property exists and is available
-    $property_check_stmt = $conn->prepare("SELECT id, status, title FROM properties WHERE id = ? AND status = 'available' AND is_active = 1");
-    $property_check_stmt->bind_param('i', $property_id);
-    $property_check_stmt->execute();
-    $property_result = $property_check_stmt->get_result();
+    $property = $db->fetch(
+        "SELECT id, status, title FROM properties WHERE id = :id AND status = 'available' AND is_active = 1",
+        ['id' => $property_id],
+        false
+    );
 
-    if ($property_result->num_rows === 0) {
+    if (!$property) {
         logSecurityEvent('Property Not Available for Booking', [
             'property_id' => $property_id,
             'ip_address' => $ip_address,
             'user_id' => $user['id'] ?? 'UNKNOWN'
         ]);
-        $property_check_stmt->close();
         sendSecurityResponse(400, 'Property is not available for booking.');
     }
 
-    $property = $property_result->fetch_assoc();
-    $property_check_stmt->close();
-
     // Check if user already has a booking for this property on the same date
-    $existing_booking_stmt = $conn->prepare("SELECT id FROM bookings WHERE property_id = ? AND visit_date = ? AND user_id = ? AND status != 'cancelled'");
-    $existing_booking_stmt->bind_param('isi', $property_id, $visit_date, $user['id']);
-    $existing_booking_stmt->execute();
-    $existing_result = $existing_booking_stmt->get_result();
+    $existing_booking = $db->fetch(
+        "SELECT id FROM bookings WHERE property_id = :property_id AND visit_date = :visit_date AND user_id = :user_id AND status != 'cancelled'",
+        [
+            'property_id' => $property_id,
+            'visit_date' => $visit_date,
+            'user_id' => $user['id']
+        ],
+        false
+    );
 
-    if ($existing_result->num_rows > 0) {
+    if ($existing_booking) {
         logSecurityEvent('Duplicate Booking Attempt', [
             'property_id' => $property_id,
             'visit_date' => $visit_date,
             'ip_address' => $ip_address,
             'user_id' => $user['id'] ?? 'UNKNOWN'
         ]);
-        $existing_booking_stmt->close();
         sendSecurityResponse(400, 'You already have a booking for this property on this date.');
     }
-
-    $existing_booking_stmt->close();
 
     // Log booking attempt
     logSecurityEvent('Property Booking Attempt', [
@@ -535,23 +532,26 @@ try {
     ]);
 
     // Insert booking record
-    $booking_stmt = $conn->prepare("INSERT INTO bookings (property_id, user_id, visit_date, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
-    $booking_stmt->bind_param('iis', $property_id, $user['id'], $visit_date);
+    $inserted = $db->execute(
+        "INSERT INTO bookings (property_id, user_id, visit_date, status, created_at) VALUES (:property_id, :user_id, :visit_date, 'pending', NOW())",
+        [
+            'property_id' => $property_id,
+            'user_id' => $user['id'],
+            'visit_date' => $visit_date
+        ]
+    );
 
-    if (!$booking_stmt->execute()) {
+    if (!$inserted) {
         logSecurityEvent('Booking Insertion Failed', [
             'property_id' => $property_id,
             'visit_date' => $visit_date,
             'ip_address' => $ip_address,
-            'user_id' => $user['id'] ?? 'UNKNOWN',
-            'error' => $booking_stmt->error
+            'user_id' => $user['id'] ?? 'UNKNOWN'
         ]);
-        $booking_stmt->close();
         sendSecurityResponse(500, 'Failed to create booking. Please try again.');
     }
 
-    $booking_id = $conn->insert_id;
-    $booking_stmt->close();
+    $booking_id = $db->lastInsertId();
 
     // Log successful booking
     logSecurityEvent('Property Booking Successful', [
@@ -573,7 +573,6 @@ try {
     ];
 
     sendSecurityResponse(201, 'Booking created successfully', $response_data);
-
 } catch (Exception $e) {
     // Enhanced error handling without information disclosure
     logSecurityEvent('Booking API Exception', [
@@ -587,4 +586,3 @@ try {
     // Send generic error response without exposing internal details
     sendSecurityResponse(500, 'An internal error occurred while processing your booking request.');
 }
-?>

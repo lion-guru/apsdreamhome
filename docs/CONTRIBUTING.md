@@ -1,64 +1,47 @@
-# Contributing to APS Dream Home
+# 🤝 Contributing to APS Dream Home
 
-Thank you for your interest in contributing to APS Dream Home! We welcome contributions from the community to help improve our real estate management system.
+First off, thanks for taking the time to contribute! ❤️
 
-## How to Contribute
+## 📋 Code of Conduct
+This project and everyone participating in it is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
-### Reporting Issues
-- Check if the issue already exists in the issue tracker
-- Provide a clear title and description
-- Include steps to reproduce the issue
-- Specify your environment (PHP version, database, etc.)
-- Add screenshots if applicable
+## 🚀 Getting Started
+1. Fork the repository on GitHub
+2. Clone your fork locally
+   ```bash
+   git clone https://github.com/your-username/apsdreamhome.git
+   cd apsdreamhome
+   ```
+3. Create a new branch for your changes
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+4. Make your changes
+5. Push your changes to your fork
+6. Open a pull request
 
-### Feature Requests
-- Explain the feature you'd like to see
-- Describe why this feature would be valuable
-- Provide examples of how it would work
+## 🛠 Development Setup
+1. Make sure you have PHP 7.4+ and MySQL 5.7+ installed
+2. Install dependencies:
+   ```bash
+   composer install
+   npm install
+   ```
+3. Copy `.env.example` to `.env` and configure your environment
+4. Generate application key:
+   ```bash
+   php artisan key:generate
+   ```
+5. Run migrations:
+   ```bash
+   php artisan migrate
+   ```
 
-### Code Contributions
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Open a pull request
+## 📝 Pull Request Process
+1. Ensure any install or build dependencies are removed before the end of the layer when doing a build
+2. Update the README.md with details of changes to the interface
+3. Increase the version numbers in any example files and the README.md to the new version that this Pull Request would represent
+4. You may merge the Pull Request once you have the sign-off of two other developers, or if you do not have permission to do that, you may request the reviewer to merge it for you
 
-## Coding Standards
-
-### PHP
-- Follow PSR-12 coding standard
-- Use type hints where possible
-- Add PHPDoc blocks for functions and classes
-- Keep methods small and focused
-
-### JavaScript
-- Use ES6+ syntax
-- Follow Airbnb JavaScript Style Guide
-- Use meaningful variable and function names
-- Add JSDoc comments for complex functions
-
-### Database
-- Use snake_case for table and column names
-- Add indexes for frequently queried columns
-- Use foreign key constraints
-- Document schema changes in migration files
-
-## Testing
-- Write unit tests for new features
-- Ensure all tests pass before submitting a PR
-- Update documentation when adding new features
-
-## Pull Request Process
-1. Ensure your code follows the coding standards
-2. Update the documentation as needed
-3. Add tests for your changes
-4. Ensure your branch is up to date with the main branch
-5. Submit your pull request with a clear description of changes
-
-## Code Review Process
-- At least one maintainer must approve the PR
-- Address any feedback from code reviews
-- All tests must pass before merging
-
-## License
-By contributing to APS Dream Home, you agree that your contributions will be licensed under the project's license.
+## 🐛 Found a Bug?
+If you find a bug, you can help us by [submitting an issue](#) to our GitHub Repository. Even better, you can submit a Pull Request with a fix.

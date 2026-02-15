@@ -41,7 +41,7 @@ function set_cache_headers($filename) {
 }
 
 // Database query caching
-function get_cached_query($query_key, $query, $cache_time = 300) {
+function get_cached_query($query_key, $query, $params = [], $cache_time = 300) {
     $cache_file = __DIR__ . "/cache/queries/" . md5($query_key) . ".json";
 
     // Check if cache exists and is valid
@@ -49,24 +49,22 @@ function get_cached_query($query_key, $query, $cache_time = 300) {
         return json_decode(file_get_contents($cache_file), true);
     }
 
-    // Execute query and cache result
-    global $conn;
-    $result = $conn->query($query);
-    $data = [];
-
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+    // Execute query and cache result using singleton
+    try {
+        $db = \App\Core\App::database();
+        $data = $db->fetch($query, $params);
+        
+        // Create cache directory if it doesn\'t exist
+        if (!is_dir(dirname($cache_file))) {
+            mkdir(dirname($cache_file), 0755, true);
         }
-    }
 
-    // Create cache directory if it doesn\'t exist
-    if (!is_dir(dirname($cache_file))) {
-        mkdir(dirname($cache_file), 0755, true);
+        file_put_contents($cache_file, json_encode($data));
+        return $data;
+    } catch (Exception $e) {
+        error_log("Cache query error: " . $e->getMessage());
+        return [];
     }
-
-    file_put_contents($cache_file, json_encode($data));
-    return $data;
 }
 
 // Image optimization function

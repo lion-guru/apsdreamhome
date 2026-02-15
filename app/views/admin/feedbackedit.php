@@ -20,8 +20,11 @@ if (isset($_POST['update'])) {
     } else {
         $db = \App\Core\App::database();
         $status = $_POST['status'];
-        
-        if ($db->execute("UPDATE feedback SET status = ? WHERE fid = ?", [$status, $id])) {
+
+        if ($db->execute("UPDATE feedback SET status = :status WHERE fid = :id", [
+            'status' => $status,
+            'id' => $id
+        ])) {
             $msg = "Feedback status updated successfully.";
             header("Location: feedbackview.php?msg=" . urlencode($msg));
             exit();
@@ -31,9 +34,9 @@ if (isset($_POST['update'])) {
     }
 }
 
-// Fetch current data
+// Fetch data
 $db = \App\Core\App::database();
-$row = $db->fetch("SELECT * FROM feedback WHERE fid = ?", [$id]);
+$row = $db->fetch("SELECT * FROM feedback WHERE fid = :id", ['id' => $id]);
 
 if (!$row) {
     header('Location: feedbackview.php');
@@ -70,8 +73,8 @@ include('admin_sidebar.php');
                         <h4 class="card-title">Update Feedback Visibility</h4>
                     </div>
                     <div class="card-body">
-                        <?php if($error) echo $error; ?>
-                        
+                        <?php if ($error) echo $error; ?>
+
                         <div class="row">
                             <div class="col-xl-12">
                                 <div class="form-group row">
@@ -86,7 +89,7 @@ include('admin_sidebar.php');
                                         <textarea class="form-control" rows="5" readonly><?php echo h($row['fdescription']); ?></textarea>
                                     </div>
                                 </div>
-                                
+
                                 <form method="post">
                                     <?php echo getCsrfField(); ?>
                                     <div class="form-group row">
@@ -114,4 +117,3 @@ include('admin_sidebar.php');
 </div>
 
 <?php include('admin_footer.php'); ?>
-

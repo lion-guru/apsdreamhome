@@ -30,14 +30,14 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
 
         <div class="row">
             <div class="col-md-12">
-                <?php if($flash_success = get_flash('success')): ?>
+                <?php if ($flash_success = get_flash('success')): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="fas fa-check-circle me-2"></i>
                         <?php echo h($flash_success); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 <?php endif; ?>
-                <?php if($flash_error = get_flash('error')): ?>
+                <?php if ($flash_error = get_flash('error')): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         <?php echo h($flash_error); ?>
@@ -119,36 +119,36 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <?php 
-                                                        $typeClass = [
-                                                            'site_visit' => 'badge-info',
-                                                            'online_consultation' => 'badge-warning',
-                                                            'direct_booking' => 'badge-success'
-                                                        ];
-                                                        $typeLabel = str_replace('_', ' ', ucfirst($booking['booking_type']));
+                                                    <?php
+                                                    $typeClass = [
+                                                        'site_visit' => 'badge-info',
+                                                        'online_consultation' => 'badge-warning',
+                                                        'direct_booking' => 'badge-success'
+                                                    ];
+                                                    $typeLabel = str_replace('_', ' ', ucfirst($booking['booking_type']));
                                                     ?>
                                                     <span class="badge <?php echo $typeClass[$booking['booking_type']] ?? 'badge-secondary'; ?>">
                                                         <?php echo h($mlSupport->translate($typeLabel)); ?>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <?php echo date('d M Y', strtotime($booking['visit_date'])); ?>
-                                                    <?php if ($booking['visit_time']): ?>
+                                                    <?php echo date('d M Y', strtotime($booking['booking_date'])); ?>
+                                                    <?php if (isset($booking['visit_time']) && $booking['visit_time']): ?>
                                                         <br><small class="text-muted"><?php echo date('h:i A', strtotime($booking['visit_time'])); ?></small>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
                                                     <div class="dropdown action-label">
                                                         <a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="fas fa-dot-circle <?php 
-                                                                echo match($booking['status']) {
-                                                                    'pending' => 'text-warning',
-                                                                    'confirmed' => 'text-success',
-                                                                    'cancelled' => 'text-danger',
-                                                                    'completed' => 'text-info',
-                                                                    default => 'text-secondary'
-                                                                };
-                                                            ?> me-1"></i> <?php echo h(ucfirst($booking['status'])); ?>
+                                                            <i class="fas fa-dot-circle <?php
+                                                                                        echo match ($booking['status']) {
+                                                                                            'pending' => 'text-warning',
+                                                                                            'confirmed' => 'text-success',
+                                                                                            'cancelled' => 'text-danger',
+                                                                                            'completed' => 'text-info',
+                                                                                            default => 'text-secondary'
+                                                                                        };
+                                                                                        ?> me-1"></i> <?php echo h(ucfirst($booking['status'])); ?>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right">
                                                             <form action="/admin/bookings/status/<?php echo h($booking['id']); ?>" method="POST" class="status-form">

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WhatsApp Chat Widget - APS Dream Homes
  * Integrated WhatsApp support for customer inquiries
@@ -10,8 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/includes/config.php';
 
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
+$db = \App\Core\App::database();
 
 // Handle WhatsApp message submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['whatsapp_message'])) {
@@ -21,9 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['whatsapp_message'])) {
 
     if (!empty($name) && !empty($phone) && !empty($message)) {
         // Store inquiry in database
-        $stmt = $conn->prepare("INSERT INTO whatsapp_inquiries (name, phone, message, status, created_at) VALUES (?, ?, ?, 'new', NOW())");
-        $stmt->bind_param("sss", $name, $phone, $message);
-        $stmt->execute();
+        $db->execute("INSERT INTO whatsapp_inquiries (name, phone, message, status, created_at) VALUES (:name, :phone, :message, 'new', NOW())", [
+            'name' => $name,
+            'phone' => $phone,
+            'message' => $message
+        ]);
 
         // Send WhatsApp message to business
         $business_message = "🔔 New Customer Inquiry\n\n";
@@ -45,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['whatsapp_message'])) {
 }
 
 // Function to send WhatsApp to business
-function sendWhatsAppToBusiness($customer_phone, $message) {
+function sendWhatsAppToBusiness($customer_phone, $message)
+{
     // This would integrate with WhatsApp Business API
     // For now, just log the message
     error_log("WhatsApp Business Notification:\n" . $message);
@@ -55,6 +58,7 @@ function sendWhatsAppToBusiness($customer_phone, $message) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,7 +102,7 @@ function sendWhatsAppToBusiness($customer_phone, $message) {
             height: 500px;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             display: none;
             z-index: 1001;
             overflow: hidden;
@@ -114,6 +118,7 @@ function sendWhatsAppToBusiness($customer_phone, $message) {
                 transform: translateY(20px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -201,6 +206,7 @@ function sendWhatsAppToBusiness($customer_phone, $message) {
         }
     </style>
 </head>
+
 <body>
     <!-- WhatsApp Widget -->
     <div class="whatsapp-widget">
@@ -309,53 +315,53 @@ function sendWhatsAppToBusiness($customer_phone, $message) {
                     formData.append('whatsapp_message', '1');
 
                     fetch(window.location.href, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        typingIndicator.style.display = 'none';
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            typingIndicator.style.display = 'none';
 
-                        if (data.success) {
-                            // Add user message to chat
-                            const userMessage = document.createElement('div');
-                            userMessage.className = 'chat-message user';
-                            userMessage.innerHTML = message;
-                            chatBody.appendChild(userMessage);
+                            if (data.success) {
+                                // Add user message to chat
+                                const userMessage = document.createElement('div');
+                                userMessage.className = 'chat-message user';
+                                userMessage.innerHTML = message;
+                                chatBody.appendChild(userMessage);
 
-                            // Add success message
-                            const successMessage = document.createElement('div');
-                            successMessage.className = 'chat-message support';
-                            successMessage.innerHTML = '✅ ' + data.message;
-                            chatBody.appendChild(successMessage);
+                                // Add success message
+                                const successMessage = document.createElement('div');
+                                successMessage.className = 'chat-message support';
+                                successMessage.innerHTML = '✅ ' + data.message;
+                                chatBody.appendChild(successMessage);
 
-                            // Clear form
-                            whatsappForm.reset();
+                                // Clear form
+                                whatsappForm.reset();
 
-                            // Scroll to bottom
-                            chatBody.scrollTop = chatBody.scrollHeight;
+                                // Scroll to bottom
+                                chatBody.scrollTop = chatBody.scrollHeight;
 
-                            // Close popup after 3 seconds
-                            setTimeout(() => {
-                                whatsappPopup.classList.remove('show');
-                            }, 3000);
-                        } else {
+                                // Close popup after 3 seconds
+                                setTimeout(() => {
+                                    whatsappPopup.classList.remove('show');
+                                }, 3000);
+                            } else {
+                                const errorMessage = document.createElement('div');
+                                errorMessage.className = 'chat-message support';
+                                errorMessage.innerHTML = '❌ ' + data.message;
+                                chatBody.appendChild(errorMessage);
+                                chatBody.scrollTop = chatBody.scrollHeight;
+                            }
+                        })
+                        .catch(error => {
+                            typingIndicator.style.display = 'none';
+                            console.error('Error:', error);
                             const errorMessage = document.createElement('div');
                             errorMessage.className = 'chat-message support';
-                            errorMessage.innerHTML = '❌ ' + data.message;
+                            errorMessage.innerHTML = '❌ Sorry, there was an error sending your message. Please try again or call us directly.';
                             chatBody.appendChild(errorMessage);
                             chatBody.scrollTop = chatBody.scrollHeight;
-                        }
-                    })
-                    .catch(error => {
-                        typingIndicator.style.display = 'none';
-                        console.error('Error:', error);
-                        const errorMessage = document.createElement('div');
-                        errorMessage.className = 'chat-message support';
-                        errorMessage.innerHTML = '❌ Sorry, there was an error sending your message. Please try again or call us directly.';
-                        chatBody.appendChild(errorMessage);
-                        chatBody.scrollTop = chatBody.scrollHeight;
-                    });
+                        });
                 }
             });
 
@@ -371,4 +377,5 @@ function sendWhatsAppToBusiness($customer_phone, $message) {
         });
     </script>
 </body>
+
 </html>

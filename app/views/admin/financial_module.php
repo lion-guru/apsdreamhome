@@ -131,14 +131,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 function getTotalIncome($user_id)
 {
     $db = \App\Core\App::database();
-    $row = $db->fetch("SELECT SUM(amount) as total FROM income WHERE user_id = ?", [$user_id]);
+    $row = $db->fetch("SELECT SUM(amount) as total FROM income WHERE user_id = :user_id", ['user_id' => $user_id]);
     return $row['total'] ?? 0;
 }
 
 function getTotalExpenses($user_id)
 {
     $db = \App\Core\App::database();
-    $row = $db->fetch("SELECT SUM(amount) as total FROM expenses WHERE user_id = ?", [$user_id]);
+    $row = $db->fetch("SELECT SUM(amount) as total FROM expenses WHERE user_id = :user_id", ['user_id' => $user_id]);
     return $row['total'] ?? 0;
 }
 

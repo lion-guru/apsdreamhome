@@ -143,7 +143,7 @@ $totalTables = count($allTables);
 $existingTables = 0;
 
 foreach ($allTables as $table => $description) {
-    $exists = $db->fetchOne("SHOW TABLES LIKE ?", [$table]);
+    $exists = $db->fetchOne("SHOW TABLES LIKE :table", ['table' => $table]);
 
     if ($exists) {
         $existingTables++;

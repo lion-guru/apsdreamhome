@@ -100,6 +100,7 @@ $adminRole = getAuthSubRole();
                     <ul style="display: none;">
                         <li><a class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/kisaan/list') !== false) ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/kisaan/list">Land Records</a></li>
                         <li><a class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/kisaan/add') !== false) ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/kisaan/add">Add Land Details</a></li>
+                        <li><a class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/gata/list') !== false) ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/gata/list">Gata Master</a></li>
                     </ul>
                 </li>
 

@@ -3,290 +3,146 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
-use \Exception;
+use Exception;
 
 class BookingController extends BaseController
 {
     public function __construct()
     {
         parent::__construct();
+        // Use the Core Database wrapper
+        $this->db = \App\Core\App::database();
+        // Use legacy admin layout for consistency
+        $this->layout = 'layouts/admin_legacy';
 
-        // Register middlewares
-        $this->middleware('role:admin');
-        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'updateStatus']]);
+        if (!$this->isAdmin()) {
+            $this->redirect('login');
+        }
     }
 
     /**
-     * Display a listing of bookings.
+     * List all bookings
      */
     public function index()
     {
-        $request = $this->request();
-        $status = $request->get('status', 'all');
-        $search = $request->get('search', '');
+        $this->data['page_title'] = 'Bookings Management';
 
-        $sql = "SELECT b.*, p.title as property_title,
-                       COALESCE(u.uname, c.name) as customer_name,
-                       COALESCE(u.uemail, c.email) as customer_email,
-                       COALESCE(u.uphone, c.phone) as customer_phone
-                FROM bookings b
-                LEFT JOIN properties p ON b.property_id = p.id
-                LEFT JOIN customers c ON b.customer_id = c.id
-                LEFT JOIN user u ON c.user_id = u.uid
-                WHERE 1=1";
+        $filters = [
+            'search' => $_GET['search'] ?? '',
+            'status' => $_GET['status'] ?? '',
+            'page' => (int)($_GET['page'] ?? 1),
+            'per_page' => (int)($_GET['per_page'] ?? 10)
+        ];
 
+        // Construct query
+        $where = ["1=1"];
         $params = [];
-        if ($status !== 'all') {
-            $sql .= " AND b.status = ?";
-            $params[] = $status;
+
+        if (!empty($filters['search'])) {
+            $where[] = "(b.id LIKE ? OR u.uname LIKE ? OR p.title LIKE ?)";
+            $term = '%' . $filters['search'] . '%';
+            $params[] = $term;
+            $params[] = $term;
+            $params[] = $term;
         }
 
-        if (!empty($search)) {
-            $sql .= " AND (u.uname LIKE ? OR u.uemail LIKE ? OR c.name LIKE ? OR c.email LIKE ? OR p.title LIKE ?)";
-            $searchTerm = "%$search%";
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
+        if (!empty($filters['status'])) {
+            $where[] = "b.status = ?";
+            $params[] = $filters['status'];
         }
 
-        $sql .= " ORDER BY b.created_at DESC";
+        $whereSql = implode(' AND ', $where);
+
+        // Count total
+        $countSql = "SELECT COUNT(*) FROM bookings b 
+                     LEFT JOIN customers u ON b.customer_id = u.id 
+                     LEFT JOIN properties p ON b.property_id = p.id 
+                     WHERE $whereSql";
+        $total_bookings = $this->db->fetchColumn($countSql, $params);
+
+        // Fetch data
+        $offset = ($filters['page'] - 1) * $filters['per_page'];
+        $sql = "SELECT b.*, u.name as customer_name, p.title as property_title 
+                FROM bookings b 
+                LEFT JOIN customers u ON b.customer_id = u.id 
+                LEFT JOIN properties p ON b.property_id = p.id 
+                WHERE $whereSql 
+                ORDER BY b.created_at DESC 
+                LIMIT {$filters['per_page']} OFFSET $offset";
 
         $bookings = $this->db->fetchAll($sql, $params);
 
-        return $this->render('admin/bookings/index', [
-            'page_title' => $this->mlSupport->translate('Booking Management') . ' - ' . $this->getConfig('app_name'),
-            'bookings' => $bookings,
-            'status' => $status,
-            'search' => $search,
-            'breadcrumbs' => [$this->mlSupport->translate("Bookings") => "admin/bookings"]
-        ]);
+        $this->data['bookings'] = $bookings;
+        $this->data['total_bookings'] = $total_bookings;
+        $this->data['filters'] = $filters;
+        $this->data['total_pages'] = ceil($total_bookings / $filters['per_page']);
+
+        $this->render('admin/bookings/index');
     }
 
     /**
-     * Show the form for creating a new booking.
+     * Show create booking form
      */
     public function create()
     {
-        $properties = $this->db->fetchAll("SELECT id, title FROM properties WHERE status = 'available' ORDER BY title ASC");
-        $customers = $this->db->fetchAll("SELECT c.id, COALESCE(u.uname, c.name) as name FROM customers c LEFT JOIN user u ON c.user_id = u.uid ORDER BY name ASC");
+        $this->data['page_title'] = 'Add New Booking';
 
-        return $this->render('admin/bookings/create', [
-            'page_title' => $this->mlSupport->translate('Add Booking') . ' - ' . $this->getConfig('app_name'),
-            'properties' => $properties,
-            'customers' => $customers,
-            'breadcrumbs' => [
-                $this->mlSupport->translate("Bookings") => "admin/bookings",
-                $this->mlSupport->translate("Add Booking") => ""
-            ]
-        ]);
+        // Fetch properties
+        $this->data['properties'] = $this->db->fetchAll("SELECT id, title FROM properties WHERE status = 'available' ORDER BY title");
+
+        // Fetch customers
+        $this->data['customers'] = $this->db->fetchAll("SELECT uid, uname FROM user WHERE utype = 'customer' ORDER BY uname");
+
+        $this->render('admin/bookings/create');
     }
 
     /**
-     * Store a newly created booking in storage.
+     * Store new booking
      */
     public function store()
     {
         if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            return $this->back();
+            $this->setFlash('error', 'Invalid security token.');
+            $this->redirect('admin/bookings/create');
+            return;
         }
 
-        $request = $this->request();
-        $data = $request->post();
+        $property_id = intval($_POST['property_id'] ?? 0);
+        $customer_id = $_POST['customer_id'] ?? '';
+        $booking_date = $_POST['booking_date'] ?? date('Y-m-d');
+        $booking_amount = floatval($_POST['amount'] ?? 0);
+        $status = $_POST['status'] ?? 'pending';
+        $booking_number = 'BK-' . strtoupper(uniqid());
 
-        // Validation
-        if (empty($data['customer_id']) || empty($data['property_id']) || empty($data['visit_date'])) {
-            $this->setFlash('error', $this->mlSupport->translate('Required fields are missing.'));
-            return $this->back();
+        // Fetch property price for total amount (simplified logic, ideally should come from form or property table)
+        $property = $this->db->fetchOne("SELECT price FROM properties WHERE id = ?", [$property_id]);
+        $total_amount = $property['price'] ?? $booking_amount;
+
+        if ($property_id <= 0 || empty($customer_id) || $booking_amount <= 0) {
+            $this->setFlash('error', 'Please fill in all required fields.');
+            $this->redirect('admin/bookings/create');
+            return;
         }
 
         try {
-            // XSS Protection - Sanitize input
-            $customerId = strip_tags($data['customer_id']);
-            $propertyId = (int)$data['property_id'];
-            $bookingType = strip_tags($data['booking_type'] ?? 'site_visit');
-            $visitDate = strip_tags($data['visit_date']);
-            $visitTime = !empty($data['visit_time']) ? strip_tags($data['visit_time']) : null;
-            $budgetRange = !empty($data['budget_range']) ? strip_tags($data['budget_range']) : null;
-            $specialRequirements = !empty($data['special_requirements']) ? strip_tags($data['special_requirements']) : null;
-            $status = strip_tags($data['status'] ?? 'pending');
-
-            $sql = "INSERT INTO bookings (customer_id, property_id, booking_type, visit_date, visit_time, budget_range, special_requirements, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-
-            $this->db->execute($sql, [
-                $customerId,
-                $propertyId,
-                $bookingType,
-                $visitDate,
-                $visitTime,
-                $budgetRange,
-                $specialRequirements,
-                $status
-            ]);
-
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
-
-            $this->logActivity('Add Booking', 'Added booking for customer ' . $customerId . ' for property ' . $propertyId);
-            $this->setFlash('success', $this->mlSupport->translate('Booking added successfully.'));
-            return $this->redirect('admin/bookings');
-        } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error adding booking: ') . $e->getMessage());
-            return $this->back();
-        }
-    }
-
-    /**
-     * Show the form for editing the specified booking.
-     */
-    public function edit($id)
-    {
-        $id = (int)$id;
-        $booking = $this->db->fetch("SELECT * FROM bookings WHERE id = ?", [$id]);
-
-        if (!$booking) {
-            $this->setFlash('error', $this->mlSupport->translate('Booking not found.'));
-            return $this->redirect('admin/bookings');
-        }
-
-        $properties = $this->db->fetchAll("SELECT id, title FROM properties ORDER BY title ASC");
-        $customers = $this->db->fetchAll("SELECT c.id, COALESCE(u.uname, c.name) as name FROM customers c LEFT JOIN user u ON c.user_id = u.uid ORDER BY name ASC");
-
-        return $this->render('admin/bookings/edit', [
-            'page_title' => $this->mlSupport->translate('Edit Booking') . ' - ' . $this->getConfig('app_name'),
-            'booking' => $booking,
-            'properties' => $properties,
-            'customers' => $customers,
-            'breadcrumbs' => [
-                $this->mlSupport->translate("Bookings") => "admin/bookings",
-                $this->mlSupport->translate("Edit Booking") => ""
-            ]
-        ]);
-    }
-
-    /**
-     * Update the specified booking in storage.
-     */
-    public function update($id)
-    {
-        $id = (int)$id;
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            return $this->back();
-        }
-
-        $request = $this->request();
-        $data = $request->post();
-
-        try {
-            // XSS Protection - Sanitize input
-            $customerId = strip_tags($data['customer_id']);
-            $propertyId = (int)$data['property_id'];
-            $bookingType = strip_tags($data['booking_type']);
-            $visitDate = strip_tags($data['visit_date']);
-            $visitTime = !empty($data['visit_time']) ? strip_tags($data['visit_time']) : null;
-            $budgetRange = !empty($data['budget_range']) ? strip_tags($data['budget_range']) : null;
-            $specialRequirements = !empty($data['special_requirements']) ? strip_tags($data['special_requirements']) : null;
-            $status = strip_tags($data['status']);
-
-            $sql = "UPDATE bookings SET
-                    customer_id = ?,
-                    property_id = ?,
-                    booking_type = ?,
-                    visit_date = ?,
-                    visit_time = ?,
-                    budget_range = ?,
-                    special_requirements = ?,
-                    status = ?,
-                    updated_at = NOW()
-                    WHERE id = ?";
-
-            $this->db->execute($sql, [
-                $customerId,
-                $propertyId,
-                $bookingType,
-                $visitDate,
-                $visitTime,
-                $budgetRange,
-                $specialRequirements,
+            $this->db->execute("INSERT INTO bookings (property_id, customer_id, booking_date, booking_amount, total_amount, status, booking_number) VALUES (?, ?, ?, ?, ?, ?, ?)", [
+                $property_id,
+                $customer_id,
+                $booking_date,
+                $booking_amount,
+                $total_amount,
                 $status,
-                $id
+                $booking_number
             ]);
 
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
+            // TODO: Add notification logic (Customer & Admin)
+            // $this->sendNotifications($property_id, $customer_id, $amount, $booking_date);
 
-            $this->logActivity('Update Booking', 'Updated booking ID: ' . $id);
-            $this->setFlash('success', $this->mlSupport->translate('Booking updated successfully.'));
-            return $this->redirect('admin/bookings');
+            $this->setFlash('success', 'Booking added successfully!');
+            $this->redirect('admin/bookings');
         } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error updating booking: ') . $e->getMessage());
-            return $this->back();
+            $this->setFlash('error', 'Error adding booking: ' . $e->getMessage());
+            $this->redirect('admin/bookings/create');
         }
-    }
-
-    /**
-     * Update booking status.
-     */
-    public function updateStatus($id)
-    {
-        $id = (int)$id;
-        if (!$this->validateCsrfToken()) {
-            return $this->jsonError($this->mlSupport->translate('Security validation failed.'));
-        }
-
-        $status = $this->request()->post('status');
-        if (!in_array($status, ['pending', 'confirmed', 'cancelled', 'completed'])) {
-            return $this->jsonError($this->mlSupport->translate('Invalid status.'));
-        }
-
-        try {
-            $this->db->execute("UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?", [$status, $id]);
-
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
-
-            $this->logActivity('Update Booking Status', "Updated booking ID: $id status to $status");
-            return $this->jsonSuccess(null, $this->mlSupport->translate('Status updated successfully.'));
-        } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Remove the specified booking from storage.
-     */
-    public function destroy($id)
-    {
-        $id = (int)$id;
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            return $this->back();
-        }
-
-        try {
-            $this->db->execute("DELETE FROM bookings WHERE id = ?", [$id]);
-
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
-
-            $this->logActivity('Delete Booking', 'Deleted booking ID: ' . $id);
-            $this->setFlash('success', $this->mlSupport->translate('Booking deleted successfully.'));
-        } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error deleting booking: ') . $e->getMessage());
-        }
-
-        return $this->redirect('admin/bookings');
     }
 }

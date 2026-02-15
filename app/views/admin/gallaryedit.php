@@ -63,7 +63,7 @@ if (isset($_POST['update'])) {
 
 // Fetch current data
 $db = \App\Core\App::database();
-$row = $db->fetch("SELECT * FROM images WHERE id = ?", [$id]);
+$row = $db->fetch("SELECT * FROM images WHERE id = :id", ['id' => $id]);
 
 if (!$row) {
     header('Location: gallaryview.php');

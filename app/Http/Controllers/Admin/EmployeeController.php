@@ -40,10 +40,13 @@ class EmployeeController extends BaseController
      */
     public function create()
     {
-        $roles = $this->model('Employee')->getRoles();
+        $employeeModel = $this->model('Employee');
+        $roles = $employeeModel->getRoles();
+        $departments = $employeeModel->getDepartments();
 
         return $this->render('admin/employees/create', [
             'roles' => $roles,
+            'departments' => $departments,
             'page_title' => $this->mlSupport->translate('Add New Employee') . ' - ' . $this->getConfig('app_name')
         ]);
     }
@@ -92,21 +95,16 @@ class EmployeeController extends BaseController
         }
 
         try {
-            $this->db->beginTransaction();
+            // Map form fields to model fields if necessary
+            // The view likely sends 'role_id' and 'department_id' if using select dropdowns correctly
+            // If view sends 'role' instead of 'role_id', we need to map it.
+            // Assuming view is updated or sends correct IDs.
+            
+            $employeeId = $employeeModel->createEmployee($data);
 
-            $success = $employeeModel->createEmployee($data);
-
-            if ($success) {
-                $employeeId = $this->db->lastInsertId();
-
-                // Assign role if provided
-                if (!empty($data['role_id'])) {
-                    $employeeModel->assignRole($employeeId, $data['role_id']);
-                }
-
+            if ($employeeId) {
                 $this->logActivity('Add Employee', 'Added employee: ' . h($data['name']));
 
-                $this->db->commit();
                 // Invalidate dashboard cache
                 if (function_exists('getPerformanceManager')) {
                     getPerformanceManager()->clearCache('query_');
@@ -114,12 +112,10 @@ class EmployeeController extends BaseController
                 $this->setFlash('success', $this->mlSupport->translate('Employee added successfully.'));
                 return $this->redirect('admin/employees');
             } else {
-                $this->db->rollBack();
                 $this->setFlash('error', $this->mlSupport->translate('Error adding employee. Please try again.'));
                 return $this->back();
             }
         } catch (\Exception $e) {
-            $this->db->rollBack();
             $this->setFlash('error', $this->mlSupport->translate('Error') . ': ' . h($e->getMessage()));
             return $this->back();
         }
@@ -134,7 +130,7 @@ class EmployeeController extends BaseController
         $employeeModel = $this->model('Employee');
         $employee = $employeeModel->getEmployeeById($id);
         $roles = $employeeModel->getRoles();
-        $assignedRole = $employeeModel->getEmployeeRole($id);
+        $departments = $employeeModel->getDepartments();
 
         if (!$employee) {
             $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
@@ -144,7 +140,7 @@ class EmployeeController extends BaseController
         return $this->render('admin/employees/edit', [
             'employee' => $employee,
             'roles' => $roles,
-            'assignedRole' => $assignedRole,
+            'departments' => $departments,
             'page_title' => $this->mlSupport->translate('Edit Employee') . ' - ' . $this->getConfig('app_name')
         ]);
     }
@@ -188,31 +184,11 @@ class EmployeeController extends BaseController
         $data = $sanitizedData;
 
         try {
-            $this->db->beginTransaction();
-
-            $updateData = [
-                'name' => $data['name'],
-                'phone' => $data['phone'] ?? null,
-                'department' => $data['department'] ?? 'General',
-                'role' => $data['role'] ?? 'employee',
-                'salary' => $data['salary'] ?? 0,
-                'address' => $data['address'] ?? null,
-                'notes' => $data['notes'] ?? null,
-                'status' => $data['status'] ?? 'active',
-                'updated_at' => \date('Y-m-d H:i:s')
-            ];
-
-            $success = $this->db->update('employees', $updateData, 'id = ?', [$id]);
+            $success = $employeeModel->updateEmployee($id, $data);
 
             if ($success) {
-                // Update role assignment
-                if (!empty($data['role_id'])) {
-                    $employeeModel->assignRole($id, $data['role_id']);
-                }
-
                 $this->logActivity('Update Employee', 'Updated employee: ' . h($data['name']));
 
-                $this->db->commit();
                 // Invalidate dashboard cache
                 if (function_exists('getPerformanceManager')) {
                     getPerformanceManager()->clearCache('query_');
@@ -220,12 +196,10 @@ class EmployeeController extends BaseController
                 $this->setFlash('success', $this->mlSupport->translate('Employee updated successfully.'));
                 return $this->redirect('admin/employees');
             } else {
-                $this->db->rollBack();
                 $this->setFlash('error', $this->mlSupport->translate('Error updating employee.'));
                 return $this->back();
             }
         } catch (\Exception $e) {
-            $this->db->rollBack();
             $this->setFlash('error', $this->mlSupport->translate('Error') . ': ' . h($e->getMessage()));
             return $this->back();
         }
@@ -242,22 +216,24 @@ class EmployeeController extends BaseController
             return $this->back();
         }
 
-        $success = $this->db->update('employees', [
-            'status' => 'deleted',
-            'updated_at' => \date('Y-m-d H:i:s'),
-            'deleted_at' => \date('Y-m-d H:i:s')
-        ], 'id = ?', [$id]);
+        try {
+            $employeeModel = $this->model('Employee');
+            $success = $employeeModel->deleteEmployee($id);
 
-        if ($success) {
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
+            if ($success) {
+                // Invalidate dashboard cache
+                if (function_exists('getPerformanceManager')) {
+                    getPerformanceManager()->clearCache('query_');
+                }
+                $this->logActivity('Delete Employee', 'Soft deleted employee ID: ' . $id);
+                $this->setFlash('success', $this->mlSupport->translate('Employee deleted successfully.'));
+                return $this->redirect('admin/employees');
+            } else {
+                $this->setFlash('error', $this->mlSupport->translate('Error deleting employee.'));
+                return $this->back();
             }
-            $this->logActivity('Delete Employee', 'Soft deleted employee ID: ' . $id);
-            $this->setFlash('success', $this->mlSupport->translate('Employee deleted successfully.'));
-            return $this->redirect('admin/employees');
-        } else {
-            $this->setFlash('error', $this->mlSupport->translate('Error deleting employee.'));
+        } catch (\Exception $e) {
+            $this->setFlash('error', $this->mlSupport->translate('Error') . ': ' . h($e->getMessage()));
             return $this->back();
         }
     }
@@ -274,36 +250,31 @@ class EmployeeController extends BaseController
         }
 
         try {
-            $this->db->beginTransaction();
-
             $employeeModel = $this->model('Employee');
-            // Fetch employee data before deactivation for notification
             $employee = $employeeModel->getEmployeeById($id);
+            
             if (!$employee) {
                 $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
                 return $this->redirect('admin/employees');
             }
 
-            // Deactivate employee
-            $this->db->update('employees', ['status' => 'inactive'], 'id = ?', [$id]);
+            $success = $employeeModel->offboardEmployee($id);
 
-            // Remove all roles
-            $this->db->delete('user_roles', 'user_id = ?', [$id]);
+            if ($success) {
+                $this->logActivity('Offboard Employee', 'Offboarded employee: ' . ($employee['name'] ?? $id));
+                $this->sendOffboardNotification($employee);
 
-            $this->logActivity('Offboard Employee', 'Offboarded employee: ' . ($employee['name'] ?? $id));
-
-            // Send Notification (Admin Notification)
-            $this->sendOffboardNotification($employee);
-
-            $this->db->commit();
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
+                // Invalidate dashboard cache
+                if (function_exists('getPerformanceManager')) {
+                    getPerformanceManager()->clearCache('query_');
+                }
+                $this->setFlash('success', $this->mlSupport->translate('Employee offboarded successfully.'));
+                return $this->redirect('admin/employees');
+            } else {
+                $this->setFlash('error', $this->mlSupport->translate('Error offboarding employee.'));
+                return $this->back();
             }
-            $this->setFlash('success', $this->mlSupport->translate('Employee offboarded successfully.'));
-            return $this->redirect('admin/employees');
         } catch (\Exception $e) {
-            $this->db->rollBack();
             $this->setFlash('error', $this->mlSupport->translate('Error offboarding employee') . ': ' . h($e->getMessage()));
             return $this->back();
         }
@@ -312,22 +283,24 @@ class EmployeeController extends BaseController
     protected function sendOffboardNotification($employee)
     {
         try {
-            // Include legacy notification system
-            require_once ABSPATH . '/includes/notification_manager.php';
-            require_once ABSPATH . '/includes/email_service.php';
-
-            $nm = new \NotificationManager(null, new \EmailService());
-
-            // Notify Admin
-            $nm->send([
-                'user_id' => 1, // Admin ID
-                'template' => 'EMPLOYEE_OFFBOARDED',
-                'data' => [
-                    'employee_name' => $employee['name'],
-                    'admin_name' => $this->request()->session('auth')['username'] ?? 'Admin'
-                ],
-                'channels' => ['db']
-            ]);
+            // Include legacy notification system if available
+            if (file_exists(ABSPATH . '/includes/notification_manager.php')) {
+                require_once ABSPATH . '/includes/notification_manager.php';
+                require_once ABSPATH . '/includes/email_service.php';
+    
+                $nm = new \NotificationManager(null, new \EmailService());
+    
+                // Notify Admin
+                $nm->send([
+                    'user_id' => 1, // Admin ID
+                    'template' => 'EMPLOYEE_OFFBOARDED',
+                    'data' => [
+                        'employee_name' => $employee['name'],
+                        'admin_name' => $this->request()->session('auth')['username'] ?? 'Admin'
+                    ],
+                    'channels' => ['db']
+                ]);
+            }
         } catch (\Exception $e) {
             // Log notification error but don't fail the offboarding process
             \error_log("Failed to send offboard notification: " . $e->getMessage());

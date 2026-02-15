@@ -1,4 +1,5 @@
 <?php
+
 /**
  * APS Dream Home - WhatsApp Integration System
  * Handles WhatsApp messaging through multiple providers
@@ -9,15 +10,17 @@ if (!defined('BASE_URL')) {
     exit('Direct access not allowed');
 }
 
-class WhatsAppIntegration {
+class WhatsAppIntegration
+{
     private $config;
     private $provider;
 
-    public function __construct() {
-        global $config;
-        $this->config = $config['whatsapp'] ?? [];
+    public function __construct()
+    {
+        $db = \App\Core\App::database();
+        $this->config = \App\Core\App::config('whatsapp') ?? [];
 
-        if (!$this->config['enabled']) {
+        if (empty($this->config) || !$this->config['enabled']) {
             throw new Exception('WhatsApp integration is disabled');
         }
 
@@ -27,7 +30,8 @@ class WhatsAppIntegration {
     /**
      * Send WhatsApp message using template
      */
-    public function sendTemplateMessage($phone_number, $template_name, $variables = []) {
+    public function sendTemplateMessage($phone_number, $template_name, $variables = [])
+    {
         // Include template system
         require_once __DIR__ . '/whatsapp_templates.php';
 
@@ -45,7 +49,8 @@ class WhatsAppIntegration {
     /**
      * Send WhatsApp message
      */
-    public function sendMessage($phone_number, $message, $message_type = 'text') {
+    public function sendMessage($phone_number, $message, $message_type = 'text')
+    {
         // Format phone number
         $formatted_number = $this->formatPhoneNumber($phone_number);
 
@@ -70,7 +75,8 @@ class WhatsAppIntegration {
     /**
      * Send welcome message
      */
-    public function sendWelcomeMessage($phone_number, $customer_name) {
+    public function sendWelcomeMessage($phone_number, $customer_name)
+    {
         if (!$this->config['notification_types']['welcome_message']) {
             return ['success' => false, 'error' => 'Welcome messages disabled'];
         }
@@ -86,7 +92,8 @@ class WhatsAppIntegration {
     /**
      * Send property inquiry notification
      */
-    public function sendPropertyInquiryNotification($phone_number, $property_data, $customer_data) {
+    public function sendPropertyInquiryNotification($phone_number, $property_data, $customer_data)
+    {
         if (!$this->config['notification_types']['property_inquiry']) {
             return ['success' => false, 'error' => 'Property inquiry notifications disabled'];
         }
@@ -106,7 +113,8 @@ class WhatsAppIntegration {
     /**
      * Send booking confirmation
      */
-    public function sendBookingConfirmation($phone_number, $booking_data) {
+    public function sendBookingConfirmation($phone_number, $booking_data)
+    {
         if (!$this->config['notification_types']['booking_confirmation']) {
             return ['success' => false, 'error' => 'Booking confirmations disabled'];
         }
@@ -126,7 +134,8 @@ class WhatsAppIntegration {
     /**
      * Send commission notification
      */
-    public function sendCommissionNotification($phone_number, $commission_data) {
+    public function sendCommissionNotification($phone_number, $commission_data)
+    {
         if (!$this->config['notification_types']['commission_alert']) {
             return ['success' => false, 'error' => 'Commission notifications disabled'];
         }
@@ -146,7 +155,8 @@ class WhatsAppIntegration {
     /**
      * Send payment reminder
      */
-    public function sendPaymentReminder($phone_number, $payment_data) {
+    public function sendPaymentReminder($phone_number, $payment_data)
+    {
         if (!$this->config['notification_types']['payment_reminder']) {
             return ['success' => false, 'error' => 'Payment reminders disabled'];
         }
@@ -167,7 +177,8 @@ class WhatsAppIntegration {
     /**
      * Send appointment reminder
      */
-    public function sendAppointmentReminder($phone_number, $appointment_data) {
+    public function sendAppointmentReminder($phone_number, $appointment_data)
+    {
         if (!$this->config['notification_types']['appointment_reminder']) {
             return ['success' => false, 'error' => 'Appointment reminders disabled'];
         }
@@ -187,7 +198,8 @@ class WhatsAppIntegration {
     /**
      * Send system alert
      */
-    public function sendSystemAlert($phone_number, $alert_data) {
+    public function sendSystemAlert($phone_number, $alert_data)
+    {
         if (!$this->config['notification_types']['system_alerts']) {
             return ['success' => false, 'error' => 'System alerts disabled'];
         }
@@ -204,7 +216,8 @@ class WhatsAppIntegration {
     /**
      * Send via WhatsApp Business API
      */
-    private function sendViaWhatsAppBusinessAPI($phone_number, $message, $message_type) {
+    private function sendViaWhatsAppBusinessAPI($phone_number, $message, $message_type)
+    {
         // WhatsApp Business API implementation
         // Note: This requires a WhatsApp Business Account and API access
 
@@ -252,7 +265,8 @@ class WhatsAppIntegration {
     /**
      * Send via Twilio WhatsApp API
      */
-    private function sendViaTwilio($phone_number, $message) {
+    private function sendViaTwilio($phone_number, $message)
+    {
         // Twilio WhatsApp API implementation
         // Note: This requires a Twilio account with WhatsApp enabled
 
@@ -297,7 +311,8 @@ class WhatsAppIntegration {
     /**
      * Send via WhatsApp Web (alternative method)
      */
-    private function sendViaWhatsAppWeb($phone_number, $message) {
+    private function sendViaWhatsAppWeb($phone_number, $message)
+    {
         // This is a fallback method that opens WhatsApp Web
         // Not recommended for production use
 
@@ -316,7 +331,8 @@ class WhatsAppIntegration {
     /**
      * Format phone number for WhatsApp
      */
-    private function formatPhoneNumber($phone_number) {
+    private function formatPhoneNumber($phone_number)
+    {
         // Remove all non-digit characters
         $phone = preg_replace('/\D/', '', $phone_number);
 
@@ -331,7 +347,8 @@ class WhatsAppIntegration {
     /**
      * Validate phone number format
      */
-    private function isValidPhoneNumber($phone_number) {
+    private function isValidPhoneNumber($phone_number)
+    {
         // Basic validation - should be 10-15 digits
         return preg_match('/^\d{10,15}$/', $phone_number);
     }
@@ -339,25 +356,16 @@ class WhatsAppIntegration {
     /**
      * Log WhatsApp activity
      */
-    private function logWhatsAppActivity($status, $recipient, $message, $error = null) {
-        $log_file = __DIR__ . '/../logs/whatsapp.log';
-        $log_entry = [
-            'timestamp' => date('Y-m-d H:i:s'),
-            'status' => $status,
-            'recipient' => $recipient,
-            'message_length' => strlen($message),
-            'provider' => $this->provider,
-            'error' => $error,
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'system'
-        ];
-
-        file_put_contents($log_file, json_encode($log_entry) . PHP_EOL, FILE_APPEND | LOCK_EX);
+    private function logWhatsAppActivity($status, $recipient, $message, $error = null)
+    {
+        return logWhatsAppActivity($status, $recipient, $message, $error);
     }
 
     /**
      * Handle incoming WhatsApp webhooks
      */
-    public function handleWebhook() {
+    public function handleWebhook()
+    {
         $input = json_decode(file_get_contents('php://input'), true);
 
         if (!$input) {
@@ -384,7 +392,8 @@ class WhatsAppIntegration {
     /**
      * Process incoming WhatsApp message
      */
-    private function processIncomingMessage($sender_phone, $message_data) {
+    private function processIncomingMessage($sender_phone, $message_data)
+    {
         // Store incoming message in database for processing
         $this->storeIncomingMessage($sender_phone, $message_data);
 
@@ -401,25 +410,26 @@ class WhatsAppIntegration {
     /**
      * Store incoming message for processing
      */
-    private function storeIncomingMessage($sender_phone, $message_data) {
-        // Store in database for admin review and processing
-        // This could be used to create leads, respond to inquiries, etc.
-        $log_file = __DIR__ . '/../logs/whatsapp_incoming.log';
-        $log_entry = [
-            'timestamp' => date('Y-m-d H:i:s'),
-            'sender_phone' => $sender_phone,
-            'message_type' => $message_data['type'] ?? 'text',
-            'message_content' => $message_data['text']['body'] ?? '',
-            'message_id' => $message_data['id'] ?? ''
-        ];
-
-        file_put_contents($log_file, json_encode($log_entry) . PHP_EOL, FILE_APPEND | LOCK_EX);
+    private function storeIncomingMessage($sender_phone, $message_data)
+    {
+        $db = \App\Core\App::database();
+        try {
+            $query = "INSERT INTO whatsapp_inquiries (name, phone, message, status, created_at) VALUES (:name, :phone, :message, 'new', NOW())";
+            $db->execute($query, [
+                'name' => 'WhatsApp User',
+                'phone' => $sender_phone,
+                'message' => $message_data['text']['body'] ?? 'Media/Other message',
+            ]);
+        } catch (Exception $e) {
+            error_log('Failed to store incoming WhatsApp message: ' . $e->getMessage());
+        }
     }
 
     /**
      * Generate auto-response based on message content
      */
-    private function generateAutoResponse($message_data) {
+    private function generateAutoResponse($message_data)
+    {
         $message_text = strtolower($message_data['text']['body'] ?? '');
 
         // Check business hours
@@ -450,7 +460,8 @@ class WhatsAppIntegration {
     /**
      * Get WhatsApp statistics
      */
-    public function getWhatsAppStats() {
+    public function getWhatsAppStats()
+    {
         $log_file = __DIR__ . '/../logs/whatsapp.log';
 
         if (!file_exists($log_file)) {
@@ -492,7 +503,8 @@ class WhatsAppIntegration {
 /**
  * Send WhatsApp welcome message
  */
-function sendWhatsAppWelcome($phone_number, $customer_name) {
+function sendWhatsAppWelcome($phone_number, $customer_name)
+{
     try {
         $whatsapp = new WhatsAppIntegration();
         return $whatsapp->sendWelcomeMessage($phone_number, $customer_name);
@@ -504,7 +516,8 @@ function sendWhatsAppWelcome($phone_number, $customer_name) {
 /**
  * Send WhatsApp property inquiry notification
  */
-function sendWhatsAppPropertyInquiry($phone_number, $property_data, $customer_data) {
+function sendWhatsAppPropertyInquiry($phone_number, $property_data, $customer_data)
+{
     try {
         $whatsapp = new WhatsAppIntegration();
         return $whatsapp->sendPropertyInquiryNotification($phone_number, $property_data, $customer_data);
@@ -516,7 +529,8 @@ function sendWhatsAppPropertyInquiry($phone_number, $property_data, $customer_da
 /**
  * Send WhatsApp commission notification
  */
-function sendWhatsAppCommissionNotification($phone_number, $commission_data) {
+function sendWhatsAppCommissionNotification($phone_number, $commission_data)
+{
     try {
         $whatsapp = new WhatsAppIntegration();
         return $whatsapp->sendCommissionNotification($phone_number, $commission_data);
@@ -528,7 +542,8 @@ function sendWhatsAppCommissionNotification($phone_number, $commission_data) {
 /**
  * Send WhatsApp payment reminder
  */
-function sendWhatsAppPaymentReminder($phone_number, $payment_data) {
+function sendWhatsAppPaymentReminder($phone_number, $payment_data)
+{
     try {
         $whatsapp = new WhatsAppIntegration();
         return $whatsapp->sendPaymentReminder($phone_number, $payment_data);
@@ -540,7 +555,8 @@ function sendWhatsAppPaymentReminder($phone_number, $payment_data) {
 /**
  * Send WhatsApp appointment reminder
  */
-function sendWhatsAppAppointmentReminder($phone_number, $appointment_data) {
+function sendWhatsAppAppointmentReminder($phone_number, $appointment_data)
+{
     try {
         $whatsapp = new WhatsAppIntegration();
         return $whatsapp->sendAppointmentReminder($phone_number, $appointment_data);
@@ -552,7 +568,8 @@ function sendWhatsAppAppointmentReminder($phone_number, $appointment_data) {
 /**
  * Send WhatsApp system alert
  */
-function sendWhatsAppSystemAlert($phone_number, $alert_data) {
+function sendWhatsAppSystemAlert($phone_number, $alert_data)
+{
     try {
         $whatsapp = new WhatsAppIntegration();
         return $whatsapp->sendSystemAlert($phone_number, $alert_data);
@@ -564,7 +581,8 @@ function sendWhatsAppSystemAlert($phone_number, $alert_data) {
 /**
  * Send WhatsApp template message
  */
-function sendWhatsAppTemplateMessage($phone_number, $template_name, $variables = []) {
+function sendWhatsAppTemplateMessage($phone_number, $template_name, $variables = [])
+{
     try {
         $whatsapp = new WhatsAppIntegration();
         return $whatsapp->sendTemplateMessage($phone_number, $template_name, $variables);
@@ -576,31 +594,35 @@ function sendWhatsAppTemplateMessage($phone_number, $template_name, $variables =
 /**
  * Get WhatsApp statistics
  */
-function getWhatsAppStats() {
-    global $conn;
+function getWhatsAppStats()
+{
+    $db = \App\Core\App::database();
 
     try {
         // Get total messages sent
-        $total_sent = $conn->query("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'SENT'")->fetch_assoc()['count'];
+        $total_sent_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'SENT'");
+        $total_sent = $total_sent_row['count'] ?? 0;
 
         // Get total messages delivered
-        $total_delivered = $conn->query("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'DELIVERED'")->fetch_assoc()['count'];
+        $total_delivered_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'DELIVERED'");
+        $total_delivered = $total_delivered_row['count'] ?? 0;
 
         // Get total messages failed
-        $total_failed = $conn->query("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'FAILED'")->fetch_assoc()['count'];
+        $total_failed_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'FAILED'");
+        $total_failed = $total_failed_row['count'] ?? 0;
 
         // Get success rate
         $success_rate = $total_sent > 0 ? round(($total_delivered / $total_sent) * 100, 2) : 0;
 
         // Get recent activity (last 7 days)
         $recent_query = "SELECT
-            COUNT(CASE WHEN action = 'SENT' THEN 1 END) as sent_today,
-            COUNT(CASE WHEN action = 'DELIVERED' THEN 1 END) as delivered_today,
-            COUNT(CASE WHEN action = 'FAILED' THEN 1 END) as failed_today
+            COUNT(CASE WHEN action = 'SENT' THEN 1 END) as sent_7days,
+            COUNT(CASE WHEN action = 'DELIVERED' THEN 1 END) as delivered_7days,
+            COUNT(CASE WHEN action = 'FAILED' THEN 1 END) as failed_7days
         FROM whatsapp_logs
         WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
 
-        $recent_result = $conn->query($recent_query)->fetch_assoc();
+        $recent_result = $db->fetch($recent_query);
 
         return [
             'total_sent' => (int)$total_sent,
@@ -608,13 +630,12 @@ function getWhatsAppStats() {
             'total_failed' => (int)$total_failed,
             'success_rate' => (float)$success_rate,
             'recent_activity' => [
-                'sent_7days' => (int)$recent_result['sent_today'],
-                'delivered_7days' => (int)$recent_result['delivered_today'],
-                'failed_7days' => (int)$recent_result['failed_today']
+                'sent_7days' => (int)($recent_result['sent_7days'] ?? 0),
+                'delivered_7days' => (int)($recent_result['delivered_7days'] ?? 0),
+                'failed_7days' => (int)($recent_result['failed_7days'] ?? 0)
             ],
             'last_updated' => date('Y-m-d H:i:s')
         ];
-
     } catch (Exception $e) {
         return [
             'total_sent' => 0,
@@ -634,7 +655,8 @@ function getWhatsAppStats() {
 /**
  * Initialize WhatsApp integration (if not already done)
  */
-function initializeWhatsAppIntegration() {
+function initializeWhatsAppIntegration()
+{
     static $initialized = false;
 
     if ($initialized) {
@@ -643,21 +665,22 @@ function initializeWhatsAppIntegration() {
 
     try {
         // Check if WhatsApp is enabled
-        global $config;
-        if (!$config['whatsapp']['enabled']) {
+        $whatsapp_config = \App\Core\App::config('whatsapp');
+        if (!$whatsapp_config || !$whatsapp_config['enabled']) {
             return false;
         }
 
         // Create logs table if it doesn't exist
-        global $conn;
-        $conn->query("CREATE TABLE IF NOT EXISTS whatsapp_logs (
+        $db = \App\Core\App::database();
+        $db->execute("CREATE TABLE IF NOT EXISTS whatsapp_logs (
             id INT AUTO_INCREMENT PRIMARY KEY,
             phone_number VARCHAR(20) NOT NULL,
             message TEXT,
-            action ENUM('SENT', 'DELIVERED', 'FAILED', 'TEMPLATE_USED') NOT NULL,
+            action VARCHAR(50) NOT NULL,
             provider VARCHAR(50),
             message_id VARCHAR(255),
             error_message TEXT,
+            ip VARCHAR(45),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_phone (phone_number),
             INDEX idx_action (action),
@@ -666,7 +689,6 @@ function initializeWhatsAppIntegration() {
 
         $initialized = true;
         return true;
-
     } catch (Exception $e) {
         error_log('WhatsApp initialization failed: ' . $e->getMessage());
         return false;
@@ -676,13 +698,19 @@ function initializeWhatsAppIntegration() {
 /**
  * Log WhatsApp activity
  */
-function logWhatsAppActivity($action, $phone_number, $message = '', $error = '') {
-    global $conn;
+function logWhatsAppActivity($action, $phone_number, $message = '', $error = '')
+{
+    $db = \App\Core\App::database();
 
     try {
-        $stmt = $conn->prepare("INSERT INTO whatsapp_logs (phone_number, message, action, error_message) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $phone_number, $message, $action, $error);
-        return $stmt->execute();
+        $query = "INSERT INTO whatsapp_logs (phone_number, message, action, error_message, ip) VALUES (:phone_number, :message, :action, :error, :ip)";
+        return $db->execute($query, [
+            'phone_number' => $phone_number,
+            'message' => $message,
+            'action' => $action,
+            'error' => is_array($error) ? json_encode($error) : (string)$error,
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'system'
+        ]);
     } catch (Exception $e) {
         error_log('WhatsApp logging failed: ' . $e->getMessage());
         return false;
@@ -692,10 +720,11 @@ function logWhatsAppActivity($action, $phone_number, $message = '', $error = '')
 /**
  * Log WhatsApp activity
  */
-function sendWhatsAppBookingConfirmation($phone_number, $booking_details) {
-    global $config;
+function sendWhatsAppBookingConfirmation($phone_number, $booking_details)
+{
+    $whatsapp_config = \App\Core\App::config('whatsapp');
 
-    if (!$config['whatsapp']['enabled']) {
+    if (!$whatsapp_config || !$whatsapp_config['enabled']) {
         return ['success' => false, 'error' => 'WhatsApp integration disabled'];
     }
 

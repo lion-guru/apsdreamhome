@@ -98,14 +98,42 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
 
         // Project Management
         $router->get('/projects', 'Admin\ProjectController@index');
+
+        // Payment Management
+        $router->get('/payments', 'Admin\PaymentController@index');
+        $router->get('/payments/data', 'Admin\PaymentController@data'); // DataTables AJAX
+        $router->get('/payments/customers', 'Admin\PaymentController@customers'); // Select2 AJAX
+        $router->get('/payments/create', 'Admin\PaymentController@create');
+        $router->post('/payments/store', 'Admin\PaymentController@store');
+        $router->get('/payments/edit/{id}', 'Admin\PaymentController@edit');
+        $router->post('/payments/update/{id}', 'Admin\PaymentController@update');
+        $router->post('/payments/delete/{id}', 'Admin\PaymentController@destroy');
+        $router->get('/payments/receipt/{id}', 'Admin\PaymentController@receipt');
+        $router->get('/payments/show/{id}', 'Admin\PaymentController@show');
+
+
         $router->get('/projects/create', 'Admin\ProjectController@create');
         $router->post('/projects/store', 'Admin\ProjectController@store');
         $router->get('/projects/edit/{id}', 'Admin\ProjectController@edit');
         $router->post('/projects/update/{id}', 'Admin\ProjectController@update');
         $router->post('/projects/delete/{id}', 'Admin\ProjectController@delete');
 
+        // Land/Farmer Management
+        $router->get('/land', 'Admin\LandController@index');
+        $router->get('/land/create', 'Admin\LandController@create');
+        $router->post('/land/store', 'Admin\LandController@store');
+        $router->get('/land/edit/{id}', 'Admin\LandController@edit');
+        $router->post('/land/update/{id}', 'Admin\LandController@update');
+        $router->post('/land/delete/{id}', 'Admin\LandController@destroy');
+
         // Static Pages
         $router->get('/about', 'Admin\AdminController@about');
+        $router->get('/about/create', 'Admin\AdminController@aboutCreate');
+        $router->post('/about/store', 'Admin\AdminController@aboutStore');
+        $router->get('/about/edit/{id}', 'Admin\AdminController@aboutEdit');
+        $router->post('/about/update/{id}', 'Admin\AdminController@aboutUpdate');
+        $router->post('/about/delete/{id}', 'Admin\AdminController@aboutDelete');
+
         $router->get('/contact', 'Admin\AdminController@contact');
 
         // CRM Management
@@ -148,8 +176,23 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->get('/settings/logs', 'Admin\AdminController@auditLogs');
 
         // Kisaan (Land) Management
-        $router->get('/kisaan/list', 'Admin\AdminController@kisaanList');
-        $router->get('/kisaan/add', 'Admin\AdminController@kisaanAdd');
+        $router->get('/kisaan/list', 'Admin\LandController@index');
+        $router->get('/kisaan/add', 'Admin\LandController@create');
+        $router->post('/kisaan/store', 'Admin\LandController@store');
+        $router->get('/kisaan/edit/{id}', 'Admin\LandController@edit');
+        $router->post('/kisaan/update/{id}', 'Admin\LandController@update');
+        $router->post('/kisaan/delete', 'Admin\LandController@destroy');
+
+        // Gata Management
+        $router->get('/gata/list', 'Admin\LandController@gataIndex');
+        $router->get('/gata/add', 'Admin\LandController@gataCreate');
+        $router->post('/gata/store', 'Admin\LandController@gataStore');
+        $router->get('/gata/edit/{id}', 'Admin\LandController@gataEdit');
+        $router->post('/gata/update/{id}', 'Admin\LandController@gataUpdate');
+
+        // Land AJAX Helpers
+        $router->get('/land/get-farmers', 'Admin\LandController@getFarmers');
+        $router->get('/land/get-gata', 'Admin\LandController@getGata');
 
         // MLM Management Routes (Clean structure)
         $router->get('/mlm/reports', 'Admin\AdminController@mlmReports');
@@ -158,7 +201,20 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->get('/mlm/commissions', 'Admin\AdminController@mlmCommissions');
 
         // Associates Management
-        $router->get('/associates', 'Admin\AdminController@associates');
+        $router->get('/associates', 'Admin\AssociateController@index');
+        $router->get('/associates/create', 'Admin\AssociateController@create');
+        $router->post('/associates/store', 'Admin\AssociateController@store');
+        $router->get('/associates/edit/{id}', 'Admin\AssociateController@edit');
+        $router->post('/associates/update/{id}', 'Admin\AssociateController@update');
+        $router->post('/associates/delete/{id}', 'Admin\AssociateController@destroy');
+
+        // Payment Management
+        $router->get('/payments', 'Admin\PaymentController@index');
+        $router->post('/payments/store', 'Admin\PaymentController@store');
+        $router->post('/payments/delete', 'Admin\PaymentController@delete');
+        $router->get('/payments/stats', 'Admin\PaymentController@dashboardStats');
+        $router->get('/payments/data', 'Admin\PaymentController@getData');
+        $router->get('/payments/customers', 'Admin\PaymentController@getCustomers');
 
         // EMI Routes
         $router->get('/emi', 'Admin\EMIController@index');

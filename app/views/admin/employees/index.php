@@ -55,11 +55,11 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                             <td><?php echo h($emp['name']); ?></td>
                                             <td><?php echo h($emp['email']); ?></td>
                                             <td><?php echo h($emp['phone']); ?></td>
-                                            <td><?php echo h($emp['department']); ?></td>
-                                            <td><span class="badge bg-inverse-info"><?php echo h($mlSupport->translate(ucfirst($emp['role']))); ?></span></td>
-                                            <td><?php echo h(date('d M Y', strtotime($emp['join_date']))); ?></td>
+                                            <td><?php echo h($emp['department_name'] ?? $emp['department'] ?? 'N/A'); ?></td>
+                                            <td><span class="badge bg-inverse-info"><?php echo h($mlSupport->translate(ucfirst($emp['role_name'] ?? $emp['role'] ?? 'N/A'))); ?></span></td>
+                                            <td><?php echo h(date('d M Y', strtotime($emp['join_date'] ?? $emp['created_at']))); ?></td>
                                             <td>
-                                                <span class="badge bg-inverse-<?php echo $emp['status'] == 'active' ? 'success' : 'danger'; ?>">
+                                                <span class="badge bg-inverse-<?php echo ($emp['status'] ?? 'active') == 'active' ? 'success' : 'danger'; ?>">
                                                     <?php echo h($mlSupport->translate(ucfirst($emp['status']))); ?>
                                                 </span>
                                             </td>

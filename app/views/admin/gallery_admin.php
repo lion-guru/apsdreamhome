@@ -16,68 +16,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload'])) {
         $error_message = "Invalid security token. Please try again.";
     } else {
         $title = $_POST['title'];
-    $description = $_POST['description'];
-    $category = $_POST['category'];
+        $description = $_POST['description'];
+        $category = $_POST['category'];
 
-    $target_dir = "../uploads/gallery/";
-    if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
-    }
+        $target_dir = "../uploads/gallery/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
 
-    $target_file = $target_dir . basename($_FILES["image"]["name"]);
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        $target_file = $target_dir . basename($_FILES["image"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Check if image file is actual image
-    if(isset($_FILES["image"])) {
-        $check = getimagesize($_FILES["image"]["tmp_name"]);
-        if($check !== false) {
-            // Generate unique filename
-            $filename = \App\Helpers\SecurityHelper::generateRandomString(16, false) . '.' . $imageFileType;
-            $target_file = $target_dir . $filename;
+        // Check if image file is actual image
+        if (isset($_FILES["image"])) {
+            $check = getimagesize($_FILES["image"]["tmp_name"]);
+            if ($check !== false) {
+                // Generate unique filename
+                $filename = \App\Helpers\SecurityHelper::generateRandomString(16, false) . '.' . $imageFileType;
+                $target_file = $target_dir . $filename;
 
-            if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                // Save to database
-                $db = \App\Core\App::database();
-                $image_path = "uploads/gallery/" . $filename;
+                if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                    // Save to database
+                    $db = \App\Core\App::database();
+                    $image_path = "uploads/gallery/" . $filename;
 
-                $gallery_id = $db->insert('gallery', [
-                    'title' => $title,
-                    'description' => $description,
-                    'category' => $category,
-                    'image_path' => $image_path,
-                    'created_at' => date('Y-m-d H:i:s')
-                ]);
+                    $gallery_id = $db->insert('gallery', [
+                        'title' => $title,
+                        'description' => $description,
+                        'category' => $category,
+                        'image_path' => $image_path,
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
 
-                if ($gallery_id) {
-                    $success_message = "Image uploaded successfully!";
-                    // Google Drive upload and Slack notification
-                    require_once __DIR__ . '/includes/integration_helpers.php';
-                    upload_to_google_drive_and_save_id($image_path, 'gallery', 'id', $gallery_id, 'drive_file_id');
+                    if ($gallery_id) {
+                        $success_message = "Image uploaded successfully!";
+                        // Google Drive upload and Slack notification
+                        require_once __DIR__ . '/includes/integration_helpers.php';
+                        upload_to_google_drive_and_save_id($image_path, 'gallery', 'id', $gallery_id, 'drive_file_id');
 
-                    $drive_result = $db->fetch("SELECT drive_file_id FROM gallery WHERE id = ?", [$gallery_id]);
-                    $driveId = $drive_result['drive_file_id'] ?? null;
+                        $drive_result = $db->fetch("SELECT drive_file_id FROM gallery WHERE id = :id", ['id' => $gallery_id]);
+                        $driveId = $drive_result['drive_file_id'] ?? null;
 
-                    $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
-                    $slackMsg = "🖼️ *New Gallery Image Uploaded*\n" .
-                        "Title: $title\n" .
-                        ($driveLink ? "[View on Google Drive]($driveLink)" : '');
-                    send_slack_notification($slackMsg);
-                    send_telegram_notification($slackMsg);
-                    require_once __DIR__ . '/includes/upload_audit_log.php';
-                    $slack_status = 'sent';
-                    $telegram_status = 'sent';
-                    log_upload_event('gallery_image', $gallery_id, 'gallery', $filename, $driveId, $title, $slack_status, $telegram_status);
+                        $driveLink = $driveId ? "https://drive.google.com/file/d/$driveId/view" : '';
+                        $slackMsg = "🖼️ *New Gallery Image Uploaded*\n" .
+                            "Title: $title\n" .
+                            ($driveLink ? "[View on Google Drive]($driveLink)" : '');
+                        send_slack_notification($slackMsg);
+                        send_telegram_notification($slackMsg);
+                        require_once __DIR__ . '/includes/upload_audit_log.php';
+                        $slack_status = 'sent';
+                        $telegram_status = 'sent';
+                        log_upload_event('gallery_image', $gallery_id, 'gallery', $filename, $driveId, $title, $slack_status, $telegram_status);
+                    } else {
+                        $error_message = "Error saving to database.";
+                    }
                 } else {
-                    $error_message = "Error saving to database.";
+                    $error_message = "Sorry, there was an error uploading your file.";
                 }
             } else {
-                $error_message = "Sorry, there was an error uploading your file.";
+                $error_message = "File is not an image.";
             }
-        } else {
-            $error_message = "File is not an image.";
         }
     }
-}
 }
 
 // Handle image deletion
@@ -89,12 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
         $db = \App\Core\App::database();
 
         // Get image path before deletion
-        $row = $db->fetch("SELECT image_path FROM gallery WHERE id = ?", [$id]);
+        $row = $db->fetch("SELECT image_path FROM gallery WHERE id = :id", ['id' => $id]);
 
         if ($row) {
             $image_path = "../" . $row['image_path'];
             // Delete from database
-            if ($db->delete('gallery', 'id = ?', [$id])) {
+            if ($db->delete('gallery', 'id = :id', ['id' => $id])) {
                 // Delete file from server
                 if (file_exists($image_path)) {
                     unlink($image_path);
@@ -129,6 +129,7 @@ $start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -136,6 +137,7 @@ $start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
     <link rel="stylesheet" href="../css/gallery.css">
     <link rel="stylesheet" href="../assets/vendor/font-awesome/css/all.min.css">
 </head>
+
 <body>
     <h1>Gallery Admin Panel</h1>
     <?php if (isset($success_message)): ?>
@@ -182,4 +184,5 @@ $start = isset($_GET['page']) ? $_GET['page'] * $limit : 0;
         <?php endfor; ?>
     </div>
 </body>
+
 </html>

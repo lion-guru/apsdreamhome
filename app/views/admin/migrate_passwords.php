@@ -11,8 +11,11 @@ function migratePasswords() {
         // Check if the password is not already hashed with Argon2id
         if (strpos($user['password'], '$argon2id$') !== 0) {
             $hashedPassword = hashPassword($user['password']);
-            $updateStmt = $pdo->prepare("UPDATE admin SET password = ? WHERE id = ?");
-            $updateStmt->execute([$hashedPassword, $user['id']]);
+            $updateStmt = $pdo->prepare("UPDATE admin SET password = :password WHERE id = :id");
+            $updateStmt->execute([
+                ':password' => $hashedPassword,
+                ':id' => $user['id']
+            ]);
         }
     }
 }

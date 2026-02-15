@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Advanced Role-Based Access Control (RBAC) Manager
  * Provides granular access control and permission management
  */
-class RBACManager {
+class RBACManager
+{
     // Cache for user permissions to avoid redundant DB queries and JSON decoding
     private static $permissionsCache = [];
 
@@ -59,7 +61,8 @@ class RBACManager {
      * @param string $permission
      * @return bool
      */
-    public static function hasPermission($userId, $permission) {
+    public static function hasPermission($userId, $permission)
+    {
         // Check cache first
         if (isset(self::$permissionsCache[$userId])) {
             return in_array($permission, self::$permissionsCache[$userId]);
@@ -67,16 +70,16 @@ class RBACManager {
 
         try {
             $db = \App\Core\App::database();
-            
+
             // Fetch user role and permissions using the query method which handles cross-driver support
             $sql = "
                 SELECT r.permissions 
                 FROM user_roles ur
                 JOIN roles r ON ur.role_id = r.id
-                WHERE ur.user_id = ?
+                WHERE ur.user_id = :user_id
             ";
-            
-            $roleData = $db->fetch($sql, [$userId]);
+
+            $roleData = $db->fetch($sql, ['user_id' => $userId]);
 
             if (!$roleData) {
                 // Log unauthorized access attempt
@@ -125,29 +128,30 @@ class RBACManager {
      * @param string $roleName
      * @return bool
      */
-    public static function assignRole($userId, $roleName) {
+    public static function assignRole($userId, $roleName)
+    {
         if (!isset(self::ROLES[$roleName])) {
             throw new InvalidArgumentException("Invalid role: $roleName");
         }
 
         try {
             $db = \App\Core\App::database();
-            
+
             // Begin transaction
             $db->beginTransaction();
 
             // Get role ID
-            $role = $db->fetch("SELECT id FROM roles WHERE name = ?", [$roleName]);
+            $role = $db->fetch("SELECT id FROM roles WHERE name = :name", ['name' => $roleName]);
 
             if (!$role) {
                 // Create role if not exists
                 $db->execute("
                     INSERT INTO roles (name, permissions, description) 
-                    VALUES (?, ?, ?)
+                    VALUES (:name, :permissions, :description)
                 ", [
-                    $roleName, 
-                    json_encode(self::ROLES[$roleName]['permissions']),
-                    self::ROLES[$roleName]['description']
+                    'name' => $roleName,
+                    'permissions' => json_encode(self::ROLES[$roleName]['permissions']),
+                    'description' => self::ROLES[$roleName]['description']
                 ]);
                 $roleId = $db->lastInsertId();
             } else {
@@ -157,9 +161,9 @@ class RBACManager {
             // Assign role to user
             $db->execute("
                 INSERT INTO user_roles (user_id, role_id) 
-                VALUES (?, ?) 
-                ON DUPLICATE KEY UPDATE role_id = ?
-            ", [$userId, $roleId, $roleId]);
+                VALUES (:user_id, :role_id) 
+                ON DUPLICATE KEY UPDATE role_id = :role_id_update
+            ", ['user_id' => $userId, 'role_id' => $roleId, 'role_id_update' => $roleId]);
 
             // Commit transaction
             $db->commit();
@@ -195,16 +199,17 @@ class RBACManager {
      * @param string $userId
      * @return string|null
      */
-    public static function getUserRole($userId) {
+    public static function getUserRole($userId)
+    {
         try {
             $db = \App\Core\App::database();
-            
+
             $role = $db->fetch("
                 SELECT r.name 
                 FROM user_roles ur
                 JOIN roles r ON ur.role_id = r.id
-                WHERE ur.user_id = ?
-            ", [$userId]);
+                WHERE ur.user_id = :user_id
+            ", ['user_id' => $userId]);
 
             return $role ? $role['name'] : null;
         } catch (Exception $e) {
@@ -224,7 +229,8 @@ class RBACManager {
      * @param string $requiredPermission
      * @throws AccessDeniedException
      */
-    public static function enforceAccess($userId, $requiredPermission) {
+    public static function enforceAccess($userId, $requiredPermission)
+    {
         if (!self::hasPermission($userId, $requiredPermission)) {
             // Log access violation
             AdminLogger::securityAlert('ACCESS_DENIED', [
@@ -243,13 +249,14 @@ class RBACManager {
 class AccessDeniedException extends Exception {}
 
 // Global helper functions
-function check_permission($permission) {
+function check_permission($permission)
+{
     $userId = $_SESSION['admin_user_id'] ?? null;
     return $userId ? RBACManager::hasPermission($userId, $permission) : false;
 }
 
-function enforce_permission($permission) {
+function enforce_permission($permission)
+{
     $userId = $_SESSION['admin_user_id'] ?? null;
     RBACManager::enforceAccess($userId, $permission);
 }
-

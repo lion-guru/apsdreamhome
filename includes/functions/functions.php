@@ -3,16 +3,20 @@
 require_once __DIR__ . '/../config.php';
 
 // Existing sanitize_input function
-function sanitize_input($data) {
-    global $con;
+function sanitize_input($data)
+{
+    if (is_array($data)) {
+        return array_map('sanitize_input', $data);
+    }
     $data = trim($data);
     $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return mysqli_real_escape_string($con, $data);
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+    return $data;
 }
 
 // Enhanced token generation with expiry
-function generate_token($expiry = 3600) {
+function generate_token($expiry = 3600)
+{
     $token = bin2hex(random_bytes(32));
     $_SESSION['token'] = $token;
     $_SESSION['token_expiry'] = time() + $expiry;
@@ -20,7 +24,8 @@ function generate_token($expiry = 3600) {
 }
 
 // Validate token
-function validate_token($token) {
+function validate_token($token)
+{
     if (!isset($_SESSION['token']) || !isset($_SESSION['token_expiry'])) {
         return false;
     }
@@ -34,19 +39,20 @@ function validate_token($token) {
 }
 
 // Enhanced file upload validation
-function validate_file_upload($file, $allowed_types = ['jpg', 'jpeg', 'png']) {
+function validate_file_upload($file, $allowed_types = ['jpg', 'jpeg', 'png'])
+{
     if (!isset($file['error']) || is_array($file['error'])) {
         log_error('Invalid file parameter');
         return false;
     }
 
     $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    
+
     if (!in_array($file_extension, $allowed_types)) {
         log_error('Invalid file type: ' . $file_extension);
         return false;
     }
-    
+
     if ($file['size'] > MAX_FILE_SIZE) {
         log_error('File too large: ' . $file['size']);
         return false;
@@ -66,12 +72,13 @@ function validate_file_upload($file, $allowed_types = ['jpg', 'jpeg', 'png']) {
         log_error('Invalid MIME type: ' . $mime_type);
         return false;
     }
-    
+
     return true;
 }
 
 // Enhanced error logging
-function log_error($message) {
+function log_error($message)
+{
     $log_file = __DIR__ . '/../logs/error.log';
     $timestamp = date('Y-m-d H:i:s');
     $user_ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
@@ -81,7 +88,8 @@ function log_error($message) {
 }
 
 // Secure file upload handler
-function handle_file_upload($file, $destination_path) {
+function handle_file_upload($file, $destination_path)
+{
     if (!validate_file_upload($file)) {
         return false;
     }
@@ -99,22 +107,24 @@ function handle_file_upload($file, $destination_path) {
 }
 
 // Session security check
-function check_session_security() {
+function check_session_security()
+{
     if (!isset($_SESSION['last_activity'])) {
         $_SESSION['last_activity'] = time();
     }
-    
+
     if (time() - $_SESSION['last_activity'] > 1800) { // 30 minutes
         session_destroy();
         return false;
     }
-    
+
     $_SESSION['last_activity'] = time();
     return true;
 }
 
 // Password strength validation
-function validate_password($password) {
+function validate_password($password)
+{
     if (strlen($password) < 8) {
         return false;
     }
@@ -134,29 +144,33 @@ function validate_password($password) {
 }
 
 // Fetch latest news from database (fallback to static array if DB fails)
-function get_latest_news($limit = 3, $allow_html = false, $offset = 0) {
-    global $conn;
+function get_latest_news($limit = 3, $allow_html = false, $offset = 0)
+{
     $news = [];
     // Try DB first
-    if (isset($conn) && $conn) {
-        $sql = "SELECT id, title, date, summary, image, content FROM news ORDER BY date DESC, id DESC LIMIT ? OFFSET ?";
-        if ($stmt = $conn->prepare($sql)) {
-            $stmt->bind_param('ii', $limit, $offset);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            while ($row = $result->fetch_assoc()) {
-                $news[] = [
-                    'title' => $row['title'],
-                    'date' => $row['date'],
-                    'summary' => $row['summary'],
-                    'url' => '/news-detail.php?id=' . $row['id'],
-                    'image' => $row['image'],
-                    'content' => $allow_html ? $row['content'] : strip_tags($row['content'])
-                ];
-            }
-            $stmt->close();
+    try {
+        $db = \App\Core\App::database();
+        $sql = "SELECT id, title, date, summary, image, content FROM news ORDER BY date DESC, id DESC LIMIT :limit OFFSET :offset";
+
+        $rows = $db->fetchAll($sql, [
+            'limit' => (int)$limit,
+            'offset' => (int)$offset
+        ]);
+
+        foreach ($rows as $row) {
+            $news[] = [
+                'title' => $row['title'],
+                'date' => $row['date'],
+                'summary' => $row['summary'],
+                'url' => '/news-detail.php?id=' . $row['id'],
+                'image' => $row['image'],
+                'content' => $allow_html ? $row['content'] : strip_tags($row['content'])
+            ];
         }
+    } catch (Exception $e) {
+        error_log("Error fetching news: " . $e->getMessage());
     }
+
     // Fallback to static array if DB fails
     if (empty($news)) {
         $news = [
@@ -189,4 +203,3 @@ function get_latest_news($limit = 3, $allow_html = false, $offset = 0) {
     }
     return array_slice($news, 0, $limit);
 }
-?>

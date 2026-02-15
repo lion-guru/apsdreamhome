@@ -9,13 +9,7 @@ require_once 'includes/associate_permissions.php';
 require_once 'includes/hybrid_commission_system.php';
 
 // Initialize database connection
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
-
-// Check if connection is successful
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+$db = \App\Core\App::database();
 
 session_start();
 if (!isset($_SESSION['associate_logged_in']) || $_SESSION['associate_logged_in'] !== true) {
@@ -27,7 +21,7 @@ $associate_id = $_SESSION['associate_id'];
 $associate_name = $_SESSION['associate_name'];
 
 // Initialize hybrid commission system
-$hybrid_system = new HybridRealEstateCommission($conn);
+$hybrid_system = new HybridRealEstateCommission($db);
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -53,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 function calculatePlotRate($data) {
-    global $hybrid_system, $associate_id;
+    global $hybrid_system;
 
     try {
         // Check if hybrid system is available
@@ -105,12 +99,7 @@ function calculatePlotRate($data) {
 }
 
 function saveCostBreakdown($data) {
-    global $conn, $hybrid_system;
-
-    // Check if connection is available
-    if (!$conn || $conn->connect_error) {
-        return ['success' => false, 'message' => 'Database connection not available'];
-    }
+    global $hybrid_system;
 
     try {
         $property_id = intval($data['property_id']);

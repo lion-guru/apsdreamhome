@@ -48,9 +48,12 @@ foreach ($migrationFiles as $file) {
 
 // Save migrations to database
 if (!empty($newMigrations)) {
-    $stmt = $db->prepare("INSERT INTO migrations (migration, batch) VALUES (?, ?)");
+    $stmt = $db->prepare("INSERT INTO migrations (migration, batch) VALUES (:migration, :batch)");
     foreach ($newMigrations as $migration) {
-        $stmt->execute([$migration, $batch]);
+        $stmt->execute([
+            'migration' => $migration,
+            'batch' => $batch
+        ]);
     }
     
     echo "\nMigration completed. " . count($newMigrations) . " migration(s) run.\n";

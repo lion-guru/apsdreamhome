@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modernized Reset Password Page
  * Migrated from Views/reset_password.php
@@ -19,7 +20,10 @@ $msg = '';
 
 if ($email && $token) {
     try {
-        $reset_data = $db->fetch("SELECT * FROM password_resets WHERE email = ? AND token = ? AND expires_at >= NOW() AND used = 0 LIMIT 1", [$email, $token]);
+        $reset_data = $db->fetch("SELECT * FROM password_resets WHERE email = :email AND token = :token AND expires_at >= NOW() AND used = 0 LIMIT 1", [
+            'email' => $email,
+            'token' => $token
+        ]);
         if ($reset_data) {
             $validToken = true;
         }
@@ -82,10 +86,13 @@ if (time() < ($_SESSION['rp_blocked_until'] ?? 0)) {
             $db->beginTransaction();
             try {
                 // Update 'user' table
-                $db->update('user', ['upass' => $hashedPassword], 'uemail = ?', [$email]);
+                $db->update('user', ['upass' => $hashedPassword], 'uemail = :email', ['email' => $email]);
 
-                // Mark the token as used
-                $db->update('password_resets', ['used' => 1], 'email = ? AND token = ?', [$email, $token]);
+                // Mark token as used
+                $db->update('password_resets', ['used' => 1], 'email = :email AND token = :token', [
+                    'email' => $email,
+                    'token' => $token
+                ]);
 
                 $db->commit();
                 $msg = "Password has been reset successfully. You can now log in.";
@@ -198,21 +205,34 @@ ob_start();
 </div>
 
 <style>
-.hover-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-.animate-shake {
-    animation: shake 0.4s ease-in-out 0s 2;
-}
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    .animate-shake {
+        animation: shake 0.4s ease-in-out 0s 2;
+    }
 </style>
 
 <?php

@@ -149,21 +149,33 @@ try {
         $visits_created = 0;
         foreach ($sample_visits as $visit) {
             // Check if visit already exists
-            $check_visit = $pdo->prepare("SELECT id FROM property_visits WHERE customer_id = ? AND property_id = ? AND visit_date = ?");
-            $check_visit->execute([$visit['customer_id'], $visit['property_id'], $visit['visit_date']]);
+            $check_visit = $pdo->prepare("SELECT id FROM property_visits WHERE customer_id = :customer_id AND property_id = :property_id AND visit_date = :visit_date");
+            $check_visit->execute([
+                ':customer_id' => $visit['customer_id'],
+                ':property_id' => $visit['property_id'],
+                ':visit_date' => $visit['visit_date']
+            ]);
             
             if (!$check_visit->fetch()) {
                 $insert_visit = $pdo->prepare("
                     INSERT INTO property_visits 
                     (customer_id, property_id, associate_id, visit_date, visit_type, status, notes, feedback_rating, feedback_comments, interest_level, follow_up_required, follow_up_date, created_by) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (:customer_id, :property_id, :associate_id, :visit_date, :visit_type, :status, :notes, :feedback_rating, :feedback_comments, :interest_level, :follow_up_required, :follow_up_date, :created_by)
                 ");
                 $insert_visit->execute([
-                    $visit['customer_id'], $visit['property_id'], $visit['associate_id'], 
-                    $visit['visit_date'], $visit['visit_type'], $visit['status'], 
-                    $visit['notes'], $visit['feedback_rating'], $visit['feedback_comments'], 
-                    $visit['interest_level'], $visit['follow_up_required'], $visit['follow_up_date'], 
-                    $visit['created_by']
+                    ':customer_id' => $visit['customer_id'],
+                    ':property_id' => $visit['property_id'],
+                    ':associate_id' => $visit['associate_id'], 
+                    ':visit_date' => $visit['visit_date'],
+                    ':visit_type' => $visit['visit_type'],
+                    ':status' => $visit['status'], 
+                    ':notes' => $visit['notes'],
+                    ':feedback_rating' => $visit['feedback_rating'] ?? null,
+                    ':feedback_comments' => $visit['feedback_comments'] ?? null, 
+                    ':interest_level' => $visit['interest_level'],
+                    ':follow_up_required' => $visit['follow_up_required'],
+                    ':follow_up_date' => $visit['follow_up_date'], 
+                    ':created_by' => $visit['created_by']
                 ]);
                 $visits_created++;
             }
@@ -231,12 +243,11 @@ try {
             u.email as customer_email,
             p.title as property_title,
             p.price as property_price,
-            a.name as associate_name
+            (SELECT name FROM associates WHERE id = pv.associate_id) as associate_name
         FROM property_visits pv
         LEFT JOIN customers c ON pv.customer_id = c.id
         LEFT JOIN users u ON c.user_id = u.id
         LEFT JOIN properties p ON pv.property_id = p.id
-        LEFT JOIN associates a ON pv.associate_id = a.id
         ORDER BY pv.visit_date DESC
         LIMIT 10
     ");

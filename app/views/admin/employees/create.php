@@ -65,13 +65,13 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                 <div class="col-sm-6">
                                     <div class="form-group mb-3">
                                         <label><?php echo h($mlSupport->translate('Department')); ?></label>
-                                        <select class="form-control" name="department">
-                                            <option value="General"><?php echo h($mlSupport->translate('General')); ?></option>
-                                            <option value="Sales"><?php echo h($mlSupport->translate('Sales')); ?></option>
-                                            <option value="Marketing"><?php echo h($mlSupport->translate('Marketing')); ?></option>
-                                            <option value="Accounts"><?php echo h($mlSupport->translate('Accounts')); ?></option>
-                                            <option value="IT"><?php echo h($mlSupport->translate('IT')); ?></option>
-                                            <option value="Operations"><?php echo h($mlSupport->translate('Operations')); ?></option>
+                                        <select class="form-control" name="department_id">
+                                            <option value=""><?php echo h($mlSupport->translate('Select Department')); ?></option>
+                                            <?php if (!empty($departments)): ?>
+                                                <?php foreach ($departments as $dept): ?>
+                                                    <option value="<?php echo h($dept['id']); ?>"><?php echo h($mlSupport->translate($dept['name'])); ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -89,13 +89,8 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group mb-3">
-                                        <label><?php echo h($mlSupport->translate('Designation (Employee Role)')); ?></label>
-                                        <select class="form-control" name="role">
-                                            <option value="employee"><?php echo h($mlSupport->translate('Employee')); ?></option>
-                                            <option value="manager"><?php echo h($mlSupport->translate('Manager')); ?></option>
-                                            <option value="supervisor"><?php echo h($mlSupport->translate('Supervisor')); ?></option>
-                                            <option value="executive"><?php echo h($mlSupport->translate('Executive')); ?></option>
-                                        </select>
+                                        <label><?php echo h($mlSupport->translate('Designation (Job Title)')); ?></label>
+                                        <input class="form-control" type="text" name="designation" placeholder="<?php echo h($mlSupport->translate('e.g. Senior Manager')); ?>">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -107,7 +102,7 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                                 <div class="col-sm-6">
                                     <div class="form-group mb-3">
                                         <label><?php echo h($mlSupport->translate('Join Date')); ?></label>
-                                        <input class="form-control" type="date" name="join_date" value="<?php echo date('Y-m-d'); ?>">
+                                        <input class="form-control" type="date" name="joining_date" value="<?php echo date('Y-m-d'); ?>">
                                     </div>
                                 </div>
                                 <div class="col-sm-12">

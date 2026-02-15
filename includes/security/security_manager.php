@@ -354,8 +354,13 @@ class SecurityManager {
         // Database logging if available
         if ($this->db) {
             try {
-                $stmt = $this->db->prepare("INSERT INTO security_logs (event, data, ip, user_agent, created_at) VALUES (?, ?, ?, ?, NOW())");
-                $stmt->execute([$event, json_encode($data), $event_data['ip'], $event_data['user_agent']]);
+                $stmt = $this->db->prepare("INSERT INTO security_logs (event, data, ip, user_agent, created_at) VALUES (:event, :data, :ip, :user_agent, NOW())");
+                $stmt->execute([
+                    'event' => $event, 
+                    'data' => json_encode($data), 
+                    'ip' => $event_data['ip'], 
+                    'user_agent' => $event_data['user_agent']
+                ]);
             } catch (Exception $e) {
                 // Silent fail for database logging
             }

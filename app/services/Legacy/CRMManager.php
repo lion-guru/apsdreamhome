@@ -316,8 +316,17 @@ class CRMManager {
             ];
 
             foreach ($sources as $source) {
-                $sql = "INSERT INTO lead_sources (source_name, source_type, description, cost_per_lead, conversion_rate, status) VALUES (?, ?, ?, ?, ?, ?)";
-                $this->db->execute($sql, $source);
+                $sql = "INSERT INTO lead_sources (source_name, source_type, description, cost_per_lead, conversion_rate, status) 
+                        VALUES (:source_name, :source_type, :description, :cost_per_lead, :conversion_rate, :status)";
+                $params = [
+                    ':source_name' => $source[0],
+                    ':source_type' => $source[1],
+                    ':description' => $source[2],
+                    ':cost_per_lead' => $source[3],
+                    ':conversion_rate' => $source[4],
+                    ':status' => $source[5]
+                ];
+                $this->db->execute($sql, $params);
             }
         }
 
@@ -336,8 +345,17 @@ class CRMManager {
             ];
 
             foreach ($stages as $stage) {
-                $sql = "INSERT INTO sales_pipeline_stages (stage_name, stage_order, description, probability_percentage, expected_duration_days, color_code) VALUES (?, ?, ?, ?, ?, ?)";
-                $this->db->execute($sql, $stage);
+                $sql = "INSERT INTO sales_pipeline_stages (stage_name, stage_order, description, probability_percentage, expected_duration_days, color_code) 
+                        VALUES (:stage_name, :stage_order, :description, :probability_percentage, :expected_duration_days, :color_code)";
+                $params = [
+                    ':stage_name' => $stage[0],
+                    ':stage_order' => $stage[1],
+                    ':description' => $stage[2],
+                    ':probability_percentage' => $stage[3],
+                    ':expected_duration_days' => $stage[4],
+                    ':color_code' => $stage[5]
+                ];
+                $this->db->execute($sql, $params);
             }
         }
 
@@ -360,8 +378,17 @@ class CRMManager {
             ];
 
             foreach ($templates as $template) {
-                $sql = "INSERT INTO communication_templates (template_name, template_type, category, subject, message_body, variables) VALUES (?, ?, ?, ?, ?, ?)";
-                $this->db->execute($sql, $template);
+                $sql = "INSERT INTO communication_templates (template_name, template_type, category, subject, message_body, variables) 
+                        VALUES (:template_name, :template_type, :category, :subject, :message_body, :variables)";
+                $params = [
+                    ':template_name' => $template[0],
+                    ':template_type' => $template[1],
+                    ':category' => $template[2],
+                    ':subject' => $template[3],
+                    ':message_body' => $template[4],
+                    ':variables' => $template[5]
+                ];
+                $this->db->execute($sql, $params);
             }
         }
     }
@@ -376,35 +403,41 @@ class CRMManager {
             annual_income, address, city, state, pincode, property_interest,
             budget_min, budget_max, preferred_location, property_type, requirement_details,
             lead_score, assigned_to, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (
+            :lead_number, :lead_source_id, :name, :email, :phone, :alternate_phone,
+            :date_of_birth, :gender, :marital_status, :occupation, :company, :designation,
+            :annual_income, :address, :city, :state, :pincode, :property_interest,
+            :budget_min, :budget_max, :preferred_location, :property_type, :requirement_details,
+            :lead_score, :assigned_to, :created_by
+        )";
 
         $params = [
-            $leadData['lead_number'],
-            $leadData['lead_source_id'],
-            $leadData['name'],
-            $leadData['email'],
-            $leadData['phone'],
-            $leadData['alternate_phone'],
-            $leadData['date_of_birth'],
-            $leadData['gender'],
-            $leadData['marital_status'],
-            $leadData['occupation'],
-            $leadData['company'],
-            $leadData['designation'],
-            $leadData['annual_income'],
-            $leadData['address'],
-            $leadData['city'],
-            $leadData['state'],
-            $leadData['pincode'],
-            $leadData['property_interest'],
-            $leadData['budget_min'],
-            $leadData['budget_max'],
-            $leadData['preferred_location'],
-            $leadData['property_type'],
-            $leadData['requirement_details'],
-            $leadData['lead_score'],
-            $leadData['assigned_to'],
-            $leadData['created_by']
+            ':lead_number' => $leadData['lead_number'],
+            ':lead_source_id' => $leadData['lead_source_id'],
+            ':name' => $leadData['name'],
+            ':email' => $leadData['email'],
+            ':phone' => $leadData['phone'],
+            ':alternate_phone' => $leadData['alternate_phone'],
+            ':date_of_birth' => $leadData['date_of_birth'],
+            ':gender' => $leadData['gender'],
+            ':marital_status' => $leadData['marital_status'],
+            ':occupation' => $leadData['occupation'],
+            ':company' => $leadData['company'],
+            ':designation' => $leadData['designation'],
+            ':annual_income' => $leadData['annual_income'],
+            ':address' => $leadData['address'],
+            ':city' => $leadData['city'],
+            ':state' => $leadData['state'],
+            ':pincode' => $leadData['pincode'],
+            ':property_interest' => $leadData['property_interest'],
+            ':budget_min' => $leadData['budget_min'],
+            ':budget_max' => $leadData['budget_max'],
+            ':preferred_location' => $leadData['preferred_location'],
+            ':property_type' => $leadData['property_type'],
+            ':requirement_details' => $leadData['requirement_details'],
+            ':lead_score' => $leadData['lead_score'],
+            ':assigned_to' => $leadData['assigned_to'],
+            ':created_by' => $leadData['created_by']
         ];
 
         try {
@@ -474,9 +507,9 @@ class CRMManager {
      * Calculate lead score
      */
     private function calculateLeadScore($leadId) {
-        $sql = "SELECT budget_min, email, alternate_phone, property_interest, preferred_location, annual_income FROM leads WHERE id = ?";
+        $sql = "SELECT budget_min, email, alternate_phone, property_interest, preferred_location, annual_income FROM leads WHERE id = :id";
         try {
-            $lead = $this->db->fetch($sql, [$leadId]);
+            $lead = $this->db->fetch($sql, [':id' => $leadId]);
 
             if (!$lead) return;
 
@@ -501,13 +534,13 @@ class CRMManager {
             elseif ($lead['annual_income'] >= 500000) $score += 10;
 
             // Update lead score
-            $updateSql = "UPDATE leads SET lead_score = ? WHERE id = ?";
-            $this->db->execute($updateSql, [$score, $leadId]);
+            $updateSql = "UPDATE leads SET lead_score = :score WHERE id = :id";
+            $this->db->execute($updateSql, [':score' => $score, ':id' => $leadId]);
 
             // Update conversion probability based on score
             $probability = min($score * 2, 100); // Max 100%
-            $probabilitySql = "UPDATE leads SET conversion_probability = ? WHERE id = ?";
-            $this->db->execute($probabilitySql, [$probability, $leadId]);
+            $probabilitySql = "UPDATE leads SET conversion_probability = :probability WHERE id = :id";
+            $this->db->execute($probabilitySql, [':probability' => $probability, ':id' => $leadId]);
         } catch (Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error calculating lead score: " . $e->getMessage(), 'error', 'crm');
@@ -519,9 +552,9 @@ class CRMManager {
      * Send welcome email to lead
      */
     private function sendLeadWelcomeEmail($leadId) {
-        $sql = "SELECT name, email FROM leads WHERE id = ?";
+        $sql = "SELECT name, email FROM leads WHERE id = :id";
         try {
-            $lead = $this->db->fetch($sql, [$leadId]);
+            $lead = $this->db->fetch($sql, [':id' => $leadId]);
 
             if ($lead && $lead['email']) {
                 $this->emailManager->send($lead['email'], 'lead_welcome_email', ['name' => $lead['name']]);
@@ -546,48 +579,48 @@ class CRMManager {
         $params = [];
 
         if (!empty($filters['lead_status'])) {
-            $sql .= " AND l.lead_status = ?";
-            $params[] = $filters['lead_status'];
+            $sql .= " AND l.lead_status = :lead_status";
+            $params[':lead_status'] = $filters['lead_status'];
         }
 
         if (!empty($filters['assigned_to'])) {
-            $sql .= " AND l.assigned_to = ?";
-            $params[] = $filters['assigned_to'];
+            $sql .= " AND l.assigned_to = :assigned_to";
+            $params[':assigned_to'] = $filters['assigned_to'];
         }
 
         if (!empty($filters['lead_source_id'])) {
-            $sql .= " AND l.lead_source_id = ?";
-            $params[] = $filters['lead_source_id'];
+            $sql .= " AND l.lead_source_id = :lead_source_id";
+            $params[':lead_source_id'] = $filters['lead_source_id'];
         }
 
         if (!empty($filters['search'])) {
             $search = "%" . $filters['search'] . "%";
-            $sql .= " AND (l.name LIKE ? OR l.email LIKE ? OR l.phone LIKE ?)";
-            $params[] = $search;
-            $params[] = $search;
-            $params[] = $search;
+            $sql .= " AND (l.name LIKE :search_name OR l.email LIKE :search_email OR l.phone LIKE :search_phone)";
+            $params[':search_name'] = $search;
+            $params[':search_email'] = $search;
+            $params[':search_phone'] = $search;
         }
 
         if (!empty($filters['date_from'])) {
-            $sql .= " AND DATE(l.created_at) >= ?";
-            $params[] = $filters['date_from'];
+            $sql .= " AND DATE(l.created_at) >= :date_from";
+            $params[':date_from'] = $filters['date_from'];
         }
 
         if (!empty($filters['date_to'])) {
-            $sql .= " AND DATE(l.created_at) <= ?";
-            $params[] = $filters['date_to'];
+            $sql .= " AND DATE(l.created_at) <= :date_to";
+            $params[':date_to'] = $filters['date_to'];
         }
 
         $sql .= " ORDER BY l.created_at DESC";
 
         if ($limit > 0) {
-            $sql .= " LIMIT ?";
-            $params[] = $limit;
+            $sql .= " LIMIT :limit";
+            $params[':limit'] = (int)$limit;
         }
 
         if ($offset > 0) {
-            $sql .= " OFFSET ?";
-            $params[] = $offset;
+            $sql .= " OFFSET :offset";
+            $params[':offset'] = (int)$offset;
         }
 
         try {
@@ -739,37 +772,37 @@ class CRMManager {
         $params = [];
 
         if (!empty($filters['assigned_to'])) {
-            $sql .= " AND o.assigned_to = ?";
-            $params[] = $filters['assigned_to'];
+            $sql .= " AND o.assigned_to = :assigned_to";
+            $params[':assigned_to'] = $filters['assigned_to'];
         }
 
         if (!empty($filters['pipeline_stage_id'])) {
-            $sql .= " AND o.pipeline_stage_id = ?";
-            $params[] = $filters['pipeline_stage_id'];
+            $sql .= " AND o.pipeline_stage_id = :pipeline_stage_id";
+            $params[':pipeline_stage_id'] = $filters['pipeline_stage_id'];
         }
 
         if (!empty($filters['opportunity_type'])) {
-            $sql .= " AND o.opportunity_type = ?";
-            $params[] = $filters['opportunity_type'];
+            $sql .= " AND o.opportunity_type = :opportunity_type";
+            $params[':opportunity_type'] = $filters['opportunity_type'];
         }
 
         if (!empty($filters['search'])) {
             $search = "%" . $filters['search'] . "%";
-            $sql .= " AND (o.opportunity_title LIKE ? OR l.name LIKE ?)";
-            $params[] = $search;
-            $params[] = $search;
+            $sql .= " AND (o.opportunity_title LIKE :search_title OR l.name LIKE :search_name)";
+            $params[':search_title'] = $search;
+            $params[':search_name'] = $search;
         }
 
         $sql .= " ORDER BY o.created_at DESC";
 
         if ($limit > 0) {
-            $sql .= " LIMIT ?";
-            $params[] = $limit;
+            $sql .= " LIMIT :limit";
+            $params[':limit'] = (int)$limit;
         }
 
         if ($offset > 0) {
-            $sql .= " OFFSET ?";
-            $params[] = $offset;
+            $sql .= " OFFSET :offset";
+            $params[':offset'] = (int)$offset;
         }
 
         try {
@@ -788,15 +821,15 @@ class CRMManager {
     public function convertLeadToCustomer($leadId, $customerData = []) {
         try {
             // Get lead details
-            $sql = "SELECT * FROM leads WHERE id = ?";
-            $lead = $this->db->fetch($sql, [$leadId]);
+            $sql = "SELECT * FROM leads WHERE id = :id";
+            $lead = $this->db->fetch($sql, [':id' => $leadId]);
 
             if (!$lead) return false;
 
             // Check if customer already exists
             if (!empty($lead['email'])) {
-                $checkSql = "SELECT id FROM customer_profiles WHERE email = ? OR phone = ?";
-                $existingCustomer = $this->db->fetch($checkSql, [$lead['email'], $lead['phone']]);
+                $checkSql = "SELECT id FROM customer_profiles WHERE email = :email OR phone = :phone";
+                $existingCustomer = $this->db->fetch($checkSql, [':email' => $lead['email'], ':phone' => $lead['phone']]);
                 if ($existingCustomer) {
                     return $existingCustomer['id'];
                 }
@@ -807,28 +840,32 @@ class CRMManager {
                 customer_number, name, email, phone, alternate_phone,
                 date_of_birth, gender, marital_status, occupation, company, designation, annual_income,
                 address, city, state, pincode, user_id, lead_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            ) VALUES (
+                :customer_number, :name, :email, :phone, :alternate_phone,
+                :date_of_birth, :gender, :marital_status, :occupation, :company, :designation, :annual_income,
+                :address, :city, :state, :pincode, :user_id, :lead_id
+            )";
 
             $customerNumber = 'CUST' . date('Y') . str_pad($leadId, 4, '0', STR_PAD_LEFT);
             $params = [
-                $customerNumber,
-                $lead['name'],
-                $lead['email'],
-                $lead['phone'],
-                $lead['alternate_phone'],
-                $lead['date_of_birth'],
-                $lead['gender'],
-                $lead['marital_status'],
-                $lead['occupation'],
-                $lead['company'],
-                $lead['designation'],
-                $lead['annual_income'],
-                $lead['address'],
-                $lead['city'],
-                $lead['state'],
-                $lead['pincode'],
-                $lead['assigned_to'],
-                $leadId
+                ':customer_number' => $customerNumber,
+                ':name' => $lead['name'],
+                ':email' => $lead['email'],
+                ':phone' => $lead['phone'],
+                ':alternate_phone' => $lead['alternate_phone'],
+                ':date_of_birth' => $lead['date_of_birth'],
+                ':gender' => $lead['gender'],
+                ':marital_status' => $lead['marital_status'],
+                ':occupation' => $lead['occupation'],
+                ':company' => $lead['company'],
+                ':designation' => $lead['designation'],
+                ':annual_income' => $lead['annual_income'],
+                ':address' => $lead['address'],
+                ':city' => $lead['city'],
+                ':state' => $lead['state'],
+                ':pincode' => $lead['pincode'],
+                ':user_id' => $lead['assigned_to'],
+                ':lead_id' => $leadId
             ];
 
             if ($this->db->execute($customerSql, $params)) {
@@ -836,8 +873,8 @@ class CRMManager {
 
                 if ($customerId) {
                     // Update lead status
-                    $updateSql = "UPDATE leads SET lead_status = 'won' WHERE id = ?";
-                    $this->db->execute($updateSql, [$leadId]);
+                    $updateSql = "UPDATE leads SET lead_status = 'won' WHERE id = :id";
+                    $this->db->execute($updateSql, [':id' => $leadId]);
 
                     if ($this->logger) {
                         $this->logger->log("Lead converted to customer: Lead ID $leadId, Customer ID $customerId", 'info', 'crm');
@@ -861,19 +898,22 @@ class CRMManager {
         $sql = "INSERT INTO support_tickets (
             ticket_number, customer_id, ticket_type, priority, subject, description,
             status, assigned_to, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        ) VALUES (
+            :ticket_number, :customer_id, :ticket_type, :priority, :subject, :description,
+            :status, :assigned_to, :created_by
+        )";
 
         try {
             $params = [
-                $ticketData['ticket_number'],
-                $ticketData['customer_id'],
-                $ticketData['ticket_type'],
-                $ticketData['priority'],
-                $ticketData['subject'],
-                $ticketData['description'],
-                $ticketData['status'],
-                $ticketData['assigned_to'],
-                $ticketData['created_by']
+                ':ticket_number' => $ticketData['ticket_number'],
+                ':customer_id' => $ticketData['customer_id'],
+                ':ticket_type' => $ticketData['ticket_type'],
+                ':priority' => $ticketData['priority'],
+                ':subject' => $ticketData['subject'],
+                ':description' => $ticketData['description'],
+                ':status' => $ticketData['status'],
+                ':assigned_to' => $ticketData['assigned_to'],
+                ':created_by' => $ticketData['created_by']
             ];
 
             if ($this->db->execute($sql, $params)) {
@@ -905,9 +945,9 @@ class CRMManager {
         $sql = "SELECT st.*, cp.name, cp.email
                 FROM support_tickets st
                 JOIN customer_profiles cp ON st.customer_id = cp.id
-                WHERE st.id = ?";
+                WHERE st.id = :id";
         try {
-            $ticket = $this->db->fetch($sql, [$ticketId]);
+            $ticket = $this->db->fetch($sql, [':id' => $ticketId]);
 
             if ($ticket && $ticket['email']) {
                 $this->emailManager->send($ticket['email'], 'support_ticket_acknowledgment', ['ticket_number' => $ticket['ticket_number'], 'name' => $ticket['name']]);

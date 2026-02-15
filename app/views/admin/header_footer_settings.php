@@ -105,26 +105,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (move_uploaded_file($_FILES['site_logo']['tmp_name'], $uploadPath)) {
                 $logoPath = 'assets/images/' . $fileName;
                 // Update logo path in database
-                $stmt = $pdo->prepare('UPDATE site_settings SET value = ? WHERE setting_name = "site_logo"');
-                $stmt->execute([$logoPath]);
+                $stmt = $pdo->prepare('UPDATE site_settings SET value = :value WHERE setting_name = "site_logo"');
+                $stmt->execute([':value' => $logoPath]);
             }
         }
 
         // Update header menu items
-        $stmt = $pdo->prepare('UPDATE site_settings SET value = ? WHERE setting_name = "header_menu_items"');
-        $stmt->execute([json_encode($headerMenuItems)]);
+        $stmt = $pdo->prepare('UPDATE site_settings SET value = :value WHERE setting_name = "header_menu_items"');
+        $stmt->execute([':value' => json_encode($headerMenuItems)]);
 
         // Update header styles
-        $stmt = $pdo->prepare('UPDATE site_settings SET value = ? WHERE setting_name = "header_styles"');
-        $stmt->execute([json_encode($headerStyles)]);
+        $stmt = $pdo->prepare('UPDATE site_settings SET value = :value WHERE setting_name = "header_styles"');
+        $stmt->execute([':value' => json_encode($headerStyles)]);
 
         // Update footer content
-        $stmt = $pdo->prepare('UPDATE site_settings SET value = ? WHERE setting_name = "footer_content"');
-        $stmt->execute([$footerContent]);
-        $stmt = $pdo->prepare('UPDATE site_settings SET value = ? WHERE setting_name = "footer_links"');
-        $stmt->execute([json_encode($footerLinks)]);
-        $stmt = $pdo->prepare('UPDATE site_settings SET value = ? WHERE setting_name = "social_links"');
-        $stmt->execute([json_encode($socialLinks)]);
+        $stmt = $pdo->prepare('UPDATE site_settings SET value = :value WHERE setting_name = "footer_content"');
+        $stmt->execute([':value' => $footerContent]);
+        $stmt = $pdo->prepare('UPDATE site_settings SET value = :value WHERE setting_name = "footer_links"');
+        $stmt->execute([':value' => json_encode($footerLinks)]);
+        $stmt = $pdo->prepare('UPDATE site_settings SET value = :value WHERE setting_name = "social_links"');
+        $stmt->execute([':value' => json_encode($socialLinks)]);
 
         // Update new footer settings
         updateSetting($pdo, 'footer_status', $footerStatus);

@@ -82,14 +82,11 @@ function getCommissionStructure() {
  * Calculate commission for a specific booking
  */
 function calculateCommission($associate_id, $booking_amount, $customer_id) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     // Get associate details
-    $associate_query = "SELECT current_level, sponsor_id FROM mlm_agents WHERE id = ?";
-    $stmt = $conn->prepare($associate_query);
-    $stmt->bind_param("i", $associate_id);
-    $stmt->execute();
-    $associate = $stmt->get_result()->fetch_assoc();
+    $associate_query = "SELECT current_level, sponsor_id FROM mlm_agents WHERE id = :id";
+    $associate = $db->fetch($associate_query, ['id' => $associate_id]);
 
     if (!$associate) {
         return ['error' => 'Associate not found'];
@@ -181,14 +178,14 @@ function calculateCommission($associate_id, $booking_amount, $customer_id) {
  * Higher level associates get percentage of lower level business
  */
 function calculateLevelDifferenceBonus($associate_id, $booking_amount) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     // Get associate level
-    $associate_query = "SELECT current_level FROM mlm_agents WHERE id = ?";
-    $stmt = $conn->prepare($associate_query);
-    $stmt->bind_param("i", $associate_id);
-    $stmt->execute();
-    $associate = $stmt->get_result()->fetch_assoc();
+    $associate_query = "SELECT current_level FROM mlm_agents WHERE id = :id";
+    $associate = $db->fetch($associate_query, ['id' => $associate_id]);
+    
+    if (!$associate) return 0;
+    
     $associate_level = $associate['current_level'];
 
     // Get team members at lower levels
@@ -196,7 +193,7 @@ function calculateLevelDifferenceBonus($associate_id, $booking_amount) {
         WITH RECURSIVE team_tree AS (
             SELECT id, current_level, sponsor_id, 1 as level
             FROM mlm_agents
-            WHERE sponsor_id = ? AND status = 'active'
+            WHERE sponsor_id = :sponsor_id AND status = 'active'
 
             UNION ALL
 
@@ -205,13 +202,13 @@ function calculateLevelDifferenceBonus($associate_id, $booking_amount) {
             JOIN team_tree t ON m.sponsor_id = t.id
             WHERE m.status = 'active' AND t.level < 5
         )
-        SELECT id, current_level FROM team_tree WHERE id != ?
+        SELECT id, current_level FROM team_tree WHERE id != :associate_id
     ";
 
-    $stmt = $conn->prepare($team_query);
-    $stmt->bind_param("ii", $associate_id, $associate_id);
-    $stmt->execute();
-    $team_members = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $team_members = $db->fetchAll($team_query, [
+        'sponsor_id' => $associate_id,
+        'associate_id' => $associate_id
+    ]);
 
     $level_structure = getCommissionStructure();
     $associate_commission_rate = $level_structure[$associate_level]['direct_commission'];
@@ -241,14 +238,11 @@ function calculateLevelDifferenceBonus($associate_id, $booking_amount) {
  * Calculate Team Commission
  */
 function calculateTeamCommission($associate_id, $booking_amount) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     // Get direct team members
-    $team_query = "SELECT id, current_level FROM mlm_agents WHERE sponsor_id = ? AND status = 'active'";
-    $stmt = $conn->prepare($team_query);
-    $stmt->bind_param("i", $associate_id);
-    $stmt->execute();
-    $team_members = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $team_query = "SELECT id, current_level FROM mlm_agents WHERE sponsor_id = :sponsor_id AND status = 'active'";
+    $team_members = $db->fetchAll($team_query, ['sponsor_id' => $associate_id]);
 
     $structure = getCommissionStructure();
     $associate_level = getAssociateLevel($associate_id);
@@ -276,14 +270,11 @@ function calculateTeamCommission($associate_id, $booking_amount) {
  * Calculate Matching Bonus
  */
 function calculateMatchingBonus($associate_id, $booking_amount) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     // Get associate's direct recruits
-    $direct_recruits_query = "SELECT id FROM mlm_agents WHERE sponsor_id = ? AND status = 'active'";
-    $stmt = $conn->prepare($direct_recruits_query);
-    $stmt->bind_param("i", $associate_id);
-    $stmt->execute();
-    $direct_recruits = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $direct_recruits_query = "SELECT id FROM mlm_agents WHERE sponsor_id = :sponsor_id AND status = 'active'";
+    $direct_recruits = $db->fetchAll($direct_recruits_query, ['sponsor_id' => $associate_id]);
 
     $associate_level = getAssociateLevel($associate_id);
     $structure = getCommissionStructure();
@@ -331,16 +322,19 @@ function calculatePerformanceBonus($associate_id, $booking_amount) {
  * Credit commission to upline
  */
 function creditUplineCommission($associate_id, $downline_id, $amount, $type) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     try {
         $query = "INSERT INTO mlm_commissions
                   (associate_id, downline_id, commission_amount, commission_type, status, created_at)
-                  VALUES (?, ?, ?, ?, 'pending', NOW())";
+                  VALUES (:associate_id, :downline_id, :amount, :type, 'pending', NOW())";
 
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("iids", $associate_id, $downline_id, $amount, $type);
-        $stmt->execute();
+        $db->execute($query, [
+            'associate_id' => $associate_id,
+            'downline_id' => $downline_id,
+            'amount' => $amount,
+            'type' => $type
+        ]);
 
     } catch (Exception $e) {
         error_log("Error crediting commission: " . $e->getMessage());
@@ -351,18 +345,22 @@ function creditUplineCommission($associate_id, $downline_id, $amount, $type) {
  * Save commission record
  */
 function saveCommissionRecord($associate_id, $customer_id, $booking_amount, $commissions, $total) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     try {
         $query = "INSERT INTO mlm_commission_records
                   (associate_id, customer_id, booking_amount, commission_details, total_commission, status, created_at)
-                  VALUES (?, ?, ?, ?, ?, 'calculated', NOW())";
+                  VALUES (:associate_id, :customer_id, :booking_amount, :details, :total, 'calculated', NOW())";
 
         $details_json = json_encode($commissions);
 
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("iidsd", $associate_id, $customer_id, $booking_amount, $details_json, $total);
-        $stmt->execute();
+        $db->execute($query, [
+            'associate_id' => $associate_id,
+            'customer_id' => $customer_id,
+            'booking_amount' => $booking_amount,
+            'details' => $details_json,
+            'total' => $total
+        ]);
 
     } catch (Exception $e) {
         error_log("Error saving commission record: " . $e->getMessage());
@@ -373,16 +371,13 @@ function saveCommissionRecord($associate_id, $customer_id, $booking_amount, $com
  * Get associate level
  */
 function getAssociateLevel($associate_id) {
-    global $conn;
+    $db = \App\Core\App::database();
 
-    $query = "SELECT current_level FROM mlm_agents WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $associate_id);
-    $stmt->execute();
+    $query = "SELECT current_level FROM mlm_agents WHERE id = :id";
+    $result = $db->fetch($query, ['id' => $associate_id]);
 
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        return $result->fetch_assoc()['current_level'];
+    if ($result) {
+        return $result['current_level'];
     }
 
     return 'Associate';
@@ -392,45 +387,37 @@ function getAssociateLevel($associate_id) {
  * Get monthly sales for associate
  */
 function getMonthlySales($associate_id) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     $query = "SELECT COALESCE(SUM(amount), 0) as monthly_sales
               FROM bookings
-              WHERE associate_id = ? AND status IN ('confirmed', 'completed')
+              WHERE associate_id = :associate_id AND status IN ('confirmed', 'completed')
               AND booking_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
 
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $associate_id);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    return $result->fetch_assoc()['monthly_sales'];
+    $result = $db->fetch($query, ['associate_id' => $associate_id]);
+    return $result['monthly_sales'] ?? 0;
 }
 
 /**
  * Get recruit sales
  */
 function getRecruitSales($recruit_id) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     $query = "SELECT COALESCE(SUM(amount), 0) as recruit_sales
               FROM bookings
-              WHERE associate_id = ? AND status IN ('confirmed', 'completed')
+              WHERE associate_id = :recruit_id AND status IN ('confirmed', 'completed')
               AND booking_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
 
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $recruit_id);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    return $result->fetch_assoc()['recruit_sales'];
+    $result = $db->fetch($query, ['recruit_id' => $recruit_id]);
+    return $result['recruit_sales'] ?? 0;
 }
 
 /**
  * Get commission summary for associate
  */
 function getCommissionSummary($associate_id, $period = 'monthly') {
-    global $conn;
+    $db = \App\Core\App::database();
 
     $date_filter = "";
     if ($period == 'monthly') {
@@ -445,32 +432,24 @@ function getCommissionSummary($associate_id, $period = 'monthly') {
                 COUNT(*) as count,
                 status
               FROM mlm_commissions
-              WHERE associate_id = ? $date_filter
+              WHERE associate_id = :associate_id $date_filter
               GROUP BY commission_type, status";
 
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $associate_id);
-    $stmt->execute();
-
-    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    return $db->fetchAll($query, ['associate_id' => $associate_id]);
 }
 
 /**
  * Process commission payout
  */
 function processCommissionPayout($associate_id) {
-    global $conn;
+    $db = \App\Core\App::database();
 
     try {
         // Get pending commissions
         $query = "SELECT id, commission_amount FROM mlm_commissions
-                  WHERE associate_id = ? AND status = 'pending'";
+                  WHERE associate_id = :associate_id AND status = 'pending'";
 
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $associate_id);
-        $stmt->execute();
-
-        $pending_commissions = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $pending_commissions = $db->fetchAll($query, ['associate_id' => $associate_id]);
 
         if (empty($pending_commissions)) {
             return ['success' => false, 'message' => 'No pending commissions'];
@@ -480,21 +459,22 @@ function processCommissionPayout($associate_id) {
 
         // Update commission status to paid
         $update_query = "UPDATE mlm_commissions SET status = 'paid', paid_at = NOW()
-                         WHERE associate_id = ? AND status = 'pending'";
+                         WHERE associate_id = :associate_id AND status = 'pending'";
 
-        $update_stmt = $conn->prepare($update_query);
-        $update_stmt->bind_param("i", $associate_id);
-        $update_stmt->execute();
+        $db->execute($update_query, ['associate_id' => $associate_id]);
 
         // Record payout
         $payout_query = "INSERT INTO mlm_payouts
                         (associate_id, amount, commission_ids, payout_date, status)
-                        VALUES (?, ?, ?, NOW(), 'completed')";
+                        VALUES (:associate_id, :amount, :commission_ids, NOW(), 'completed')";
 
         $commission_ids = implode(',', array_column($pending_commissions, 'id'));
-        $payout_stmt = $conn->prepare($payout_query);
-        $payout_stmt->bind_param("ids", $associate_id, $total_payout, $commission_ids);
-        $payout_stmt->execute();
+        
+        $db->execute($payout_query, [
+            'associate_id' => $associate_id,
+            'amount' => $total_payout,
+            'commission_ids' => $commission_ids
+        ]);
 
         return [
             'success' => true,

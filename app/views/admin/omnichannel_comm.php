@@ -69,7 +69,7 @@ require_once __DIR__ . '/admin_sidebar.php';
                             <i class="fas fa-chart-line fa-2x me-3 opacity-50"></i>
                             <h5 class="mb-0"><?= h($mlSupport->translate('Finance/Investments')) ?></h5>
                         </div>
-                        <h3 class="fw-bold mb-0"><?= h($db->fetchOne("SELECT COUNT(*) as count FROM communication_interactions WHERE tag = 'investment'")['count'] ?? 0) ?></h3>
+                        <h3 class="fw-bold mb-0"><?= h($db->fetchOne("SELECT COUNT(*) as count FROM communication_interactions WHERE tag = :tag", ['tag' => 'investment'])['count'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>
@@ -80,7 +80,7 @@ require_once __DIR__ . '/admin_sidebar.php';
                             <i class="fas fa-building fa-2x me-3 opacity-50"></i>
                             <h5 class="mb-0"><?= h($mlSupport->translate('Real Estate Enquiries')) ?></h5>
                         </div>
-                        <h3 class="fw-bold mb-0"><?= h($db->fetchOne("SELECT COUNT(*) as count FROM communication_interactions WHERE tag = 'enquiry'")['count'] ?? 0) ?></h3>
+                        <h3 class="fw-bold mb-0"><?= h($db->fetchOne("SELECT COUNT(*) as count FROM communication_interactions WHERE tag = :tag", ['tag' => 'enquiry'])['count'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>
@@ -119,18 +119,18 @@ require_once __DIR__ . '/admin_sidebar.php';
                                     ");
                                     foreach ($interactions as $row):
                                     ?>
-                                    <tr>
-                                        <td>
-                                            <span class="badge rounded-pill bg-light text-dark px-3">
-                                                <i class="fab fa-<?= h($row['channel']) ?> me-1"></i> <?= h(strtoupper($row['channel'])) ?>
-                                            </span>
-                                        </td>
-                                        <td><?= h($mlSupport->translate('Lead')) ?> #<?= h($row['lead_id'] ?: $mlSupport->translate('Unknown')) ?></td>
-                                        <td><span class="text-uppercase small fw-bold"><?= h($row['interaction_type']) ?></span></td>
-                                        <td><span class="badge bg-<?= ($row['tag'] == 'investment') ? 'success' : 'info' ?> rounded-pill px-3"><?= h(strtoupper($row['tag'])) ?></span></td>
-                                        <td><?= $row['dept_name'] ? h($row['dept_name']) : '<span class="text-muted small italic">' . h($mlSupport->translate('Routing...')) . '</span>' ?></td>
-                                        <td><?= h(date('H:i', strtotime($row['created_at']))) ?></td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="badge rounded-pill bg-light text-dark px-3">
+                                                    <i class="fab fa-<?= h($row['channel']) ?> me-1"></i> <?= h(strtoupper($row['channel'])) ?>
+                                                </span>
+                                            </td>
+                                            <td><?= h($mlSupport->translate('Lead')) ?> #<?= h($row['lead_id'] ?: $mlSupport->translate('Unknown')) ?></td>
+                                            <td><span class="text-uppercase small fw-bold"><?= h($row['interaction_type']) ?></span></td>
+                                            <td><span class="badge bg-<?= ($row['tag'] == 'investment') ? 'success' : 'info' ?> rounded-pill px-3"><?= h(strtoupper($row['tag'])) ?></span></td>
+                                            <td><?= $row['dept_name'] ? h($row['dept_name']) : '<span class="text-muted small italic">' . h($mlSupport->translate('Routing...')) . '</span>' ?></td>
+                                            <td><?= h(date('H:i', strtotime($row['created_at']))) ?></td>
+                                        </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
@@ -149,15 +149,15 @@ require_once __DIR__ . '/admin_sidebar.php';
                     </div>
                     <div class="card-body">
                         <?php foreach ($deptWise as $dept): ?>
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="fw-medium text-dark"><?= h($dept['name']) ?></span>
-                                <span class="badge bg-light text-primary"><?= h($dept['count']) ?> <?= h($mlSupport->translate('cases')) ?></span>
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-medium text-dark"><?= h($dept['name']) ?></span>
+                                    <span class="badge bg-light text-primary"><?= h($dept['count']) ?> <?= h($mlSupport->translate('cases')) ?></span>
+                                </div>
+                                <div class="progress rounded-pill" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: <?= min(100, $dept['count'] * 10) ?>%" aria-valuenow="<?= min(100, $dept['count'] * 10) ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
                             </div>
-                            <div class="progress rounded-pill" style="height: 8px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: <?= min(100, $dept['count'] * 10) ?>%" aria-valuenow="<?= min(100, $dept['count'] * 10) ?>" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -175,23 +175,23 @@ require_once __DIR__ . '/admin_sidebar.php';
                             $docs = $db->fetchAll("SELECT * FROM business_documents ORDER BY generated_at DESC LIMIT 5");
                             foreach ($docs as $doc):
                             ?>
-                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-sm bg-light text-danger rounded me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                        <i class="fas fa-file-pdf"></i>
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm bg-light text-danger rounded me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <span class="fw-medium text-uppercase small"><?= h($doc['doc_type']) ?></span>
                                     </div>
-                                    <span class="fw-medium text-uppercase small"><?= h($doc['doc_type']) ?></span>
-                                </div>
-                                <a href="<?= h($doc['file_path']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                    <?= h($mlSupport->translate('View')) ?>
-                                </a>
-                            </li>
+                                    <a href="<?= h($doc['file_path']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        <?= h($mlSupport->translate('View')) ?>
+                                    </a>
+                                </li>
                             <?php endforeach; ?>
                             <?php if (empty($docs)): ?>
-                            <li class="list-group-item text-center text-muted py-4">
-                                <i class="fas fa-folder-open fa-2x mb-2 d-block opacity-25"></i>
-                                <?= h($mlSupport->translate('No documents generated yet.')) ?>
-                            </li>
+                                <li class="list-group-item text-center text-muted py-4">
+                                    <i class="fas fa-folder-open fa-2x mb-2 d-block opacity-25"></i>
+                                    <?= h($mlSupport->translate('No documents generated yet.')) ?>
+                                </li>
                             <?php endif; ?>
                         </ul>
                     </div>

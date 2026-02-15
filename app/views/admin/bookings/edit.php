@@ -87,8 +87,8 @@ require_once ABSPATH . '/resources/views/admin/layouts/header.php';
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
-                                        <label class="form-label"><?php echo h($mlSupport->translate('Visit Date')); ?> <span class="text-danger">*</span></label>
-                                        <input type="date" name="visit_date" class="form-control" required value="<?php echo h($booking['visit_date']); ?>">
+                                        <label class="form-label"><?php echo h($mlSupport->translate('Booking Date')); ?> <span class="text-danger">*</span></label>
+                                        <input type="date" name="booking_date" class="form-control" required value="<?php echo h($booking['booking_date']); ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

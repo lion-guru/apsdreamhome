@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Advanced Password Reset Mechanism
  * Provides secure password reset functionality
  */
-class PasswordReset {
+class PasswordReset
+{
     private const TOKEN_EXPIRY = 3600; // 1 hour
     private const MAX_RESET_ATTEMPTS = 3;
 
@@ -14,7 +16,8 @@ class PasswordReset {
      * @param int $userId
      * @return string
      */
-    public static function generateResetToken($userId) {
+    public static function generateResetToken($userId)
+    {
         // Create cryptographically secure token
         $token = \bin2hex(\App\Helpers\SecurityHelper::secureRandomBytes(32));
 
@@ -26,9 +29,12 @@ class PasswordReset {
             $stmt = $db->prepare("
                 INSERT INTO password_reset_tokens
                 (user_id, token_hash, created_at, expires_at)
-                VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 1 HOUR))
+                VALUES (:user_id, :token_hash, NOW(), DATE_ADD(NOW(), INTERVAL 1 HOUR))
             ");
-            $stmt->execute([$userId, $hashedToken]);
+            $stmt->execute([
+                'user_id' => $userId,
+                'token_hash' => $hashedToken
+            ]);
 
             // Log token generation
             AdminLogger::log('PASSWORD_RESET_TOKEN_GENERATED', [
@@ -53,7 +59,8 @@ class PasswordReset {
      * @param string $token
      * @return array|false
      */
-    public static function validateResetToken($token) {
+    public static function validateResetToken($token)
+    {
         $hashedToken = hash('sha256', $token);
 
         try {
@@ -61,11 +68,11 @@ class PasswordReset {
             $stmt = $db->prepare("
                 SELECT user_id, created_at
                 FROM password_reset_tokens
-                WHERE token_hash = ?
+                WHERE token_hash = :token_hash
                 AND expires_at > NOW()
                 AND used = 0
             ");
-            $stmt->execute([$hashedToken]);
+            $stmt->execute(['token_hash' => $hashedToken]);
             $tokenData = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$tokenData) {
@@ -91,7 +98,8 @@ class PasswordReset {
      * @param string $newPassword
      * @return bool
      */
-    public static function processPasswordReset($token, $newPassword) {
+    public static function processPasswordReset($token, $newPassword)
+    {
         // Validate token
         $tokenData = self::validateResetToken($token);
         if (!$tokenData) {
@@ -110,22 +118,22 @@ class PasswordReset {
             // Update user password
             $stmt = $db->prepare("
                 UPDATE user
-                SET upass = ?,
+                SET upass = :upass,
                     last_password_change = NOW()
-                WHERE uid = ?
+                WHERE uid = :uid
             ");
             $stmt->execute([
-                $passwordData['hash'],
-                $tokenData['user_id']
+                'upass' => $passwordData['hash'],
+                'uid' => $tokenData['user_id']
             ]);
 
             // Mark token as used
             $stmt = $db->prepare("
                 UPDATE password_reset_tokens
                 SET used = 1, used_at = NOW()
-                WHERE token_hash = ?
+                WHERE token_hash = :token_hash
             ");
-            $stmt->execute([hash('sha256', $token)]);
+            $stmt->execute(['token_hash' => hash('sha256', $token)]);
 
             // Log successful password reset
             AdminLogger::log('PASSWORD_RESET_SUCCESS', [
@@ -154,11 +162,12 @@ class PasswordReset {
      * @param string $email
      * @return bool
      */
-    public static function sendResetEmail($email) {
+    public static function sendResetEmail($email)
+    {
         try {
             $db = \App\Core\App::database();
-            $stmt = $db->prepare("SELECT uid as id FROM user WHERE uemail = ?");
-            $stmt->execute([$email]);
+            $stmt = $db->prepare("SELECT uid as id FROM user WHERE uemail = :email");
+            $stmt->execute(['email' => $email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$user) {
@@ -206,7 +215,8 @@ class PasswordReset {
      * @param string $body
      * @return bool
      */
-    private static function sendSecureEmail($to, $subject, $body) {
+    private static function sendSecureEmail($to, $subject, $body)
+    {
         // Implement secure email sending
         // Use libraries like PHPMailer with SMTP encryption
         return true; // Placeholder
@@ -214,6 +224,7 @@ class PasswordReset {
 }
 
 // Helper function for global use
-function send_password_reset($email) {
+function send_password_reset($email)
+{
     return PasswordReset::sendResetEmail($email);
 }

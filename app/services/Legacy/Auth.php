@@ -398,7 +398,7 @@ class Auth
         }
 
         try {
-            return $db->query("SELECT * FROM user WHERE uemail = ?", [$email])->fetch();
+            return $db->query("SELECT * FROM user WHERE uemail = :email", ['email' => $email])->fetch();
         } catch (\Exception $e) {
             error_log('Database error in Auth: ' . $e->getMessage());
             return false;
