@@ -106,7 +106,7 @@
                                             <option value="">स्रोत चुनें</option>
                                             <?php foreach ($sources as $source): ?>
                                                 <option value="<?= $source['id'] ?>"
-                                                    <?= $source['id'] == $lead['source'] ? 'selected' : '' ?>>
+                                                    <?= ($source['id'] == $lead['source'] || strtolower($source['source_name']) == strtolower($lead['source'])) ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($source['source_name']) ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -121,7 +121,7 @@
                                             <option value="">स्टेटस चुनें</option>
                                             <?php foreach ($statuses as $status): ?>
                                                 <option value="<?= $status['id'] ?>"
-                                                    <?= $status['id'] == $lead['status'] ? 'selected' : '' ?>>
+                                                    <?= ($status['id'] == $lead['status'] || strtolower($status['status_name']) == strtolower($lead['status'])) ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($status['status_name']) ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -267,8 +267,8 @@
     }
 
     function confirmDelete() {
-        fetch('/admin/leads/<?= $lead['id'] ?>/delete', {
-                method: 'DELETE',
+        fetch('/admin/leads/delete/<?= $lead['id'] ?>', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 }

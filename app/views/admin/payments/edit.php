@@ -20,13 +20,7 @@
                     <div class="form-group mb-3">
                         <label class="form-label fw-bold" for="customer">Customer <span class="text-danger">*</span></label>
                         <select class="form-control shadow-sm" id="customer" name="customer_id" required style="width: 100%;">
-                            <?php if (!empty($payment['customer_id'])): ?>
-                                <option value="<?php echo $payment['customer_id']; ?>" selected>
-                                    <?php echo htmlspecialchars($payment['customer_name'] . ' (' . ($payment['customer_mobile'] ?? 'N/A') . ')'); ?>
-                                </option>
-                            <?php else: ?>
-                                <option value="">Select Customer</option>
-                            <?php endif; ?>
+                            <option value="<?php echo $payment['customer_id']; ?>" selected><?php echo htmlspecialchars($payment['customer_name'] . ' (' . $payment['customer_mobile'] . ')'); ?></option>
                         </select>
                     </div>
                 </div>
@@ -35,7 +29,7 @@
                         <label class="form-label fw-bold" for="amount">Amount <span class="text-danger">*</span></label>
                         <div class="input-group shadow-sm">
                             <span class="input-group-text">₹</span>
-                            <input type="number" class="form-control" id="amount" name="amount" required step="0.01" min="0" value="<?php echo htmlspecialchars($payment['amount']); ?>">
+                            <input type="number" class="form-control" id="amount" name="amount" required step="0.01" min="0" value="<?php echo $payment['amount']; ?>">
                         </div>
                     </div>
                 </div>
@@ -43,9 +37,9 @@
                     <div class="form-group mb-3">
                         <label class="form-label fw-bold" for="paymentType">Payment Type <span class="text-danger">*</span></label>
                         <select class="form-control shadow-sm" id="paymentType" name="payment_type" required>
-                            <option value="booking" <?php echo ($payment['payment_type'] == 'booking') ? 'selected' : ''; ?>>Booking</option>
-                            <option value="installment" <?php echo ($payment['payment_type'] == 'installment') ? 'selected' : ''; ?>>Installment</option>
-                            <option value="full" <?php echo ($payment['payment_type'] == 'full_payment' || $payment['payment_type'] == 'full') ? 'selected' : ''; ?>>Full Payment</option>
+                            <option value="booking" <?php echo $payment['payment_type'] == 'booking' ? 'selected' : ''; ?>>Booking</option>
+                            <option value="installment" <?php echo $payment['payment_type'] == 'installment' ? 'selected' : ''; ?>>Installment</option>
+                            <option value="full" <?php echo $payment['payment_type'] == 'full' ? 'selected' : ''; ?>>Full Payment</option>
                         </select>
                     </div>
                 </div>
@@ -53,26 +47,41 @@
                     <div class="form-group mb-3">
                         <label class="form-label fw-bold" for="paymentMethod">Payment Method <span class="text-danger">*</span></label>
                         <select class="form-control shadow-sm" id="paymentMethod" name="payment_method" required>
-                            <option value="cash" <?php echo ($payment['payment_method'] == 'cash') ? 'selected' : ''; ?>>Cash</option>
-                            <option value="bank_transfer" <?php echo ($payment['payment_method'] == 'bank_transfer') ? 'selected' : ''; ?>>Bank Transfer</option>
-                            <option value="cheque" <?php echo ($payment['payment_method'] == 'cheque') ? 'selected' : ''; ?>>Cheque</option>
-                            <option value="upi" <?php echo ($payment['payment_method'] == 'upi') ? 'selected' : ''; ?>>UPI</option>
+                            <option value="cash" <?php echo $payment['payment_method'] == 'cash' ? 'selected' : ''; ?>>Cash</option>
+                            <option value="bank_transfer" <?php echo $payment['payment_method'] == 'bank_transfer' ? 'selected' : ''; ?>>Bank Transfer</option>
+                            <option value="cheque" <?php echo $payment['payment_method'] == 'cheque' ? 'selected' : ''; ?>>Cheque</option>
+                            <option value="upi" <?php echo $payment['payment_method'] == 'upi' ? 'selected' : ''; ?>>UPI</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-bold" for="paymentDate">Payment Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control shadow-sm" id="paymentDate" name="payment_date" required value="<?php echo date('Y-m-d', strtotime($payment['payment_date'])); ?>">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-bold" for="transactionId">Transaction ID</label>
+                        <input type="text" class="form-control shadow-sm" id="transactionId" name="transaction_id" value="<?php echo htmlspecialchars($payment['transaction_id'] ?? ''); ?>">
+                    </div>
+                </div>
+                 <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label fw-bold" for="status">Status <span class="text-danger">*</span></label>
+                        <select class="form-control shadow-sm" id="status" name="status" required>
+                            <option value="completed" <?php echo $payment['status'] == 'completed' ? 'selected' : ''; ?>>Completed</option>
+                            <option value="pending" <?php echo $payment['status'] == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                            <option value="failed" <?php echo $payment['status'] == 'failed' ? 'selected' : ''; ?>>Failed</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group mb-3">
                         <label class="form-label fw-bold" for="description">Description</label>
-                        <textarea class="form-control shadow-sm" id="description" name="description" rows="3"><?php echo htmlspecialchars($payment['description'] ?? ''); ?></textarea>
+                        <textarea class="form-control shadow-sm" id="description" name="description" rows="3"><?php echo htmlspecialchars($payment['notes'] ?? ''); ?></textarea>
                     </div>
                 </div>
-                
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-1"></i> Transaction ID: <strong><?php echo htmlspecialchars($payment['transaction_id']); ?></strong> | Created on: <?php echo date('d M Y, h:i A', strtotime($payment['payment_date'])); ?>
-                    </div>
-                </div>
-
                 <div class="col-12">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <button type="button" class="btn btn-light me-md-2" onclick="history.back()">Cancel</button>

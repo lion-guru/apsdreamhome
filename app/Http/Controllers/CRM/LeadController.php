@@ -55,7 +55,7 @@ class LeadController extends BaseController
         $this->data['sources'] = $sources;
         $this->data['statuses'] = $statuses;
 
-        $this->render('admin/leads');
+        $this->render('admin/leads/index');
     }
 
     /**
@@ -263,20 +263,16 @@ class LeadController extends BaseController
         try {
             $result = $this->leadService->deleteLead($id);
 
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => $result,
-                'message' => $result ? 'Lead deleted successfully' : 'Failed to delete lead'
-            ]);
-            exit;
+            if ($result) {
+                $this->setFlash('success', 'Lead deleted successfully!');
+            } else {
+                $this->setFlash('error', 'Failed to delete lead');
+            }
         } catch (\Exception $e) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-            exit;
+            $this->setFlash('error', $e->getMessage());
         }
+
+        $this->redirect('admin/leads');
     }
 
     /**

@@ -275,6 +275,7 @@ class AuthController extends BaseController
             ");
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
 
             if ($user && $this->verifyPassword($password, $user['password'])) {
                 // Remove password from user data before returning
@@ -293,7 +294,7 @@ class AuthController extends BaseController
                         ");
                         $roleStmt->execute([$user['id']]);
                         $specificRole = $roleStmt->fetchColumn();
-                        
+
                         if ($specificRole) {
                             $user['role'] = $specificRole;
                         }

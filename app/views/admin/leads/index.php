@@ -10,7 +10,8 @@
 
     <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+            <?php echo $_SESSION['success'];
+            unset($_SESSION['success']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -38,20 +39,34 @@
                             <?php foreach ($leads as $lead): ?>
                                 <tr>
                                     <td>
-                                        <div class="fw-bold"><?php echo $lead['first_name'] . ' ' . $lead['last_name']; ?></div>
-                                        <small class="text-muted"><?php echo $lead['email']; ?></small>
+                                        <div class="fw-bold"><?php echo htmlspecialchars($lead['name']); ?></div>
+                                        <small class="text-muted"><?php echo htmlspecialchars($lead['email'] ?? ''); ?></small>
+                                        <?php if (!empty($lead['company'])): ?>
+                                            <br><small class="text-info"><i class="fas fa-building me-1"></i><?php echo htmlspecialchars($lead['company']); ?></small>
+                                        <?php endif; ?>
                                     </td>
-                                    <td><?php echo $lead['phone']; ?></td>
-                                    <td><span class="badge bg-secondary"><?php echo $lead['source']; ?></span></td>
+                                    <td><?php echo htmlspecialchars($lead['phone'] ?? ''); ?></td>
+                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($lead['source_name'] ?? $lead['source'] ?? 'Unknown'); ?></span></td>
                                     <td>
-                                        <?php 
-                                            $statusClass = 'bg-info';
-                                            if ($lead['status'] == 'Hot') $statusClass = 'bg-danger';
-                                            if ($lead['status'] == 'Closed') $statusClass = 'bg-success';
+                                        <?php
+                                        $statusLabel = $lead['status_label'] ?? $lead['status'] ?? 'New';
+                                        $statusClass = 'bg-info';
+                                        $statusLower = strtolower($statusLabel);
+
+                                        if (strpos($statusLower, 'hot') !== false || $statusLower == 'high') $statusClass = 'bg-danger';
+                                        elseif (strpos($statusLower, 'closed') !== false || $statusLower == 'won') $statusClass = 'bg-success';
+                                        elseif (strpos($statusLower, 'new') !== false) $statusClass = 'bg-primary';
+                                        elseif (strpos($statusLower, 'lost') !== false) $statusClass = 'bg-secondary';
+                                        elseif (strpos($statusLower, 'qualified') !== false) $statusClass = 'bg-warning text-dark';
                                         ?>
-                                        <span class="badge <?php echo $statusClass; ?>"><?php echo $lead['status']; ?></span>
+                                        <span class="badge <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusLabel); ?></span>
                                     </td>
-                                    <td><?php echo date('d M Y', strtotime($lead['created_at'])); ?></td>
+                                    <td>
+                                        <?php echo date('d M Y', strtotime($lead['created_at'])); ?>
+                                        <?php if (!empty($lead['assigned_to_name'])): ?>
+                                            <br><small class="text-muted"><i class="fas fa-user-tag me-1"></i><?php echo htmlspecialchars($lead['assigned_to_name']); ?></small>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="text-end">
                                         <a href="<?php echo BASE_URL; ?>/admin/leads/edit/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-edit"></i>
@@ -71,11 +86,11 @@
 </div>
 
 <script>
-function confirmDelete(id) {
-    if (confirm('Are you sure you want to delete this lead?')) {
-        window.location.href = '<?php echo BASE_URL; ?>/admin/leads/delete/' + id;
+    function confirmDelete(id) {
+        if (confirm('Are you sure you want to delete this lead?')) {
+            window.location.href = '<?php echo BASE_URL; ?>/admin/leads/delete/' + id;
+        }
     }
-}
 </script>
 
 <?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
