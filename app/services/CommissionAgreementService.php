@@ -1,12 +1,17 @@
 <?php
+
+namespace App\Services;
+
+use App\Core\Database;
+use PDO;
+
 class CommissionAgreementService
 {
-    private mysqli $conn;
+    private PDO $conn;
 
     public function __construct()
     {
-        $config = AppConfig::getInstance();
-        $this->conn = $config->getDatabaseConnection();
+        $this->conn = Database::getInstance()->getConnection();
     }
 
     public function listAgreements(array $filters = []): array
@@ -15,12 +20,10 @@ class CommissionAgreementService
                 FROM mlm_commission_agreements a
                 JOIN users u ON a.user_id = u.id";
         $where = [];
-        $types = '';
         $params = [];
 
         if (!empty($filters['user_id'])) {
             $where[] = 'a.user_id = ?';
-            $types .= 'i';
             $params[] = (int) $filters['user_id'];
         }
 
@@ -31,14 +34,8 @@ class CommissionAgreementService
         $sql .= ' ORDER BY a.created_at DESC';
 
         $stmt = $this->conn->prepare($sql);
-        if ($types) {
-            $stmt->bind_param($types, ...$params);
-        }
-        $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        return $rows;
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function createAgreement(array $data): array
@@ -56,8 +53,7 @@ class CommissionAgreementService
         $validTo = $data['valid_to'] ?? null;
         $notes = $data['notes'] ?? null;
 
-        $stmt->bind_param(
-            'iidddss',
+        $success = $stmt->execute([
             $userId,
             $propertyId,
             $commissionRate,
@@ -65,11 +61,9 @@ class CommissionAgreementService
             $validFrom,
             $validTo,
             $notes
-        );
+        ]);
 
-        $success = $stmt->execute();
-        $id = $stmt->insert_id;
-        $stmt->close();
+        $id = $this->conn->lastInsertId();
 
         return ['success' => $success, 'id' => $id];
     }
@@ -89,8 +83,7 @@ class CommissionAgreementService
         $validTo = $data['valid_to'] ?? null;
         $notes = $data['notes'] ?? null;
 
-        $stmt->bind_param(
-            'dddddsi',
+        return $stmt->execute([
             $propertyId,
             $commissionRate,
             $flatAmount,
@@ -98,21 +91,20 @@ class CommissionAgreementService
             $validTo,
             $notes,
             $id
-        );
+        ]);
+    }
 
-        $success = $stmt->execute();
-        $stmt->close();
-
-        return $success;
+    public function getAgreement(int $id): ?array
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM mlm_commission_agreements WHERE id = ?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
     }
 
     public function deleteAgreement(int $id): bool
     {
-        $stmt = $this->conn->prepare('DELETE FROM mlm_commission_agreements WHERE id = ?');
-        $stmt->bind_param('i', $id);
-        $success = $stmt->execute();
-        $stmt->close();
-
-        return $success;
+        $stmt = $this->conn->prepare("DELETE FROM mlm_commission_agreements WHERE id = ?");
+        return $stmt->execute([$id]);
     }
 }

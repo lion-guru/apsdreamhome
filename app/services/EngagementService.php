@@ -1,4 +1,13 @@
 <?php
+
+namespace App\Services;
+
+use App\Core\Database;
+use PDO;
+use Exception;
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
  * EngagementService
  * Provides read models for engagement features (metrics, leaderboards, goals, notifications).
@@ -6,12 +15,11 @@
 
 class EngagementService
 {
-    private mysqli $conn;
+    private PDO $conn;
 
     public function __construct()
     {
-        $config = AppConfig::getInstance();
-        $this->conn = $config->getDatabaseConnection();
+        $this->conn = Database::getInstance()->getConnection();
     }
 
     /**
@@ -19,7 +27,7 @@ class EngagementService
      */
     public function getAssociateMetrics(array $filters = [], int $limit = 50, int $offset = 0): array
     {
-        [$where, $types, $params] = $this->buildMetricsFilter($filters);
+        [$where, $params] = $this->buildMetricsFilter($filters);
 
         $sql = 'SELECT am.*, u.name AS user_name, u.email AS user_email,
                        mp.current_level, mp.referral_code
@@ -33,17 +41,12 @@ class EngagementService
 
         $sql .= ' ORDER BY am.period_end DESC, am.period_start DESC LIMIT ? OFFSET ?';
 
-        $types .= 'ii';
         $params[] = $limit;
         $params[] = $offset;
 
         $stmt = $this->conn->prepare($sql);
-        $this->bindParams($stmt, $types, $params);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        return $result;
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -58,10 +61,8 @@ class EngagementService
 
         if ($snapshotDate === null) {
             $stmt = $this->conn->prepare('SELECT MAX(snapshot_date) AS latest_date FROM mlm_leaderboard_snapshots WHERE metric_type = ?');
-            $stmt->bind_param('s', $metricType);
-            $stmt->execute();
-            $row = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
+            $stmt->execute([$metricType]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$row || empty($row['latest_date'])) {
                 return [
@@ -81,13 +82,17 @@ class EngagementService
                 LEFT JOIN mlm_profiles mp ON mp.user_id = ls.user_id
                 WHERE ls.metric_type = ? AND ls.snapshot_date = ?
                 ORDER BY ls.rank_position ASC
-                LIMIT ?';
+                LIMIT ?'; // PDO limits need int, but we can't bind int directly in execute array easily without setting type. 
+                          // However, mysql driver often handles string numbers in LIMIT if emulation is on.
+                          // To be safe, we can use bindValue or just put it in execute array if emulation is on.
+                          // Or we can just use bindValue.
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ssi', $metricType, $snapshotDate, $limit);
+        $stmt->bindValue(1, $metricType);
+        $stmt->bindValue(2, $snapshotDate);
+        $stmt->bindValue(3, $limit, PDO::PARAM_INT);
         $stmt->execute();
-        $records = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return [
             'metric_type' => $metricType,
@@ -101,7 +106,7 @@ class EngagementService
      */
     public function getGoals(array $filters = [], int $limit = 50, int $offset = 0): array
     {
-        [$where, $types, $params] = $this->buildGoalFilter($filters);
+        [$where, $params] = $this->buildGoalFilter($filters);
 
         $sql = 'SELECT g.*, owner.name AS owner_name, creator.name AS created_by_name
                 FROM mlm_goals g
@@ -114,17 +119,29 @@ class EngagementService
 
         $sql .= ' ORDER BY g.start_date DESC, g.id DESC LIMIT ? OFFSET ?';
 
-        $types .= 'ii';
+        // For LIMIT/OFFSET in PDO, bindValue with PARAM_INT is safer.
+        // But since we are building dynamic params array, let's just append and rely on driver or do manual binding.
+        // Let's do manual binding for the whole array to be safe, or just use execute if emulation handles it.
+        // Given previous code used execute($params) for LIMIT, let's stick to that but be aware.
+        // Wait, execute($params) treats everything as string by default. LIMIT '50' works in MySQL usually.
+        
         $params[] = $limit;
         $params[] = $offset;
 
         $stmt = $this->conn->prepare($sql);
-        $this->bindParams($stmt, $types, $params);
+        // We need to bind parameters manually if we want correct types for LIMIT/OFFSET, 
+        // or ensure emulation is ON (which is default usually).
+        // However, to be perfectly safe with LIMIT in PDO without emulation, we must bind as INT.
+        // Let's assume standard behavior where execute works, or use a loop to bind.
+        
+        foreach ($params as $key => $value) {
+            // indices are 1-based for bindValue
+            $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue($key + 1, $value, $type);
+        }
+        
         $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        return $rows;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -133,12 +150,8 @@ class EngagementService
     public function getGoalProgress(int $goalId): array
     {
         $stmt = $this->conn->prepare('SELECT * FROM mlm_goal_progress WHERE goal_id = ? ORDER BY checkpoint_date ASC');
-        $stmt->bind_param('i', $goalId);
-        $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        return $rows;
+        $stmt->execute([$goalId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -147,12 +160,8 @@ class EngagementService
     public function getGoalEvents(int $goalId): array
     {
         $stmt = $this->conn->prepare('SELECT * FROM mlm_goal_events WHERE goal_id = ? ORDER BY created_at ASC');
-        $stmt->bind_param('i', $goalId);
-        $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        return $rows;
+        $stmt->execute([$goalId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -161,27 +170,24 @@ class EngagementService
     public function getNotificationFeed(int $userId, int $limit = 20, int $offset = 0, ?string $category = null): array
     {
         $sql = 'SELECT * FROM mlm_notification_feed WHERE user_id = ?';
-        $types = 'i';
         $params = [$userId];
 
         if ($category) {
             $sql .= ' AND category = ?';
-            $types .= 's';
             $params[] = $category;
         }
 
         $sql .= ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
-        $types .= 'ii';
         $params[] = $limit;
         $params[] = $offset;
 
         $stmt = $this->conn->prepare($sql);
-        $this->bindParams($stmt, $types, $params);
+        foreach ($params as $key => $value) {
+            $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue($key + 1, $value, $type);
+        }
         $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        return $rows;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -190,12 +196,8 @@ class EngagementService
     public function getNotificationPreferences(int $userId): array
     {
         $stmt = $this->conn->prepare('SELECT * FROM mlm_notification_preferences WHERE user_id = ?');
-        $stmt->bind_param('i', $userId);
-        $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
-
-        return $rows;
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function markNotificationRead(int $notificationId, int $userId): bool
@@ -211,21 +213,12 @@ class EngagementService
         $stmt = $this->conn->prepare(
             'UPDATE mlm_notification_feed SET read_at = NOW() WHERE id = ? AND user_id = ? AND read_at IS NULL'
         );
-        if (!$stmt) {
-            throw new RuntimeException('Failed to prepare markNotificationRead statement.');
+
+        if (!$stmt->execute([$notificationId, $userId])) {
+            throw new RuntimeException('Failed to mark notification read: ' . implode(" ", $stmt->errorInfo()));
         }
 
-        $stmt->bind_param('ii', $notificationId, $userId);
-        if (!$stmt->execute()) {
-            $error = $stmt->error;
-            $stmt->close();
-            throw new RuntimeException('Failed to mark notification read: ' . $error);
-        }
-
-        $affected = $stmt->affected_rows;
-        $stmt->close();
-
-        return $affected > 0;
+        return $stmt->rowCount() > 0;
     }
 
     public function markAllNotificationsRead(int $userId): int
@@ -237,21 +230,12 @@ class EngagementService
         $stmt = $this->conn->prepare(
             'UPDATE mlm_notification_feed SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL'
         );
-        if (!$stmt) {
-            throw new RuntimeException('Failed to prepare markAllNotificationsRead statement.');
+
+        if (!$stmt->execute([$userId])) {
+            throw new RuntimeException('Failed to mark notifications read: ' . implode(" ", $stmt->errorInfo()));
         }
 
-        $stmt->bind_param('i', $userId);
-        if (!$stmt->execute()) {
-            $error = $stmt->error;
-            $stmt->close();
-            throw new RuntimeException('Failed to mark notifications read: ' . $error);
-        }
-
-        $affected = $stmt->affected_rows;
-        $stmt->close();
-
-        return $affected;
+        return $stmt->rowCount();
     }
 
     public function createGoal(array $payload): array
@@ -285,43 +269,36 @@ class EngagementService
         }
 
         $userId = !empty($payload['user_id']) ? (int) $payload['user_id'] : null;
-        if ($scope === 'individual' && $userId <= 0) {
+        if ($scope === 'individual' && ($userId === null || $userId <= 0)) {
             throw new InvalidArgumentException('user_id is required for individual goals.');
         }
 
         $targetUnits = !empty($payload['target_units']) ? trim($payload['target_units']) : null;
         $createdBy = !empty($payload['created_by']) ? (int) $payload['created_by'] : null;
+        $status = 'active';
 
         $stmt = $this->conn->prepare(
             'INSERT INTO mlm_goals (goal_type, scope, user_id, target_value, target_units, start_date, end_date, status, created_by, created_at)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())'
         );
 
-        $status = 'active';
-        $userIdParam = $userId ?? null;
-        $targetUnitsParam = $targetUnits ?? null;
-
-        $stmt->bind_param(
-            'ssidssssi',
+        $params = [
             $goalType,
             $scope,
-            $userIdParam,
+            $userId,
             $targetValue,
-            $targetUnitsParam,
+            $targetUnits,
             $startDate,
             $endDate,
             $status,
             $createdBy
-        );
+        ];
 
-        if (!$stmt->execute()) {
-            $error = $stmt->error;
-            $stmt->close();
-            throw new RuntimeException('Failed to create goal: ' . $error);
+        if (!$stmt->execute($params)) {
+            throw new RuntimeException('Failed to create goal: ' . implode(" ", $stmt->errorInfo()));
         }
 
-        $goalId = (int) $stmt->insert_id;
-        $stmt->close();
+        $goalId = (int) $this->conn->lastInsertId();
 
         return ['id' => $goalId];
     }
@@ -342,7 +319,6 @@ class EngagementService
         $allowedStatuses = ['draft', 'active', 'completed', 'expired', 'cancelled'];
 
         $fields = [];
-        $types = '';
         $params = [];
         $updatedKeys = [];
 
@@ -352,7 +328,6 @@ class EngagementService
                 throw new InvalidArgumentException('Invalid goal_type supplied.');
             }
             $fields[] = 'goal_type = ?';
-            $types .= 's';
             $params[] = $goalType;
             $updatedKeys[] = 'goal_type';
         }
@@ -363,7 +338,6 @@ class EngagementService
                 throw new InvalidArgumentException('Invalid scope supplied.');
             }
             $fields[] = 'scope = ?';
-            $types .= 's';
             $params[] = $scope;
             $updatedKeys[] = 'scope';
         } else {
@@ -381,7 +355,6 @@ class EngagementService
                 $fields[] = 'user_id = NULL';
             } else {
                 $fields[] = 'user_id = ?';
-                $types .= 'i';
                 $params[] = $userId;
             }
             $updatedKeys[] = 'user_id';
@@ -393,7 +366,6 @@ class EngagementService
                 throw new InvalidArgumentException('target_value must be greater than zero.');
             }
             $fields[] = 'target_value = ?';
-            $types .= 'd';
             $params[] = $targetValue;
             $updatedKeys[] = 'target_value';
         }
@@ -404,7 +376,6 @@ class EngagementService
                 $fields[] = 'target_units = NULL';
             } else {
                 $fields[] = 'target_units = ?';
-                $types .= 's';
                 $params[] = $targetUnits;
             }
             $updatedKeys[] = 'target_units';
@@ -424,14 +395,12 @@ class EngagementService
 
             if (array_key_exists('start_date', $payload)) {
                 $fields[] = 'start_date = ?';
-                $types .= 's';
                 $params[] = $startDate;
                 $updatedKeys[] = 'start_date';
             }
 
             if (array_key_exists('end_date', $payload)) {
                 $fields[] = 'end_date = ?';
-                $types .= 's';
                 $params[] = $endDate;
                 $updatedKeys[] = 'end_date';
             }
@@ -443,7 +412,6 @@ class EngagementService
                 throw new InvalidArgumentException('Invalid status supplied.');
             }
             $fields[] = 'status = ?';
-            $types .= 's';
             $params[] = $status;
             $updatedKeys[] = 'status';
         }
@@ -453,14 +421,11 @@ class EngagementService
         }
 
         $sql = 'UPDATE mlm_goals SET ' . implode(', ', $fields) . ', updated_at = NOW() WHERE id = ?';
-        $types .= 'i';
         $params[] = $goalId;
 
         $stmt = $this->conn->prepare($sql);
-        $this->bindParams($stmt, $types, $params);
-        $stmt->execute();
-        $affected = $stmt->affected_rows;
-        $stmt->close();
+        $stmt->execute($params);
+        $affected = $stmt->rowCount();
 
         if ($affected > 0) {
             $this->logGoalEvent(
@@ -518,13 +483,9 @@ class EngagementService
              ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value), percentage_complete = VALUES(percentage_complete), updated_at = CURRENT_TIMESTAMP'
         );
 
-        $stmt->bind_param('isdd', $goalId, $checkpointDate, $actualValue, $percentage);
-        if (!$stmt->execute()) {
-            $error = $stmt->error;
-            $stmt->close();
-            throw new RuntimeException('Failed to record progress: ' . $error);
+        if (!$stmt->execute([$goalId, $checkpointDate, $actualValue, $percentage])) {
+            throw new RuntimeException('Failed to record progress: ' . implode(" ", $stmt->errorInfo()));
         }
-        $stmt->close();
 
         $this->logGoalEvent(
             $goalId,
@@ -552,10 +513,8 @@ class EngagementService
         }
 
         $stmt = $this->conn->prepare('UPDATE mlm_goals SET status = ?, updated_at = NOW() WHERE id = ?');
-        $stmt->bind_param('si', $status, $goalId);
-        $stmt->execute();
-        $affected = $stmt->affected_rows;
-        $stmt->close();
+        $stmt->execute([$status, $goalId]);
+        $affected = $stmt->rowCount();
 
         if ($affected > 0) {
             $this->logGoalEvent(
@@ -578,10 +537,8 @@ class EngagementService
     private function fetchGoal(int $goalId): ?array
     {
         $stmt = $this->conn->prepare('SELECT * FROM mlm_goals WHERE id = ? LIMIT 1');
-        $stmt->bind_param('i', $goalId);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+        $stmt->execute([$goalId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $row ?: null;
     }
@@ -594,98 +551,70 @@ class EngagementService
             'INSERT INTO mlm_goal_events (goal_id, event_type, event_message, event_payload)
              VALUES (?, ?, ?, ?)' 
         );
-        $stmt->bind_param('isss', $goalId, $eventType, $message, $payloadJson);
-        $stmt->execute();
-        $stmt->close();
+        $stmt->execute([$goalId, $eventType, $message, $payloadJson]);
     }
 
     private function buildMetricsFilter(array $filters): array
     {
         $where = [];
-        $types = '';
         $params = [];
 
         if (!empty($filters['user_id'])) {
             $where[] = 'am.user_id = ?';
-            $types .= 'i';
             $params[] = (int) $filters['user_id'];
         }
 
         if (!empty($filters['from'])) {
             $where[] = 'am.period_start >= ?';
-            $types .= 's';
             $params[] = $filters['from'];
         }
 
         if (!empty($filters['to'])) {
             $where[] = 'am.period_end <= ?';
-            $types .= 's';
             $params[] = $filters['to'];
         }
 
         if (!empty($filters['rank_label'])) {
             $where[] = 'am.rank_label = ?';
-            $types .= 's';
             $params[] = $filters['rank_label'];
         }
 
-        return [implode(' AND ', $where), $types, $params];
+        return [implode(' AND ', $where), $params];
     }
 
     private function buildGoalFilter(array $filters): array
     {
         $where = [];
-        $types = '';
         $params = [];
 
         if (!empty($filters['status'])) {
             $statuses = (array) $filters['status'];
             $placeholders = implode(',', array_fill(0, count($statuses), '?'));
             $where[] = 'g.status IN (' . $placeholders . ')';
-            $types .= str_repeat('s', count($statuses));
             $params = array_merge($params, $statuses);
         }
 
         if (!empty($filters['scope'])) {
             $where[] = 'g.scope = ?';
-            $types .= 's';
             $params[] = $filters['scope'];
         }
 
         if (!empty($filters['user_id'])) {
             $where[] = 'g.user_id = ?';
-            $types .= 'i';
             $params[] = (int) $filters['user_id'];
         }
 
         if (!empty($filters['goal_type'])) {
             $where[] = 'g.goal_type = ?';
-            $types .= 's';
             $params[] = $filters['goal_type'];
         }
 
         if (!empty($filters['active_on'])) {
             $where[] = 'g.start_date <= ? AND g.end_date >= ?';
-            $types .= 'ss';
             $params[] = $filters['active_on'];
             $params[] = $filters['active_on'];
         }
 
-        return [implode(' AND ', $where), $types, $params];
-    }
-
-    private function bindParams(mysqli_stmt $stmt, string $types, array $params): void
-    {
-        if ($types === '' || empty($params)) {
-            return;
-        }
-
-        $bindParams = [];
-        $bindParams[] = $types;
-        foreach ($params as $key => $value) {
-            $bindParams[] = &$params[$key];
-        }
-
-        call_user_func_array([$stmt, 'bind_param'], $bindParams);
+        return [implode(' AND ', $where), $params];
     }
 }

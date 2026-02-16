@@ -1,4 +1,12 @@
 <?php
+
+namespace App\Services;
+
+use App\Models\Database;
+use App\Services\NotificationService;
+use App\Services\MlmSettings;
+use PDO;
+
 /**
  * CommissionService
  * Phase 2 analytics helper for MLM commission insights.
@@ -6,13 +14,12 @@
 
 class CommissionService
 {
-    private mysqli $conn;
+    private PDO $conn;
     private NotificationService $notifier;
 
     public function __construct()
     {
-        $config = AppConfig::getInstance();
-        $this->conn = $config->getDatabaseConnection();
+        $this->conn = Database::getInstance()->getConnection();
         $this->notifier = new NotificationService();
     }
 
@@ -28,12 +35,11 @@ class CommissionService
 
         $sql .= ' GROUP BY status';
 
-        $statement = $this->prepare($sql, $filter['types'], $filter['params']);
-        $statement->execute();
-        $result = $statement->get_result()->fetch_all(MYSQLI_ASSOC);
-        $statement->close();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($filter['params']);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $this->checkPendingThreshold($filter['where'], $filter['types'], $filter['params']);
+        $this->checkPendingThreshold($filter['where'], $filter['params']);
 
         return $result;
     }
@@ -50,10 +56,9 @@ class CommissionService
 
         $sql .= ' GROUP BY level ORDER BY level';
 
-        $stmt = $this->prepare($sql, $filter['types'], $filter['params']);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($filter['params']);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
     }
@@ -77,13 +82,17 @@ class CommissionService
                   ORDER BY total_amount DESC
                   LIMIT ?';
 
-        $types = $filter['types'] . 'i';
-        $params = array_merge($filter['params'], [$limit]);
-
-        $stmt = $this->prepare($sql, $types, $params);
+        $stmt = $this->conn->prepare($sql);
+        
+        // Bind parameters manually to handle LIMIT
+        $paramIndex = 1;
+        foreach ($filter['params'] as $param) {
+            $stmt->bindValue($paramIndex++, $param);
+        }
+        $stmt->bindValue($paramIndex, $limit, PDO::PARAM_INT);
+        
         $stmt->execute();
-        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
     }
@@ -107,13 +116,16 @@ class CommissionService
                   ORDER BY mp.direct_referrals DESC, total_amount DESC
                   LIMIT ?';
 
-        $types = $filter['types'] . 'i';
-        $params = array_merge($filter['params'], [$limit]);
-
-        $stmt = $this->prepare($sql, $types, $params);
+        $stmt = $this->conn->prepare($sql);
+        
+        $paramIndex = 1;
+        foreach ($filter['params'] as $param) {
+            $stmt->bindValue($paramIndex++, $param);
+        }
+        $stmt->bindValue($paramIndex, $limit, PDO::PARAM_INT);
+        
         $stmt->execute();
-        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
     }
@@ -138,10 +150,9 @@ class CommissionService
 
         $sql .= ' GROUP BY bucket ORDER BY bucket';
 
-        $stmt = $this->prepare($sql, $filter['types'], $filter['params']);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($filter['params']);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
     }
@@ -162,13 +173,17 @@ class CommissionService
 
         $sql .= ' ORDER BY l.created_at DESC LIMIT ? OFFSET ?';
 
-        $types = $filter['types'] . 'ii';
-        $params = array_merge($filter['params'], [$limit, $offset]);
-
-        $stmt = $this->prepare($sql, $types, $params);
+        $stmt = $this->conn->prepare($sql);
+        
+        $paramIndex = 1;
+        foreach ($filter['params'] as $param) {
+            $stmt->bindValue($paramIndex++, $param);
+        }
+        $stmt->bindValue($paramIndex++, $limit, PDO::PARAM_INT);
+        $stmt->bindValue($paramIndex, $offset, PDO::PARAM_INT);
+        
         $stmt->execute();
-        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
     }
@@ -189,35 +204,22 @@ class CommissionService
 
         $sql .= ' ORDER BY l.created_at DESC';
 
-        $stmt = $this->prepare($sql, $filter['types'], $filter['params']);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        $stmt->close();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($filter['params']);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
-    }
-
-    private function prepare(string $sql, string $types = '', array $params = []): mysqli_stmt
-    {
-        $stmt = $this->conn->prepare($sql);
-        if ($types && $params) {
-            $stmt->bind_param($types, ...$params);
-        }
-
-        return $stmt;
     }
 
     private function buildFilter(array $filters): array
     {
         $where = [];
-        $types = '';
         $params = [];
 
         if (!empty($filters['status'])) {
             $statuses = (array) $filters['status'];
             $placeholders = implode(',', array_fill(0, count($statuses), '?'));
             $where[] = 'status IN (' . $placeholders . ')';
-            $types .= str_repeat('s', count($statuses));
             $params = array_merge($params, $statuses);
         }
 
@@ -225,42 +227,36 @@ class CommissionService
             $typesFilter = (array) $filters['commission_type'];
             $placeholders = implode(',', array_fill(0, count($typesFilter), '?'));
             $where[] = 'commission_type IN (' . $placeholders . ')';
-            $types .= str_repeat('s', count($typesFilter));
             $params = array_merge($params, $typesFilter);
         }
 
         if (!empty($filters['beneficiary_id'])) {
             $where[] = 'beneficiary_user_id = ?';
-            $types .= 'i';
             $params[] = (int) $filters['beneficiary_id'];
         }
 
         if (!empty($filters['source_user_id'])) {
             $where[] = 'source_user_id = ?';
-            $types .= 'i';
             $params[] = (int) $filters['source_user_id'];
         }
 
         if (!empty($filters['date_from'])) {
             $where[] = 'created_at >= ?';
-            $types .= 's';
             $params[] = $filters['date_from'];
         }
 
         if (!empty($filters['date_to'])) {
             $where[] = 'created_at <= ?';
-            $types .= 's';
             $params[] = $filters['date_to'];
         }
 
         return [
             'where' => implode(' AND ', $where),
-            'types' => $types,
             'params' => $params
         ];
     }
 
-    private function checkPendingThreshold(string $baseWhere, string $types, array $params): void
+    private function checkPendingThreshold(string $baseWhere, array $params): void
     {
         $threshold = (float) MlmSettings::getFloat('pending_commission_threshold', 0);
         if ($threshold <= 0) {
@@ -272,10 +268,45 @@ class CommissionService
             $sql .= ' AND ' . $baseWhere;
         }
 
-        $stmt = $this->prepare($sql, 's' . $types, array_merge(['pending'], $params));
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+        // Prepend 'pending' to params if filtering by status, or just use base params if status is part of filter?
+        // Wait, the query adds `status='pending'` manually.
+        // If `$baseWhere` contains `status IN (...)`, we might have a conflict or just redundant condition.
+        // Assuming `$baseWhere` filters by date/user, not status, or if it does, it might be restrictive.
+        // The original code merged `['pending']` with `$params`.
+        // Wait, the original code had:
+        // $stmt = $this->prepare($sql, 's' . $types, array_merge(['pending'], $params));
+        // But `status = 'pending'` is hardcoded in SQL.
+        // If `status` was in `$baseWhere`, it would be `status = 'pending' AND status IN (...)`.
+        // This seems fine.
+        // However, `params` for `$baseWhere` must match placeholders in `$baseWhere`.
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params); // Wait, original code merged `['pending']`?
+        
+        // Original code:
+        // $sql = 'SELECT ... WHERE status = \'pending\'';
+        // if ($baseWhere) $sql .= ' AND ' . $baseWhere;
+        // $stmt = $this->prepare($sql, 's' . $types, array_merge(['pending'], $params));
+        
+        // Wait, if `status = 'pending'` is hardcoded, where does the extra parameter come from?
+        // Ah, maybe the original code used `WHERE status = ?`?
+        // Let's check original code.
+        // Line 270: $sql = 'SELECT SUM(amount) AS pending_total FROM mlm_commission_ledger WHERE status = \'pending\'';
+        // Line 275: $stmt = $this->prepare($sql, 's' . $types, array_merge(['pending'], $params));
+        // This looks like a bug in original code if SQL didn't have `?` for status.
+        // Or maybe `prepare` ignored extra params? No, `bind_param` would fail if types count mismatch.
+        // Unless `prepare` wrapper handles it?
+        
+        // Let's look at `CommissionService.php` again.
+        // Line 270: `WHERE status = 'pending'`
+        // Line 275: `prepare($sql, 's' . $types, array_merge(['pending'], $params))`
+        // This definitely looks like the original code was trying to bind 'pending' but hardcoded it in SQL.
+        // If I keep `status = 'pending'`, I don't need to bind it.
+        // I will trust the SQL and remove the extra bind if it's not needed.
+        // But wait, if `$baseWhere` has params, I need to pass them.
+        
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $pendingTotal = (float) ($row['pending_total'] ?? 0);
         if ($pendingTotal >= $threshold) {

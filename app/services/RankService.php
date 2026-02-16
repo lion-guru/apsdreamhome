@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Services;
+
 /**
  * RankService
  * Encapsulates rank thresholds, rewards, and progress calculations.

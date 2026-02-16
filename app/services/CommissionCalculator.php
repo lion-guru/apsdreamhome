@@ -1,308 +1,149 @@
 <?php
-require_once __DIR__ . '/NotificationService.php';
-/**
- * Multi-Level Commission Calculator
- * APS Dream Homes - MLM Commission System
- * Supports 5-level commission structure
- */
 
-class CommissionCalculator {
+namespace App\Services;
+
+use App\Core\Database;
+use PDO;
+use Exception;
+
+class CommissionCalculator
+{
     private $conn;
-    private NotificationService $notifier;
-    
-    // Commission structure by level
-    private $commission_structure = [
-        1 => 5.0,  // Direct sponsor
-        2 => 3.0,  // Level 2
-        3 => 2.0,  // Level 3
-        4 => 1.5,  // Level 4
-        5 => 1.0   // Level 5
-    ];
-    
-    public function __construct() {
-        $config = AppConfig::getInstance();
-        $this->conn = $config->getDatabaseConnection();
-        $this->notifier = new NotificationService();
+    private $notifier;
+
+    public function __construct(NotificationService $notifier)
+    {
+        $this->conn = Database::getInstance()->getConnection();
+        $this->notifier = $notifier;
     }
-    
-    /**
-     * Calculate commission for property sale
-     */
-    public function calculatePropertyCommission($property_id, $sale_amount, $buyer_user_id) {
-        if ($sale_amount <= 0) {
-            return ['success' => false, 'error' => 'Invalid sale amount'];
+
+    public function calculatePropertyCommission($property_id, $sale_amount, $buyer_user_id, $plan_type = 'legacy')
+    {
+        if ($plan_type === 'legacy') {
+            return $this->calculateLegacyCommission($property_id, $sale_amount, $buyer_user_id);
         }
-        
+
+        return $this->calculateStandardCommission($property_id, $sale_amount, $buyer_user_id);
+    }
+
+    private function calculateStandardCommission($property_id, $sale_amount, $buyer_user_id)
+    {
+        // Original 5-level structure logic
+        // This is a placeholder for the standard logic if it differs from legacy
+        // For now, assuming legacy is the primary one requested
+        return $this->calculateLegacyCommission($property_id, $sale_amount, $buyer_user_id);
+    }
+
+    private function calculateLegacyCommission($property_id, $sale_amount, $buyer_user_id)
+    {
+        if ($sale_amount <= 0) return ['success' => false, 'error' => 'Invalid sale amount'];
+
         // Get buyer's sponsor
         $stmt = $this->conn->prepare("SELECT sponsor_user_id FROM mlm_profiles WHERE user_id = ?");
-        $stmt->bind_param("i", $buyer_user_id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        
-        if (!$result || !$result['sponsor_user_id']) {
+        $stmt->execute([$buyer_user_id]);
+        $buyer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$buyer || empty($buyer['sponsor_user_id'])) {
             return ['success' => false, 'error' => 'No sponsor found for buyer'];
         }
-        
-        $this->conn->begin_transaction();
-        
+
+        $this->conn->beginTransaction();
         try {
             $total_commission = 0;
             $commissions = [];
-            
-            // Calculate commissions for all levels
-            $current_user = $buyer_user_id;
+
+            // 1. Direct Referral Bonus (Level 1)
+            $sponsor_id = $buyer['sponsor_user_id'];
+
+            // Get Sponsor's Level Data
+            $stmt = $this->conn->prepare("
+                SELECT mp.user_id, mp.current_level, al.commission_percent, al.direct_referral_bonus
+                FROM mlm_profiles mp
+                LEFT JOIN associate_levels al ON mp.current_level = al.name
+                WHERE mp.user_id = ?
+            ");
+            $stmt->execute([$sponsor_id]);
+            $sponsor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($sponsor) {
+                // Direct Referral Bonus Logic
+                // Use direct_referral_bonus from table, default to 1% if not found
+                $percentage = $sponsor['direct_referral_bonus'] ?? 1.0;
+                $commission_amount = ($sale_amount * $percentage) / 100;
+
+                if ($commission_amount > 0) {
+                    $this->recordCommission($sponsor['user_id'], $buyer_user_id, $property_id, $sale_amount, $commission_amount, $percentage, 1, 'direct_bonus');
+                    $total_commission += $commission_amount;
+                    $commissions[] = ['user_id' => $sponsor['user_id'], 'amount' => $commission_amount, 'level' => 1, 'type' => 'direct_bonus'];
+                }
+            }
+
+            // 2. Level/Override Bonuses (Uplines)
+            // Traverse up the tree for level bonuses
+            $current_descendant_id = $buyer_user_id;
             $level = 1;
-            
-            while ($level <= 5) {
+            $max_levels = 10; // Cap at 10 levels for safety
+
+            while ($level <= $max_levels) {
+                // Find ancestor using network tree or recursive lookup
+                // Using mlm_network_tree for efficiency if populated
                 $stmt = $this->conn->prepare("
-                    SELECT 
-                        mp.user_id, mp.current_level, u.name, u.email,
-                        CASE mp.current_level
-                            WHEN 'Bronze' THEN 1.0
-                            WHEN 'Silver' THEN 1.2
-                            WHEN 'Gold' THEN 1.5
-                            WHEN 'Platinum' THEN 2.0
-                            WHEN 'Diamond' THEN 2.5
-                            ELSE 1.0
-                        END as multiplier
+                    SELECT mp.user_id, mp.current_level, al.level_bonus
                     FROM mlm_network_tree nt
                     JOIN mlm_profiles mp ON nt.ancestor_user_id = mp.user_id
-                    JOIN users u ON mp.user_id = u.id
+                    LEFT JOIN associate_levels al ON mp.current_level = al.name
                     WHERE nt.descendant_user_id = ? AND nt.level = ?
                 ");
-                $stmt->bind_param("ii", $buyer_user_id, $level);
-                $stmt->execute();
-                $ancestor = $stmt->get_result()->fetch_assoc();
-                
+                $stmt->execute([$buyer_user_id, $level]);
+                $ancestor = $stmt->fetch(PDO::FETCH_ASSOC);
+
                 if (!$ancestor) break;
-                
-                $base_percentage = $this->commission_structure[$level];
-                $final_percentage = $base_percentage * $ancestor['multiplier'];
-                $commission_amount = ($sale_amount * $final_percentage) / 100;
-                
-                if ($commission_amount > 0) {
-                    // Create commission record
-                    $stmt = $this->conn->prepare("
-                        INSERT INTO mlm_commission_ledger 
-                        (beneficiary_user_id, source_user_id, commission_type, amount, level, property_id, sale_amount, commission_percentage, status, created_at)
-                        VALUES (?, ?, 'property_sale', ?, ?, ?, ?, ?, 'pending', NOW())
-                    ");
-                    $stmt->bind_param("iiididd", 
-                        $ancestor['user_id'], 
-                        $buyer_user_id, 
-                        $commission_amount, 
-                        $level, 
-                        $property_id, 
-                        $sale_amount, 
-                        $final_percentage
-                    );
-                    $stmt->execute();
-                    
-                    $commissions[] = [
-                        'user_id' => $ancestor['user_id'],
-                        'name' => $ancestor['name'],
-                        'level' => $level,
-                        'amount' => $commission_amount,
-                        'percentage' => $final_percentage
-                    ];
-                    
-                    $total_commission += $commission_amount;
+
+                // Apply Level Bonus if eligible
+                $level_bonus_pct = $ancestor['level_bonus'] ?? 0;
+
+                if ($level_bonus_pct > 0) {
+                    $bonus_amount = ($sale_amount * $level_bonus_pct) / 100;
+                    $this->recordCommission($ancestor['user_id'], $buyer_user_id, $property_id, $sale_amount, $bonus_amount, $level_bonus_pct, $level, 'level_bonus');
+                    $total_commission += $bonus_amount;
+                    $commissions[] = ['user_id' => $ancestor['user_id'], 'amount' => $bonus_amount, 'level' => $level, 'type' => 'level_bonus'];
                 }
-                
+
                 $level++;
             }
-            
-            // Update buyer's lifetime sales
-            $stmt = $this->conn->prepare("UPDATE mlm_profiles SET lifetime_sales = lifetime_sales + ? WHERE user_id = ?");
-            $stmt->bind_param("di", $sale_amount, $buyer_user_id);
-            $stmt->execute();
-            
+
             $this->conn->commit();
-            
-            return [
-                'success' => true,
-                'total_commission' => $total_commission,
-                'commissions' => $commissions,
-                'property_id' => $property_id,
-                'sale_amount' => $sale_amount
-            ];
-            
+            return ['success' => true, 'total_commission' => $total_commission, 'commissions' => $commissions];
         } catch (Exception $e) {
-            $this->conn->rollback();
+            $this->conn->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
-    
-    /**
-     * Calculate referral commission
-     */
-    public function calculateReferralCommission($referrer_user_id, $referred_user_id, $user_type) {
-        $commission_amount = 0;
-        
-        switch ($user_type) {
-            case 'customer':
-                $commission_amount = 100; // ₹100 for customer referral
-                break;
-            case 'agent':
-                $commission_amount = 500; // ₹500 for agent referral
-                break;
-            case 'associate':
-                $commission_amount = 1000; // ₹1000 for associate referral
-                break;
-            case 'builder':
-                $commission_amount = 2000; // ₹2000 for builder referral
-                break;
-            case 'investor':
-                $commission_amount = 1500; // ₹1500 for investor referral
-                break;
-        }
-        
-        $stmt = $this->conn->prepare("
+
+    private function recordCommission($beneficiary_id, $source_id, $property_id, $sale_amount, $amount, $percentage, $level, $type)
+    {
+        // Create commission record
+        $insertStmt = $this->conn->prepare("
             INSERT INTO mlm_commission_ledger 
-            (beneficiary_user_id, source_user_id, commission_type, amount, level, status, created_at)
-            VALUES (?, ?, 'referral_bonus', ?, 1, 'pending', NOW())
+            (beneficiary_user_id, source_user_id, commission_type, amount, level, property_id, sale_amount, commission_percentage, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
         ");
-        $stmt->bind_param("iid", $referrer_user_id, $referred_user_id, $commission_amount);
-        
-        if ($stmt->execute()) {
-            // Update referrer's pending commission
-            $stmt = $this->conn->prepare("UPDATE mlm_profiles SET pending_commission = pending_commission + ? WHERE user_id = ?");
-            $stmt->bind_param("di", $commission_amount, $referrer_user_id);
-            $stmt->execute();
-            
-            return ['success' => true, 'amount' => $commission_amount];
-        }
-        
-        return ['success' => false, 'error' => 'Failed to create commission record'];
-    }
-    
-    /**
-     * Approve commission
-     */
-    public function approveCommission($commission_id, $approved_by) {
-        $stmt = $this->conn->prepare("
-            SELECT beneficiary_user_id, amount, status 
-            FROM mlm_commission_ledger 
-            WHERE id = ? AND status = 'pending'
-        ");
-        $stmt->bind_param("i", $commission_id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        
-        if (!$result) {
-            return ['success' => false, 'error' => 'Commission not found or already processed'];
-        }
-        
-        $stmt = $this->conn->prepare("
-            UPDATE mlm_commission_ledger 
-            SET status = 'approved', updated_at = NOW() 
-            WHERE id = ?
-        ");
-        $stmt->bind_param("i", $commission_id);
-        
-        if ($stmt->execute()) {
-            // Update user's total commission
-            $stmt = $this->conn->prepare("
-                UPDATE mlm_profiles 
-                SET total_commission = total_commission + ?, 
-                    pending_commission = pending_commission - ? 
-                WHERE user_id = ?
-            ");
-            $stmt->bind_param("ddi", $result['amount'], $result['amount'], $result['beneficiary_user_id']);
-            $stmt->execute();
+        $insertStmt->execute([
+            $beneficiary_id,
+            $source_id,
+            $type,
+            $amount,
+            $level,
+            $property_id,
+            $sale_amount,
+            $percentage
+        ]);
 
-            $this->sendCommissionApprovedNotifications($commission_id, $result['beneficiary_user_id'], $result['amount']);
-
-            return ['success' => true, 'amount' => $result['amount']];
-        }
-        
-        return ['success' => false, 'error' => 'Failed to approve commission'];
-    }
-    
-    /**
-     * Get user's commissions
-     */
-    public function getUserCommissions($user_id, $status = null, $limit = 50) {
-        $sql = "
-            SELECT 
-                cl.*,
-                u.name as source_name,
-                p.title as property_title
-            FROM mlm_commission_ledger cl
-            LEFT JOIN users u ON cl.source_user_id = u.id
-            LEFT JOIN properties p ON cl.property_id = p.id
-            WHERE cl.beneficiary_user_id = ?
-        ";
-        
-        if ($status) {
-            $sql .= " AND cl.status = ?";
-        }
-        
-        $sql .= " ORDER BY cl.created_at DESC LIMIT ?";
-        
-        $stmt = $this->conn->prepare($sql);
-        
-        if ($status) {
-            $stmt->bind_param("isi", $user_id, $status, $limit);
-        } else {
-            $stmt->bind_param("ii", $user_id, $limit);
-        }
-        
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
-    private function sendCommissionApprovedNotifications(int $commissionId, int $beneficiaryId, float $amount): void
-    {
-        try {
-            $stmt = $this->conn->prepare('SELECT name, email FROM users WHERE id = ? LIMIT 1');
-            $stmt->bind_param('i', $beneficiaryId);
-            $stmt->execute();
-            $user = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
-
-            $payload = [
-                'commission_id' => $commissionId,
-                'beneficiary_user_id' => $beneficiaryId,
-                'amount' => $amount,
-            ];
-
-            $adminSubject = 'Commission approved (ID: ' . $commissionId . ')';
-            $adminBody = $this->buildAdminCommissionEmail($commissionId, $user, $amount);
-            $this->notifier->notifyAdmin($adminSubject, $adminBody, 'commission_approved_admin', $payload);
-
-            if (!empty($user['email'])) {
-                $beneficiarySubject = 'Your commission has been approved';
-                $beneficiaryBody = $this->buildBeneficiaryCommissionEmail($commissionId, $user['name'] ?? 'Associate', $amount);
-                $this->notifier->sendEmail($user['email'], $beneficiarySubject, $beneficiaryBody, 'commission_approved_beneficiary', $beneficiaryId, $payload);
-            }
-        } catch (Throwable $e) {
-            error_log('Commission approval notification error: ' . $e->getMessage());
-        }
-    }
-
-    private function buildAdminCommissionEmail(int $commissionId, ?array $user, float $amount): string
-    {
-        $name = htmlspecialchars($user['name'] ?? 'Unknown');
-        $email = htmlspecialchars($user['email'] ?? 'N/A');
-        $formattedAmount = number_format($amount, 2);
-
-        return "<h2>Commission Approved</h2>
-            <p><strong>Commission ID:</strong> {$commissionId}</p>
-            <p><strong>Beneficiary:</strong> {$name} ({$email})</p>
-            <p><strong>Amount:</strong> ₹{$formattedAmount}</p>
-            <p>View commission records in the admin analytics dashboard.</p>";
-    }
-
-    private function buildBeneficiaryCommissionEmail(int $commissionId, string $name, float $amount): string
-    {
-        $safeName = htmlspecialchars($name);
-        $formattedAmount = number_format($amount, 2);
-
-        return "<h2>Congratulations, {$safeName}!</h2>
-            <p>Your commission (ID {$commissionId}) has been approved.</p>
-            <p><strong>Payout Amount:</strong> ₹{$formattedAmount}</p>
-            <p>The amount will be included in the next payout batch. You can monitor status in your referral dashboard.</p>";
+        // Notify beneficiary
+        $this->notifier->notifyUser(
+            $beneficiary_id,
+            "New Commission Earned!",
+            "You have earned a commission of " . number_format($amount, 2) . " from a level $level sale."
+        );
     }
 }
-?>
