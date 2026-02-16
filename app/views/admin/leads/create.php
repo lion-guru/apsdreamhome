@@ -170,14 +170,27 @@
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="requirements" class="form-label">
-                                            आवश्यकताएं
+                                        <label for="property_type" class="form-label">
+                                            प्रॉपर्टी का प्रकार
                                         </label>
-                                        <textarea class="form-control"
-                                            id="requirements"
-                                            name="requirements"
-                                            rows="3"
-                                            placeholder="लीड की आवश्यकताओं का विवरण"></textarea>
+                                        <select class="form-control" id="property_type" name="property_type">
+                                            <option value="">चुनें</option>
+                                            <option value="residential">रेजिडेंशियल</option>
+                                            <option value="commercial">कॉमर्शियल</option>
+                                            <option value="industrial">इंडस्ट्रियल</option>
+                                            <option value="land">जमीन</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="location_preference" class="form-label">
+                                            लोकेशन प्रेफरेंस
+                                        </label>
+                                        <input type="text"
+                                            class="form-control"
+                                            id="location_preference"
+                                            name="location_preference"
+                                            placeholder="पसंदीदा लोकेशन">
                                     </div>
 
                                     <div class="form-group mb-3">

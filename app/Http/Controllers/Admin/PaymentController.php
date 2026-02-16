@@ -78,8 +78,6 @@ class PaymentController extends BaseController
 
             $payments = $this->paymentModel->getPaginatedPayments($start, $length, $search, $order, $filters);
             $totalFiltered = $this->paymentModel->getTotalPaymentsCount($search, $filters);
-            // Ideally we should get total count without filters for recordsTotal, but using filtered count is acceptable for now
-            // or we can call getTotalPaymentsCount with empty args
             $totalRecords = $this->paymentModel->getTotalPaymentsCount();
 
             $data = [];
@@ -124,6 +122,152 @@ class PaymentController extends BaseController
     }
 
     /**
+     * Show payment details (AJAX)
+     */
+    public function show($id)
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $payment = $this->paymentModel->getPaymentById($id);
+
+            if ($payment) {
+                echo json_encode([
+                    'success' => true,
+                    'data' => $payment
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Payment not found'
+                ]);
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Generate payment receipt
+     */
+    public function receipt($id)
+    {
+        $payment = $this->paymentModel->getPaymentById($id);
+
+        if (!$payment) {
+            $this->notFound();
+            return;
+        }
+
+        $this->render('admin/payments/receipt', [
+            'payment' => $payment,
+            'title' => 'Payment Receipt #' . ($payment['transaction_id'] ?? $id)
+        ]);
+    }
+
+    /**
+     * Delete payment
+     */
+    public function destroy($id)
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            // Check if payment exists
+            $payment = $this->paymentModel->getPaymentById($id);
+            if (!$payment) {
+                throw new Exception('Payment not found');
+            }
+
+            $result = $this->paymentModel->deletePayment($id);
+
+            if ($result) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Payment deleted successfully'
+                ]);
+            } else {
+                throw new Exception('Failed to delete payment');
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Show the form for editing a payment
+     */
+    public function edit($id)
+    {
+        $payment = $this->paymentModel->getPaymentById($id);
+
+        if (!$payment) {
+            $this->notFound();
+            return;
+        }
+
+        $this->render('admin/payments/edit', [
+            'payment' => $payment,
+            'title' => 'Edit Payment: ' . ($payment['transaction_id'] ?? $id)
+        ]);
+    }
+
+    /**
+     * Update the specified payment
+     */
+    public function update($id)
+    {
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            return;
+        }
+
+        try {
+            $data = $_POST;
+
+            // Remove csrf_token and other non-db fields if necessary
+            unset($data['csrf_token']);
+
+            // Validate required fields
+            $requiredFields = ['customer_id', 'amount', 'payment_type', 'payment_method'];
+            foreach ($requiredFields as $field) {
+                if (!isset($data[$field]) || empty($data[$field])) {
+                    throw new Exception(ucfirst(str_replace('_', ' ', $field)) . " is required");
+                }
+            }
+
+            $result = $this->paymentModel->updatePayment($id, $data);
+
+            if ($result) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Payment updated successfully'
+                ]);
+            } else {
+                throw new Exception('Failed to update payment');
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * Search customers for Select2
      */
     public function customers()
@@ -141,17 +285,6 @@ class PaymentController extends BaseController
         echo json_encode([
             'items' => $result['items'],
             'more' => ($offset + $limit) < $result['total']
-        ]);
-    }
-
-    /**
-     * Show create payment form (if not using modal)
-     */
-    public function create()
-    {
-        // Not used currently as we use modal, but could render a dedicated page
-        $this->render('admin/payments/create', [
-            'page_title' => 'Add New Payment'
         ]);
     }
 
@@ -198,186 +331,12 @@ class PaymentController extends BaseController
     }
 
     /**
-     * Show edit payment form
+     * Show create payment form (unused but kept for structure)
      */
-    public function edit($id)
+    public function create()
     {
-        $payment = $this->paymentModel->getPaymentById($id);
-        if (!$payment) {
-            $this->redirect('payments'); // Or show 404
-            return;
-        }
-
-        $this->render('admin/payments/edit', [
-            'payment' => $payment,
-            'page_title' => 'Edit Payment'
+        $this->render('admin/payments/create', [
+            'page_title' => 'Add New Payment'
         ]);
-    }
-
-    /**
-     * Update payment
-     */
-    public function update($id)
-    {
-        header('Content-Type: application/json');
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            return;
-        }
-
-        try {
-            $data = $_POST;
-
-            // Remove csrf_token and other non-db fields
-            unset($data['csrf_token']);
-
-            // Validate required fields
-            $requiredFields = ['customer_id', 'amount', 'payment_type', 'payment_method'];
-            foreach ($requiredFields as $field) {
-                if (!isset($data[$field]) || empty($data[$field])) {
-                    throw new Exception(ucfirst(str_replace('_', ' ', $field)) . " is required");
-                }
-            }
-
-            if ($this->paymentModel->updatePayment($id, $data)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Payment updated successfully'
-                ]);
-            } else {
-                throw new Exception('Failed to update payment');
-            }
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Delete payment
-     */
-    public function destroy($id)
-    {
-        header('Content-Type: application/json');
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            return;
-        }
-
-        if ($this->paymentModel->deletePayment($id)) {
-            echo json_encode(['success' => true, 'message' => 'Payment deleted successfully']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to delete payment']);
-        }
-    }
-
-    /**
-     * Show payment details
-     */
-    public function show($id)
-    {
-        $payment = $this->paymentModel->getPaymentById($id);
-
-        if (!$payment) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Payment not found']);
-            exit;
-        }
-
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'data' => $payment]);
-        exit;
-    }
-
-    /**
-     * Generate payment receipt PDF (HTML View for now)
-     */
-    public function receipt($id)
-    {
-        $payment = $this->paymentModel->getPaymentById($id);
-        if (!$payment) {
-            die('Payment not found');
-        }
-
-        // Render receipt HTML
-        $html = '
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Payment Receipt #' . ($payment['transaction_id'] ?? $id) . '</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-                .receipt-box { border: 1px solid #ddd; padding: 20px; max-width: 600px; margin: 0 auto; }
-                .header { text-align: center; margin-bottom: 20px; }
-                .header h1 { margin: 0; color: #333; }
-                .header p { margin: 5px 0; color: #666; }
-                .details-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                .details-table td { padding: 10px; border-bottom: 1px solid #eee; }
-                .details-table tr:last-child td { border-bottom: none; }
-                .label { font-weight: bold; color: #555; width: 40%; }
-                .value { color: #333; }
-                .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #999; }
-                .print-btn { display: block; margin: 20px auto; padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px; text-decoration: none; width: fit-content; }
-                @media print { .print-btn { display: none; } .receipt-box { border: none; } }
-            </style>
-        </head>
-        <body>
-            <div class="receipt-box">
-                <div class="header">
-                    <h1>APS Dream Home</h1>
-                    <p>Payment Receipt</p>
-                </div>
-                
-                <table class="details-table">
-                    <tr>
-                        <td class="label">Receipt No:</td>
-                        <td class="value">' . ($payment['transaction_id'] ?? 'N/A') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Date:</td>
-                        <td class="value">' . date('d M Y, h:i A', strtotime($payment['payment_date'])) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Customer:</td>
-                        <td class="value">' . htmlspecialchars($payment['customer_name'] ?? 'Unknown') . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Amount:</td>
-                        <td class="value">₹' . number_format($payment['amount'], 2) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Payment Type:</td>
-                        <td class="value">' . ucfirst(str_replace('_', ' ', $payment['payment_type'])) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Payment Method:</td>
-                        <td class="value">' . ucfirst(str_replace('_', ' ', $payment['payment_method'] ?? 'N/A')) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Status:</td>
-                        <td class="value">' . ucfirst($payment['status']) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Notes:</td>
-                        <td class="value">' . htmlspecialchars($payment['notes'] ?? '') . '</td>
-                    </tr>
-                </table>
-
-                <div class="footer">
-                    <p>This is a computer generated receipt.</p>
-                    <p>Generated on ' . date('d M Y, h:i A') . '</p>
-                </div>
-
-                <a href="#" class="print-btn" onclick="window.print(); return false;">Print Receipt</a>
-            </div>
-        </body>
-        </html>
-        ';
-
-        echo $html;
     }
 }

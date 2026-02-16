@@ -68,6 +68,8 @@ $adminRole = getAuthSubRole();
                         <li><a class="<?php echo strpos($_SERVER['REQUEST_URI'], '/admin/bookings/create') !== false ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/bookings/create">Add Booking</a></li>
                         <li><a class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/employees') !== false && strpos($_SERVER['REQUEST_URI'], '/admin/employees/create') === false) ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/employees">Employees List</a></li>
                         <li><a class="<?php echo strpos($_SERVER['REQUEST_URI'], '/admin/employees/create') !== false ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/employees/create">Add Employee</a></li>
+                        <li><a class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/tickets') !== false) ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/tickets">Support Tickets</a></li>
+                        <li><a class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/tasks') !== false) ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/tasks">Tasks</a></li>
                         <li><a class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/admin/reports') !== false) ? 'active' : ''; ?>" href="<?php echo BASE_URL; ?>/admin/reports">Reports</a></li>
                     </ul>
                 </li>

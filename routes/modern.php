@@ -78,7 +78,23 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->post('/leads/store', 'Admin\LeadController@store');
         $router->get('/leads/edit/{id}', 'Admin\LeadController@edit');
         $router->post('/leads/update/{id}', 'Admin\LeadController@update');
-        $router->get('/leads/delete/{id}', 'Admin\LeadController@delete');
+        $router->get('/leads/delete/{id}', 'Admin\LeadController@destroy');
+
+        // Support Ticket Management
+        $router->get('/tickets', 'Admin\SupportTicketController@index');
+        $router->get('/tickets/create', 'Admin\SupportTicketController@create');
+        $router->post('/tickets/store', 'Admin\SupportTicketController@store');
+        $router->get('/tickets/{id}', 'Admin\SupportTicketController@show');
+        $router->post('/tickets/reply/{id}', 'Admin\SupportTicketController@reply');
+        $router->post('/tickets/updateStatus/{id}', 'Admin\SupportTicketController@updateStatus');
+
+        // Task Management
+        $router->get('/tasks', 'Admin\TaskController@index');
+        $router->get('/tasks/create', 'Admin\TaskController@create');
+        $router->post('/tasks/store', 'Admin\TaskController@store');
+        $router->get('/tasks/edit/{id}', 'Admin\TaskController@edit');
+        $router->post('/tasks/update/{id}', 'Admin\TaskController@update');
+        $router->get('/tasks/delete/{id}', 'Admin\TaskController@destroy');
 
         // Property Management
         $router->get('/properties', 'Admin\PropertyController@index');
@@ -138,6 +154,22 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
 
         // CRM Management
         $router->get('/crm/dashboard', 'Admin\AdminController@crmDashboard');
+
+        // Task Management
+        $router->get('/tasks', 'Admin\TaskController@index');
+        $router->get('/tasks/create', 'Admin\TaskController@create');
+        $router->post('/tasks/store', 'Admin\TaskController@store');
+        $router->get('/tasks/edit/{id}', 'Admin\TaskController@edit');
+        $router->post('/tasks/update/{id}', 'Admin\TaskController@update');
+        $router->get('/tasks/delete/{id}', 'Admin\TaskController@destroy');
+
+        // Support Tickets
+        $router->get('/support-tickets', 'Admin\SupportTicketController@index');
+        $router->get('/support-tickets/create', 'Admin\SupportTicketController@create');
+        $router->post('/support-tickets/store', 'Admin\SupportTicketController@store');
+        $router->get('/support-tickets/edit/{id}', 'Admin\SupportTicketController@edit');
+        $router->post('/support-tickets/update/{id}', 'Admin\SupportTicketController@update');
+        $router->get('/support-tickets/delete/{id}', 'Admin\SupportTicketController@destroy');
         $router->get('/customers', 'Admin\CustomerController@index');
         $router->get('/customers/create', 'Admin\CustomerController@create');
         $router->post('/customers/store', 'Admin\CustomerController@store');
@@ -208,13 +240,8 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->post('/associates/update/{id}', 'Admin\AssociateController@update');
         $router->post('/associates/delete/{id}', 'Admin\AssociateController@destroy');
 
-        // Payment Management
-        $router->get('/payments', 'Admin\PaymentController@index');
-        $router->post('/payments/store', 'Admin\PaymentController@store');
-        $router->post('/payments/delete', 'Admin\PaymentController@delete');
-        $router->get('/payments/stats', 'Admin\PaymentController@dashboardStats');
-        $router->get('/payments/data', 'Admin\PaymentController@getData');
-        $router->get('/payments/customers', 'Admin\PaymentController@getCustomers');
+        // Payment Management (Consolidated above)
+
 
         // EMI Routes
         $router->get('/emi', 'Admin\EMIController@index');

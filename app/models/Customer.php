@@ -14,6 +14,13 @@ class Customer extends Model
 {
     protected static string $table = 'users';
     protected $primaryKey = 'id';
+    protected $db;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->db = Database::getInstance()->getConnection();
+    }
 
     /**
      * Search customers for AJAX/Select2
@@ -35,7 +42,7 @@ class Customer extends Model
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         $items = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $items[] = [
@@ -132,11 +139,12 @@ class Customer extends Model
 
         try {
             // Insert into users table
+            $table = static::$table;
             $sql = "
-                INSERT INTO {$this->table} (
-                    name, email, password, phone, role, status, email_verified, created_at, updated_at
+                INSERT INTO {$table} (
+                    name, email, password, phone, role, status, created_at, updated_at
                 ) VALUES (
-                    :name, :email, :password, :phone, 'customer', 'active', 0, NOW(), NOW()
+                    :name, :email, :password, :phone, 'customer', 'active', NOW(), NOW()
                 )
             ";
 
@@ -151,12 +159,14 @@ class Customer extends Model
             $customerId = $this->db->lastInsertId();
 
             // Insert into customer_profiles table
+            $customerNumber = 'CUST' . date('Ymd') . rand(1000, 9999);
+
             $profileSql = "
                 INSERT INTO customer_profiles (
-                    user_id, phone, address, city, state, pincode, date_of_birth,
+                    user_id, customer_number, phone, address, city, state, pincode, date_of_birth,
                     occupation, marital_status, anniversary_date, referral_source, created_at, updated_at
                 ) VALUES (
-                    :user_id, :phone, :address, :city, :state, :pincode, :date_of_birth,
+                    :user_id, :customer_number, :phone, :address, :city, :state, :pincode, :date_of_birth,
                     :occupation, :marital_status, :anniversary_date, :referral_source, NOW(), NOW()
                 )
             ";
@@ -164,6 +174,7 @@ class Customer extends Model
             $profileStmt = $this->db->prepare($profileSql);
             $profileStmt->execute([
                 'user_id' => $customerId,
+                'customer_number' => $customerNumber,
                 'phone' => $data['phone'] ?? null,
                 'address' => $data['address'] ?? null,
                 'city' => $data['city'] ?? null,
@@ -180,7 +191,6 @@ class Customer extends Model
             $this->db->commit();
 
             return $customerId;
-
         } catch (\Exception $e) {
             // Rollback transaction
             $this->db->rollBack();
@@ -227,8 +237,16 @@ class Customer extends Model
             $profileParams = ['user_id' => $customerId];
 
             $profileFields = [
-                'phone', 'address', 'city', 'state', 'pincode', 'date_of_birth',
-                'occupation', 'marital_status', 'anniversary_date', 'referral_source'
+                'phone',
+                'address',
+                'city',
+                'state',
+                'pincode',
+                'date_of_birth',
+                'occupation',
+                'marital_status',
+                'anniversary_date',
+                'referral_source'
             ];
 
             foreach ($profileFields as $field) {
@@ -241,7 +259,9 @@ class Customer extends Model
             if (!empty($profileData)) {
                 $profileSql = "
                     INSERT INTO customer_profiles (user_id, " . implode(', ', $profileFields) . ", created_at, updated_at)
-                    VALUES (:user_id, " . implode(', ', array_map(function($field) { return ':' . $field; }, $profileFields)) . ", NOW(), NOW())
+                    VALUES (:user_id, " . implode(', ', array_map(function ($field) {
+                    return ':' . $field;
+                }, $profileFields)) . ", NOW(), NOW())
                     ON DUPLICATE KEY UPDATE " . implode(', ', $profileData) . ", updated_at = NOW()
                 ";
 
@@ -253,7 +273,6 @@ class Customer extends Model
             $this->db->commit();
 
             return true;
-
         } catch (\Exception $e) {
             // Rollback transaction
             $this->db->rollBack();
@@ -1167,7 +1186,6 @@ class Customer extends Model
                 'associate_code' => $associateCode,
                 'message' => 'Customer successfully converted to associate'
             ];
-
         } catch (\Exception $e) {
             // Rollback transaction
             $this->db->rollBack();

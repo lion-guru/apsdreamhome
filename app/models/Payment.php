@@ -292,10 +292,10 @@ class Payment extends Model
 
         $sql = "SELECT p.*, 
                        c.name as customer_name, c.email as customer_email, c.phone as customer_mobile,
-                       u.uname as created_by_name
+                       u.name as created_by_name
                 FROM payments p 
                 LEFT JOIN customers c ON p.customer_id = c.id 
-                LEFT JOIN user u ON p.created_by = u.uid
+                LEFT JOIN users u ON p.created_by = u.id
                 WHERE p.id = :id";
 
         $stmt = $conn->prepare($sql);
@@ -338,8 +338,11 @@ class Payment extends Model
             $params[':status'] = $data['status'];
         }
         if (isset($data['description'])) {
-            $fields[] = "description = :description";
-            $params[':description'] = $data['description'];
+            $fields[] = "notes = :notes";
+            $params[':notes'] = $data['description'];
+        } elseif (isset($data['notes'])) {
+            $fields[] = "notes = :notes";
+            $params[':notes'] = $data['notes'];
         }
 
         if (empty($fields)) {

@@ -56,6 +56,17 @@ Route::get('/admin/payments/show/{id}', 'Admin\PaymentController@show');
 Route::get('/admin/payments/receipt/{id}', 'Admin\PaymentController@receipt');
 Route::get('/admin/payments/edit/{id}', 'Admin\PaymentController@edit');
 
+// CRM / Lead Management
+Route::get('/admin/leads', 'CRM\LeadController@index');
+Route::get('/admin/leads/create', 'CRM\LeadController@create');
+Route::post('/admin/leads/store', 'CRM\LeadController@store');
+Route::get('/admin/leads/edit/{id}', 'CRM\LeadController@edit');
+Route::post('/admin/leads/update/{id}', 'CRM\LeadController@update');
+Route::post('/admin/leads/delete/{id}', 'CRM\LeadController@destroy');
+Route::get('/admin/leads/{id}', 'CRM\LeadController@show');
+Route::post('/admin/leads/{id}/activity', 'CRM\LeadController@addActivity');
+Route::post('/admin/leads/{id}/note', 'CRM\LeadController@addNote');
+
 // Visit Management
 Route::get('/admin/visits', 'Admin\VisitController@index');
 Route::get('/admin/visits/create', 'Admin\VisitController@create');

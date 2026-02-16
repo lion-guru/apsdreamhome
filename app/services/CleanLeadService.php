@@ -2,26 +2,28 @@
 
 namespace App\Services;
 
-use App\Core\Database;
+use App\Models\Database;
 
 class CleanLeadService
 {
     private $db;
 
-    public function __construct() {
-        $this->db = Database::getInstance();
+    public function __construct()
+    {
+        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
      * Get leads with filters
      */
-    public function getLeads($filters = []) {
+    public function getLeads($filters = [])
+    {
         try {
             $where = [];
             $params = [];
 
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR phone LIKE ?)";
+                $where[] = "(leads.name LIKE ? OR leads.email LIKE ? OR leads.phone LIKE ?)";
                 $searchTerm = '%' . $filters['search'] . '%';
                 $params[] = $searchTerm;
                 $params[] = $searchTerm;
@@ -29,24 +31,33 @@ class CleanLeadService
             }
 
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
+                $where[] = "leads.status = ?";
                 $params[] = $filters['status'];
             }
 
             if (!empty($filters['source'])) {
-                $where[] = "source = ?";
+                $where[] = "leads.source = ?";
                 $params[] = $filters['source'];
             }
 
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
             $offset = ($filters['page'] - 1) * $filters['per_page'];
-            $stmt = $this->db->query("
-                SELECT * FROM leads
+            $stmt = $this->db->prepare("
+                SELECT leads.*, 
+                       leads.property_interest as property_type,
+                       lead_sources.name as source_name, 
+                       lead_statuses.status_name as status_label,
+                       users.name as assigned_to_name
+                FROM leads
+                LEFT JOIN lead_sources ON leads.source = lead_sources.id
+                LEFT JOIN lead_statuses ON leads.status = lead_statuses.id
+                LEFT JOIN users ON leads.assigned_to = users.id
                 $whereClause
-                ORDER BY created_at DESC
+                ORDER BY leads.created_at DESC
                 LIMIT $offset, {$filters['per_page']}
-            ", $params);
+            ");
+            $stmt->execute($params);
 
             return $stmt->fetchAll();
         } catch (\Exception $e) {
@@ -57,9 +68,22 @@ class CleanLeadService
     /**
      * Get lead by ID
      */
-    public function getLeadById($id) {
+    public function getLeadById($id)
+    {
         try {
-            $stmt = $this->db->query("SELECT * FROM leads WHERE id = ?", [$id]);
+            $stmt = $this->db->prepare("
+                SELECT leads.*, 
+                       leads.property_interest as property_type,
+                       lead_sources.name as source_name, 
+                       lead_statuses.status_name as status_label,
+                       users.name as assigned_to_name
+                FROM leads
+                LEFT JOIN lead_sources ON leads.source = lead_sources.id
+                LEFT JOIN lead_statuses ON leads.status = lead_statuses.id
+                LEFT JOIN users ON leads.assigned_to = users.id
+                WHERE leads.id = ?
+            ");
+            $stmt->execute([$id]);
             return $stmt->fetch();
         } catch (\Exception $e) {
             return null;
@@ -69,13 +93,15 @@ class CleanLeadService
     /**
      * Get lead activities
      */
-    public function getLeadActivities($leadId) {
+    public function getLeadActivities($leadId)
+    {
         try {
-            $stmt = $this->db->query("
+            $stmt = $this->db->prepare("
                 SELECT * FROM lead_activities
                 WHERE lead_id = ?
                 ORDER BY created_at DESC
-            ", [$leadId]);
+            ");
+            $stmt->execute([$leadId]);
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -85,13 +111,15 @@ class CleanLeadService
     /**
      * Get lead notes
      */
-    public function getLeadNotes($leadId) {
+    public function getLeadNotes($leadId)
+    {
         try {
-            $stmt = $this->db->query("
+            $stmt = $this->db->prepare("
                 SELECT * FROM lead_notes
                 WHERE lead_id = ?
                 ORDER BY created_at DESC
-            ", [$leadId]);
+            ");
+            $stmt->execute([$leadId]);
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -101,13 +129,15 @@ class CleanLeadService
     /**
      * Get lead files
      */
-    public function getLeadFiles($leadId) {
+    public function getLeadFiles($leadId)
+    {
         try {
-            $stmt = $this->db->query("
+            $stmt = $this->db->prepare("
                 SELECT * FROM lead_files
                 WHERE lead_id = ?
                 ORDER BY created_at DESC
-            ", [$leadId]);
+            ");
+            $stmt->execute([$leadId]);
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -117,23 +147,26 @@ class CleanLeadService
     /**
      * Get lead statistics
      */
-    public function getLeadStats() {
+    public function getLeadStats()
+    {
         try {
             $stats = [];
 
             // Total leads by status
             $stmt = $this->db->query("
-                SELECT status, COUNT(*) as count
+                SELECT lead_statuses.status_name as status, COUNT(leads.id) as count
                 FROM leads
-                GROUP BY status
+                LEFT JOIN lead_statuses ON leads.status = lead_statuses.id
+                GROUP BY leads.status
             ");
             $stats['by_status'] = $stmt->fetchAll();
 
             // Total leads by source
             $stmt = $this->db->query("
-                SELECT source, COUNT(*) as count
+                SELECT lead_sources.name as source, COUNT(leads.id) as count
                 FROM leads
-                GROUP BY source
+                LEFT JOIN lead_sources ON leads.source = lead_sources.id
+                GROUP BY leads.source
             ");
             $stats['by_source'] = $stmt->fetchAll();
 
@@ -146,9 +179,10 @@ class CleanLeadService
     /**
      * Get lead sources
      */
-    public function getSources() {
+    public function getSources()
+    {
         try {
-            $stmt = $this->db->query("SELECT DISTINCT source FROM leads WHERE source IS NOT NULL ORDER BY source");
+            $stmt = $this->db->query("SELECT id, name as source_name FROM lead_sources WHERE is_active = 1 ORDER BY sort_order ASC, name ASC");
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -158,9 +192,30 @@ class CleanLeadService
     /**
      * Get lead statuses
      */
-    public function getStatuses() {
+    public function getStatuses()
+    {
         try {
-            $stmt = $this->db->query("SELECT DISTINCT status FROM leads WHERE status IS NOT NULL ORDER BY status");
+            $stmt = $this->db->query("SELECT id, status_name FROM lead_statuses ORDER BY id ASC");
+            return $stmt->fetchAll();
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get assignable users
+     */
+    public function getAssignableUsers()
+    {
+        try {
+            $stmt = $this->db->query("
+                SELECT u.id, u.name, COUNT(l.id) as lead_count
+                FROM users u
+                LEFT JOIN leads l ON u.id = l.assigned_to
+                WHERE u.status = 'active'
+                GROUP BY u.id
+                ORDER BY u.name ASC
+            ");
             return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
@@ -170,17 +225,28 @@ class CleanLeadService
     /**
      * Create lead
      */
-    public function createLead($data) {
+    public function createLead($data)
+    {
         try {
-            $stmt = $this->db->query(
-                "INSERT INTO leads (name, email, phone, source, status, priority, budget, property_type, location_preference, notes, assigned_to, created_by, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
-                [
-                    $data['name'], $data['email'], $data['phone'], $data['source'],
-                    $data['status'], $data['priority'], $data['budget'], $data['property_type'],
-                    $data['location_preference'], $data['notes'], $data['assigned_to'], $data['created_by']
-                ]
+            $stmt = $this->db->prepare(
+                "INSERT INTO leads (name, email, phone, source, status, priority, budget, property_interest, location_preference, notes, company, assigned_to, created_by, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
             );
+            $stmt->execute([
+                $data['name'],
+                $data['email'],
+                $data['phone'],
+                $data['source'],
+                $data['status'],
+                $data['priority'],
+                $data['budget'],
+                $data['property_type'], // Maps to property_interest
+                $data['location_preference'],
+                $data['notes'],
+                $data['company'] ?? null,
+                $data['assigned_to'],
+                $data['created_by']
+            ]);
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
             return false;
@@ -190,19 +256,30 @@ class CleanLeadService
     /**
      * Update lead
      */
-    public function updateLead($id, $data) {
+    public function updateLead($id, $data)
+    {
         try {
-            $stmt = $this->db->query(
+            $stmt = $this->db->prepare(
                 "UPDATE leads SET
                  name = ?, email = ?, phone = ?, source = ?, status = ?, priority = ?,
-                 budget = ?, property_type = ?, location_preference = ?, notes = ?, assigned_to = ?, updated_at = NOW()
-                 WHERE id = ?",
-                [
-                    $data['name'], $data['email'], $data['phone'], $data['source'],
-                    $data['status'], $data['priority'], $data['budget'], $data['property_type'],
-                    $data['location_preference'], $data['notes'], $data['assigned_to'], $id
-                ]
+                 budget = ?, property_interest = ?, location_preference = ?, notes = ?, company = ?, assigned_to = ?, updated_at = NOW()
+                 WHERE id = ?"
             );
+            $stmt->execute([
+                $data['name'],
+                $data['email'],
+                $data['phone'],
+                $data['source'],
+                $data['status'],
+                $data['priority'],
+                $data['budget'],
+                $data['property_type'], // Maps to property_interest
+                $data['location_preference'],
+                $data['notes'],
+                $data['company'] ?? null,
+                $data['assigned_to'],
+                $id
+            ]);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             return false;
@@ -212,16 +289,21 @@ class CleanLeadService
     /**
      * Add activity
      */
-    public function addActivity($data) {
+    public function addActivity($data)
+    {
         try {
-            $stmt = $this->db->query(
+            $stmt = $this->db->prepare(
                 "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, metadata, created_at)
-                 VALUES (?, ?, ?, ?, ?, NOW())",
-                [
-                    $data['lead_id'], $data['activity_type'], $data['description'],
-                    $data['created_by'], $data['metadata'], $data['created_at']
-                ]
+                 VALUES (?, ?, ?, ?, ?, NOW())"
             );
+            $stmt->execute([
+                $data['lead_id'],
+                $data['activity_type'],
+                $data['description'],
+                $data['created_by'],
+                $data['metadata'],
+                $data['created_at']
+            ]);
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
             return false;
@@ -231,13 +313,14 @@ class CleanLeadService
     /**
      * Add note
      */
-    public function addNote($data) {
+    public function addNote($data)
+    {
         try {
-            $stmt = $this->db->query(
+            $stmt = $this->db->prepare(
                 "INSERT INTO lead_notes (lead_id, note, created_by, created_at)
-                 VALUES (?, ?, ?, NOW())",
-                [$data['lead_id'], $data['note'], $data['created_by']]
+                 VALUES (?, ?, ?, NOW())"
             );
+            $stmt->execute([$data['lead_id'], $data['note'], $data['created_by']]);
             return $this->db->lastInsertId();
         } catch (\Exception $e) {
             return false;
@@ -247,12 +330,27 @@ class CleanLeadService
     /**
      * Assign lead
      */
-    public function assignLead($leadId, $userId) {
+    public function assignLead($leadId, $userId)
+    {
         try {
-            $stmt = $this->db->query(
-                "UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?",
-                [$userId, $leadId]
+            $stmt = $this->db->prepare(
+                "UPDATE leads SET assigned_to = ?, updated_at = NOW() WHERE id = ?"
             );
+            $stmt->execute([$userId, $leadId]);
+            return $stmt->rowCount() > 0;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Delete lead
+     */
+    public function deleteLead($id)
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM leads WHERE id = ?");
+            $stmt->execute([$id]);
             return $stmt->rowCount() > 0;
         } catch (\Exception $e) {
             return false;
@@ -262,7 +360,8 @@ class CleanLeadService
     /**
      * Convert to customer
      */
-    public function convertToCustomer($leadId) {
+    public function convertToCustomer($leadId)
+    {
         try {
             $lead = $this->getLeadById($leadId);
 
@@ -270,17 +369,18 @@ class CleanLeadService
                 return false;
             }
 
-            $stmt = $this->db->query(
+            $stmt = $this->db->prepare(
                 "INSERT INTO customers (name, email, phone, created_at)
-                 VALUES (?, ?, ?, NOW())",
-                [$lead['name'], $lead['email'], $lead['phone']]
+                 VALUES (?, ?, ?, NOW())"
             );
+            $stmt->execute([$lead['name'], $lead['email'], $lead['phone']]);
 
             $customerId = $this->db->lastInsertId();
 
             if ($customerId) {
                 // Update lead status to converted
-                $this->db->query("UPDATE leads SET status = 'converted', updated_at = NOW() WHERE id = ?", [$leadId]);
+                $stmt = $this->db->prepare("UPDATE leads SET status = 'converted', updated_at = NOW() WHERE id = ?");
+                $stmt->execute([$leadId]);
                 return $customerId;
             }
 
@@ -293,11 +393,12 @@ class CleanLeadService
     /**
      * Generate report
      */
-    public function generateReport($reportType, $dateRange) {
+    public function generateReport($reportType, $dateRange)
+    {
         try {
             switch ($reportType) {
                 case 'summary':
-                    $stmt = $this->db->query("
+                    $stmt = $this->db->prepare("
                         SELECT
                             COUNT(*) as total_leads,
                             COUNT(CASE WHEN status = 'new' THEN 1 END) as new_leads,
@@ -306,7 +407,8 @@ class CleanLeadService
                             COUNT(CASE WHEN status = 'converted' THEN 1 END) as converted_leads
                         FROM leads
                         WHERE created_at BETWEEN ? AND ?
-                    ", [$dateRange['start'], $dateRange['end']]);
+                    ");
+                    $stmt->execute([$dateRange['start'], $dateRange['end']]);
                     break;
 
                 default:
@@ -314,18 +416,6 @@ class CleanLeadService
             }
 
             return $stmt->fetch();
-        } catch (\Exception $e) {
-            return [];
-        }
-    }
-
-    /**
-     * Get assignable users
-     */
-    public function getAssignableUsers() {
-        try {
-            $stmt = $this->db->query("SELECT id, name FROM users WHERE status = 'active' ORDER BY name");
-            return $stmt->fetchAll();
         } catch (\Exception $e) {
             return [];
         }

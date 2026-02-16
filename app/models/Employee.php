@@ -22,7 +22,7 @@ class Employee extends Model
     public function getEmployeeById($id)
     {
         $sql = "
-            SELECT e.*, u.name, u.email, e.phone, u.status as user_status,
+            SELECT e.*, 
                    r.name as role_name,
                    d.name as department_name,
                    e.created_at as joining_date, e.updated_at as last_updated,
@@ -30,7 +30,6 @@ class Employee extends Model
                    (SELECT COUNT(*) FROM employee_tasks et WHERE et.employee_id = e.id AND et.status != 'completed') as pending_tasks,
                    (SELECT COUNT(*) FROM employee_attendance ea2 WHERE ea2.employee_id = e.id AND ea2.attendance_date = CURDATE()) as today_attendance
             FROM " . static::$table . " e
-            JOIN users u ON e.user_id = u.id
             LEFT JOIN roles r ON e.role_id = r.id
             LEFT JOIN departments d ON e.department_id = d.id
             WHERE e.id = :id
@@ -47,11 +46,10 @@ class Employee extends Model
     public function getEmployeeByUserId($userId)
     {
         $sql = "
-            SELECT e.*, u.name, u.email, e.phone,
+            SELECT e.*,
                    r.name as role_name,
                    d.name as department_name
             FROM " . static::$table . " e
-            JOIN users u ON e.user_id = u.id
             LEFT JOIN roles r ON e.role_id = r.id
             LEFT JOIN departments d ON e.department_id = d.id
             WHERE e.user_id = :user_id
@@ -68,12 +66,11 @@ class Employee extends Model
     public function getEmployeeByEmail($email)
     {
         $sql = "
-            SELECT e.*, u.name, u.email, e.phone,
+            SELECT e.*,
                    r.name as role_name
             FROM " . static::$table . " e
-            JOIN users u ON e.user_id = u.id
             LEFT JOIN roles r ON e.role_id = r.id
-            WHERE u.email = :email
+            WHERE e.email = :email
         ";
 
         $stmt = $this->db->prepare($sql);
@@ -87,10 +84,9 @@ class Employee extends Model
     public function getAllEmployees($filters = [])
     {
         $sql = "
-            SELECT e.*, u.name, u.email, e.phone, u.status as user_status,
+            SELECT e.*,
                    r.name as role_name, d.name as department_name
             FROM " . static::$table . " e
-            JOIN users u ON e.user_id = u.id
             LEFT JOIN roles r ON e.role_id = r.id
             LEFT JOIN departments d ON e.department_id = d.id
             WHERE 1=1
@@ -99,7 +95,7 @@ class Employee extends Model
         $params = [];
 
         if (!empty($filters['search'])) {
-            $sql .= " AND (u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
+            $sql .= " AND (e.name LIKE :search OR e.email LIKE :search OR e.phone LIKE :search)";
             $params['search'] = '%' . $filters['search'] . '%';
         }
 
@@ -125,16 +121,16 @@ class Employee extends Model
 
         try {
             // Create user account first
-            // Removed phone from users insert as column does not exist
             $userSql = "
-                INSERT INTO users (name, email, password, role, status, created_at, updated_at)
-                VALUES (:name, :email, :password, 'employee', 'active', NOW(), NOW())
+                INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at)
+                VALUES (:name, :email, :phone, :password, 'employee', 'active', NOW(), NOW())
             ";
 
             $userStmt = $this->db->prepare($userSql);
             $userStmt->execute([
                 'name' => $data['name'],
                 'email' => $data['email'],
+                'phone' => $data['phone'] ?? null,
                 'password' => password_hash($data['password'], PASSWORD_DEFAULT)
             ]);
 
@@ -292,7 +288,11 @@ class Employee extends Model
                     $userUpdates[] = "email = :email";
                     $userParams['email'] = $data['email'];
                 }
-                // users table does NOT have phone
+
+                if (isset($data['phone'])) {
+                    $userUpdates[] = "phone = :phone";
+                    $userParams['phone'] = $data['phone'];
+                }
 
                 // Update password in users table too if changed
                 if (!empty($data['password'])) {
