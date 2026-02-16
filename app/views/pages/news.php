@@ -1,78 +1,14 @@
 <?php
-require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/functions.php';
-
-// Function to sanitize input data
-function sanitizeInput($data) {
-    return htmlspecialchars(stripslashes(trim($data)));
-}
-
-// Initialize variables
-$page_title = "News & Updates - APS Dream Homes";
-$meta_description = "Stay updated with the latest real estate news, market trends, and company updates from APS Dream Homes.";
-$meta_keywords = "real estate news, property market updates, APS Dream Homes news, real estate trends, property investment news";
-
-// Additional CSS
-$additional_css = '
+// app/views/pages/news.php
+$extra_css = '
 <link rel="stylesheet" href="' . get_asset_url("css/common.css") . '">
 <link rel="stylesheet" href="' . get_asset_url("css/news.css") . '">
 ';
 
-// Additional JS
-$additional_js = '
+$extra_js = '
 <script src="' . get_asset_url("js/common.js") . '"></script>
 <script src="' . get_asset_url("js/news.js") . '"></script>
 ';
-
-// Fetch news categories
-    $categories = [];
-    $stmt = $conn->prepare("SELECT DISTINCT category FROM news WHERE status = 'published' ORDER BY category");
-    $stmt->execute();
-    $categories_result = $stmt->get_result();
-    while ($row = $categories_result->fetch_assoc()) {
-        $categories[] = $row['category'];
-    }
-    $stmt->close();
-
-// Fetch news with pagination
-$items_per_page = 9;
-$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($current_page - 1) * $items_per_page;
-
-$current_category = isset($_GET['category']) ? mysqli_real_escape_string($conn, $_GET['category']) : 'all';
-$where_clause = $current_category !== 'all' ? "AND category = '$current_category'" : "";
-
-    $count_query = "SELECT COUNT(*) as total FROM news WHERE status = 'published' ";
-    if ($current_category !== 'all') {
-        $count_query .= "AND category = ?";
-    }
-    $stmt = $conn->prepare($count_query);
-    if ($current_category !== 'all') {
-        $stmt->bind_param("s", $current_category);
-    }
-    $stmt->execute();
-    $count_result = $stmt->get_result();
-    $total_items = $count_result->fetch_assoc()['total'];
-    $stmt->close();
-$total_pages = ceil($total_items / $items_per_page);
-
-    $news_query = "SELECT n.*, u.name as author_name, u.profile_image as author_image 
-                   FROM news n 
-                   LEFT JOIN users u ON n.author_id = u.id 
-                   WHERE n.status = 'published' $where_clause 
-                   ORDER BY n.created_at DESC 
-                   LIMIT ?, ?";
-    $stmt = $conn->prepare($news_query);
-    if ($current_category !== 'all') {
-        $stmt->bind_param("sii", $current_category, $offset, $items_per_page);
-    } else {
-        $stmt->bind_param("ii", $offset, $items_per_page);
-    }
-    $stmt->execute();
-    $news_result = $stmt->get_result();
-
-// Include header
-require_once __DIR__ . '/includes/templates/header.php';
 ?>
 
 <!-- Hero Section -->
@@ -83,9 +19,9 @@ require_once __DIR__ . '/includes/templates/header.php';
                 <h1 class="display-4 fw-bold">News & Updates</h1>
                 <p class="lead text-muted">Stay informed with the latest real estate news and market trends.</p>
                 <div class="mt-4">
-                    <form class="search-form" id="newsSearch">
+                    <form class="search-form" id="newsSearch" action="/news" method="GET">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search news..." id="searchInput">
+                            <input type="text" name="q" class="form-control" placeholder="Search news..." id="searchInput" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-search"></i>
                             </button>
@@ -104,8 +40,13 @@ require_once __DIR__ . '/includes/templates/header.php';
 <nav class="bg-light border-bottom py-2">
     <div class="container">
         <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active">News</li>
+            <?php foreach ($breadcrumbs as $crumb): ?>
+                <?php if (isset($crumb['active']) && $crumb['active']): ?>
+                    <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                <?php endif; ?>
+            <?php endforeach; ?>
         </ol>
     </div>
 </nav>
@@ -117,15 +58,14 @@ require_once __DIR__ . '/includes/templates/header.php';
         <div class="row mb-4">
             <div class="col-12">
                 <div class="news-filter text-center">
-                    <button class="btn <?= $current_category === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2" 
-                            onclick="window.location.href='news'">
+                    <a href="/news" class="btn <?= $pagination['current_category'] === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                         All News
-                    </button>
-                    <?php foreach ($categories as $category): ?>
-                    <button class="btn <?= $current_category === $category ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2"
-                            onclick="window.location.href='news?category=<?= urlencode($category) ?>'">
-                        <?= htmlspecialchars(ucwords($category)) ?>
-                    </button>
+                    </a>
+                    <?php foreach ($categories as $cat): ?>
+                        <a href="/news?category=<?= urlencode($cat) ?>"
+                            class="btn <?= $pagination['current_category'] === $cat ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                            <?= htmlspecialchars(ucwords($cat)) ?>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -133,68 +73,87 @@ require_once __DIR__ . '/includes/templates/header.php';
 
         <!-- News Grid -->
         <div class="row g-4">
-            <?php while ($news = mysqli_fetch_assoc($news_result)): ?>
-            <div class="col-lg-4 col-md-6">
-                <article class="news-card">
-                    <div class="news-image">
-                        <img src="<?= get_asset_url($news['image']) ?>" 
-                             alt="<?= htmlspecialchars($news['title']) ?>" 
-                             class="img-fluid">
-                        <div class="news-category">
-                            <?= htmlspecialchars(ucwords($news['category'])) ?>
-                        </div>
+            <?php if (empty($news_items)): ?>
+                <div class="col-12 text-center py-5">
+                    <div class="empty-state">
+                        <i class="far fa-newspaper fa-3x text-muted mb-3"></i>
+                        <h3>No news found</h3>
+                        <p class="text-muted">There are no news items to display at this time.</p>
+                        <?php if ($pagination['current_category'] !== 'all'): ?>
+                            <a href="/news" class="btn btn-primary mt-3">View All News</a>
+                        <?php endif; ?>
                     </div>
-                    <div class="news-content">
-                        <h3 class="news-title">
-                            <a href="/news/<?= $news['slug'] ?>">
-                                <?= htmlspecialchars($news['title']) ?>
-                            </a>
-                        </h3>
-                        <div class="news-meta">
-                            <span class="news-date">
-                                <i class="far fa-calendar-alt me-1"></i>
-                                <?= date('M d, Y', strtotime($news['created_at'])) ?>
-                            </span>
-                            <?php if ($news['author_name']): ?>
-                            <span class="news-author">
-                                <i class="far fa-user me-1"></i>
-                                <?= htmlspecialchars($news['author_name']) ?>
-                            </span>
-                            <?php endif; ?>
-                        </div>
-                        <p class="news-excerpt">
-                            <?= htmlspecialchars(substr(strip_tags($news['excerpt']), 0, 150)) ?>...
-                        </p>
-                        <a href="/news/<?= $news['slug'] ?>" class="btn btn-outline-primary">
-                            Read More
-                            <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
+                </div>
+            <?php else: ?>
+                <?php foreach ($news_items as $news): ?>
+                    <div class="col-lg-4 col-md-6">
+                        <article class="news-card h-100 shadow-sm rounded overflow-hidden bg-white">
+                            <div class="news-image position-relative">
+                                <?php
+                                $imagePath = !empty($news->image) ? $news->image : 'img/default-news.jpg';
+                                $imageUrl = get_asset_url($imagePath);
+                                ?>
+                                <img src="<?= $imageUrl ?>"
+                                    alt="<?= htmlspecialchars($news->title) ?>"
+                                    class="img-fluid w-100" style="height: 250px; object-fit: cover;">
+                                <div class="news-category position-absolute top-0 start-0 m-3">
+                                    <span class="badge bg-primary">News</span>
+                                </div>
+                            </div>
+                            <div class="news-content p-4">
+                                <h3 class="news-title h5 mb-3">
+                                    <a href="/news/view/<?= htmlspecialchars($news->id) ?>" class="text-decoration-none text-dark">
+                                        <?= htmlspecialchars($news->title) ?>
+                                    </a>
+                                </h3>
+                                <div class="news-meta text-muted small mb-3">
+                                    <span class="news-date me-3">
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                        <?= date('M d, Y', strtotime($news->created_at)) ?>
+                                    </span>
+                                </div>
+                                <p class="news-excerpt text-muted mb-4">
+                                    <?= htmlspecialchars(substr(strip_tags($news->summary ?? $news->content), 0, 150)) ?>...
+                                </p>
+                                <a href="/news/view/<?= htmlspecialchars($news->id) ?>" class="btn btn-outline-primary btn-sm stretched-link">
+                                    Read More
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </article>
                     </div>
-                </article>
-            </div>
-            <?php endwhile; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
-
-        <?php if (mysqli_num_rows($news_result) === 0): ?>
-        <div class="text-center py-5">
-            <h3>No news found</h3>
-            <p class="text-muted">Please try selecting a different category or check back later.</p>
-        </div>
-        <?php endif; ?>
 
         <!-- Pagination -->
-        <?php if ($total_pages > 1): ?>
-        <nav class="mt-5">
-            <ul class="pagination justify-content-center">
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?= $i === $current_page ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $i ?><?= $current_category !== 'all' ? '&category=' . urlencode($current_category) : '' ?>">
-                        <?= $i ?>
-                    </a>
-                </li>
-                <?php endfor; ?>
-            </ul>
-        </nav>
+        <?php if ($pagination['total_pages'] > 1): ?>
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Page -->
+                    <li class="page-item <?= $pagination['current_page'] <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="/news?page=<?= $pagination['current_page'] - 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
+                        <li class="page-item <?= $i == $pagination['current_page'] ? 'active' : '' ?>">
+                            <a class="page-link" href="/news?page=<?= $i ?>&category=<?= urlencode($pagination['current_category']) ?>">
+                                <?= $i ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Next Page -->
+                    <li class="page-item <?= $pagination['current_page'] >= $pagination['total_pages'] ? 'disabled' : '' ?>">
+                        <a class="page-link" href="/news?page=<?= $pagination['current_page'] + 1 ?>&category=<?= urlencode($pagination['current_category']) ?>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         <?php endif; ?>
 
         <!-- Newsletter CTA -->
@@ -214,8 +173,3 @@ require_once __DIR__ . '/includes/templates/header.php';
         </div>
     </div>
 </main>
-
-<?php
-// Include footer
-require_once __DIR__ . '/includes/templates/footer.php';
-?>

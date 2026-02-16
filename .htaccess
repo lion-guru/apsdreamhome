@@ -6,6 +6,12 @@
     # This prevents Apache from serving the legacy admin directory directly
     RewriteRule ^admin/?$ public/index.php [L]
 
+    # Serve assets from public directory
+    RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+    RewriteRule ^css/(.*)$ public/css/$1 [L]
+    RewriteRule ^js/(.*)$ public/js/$1 [L]
+    RewriteRule ^images/(.*)$ public/images/$1 [L]
+
     # Serve existing files/directories directly
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d

@@ -1,3 +1,5 @@
 <?php
 // phpstan-bootstrap.php
-define('PHPSTAN', true);
+if (!defined('PHPSTAN')) {
+    define('PHPSTAN', true);
+}

@@ -35,11 +35,18 @@ $app->router()->group(['prefix' => 'api'], function ($router) {
 
 // Modern web routes with better organization
 $app->router()->group(['middleware' => 'web'], function ($router) {
+    // Admin Login Routes (Public)
+    $router->get('/admin/login', 'Auth\AdminAuthController@showLogin');
+    $router->post('/admin/login', 'Auth\AdminAuthController@processLogin');
+    $router->post('/admin/logout', 'Auth\AdminAuthController@logout');
+
     // Public routes
     $router->get('/', 'Public\PageController@index');
     $router->get('/about', 'Public\PageController@about');
     $router->get('/contact', 'Public\PageController@contact');
     $router->post('/contact', 'Public\PageController@processContact');
+    $router->get('/careers', 'Public\PageController@careers');
+    $router->get('/news', 'Public\PageController@news');
 
     // Property routes
     $router->get('/properties', 'Property\PropertyController@index');
@@ -71,6 +78,7 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
     // Admin Dashboards
     $router->group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function ($router) {
         $router->get('/', 'Admin\AdminController@index');
+        $router->get('/dashboard', 'Admin\AdminController@dashboard');
 
         // Lead Management
         $router->get('/leads', 'Admin\LeadController@index');
@@ -92,6 +100,30 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         // Task Management
         $router->get('/tasks', 'Admin\TaskController@index');
         $router->get('/tasks/create', 'Admin\TaskController@create');
+
+        // News Management
+        $router->get('/news', 'Admin\NewsController@index');
+        $router->get('/news/create', 'Admin\NewsController@create');
+        $router->post('/news/store', 'Admin\NewsController@store');
+        $router->get('/news/edit/{id}', 'Admin\NewsController@edit');
+        $router->post('/news/update/{id}', 'Admin\NewsController@update');
+        $router->post('/news/delete/{id}', 'Admin\NewsController@delete');
+
+        // Career Management
+        $router->get('/careers', 'Admin\CareerController@index');
+        $router->get('/careers/create', 'Admin\CareerController@create');
+        $router->post('/careers/store', 'Admin\CareerController@store');
+        $router->get('/careers/edit/{id}', 'Admin\CareerController@edit');
+        $router->post('/careers/update/{id}', 'Admin\CareerController@update');
+        $router->post('/careers/delete/{id}', 'Admin\CareerController@delete');
+        $router->get('/careers/applications/{id}', 'Admin\CareerController@applications');
+        $router->get('/careers/applications', 'Admin\CareerController@applications');
+
+        // Media Library
+        $router->get('/media', 'Admin\MediaController@index');
+        $router->get('/media/create', 'Admin\MediaController@create');
+        $router->post('/media/store', 'Admin\MediaController@store');
+        $router->post('/media/delete/{id}', 'Admin\MediaController@delete');
         $router->post('/tasks/store', 'Admin\TaskController@store');
         $router->get('/tasks/edit/{id}', 'Admin\TaskController@edit');
         $router->post('/tasks/update/{id}', 'Admin\TaskController@update');
@@ -300,6 +332,35 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->get('/leads', 'Associate\LeadController@index');
         $router->get('/commissions', 'Associate\CommissionController@index');
         $router->get('/referrals', 'Associate\ReferralController@index');
+    });
+
+    // Customer Portal Routes (Restored)
+    $router->group(['prefix' => 'customer'], function ($router) {
+        $router->get('/login', 'Customer\CustomerController@login');
+        $router->post('/authenticate', 'Customer\CustomerController@authenticate');
+        $router->get('/register', 'Customer\CustomerController@register');
+        $router->post('/register', 'Customer\CustomerController@processRegistration');
+
+        // Authenticated Customer Routes
+        $router->group(['middleware' => 'auth'], function ($router) {
+            $router->get('/dashboard', 'Customer\CustomerController@dashboard');
+            $router->get('/emi-calculator', 'Customer\CustomerController@emiCalculator');
+            $router->post('/emi-calculate', 'Customer\CustomerController@calculateEMI');
+            $router->post('/emi-save', 'Customer\CustomerController@saveEMICalculation');
+            $router->get('/emi-history', 'Customer\CustomerController@emiHistory');
+        });
+    });
+
+    // SaaS Professional Dashboard Routes (Restored)
+    $router->group(['prefix' => 'professional', 'middleware' => ['auth']], function ($router) {
+        $router->get('/dashboard', 'SaaS\ProfessionalDashboardController@index');
+        $router->get('/projects/inventory', 'SaaS\ProfessionalToolsController@inventory');
+        $router->get('/construction/workflow', 'SaaS\ProfessionalToolsController@workflow');
+        $router->get('/expenses/manage', 'SaaS\ProfessionalToolsController@expenses');
+        $router->get('/labor/management', 'SaaS\ProfessionalToolsController@labor');
+        $router->get('/marketing/whatsapp', 'SaaS\ProfessionalToolsController@whatsapp');
+        $router->get('/referrals', 'SaaS\ProfessionalToolsController@referrals');
+        $router->get('/documents', 'SaaS\ProfessionalToolsController@documents');
     });
 });
 

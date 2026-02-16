@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,32 +15,39 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
+
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.8);
             border-radius: 0;
             padding: 15px 20px;
         }
+
         .sidebar .nav-link:hover,
         .sidebar .nav-link.active {
             color: white;
             background-color: rgba(255, 255, 255, 0.1);
         }
+
         .main-content {
             min-height: 100vh;
             background-color: #f8f9fa;
         }
+
         .navbar-brand {
             font-weight: bold;
             font-size: 1.5rem;
         }
+
         .stat-card {
             border: none;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         .stat-card .card-body {
             padding: 2rem;
         }
+
         .stat-icon {
             width: 50px;
             height: 50px;
@@ -51,6 +59,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="d-flex">
         <!-- Sidebar -->
@@ -98,7 +107,22 @@
                 </li>
                 <li class="nav-item mb-1">
                     <a href="/admin/customers" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/customers') !== false) ? 'active' : '' ?>">
-                        <i class="fas fa-users me-2"></i>Customers
+                        <i class="fas fa-users-cog me-2"></i>Customers
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="/admin/news" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/news') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-newspaper me-2"></i>News
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="/admin/careers" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/careers') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-briefcase me-2"></i>Careers
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="/admin/media" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/media') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-images me-2"></i>Media
                     </a>
                 </li>
                 <li class="nav-item mb-1">
@@ -171,18 +195,20 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="/admin/settings">
-                                    <i class="fas fa-cog me-2"></i>Settings
-                                </a></li>
+                                        <i class="fas fa-cog me-2"></i>Settings
+                                    </a></li>
                                 <li><a class="dropdown-item" href="/admin/database">
-                                    <i class="fas fa-database me-2"></i>Database
-                                </a></li>
+                                        <i class="fas fa-database me-2"></i>Database
+                                    </a></li>
                                 <li><a class="dropdown-item" href="/admin/logs">
-                                    <i class="fas fa-file-alt me-2"></i>Logs
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                        <i class="fas fa-file-alt me-2"></i>Logs
+                                    </a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li><a class="dropdown-item text-danger" href="/admin/logout">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a></li>
                             </ul>
                         </div>
                     </div>
@@ -221,13 +247,15 @@
     <script>
         // CSRF token for AJAX requests
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
-        
+
         // Initialize DataTables for admin tables
         $(document).ready(function() {
             $('.admin-table').DataTable({
                 pageLength: 25,
                 responsive: true,
-                order: [[0, 'desc']]
+                order: [
+                    [0, 'desc']
+                ]
             });
         });
 
@@ -248,7 +276,10 @@
 
             // Merge headers
             if (options.headers) {
-                options.headers = { ...defaultOptions.headers, ...options.headers };
+                options.headers = {
+                    ...defaultOptions.headers,
+                    ...options.headers
+                };
             } else {
                 options.headers = defaultOptions.headers;
             }
@@ -273,4 +304,5 @@
         });
     </script>
 </body>
+
 </html>

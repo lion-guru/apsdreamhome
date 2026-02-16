@@ -5,7 +5,9 @@
 
 namespace App\Models;
 
-class Feedback extends Model {
+use App\Core\UnifiedModel;
+
+class Feedback extends UnifiedModel {
     public static $table = 'feedback';
     
     protected array $fillable = [

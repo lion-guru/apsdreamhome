@@ -75,7 +75,7 @@ class BaseController extends CoreController
     /**
      * Require user to be logged in
      */
-    public function requireLogin(): void
+    public function requireLogin()
     {
         if (!$this->isLoggedIn()) {
             if ($this->isAjaxRequest()) {
@@ -120,7 +120,7 @@ class BaseController extends CoreController
     /**
      * Require user to be an admin
      */
-    public function requireAdmin(): void
+    public function requireAdmin()
     {
         if (!$this->isAdmin()) {
             if ($this->isAjaxRequest()) {
@@ -167,10 +167,10 @@ class BaseController extends CoreController
     protected function getViewsBasePath(): string
     {
         if (defined('APP_ROOT')) {
-            return APP_ROOT . 'app/views/';
+            return rtrim(APP_ROOT, '/\\') . '/app/views/';
         }
 
-        return __DIR__ . '/../views/';
+        return dirname(__DIR__, 2) . '/views/';
     }
 
     /**

@@ -79,5 +79,8 @@ dist/
 # Dependencies
 vendor/
 
+# Legacy backup
+_backup_legacy_files/
+
 # OpenMemory - IDE/Assistant specific rules
 .windsurf\rules\openmemory.md

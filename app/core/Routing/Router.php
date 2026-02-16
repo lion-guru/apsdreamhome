@@ -231,8 +231,8 @@ class Router
     {
         if (isset($new['namespace'])) {
             return isset($old['namespace'])
-                ? trim($old['namespace'], '\\\\') . '\\\\' . trim($new['namespace'], '\\\\')
-                : trim($new['namespace'], '\\\\');
+                ? trim((string)$old['namespace'], '\\\\') . '\\\\' . trim((string)$new['namespace'], '\\\\')
+                : trim((string)$new['namespace'], '\\\\');
         }
 
         return $old['namespace'] ?? null;
@@ -250,7 +250,8 @@ class Router
         $oldPrefix = $old['prefix'] ?? null;
 
         if (isset($new['prefix'])) {
-            return trim($oldPrefix, '/') . '/' . trim($new['prefix'], '/');
+            $prefix = trim((string)$new['prefix'], '/');
+            return $oldPrefix ? (trim((string)$oldPrefix, '/') . '/' . $prefix) : $prefix;
         }
 
         return $oldPrefix;
@@ -436,7 +437,7 @@ class Router
             return $uri;
         }
 
-        return trim($prefix, '/') . '/' . ltrim($uri, '/');
+        return trim((string)$prefix, '/') . '/' . ltrim((string)$uri, '/');
     }
 
     /**
@@ -675,7 +676,7 @@ class Router
         // Add default controller namespace if not present
         if (!str_contains($class, '\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
-        } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\')) {
+        } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\') || str_starts_with($class, 'Public\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
         }
 

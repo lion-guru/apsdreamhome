@@ -20,37 +20,52 @@ abstract class Model
     /**
      * @var array The model's attributes
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * @var bool Indicates if the model exists in the database
      */
-    protected $exists = false;
+    protected bool $exists = false;
 
     /**
      * @var array The model's fillable attributes
      */
-    protected $fillable = [];
+    protected array $fillable = [];
 
     /**
      * @var array The model's hidden attributes
      */
-    protected $hidden = [];
+    protected array $hidden = [];
 
     /**
      * @var array The model's default attribute values
      */
-    protected $attributesDefault = [];
+    protected array $attributesDefault = [];
 
     /**
      * @var array The query where conditions
      */
-    protected $wheres = [];
+    protected array $wheres = [];
+
+    /**
+     * @var array The query order by clauses
+     */
+    protected array $orders = [];
+
+    /**
+     * @var int|null The query limit
+     */
+    protected ?int $limit = null;
+
+    /**
+     * @var int|null The query offset
+     */
+    protected ?int $offset = null;
 
     /**
      * @var array The original attributes for dirty checking
      */
-    protected $original = [];
+    protected array $original = [];
 
     /**
      * @var PDO The database connection
@@ -82,6 +97,10 @@ abstract class Model
                 $config = db_config();
             } else {
                 $config = config('database');
+                // Handle wrapped config structure
+                if (isset($config['database'])) {
+                    $config = $config['database'];
+                }
             }
 
             $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset={$config['charset']}";
@@ -518,6 +537,36 @@ abstract class Model
     }
 
     /**
+     * Add an order by clause to the query
+     */
+    public function orderBy($column, $direction = 'ASC')
+    {
+        $this->orders[] = [
+            'column' => $column,
+            'direction' => strtoupper($direction)
+        ];
+        return $this;
+    }
+
+    /**
+     * Set the query limit
+     */
+    public function limit($limit)
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    /**
+     * Set the query offset
+     */
+    public function offset($offset)
+    {
+        $this->offset = $offset;
+        return $this;
+    }
+
+    /**
      * Get the first record matching the query
      */
     public function first()
@@ -536,7 +585,19 @@ abstract class Model
             $sql .= ' WHERE ' . implode(' AND ', $whereClause);
         }
 
+        if (!empty($this->orders)) {
+            $orderClause = [];
+            foreach ($this->orders as $order) {
+                $orderClause[] = sprintf('%s %s', $order['column'], $order['direction']);
+            }
+            $sql .= ' ORDER BY ' . implode(', ', $orderClause);
+        }
+
         $sql .= ' LIMIT 1';
+
+        if ($this->offset !== null) {
+            $sql .= ' OFFSET ' . $this->offset;
+        }
 
         $stmt = static::getConnection()->prepare($sql);
         $stmt->execute($params);
@@ -568,6 +629,22 @@ abstract class Model
             }
 
             $sql .= ' WHERE ' . implode(' AND ', $whereClause);
+        }
+
+        if (!empty($this->orders)) {
+            $orderClause = [];
+            foreach ($this->orders as $order) {
+                $orderClause[] = sprintf('%s %s', $order['column'], $order['direction']);
+            }
+            $sql .= ' ORDER BY ' . implode(', ', $orderClause);
+        }
+
+        if ($this->limit !== null) {
+            $sql .= ' LIMIT ' . $this->limit;
+        }
+
+        if ($this->offset !== null) {
+            $sql .= ' OFFSET ' . $this->offset;
         }
 
         $stmt = static::getConnection()->prepare($sql);

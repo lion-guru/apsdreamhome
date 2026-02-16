@@ -66,6 +66,14 @@ class AdminController extends BaseController
     }
 
     /**
+     * Alias for index (Dashboard)
+     */
+    public function dashboard()
+    {
+        $this->index();
+    }
+
+    /**
      * Load role-specific data for the dashboard
      */
     private function loadRoleSpecificData($role)

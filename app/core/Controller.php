@@ -5,7 +5,7 @@ namespace App\Core;
 use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Core\View\View;
-use App\Core\Auth\Auth;
+use App\Core\Auth;
 use App\Core\Database\Database;
 use App\Core\Session\SessionManager;
 
@@ -14,49 +14,50 @@ use App\Core\Session\SessionManager;
  * 
  * All controllers should extend this base controller
  */
-class Controller {
+class Controller
+{
     /**
      * The request instance
      *
      * @var Request
      */
     protected $request;
-    
+
     /**
      * The response instance
      *
      * @var Response
      */
     protected $response;
-    
+
     /**
      * The view instance
      *
      * @var View
      */
     protected $view;
-    
+
     /**
      * The auth instance
      *
      * @var Auth
      */
     protected $auth;
-    
+
     /**
      * The database connection
      *
      * @var Database
      */
     protected $db;
-    
+
     /**
      * The session manager
      *
      * @var SessionManager
      */
     protected $session;
-    
+
     /**
      * The middleware stack
      *
@@ -78,18 +79,25 @@ class Controller {
             'options' => $options
         ];
     }
-    
+
     /**
      * Controller constructor
      */
-    public function __construct() {
+    public function __construct()
+    {
         // Get the base path from APP_ROOT constant or use default
         $basePath = defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 2);
         $app = App::getInstance($basePath);
-        
+
         $this->request = $app->request();
         $this->response = $app->response();
         $this->view = new View();
+
+        // Debug auth
+        if (!isset($app->auth)) {
+            // echo "DEBUG: App auth is not set in Controller\n";
+        }
+
         $this->auth = $app->auth ?? null;
         $this->db = $app->db();
         $this->session = $app->session();
@@ -101,7 +109,8 @@ class Controller {
      *
      * @return array
      */
-    public function getMiddleware() {
+    public function getMiddleware()
+    {
         return $this->middleware;
     }
 
@@ -111,7 +120,8 @@ class Controller {
      * @param string $model The model name (without namespace)
      * @return \App\Models\Model
      */
-    public function model($model) {
+    public function model($model)
+    {
         $model = 'App\\Models\\' . $model;
         return new $model($this->db);
     }
@@ -123,7 +133,8 @@ class Controller {
      * @param int $statusCode The HTTP status code (default: 302)
      * @return Response
      */
-    public function redirect($url, $statusCode = 302) {
+    public function redirect($url, $statusCode = 302)
+    {
         return Response::redirect($url, $statusCode);
     }
 
@@ -135,7 +146,8 @@ class Controller {
      * @param int $statusCode The HTTP status code (default: 302)
      * @return Response
      */
-    public function redirectToRoute($name, $params = [], $statusCode = 302) {
+    public function redirectToRoute($name, $params = [], $statusCode = 302)
+    {
         $url = $this->app->router->url($name, $params);
         return $this->redirect($url, $statusCode);
     }
@@ -147,7 +159,8 @@ class Controller {
      * @param string $fallback The fallback URL if no referrer is set
      * @return Response
      */
-    public function back($statusCode = 302, $fallback = '/') {
+    public function back($statusCode = 302, $fallback = '/')
+    {
         $url = $this->request->headers->get('Referer', $fallback);
         return $this->redirect($url, $statusCode);
     }
@@ -160,14 +173,19 @@ class Controller {
      * @param string|null $layout The layout to use (optional)
      * @return string
      */
-    public function view($view, $data = [], $layout = null) {
+    public function view($view, $data = [], $layout = null)
+    {
         if ($layout !== null) {
             $this->view->layout($layout);
         }
-        
+
         // Add flash messages to all views
         $data['flash'] = $this->session->getFlashBag()->all();
-        
+
+        // Add auth and user to all views
+        $data['auth'] = $this->auth;
+        $data['user'] = $this->auth ? $this->auth->user() : null;
+
         return $this->view->render($view, $data);
     }
 
@@ -179,7 +197,8 @@ class Controller {
      * @param array $headers Additional headers
      * @return Response
      */
-    public function json($data, $statusCode = 200, $headers = []) {
+    public function json($data, $statusCode = 200, $headers = [])
+    {
         return Response::json($data, $statusCode, $headers);
     }
 
@@ -189,7 +208,8 @@ class Controller {
      * @param string $message The error message
      * @return Response
      */
-    public function notFound($message = 'Not Found') {
+    public function notFound($message = 'Not Found')
+    {
         return Response::error($message, 404);
     }
 
@@ -199,7 +219,8 @@ class Controller {
      * @param string $message The error message
      * @return Response
      */
-    public function forbidden($message = 'Forbidden') {
+    public function forbidden($message = 'Forbidden')
+    {
         return Response::error($message, 403);
     }
 
@@ -209,7 +230,8 @@ class Controller {
      * @param string $message The error message
      * @return Response
      */
-    public function unauthorized($message = 'Unauthorized') {
+    public function unauthorized($message = 'Unauthorized')
+    {
         return Response::error($message, 401);
     }
 
@@ -219,7 +241,8 @@ class Controller {
      * @throws \RuntimeException If user is not authenticated
      * @return void
      */
-    public function requireLogin() {
+    public function requireLogin()
+    {
         if (!$this->auth->check()) {
             $this->session->getFlashBag()->add('error', 'Please login to access this page');
             $this->redirect('/login')->send();
@@ -234,9 +257,10 @@ class Controller {
      * @throws \RuntimeException If user doesn't have the required role
      * @return void
      */
-    public function requireRole($roles) {
+    public function requireRole($roles)
+    {
         $this->requireLogin();
-        
+
         if (!$this->auth->hasRole($roles)) {
             $this->forbidden()->send();
             exit;
@@ -249,7 +273,8 @@ class Controller {
      * @throws \RuntimeException If user is not an admin
      * @return void
      */
-    public function requireAdmin() {
+    public function requireAdmin()
+    {
         $this->requireRole('admin');
     }
 
@@ -258,7 +283,8 @@ class Controller {
      *
      * @return \App\Models\User|null
      */
-    public function user() {
+    public function user()
+    {
         return $this->auth->user();
     }
 
@@ -270,9 +296,10 @@ class Controller {
      * @param array $messages Custom error messages
      * @return bool|Response True if validation passes, Response if validation fails
      */
-    public function validate($data, $rules, $messages = []) {
+    public function validate($data, $rules, $messages = [])
+    {
         $validator = new Validator($data, $rules, $messages);
-        
+
         if ($validator->fails()) {
             if ($this->request->expectsJson()) {
                 return $this->json([
@@ -280,14 +307,14 @@ class Controller {
                     'errors' => $validator->errors()
                 ], 422);
             }
-            
+
             // For non-JSON requests, redirect back with errors
             $this->session->getFlashBag()->add('errors', $validator->errors());
             $this->session->getFlashBag()->add('old', $this->request->all());
-            
+
             return $this->back()->withInput();
         }
-        
+
         return true;
     }
 
@@ -296,7 +323,8 @@ class Controller {
      *
      * @return bool
      */
-    protected function isAjax() {
+    protected function isAjax()
+    {
         return $this->request->isAjax();
     }
 
@@ -305,7 +333,8 @@ class Controller {
      *
      * @return bool
      */
-    protected function isJson() {
+    protected function isJson()
+    {
         return $this->request->isJson();
     }
 
@@ -314,7 +343,8 @@ class Controller {
      *
      * @return int|null
      */
-    protected function getUserId() {
+    protected function getUserId()
+    {
         return $this->auth->id();
     }
 
@@ -323,11 +353,12 @@ class Controller {
      *
      * @return string|null
      */
-    protected function getUserRole() {
+    protected function getUserRole()
+    {
         $user = $this->auth->user();
         return $user ? $user->role : null;
     }
-    
+
     /**
      * Magic method to handle undefined method calls
      *
@@ -336,9 +367,12 @@ class Controller {
      * @return mixed
      * @throws \BadMethodCallException
      */
-    public function __call($method, $parameters) {
+    public function __call($method, $parameters)
+    {
         throw new \BadMethodCallException(sprintf(
-            'Method %s::%s does not exist.', static::class, $method
+            'Method %s::%s does not exist.',
+            static::class,
+            $method
         ));
     }
 }

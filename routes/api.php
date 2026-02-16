@@ -1,80 +1,84 @@
 <?php
 
-/**
- * API Routes Configuration
- * Custom Framework API Routes (Converted from Laravel)
- */
+use App\Core\App;
+
+/** @var App $app */
 
 // API Route Definitions
-$apiRoutes = [
-    // Public routes (no authentication required)
-    'public' => [
-        'GET' => [
-            '/api/health' => function() {
-                header('Content-Type: application/json');
-                echo json_encode(['status' => 'ok', 'message' => 'API is running']);
-                exit;
-            },
 
-        ],
-    ],
+$app->router()->group(['prefix' => 'api'], function ($router) {
 
-    // Protected routes (require authentication)
-    'protected' => [
-        'GET' => [
-            '/api/leads' => 'ApiLeadController@index',
-            '/api/leads/{id}' => 'ApiLeadController@show',
-            '/api/leads/{lead}/notes' => 'ApiLeadController@getNotes',
-            '/api/leads/{lead}/files' => 'ApiLeadController@getFiles',
-            '/api/leads/{lead}/activities' => 'ApiLeadController@getActivities',
-            '/api/leads/{lead}/tags' => 'ApiLeadController@getTags',
-            '/api/leads/{lead}/custom-fields' => 'ApiLeadController@getCustomFields',
-            '/api/leads/{lead}/deals' => 'ApiLeadController@getDeals',
-            '/api/leads/stats/overview' => 'ApiLeadController@getStats',
-            '/api/leads/stats/status' => 'ApiLeadController@getStatusStats',
-            '/api/leads/stats/source' => 'ApiLeadController@getSourceStats',
-            '/api/leads/stats/assigned-to' => 'ApiLeadController@getAssignedToStats',
-            '/api/leads/stats/created-by' => 'ApiLeadController@getCreatedByStats',
-            '/api/leads/stats/timeline' => 'ApiLeadController@getTimelineStats',
-            '/api/lookup/statuses' => 'ApiLeadController@getStatuses',
-            '/api/lookup/sources' => 'ApiLeadController@getSources',
-            '/api/lookup/tags' => 'ApiLeadController@getAllTags',
-            '/api/lookup/users' => 'ApiLeadController@getUsers',
-            '/api/lookup/custom-fields' => 'ApiLeadController@getCustomFieldDefinitions',
-            '/api/lookup/deal-stages' => 'ApiLeadController@getDealStages',
-            '/api/leads/{file}/download' => 'ApiLeadController@downloadFile',
-        ],
+    // Health check
+    $router->get('/health', function () {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'ok', 'message' => 'API is running']);
+        exit;
+    });
 
-        'POST' => [
-            '/api/leads' => 'ApiLeadController@store',
-            '/api/leads/{lead}/notes' => 'ApiLeadController@addNote',
-            '/api/leads/{lead}/files' => 'ApiLeadController@uploadFile',
-            '/api/leads/{lead}/status' => 'ApiLeadController@updateStatus',
-            '/api/leads/{lead}/assign' => 'ApiLeadController@assign',
-            '/api/leads/{lead}/tags' => 'ApiLeadController@addTag',
-            '/api/leads/{lead}/custom-fields' => 'ApiLeadController@updateCustomFields',
-            '/api/leads/{lead}/deals' => 'ApiLeadController@createDeal',
-            '/api/leads/bulk/delete' => 'ApiLeadController@bulkDelete',
-            '/api/leads/bulk/status' => 'ApiLeadController@bulkUpdateStatus',
-            '/api/leads/bulk/assign' => 'ApiLeadController@bulkAssign',
-            '/api/leads/import' => 'ApiLeadController@import',
-        ],
+    // Search Routes (Legacy compatibility for search.js)
+    $router->get('/properties', 'Api\PropertyController@index'); // Modern endpoint for search.js
+    $router->post('/search.php', 'Api\PropertyController@search');
+    $router->get('/get_saved_searches.php', 'Api\PropertyController@getSavedSearches');
+    $router->get('/get_saved_search.php', 'Api\PropertyController@getSavedSearch');
+    $router->post('/save_search.php', 'Api\PropertyController@saveSearch');
+    $router->post('/delete_search.php', 'Api\PropertyController@deleteSearch');
 
-        'PUT' => [
-            '/api/leads/{id}' => 'ApiLeadController@update',
-            '/api/leads/{lead}/notes/{note}' => 'ApiLeadController@updateNote',
-            '/api/leads/{lead}/deals/{deal}' => 'ApiLeadController@updateDeal',
-        ],
+    // Leads Routes
+    $router->group(['middleware' => 'auth'], function ($router) {
+        $router->get('/leads', 'Api\ApiLeadController@index');
+        $router->post('/leads', 'Api\ApiLeadController@store');
+        $router->get('/leads/{id}', 'Api\ApiLeadController@show');
+        $router->put('/leads/{id}', 'Api\ApiLeadController@update');
+        $router->delete('/leads/{id}', 'Api\ApiLeadController@destroy');
 
-        'DELETE' => [
-            '/api/leads/{id}' => 'ApiLeadController@destroy',
-            '/api/leads/{lead}/notes/{note}' => 'ApiLeadController@deleteNote',
-            '/api/leads/{lead}/files/{file}' => 'ApiLeadController@deleteFile',
-            '/api/leads/{lead}/tags/{tag}' => 'ApiLeadController@removeTag',
-            '/api/leads/{lead}/deals/{deal}' => 'ApiLeadController@deleteDeal',
-        ],
-    ],
-];
+        $router->get('/leads/{lead}/notes', 'Api\ApiLeadController@getNotes');
+        $router->post('/leads/{lead}/notes', 'Api\ApiLeadController@addNote');
+        $router->put('/leads/{lead}/notes/{note}', 'Api\ApiLeadController@updateNote');
+        $router->delete('/leads/{lead}/notes/{note}', 'Api\ApiLeadController@deleteNote');
 
-// Export routes for use in router
-return $apiRoutes;
+        $router->get('/leads/{lead}/files', 'Api\ApiLeadController@getFiles');
+        $router->post('/leads/{lead}/files', 'Api\ApiLeadController@uploadFile');
+        $router->delete('/leads/{lead}/files/{file}', 'Api\ApiLeadController@deleteFile');
+
+        $router->get('/leads/{lead}/activities', 'Api\ApiLeadController@getActivities');
+
+        $router->get('/leads/{lead}/tags', 'Api\ApiLeadController@getTags');
+        $router->post('/leads/{lead}/tags', 'Api\ApiLeadController@addTag');
+        $router->delete('/leads/{lead}/tags/{tag}', 'Api\ApiLeadController@removeTag');
+
+        $router->get('/leads/{lead}/custom-fields', 'Api\ApiLeadController@getCustomFields');
+        $router->post('/leads/{lead}/custom-fields', 'Api\ApiLeadController@updateCustomFields');
+
+        $router->get('/leads/{lead}/deals', 'Api\ApiLeadController@getDeals');
+        $router->post('/leads/{lead}/deals', 'Api\ApiLeadController@createDeal');
+        $router->put('/leads/{lead}/deals/{deal}', 'Api\ApiLeadController@updateDeal');
+        $router->delete('/leads/{lead}/deals/{deal}', 'Api\ApiLeadController@deleteDeal');
+
+        $router->put('/leads/{lead}/status', 'Api\ApiLeadController@updateStatus');
+        $router->put('/leads/{lead}/assign', 'Api\ApiLeadController@assign');
+
+        // Bulk operations
+        $router->post('/leads/bulk/delete', 'Api\ApiLeadController@bulkDelete');
+        $router->post('/leads/bulk/status', 'Api\ApiLeadController@bulkUpdateStatus');
+        $router->post('/leads/bulk/assign', 'Api\ApiLeadController@bulkAssign');
+        $router->post('/leads/import', 'Api\ApiLeadController@import');
+
+        // Stats
+        $router->get('/leads/stats/overview', 'Api\ApiLeadController@getStats');
+        $router->get('/leads/stats/status', 'Api\ApiLeadController@getStatusStats');
+        $router->get('/leads/stats/source', 'Api\ApiLeadController@getSourceStats');
+        $router->get('/leads/stats/assigned-to', 'Api\ApiLeadController@getAssignedToStats');
+        $router->get('/leads/stats/created-by', 'Api\ApiLeadController@getCreatedByStats');
+        $router->get('/leads/stats/timeline', 'Api\ApiLeadController@getTimelineStats');
+
+        // Lookups
+        $router->get('/lookup/statuses', 'Api\ApiLeadController@getStatuses');
+        $router->get('/lookup/sources', 'Api\ApiLeadController@getSources');
+        $router->get('/lookup/tags', 'Api\ApiLeadController@getAllTags');
+        $router->get('/lookup/users', 'Api\ApiLeadController@getUsers');
+        $router->get('/lookup/custom-fields', 'Api\ApiLeadController@getCustomFieldDefinitions');
+        $router->get('/lookup/deal-stages', 'Api\ApiLeadController@getDealStages');
+
+        $router->get('/leads/{file}/download', 'Api\ApiLeadController@downloadFile');
+    });
+});

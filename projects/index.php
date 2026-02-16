@@ -1,1 +1,0 @@
-<?php header("Location: /apsdreamhome/index.php?route=projects"); exit(); ?>

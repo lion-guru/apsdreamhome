@@ -4,21 +4,13 @@
  * Displays contact information and contact form
  */
 
-if (!defined('BASE_URL')) {
-    define('BASE_URL', 'http://localhost/apsdreamhome/');
-}
-
-$page_title = $title ?? 'Contact Us - APS Dream Home';
-$page_description = 'Get in touch with APS Dream Home. Contact our expert team for all your real estate needs.';
-
-$contact = array_merge([
+// Contact info is passed from PageController
+$contact = $contact_info ?? [
     'phone' => '+91-1234567890',
     'email' => 'info@apsdreamhome.com',
     'address' => '123 Main Street, Gorakhpur, Uttar Pradesh - 273001',
     'hours' => 'Mon - Sat: 9:00 AM - 8:00 PM, Sun: 10:00 AM - 6:00 PM'
-], $contact_info ?? []);
-
-include __DIR__ . '/../includes/header.php';
+];
 ?>
 
 <section class="py-5" style="background: radial-gradient(circle at top, rgba(14,165,233,.18), transparent 70%), #0f172a;">

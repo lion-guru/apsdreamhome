@@ -26,8 +26,12 @@ if (file_exists(__DIR__ . '/.env')) {
 }
 
 // Get credentials from environment variables
-define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
-define('GOOGLE_CLIENT_SECRET', getenv('GOOGLE_CLIENT_SECRET'));
+if (!defined('GOOGLE_CLIENT_ID')) {
+    define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
+}
+if (!defined('GOOGLE_CLIENT_SECRET')) {
+    define('GOOGLE_CLIENT_SECRET', getenv('GOOGLE_CLIENT_SECRET'));
+}
 
 // Set appropriate redirect URL based on environment
 // Set protocol based on environment
@@ -36,7 +40,9 @@ $host = $_SERVER['HTTP_HOST'];
 $path = '/march2025apssite/google_callback.php';
 
 // Set the redirect URL
-define('GOOGLE_REDIRECT_URL', $protocol . '://' . $host . $path);
+if (!defined('GOOGLE_REDIRECT_URL')) {
+    define('GOOGLE_REDIRECT_URL', $protocol . '://' . $host . $path);
+}
 
 // Validate configuration
 if (empty(GOOGLE_CLIENT_ID) || empty(GOOGLE_CLIENT_SECRET)) {

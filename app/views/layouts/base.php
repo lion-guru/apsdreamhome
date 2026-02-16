@@ -55,6 +55,8 @@
             height: 80px;
         }
     </style>
+    
+    <?php if (isset($extra_css)) echo $extra_css; ?>
 </head>
 <body>
     <!-- Loading Elements -->
@@ -86,5 +88,6 @@
     <?php include __DIR__ . '/footer_unified.php'; ?>
 
     <script src="<?php echo BASE_URL; ?>public/js/premium-header.js"></script>
+    <?php if (isset($extra_js)) echo $extra_js; ?>
 </body>
 </html>

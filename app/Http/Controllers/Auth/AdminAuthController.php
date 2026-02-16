@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Authentication Controller
  * Handles admin-specific login, session management, and role-based redirects.
@@ -13,6 +14,8 @@ use App\Helpers\AuthHelper;
 use App\Helpers\SecurityHelper;
 use App\Core\App;
 use Exception;
+
+use App\Services\Legacy\SessionHelpers;
 
 class AdminAuthController extends BaseController
 {
@@ -32,12 +35,26 @@ class AdminAuthController extends BaseController
     public function showLogin()
     {
         if (AuthHelper::isLoggedIn('admin')) {
-            $this->redirectBasedOnRole();
+            $this->redirect('/admin/dashboard');
+            return;
         }
 
         $this->data['page_title'] = 'Admin Login - ' . APP_NAME;
         $this->data['error'] = $this->getFlash('error') ?? ($_GET['error'] ?? '');
         $this->data['success'] = $this->getFlash('success') ?? ($_GET['success'] ?? '');
+
+        // Generate simple CAPTCHA
+        $num1 = SecurityHelper::secureRandomInt(1, 10);
+        $num2 = SecurityHelper::secureRandomInt(1, 10);
+        $_SESSION['captcha_num1_admin'] = $num1;
+        $_SESSION['captcha_num2_admin'] = $num2;
+        $_SESSION['captcha_answer'] = $num1 + $num2;
+        $this->data['captcha_question'] = "$num1 + $num2 = ?";
+
+        // Generate CSRF token if not already in view
+        if (!isset($this->data['csrf_token'])) {
+            $this->data['csrf_token'] = SecurityHelper::generateCsrfToken();
+        }
 
         return $this->render('admin/login');
     }
@@ -49,9 +66,16 @@ class AdminAuthController extends BaseController
     {
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
+        $captcha = $_POST['captcha_answer'] ?? '';
 
         if (empty($username) || empty($password)) {
             $this->setFlash('error', 'Please fill in all fields');
+            $this->redirect('/admin/login');
+        }
+
+        // Verify CAPTCHA
+        if (!isset($_SESSION['captcha_answer']) || (int)$captcha !== (int)$_SESSION['captcha_answer']) {
+            $this->setFlash('error', 'Incorrect security answer');
             $this->redirect('/admin/login');
         }
 
@@ -64,29 +88,32 @@ class AdminAuthController extends BaseController
         try {
             $adminModel = new Admin();
             // Fetch admin from database using email or username
-            $admin = $adminModel->query()
-                ->where('auser', '=', $username)
-                ->orWhere('aemail', '=', $username)
-                ->first();
+            $admin = $adminModel->findByUsernameOrEmail($username);
 
             if (!$admin) {
                 return $this->handleFailedLogin($username);
             }
 
-            // Check admin status
-            if ($admin->status !== 'active') {
-                $this->setFlash('error', 'Account is not active');
-                $this->redirect('/admin/login');
+            // Verify password with support for multiple hash columns and legacy SHA1
+            $hash = $admin->apass ?? $admin->password;
+            $verified = false;
+
+            if ($hash && password_verify($password, $hash)) {
+                $verified = true;
+            } elseif ($hash && preg_match('/^[a-f0-9]{40}$/i', $hash) && sha1($password) === $hash) {
+                // Legacy SHA1 support
+                $verified = true;
+                // TODO: Rehash password to bcrypt/argon2 here if possible
             }
 
-            // Verify password
-            if (!password_verify($password, $admin->apass)) {
-                // Fallback for SHA1 if needed (legacy)
-                if (preg_match('/^[a-f0-9]{40}$/i', $admin->apass) && sha1($password) === $admin->apass) {
-                    // Valid SHA1, will rehash below
-                } else {
-                    return $this->handleFailedLogin($username);
-                }
+            if (!$verified) {
+                return $this->handleFailedLogin($username);
+            }
+
+            // Check admin status
+            if (isset($admin->status) && $admin->status !== 'active') {
+                $this->setFlash('error', 'Account is not active');
+                $this->redirect('/admin/login');
             }
 
             // Successful login
@@ -98,8 +125,9 @@ class AdminAuthController extends BaseController
 
             // Set session using unified helper
             // Note: the helper uses an array, so we convert the model object to array if needed
-            $userData = (array)$admin;
-            \App\Services\Legacy\setAuthSession($userData, 'admin', $admin->role ?? 'admin');
+            $userData = $admin->toArray();
+            // Use static method for unified session handling
+            SessionHelpers::setAuthSession($userData, 'admin', $admin->role ?? 'admin');
 
             // Regenerate session ID for security
             session_regenerate_id(true);
@@ -108,8 +136,7 @@ class AdminAuthController extends BaseController
             error_log("[Admin Login Success] User: " . $admin->auser . " IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
 
             $this->setFlash('success', 'Logged in successfully');
-            $this->redirect($this->getDashboardForRole($admin->role ?? 'admin'));
-
+            $this->redirect('/admin/dashboard');
         } catch (Exception $e) {
             error_log("Admin login error: " . $e->getMessage());
             $this->setFlash('error', 'An unexpected error occurred');

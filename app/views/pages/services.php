@@ -71,149 +71,58 @@ $page_description = 'Discover our comprehensive range of real estate services de
         </div>
 
         <div class="row g-4">
-            <!-- Property Sales -->
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card">
-                    <div class="service-icon mb-4">
-                        <i class="fas fa-home fa-3x text-primary"></i>
+            <?php if (!empty($services)): ?>
+                <?php foreach ($services as $service): ?>
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card">
+                        <div class="service-icon mb-4">
+                            <i class="<?php echo htmlspecialchars($service->icon ?? 'fas fa-check'); ?> fa-3x text-<?php echo htmlspecialchars($service->color ?? 'primary'); ?>"></i>
+                        </div>
+                        <h4 class="service-title mb-3"><?php echo htmlspecialchars($service->title); ?></h4>
+                        <p class="service-description mb-4">
+                            <?php echo htmlspecialchars($service->description ?? ''); ?>
+                        </p>
+                        <?php if (isset($service->features) && !empty($service->features)): ?>
+                        <div class="service-features">
+                            <ul class="list-unstyled">
+                                <?php foreach (explode(',', $service->features) as $feature): ?>
+                                <li><i class="fas fa-check text-success me-2"></i><?php echo htmlspecialchars(trim($feature)); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                        <?php endif; ?>
+                        <a href="<?php echo BASE_URL; ?>contact" class="btn btn-<?php echo htmlspecialchars($service->color ?? 'primary'); ?> mt-3">
+                            <i class="fas fa-phone me-2"></i>Contact Us
+                        </a>
                     </div>
-                    <h4 class="service-title mb-3">Property Sales</h4>
-                    <p class="service-description mb-4">
-                        Find your dream home from our extensive collection of residential properties. We help you navigate the buying process with expert guidance every step of the way.
-                    </p>
-                    <div class="service-features">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i>Residential Properties</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Commercial Properties</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Investment Properties</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Expert Negotiation</li>
-                        </ul>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>properties" class="btn btn-primary mt-3">
-                        <i class="fas fa-search me-2"></i>Browse Properties
-                    </a>
                 </div>
-            </div>
-
-            <!-- Property Rentals -->
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card">
-                    <div class="service-icon mb-4">
-                        <i class="fas fa-key fa-3x text-success"></i>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Fallback or static services if no dynamic data -->
+                <!-- Property Sales -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card">
+                        <div class="service-icon mb-4">
+                            <i class="fas fa-home fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="service-title mb-3">Property Sales</h4>
+                        <p class="service-description mb-4">
+                            Find your dream home from our extensive collection of residential properties. We help you navigate the buying process with expert guidance every step of the way.
+                        </p>
+                        <div class="service-features">
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Residential Properties</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Commercial Properties</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Investment Properties</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Expert Negotiation</li>
+                            </ul>
+                        </div>
+                        <a href="<?php echo BASE_URL; ?>properties" class="btn btn-primary mt-3">
+                            <i class="fas fa-search me-2"></i>Browse Properties
+                        </a>
                     </div>
-                    <h4 class="service-title mb-3">Property Rentals</h4>
-                    <p class="service-description mb-4">
-                        Discover rental properties that match your lifestyle and budget. From apartments to luxury villas, we have options for every need.
-                    </p>
-                    <div class="service-features">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i>Short-term Rentals</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Long-term Rentals</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Furnished Options</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Lease Management</li>
-                        </ul>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>properties?type=rental" class="btn btn-success mt-3">
-                        <i class="fas fa-key me-2"></i>Find Rentals
-                    </a>
                 </div>
-            </div>
-
-            <!-- Property Management -->
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card">
-                    <div class="service-icon mb-4">
-                        <i class="fas fa-building fa-3x text-warning"></i>
-                    </div>
-                    <h4 class="service-title mb-3">Property Management</h4>
-                    <p class="service-description mb-4">
-                        Let us handle the day-to-day management of your rental properties. We take care of everything from tenant screening to maintenance.
-                    </p>
-                    <div class="service-features">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i>Tenant Screening</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Rent Collection</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Maintenance Coordination</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Legal Compliance</li>
-                        </ul>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-warning mt-3">
-                        <i class="fas fa-phone me-2"></i>Contact Us
-                    </a>
-                </div>
-            </div>
-
-            <!-- Real Estate Investment -->
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card">
-                    <div class="service-icon mb-4">
-                        <i class="fas fa-chart-line fa-3x text-info"></i>
-                    </div>
-                    <h4 class="service-title mb-3">Investment Advisory</h4>
-                    <p class="service-description mb-4">
-                        Get expert advice on real estate investments. We help you identify profitable opportunities and maximize your returns.
-                    </p>
-                    <div class="service-features">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i>Market Analysis</li>
-                            <li><i class="fas fa-check text-success me-2"></i>ROI Calculations</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Portfolio Management</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Risk Assessment</li>
-                        </ul>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-info mt-3">
-                        <i class="fas fa-chart-bar me-2"></i>Get Advice
-                    </a>
-                </div>
-            </div>
-
-            <!-- Legal Services -->
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card">
-                    <div class="service-icon mb-4">
-                        <i class="fas fa-gavel fa-3x text-danger"></i>
-                    </div>
-                    <h4 class="service-title mb-3">Legal Services</h4>
-                    <p class="service-description mb-4">
-                        Comprehensive legal support for all your real estate transactions. We ensure everything is handled legally and efficiently.
-                    </p>
-                    <div class="service-features">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i>Contract Review</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Title Verification</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Registration Assistance</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Dispute Resolution</li>
-                        </ul>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-danger mt-3">
-                        <i class="fas fa-balance-scale me-2"></i>Legal Help
-                    </a>
-                </div>
-            </div>
-
-            <!-- Interior Design -->
-            <div class="col-lg-4 col-md-6">
-                <div class="service-card">
-                    <div class="service-icon mb-4">
-                        <i class="fas fa-palette fa-3x text-secondary"></i>
-                    </div>
-                    <h4 class="service-title mb-3">Interior Design</h4>
-                    <p class="service-description mb-4">
-                        Transform your property with our expert interior design services. We create beautiful, functional spaces that reflect your style.
-                    </p>
-                    <div class="service-features">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i>Space Planning</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Color Consultation</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Furniture Selection</li>
-                            <li><i class="fas fa-check text-success me-2"></i>3D Visualization</li>
-                        </ul>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-secondary mt-3">
-                        <i class="fas fa-magic me-2"></i>Design Help
-                    </a>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>

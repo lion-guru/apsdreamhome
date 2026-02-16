@@ -20,7 +20,10 @@ if (!file_exists($logDir)) {
  * @return bool True on success, false on failure
  */
 function log_message($message, $level = 'error', array $context = []) {
-    global $logDir;
+    $logDir = __DIR__ . '/../../logs';
+    if (!file_exists($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
     $logFile = $logDir . '/' . date('Y-m-d') . '.log';
     
     // Log levels

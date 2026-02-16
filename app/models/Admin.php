@@ -12,14 +12,34 @@ use PDO;
 class Admin extends Model
 {
     protected static string $table = 'admin';
-    protected $primaryKey = 'aid';
+    protected $primaryKey = 'id';
+    protected $db;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->db = \App\Core\Database::getInstance()->getConnection();
+    }
+
+    /**
+     * Find admin by username or email
+     */
+    public function findByUsernameOrEmail($username)
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE auser = :u1 OR username = :u2 OR email = :e1 LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['u1' => $username, 'u2' => $username, 'e1' => $username]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? new static($result) : null;
+    }
 
     /**
      * Get admin by ID
      */
     public function getAdminById($id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE aid = :id";
+        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -30,7 +50,7 @@ class Admin extends Model
      */
     public function getAdminByEmail($email)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE aemail = :email";
+        $sql = "SELECT * FROM {$this->table} WHERE email = :email";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['email' => $email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -561,7 +581,7 @@ class Admin extends Model
 
         $stats['total_tables'] = count($tables);
         $stats['total_size'] = array_sum(array_column($tables, 'Data_length')) +
-                              array_sum(array_column($tables, 'Index_length'));
+            array_sum(array_column($tables, 'Index_length'));
 
         // Get record counts for main tables
         $mainTables = ['users', 'properties', 'leads', 'farmers', 'bookings', 'payments'];
@@ -879,7 +899,7 @@ class Admin extends Model
                 $sql .= "INSERT INTO `{$tableName}` VALUES\n";
                 $values = [];
                 foreach ($rows as $row) {
-                    $escapedValues = array_map(function($value) {
+                    $escapedValues = array_map(function ($value) {
                         return is_null($value) ? 'NULL' : "'" . addslashes($value) . "'";
                     }, $row);
                     $values[] = "(" . implode(", ", $escapedValues) . ")";

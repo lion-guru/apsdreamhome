@@ -1,4 +1,4 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; ?>
+<?php $this->layout('layouts/admin'); ?>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -48,32 +48,23 @@
                                     <td><?php echo htmlspecialchars($lead['phone'] ?? ''); ?></td>
                                     <td><span class="badge bg-secondary"><?php echo htmlspecialchars($lead['source_name'] ?? $lead['source'] ?? 'Unknown'); ?></span></td>
                                     <td>
-                                        <?php
-                                        $statusLabel = $lead['status_label'] ?? $lead['status'] ?? 'New';
-                                        $statusClass = 'bg-info';
-                                        $statusLower = strtolower($statusLabel);
-
-                                        if (strpos($statusLower, 'hot') !== false || $statusLower == 'high') $statusClass = 'bg-danger';
-                                        elseif (strpos($statusLower, 'closed') !== false || $statusLower == 'won') $statusClass = 'bg-success';
-                                        elseif (strpos($statusLower, 'new') !== false) $statusClass = 'bg-primary';
-                                        elseif (strpos($statusLower, 'lost') !== false) $statusClass = 'bg-secondary';
-                                        elseif (strpos($statusLower, 'qualified') !== false) $statusClass = 'bg-warning text-dark';
-                                        ?>
-                                        <span class="badge <?php echo $statusClass; ?>"><?php echo htmlspecialchars($statusLabel); ?></span>
+                                        <span class="badge bg-<?php echo ($lead['status'] == 'new') ? 'success' : 'warning'; ?>">
+                                            <?php echo ucfirst($lead['status'] ?? 'unknown'); ?>
+                                        </span>
                                     </td>
-                                    <td>
-                                        <?php echo date('d M Y', strtotime($lead['created_at'])); ?>
-                                        <?php if (!empty($lead['assigned_to_name'])): ?>
-                                            <br><small class="text-muted"><i class="fas fa-user-tag me-1"></i><?php echo htmlspecialchars($lead['assigned_to_name']); ?></small>
-                                        <?php endif; ?>
-                                    </td>
+                                    <td><?php echo date('M d, Y', strtotime($lead['created_at'])); ?></td>
                                     <td class="text-end">
-                                        <a href="<?php echo BASE_URL; ?>/admin/leads/edit/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?php echo $lead['id']; ?>)">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <div class="btn-group">
+                                            <a href="<?php echo BASE_URL; ?>/admin/leads/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="<?php echo BASE_URL; ?>/admin/leads/edit/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="<?php echo BASE_URL; ?>/admin/leads/delete/<?php echo $lead['id']; ?>" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -84,13 +75,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function confirmDelete(id) {
-        if (confirm('Are you sure you want to delete this lead?')) {
-            window.location.href = '<?php echo BASE_URL; ?>/admin/leads/delete/' + id;
-        }
-    }
-</script>
-
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

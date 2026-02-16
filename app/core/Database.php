@@ -19,40 +19,14 @@ class Database
     private $performanceLog = [];
     private $slowQueryThreshold = 1.0; // seconds
 
-    private function __construct()
-    {
-        try {
-            $host = getenv('DB_HOST') ?: 'localhost';
-            $dbname = getenv('DB_NAME') ?: 'apsdreamhome';
-            $username = getenv('DB_USER') ?: 'root';
-            $password = getenv('DB_PASS') ?: '';
-
-            $this->connection = new \PDO(
-                "mysql:host={$host};dbname={$dbname};charset=utf8mb4",
-                $username,
-                $password,
-                [
-                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                    \PDO::ATTR_EMULATE_PREPARES => false,
-                    \PDO::ATTR_PERSISTENT => true, // Connection pooling
-                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false, // Unbuffered for large datasets
-                    \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-                ]
-            );
-
-            // Enable query profiling
-            $this->connection->exec("SET profiling = 1");
-
-        } catch (\PDOException $e) {
-            throw new \Exception("Database connection failed: " . $e->getMessage());
-        }
-    }
-
-    public static function getInstance(): self
+    /**
+     * Get singleton instance
+     * @param array $config Database configuration
+     */
+    public static function getInstance($config = []): self
     {
         if (self::$instance === null) {
-            self::$instance = new self();
+            self::$instance = new self($config);
         }
         return self::$instance;
     }
@@ -60,6 +34,44 @@ class Database
     public function getConnection(): \PDO
     {
         return $this->connection;
+    }
+
+    /**
+     * Constructor
+     * @param array $config Database configuration
+     */
+    public function __construct($config = [])
+    {
+        try {
+            $host = $config['host'] ?? (getenv('DB_HOST') ?: 'localhost');
+            $dbname = $config['database'] ?? (getenv('DB_NAME') ?: 'apsdreamhome');
+            $username = $config['username'] ?? (getenv('DB_USER') ?: 'root');
+            $password = $config['password'] ?? (getenv('DB_PASS') ?: '');
+            $charset = $config['charset'] ?? 'utf8mb4';
+
+            $dsn = "mysql:host={$host};dbname={$dbname};charset={$charset}";
+
+            $options = [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_EMULATE_PREPARES => false,
+                \PDO::ATTR_PERSISTENT => true, // Connection pooling
+                \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false, // Unbuffered for large datasets
+                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES {$charset} COLLATE {$charset}_unicode_ci"
+            ];
+
+            // Merge provided options
+            if (isset($config['options']) && is_array($config['options'])) {
+                $options = $config['options'] + $options;
+            }
+
+            $this->connection = new \PDO($dsn, $username, $password, $options);
+
+            // Enable query profiling
+            $this->connection->exec("SET profiling = 1");
+        } catch (\PDOException $e) {
+            throw new \Exception("Database connection failed: " . $e->getMessage());
+        }
     }
 
     /**
@@ -107,7 +119,6 @@ class Database
             $this->logPerformance($executionTime > $this->slowQueryThreshold ? 'SLOW_QUERY' : 'FAST_QUERY', $sql, $executionTime);
 
             return $stmt;
-
         } catch (\PDOException $e) {
             $executionTime = microtime(true) - $startTime;
             $this->logPerformance('ERROR', $sql, $executionTime, $e->getMessage());
@@ -190,7 +201,7 @@ class Database
      */
     public function getSlowQueries(): array
     {
-        return array_filter($this->performanceLog, function($log) {
+        return array_filter($this->performanceLog, function ($log) {
             return $log['type'] === 'SLOW_QUERY';
         });
     }
@@ -270,5 +281,3 @@ class Database
         }
     }
 }
-
-?>
