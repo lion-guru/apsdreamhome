@@ -26,7 +26,7 @@ class SupportTicketController extends Controller
             return;
         }
 
-        if ($user->role === 'admin' || $user->role === 'super_admin') {
+        if ($user->role === 'admin' || $user->role === 'super_admin' || $user->role === 'support') {
             $tickets = $this->ticketService->getAllTickets();
         } else {
             $tickets = $this->ticketService->getTicketsByUser($user->id);

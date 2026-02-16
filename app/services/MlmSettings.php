@@ -1,4 +1,10 @@
 <?php
+
+namespace App\Services;
+
+use App\Models\Database;
+use PDO;
+
 /**
  * MlmSettings
  * Lightweight helper for reading/writing MLM configuration values.
@@ -14,10 +20,8 @@ class MlmSettings
         }
 
         $stmt = $conn->prepare('SELECT setting_value FROM mlm_settings WHERE setting_key = ? LIMIT 1');
-        $stmt->bind_param('s', $key);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+        $stmt->execute([$key]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$result) {
             return $default;
@@ -51,21 +55,17 @@ class MlmSettings
             return false;
         }
 
+        $valueString = is_scalar($value) ? (string) $value : json_encode($value, JSON_UNESCAPED_UNICODE);
+
         $stmt = $conn->prepare(
             'INSERT INTO mlm_settings (setting_key, setting_value) VALUES (?, ?)
              ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()'
         );
-        $valueString = is_scalar($value) ? (string) $value : json_encode($value, JSON_UNESCAPED_UNICODE);
-        $stmt->bind_param('ss', $key, $valueString);
-        $success = $stmt->execute();
-        $stmt->close();
-
-        return $success;
+        return $stmt->execute([$key, $valueString]);
     }
 
-    private static function connection(): ?mysqli
+    private static function connection(): ?PDO
     {
-        $config = AppConfig::getInstance();
-        return $config->getDatabaseConnection();
+        return Database::getInstance()->getConnection();
     }
 }

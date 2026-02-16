@@ -2,23 +2,43 @@
 
 namespace App\Services;
 
-use App\Models\Database;
+use App\Core\Database;
+use App\Core\Auth;
+use Exception;
+use PDO;
 
 class TaskService
 {
     private $db;
+    private $auth;
 
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
+        $this->auth = new Auth();
     }
 
     /**
-     * Get tasks with filters
+     * Get tasks with filters and RBAC
      */
     public function getTasks($filters = [])
     {
         try {
+            // RBAC: If not admin, only show assigned tasks or created tasks
+            if (!$this->auth->isAdmin()) {
+                $userId = $this->auth->id();
+                // Force filter to current user if not explicitly filtering (or enforce it)
+                // For now, let's enforce: User can only see tasks assigned to them or created by them
+                // unless they are admin.
+                
+                // However, the original code allowed filtering by 'assigned_to'.
+                // If a user filters by 'assigned_to' = themselves, it's fine.
+                // If they filter by someone else, they shouldn't see it unless they are admin.
+                
+                // Let's add a base condition for non-admins
+                $filters['user_context'] = $userId;
+            }
+
             $where = [];
             $params = [];
 
@@ -50,13 +70,20 @@ class TaskService
                 $params[] = $filters['related_id'];
             }
 
+            // RBAC Enforcement
+            if (isset($filters['user_context'])) {
+                $where[] = "(assigned_to = ? OR created_by = ?)";
+                $params[] = $filters['user_context'];
+                $params[] = $filters['user_context'];
+            }
+
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
             $page = $filters['page'] ?? 1;
             $perPage = $filters['per_page'] ?? 20;
             $offset = ($page - 1) * $perPage;
 
-            $stmt = $this->db->prepare("
+            $sql = "
                 SELECT tasks.*, 
                        users.name as assigned_to_name,
                        creator.name as created_by_name
@@ -66,17 +93,20 @@ class TaskService
                 $whereClause
                 ORDER BY tasks.due_date ASC, tasks.priority DESC
                 LIMIT $offset, $perPage
-            ");
+            ";
+
+            $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
 
-            return $stmt->fetchAll();
-        } catch (\Exception $e) {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("TaskService::getTasks Error: " . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Get task by ID
+     * Get task by ID with RBAC
      */
     public function getTaskById($id)
     {
@@ -91,8 +121,23 @@ class TaskService
                 WHERE tasks.id = ?
             ");
             $stmt->execute([$id]);
-            return $stmt->fetch();
-        } catch (\Exception $e) {
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$task) {
+                return null;
+            }
+
+            // RBAC Check
+            if (!$this->auth->isAdmin()) {
+                $userId = $this->auth->id();
+                if ($task['assigned_to'] != $userId && $task['created_by'] != $userId) {
+                    return null; // Unauthorized
+                }
+            }
+
+            return $task;
+        } catch (Exception $e) {
+            error_log("TaskService::getTaskById Error: " . $e->getMessage());
             return null;
         }
     }
@@ -103,13 +148,18 @@ class TaskService
     public function createTask($data)
     {
         try {
+            // Validate required fields
+            if (empty($data['title']) || empty($data['created_by'])) {
+                return false;
+            }
+
             $stmt = $this->db->prepare(
                 "INSERT INTO tasks (title, description, assigned_to, created_by, priority, status, due_date, related_type, related_id, notes, created_at)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"
             );
             $stmt->execute([
                 $data['title'],
-                $data['description'],
+                $data['description'] ?? '',
                 $data['assigned_to'] ?? null,
                 $data['created_by'],
                 $data['priority'] ?? 'medium',
@@ -120,51 +170,79 @@ class TaskService
                 $data['notes'] ?? null
             ]);
             return $this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log("TaskService::createTask Error: " . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Update task
+     * Update task with RBAC
      */
     public function updateTask($id, $data)
     {
         try {
-            $stmt = $this->db->prepare(
-                "UPDATE tasks SET
-                 title = ?, description = ?, assigned_to = ?, priority = ?, status = ?, 
-                 due_date = ?, related_type = ?, related_id = ?, notes = ?, updated_at = NOW()
-                 WHERE id = ?"
-            );
-            $stmt->execute([
-                $data['title'],
-                $data['description'],
-                $data['assigned_to'] ?? null,
-                $data['priority'],
-                $data['status'],
-                $data['due_date'] ?? null,
-                $data['related_type'] ?? null,
-                $data['related_id'] ?? null,
-                $data['notes'] ?? null,
-                $id
-            ]);
+            // Check existence and permission
+            $existingTask = $this->getTaskById($id);
+            if (!$existingTask) {
+                return false; // Not found or unauthorized
+            }
+
+            $fields = [];
+            $params = [];
+
+            // Whitelist updatable fields
+            $updatable = ['title', 'description', 'assigned_to', 'priority', 'status', 'due_date', 'related_type', 'related_id', 'notes'];
+            
+            foreach ($updatable as $field) {
+                if (array_key_exists($field, $data)) {
+                    $fields[] = "$field = ?";
+                    $params[] = $data[$field];
+                }
+            }
+
+            if (empty($fields)) {
+                return true; // Nothing to update
+            }
+
+            $fields[] = "updated_at = NOW()";
+            $sql = "UPDATE tasks SET " . implode(', ', $fields) . " WHERE id = ?";
+            $params[] = $id;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log("TaskService::updateTask Error: " . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Delete task
+     * Delete task with RBAC
      */
     public function deleteTask($id)
     {
         try {
+            // Check existence and permission
+            $existingTask = $this->getTaskById($id);
+            if (!$existingTask) {
+                return false; // Not found or unauthorized
+            }
+
+            // Only Admin or Creator can delete?
+            // Or maybe just Admin?
+            // Let's allow Creator to delete too.
+            if (!$this->auth->isAdmin() && $existingTask['created_by'] != $this->auth->id()) {
+                return false; // Only creator or admin can delete
+            }
+
             $stmt = $this->db->prepare("DELETE FROM tasks WHERE id = ?");
             $stmt->execute([$id]);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log("TaskService::deleteTask Error: " . $e->getMessage());
             return false;
         }
     }
@@ -175,26 +253,44 @@ class TaskService
     public function getTaskStats()
     {
         try {
+            // RBAC: Admins see all stats, Users see their own stats?
+            // For now, let's just return global stats as it might be for dashboard
+            // But ideally should be filtered.
+            
+            $whereClause = "";
+            $params = [];
+            
+            if (!$this->auth->isAdmin()) {
+                $userId = $this->auth->id();
+                $whereClause = "WHERE assigned_to = ? OR created_by = ?";
+                $params = [$userId, $userId];
+            }
+
             $stats = [];
 
             // Total tasks by status
-            $stmt = $this->db->query("
+            $stmt = $this->db->prepare("
                 SELECT status, COUNT(*) as count
                 FROM tasks
+                $whereClause
                 GROUP BY status
             ");
-            $stats['by_status'] = $stmt->fetchAll();
+            $stmt->execute($params);
+            $stats['by_status'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Total tasks by priority
-            $stmt = $this->db->query("
+            $stmt = $this->db->prepare("
                 SELECT priority, COUNT(*) as count
                 FROM tasks
+                $whereClause
                 GROUP BY priority
             ");
-            $stats['by_priority'] = $stmt->fetchAll();
+            $stmt->execute($params);
+            $stats['by_priority'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            error_log("TaskService::getTaskStats Error: " . $e->getMessage());
             return [];
         }
     }

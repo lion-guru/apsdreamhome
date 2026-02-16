@@ -4,27 +4,23 @@ namespace App\Services;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use App\Models\AppConfig;
-
 class EmailService {
     private $mail;
-    private $config;
 
     public function __construct() {
-        $this->config = AppConfig::getInstance()->get('email');
         $this->mail = new PHPMailer(true);
         
         // Server settings
         $this->mail->isSMTP();
-        $this->mail->Host = $this->config['smtp_host'];
+        $this->mail->Host = getenv('MAIL_HOST') ?: 'localhost';
         $this->mail->SMTPAuth = true;
-        $this->mail->Username = $this->config['smtp_username'];
-        $this->mail->Password = $this->config['smtp_password'];
-        $this->mail->SMTPSecure = $this->config['smtp_secure'];
-        $this->mail->Port = $this->config['smtp_port'];
+        $this->mail->Username = getenv('MAIL_USERNAME');
+        $this->mail->Password = getenv('MAIL_PASSWORD');
+        $this->mail->SMTPSecure = getenv('MAIL_ENCRYPTION') ?: 'tls';
+        $this->mail->Port = getenv('MAIL_PORT') ?: 587;
         
         // Sender info
-        $this->mail->setFrom($this->config['smtp_username'], 'APS Dream Home');
+        $this->mail->setFrom(getenv('MAIL_FROM_ADDRESS') ?: 'no-reply@apsdreamhome.com', getenv('MAIL_FROM_NAME') ?: 'APS Dream Home');
         $this->mail->isHTML(true);
     }
 

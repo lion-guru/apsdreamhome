@@ -16,6 +16,13 @@ class Auth {
     public function check(): bool {
         return isset($_SESSION['user_id']);
     }
+
+    /**
+     * Alias for check() to support legacy code
+     */
+    public function isLoggedIn(): bool {
+        return $this->check();
+    }
     
     /**
      * Get the authenticated user

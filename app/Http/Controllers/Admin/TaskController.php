@@ -15,9 +15,17 @@ class TaskController extends BaseController
     {
         parent::__construct();
 
-        if (!$this->isAdmin()) {
+        $user = $this->auth->user();
+        if (!$user) {
             $this->redirect('login');
             return;
+        }
+
+        // Access control: only employees/admins/managers can access tasks
+        // Assuming 'customer' role should not access admin tasks
+        if ($user->role === 'customer') {
+             $this->redirect('dashboard'); 
+             return;
         }
 
         $this->layout = 'layouts/admin';
@@ -30,6 +38,8 @@ class TaskController extends BaseController
      */
     public function index()
     {
+        $user = $this->auth->user();
+        
         $filters = [
             'search' => $_GET['search'] ?? null,
             'status' => $_GET['status'] ?? null,
@@ -40,6 +50,13 @@ class TaskController extends BaseController
             'page' => (int)($_GET['page'] ?? 1),
             'per_page' => (int)($_GET['per_page'] ?? 20)
         ];
+
+        // Non-admins/managers only see tasks assigned to them or created by them
+        if (!in_array($user->role, ['admin', 'super_admin', 'manager'])) {
+            $filters['assigned_to'] = $user->id;
+            // Note: If we want them to see tasks created by them too, TaskService needs update.
+            // For now, let's stick to assigned tasks.
+        }
 
         $tasks = $this->taskService->getTasks($filters);
         $taskStats = $this->taskService->getTaskStats();
@@ -116,6 +133,13 @@ class TaskController extends BaseController
             return;
         }
 
+        $user = $this->auth->user();
+        // Permission check: only admin/manager or assigned user can edit
+        if (!in_array($user->role, ['admin', 'super_admin', 'manager']) && $task['assigned_to'] != $user->id && $task['created_by'] != $user->id) {
+            $this->forbidden();
+            return;
+        }
+
         $users = $this->leadService->getAssignableUsers();
 
         $this->data['title'] = 'Edit Task: ' . $task['title'];
@@ -135,6 +159,13 @@ class TaskController extends BaseController
 
             if (!$task) {
                 $this->notFound();
+                return;
+            }
+
+            $user = $this->auth->user();
+            // Permission check
+            if (!in_array($user->role, ['admin', 'super_admin', 'manager']) && $task['assigned_to'] != $user->id && $task['created_by'] != $user->id) {
+                $this->forbidden();
                 return;
             }
 
@@ -161,6 +192,7 @@ class TaskController extends BaseController
             throw new \Exception('Failed to update task');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
+            $_SESSION['form_data'] = $_POST;
             $this->redirect("admin/tasks/edit/$id");
         }
     }
@@ -171,6 +203,20 @@ class TaskController extends BaseController
     public function destroy($id)
     {
         try {
+            $task = $this->taskService->getTaskById($id);
+
+            if (!$task) {
+                $this->notFound();
+                return;
+            }
+
+            $user = $this->auth->user();
+            // Permission check: only admin/manager or creator can delete
+            if (!in_array($user->role, ['admin', 'super_admin', 'manager']) && $task['created_by'] != $user->id) {
+                $this->forbidden();
+                return;
+            }
+
             $result = $this->taskService->deleteTask($id);
 
             if ($result) {

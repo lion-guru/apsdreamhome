@@ -4,9 +4,15 @@
  * Centralizes outbound notifications (email for Phase 4 MVP) and logs events in mlm_notification_log.
  */
 
+namespace App\Services;
+
+use App\Models\Database;
+use PDO;
+use Throwable;
+
 class NotificationService
 {
-    private ?mysqli $conn;
+    private ?PDO $conn;
     private array $emailConfig;
     private string $defaultFromAddress;
     private string $defaultFromName;
@@ -14,12 +20,19 @@ class NotificationService
 
     public function __construct()
     {
-        $appConfig = AppConfig::getInstance();
-        $this->conn = $appConfig->getDatabaseConnection();
-        $this->emailConfig = $appConfig->get('email', []);
-        $this->defaultFromAddress = $this->emailConfig['from_email'] ?? 'noreply@apsdreamhome.com';
-        $this->defaultFromName = $this->emailConfig['from_name'] ?? 'APS Dream Home';
-        $this->adminEmail = $this->emailConfig['admin_email'] ?? 'admin@apsdreamhome.com';
+        $this->conn = Database::getInstance()->getConnection();
+        
+        // Load email config from environment variables or defaults
+        $this->emailConfig = [
+            'from_email' => getenv('MAIL_FROM_ADDRESS') ?: 'noreply@apsdreamhome.com',
+            'from_name' => getenv('MAIL_FROM_NAME') ?: 'APS Dream Home',
+            'admin_email' => getenv('MAIL_ADMIN') ?: 'admin@apsdreamhome.com',
+            'reply_to' => getenv('MAIL_REPLY_TO'),
+        ];
+        
+        $this->defaultFromAddress = $this->emailConfig['from_email'];
+        $this->defaultFromName = $this->emailConfig['from_name'];
+        $this->adminEmail = $this->emailConfig['admin_email'];
     }
 
     /**
@@ -70,15 +83,17 @@ class NotificationService
             return null;
         }
 
-        $sql = "INSERT INTO mlm_notification_log (user_id, channel, type, subject, message, payload, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')";
+        $sql = "INSERT INTO mlm_notification_log (user_id, channel, type, subject, message, payload, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
         $stmt = $this->conn->prepare($sql);
         $payloadJson = !empty($payload) ? json_encode($payload, JSON_UNESCAPED_UNICODE) : null;
-        $stmt->bind_param('isssss', $userId, $channel, $type, $subject, $message, $payloadJson);
-        $stmt->execute();
-        $logId = $stmt->insert_id;
-        $stmt->close();
-
-        return $logId;
+        
+        try {
+            $stmt->execute([$userId, $channel, $type, $subject, $message, $payloadJson]);
+            return (int)$this->conn->lastInsertId();
+        } catch (Throwable $e) {
+            error_log('NotificationService log error: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**
@@ -93,9 +108,12 @@ class NotificationService
         $sql = "UPDATE mlm_notification_log SET status = ?, error_message = ?, sent_at = CASE WHEN ? = 'sent' THEN NOW() ELSE sent_at END WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $statusForSent = $status;
-        $stmt->bind_param('sssi', $status, $errorMessage, $statusForSent, $logId);
-        $stmt->execute();
-        $stmt->close();
+        
+        try {
+            $stmt->execute([$status, $errorMessage, $statusForSent, $logId]);
+        } catch (Throwable $e) {
+            error_log('NotificationService update status error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -115,3 +133,4 @@ class NotificationService
         return implode("\r\n", $headers);
     }
 }
+
