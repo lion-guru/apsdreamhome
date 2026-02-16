@@ -76,6 +76,7 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->get('/leads', 'Admin\LeadController@index');
         $router->get('/leads/create', 'Admin\LeadController@create');
         $router->post('/leads/store', 'Admin\LeadController@store');
+        $router->get('/leads/{id}', 'Admin\LeadController@show');
         $router->get('/leads/edit/{id}', 'Admin\LeadController@edit');
         $router->post('/leads/update/{id}', 'Admin\LeadController@update');
         $router->get('/leads/delete/{id}', 'Admin\LeadController@destroy');
