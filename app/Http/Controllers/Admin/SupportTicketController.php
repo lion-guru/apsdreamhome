@@ -111,7 +111,7 @@ class SupportTicketController extends Controller
                 $this->ticketService->addReply($id, $user->id, $message, $attachment);
             }
 
-            $this->redirect('/admin/tickets/show/' . $id);
+            $this->redirect('/admin/tickets/' . $id);
         }
     }
 
@@ -129,7 +129,7 @@ class SupportTicketController extends Controller
             if (in_array($status, ['open', 'in_progress', 'resolved', 'closed'])) {
                 $this->ticketService->updateTicketStatus($id, $status);
             }
-            $this->redirect('/admin/tickets/show/' . $id);
+            $this->redirect('/admin/tickets/' . $id);
         }
     }
 

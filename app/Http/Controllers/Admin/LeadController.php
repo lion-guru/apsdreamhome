@@ -218,7 +218,7 @@ class LeadController extends BaseController
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
             $_SESSION['form_data'] = $_POST;
-            $this->redirect("admin/leads/$id/edit");
+            $this->redirect("admin/leads/edit/$id");
         }
     }
 
