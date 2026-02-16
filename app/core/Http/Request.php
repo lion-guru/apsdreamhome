@@ -905,7 +905,11 @@ class Request implements Countable {
      * Get the base URL
      */
     public function getBaseUrl(): string {
-        $baseUrl = str_replace('\\', '/', dirname($this->server->get('SCRIPT_NAME')));
+        $scriptName = $this->server->get('SCRIPT_NAME');
+        if (!$scriptName) {
+            return '';
+        }
+        $baseUrl = str_replace('\\', '/', dirname($scriptName));
         return rtrim($baseUrl, '/');
     }
     

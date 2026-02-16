@@ -56,7 +56,9 @@ if (file_exists(CONFIG_PATH . '/application.php')) {
 // Load security configuration
 if (file_exists(CONFIG_PATH . '/security.php')) {
     $securityConfig = require CONFIG_PATH . '/security.php';
-    $config = array_merge($config, $securityConfig);
+    if (is_array($securityConfig)) {
+        $config = array_merge($config, $securityConfig);
+    }
 }
 
 // Include core system files
@@ -68,7 +70,8 @@ require_once CORE_PATH . '/Database.php';
 
 
 // Initialize the application
-$app = App\Core\Application::getInstance();
+// use App\Core\App;
+// $app = new App();
 
 // Define helper functions
 if (!function_exists('config')) {

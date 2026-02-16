@@ -1,20 +1,33 @@
 <?php
-/**
- * Autoloader Class
- * Handles automatic loading of PHP classes
- */
 
 namespace App\Core;
 
-class Autoloader {
+/**
+ * Autoloader class
+ * Handles dynamic loading of classes
+ */
+class Autoloader
+{
+    /**
+     * Singleton instance
+     */
     private static $instance = null;
+
+    /**
+     * Registered namespaces
+     */
     private $namespaces = [];
+
+    /**
+     * Class map for legacy classes
+     */
     private $classMap = [];
 
     /**
      * Get singleton instance
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -22,73 +35,89 @@ class Autoloader {
     }
 
     /**
-     * Register the autoloader
+     * Private constructor
      */
-    public function register() {
+    private function __construct() {}
+
+    /**
+     * Register autoloader
+     */
+    public function register()
+    {
         spl_autoload_register([$this, 'loadClass']);
     }
 
     /**
-     * Add namespace mapping
+     * Add a namespace mapping
      */
-    public function addNamespace($namespace, $path) {
-        $this->namespaces[$namespace] = rtrim($path, '/') . '/';
-    }
+    public function addNamespace($prefix, $baseDir)
+    {
+        // Normalize namespace prefix
+        $prefix = trim($prefix, '\\') . '\\';
 
-    /**
-     * Add class map entry
-     */
-    public function addClassMap($class, $file) {
-        $this->classMap[$class] = $file;
-    }
+        // Normalize base directory with trailing separator
+        $baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-    /**
-     * Load a class file
-     */
-    public function loadClass($className) {
-        // Check class map first
-        if (isset($this->classMap[$className])) {
-            $file = $this->classMap[$className];
-            if (file_exists($file)) {
-                require_once $file;
-                return;
-            }
+        // Initialize namespace array
+        if (!isset($this->namespaces[$prefix])) {
+            $this->namespaces[$prefix] = [];
         }
 
-        // Handle namespaced classes
-        if (strpos($className, '\\') !== false) {
-            $this->loadNamespacedClass($className);
+        // Add base directory
+        $this->namespaces[$prefix][] = $baseDir;
+    }
+
+    /**
+     * Add a class map
+     */
+    public function addClassMap($className, $path)
+    {
+        $this->classMap[$className] = $path;
+    }
+
+    /**
+     * Load class
+     */
+    public function loadClass($className)
+    {
+        // Check class map first
+        if (isset($this->classMap[$className])) {
+            require_once $this->classMap[$className];
             return;
         }
 
-        // Handle legacy classes (non-namespaced)
-        $this->loadLegacyClass($className);
+        // Check legacy classes
+        if (strpos($className, '\\') === false) {
+            $this->loadLegacyClass($className);
+            return;
+        }
+
+        // Load namespaced class
+        $this->loadNamespacedClass($className);
     }
 
     /**
      * Load namespaced class
      */
-    private function loadNamespacedClass($className) {
-        $parts = explode('\\', $className);
-        $namespace = implode('\\', array_slice($parts, 0, -1));
-        $class = end($parts);
+    private function loadNamespacedClass($className)
+    {
+        // Iterate through namespaces
+        foreach ($this->namespaces as $prefix => $baseDirs) {
+            // Check if class uses this namespace prefix
+            $len = strlen($prefix);
+            if (strncmp($prefix, $className, $len) !== 0) {
+                continue;
+            }
 
-        // Remove 'App' from namespace for file path
-        $namespaceParts = explode('\\', $namespace);
-        if (isset($namespaceParts[0]) && $namespaceParts[0] === 'App') {
-            array_shift($namespaceParts);
-        }
-        $relativeNamespace = implode('/', $namespaceParts);
+            // Get relative class name
+            $relativeClass = substr($className, $len);
 
-        // Look for class in registered namespaces
-        foreach ($this->namespaces as $registeredNamespace => $path) {
-            if (strpos($namespace, $registeredNamespace) === 0) {
-                $relativePath = str_replace($registeredNamespace, '', $namespace);
-                $relativePath = str_replace('\\', '/', $relativePath);
-                $filePath = $path . trim($relativePath, '/') . '/' . $class . '.php';
+            // Try to load from base directories
+            foreach ($baseDirs as $baseDir) {
+                $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
 
-                if (file_exists($filePath)) {
-                    require_once $filePath;
+                if (file_exists($file)) {
+                    require_once $file;
                     return;
                 }
             }
@@ -104,7 +133,8 @@ class Autoloader {
     /**
      * Load legacy (non-namespaced) class
      */
-    private function loadLegacyClass($className) {
+    private function loadLegacyClass($className)
+    {
         // Try common locations for legacy classes
         $possiblePaths = [
             APP_ROOT . '/app/controllers/' . $className . '.php',
@@ -147,6 +177,3 @@ $autoloader->addClassMap('ContactManager', APP_ROOT . '/includes/managers.php');
 
 // Ensure AppConfig is autoloaded from legacy config
 $autoloader->addClassMap('AppConfig', APP_ROOT . '/includes/config.php');
-
-?>
-

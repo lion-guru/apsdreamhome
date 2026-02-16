@@ -11,14 +11,14 @@ class TeamMember extends UnifiedModel
     
     protected array $fillable = [
         'name',
-        'designation',
-        'department',
-        'image_path',
+        'position',
         'bio',
+        'photo',
         'email',
         'phone',
-        'linkedin_url',
-        'twitter_url',
+        'linkedin',
+        'expertise',
+        'experience',
         'display_order',
         'status'
     ];

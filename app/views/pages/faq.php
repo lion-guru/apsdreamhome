@@ -1,48 +1,3 @@
-<?php
-require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/functions.php';
-
-// Initialize variables
-$page_title = "Frequently Asked Questions - APS Dream Homes";
-$meta_description = "Find answers to common questions about buying, selling, and investing in real estate with APS Dream Homes.";
-$meta_keywords = "FAQ, frequently asked questions, real estate FAQ, property buying guide, home selling tips, APS Dream Homes help";
-
-// Additional CSS
-$additional_css = '
-<link rel="stylesheet" href="' . get_asset_url("css/common.css") . '">
-<link rel="stylesheet" href="' . get_asset_url("css/faq.css") . '">
-';
-
-// Additional JS
-$additional_js = '
-<script src="' . get_asset_url("js/common.js") . '"></script>
-<script src="' . get_asset_url("js/faq.js") . '"></script>
-';
-
-// Fetch FAQ categories
-$categories_query = "SELECT DISTINCT category FROM faqs WHERE status = 'active' ORDER BY category";
-$categories_result = mysqli_query($conn, $categories_query);
-$categories = [];
-while ($row = mysqli_fetch_assoc($categories_result)) {
-    $categories[] = $row['category'];
-}
-
-// Fetch FAQs
-$current_category = isset($_GET['category']) ? mysqli_real_escape_string($conn, $_GET['category']) : 'all';
-$where_clause = $current_category !== 'all' ? "AND category = '$current_category'" : "";
-
-$faqs_query = "SELECT * FROM faqs WHERE status = 'active' $where_clause ORDER BY priority DESC, category, id";
-$faqs_result = mysqli_query($conn, $faqs_query);
-
-// Group FAQs by category
-$grouped_faqs = [];
-while ($faq = mysqli_fetch_assoc($faqs_result)) {
-    $grouped_faqs[$faq['category']][] = $faq;
-}
-
-// Include header
-require_once __DIR__ . '/includes/templates/header.php';
-?>
 
 <!-- Hero Section -->
 <section class="hero-section bg-light py-5">
@@ -52,10 +7,10 @@ require_once __DIR__ . '/includes/templates/header.php';
                 <h1 class="display-4 fw-bold">Frequently Asked Questions</h1>
                 <p class="lead text-muted">Find answers to common questions about real estate and our services.</p>
                 <div class="mt-4">
-                    <form class="search-form" id="faqSearch">
+                    <form class="search-form" id="faqSearch" onsubmit="return false;">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search FAQs..." id="searchInput">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" type="button">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
@@ -63,38 +18,34 @@ require_once __DIR__ . '/includes/templates/header.php';
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="<?= get_asset_url('images/faq-hero.jpg') ?>" alt="FAQ Hero" class="img-fluid rounded-3 shadow-lg">
+                <!-- Fallback image or use generic asset -->
+                <div class="bg-white p-5 rounded shadow-sm text-center">
+                    <i class="fas fa-question-circle fa-5x text-primary mb-3"></i>
+                    <h4>Have more questions?</h4>
+                    <p>Contact our support team for personalized assistance.</p>
+                    <a href="<?= BASE_URL ?>contact" class="btn btn-outline-primary">Contact Us</a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Breadcrumb -->
-<nav class="bg-light border-bottom py-2">
-    <div class="container">
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active">FAQ</li>
-        </ol>
-    </div>
-</nav>
-
 <!-- FAQ Content -->
-<main id="main-content" class="py-5">
+<section id="main-content" class="py-5">
     <div class="container">
         <!-- Category Filter -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="faq-filter text-center">
-                    <button class="btn <?= $current_category === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2" 
-                            onclick="window.location.href='faq'">
+                    <a href="<?= BASE_URL ?>faq" class="btn <?= $current_category === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                         All Categories
-                    </button>
-                    <?php foreach ($categories as $category): ?>
-                    <button class="btn <?= $current_category === $category ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2"
-                            onclick="window.location.href='faq?category=<?= urlencode($category) ?>'">
-                        <?= htmlspecialchars(ucwords($category)) ?>
-                    </button>
+                    </a>
+                    <?php foreach ($categories as $cat): ?>
+                        <?php $catName = is_object($cat) ? $cat->category : $cat['category']; ?>
+                        <a href="<?= BASE_URL ?>faq?category=<?= urlencode($catName) ?>" 
+                           class="btn <?= $current_category === $catName ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                            <?= htmlspecialchars(ucwords($catName)) ?>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -102,71 +53,85 @@ require_once __DIR__ . '/includes/templates/header.php';
 
         <!-- FAQ Accordion -->
         <div class="row">
-            <div class="col-12">
+            <div class="col-lg-10 mx-auto">
                 <div class="accordion faq-accordion" id="faqAccordion">
-                    <?php foreach ($grouped_faqs as $category => $faqs): ?>
-                    <div class="faq-category mb-4">
-                        <h3 class="category-title mb-3"><?= htmlspecialchars(ucwords($category)) ?></h3>
-                        <?php foreach ($faqs as $index => $faq): ?>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" 
-                                        data-bs-toggle="collapse" 
-                                        data-bs-target="#faq-<?= $faq['id'] ?>">
-                                    <?= htmlspecialchars($faq['question']) ?>
-                                </button>
-                            </h2>
-                            <div id="faq-<?= $faq['id'] ?>" class="accordion-collapse collapse" 
-                                 data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    <?= nl2br(htmlspecialchars($faq['answer'])) ?>
-                                    <?php if (!empty($faq['related_links'])): ?>
-                                    <div class="related-links mt-3">
-                                        <h6>Related Resources:</h6>
-                                        <ul class="list-unstyled">
-                                            <?php foreach (json_decode($faq['related_links'], true) as $link): ?>
-                                            <li>
-                                                <a href="<?= htmlspecialchars($link['url']) ?>" class="text-primary">
-                                                    <i class="fas fa-external-link-alt me-2"></i>
-                                                    <?= htmlspecialchars($link['title']) ?>
-                                                </a>
-                                            </li>
-                                            <?php endforeach; ?>
-                                        </ul>
+                    <?php if (!empty($grouped_faqs)): ?>
+                        <?php foreach ($grouped_faqs as $category => $faqs): ?>
+                        <div class="faq-category mb-4">
+                            <h3 class="category-title mb-3 border-bottom pb-2 text-primary"><?= htmlspecialchars(ucwords($category)) ?></h3>
+                            <?php foreach ($faqs as $index => $faq): ?>
+                                <?php 
+                                    $faqId = is_object($faq) ? $faq->id : $faq['id'];
+                                    $question = is_object($faq) ? $faq->question : $faq['question'];
+                                    $answer = is_object($faq) ? $faq->answer : $faq['answer'];
+                                    $relatedLinks = is_object($faq) ? ($faq->related_links ?? null) : ($faq['related_links'] ?? null);
+                                ?>
+                                <div class="accordion-item mb-3 border rounded shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#faq-<?= $faqId ?>">
+                                            <?= htmlspecialchars($question) ?>
+                                        </button>
+                                    </h2>
+                                    <div id="faq-<?= $faqId ?>" class="accordion-collapse collapse" 
+                                         data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <?= nl2br(htmlspecialchars($answer)) ?>
+                                            <?php if (!empty($relatedLinks)): ?>
+                                            <div class="related-links mt-3">
+                                                <h6>Related Resources:</h6>
+                                                <ul class="list-unstyled">
+                                                    <?php 
+                                                        $links = json_decode($relatedLinks, true);
+                                                        if (is_array($links)):
+                                                            foreach ($links as $link): 
+                                                    ?>
+                                                    <li>
+                                                        <a href="<?= htmlspecialchars($link['url']) ?>" class="text-primary">
+                                                            <i class="fas fa-external-link-alt me-2"></i>
+                                                            <?= htmlspecialchars($link['title']) ?>
+                                                        </a>
+                                                    </li>
+                                                    <?php 
+                                                            endforeach;
+                                                        endif;
+                                                    ?>
+                                                </ul>
+                                            </div>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
-                                    <?php endif; ?>
                                 </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                         <?php endforeach; ?>
-                    </div>
-                    <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="text-center py-5">
+                            <h3>No FAQs found</h3>
+                            <p class="text-muted">Please try selecting a different category or check back later.</p>
+                        </div>
+                    <?php endif; ?>
                 </div>
-
-                <?php if (empty($grouped_faqs)): ?>
-                <div class="text-center py-5">
-                    <h3>No FAQs found</h3>
-                    <p class="text-muted">Please try selecting a different category or check back later.</p>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Contact CTA -->
-        <div class="contact-cta text-center mt-5 py-5 bg-light rounded-3">
-            <h3>Didn't Find Your Answer?</h3>
-            <p class="text-muted mb-4">Our team is here to help you with any questions you may have</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="/contact" class="btn btn-primary">Contact Us</a>
-                <a href="tel:<?= CONTACT_PHONE ?>" class="btn btn-outline-primary">
-                    <i class="fas fa-phone me-2"></i>Call Now
-                </a>
             </div>
         </div>
     </div>
-</main>
+</section>
 
-<?php
-// Include footer
-require_once __DIR__ . '/includes/templates/footer.php';
-?>
+<script>
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    let searchText = this.value.toLowerCase();
+    let accordionItems = document.querySelectorAll('.accordion-item');
+    
+    accordionItems.forEach(item => {
+        let question = item.querySelector('.accordion-button').textContent.toLowerCase();
+        let answer = item.querySelector('.accordion-body').textContent.toLowerCase();
+        
+        if (question.includes(searchText) || answer.includes(searchText)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+</script>

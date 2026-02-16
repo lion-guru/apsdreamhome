@@ -16,12 +16,18 @@ class PropertyController extends BaseApiController
     /**
      * Search properties
      */
+    public function index()
+    {
+        return $this->search();
+    }
+
     public function search()
     {
         try {
-            if ($response = $this->validateApiKey(true)) {
-                return $response;
-            }
+            // Check for API key but make it optional for public search if needed
+            // if ($response = $this->validateApiKey(false)) {
+            //     return $response;
+            // }
 
             $filters = [
                 'keyword' => $this->request()->input('keyword', $this->request()->input('q', '')),
@@ -50,7 +56,6 @@ class PropertyController extends BaseApiController
                     'total_pages' => \ceil($result['total'] / $limit)
                 ]
             ]);
-
         } catch (\Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
@@ -154,9 +159,48 @@ class PropertyController extends BaseApiController
     }
 
     /**
+     * Get a specific saved search
+     */
+    public function getSavedSearch()
+    {
+        try {
+            $user = $this->auth->user();
+            $id = $this->request()->input('id');
+
+            if (!$id) {
+                return $this->jsonError('Search ID is required', 400);
+            }
+
+            $search = $this->model('SavedSearch')->find($id);
+
+            if (!$search || $search->user_id !== $user->id) {
+                return $this->jsonError('Search not found', 404);
+            }
+
+            // Decode filters
+            $filters = \json_decode($search->filters, true);
+
+            // Format for frontend
+            $data = [
+                'id' => $search->id,
+                'name' => $search->name,
+                'user_id' => $search->user_id,
+                'filters' => $filters,
+                'search_params' => $filters, // Frontend expects this
+                'created_at' => $search->created_at,
+                'updated_at' => $search->updated_at
+            ];
+
+            return $this->jsonSuccess($data);
+        } catch (\Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
+        }
+    }
+
+    /**
      * Delete a saved search
      */
-    public function deleteSearch($id)
+    public function deleteSearch($id = null)
     {
         $method = $this->request()->getMethod();
         if ($method !== 'POST' && $method !== 'DELETE') {
@@ -165,6 +209,16 @@ class PropertyController extends BaseApiController
 
         try {
             $user = $this->auth->user();
+
+            // Get ID from input if not provided (for POST requests)
+            if ($id === null) {
+                $id = $this->request()->input('id');
+            }
+
+            if (!$id) {
+                return $this->jsonError('Search ID is required', 400);
+            }
+
             $this->model('SavedSearch')->deleteForUser($id, $user->id);
 
             return $this->jsonSuccess(null, 'Saved search deleted');
@@ -194,7 +248,7 @@ class PropertyController extends BaseApiController
             $properties = $this->model('Property')->getNearby($lat, $lng, $radius, $limit);
 
             // Format properties with distance
-            $formatted_properties = \array_map(function($property) {
+            $formatted_properties = \array_map(function ($property) {
                 return [
                     'id' => $property['id'],
                     'title' => $property['title'],

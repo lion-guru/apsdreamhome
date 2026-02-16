@@ -27,7 +27,9 @@ $host = $_SERVER['HTTP_HOST'];
 $path = '/march2025apssite/google_callback_associate.php';
 
 // Set the redirect URL for associates
-define('GOOGLE_REDIRECT_URL_ASSOCIATE', $protocol . '://' . $host . $path);
+if (!defined('GOOGLE_REDIRECT_URL_ASSOCIATE')) {
+    define('GOOGLE_REDIRECT_URL_ASSOCIATE', $protocol . '://' . $host . $path);
+}
 
 // Validate configuration
 if (empty(GOOGLE_CLIENT_ID) || empty(GOOGLE_CLIENT_SECRET)) {

@@ -14,6 +14,7 @@ class Service extends UnifiedModel
         'description',
         'icon',
         'color',
+        'features',
         'display_order',
         'status'
     ];
