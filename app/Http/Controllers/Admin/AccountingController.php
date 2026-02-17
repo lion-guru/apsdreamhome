@@ -109,11 +109,11 @@ class AccountingController extends AdminController
 
             $this->db->execute($sql, [$income_number, $income_date, $category, $amount, $description, $payment_method, $customer_id, $project_id, $created_by]);
 
-            set_flash('success', $this->mlSupport->translate('Income recorded successfully.'));
+            $this->setFlash('success', $this->mlSupport->translate('Income recorded successfully.'));
             $this->redirect('admin/accounting');
         } catch (Exception $e) {
             error_log("Store Income Error: " . $e->getMessage());
-            set_flash('error', $this->mlSupport->translate('Error recording income: ') . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate('Error recording income: ') . $e->getMessage());
             $this->redirect('admin/accounting/income/add');
         }
     }
@@ -127,7 +127,7 @@ class AccountingController extends AdminController
     public function storeExpense()
     {
         if (!$this->validateCsrfToken()) {
-            set_flash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
             $this->redirect('admin/accounting/expenses/add');
             return;
         }
@@ -139,7 +139,7 @@ class AccountingController extends AdminController
         $user_id = $_SESSION['user_id'] ?? 1;
 
         if ($amount <= 0 || empty($source) || empty($expense_date)) {
-            set_flash('error', $this->mlSupport->translate('Please fill in all required fields correctly.'));
+            $this->setFlash('error', $this->mlSupport->translate('Please fill in all required fields correctly.'));
             $this->redirect('admin/accounting/expenses/add');
             return;
         }
@@ -148,11 +148,11 @@ class AccountingController extends AdminController
             $sql = "INSERT INTO expenses (user_id, amount, source, expense_date, description) VALUES (?, ?, ?, ?, ?)";
             $this->db->execute($sql, [$user_id, $amount, $source, $expense_date, $description]);
 
-            set_flash('success', $this->mlSupport->translate('Expense recorded successfully.'));
+            $this->setFlash('success', $this->mlSupport->translate('Expense recorded successfully.'));
             $this->redirect('admin/accounting');
         } catch (Exception $e) {
             error_log("Store Expense Error: " . $e->getMessage());
-            set_flash('error', $this->mlSupport->translate('Error recording expense: ') . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate('Error recording expense: ') . $e->getMessage());
             $this->redirect('admin/accounting/expenses/add');
         }
     }
