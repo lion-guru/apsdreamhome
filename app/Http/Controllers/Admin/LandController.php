@@ -111,10 +111,10 @@ class LandController extends AdminController
                 $agreement_status
             ]);
 
-            set_flash('success', $this->mlSupport->translate('Land record added successfully.'));
+            $this->setFlash('success', $this->mlSupport->translate('Land record added successfully.'));
             $this->redirect('admin/land');
         } catch (\Exception $e) {
-            set_flash('error', $this->mlSupport->translate('Error adding record: ') . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate('Error adding record: ') . $e->getMessage());
             $this->redirect('admin/land/create');
         }
     }
@@ -128,7 +128,7 @@ class LandController extends AdminController
         $this->data['land_record'] = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
 
         if (!$this->data['land_record']) {
-            set_flash('error', $this->mlSupport->translate('Land record not found.'));
+            $this->setFlash('error', $this->mlSupport->translate('Land record not found.'));
             $this->redirect('admin/land');
             return;
         }
@@ -148,7 +148,7 @@ class LandController extends AdminController
         $this->data['land_record'] = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
 
         if (!$this->data['land_record']) {
-            set_flash('error', $this->mlSupport->translate('Land record not found.'));
+            $this->setFlash('error', $this->mlSupport->translate('Land record not found.'));
             $this->redirect('admin/land');
             return;
         }
@@ -162,7 +162,7 @@ class LandController extends AdminController
 
         // CSRF check handled by middleware if added to __construct, otherwise check manually or add to middleware
         if (!$this->validateCsrfToken()) {
-            set_flash('error', $this->mlSupport->translate('Invalid security token.'));
+            $this->setFlash('error', $this->mlSupport->translate('Invalid security token.'));
             $this->redirect('admin/land/transactions/add/' . $id);
             return;
         }
@@ -172,7 +172,7 @@ class LandController extends AdminController
         $description = trim($_POST['description'] ?? '');
 
         if ($amount <= 0 || empty($description)) {
-            set_flash('error', $this->mlSupport->translate('Please fill in all required fields.'));
+            $this->setFlash('error', $this->mlSupport->translate('Please fill in all required fields.'));
             $this->redirect('admin/land/transactions/add/' . $id);
             return;
         }
@@ -185,14 +185,14 @@ class LandController extends AdminController
                 // We should recalculate total paid or just add to it. Recalculating is safer.
                 $this->updateTotalPaid($id);
 
-                set_flash('success', $this->mlSupport->translate('Transaction added successfully.'));
+                $this->setFlash('success', $this->mlSupport->translate('Transaction added successfully.'));
                 $this->redirect('admin/land/transactions/' . $id);
             } else {
-                set_flash('error', $this->mlSupport->translate('Failed to record transaction.'));
+                $this->setFlash('error', $this->mlSupport->translate('Failed to record transaction.'));
                 $this->redirect('admin/land/transactions/add/' . $id);
             }
         } catch (\Exception $e) {
-            set_flash('error', $this->mlSupport->translate('Error: ') . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate('Error: ') . $e->getMessage());
             $this->redirect('admin/land/transactions/add/' . $id);
         }
     }

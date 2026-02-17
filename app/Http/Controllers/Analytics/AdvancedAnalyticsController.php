@@ -94,9 +94,7 @@ class AdvancedAnalyticsController extends AdminController
     {
         header('Content-Type: application/json');
 
-        if (!$this->isAdmin()) {
-            sendJsonResponse(['success' => false, 'error' => 'Admin access required'], 403);
-        }
+        // AdminController handles auth check
 
         $realtime_data = $this->getRealtimeAnalytics();
 
