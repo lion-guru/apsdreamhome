@@ -176,4 +176,4 @@ $autoloader->addClassMap('PropertyManager', APP_ROOT . '/includes/managers.php')
 $autoloader->addClassMap('ContactManager', APP_ROOT . '/includes/managers.php');
 
 // Ensure AppConfig is autoloaded from legacy config
-$autoloader->addClassMap('AppConfig', APP_ROOT . '/includes/config.php');
+// $autoloader->addClassMap('AppConfig', APP_ROOT . '/includes/config.php');
