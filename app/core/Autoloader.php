@@ -137,8 +137,8 @@ class Autoloader
     {
         // Try common locations for legacy classes
         $possiblePaths = [
-            APP_ROOT . '/app/controllers/' . $className . '.php',
-            APP_ROOT . '/app/models/' . $className . '.php',
+            APP_ROOT . '/app/Http/Controllers/' . $className . '.php',
+            APP_ROOT . '/app/Models/' . $className . '.php',
             APP_ROOT . '/app/core/' . $className . '.php',
             APP_ROOT . '/includes/' . $className . '.php',
             APP_ROOT . '/' . strtolower($className) . '.php',

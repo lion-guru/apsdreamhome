@@ -249,10 +249,8 @@ $required_files = [
     'app/Http/Controllers/Admin/AdminController.php' => 'Admin Controller',
     'app/Http/Controllers/Admin/AdminDashboardController.php' => 'Admin Dashboard Controller',
     'app/Http/Controllers/Admin/EmployeeController.php' => 'Employee Controller',
-    'app/Http/Controllers/Auth/AuthController.php' => 'Auth Controller',
+    'app/Http/Controllers/Public/AuthController.php' => 'Auth Controller',
     'app/Http/Controllers/User/DashboardController.php' => 'User Dashboard Controller',
-    'employee_logout.php' => 'Employee logout',
-    'setup_employee_system.php' => 'System setup script',
     'fixed_employee_setup.php' => 'Fixed setup script'
 ];
 
@@ -272,18 +270,34 @@ echo "<div class='checklist-section'>
 // Test login functionality
 $login_status = 'pass';
 $login_details = 'Login pages accessible and functional';
-if (!file_exists('admin/index.php') || !file_exists('employee_login.php')) {
-    $login_status = 'fail';
-    $login_details = 'Login pages missing';
+$required_login_routes = [
+    'app/Http/Controllers/Auth/AdminAuthController.php',
+    'app/Http/Controllers/Public/AuthController.php'
+];
+
+foreach ($required_login_routes as $route_file) {
+    if (!file_exists(dirname(__DIR__, 2) . '/' . $route_file)) {
+        $login_status = 'fail';
+        $login_details = 'Login controllers missing: ' . basename($route_file);
+        break;
+    }
 }
 add_checklist_item('Login System', 'Test login functionality', $login_status, $login_details);
 
 // Test dashboard functionality
 $dashboard_status = 'pass';
 $dashboard_details = 'Dashboard pages accessible';
-if (!file_exists('admin/enhanced_dashboard.php') || !file_exists('employee_dashboard.php')) {
-    $dashboard_status = 'fail';
-    $dashboard_details = 'Dashboard pages missing';
+$required_dashboard_controllers = [
+    'app/Http/Controllers/Admin/AdminDashboardController.php',
+    'app/Http/Controllers/User/DashboardController.php'
+];
+
+foreach ($required_dashboard_controllers as $controller_file) {
+    if (!file_exists(dirname(__DIR__, 2) . '/' . $controller_file)) {
+        $dashboard_status = 'fail';
+        $dashboard_details = 'Dashboard controllers missing: ' . basename($controller_file);
+        break;
+    }
 }
 add_checklist_item('Dashboard System', 'Test dashboard functionality', $dashboard_status, $dashboard_details);
 
