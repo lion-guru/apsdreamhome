@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Utility;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 
 /**
@@ -10,12 +10,12 @@ use Exception;
  * 
  * Handles seeding sample data for testing and demonstration purposes.
  */
-class DatabaseSeederController extends BaseController
+class DatabaseSeederController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('role:admin');
+        // AdminController handles role:admin check
     }
 
     /**

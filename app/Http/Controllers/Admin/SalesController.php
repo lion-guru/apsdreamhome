@@ -26,7 +26,12 @@ class SalesController extends AdminController
     public function create()
     {
         try {
-            $associates = $this->db->fetchAll("SELECT associate_id as id, name FROM associates WHERE status='active' ORDER BY name ASC");
+            // Fetch associates with their names from users table
+            $associates = $this->db->fetchAll("SELECT a.associate_id as id, u.name 
+                                             FROM associates a 
+                                             JOIN users u ON a.user_id = u.id 
+                                             WHERE a.status='active' 
+                                             ORDER BY u.name ASC");
 
             return $this->render('admin/sales/create', [
                 'associates' => $associates,
@@ -120,7 +125,6 @@ class SalesController extends AdminController
 
             $this->setFlash('success', $this->mlSupport->translate('Sale and payouts recorded successfully!'));
             return $this->redirect('/admin/sales/create');
-
         } catch (Exception $e) {
             try {
                 $this->db->rollBack();

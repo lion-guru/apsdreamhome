@@ -80,8 +80,6 @@ class VisitController extends AdminController
         $stmt = $this->db->prepare($sql);
         $result = $stmt->execute([$status, $id]);
 
-        header('Content-Type: application/json');
-        echo json_encode(['success' => $result]);
-        exit;
+        return $this->jsonResponse(['success' => $result]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Services\PayoutService;
 use Exception;
 use Throwable;
 
@@ -18,9 +19,7 @@ class PayoutController extends AdminController
     {
         parent::__construct();
 
-        // Load legacy service
-        require_once dirname(__DIR__, 3) . '/services/PayoutService.php';
-        $this->payoutService = new \PayoutService();
+        $this->payoutService = new PayoutService();
     }
 
     public function index(): void

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 
 /**
@@ -24,19 +24,14 @@ class PaymentController extends AdminController
      */
     public function dashboardStats()
     {
-        header('Content-Type: application/json');
-
         try {
             $stats = $this->paymentModel->getDashboardStats();
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => true,
                 'data' => $stats
             ]);
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Failed to fetch dashboard statistics: ' . $e->getMessage()
-            ]);
+            return $this->jsonError('Failed to fetch dashboard statistics: ' . $e->getMessage());
         }
     }
 
@@ -56,8 +51,6 @@ class PaymentController extends AdminController
      */
     public function data()
     {
-        header('Content-Type: application/json');
-
         try {
             $start = $_GET['start'] ?? 0;
             $length = $_GET['length'] ?? 10;
@@ -102,16 +95,14 @@ class PaymentController extends AdminController
                 ];
             }
 
-            echo json_encode([
+            return $this->jsonResponse([
                 'draw' => intval($_GET['draw'] ?? 1),
                 'recordsTotal' => $totalRecords,
                 'recordsFiltered' => $totalFiltered,
                 'data' => $data
             ]);
         } catch (Exception $e) {
-            echo json_encode([
-                'error' => $e->getMessage()
-            ]);
+            return $this->jsonError('Failed to fetch payment data: ' . $e->getMessage());
         }
     }
 

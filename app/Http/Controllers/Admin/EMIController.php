@@ -24,16 +24,14 @@ class EMIController extends AdminController
      */
     public function stats()
     {
-        header('Content-Type: application/json');
-
         try {
             $stats = $this->emiModel->getStats();
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => true,
                 'data' => $stats
             ]);
         } catch (\Exception $e) {
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
@@ -45,11 +43,8 @@ class EMIController extends AdminController
      */
     public function pay()
     {
-        header('Content-Type: application/json');
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            return;
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
         }
 
         try {
@@ -63,7 +58,7 @@ class EMIController extends AdminController
             $paymentId = $this->emiModel->recordInstallmentPayment($data);
 
             if ($paymentId) {
-                echo json_encode([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => 'Payment recorded successfully',
                     'payment_id' => $paymentId
@@ -72,7 +67,7 @@ class EMIController extends AdminController
                 throw new \Exception('Failed to record payment');
             }
         } catch (\Exception $e) {
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
             ]);
@@ -84,8 +79,6 @@ class EMIController extends AdminController
      */
     public function list()
     {
-        header('Content-Type: application/json');
-
         $params = [
             'draw' => (int)($_POST['draw'] ?? 1),
             'start' => (int)($_POST['start'] ?? 0),
@@ -102,14 +95,14 @@ class EMIController extends AdminController
         try {
             $result = $this->emiModel->getFilteredPlans($params);
 
-            echo json_encode([
+            return $this->jsonResponse([
                 'draw' => $params['draw'],
                 'recordsTotal' => $result['totalRecords'],
                 'recordsFiltered' => $result['filteredRecords'],
                 'data' => $result['data']
             ]);
         } catch (\Exception $e) {
-            echo json_encode([
+            return $this->jsonResponse([
                 'error' => $e->getMessage()
             ]);
         }
@@ -162,11 +155,8 @@ class EMIController extends AdminController
      */
     public function store()
     {
-        header('Content-Type: application/json');
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            return;
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method']);
         }
 
         try {
@@ -192,7 +182,7 @@ class EMIController extends AdminController
             $result = $this->emiModel->createPlan($data);
 
             if ($result['success']) {
-                echo json_encode([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => 'EMI plan created successfully',
                     'data' => [
@@ -204,7 +194,7 @@ class EMIController extends AdminController
                 throw new \Exception('Failed to create EMI plan');
             }
         } catch (\Exception $e) {
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to create EMI plan: ' . $e->getMessage()
             ]);

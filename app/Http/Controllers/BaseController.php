@@ -297,6 +297,28 @@ class BaseController extends CoreController
     }
 
     /**
+     * Send JSON response (wrapper for json())
+     * 
+     * @param mixed $data
+     * @param int $statusCode
+     */
+    protected function jsonResponse($data, int $statusCode = 200)
+    {
+        return $this->json($data, $statusCode);
+    }
+
+    /**
+     * Send JSON error response
+     * 
+     * @param string $message
+     * @param int $statusCode
+     */
+    protected function jsonError(string $message, int $statusCode = 400)
+    {
+        return $this->json(['success' => false, 'error' => $message], $statusCode);
+    }
+
+    /**
      * Get current associate ID
      */
     public function getCurrentAssociateId()

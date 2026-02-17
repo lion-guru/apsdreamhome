@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Services\CommissionService;
 use Exception;
 use Throwable;
 
@@ -17,23 +18,18 @@ class AnalyticsController extends AdminController
     public function __construct()
     {
         parent::__construct();
-
-        // Load legacy service
-        require_once dirname(__DIR__, 3) . '/services/CommissionService.php';
-        $this->commissionService = new \CommissionService();
+        $this->commissionService = new CommissionService();
     }
 
     public function index(): void
     {
-        $this->data['page_title'] = 'MLM Commission Analytics';
+        $this->data['page_title'] = $this->mlSupport->translate('MLM Commission Analytics');
         $this->data['filters'] = $this->defaultFilters();
         $this->render('admin/mlm_analytics');
     }
 
-    public function data(): void
+    public function data()
     {
-        header('Content-Type: application/json');
-
         try {
             $filters = $this->parseFilters($_GET);
             $summary = $this->commissionService->getSummary($filters);
@@ -42,7 +38,7 @@ class AnalyticsController extends AdminController
             $topReferrers = $this->commissionService->getTopReferrers($filters, (int)($_GET['limit'] ?? 10));
             $timeline = $this->commissionService->getTimeline($filters, $_GET['group_by'] ?? 'day');
 
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => true,
                 'filters' => $filters,
                 'summary' => $summary,
@@ -52,34 +48,24 @@ class AnalyticsController extends AdminController
                 'timeline' => $timeline,
             ]);
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                'success' => false,
-                'error' => $e->getMessage(),
-            ]);
+            return $this->jsonError($e->getMessage(), 500);
         }
     }
 
-    public function ledger(): void
+    public function ledger()
     {
-        header('Content-Type: application/json');
-
         try {
             $filters = $this->parseFilters($_GET);
             $limit = max(1, (int)($_GET['limit'] ?? 50));
             $offset = max(0, (int)($_GET['offset'] ?? 0));
             $records = $this->commissionService->getLedger($filters, $limit, $offset);
 
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => true,
                 'records' => $records,
             ]);
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                'success' => false,
-                'error' => $e->getMessage(),
-            ]);
+            return $this->jsonError($e->getMessage(), 500);
         }
     }
 

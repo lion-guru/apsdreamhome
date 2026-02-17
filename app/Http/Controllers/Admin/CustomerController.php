@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use \Exception;
 
 class CustomerController extends AdminController
@@ -10,7 +9,7 @@ class CustomerController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
@@ -92,8 +91,16 @@ class CustomerController extends AdminController
 
         // Explicitly define fillable fields for security
         $fillableFields = [
-            'name', 'email', 'mobile', 'address', 'city', 'state', 'pincode',
-            'country_id', 'status', 'description'
+            'name',
+            'email',
+            'mobile',
+            'address',
+            'city',
+            'state',
+            'pincode',
+            'country_id',
+            'status',
+            'description'
         ];
 
         $customerData = [];
@@ -185,8 +192,16 @@ class CustomerController extends AdminController
 
         // Explicitly define fillable fields for security
         $fillableFields = [
-            'name', 'email', 'mobile', 'address', 'city', 'state', 'pincode',
-            'country_id', 'status', 'description'
+            'name',
+            'email',
+            'mobile',
+            'address',
+            'city',
+            'state',
+            'pincode',
+            'country_id',
+            'status',
+            'description'
         ];
 
         $customerData = [];

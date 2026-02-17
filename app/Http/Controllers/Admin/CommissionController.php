@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Commission Controller
  * Handles administrative commission operations: calculation, approval, and payouts
@@ -7,18 +8,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Services\NotificationService;
 
-class CommissionController extends AdminController {
+class CommissionController extends AdminController
+{
+    protected $notificationService;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->middleware('csrf', ['only' => ['calculate', 'approve', 'processPayout']]);
+        $this->notificationService = new NotificationService();
     }
 
     /**
      * Display commission overview
      */
-    public function index() {
+    public function index()
+    {
         // Fetch pending commissions from mlm_commission_ledger
         $query = "SELECT mcl.*, u.name as associate_name
                   FROM mlm_commission_ledger mcl
@@ -37,23 +44,27 @@ class CommissionController extends AdminController {
     /**
      * Calculate commissions for a period (AJAX)
      */
-    public function calculate() {
+    public function calculate()
+    {
         if (!$this->validateCsrfToken()) {
             return $this->jsonError($this->mlSupport->translate('Security validation failed. Please try again.'));
         }
 
         try {
-            // Fetch all active associates to trigger calculation
-            $associatesQuery = "SELECT id FROM users WHERE status = 'active'";
+            // Fetch all active associates (using associate_id) to trigger calculation
+            // Join with users to check active status if needed, or check associates status
+            $associatesQuery = "SELECT a.associate_id 
+                              FROM associates a 
+                              JOIN users u ON a.user_id = u.id 
+                              WHERE a.status = 'active' AND u.status = 'active'";
             $associates = $this->db->fetchAll($associatesQuery);
 
             $calculatedCount = 0;
             $calculator = $this->model('HybridMLMCalculator');
 
             foreach ($associates as $associate) {
-                // Here we would normally find new business volume
-                // This is a simplified trigger
-                $calculator->calculateCommission(intval($associate['id']), 0);
+                // Pass associate_id, not user_id
+                $calculator->calculateCommission(intval($associate['associate_id']), 0);
                 $calculatedCount++;
             }
 
@@ -62,6 +73,19 @@ class CommissionController extends AdminController {
             // Invalidate dashboard cache
             if (function_exists('getPerformanceManager')) {
                 getPerformanceManager()->clearCache('query_');
+            }
+
+            // Notify Admin
+            try {
+                $this->notificationService->sendEmail(
+                    getenv('MAIL_ADMIN') ?: 'admin@apsdreamhome.com',
+                    'Commission Calculation Completed',
+                    "Commission calculation triggered for $calculatedCount associates by " . ($_SESSION['username'] ?? 'Admin'),
+                    'commission_calc_report'
+                );
+            } catch (\Exception $e) {
+                // Log error
+                error_log("Failed to send commission notification: " . $e->getMessage());
             }
 
             return $this->jsonResponse([
@@ -77,7 +101,8 @@ class CommissionController extends AdminController {
     /**
      * Approve pending commissions (AJAX)
      */
-    public function approve() {
+    public function approve()
+    {
         if (!$this->validateCsrfToken()) {
             return $this->jsonError($this->mlSupport->translate('Security validation failed. Please try again.'));
         }
@@ -115,7 +140,8 @@ class CommissionController extends AdminController {
     /**
      * Process payouts for approved commissions
      */
-    public function processPayout() {
+    public function processPayout()
+    {
         $request = $this->request();
         if ($request->method() === 'POST') {
             if (!$this->validateCsrfToken()) {

@@ -30,10 +30,12 @@ class AdminController extends BaseController
         $this->data = [];
 
         // Initialize Multi-Language Support
-        if (file_exists(APP_ROOT . '/app/Services/Legacy/MultiLanguageSupport.php')) {
-            require_once APP_ROOT . '/app/Services/Legacy/MultiLanguageSupport.php';
+        try {
             $this->mlSupport = new MultiLanguageSupport($this->db);
             $this->data['mlSupport'] = $this->mlSupport;
+        } catch (Exception $e) {
+            // Fallback or log error if needed
+            error_log("MultiLanguageSupport init failed: " . $e->getMessage());
         }
 
         // Ensure only admins can access admin pages
