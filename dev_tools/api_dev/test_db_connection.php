@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../app/core/App.php';
-<?php
 /**
  * Test Database Connection Script
  * 
