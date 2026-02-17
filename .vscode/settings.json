@@ -63,5 +63,7 @@
     "notebook.defaultFormatter": "esbenp.prettier-vscode",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
-    "advancedPhpCsFixer.allowRisky": true
+    "advancedPhpCsFixer.allowRisky": true,
+    "testing.automaticallyOpenPeekViewDuringAutoRun": true,
+    "chat.agent.maxRequests": 500
 }
