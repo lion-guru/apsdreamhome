@@ -1,11 +1,5 @@
 <?php
-// RBAC Protection - Only Super Admin and Manager can edit properties
-$currentRole = $_SESSION['admin_role'] ?? '';
-if ($currentRole !== 'superadmin' && $currentRole !== 'manager') {
-    // If not authorized, redirect
-    header("Location: /admin/dashboard?error=unauthorized");
-    exit;
-}
+// RBAC Protection handled by PropertyController
 ?>
 
 <div class="container-fluid">

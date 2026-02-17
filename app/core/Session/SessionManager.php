@@ -8,7 +8,8 @@ use Countable;
 use IteratorAggregate;
 use Traversable;
 
-class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
+class SessionManager implements ArrayAccess, Countable, IteratorAggregate
+{
     /**
      * The session data.
      *
@@ -30,12 +31,34 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
     protected $handler;
 
     /**
+     * The flash bag instance.
+     *
+     * @var FlashBag
+     */
+    protected $flashBag;
+
+    /**
+     * Get the flash bag instance.
+     *
+     * @return FlashBag
+     */
+    public function getFlashBag()
+    {
+        if (!$this->flashBag) {
+            $this->start();
+            $this->flashBag = new FlashBag($this);
+        }
+        return $this->flashBag;
+    }
+
+    /**
      * Set the session handler.
      *
      * @param  SessionHandlerInterface  $handler
      * @return void
      */
-    public function setHandler(SessionHandlerInterface $handler) {
+    public function setHandler(SessionHandlerInterface $handler)
+    {
         $this->handler = $handler;
     }
 
@@ -44,7 +67,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @param SessionHandlerInterface|null $handler
      */
-    public function __construct(?SessionHandlerInterface $handler = null) {
+    public function __construct(?SessionHandlerInterface $handler = null)
+    {
         $this->handler = $handler ?? new NativeSessionHandler;
         $this->started = false;
     }
@@ -54,7 +78,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @return bool
      */
-    public function start() {
+    public function start()
+    {
         if ($this->started) {
             return true;
         }
@@ -78,7 +103,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      * @param  mixed   $default
      * @return mixed
      */
-    public function get($key, $default = null) {
+    public function get($key, $default = null)
+    {
         $this->start();
         return $this->data[$key] ?? $default;
     }
@@ -90,7 +116,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      * @param  mixed   $value
      * @return void
      */
-    public function set($key, $value) {
+    public function set($key, $value)
+    {
         $this->start();
         $this->data[$key] = $value;
     }
@@ -101,7 +128,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      * @param  string  $key
      * @return void
      */
-    public function remove($key) {
+    public function remove($key)
+    {
         $this->start();
         unset($this->data[$key]);
     }
@@ -112,7 +140,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      * @param  string  $key
      * @return bool
      */
-    public function has($key) {
+    public function has($key)
+    {
         $this->start();
         return isset($this->data[$key]);
     }
@@ -122,7 +151,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @return array
      */
-    public function all() {
+    public function all()
+    {
         $this->start();
         return $this->data;
     }
@@ -132,7 +162,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @return void
      */
-    public function clear() {
+    public function clear()
+    {
         $this->start();
         $this->data = [];
     }
@@ -143,7 +174,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      * @param  bool  $destroy
      * @return bool
      */
-    public function regenerate($destroy = false) {
+    public function regenerate($destroy = false)
+    {
         $this->start();
         return session_regenerate_id($destroy);
     }
@@ -153,7 +185,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @return bool
      */
-    public function destroy() {
+    public function destroy()
+    {
         $this->start();
         $this->clear();
         $this->started = false;
@@ -165,7 +198,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @return string
      */
-    public function getId() {
+    public function getId()
+    {
         return session_id();
     }
 
@@ -175,7 +209,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      * @param  string  $id
      * @return void
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         session_id($id);
     }
 
@@ -184,7 +219,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return session_name();
     }
 
@@ -194,34 +230,41 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      * @param  string  $name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         session_name($name);
     }
 
     // ArrayAccess implementation
-    public function offsetExists($offset): bool {
+    public function offsetExists($offset): bool
+    {
         return $this->has($offset);
     }
 
-    public function offsetGet($offset): mixed {
+    public function offsetGet($offset): mixed
+    {
         return $this->get($offset);
     }
 
-    public function offsetSet($offset, $value): void {
+    public function offsetSet($offset, $value): void
+    {
         $this->set($offset, $value);
     }
 
-    public function offsetUnset($offset): void {
+    public function offsetUnset($offset): void
+    {
         $this->remove($offset);
     }
 
     // Countable implementation
-    public function count(): int {
+    public function count(): int
+    {
         return count($this->all());
     }
 
     // IteratorAggregate implementation
-    public function getIterator(): Traversable {
+    public function getIterator(): Traversable
+    {
         return new \ArrayIterator($this->all());
     }
 
@@ -230,7 +273,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
      *
      * @return FlashBag
      */
-    public function getFlashBag() {
+    public function getFlashBag()
+    {
         if (!isset($this->data['_flash'])) {
             $this->data['_flash'] = new FlashBag();
         }
@@ -241,7 +285,8 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate {
 /**
  * Flash message bag for temporary session messages.
  */
-class FlashBag {
+class FlashBag
+{
     private $messages = [];
 
     /**
@@ -251,7 +296,8 @@ class FlashBag {
      * @param string $message
      * @return void
      */
-    public function add($type, $message) {
+    public function add($type, $message)
+    {
         if (!isset($this->messages[$type])) {
             $this->messages[$type] = [];
         }
@@ -263,7 +309,8 @@ class FlashBag {
      *
      * @return array
      */
-    public function all() {
+    public function all()
+    {
         return $this->messages;
     }
 
@@ -273,7 +320,8 @@ class FlashBag {
      * @param string $type
      * @return array
      */
-    public function get($type) {
+    public function get($type)
+    {
         return $this->messages[$type] ?? [];
     }
 
@@ -282,7 +330,8 @@ class FlashBag {
      *
      * @return void
      */
-    public function clear() {
+    public function clear()
+    {
         $this->messages = [];
     }
 }
@@ -290,28 +339,35 @@ class FlashBag {
 /**
  * Native PHP session handler.
  */
-class NativeSessionHandler implements SessionHandlerInterface {
-    public function open($savePath, $sessionName): bool {
+class NativeSessionHandler implements SessionHandlerInterface
+{
+    public function open($savePath, $sessionName): bool
+    {
         return true;
     }
 
-    public function close(): bool {
+    public function close(): bool
+    {
         return true;
     }
 
-    public function read($sessionId): string|false {
+    public function read($sessionId): string|false
+    {
         return '';
     }
 
-    public function write($sessionId, $data): bool {
+    public function write($sessionId, $data): bool
+    {
         return true;
     }
 
-    public function destroy($sessionId): bool {
+    public function destroy($sessionId): bool
+    {
         return true;
     }
 
-    public function gc($maxLifetime): int|false {
+    public function gc($maxLifetime): int|false
+    {
         return (int) ini_get('session.gc_maxlifetime');
     }
 }

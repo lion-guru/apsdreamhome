@@ -34,8 +34,8 @@ class LandController extends AdminController
     {
         // CSRF check handled by middleware
 
-        $farmer_name = trim($_POST['farmer_name'] ?? '');
-        $farmer_mobile = trim($_POST['farmer_mobile'] ?? '');
+        $farmer_name = trim($this->request->post('farmer_name'));
+        $farmer_mobile = trim($this->request->post('farmer_mobile'));
 
         if (empty($farmer_name) || empty($farmer_mobile)) {
             $this->setFlash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
@@ -43,37 +43,39 @@ class LandController extends AdminController
             return;
         }
 
-        $bank_name = trim($_POST['bank_name'] ?? '');
-        $account_number = trim($_POST['account_number'] ?? '');
-        $bank_ifsc = trim($_POST['bank_ifsc'] ?? '');
-        $site_name = trim($_POST['site_name'] ?? '');
-        $land_area = floatval($_POST['land_area'] ?? 0);
-        $total_land_price = floatval($_POST['total_land_price'] ?? 0);
-        $gata_number = trim($_POST['gata_number'] ?? '');
-        $district = trim($_POST['district'] ?? '');
-        $tehsil = trim($_POST['tehsil'] ?? '');
-        $city = trim($_POST['city'] ?? '');
-        $gram = trim($_POST['gram'] ?? '');
-        $land_manager_name = trim($_POST['land_manager_name'] ?? '');
-        $land_manager_mobile = trim($_POST['land_manager_mobile'] ?? '');
-        $agreement_status = trim($_POST['agreement_status'] ?? 'Pending');
+        $bank_name = trim($this->request->post('bank_name'));
+        $account_number = trim($this->request->post('account_number'));
+        $bank_ifsc = trim($this->request->post('bank_ifsc'));
+        $site_name = trim($this->request->post('site_name'));
+        $land_area = floatval($this->request->post('land_area') ?? 0);
+        $total_land_price = floatval($this->request->post('total_land_price') ?? 0);
+        $gata_number = trim($this->request->post('gata_number'));
+        $district = trim($this->request->post('district'));
+        $tehsil = trim($this->request->post('tehsil'));
+        $city = trim($this->request->post('city'));
+        $gram = trim($this->request->post('gram'));
+        $land_manager_name = trim($this->request->post('land_manager_name'));
+        $land_manager_mobile = trim($this->request->post('land_manager_mobile'));
+        $agreement_status = trim($this->request->post('agreement_status') ?? 'Pending');
 
         // File Upload
         $file_path = "";
-        if (isset($_FILES['land_paper']) && $_FILES['land_paper']['error'] === UPLOAD_ERR_OK) {
+        $land_paper = $this->request->files('land_paper');
+        if (isset($land_paper['error']) && $land_paper['error'] === UPLOAD_ERR_OK) {
             $allowed_extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif'];
-            $file_extension = strtolower(pathinfo($_FILES['land_paper']['name'], PATHINFO_EXTENSION));
+            $file_extension = strtolower(pathinfo($land_paper['name'], PATHINFO_EXTENSION));
 
             if (in_array($file_extension, $allowed_extensions)) {
                 $upload_dir = 'uploads/land_papers/';
-                if (!is_dir(APP_ROOT . '/' . $upload_dir)) {
-                    mkdir(APP_ROOT . '/' . $upload_dir, 0755, true);
+                $app_root = defined('APP_ROOT') ? APP_ROOT : dirname(dirname(dirname(dirname(__DIR__))));
+                if (!is_dir($app_root . '/' . $upload_dir)) {
+                    mkdir($app_root . '/' . $upload_dir, 0755, true);
                 }
 
                 $file_name = uniqid('land_', true) . '.' . $file_extension;
-                $target_path = APP_ROOT . '/' . $upload_dir . $file_name;
+                $target_path = $app_root . '/' . $upload_dir . $file_name;
 
-                if (move_uploaded_file($_FILES['land_paper']['tmp_name'], $target_path)) {
+                if (move_uploaded_file($land_paper['tmp_name'], $target_path)) {
                     $file_path = $upload_dir . $file_name;
                 } else {
                     $this->setFlash('error', $this->mlSupport->translate('Failed to upload file.'));
@@ -165,8 +167,8 @@ class LandController extends AdminController
     {
         $id = intval($id);
 
-        $farmer_name = trim($_POST['farmer_name'] ?? '');
-        $farmer_mobile = trim($_POST['farmer_mobile'] ?? '');
+        $farmer_name = trim($this->request->post('farmer_name') ?? '');
+        $farmer_mobile = trim($this->request->post('farmer_mobile') ?? '');
 
         if (empty($farmer_name) || empty($farmer_mobile)) {
             $this->setFlash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
@@ -174,22 +176,22 @@ class LandController extends AdminController
             return;
         }
 
-        $bank_name = trim($_POST['bank_name'] ?? '');
-        $account_number = trim($_POST['account_number'] ?? '');
-        $bank_ifsc = trim($_POST['bank_ifsc'] ?? '');
-        $site_name = trim($_POST['site_name'] ?? '');
-        $land_area = floatval($_POST['land_area'] ?? 0);
-        $total_land_price = floatval($_POST['total_land_price'] ?? 0);
-        $total_paid_amount = floatval($_POST['total_paid_amount'] ?? 0);
+        $bank_name = trim($this->request->post('bank_name') ?? '');
+        $account_number = trim($this->request->post('account_number') ?? '');
+        $bank_ifsc = trim($this->request->post('bank_ifsc') ?? '');
+        $site_name = trim($this->request->post('site_name') ?? '');
+        $land_area = floatval($this->request->post('land_area') ?? 0);
+        $total_land_price = floatval($this->request->post('total_land_price') ?? 0);
+        $total_paid_amount = floatval($this->request->post('total_paid_amount') ?? 0);
         $amount_pending = $total_land_price - $total_paid_amount;
-        $gata_number = trim($_POST['gata_number'] ?? '');
-        $district = trim($_POST['district'] ?? '');
-        $tehsil = trim($_POST['tehsil'] ?? '');
-        $city = trim($_POST['city'] ?? '');
-        $gram = trim($_POST['gram'] ?? '');
-        $land_manager_name = trim($_POST['land_manager_name'] ?? '');
-        $land_manager_mobile = trim($_POST['land_manager_mobile'] ?? '');
-        $agreement_status = trim($_POST['agreement_status'] ?? 'Pending');
+        $gata_number = trim($this->request->post('gata_number') ?? '');
+        $district = trim($this->request->post('district') ?? '');
+        $tehsil = trim($this->request->post('tehsil') ?? '');
+        $city = trim($this->request->post('city') ?? '');
+        $gram = trim($this->request->post('gram') ?? '');
+        $land_manager_name = trim($this->request->post('land_manager_name') ?? '');
+        $land_manager_mobile = trim($this->request->post('land_manager_mobile') ?? '');
+        $agreement_status = trim($this->request->post('agreement_status') ?? 'Pending');
 
         $sql = "UPDATE kisaan_land_management SET
             farmer_name = ?, farmer_mobile = ?, bank_name = ?, account_number = ?, bank_ifsc = ?,
@@ -250,52 +252,93 @@ class LandController extends AdminController
     public function transactions($id)
     {
         $id = intval($id);
-        $this->data['page_title'] = $this->mlSupport->translate('Land Transactions');
+        $land_record = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
 
-        // Fetch land record details
-        $this->data['land_record'] = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
-
-        if (!$this->data['land_record']) {
-            $this->setFlash('error', $this->mlSupport->translate('Land record not found.'));
+        if (!$land_record) {
+            $this->setFlash('error', $this->mlSupport->translate('Record not found.'));
             $this->redirect('admin/land');
             return;
         }
 
-        // Fetch transactions
-        $this->data['transactions'] = $this->db->fetchAll("SELECT * FROM transactions WHERE kisaan_id = ? ORDER BY date DESC", [$id]);
+        // Ensure transactions table exists
+        $this->ensureTransactionsTable();
 
-        $this->render('admin/land/transactions/index');
+        $transactions = $this->db->fetchAll("SELECT * FROM kisaan_land_transactions WHERE land_record_id = ? ORDER BY date DESC", [$id]);
+
+        $this->render('admin/land/transactions/index', [
+            'land_record' => $land_record,
+            'transactions' => $transactions,
+            'page_title' => $this->mlSupport->translate('Land Transactions')
+        ]);
     }
 
     public function createTransaction()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('Add Transaction');
-        $this->data['kisan_id'] = $_GET['kisan_id'] ?? '';
-        $this->render('admin/land/transactions/create');
+        $kisan_id = $this->request->get('kisan_id');
+        $this->render('admin/land/transactions/create', [
+            'kisan_id' => $kisan_id,
+            'page_title' => $this->mlSupport->translate('Add Transaction')
+        ]);
     }
 
     public function storeTransaction()
     {
-        $kisan_id = intval($_POST['kisan_id'] ?? 0);
-        $amount = floatval($_POST['amount'] ?? 0);
-        $date = $_POST['date'] ?? date('Y-m-d');
-        $description = trim($_POST['description'] ?? '');
+        $kisan_id = intval($this->request->post('kisan_id'));
+        $amount = floatval($this->request->post('amount'));
+        $date = $this->request->post('date');
+        $description = trim($this->request->post('description'));
 
-        if ($kisan_id <= 0 || $amount <= 0 || empty($description)) {
-            $this->setFlash('error', $this->mlSupport->translate('Please fill in all required fields.'));
+        if (!$kisan_id || $amount <= 0 || empty($date)) {
+            $this->setFlash('error', $this->mlSupport->translate('Please fill all required fields correctly.'));
             $this->redirect('admin/land/transactions/create');
             return;
         }
 
-        $sql = "INSERT INTO transactions (kisaan_id, amount, date, description) VALUES (?, ?, ?, ?)";
+        // Ensure transactions table exists
+        $this->ensureTransactionsTable();
 
         try {
-            $this->db->execute($sql, [$kisan_id, $amount, $date, $description]);
+            $this->db->execute(
+                "INSERT INTO kisaan_land_transactions (land_record_id, amount, date, description, created_at) VALUES (?, ?, ?, ?, NOW())",
+                [$kisan_id, $amount, $date, $description]
+            );
+
+            // Update total paid and pending
+            $this->updatePaymentStatus($kisan_id);
+
             $this->setFlash('success', $this->mlSupport->translate('Transaction added successfully.'));
-            $this->redirect('admin/land');
+            $this->redirect("admin/land/transactions/$kisan_id");
         } catch (\Exception $e) {
             $this->setFlash('error', $this->mlSupport->translate('Error adding transaction: ') . $e->getMessage());
             $this->redirect('admin/land/transactions/create');
         }
+    }
+
+    protected function updatePaymentStatus($id)
+    {
+        $total_paid = $this->db->fetchColumn("SELECT SUM(amount) FROM kisaan_land_transactions WHERE land_record_id = ?", [$id]);
+        $land_record = $this->db->fetchOne("SELECT total_land_price FROM kisaan_land_management WHERE id = ?", [$id]);
+
+        if ($land_record) {
+            $pending = $land_record['total_land_price'] - $total_paid;
+            $this->db->execute(
+                "UPDATE kisaan_land_management SET total_paid_amount = ?, amount_pending = ? WHERE id = ?",
+                [$total_paid, $pending, $id]
+            );
+        }
+    }
+
+    protected function ensureTransactionsTable()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS kisaan_land_transactions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            land_record_id INT NOT NULL,
+            amount DECIMAL(10,2) NOT NULL,
+            date DATE NOT NULL,
+            description TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (land_record_id) REFERENCES kisaan_land_management(id) ON DELETE CASCADE
+        )";
+        $this->db->execute($sql);
     }
 }

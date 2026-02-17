@@ -85,7 +85,7 @@ class AdminController extends BaseController
         // If a specific role view exists, use it, otherwise use default
         $viewPath = "admin/dashboards/{$role}";
         if (!file_exists(APP_PATH . "/views/{$viewPath}.php")) {
-            $viewPath = 'admin/dashboard';
+            $viewPath = 'admin/dashboards/default';
         }
 
         $this->render($viewPath);
@@ -522,7 +522,7 @@ class AdminController extends BaseController
         $this->data['error'] = $_GET['error'] ?? '';
 
         // Render the settings page
-        $this->render('admin/settings');
+        $this->render('admin/settings/index');
     }
 
     /**
@@ -545,7 +545,7 @@ class AdminController extends BaseController
             $this->data['about_items'] = [];
         }
 
-        $this->render('admin/aboutview');
+        $this->render('admin/about/index');
     }
 
     /**
@@ -558,7 +558,7 @@ class AdminController extends BaseController
             return;
         }
         $this->data['page_title'] = 'Add About Content - ' . APP_NAME;
-        $this->render('admin/aboutadd');
+        $this->render('admin/about/create');
     }
 
     /**
@@ -636,7 +636,7 @@ class AdminController extends BaseController
             $this->data['page_title'] = 'Edit About Content - ' . APP_NAME;
             $this->data['about_data'] = $about->toArray();
             $this->layout = 'layouts/admin';
-            $this->render('admin/aboutedit');
+            $this->render('admin/about/edit');
         } catch (Exception $e) {
             $this->redirect('admin/about?error=' . urlencode('Error loading content: ' . $e->getMessage()));
         }

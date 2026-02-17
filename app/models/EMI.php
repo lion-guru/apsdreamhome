@@ -474,4 +474,318 @@ class EMI extends Model
         $stmt = self::getConnection()->prepare($sql);
         return $stmt->execute([$status, $id]);
     }
+
+    /**
+     * Calculate foreclosure amount
+     * Sum of principal component of all unpaid installments
+     */
+    public function calculateForeclosureAmount($planId)
+    {
+        $db = self::getConnection();
+        $sql = "SELECT SUM(principal_component) 
+                FROM emi_installments 
+                WHERE emi_plan_id = ? AND status != 'paid'";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$planId]);
+        return floatval($stmt->fetchColumn() ?: 0);
+    }
+
+    /**
+     * Foreclose an EMI plan
+     */
+    public function foreclosePlan($data)
+    {
+        $db = self::getConnection();
+
+        try {
+            $db->beginTransaction();
+
+            $planId = $data['emi_plan_id'];
+            $amount = $data['amount'];
+            $paymentDate = $data['payment_date'];
+            $paymentMethod = $data['payment_method'];
+            $notes = $data['notes'] ?? '';
+
+            // Get plan details
+            $plan = $this->getPlanDetails($planId);
+            if (!$plan) throw new \Exception("Plan not found");
+            if ($plan['status'] !== 'active') throw new \Exception("Plan is not active");
+
+            // 1. Create payment record
+            $transactionId = 'FC' . time() . rand(1000, 9999);
+            $description = "EMI Foreclosure Payment";
+
+            $sqlPay = "INSERT INTO payments (
+                            transaction_id, customer_id, property_id, amount, 
+                            payment_type, payment_method, description, status, 
+                            payment_date, created_by
+                        ) VALUES (?, ?, ?, ?, 'foreclosure', ?, ?, 'completed', ?, ?)";
+            $stmtPay = $db->prepare($sqlPay);
+            $stmtPay->execute([
+                $transactionId,
+                $plan['customer_id'],
+                $plan['property_id'],
+                $amount,
+                $paymentMethod,
+                $description . ($notes ? " - " . $notes : ""),
+                $paymentDate,
+                $_SESSION['admin_id'] ?? 1
+            ]);
+
+            $paymentId = $db->lastInsertId();
+
+            // 2. Update all pending installments to 'paid'
+            $sqlInst = "UPDATE emi_installments SET 
+                            status = 'paid', 
+                            payment_date = ?, 
+                            payment_id = ?,
+                            notes = CONCAT(COALESCE(notes, ''), ' - Foreclosed')
+                        WHERE emi_plan_id = ? AND status != 'paid'";
+            $stmtInst = $db->prepare($sqlInst);
+            $stmtInst->execute([$paymentDate, $paymentId, $planId]);
+
+            // 3. Update EMI plan
+            $sqlPlan = "UPDATE emi_plans SET 
+                            status = 'completed', 
+                            foreclosure_date = ?,
+                            foreclosure_amount = ?,
+                            foreclosure_payment_id = ?
+                        WHERE id = ?";
+            $stmtPlan = $db->prepare($sqlPlan);
+            $stmtPlan->execute([$paymentDate, $amount, $paymentId, $planId]);
+
+            // 4. Log to foreclosure_logs for audit/reporting
+            // Check if table exists first to avoid errors during migration
+            try {
+                $sqlLog = "INSERT INTO foreclosure_logs (
+                                emi_plan_id, status, message, foreclosure_amount, 
+                                original_amount, penalty_amount, waiver_amount, notes,
+                                attempted_at, attempted_by
+                           ) VALUES (?, 'success', 'Foreclosure successful', ?, ?, ?, ?, ?, NOW(), ?)";
+                $stmtLog = $db->prepare($sqlLog);
+                $stmtLog->execute([
+                    $planId,
+                    $amount,
+                    $data['original_amount'] ?? 0,
+                    $data['penalty_amount'] ?? 0,
+                    $data['waiver_amount'] ?? 0,
+                    $notes,
+                    $_SESSION['admin_id'] ?? 1
+                ]);
+            } catch (\Exception $e) {
+                // Ignore log error if table missing, but log it
+                error_log("Foreclosure logging failed: " . $e->getMessage());
+            }
+
+            $db->commit();
+            return true;
+        } catch (\Exception $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Get Foreclosure Statistics
+     */
+    public function getForeclosureStats()
+    {
+        $db = self::getConnection();
+
+        // Use foreclosure_logs if available for complete history including attempts
+        try {
+            $sql = "SELECT 
+                        COUNT(*) as total_attempts,
+                        SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as successful_attempts,
+                        SUM(CASE WHEN status != 'success' THEN 1 ELSE 0 END) as failed_attempts,
+                        COALESCE(SUM(CASE WHEN status = 'success' THEN foreclosure_amount ELSE 0 END), 0) as total_foreclosure_amount,
+                        COALESCE(AVG(CASE WHEN status = 'success' THEN foreclosure_amount ELSE NULL END), 0) as average_foreclosure_amount
+                    FROM foreclosure_logs";
+
+            $stats = $db->query($sql)->fetch(\PDO::FETCH_ASSOC);
+
+            if ($stats) {
+                return $stats;
+            }
+        } catch (\Exception $e) {
+            // Fallback to emi_plans if table doesn't exist
+        }
+
+        // Fallback implementation using emi_plans
+        $sql = "SELECT 
+                    COUNT(*) as total_foreclosures,
+                    COALESCE(SUM(foreclosure_amount), 0) as total_amount,
+                    COALESCE(AVG(foreclosure_amount), 0) as average_amount
+                FROM emi_plans 
+                WHERE status = 'completed' AND foreclosure_date IS NOT NULL";
+
+        $stats = $db->query($sql)->fetch(\PDO::FETCH_ASSOC);
+
+        return [
+            'total_attempts' => $stats['total_foreclosures'],
+            'successful_attempts' => $stats['total_foreclosures'],
+            'failed_attempts' => 0,
+            'total_foreclosure_amount' => $stats['total_amount'],
+            'average_foreclosure_amount' => $stats['average_amount']
+        ];
+    }
+
+    /**
+     * Get Monthly Foreclosure Trend
+     */
+    public function getForeclosureTrend($months = 12)
+    {
+        $db = self::getConnection();
+
+        try {
+            $sql = "SELECT 
+                        DATE_FORMAT(attempted_at, '%Y-%m') as month,
+                        COUNT(*) as total_attempts,
+                        SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as successful_attempts,
+                        SUM(CASE WHEN status = 'success' THEN foreclosure_amount ELSE 0 END) as total_foreclosure_amount
+                    FROM foreclosure_logs 
+                    WHERE attempted_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
+                    GROUP BY month
+                    ORDER BY month DESC";
+
+            $stmt = $db->prepare($sql);
+            $stmt->execute([(int)$months]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            // Fallback to emi_plans
+        }
+
+        $sql = "SELECT 
+                    DATE_FORMAT(foreclosure_date, '%Y-%m') as month,
+                    COUNT(*) as total_attempts,
+                    COUNT(*) as successful_attempts,
+                    SUM(foreclosure_amount) as total_foreclosure_amount
+                FROM emi_plans 
+                WHERE status = 'completed' 
+                AND foreclosure_date IS NOT NULL
+                AND foreclosure_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
+                GROUP BY month
+                ORDER BY month DESC";
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute([(int)$months]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get Detailed Foreclosure Report
+     */
+    public function getForeclosureReportData($filters = [])
+    {
+        $db = self::getConnection();
+
+        try {
+            $sql = "SELECT 
+                        fl.emi_plan_id,
+                        c.name as customer_name,
+                        p.title as property_title,
+                        fl.status as foreclosure_status,
+                        fl.foreclosure_amount,
+                        fl.original_amount,
+                        fl.penalty_amount,
+                        fl.waiver_amount,
+                        fl.notes,
+                        fl.attempted_at,
+                        u.auser as admin_name
+                    FROM foreclosure_logs fl
+                    JOIN emi_plans ep ON fl.emi_plan_id = ep.id
+                    LEFT JOIN customers c ON ep.customer_id = c.id
+                    LEFT JOIN properties p ON ep.property_id = p.id
+                    LEFT JOIN admin u ON fl.attempted_by = u.id
+                    WHERE 1=1";
+
+            $params = [];
+
+            if (!empty($filters['start_date'])) {
+                $sql .= " AND fl.attempted_at >= ?";
+                $params[] = $filters['start_date'];
+            }
+
+            if (!empty($filters['end_date'])) {
+                $sql .= " AND fl.attempted_at <= ?";
+                $params[] = $filters['end_date'];
+            }
+
+            if (!empty($filters['customer_id'])) {
+                $sql .= " AND ep.customer_id = ?";
+                $params[] = $filters['customer_id'];
+            }
+
+            $sql .= " ORDER BY fl.attempted_at DESC LIMIT 500";
+
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            // Fallback to emi_plans
+        }
+
+        $sql = "SELECT 
+                    ep.id as emi_plan_id,
+                    ep.customer_id,
+                    c.name as customer_name,
+                    p.title as property_title,
+                    'success' as foreclosure_status,
+                    ep.foreclosure_amount,
+                    ep.foreclosure_date as attempted_at,
+                    pay.created_by as foreclosed_by_id,
+                    u.auser as admin_name
+                FROM emi_plans ep
+                LEFT JOIN customers c ON ep.customer_id = c.id
+                LEFT JOIN properties p ON ep.property_id = p.id
+                LEFT JOIN payments pay ON ep.foreclosure_payment_id = pay.id
+                LEFT JOIN admin u ON pay.created_by = u.aid
+                WHERE ep.status = 'completed' AND ep.foreclosure_date IS NOT NULL";
+
+        $params = [];
+
+        if (!empty($filters['start_date'])) {
+            $sql .= " AND ep.foreclosure_date >= ?";
+            $params[] = $filters['start_date'];
+        }
+
+        if (!empty($filters['end_date'])) {
+            $sql .= " AND ep.foreclosure_date <= ?";
+            $params[] = $filters['end_date'];
+        }
+
+        if (!empty($filters['customer_id'])) {
+            $sql .= " AND ep.customer_id = ?";
+            $params[] = $filters['customer_id'];
+        }
+
+        $sql .= " ORDER BY ep.foreclosure_date DESC LIMIT 500";
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get details for installment receipt
+     */
+    public function getInstallmentReceiptDetails($installmentId)
+    {
+        $db = self::getConnection();
+        $query = "SELECT ei.*, ep.*, c.name as customer_name, c.phone as customer_phone,
+                         c.email as customer_email, p.title as property_title,
+                         p.address as property_address, p.location as property_location, py.transaction_id,
+                         py.payment_method, py.description as payment_description
+                  FROM emi_installments ei
+                  JOIN emi_plans ep ON ei.emi_plan_id = ep.id
+                  JOIN customers c ON ep.customer_id = c.id
+                  JOIN properties p ON ep.property_id = p.id
+                  LEFT JOIN payments py ON ei.payment_id = py.id
+                  WHERE ei.id = ?";
+        $stmt = $db->prepare($query);
+        $stmt->execute([$installmentId]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
 }

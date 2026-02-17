@@ -24,10 +24,10 @@ class BookingController extends AdminController
         $this->data['page_title'] = $this->mlSupport->translate('Bookings Management');
 
         $filters = [
-            'search' => $_GET['search'] ?? '',
-            'status' => $_GET['status'] ?? '',
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 10)
+            'search' => $this->request->get('search') ?? '',
+            'status' => $this->request->get('status') ?? '',
+            'page' => (int)($this->request->get('page') ?? 1),
+            'per_page' => (int)($this->request->get('per_page') ?? 10)
         ];
 
         // Construct query

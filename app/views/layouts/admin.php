@@ -101,6 +101,16 @@
                     </a>
                 </li>
                 <li class="nav-item mb-1">
+                    <a href="/admin/emi" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/emi') !== false && strpos($_SERVER['REQUEST_URI'], 'foreclosure') === false) ? 'active' : '' ?>">
+                        <i class="fas fa-money-check-alt me-2"></i>EMI Management
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="/admin/emi/foreclosure-report" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/emi/foreclosure-report') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Foreclosure Reports
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
                     <a href="/admin/leads" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/leads') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-user-plus me-2"></i>Leads
                     </a>

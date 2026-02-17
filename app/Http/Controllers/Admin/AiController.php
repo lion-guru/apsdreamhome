@@ -23,22 +23,20 @@ class AiController extends AdminController
 
         // Initialize Services
         $aiManager = new AIManager($this->db);
-        // $toolsManager = new AIToolsManager($this->db); // Not used in view logic currently
-        // $ecoManager = new AIEcosystemManager($this->db); // Not used in view logic currently
 
         // Handle Workflow Creation
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_workflow'])) {
-            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-                $this->data['msg'] = '<div class="alert alert-danger">Security validation failed. Please try again.</div>';
+        if ($this->request->isPost() && $this->request->post('create_workflow')) {
+            if (!$this->validateCsrfToken()) {
+                $this->data['msg'] = '<div class="alert alert-danger">' . $this->mlSupport->translate('Security validation failed. Please try again.') . '</div>';
             } else {
-                $name = $_POST['name'] ?? '';
-                $desc = $_POST['description'] ?? '';
-                $trigger = $_POST['trigger_type'] ?? '';
+                $name = $this->request->post('name');
+                $desc = $this->request->post('description');
+                $trigger = $this->request->post('trigger_type');
 
                 $actions = [
                     [
-                        'agent_id' => $_POST['agent_id'] ?? '',
-                        'task_type' => $_POST['task_type'] ?? '',
+                        'agent_id' => $this->request->post('agent_id'),
+                        'task_type' => $this->request->post('task_type'),
                         'config' => [],
                         'stop_on_failure' => true
                     ]
@@ -53,13 +51,13 @@ class AiController extends AdminController
                 ]);
 
                 if ($result) {
-                    $this->data['msg'] = '<div class="alert alert-success">Workflow created successfully!</div>';
+                    $this->data['msg'] = '<div class="alert alert-success">' . $this->mlSupport->translate('Workflow created successfully!') . '</div>';
                     // Log activity if function exists
                     if (function_exists('log_admin_activity')) {
                         log_admin_activity($_SESSION['admin_id'] ?? 0, 'create_ai_workflow', "Created workflow: $name");
                     }
                 } else {
-                    $this->data['msg'] = '<div class="alert alert-danger">Error creating workflow</div>';
+                    $this->data['msg'] = '<div class="alert alert-danger">' . $this->mlSupport->translate('Error creating workflow') . '</div>';
                 }
             }
         }
@@ -117,12 +115,7 @@ class AiController extends AdminController
 
     public function agent()
     {
-        $this->data['page_title'] = 'AI Agent';
-
-        // Ensure Agent class is loaded
-        if (file_exists(APP_ROOT . '/vendor/autoload.php')) {
-            require_once APP_ROOT . '/vendor/autoload.php';
-        }
+        $this->data['page_title'] = $this->mlSupport->translate('AI Agent');
 
         // Initialize Agent
         // Use full namespace if needed, but 'use' statement should handle it if class exists
@@ -132,23 +125,23 @@ class AiController extends AdminController
         } else {
             // Fallback or error handling
             $agent = null;
-            $this->data['error'] = "Agent class not found.";
+            $this->data['error'] = $this->mlSupport->translate('Agent class not found.');
         }
 
         $message = '';
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $agent) {
-            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-                $this->data['error'] = "Invalid CSRF token.";
+        if ($this->request->isPost() && $agent) {
+            if (!$this->validateCsrfToken()) {
+                $this->data['error'] = $this->mlSupport->translate('Invalid CSRF token.');
             } else {
-                $action = $_POST['action'] ?? '';
+                $action = $this->request->post('action');
                 if ($action === 'run') {
                     $res = $agent->runDailyOps();
-                    $message = $res['planned'] ?? 'Operations ran.';
+                    $message = $res['planned'] ?? $this->mlSupport->translate('Operations ran.');
                 }
                 if ($action === 'report') {
                     $res = $agent->generateReport();
-                    $message = $res['report'] ?? 'Report generated.';
+                    $message = $res['report'] ?? $this->mlSupport->translate('Report generated.');
                 }
             }
         }
@@ -163,25 +156,21 @@ class AiController extends AdminController
 
     public function leadScoring()
     {
-        $this->data['page_title'] = 'Lead Scoring';
-
-        if (file_exists(APP_ROOT . '/app/Services/GeminiService.php')) {
-            require_once APP_ROOT . '/app/Services/GeminiService.php';
-        }
+        $this->data['page_title'] = $this->mlSupport->translate('Lead Scoring');
 
         $gemini = new GeminiService();
         $success_msg = '';
         $error_msg = '';
 
-        if (isset($_POST['action']) && $_POST['action'] === 'score_leads') {
-            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-                $error_msg = "Invalid CSRF token.";
+        if ($this->request->isPost() && $this->request->post('action') === 'score_leads') {
+            if (!$this->validateCsrfToken()) {
+                $error_msg = $this->mlSupport->translate('Invalid CSRF token.');
             } else {
                 try {
                     $leads_to_score = $this->db->fetchAll("SELECT id, name, status, notes, source, budget, assigned_to FROM leads WHERE ai_score IS NULL OR status != 'Converted' LIMIT 10");
 
                     if (empty($leads_to_score)) {
-                        $success_msg = "All eligible leads are already scored.";
+                        $success_msg = $this->mlSupport->translate('All eligible leads are already scored.');
                     } else {
                         $scored_count = 0;
                         foreach ($leads_to_score as $lead) {

@@ -33,6 +33,11 @@ $app->router()->group(['prefix' => 'api'], function ($router) {
     });
 });
 
+// System Automation Routes
+$app->router()->group(['prefix' => 'system'], function ($router) {
+    $router->get('/cron/daily', 'System\CronController@daily');
+});
+
 // Modern web routes with better organization
 $app->router()->group(['middleware' => 'web'], function ($router) {
     // Admin Login Routes (Public)
@@ -96,9 +101,9 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->get('/land/edit/{id}', 'Admin\LandController@edit');
         $router->post('/land/update/{id}', 'Admin\LandController@update');
         $router->get('/land/delete/{id}', 'Admin\LandController@destroy');
-        $router->get('/land/transactions/{id}', 'Admin\LandController@transactions');
         $router->get('/land/transactions/create', 'Admin\LandController@createTransaction');
         $router->post('/land/transactions/store', 'Admin\LandController@storeTransaction');
+        $router->get('/land/transactions/{id}', 'Admin\LandController@transactions');
 
         // Support Ticket Management
         $router->get('/tickets', 'Admin\SupportTicketController@index');
@@ -300,9 +305,26 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
 
         // EMI Routes
         $router->get('/emi', 'Admin\EMIController@index');
-        $router->get('/emi/{id}', 'Admin\EMIController@show');
+        $router->get('/emi/create', 'Admin\EMIController@create');
         $router->post('/emi', 'Admin\EMIController@store');
+        $router->get('/emi/stats', 'Admin\EMIController@stats');
+        $router->post('/emi/list', 'Admin\EMIController@list');
+
+        // Foreclosure
+        $router->get('/emi/foreclosure-report', 'Admin\EMIController@foreclosureReport');
+        $router->get('/emi/foreclosure-stats', 'Admin\EMIController@getForeclosureStats');
+        $router->get('/emi/foreclosure-trend', 'Admin\EMIController@getForeclosureTrend');
+        $router->get('/emi/foreclosure-data', 'Admin\EMIController@getForeclosureReportData');
+        $router->get('/emi/foreclosure-amount/{id}', 'Admin\EMIController@getForeclosureAmount');
+        $router->post('/emi/foreclose', 'Admin\EMIController@foreclose');
+
+        // Operations
         $router->post('/emi/pay', 'Admin\EMIController@pay');
+        $router->get('/emi/receipt/{id}', 'Admin\EMIController@generateReceipt');
+        $router->post('/emi/run-automation', 'Admin\EMIController@runAutomation');
+
+        // Detail view
+        $router->get('/emi/{id}', 'Admin\EMIController@show');
 
         // Visit Management Routes
         $router->get('/visits', 'Admin\VisitController@index');
