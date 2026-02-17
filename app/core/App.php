@@ -6,7 +6,7 @@ use Exception;
 use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Core\Routing\Router;
-use App\Core\Database\Database;
+use App\Core\Database;
 use App\Core\Session\SessionManager;
 use App\Core\Auth;
 
@@ -84,6 +84,9 @@ class App
      */
     protected function bootstrap()
     {
+        // Load environment variables
+        $this->loadEnvironment();
+
         // Load helpers first (before config)
         $this->loadHelpers();
 
@@ -140,6 +143,17 @@ class App
             if ($key !== 'bootstrap') { // Skip bootstrap as it's already loaded
                 $this->config[$key] = require $configFile;
             }
+        }
+    }
+
+    /**
+     * Load environment variables
+     */
+    protected function loadEnvironment()
+    {
+        if (class_exists('Dotenv\Dotenv') && file_exists($this->basePath('.env'))) {
+            $dotenv = \Dotenv\Dotenv::createImmutable($this->basePath());
+            $dotenv->safeLoad();
         }
     }
 
@@ -210,13 +224,13 @@ class App
         // Support Laravel-style database config
         if (isset($config['default']) && isset($config['connections'][$config['default']])) {
             $connection = $config['connections'][$config['default']];
-            $this->db = new Database($connection);
+            $this->db = Database::getInstance($connection);
             return;
         }
 
         // Support simple database config (directly nested under 'database')
         if (isset($config['database']) && is_array($config['database'])) {
-            $this->db = new Database($config['database']);
+            $this->db = Database::getInstance($config['database']);
             return;
         }
     }
@@ -229,17 +243,19 @@ class App
         // Make $app available to all route files
         $app = $this;
 
-        // Load modern routes first
-        $modernRoutesFile = $this->basePath('routes/modern.php');
-        if (file_exists($modernRoutesFile)) {
-            require $modernRoutesFile;
-        }
-
-        // Load legacy routes as fallback
+        // Load legacy routes first (so modern routes can override them)
         $legacyRoutesFile = $this->basePath('routes/web.php');
         if (file_exists($legacyRoutesFile)) {
             // Make sure $app is available in the web.php scope
+            $app = $this;
             require $legacyRoutesFile;
+        }
+
+        // Load modern routes (overrides legacy routes)
+        $modernRoutesFile = $this->basePath('routes/modern.php');
+        if (file_exists($modernRoutesFile)) {
+            $app = $this;
+            require $modernRoutesFile;
         }
 
         // Load API routes

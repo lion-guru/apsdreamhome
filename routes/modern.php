@@ -59,11 +59,11 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
     $router->get('/blog/{slug}', 'Blog\BlogController@show');
 
     // Authentication routes
-    $router->get('/login', 'Public\AuthController@showLoginForm');
-    $router->post('/login', 'Public\AuthController@login');
+    $router->get('/login', 'Public\AuthController@login');
+    $router->post('/login', 'Public\AuthController@processLogin');
     $router->post('/logout', 'Public\AuthController@logout');
-    $router->get('/register', 'Public\AuthController@showRegistrationForm');
-    $router->post('/register', 'Public\AuthController@register');
+    $router->get('/register', 'Public\AuthController@register');
+    $router->post('/register', 'Public\AuthController@processRegister');
 
     // Protected routes
     $router->group(['middleware' => 'auth'], function ($router) {

@@ -93,28 +93,8 @@ abstract class Model
     protected static function getConnection(): PDO
     {
         if (!static::$connection) {
-            if (function_exists('db_config')) {
-                $config = db_config();
-            } else {
-                $config = config('database');
-                // Handle wrapped config structure
-                if (isset($config['database'])) {
-                    $config = $config['database'];
-                }
-            }
-
-            $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset={$config['charset']}";
-            $options = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ];
-
-            try {
-                static::$connection = new PDO($dsn, $config['username'], $config['password'], $options);
-            } catch (PDOException $e) {
-                throw new \Exception("Database connection failed: " . $e->getMessage());
-            }
+            // Use the global Database instance to share connection pool
+            static::$connection = \App\Core\Database::getInstance()->getConnection();
         }
 
         return static::$connection;

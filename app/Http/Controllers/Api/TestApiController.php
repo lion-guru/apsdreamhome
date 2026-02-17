@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 
 use App\Core\ApiController;
-use App\Core\DatabaseManager;
 
 /**
  * Sample API Controller for testing the enhanced routing system

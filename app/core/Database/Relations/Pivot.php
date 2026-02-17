@@ -4,27 +4,28 @@ namespace App\Core\Database\Relations;
 
 use App\Core\Database\Model;
 
-class Pivot extends Model {
+class Pivot extends Model
+{
     /**
      * The parent model of the relationship.
      */
     public $pivotParent;
-    
+
     /**
      * The name of the foreign key column.
      */
     protected $foreignKey;
-    
+
     /**
      * The name of the "other key" column.
      */
     protected $relatedKey;
-    
+
     /**
      * The attributes that aren't mass assignable.
      */
-    protected $guarded = [];
-    
+    protected array $guarded = [];
+
     /**
      * Create a new pivot model instance.
      */
@@ -42,65 +43,73 @@ class Pivot extends Model {
         $this->pivotParent = $parent;
         $this->foreignKey = $foreignKey;
         $this->relatedKey = $relatedKey;
-        
+
         parent::__construct($attributes);
     }
-    
+
     /**
      * Get the foreign key column name.
      */
-    public function getForeignKey() {
+    public function getForeignKey()
+    {
         return $this->foreignKey;
     }
-    
+
     /**
      * Get the "related key" column name.
      */
-    public function getRelatedKey() {
+    public function getRelatedKey()
+    {
         return $this->relatedKey;
     }
-    
+
     /**
      * Get the table associated with the model.
      */
-    public static function getTable() {
-        return (new static())->table ?? parent::getTable();
+    public static function getTable()
+    {
+        return parent::getTable();
     }
-    
+
     /**
      * Set the table associated with the model.
      */
-    public function setTable($table) {
+    public function setTable($table)
+    {
         $this->table = $table;
-        
+
         return $this;
     }
-    
+
     /**
      * Get the queueable identity for the entity.
      */
-    public function getQueueableId() {
+    public function getQueueableId()
+    {
         return $this->getKey();
     }
-    
+
     /**
      * Get the queueable relationships for the entity.
      */
-    public function getQueueableRelations() {
+    public function getQueueableRelations()
+    {
         return [];
     }
-    
+
     /**
      * Get the queueable connection for the entity.
      */
-    public function getQueueableConnection() {
+    public function getQueueableConnection()
+    {
         return $this->getConnectionName();
     }
-    
+
     /**
      * Get the connection name for the model.
      */
-    public function getConnectionName() {
+    public function getConnectionName()
+    {
         return $this->connection ?? config('database.default');
     }
 }

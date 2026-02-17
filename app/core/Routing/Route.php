@@ -55,7 +55,7 @@ class Route
      * @var string
      */
     protected $prefix = '';
-    
+
     /**
      * The route action namespace.
      *
@@ -69,13 +69,48 @@ class Route
      * @var string|null
      */
     protected $compiled;
-    
+
     /**
      * The route name.
      *
      * @var string
      */
     protected $name = '';
+
+    /**
+     * The route requirements.
+     *
+     * @var array
+     */
+    protected $requirements = [];
+
+    /**
+     * The route default values.
+     *
+     * @var array
+     */
+    protected $defaults = [];
+
+    /**
+     * The route host domain.
+     *
+     * @var string|null
+     */
+    protected $host;
+
+    /**
+     * The route scheme (http/https).
+     *
+     * @var string|null
+     */
+    protected $scheme;
+
+    /**
+     * The route priority.
+     *
+     * @var int
+     */
+    protected $priority = 0;
 
     /**
      * Create a new Route instance.
@@ -90,7 +125,7 @@ class Route
         $this->uri = $uri;
         $this->action = $this->parseAction($action);
     }
-    
+
     /**
      * Parse the route action into a standard array.
      *
@@ -104,10 +139,10 @@ class Route
         } elseif ($action instanceof Closure) {
             return ['uses' => $action];
         }
-        
+
         return $action;
     }
-    
+
     /**
      * Set the route prefix.
      *
@@ -119,7 +154,7 @@ class Route
         $this->prefix = trim($prefix, '/') . '/';
         return $this;
     }
-    
+
     /**
      * Set the route prefix (alias for setPrefix).
      *
@@ -130,7 +165,7 @@ class Route
     {
         return $this->setPrefix($prefix);
     }
-    
+
     /**
      * Get the route prefix.
      *
@@ -140,7 +175,7 @@ class Route
     {
         return $this->prefix;
     }
-    
+
     /**
      * Set the route namespace.
      *
@@ -152,7 +187,7 @@ class Route
         $this->namespace = $namespace;
         return $this;
     }
-    
+
     /**
      * Get the route namespace.
      *
@@ -162,7 +197,7 @@ class Route
     {
         return $this->namespace;
     }
-    
+
     /**
      * Set the route name.
      *
@@ -174,7 +209,7 @@ class Route
         $this->name = $name;
         return $this;
     }
-    
+
     /**
      * Get the route name.
      *
@@ -184,7 +219,7 @@ class Route
     {
         return $this->name;
     }
-    
+
     /**
      * Add middleware to the route.
      *
@@ -197,10 +232,10 @@ class Route
             $this->middleware,
             is_array($middleware) ? $middleware : func_get_args()
         );
-        
+
         return $this;
     }
-    
+
     /**
      * Get the route middleware.
      *
@@ -210,7 +245,7 @@ class Route
     {
         return $this->middleware;
     }
-    
+
     /**
      * Get the route's HTTP methods.
      *
@@ -220,7 +255,7 @@ class Route
     {
         return $this->methods;
     }
-    
+
     /**
      * Get the route URI.
      *
@@ -230,7 +265,7 @@ class Route
     {
         return $this->uri;
     }
-    
+
     /**
      * Get the route's action.
      *
@@ -240,7 +275,7 @@ class Route
     {
         return $this->action;
     }
-    
+
     /**
      * Set the route's action.
      *
@@ -252,7 +287,101 @@ class Route
         $this->action = $action;
         return $this;
     }
-    
+
+    /**
+     * Set a requirement for a route parameter.
+     *
+     * @param  string|array  $name
+     * @param  string|null  $expression
+     * @return $this
+     */
+    public function where($name, $expression = null)
+    {
+        foreach (is_array($name) ? $name : [$name => $expression] as $key => $value) {
+            $this->requirements[$key] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set default values for the route.
+     *
+     * @param  array  $defaults
+     * @return $this
+     */
+    public function defaults(array $defaults)
+    {
+        $this->defaults = array_merge($this->defaults, $defaults);
+        return $this;
+    }
+
+    /**
+     * Set the domain requirement for the route.
+     *
+     * @param  string  $domain
+     * @return $this
+     */
+    public function domain($domain)
+    {
+        $this->host = $domain;
+        return $this;
+    }
+
+    /**
+     * Force the route to use HTTP.
+     *
+     * @return $this
+     */
+    public function http()
+    {
+        $this->scheme = 'http';
+        return $this;
+    }
+
+    /**
+     * Force the route to use HTTPS.
+     *
+     * @return $this
+     */
+    public function https()
+    {
+        $this->scheme = 'https';
+        return $this;
+    }
+
+    /**
+     * Set the route priority.
+     *
+     * @param  int  $priority
+     * @return $this
+     */
+    public function priority($priority)
+    {
+        $this->priority = $priority;
+        return $this;
+    }
+
+    /**
+     * Get the route requirements.
+     *
+     * @return array
+     */
+    public function getRequirements()
+    {
+        return $this->requirements;
+    }
+
+    /**
+     * Get the route defaults.
+     *
+     * @return array
+     */
+    public function getDefaults()
+    {
+        return $this->defaults;
+    }
+
     /**
      * Determine if the route matches a given request.
      *
@@ -263,16 +392,16 @@ class Route
     public function matches(Request $request, $includingMethod = true)
     {
         $this->compileRoute();
-        
+
         $path = '/' . trim($request->getPathInfo(), '/');
-        
+
         if ($includingMethod && !in_array($request->getMethod(), $this->methods)) {
             return false;
         }
 
         return (bool) preg_match($this->compiled, $path, $this->parameters);
     }
-    
+
     /**
      * Compile the route into a regular expression.
      *
@@ -286,24 +415,27 @@ class Route
 
         // Reset parameter names
         $this->parameterNames = [];
-        
+
         // Escape forward slashes in the URI
         $pattern = preg_quote($this->prefix . $this->uri, '#');
-        
+
         // Replace parameter placeholders with regex patterns
         $pattern = preg_replace_callback('/\{(\w+)(<[^>]+>)?(\?)?\}/', function ($matches) {
             $name = $matches[1];
-            $pattern = isset($matches[2]) ? trim($matches[2], '<>') : '[^/]+';
+            // Check for inline regex, then requirements, then default
+            $pattern = isset($matches[2])
+                ? trim($matches[2], '<>')
+                : ($this->requirements[$name] ?? '[^/]+');
             $optional = isset($matches[3]);
-            
+
             $this->parameterNames[] = $name;
-            
+
             return $optional ? "(?:/($pattern))?" : "($pattern)";
         }, $pattern);
 
         $this->compiled = '#^' . $pattern . '$#s';
     }
-    
+
     /**
      * Get the route parameters.
      *
@@ -313,7 +445,7 @@ class Route
     {
         return $this->parameters;
     }
-    
+
     /**
      * Get a parameter from the route.
      *
@@ -325,7 +457,7 @@ class Route
     {
         return $this->parameters[$name] ?? $default;
     }
-    
+
     /**
      * Set a parameter on the route.
      *
@@ -337,7 +469,7 @@ class Route
     {
         $this->parameters[$name] = $value;
     }
-    
+
     /**
      * Get the parameter names for the route.
      *
@@ -347,7 +479,7 @@ class Route
     {
         return $this->parameterNames;
     }
-    
+
     /**
      * Bind the route to a given request for execution.
      *
@@ -357,19 +489,19 @@ class Route
     public function bind(Request $request)
     {
         $this->compileRoute();
-        
+
         $path = '/' . trim($request->getPathInfo(), '/');
-        
+
         if (preg_match($this->compiled, $path, $matches)) {
             $this->parameters = array_intersect_key(
-                $matches, 
+                $matches,
                 array_flip($this->parameterNames)
             );
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Run the route action and return the response.
      *
@@ -379,20 +511,20 @@ class Route
     public function run(Request $request)
     {
         $this->bind($request);
-        
+
         $action = $this->getAction();
-        
+
         if (isset($action['uses'])) {
             return $this->runCallable($action['uses'], $this->parameters());
         }
-        
+
         if (is_string($action)) {
             return $this->runController($action, $this->parameters());
         }
-        
+
         throw new \RuntimeException('Invalid route action.');
     }
-    
+
     /**
      * Run a controller based action.
      *
@@ -403,26 +535,28 @@ class Route
     protected function runController($action, $parameters)
     {
         list($controller, $method) = explode('@', $action);
-        
+
         if (!empty($this->namespace)) {
             $controller = $this->namespace . '\\' . $controller;
         }
-        
+
         // Add default controller namespace if not present and not absolute
-        if (!str_contains($controller, '\\') || 
-            (str_starts_with($controller, 'Admin\\') || str_starts_with($controller, 'Associate\\') || str_starts_with($controller, 'Api\\'))) {
+        if (
+            !str_contains($controller, '\\') ||
+            (str_starts_with($controller, 'Admin\\') || str_starts_with($controller, 'Associate\\') || str_starts_with($controller, 'Api\\'))
+        ) {
             $controller = 'App\\Http\\Controllers\\' . ltrim($controller, '\\');
         }
-        
+
         if (!class_exists($controller)) {
             throw new \RuntimeException("Controller class {$controller} not found.");
         }
-        
+
         $controllerInstance = new $controller();
-        
+
         return call_user_func_array([$controllerInstance, $method], $parameters);
     }
-    
+
     /**
      * Run a callable based action.
      *

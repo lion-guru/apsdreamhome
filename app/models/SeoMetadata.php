@@ -5,6 +5,8 @@
 
 namespace App\Models;
 
+use App\Core\Database\Model;
+
 class SeoMetadata extends Model {
     public static $table = 'seo_metadata';
     

@@ -1,283 +1,118 @@
 <?php
 /**
- * Environment Configuration Helper
- * Reads configuration from .env file and provides easy access
+ * Legacy Config/Env Loader - Shim for backward compatibility
+ * 
+ * This file is deprecated. Please use App\Core\App to bootstrap the application.
  */
 
-class Env
-{
-    private static $config = [];
-    private static $loaded = false;
+use Dotenv\Dotenv;
 
-    /**
-     * Load configuration from .env file
-     */
-    private static function load()
+// Ensure environment variables are loaded if not already
+if (!isset($_ENV['APP_ENV']) && file_exists(dirname(__DIR__, 2) . '/.env') && class_exists('Dotenv\Dotenv')) {
+    try {
+        $dotenv = Dotenv::createImmutable(dirname(__DIR__, 2));
+        $dotenv->safeLoad();
+    } catch (\Exception $e) {
+        // Ignore errors if .env cannot be loaded here
+    }
+}
+
+// Load the modern helper file if functions are not defined
+if (!function_exists('env')) {
+    require_once __DIR__ . '/../Helpers/env.php';
+}
+
+// Legacy Env class for backward compatibility
+if (!class_exists('Env')) {
+    class Env
     {
-        if (self::$loaded) {
-            return;
+        public static function get($key, $default = null)
+        {
+            return $_ENV[$key] ?? getenv($key) ?: $default;
         }
 
-        $envFile = __DIR__ . '/../.env';
-        if (file_exists($envFile)) {
-            $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($lines as $line) {
-                // Skip comments
-                if (strpos($line, '#') === 0) {
-                    continue;
-                }
+        public static function load() 
+        { 
+            // No-op, handled by Dotenv
+        }
+        
+        public static function set($key, $value) 
+        { 
+            $_ENV[$key] = $value; 
+        }
+        
+        public static function has($key) 
+        { 
+            return isset($_ENV[$key]); 
+        }
+        
+        public static function all() 
+        { 
+            return $_ENV; 
+        }
+    }
+}
 
-                // Parse key=value pairs
-                if (strpos($line, '=') !== false) {
-                    list($key, $value) = explode('=', $line, 2);
-                    $key = trim($key);
-                    $value = trim($value);
+// Legacy config functions (wrapped to prevent redefinition)
 
-                    // Remove quotes if present
-                    if (preg_match('/^["\'](.*)["\']$/', $value, $matches)) {
-                        $value = $matches[1];
+if (!function_exists('config')) {
+    function config($key = null, $default = null)
+    {
+        // If App class is available and initialized, use it
+        if (class_exists('App\Core\App')) {
+            try {
+                $app = \App\Core\App::getInstance();
+                if ($app) {
+                    if (is_null($key)) {
+                        return $app;
                     }
-
-                    self::$config[$key] = $value;
+                    return $app->config($key) ?? $default;
                 }
+            } catch (\Exception $e) {
+                // App instance might not be ready
             }
         }
-
-        self::$loaded = true;
-    }
-
-    /**
-     * Get configuration value
-     */
-    public static function get($key, $default = null)
-    {
-        self::load();
-        return self::$config[$key] ?? $default;
-    }
-
-    /**
-     * Set configuration value
-     */
-    public static function set($key, $value)
-    {
-        self::load();
-        self::$config[$key] = $value;
-    }
-
-    /**
-     * Check if key exists
-     */
-    public static function has($key)
-    {
-        self::load();
-        return isset(self::$config[$key]);
-    }
-
-    /**
-     * Get all configuration
-     */
-    public static function all()
-    {
-        self::load();
-        return self::$config;
-    }
-}
-
-/**
- * Helper function for easy access
- */
-function env($key, $default = null)
-{
-    return Env::get($key, $default);
-}
-
-/**
- * Configuration helper for application settings
- */
-function config($key, $default = null)
-{
-    // Handle nested keys like 'app.name'
-    if (strpos($key, '.') !== false) {
-        $keys = explode('.', $key);
-        $config = Env::get($keys[0], []);
-
-        // If it's a simple string, return it
-        if (is_string($config)) {
-            return $config;
+        
+        // Fallback to Env
+        if (class_exists('Env')) {
+            return Env::get($key, $default);
         }
-
-        // Navigate through nested array
-        for ($i = 1; $i < count($keys); $i++) {
-            if (isset($config[$keys[$i]])) {
-                $config = $config[$keys[$i]];
-            } else {
-                return $default;
-            }
-        }
-
-        return $config;
+        
+        return $default;
     }
-
-    return Env::get($key, $default);
 }
 
-/**
- * Email configuration helper
- */
-function email_config()
-{
-    return [
-        'smtp_host' => env('MAIL_HOST', 'smtp.gmail.com'),
-        'smtp_port' => env('MAIL_PORT', 587),
-        'smtp_username' => env('MAIL_USERNAME', ''),
-        'smtp_password' => env('MAIL_PASSWORD', ''),
-        'smtp_encryption' => env('MAIL_ENCRYPTION', 'tls'),
-        'from_address' => env('MAIL_FROM_ADDRESS', 'noreply@apsdreamhome.com'),
-        'from_name' => env('MAIL_FROM_NAME', 'APS Dream Home'),
-        'admin_email' => env('ADMIN_EMAIL', 'admin@apsdreamhome.com')
-    ];
+if (!function_exists('email_config')) {
+    function email_config()
+    {
+        return [
+            'smtp_host' => env('MAIL_HOST', 'smtp.gmail.com'),
+            'smtp_port' => env('MAIL_PORT', 587),
+            'smtp_username' => env('MAIL_USERNAME', ''),
+            'smtp_password' => env('MAIL_PASSWORD', ''),
+            'smtp_encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'from_address' => env('MAIL_FROM_ADDRESS', 'noreply@apsdreamhome.com'),
+            'from_name' => env('MAIL_FROM_NAME', 'APS Dream Home'),
+            'admin_email' => env('ADMIN_EMAIL', 'admin@apsdreamhome.com')
+        ];
+    }
 }
 
-/**
- * Database configuration helper
- */
-function db_config()
-{
-    return [
-        'host' => env('DB_HOST', 'localhost'),
-        'port' => env('DB_PORT', 3306),
-        'database' => env('DB_DATABASE', 'apsdreamhome'),
-        'username' => env('DB_USERNAME', 'root'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => 'utf8mb4',
-        'options' => [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]
-    ];
+if (!function_exists('db_config')) {
+    function db_config()
+    {
+        return [
+            'host' => env('DB_HOST', 'localhost'),
+            'port' => env('DB_PORT', 3306),
+            'database' => env('DB_DATABASE', 'apsdreamhome'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'options' => [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]
+        ];
+    }
 }
-
-/**
- * Application configuration helper
- */
-function app_config()
-{
-    return [
-        'name' => env('APP_NAME', 'APS Dream Home'),
-        'env' => env('APP_ENV', 'development'),
-        'debug' => env('APP_DEBUG', true),
-        'url' => env('APP_URL', 'http://localhost/apsdreamhome'),
-        'key' => env('APP_KEY', ''),
-    ];
-}
-
-/**
- * Security configuration helper
- */
-function security_config()
-{
-    return [
-        'session_lifetime' => env('SESSION_LIFETIME', 120),
-        'session_encrypt' => env('SESSION_ENCRYPT', true),
-        'session_secure_cookie' => env('SESSION_SECURE_COOKIE', false),
-        'api_rate_limit' => env('API_RATE_LIMIT', 1000),
-    ];
-}
-
-/**
- * File upload configuration helper
- */
-function upload_config()
-{
-    return [
-        'max_file_size' => env('MAX_FILE_SIZE', 5242880), // 5MB
-        'allowed_types' => explode(',', env('ALLOWED_FILE_TYPES', 'jpg,jpeg,png,gif,pdf,doc,docx')),
-    ];
-}
-
-/**
- * Payment configuration helper
- */
-function payment_config()
-{
-    return [
-        'razorpay_key' => env('RAZORPAY_KEY', ''),
-        'razorpay_secret' => env('RAZORPAY_SECRET', ''),
-    ];
-}
-
-/**
- * SMS configuration helper
- */
-function sms_config()
-{
-    return [
-        'api_key' => env('SMS_API_KEY', ''),
-        'sender_id' => env('SMS_SENDER_ID', ''),
-    ];
-}
-
-/**
- * Analytics configuration helper
- */
-function analytics_config()
-{
-    return [
-        'google_analytics_id' => env('GOOGLE_ANALYTICS_ID', ''),
-    ];
-}
-
-/**
- * Maintenance mode helper
- */
-function is_maintenance_mode()
-{
-    return env('MAINTENANCE_MODE', false);
-}
-
-/**
- * Get cache configuration
- */
-function cache_config()
-{
-    return [
-        'driver' => env('CACHE_DRIVER', 'file'),
-        'ttl' => env('CACHE_TTL', 3600),
-    ];
-}
-
-/**
- * Get queue configuration
- */
-function queue_config()
-{
-    return [
-        'connection' => env('QUEUE_CONNECTION', 'sync'),
-        'failed' => env('QUEUE_FAILED_DRIVER', 'database'),
-    ];
-}
-
-/**
- * Get logging configuration
- */
-function logging_config()
-{
-    return [
-        'channel' => env('LOG_CHANNEL', 'stack'),
-        'level' => env('LOG_LEVEL', 'debug'),
-    ];
-}
-
-/**
- * Get API configuration
- */
-function api_config()
-{
-    return [
-        'version' => env('API_VERSION', 'v1'),
-        'rate_limit' => env('API_RATE_LIMIT', 1000),
-        'throttle' => env('API_THROTTLE', 60),
-    ];
-}
-?>

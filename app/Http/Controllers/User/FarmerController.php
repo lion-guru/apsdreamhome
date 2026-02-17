@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Farmer;
@@ -18,7 +18,6 @@ class FarmerController extends Controller
     private $farmerModel;
     private $landHoldingModel;
     private $purchaseModel;
-    private $db;
 
     public function __construct()
     {
