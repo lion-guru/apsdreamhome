@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Utility;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 
 /**
@@ -10,7 +10,7 @@ use Exception;
  *
  * Comprehensive system health check and diagnostic tool
  */
-class SystemDiagnosticController extends BaseController
+class SystemDiagnosticController extends AdminController
 {
     private $report = [];
     private $criticalIssues = [];
@@ -18,7 +18,7 @@ class SystemDiagnosticController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('role:admin');
+        // AdminController handles role:admin check
     }
 
     public function index()

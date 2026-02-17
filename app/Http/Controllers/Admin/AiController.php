@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Services\AI\AIManager;
 use App\Services\AI\AIToolsManager;
 use App\Services\AI\AIEcosystemManager;
@@ -23,17 +22,6 @@ class AiController extends AdminController
         $this->data['page_title'] = $this->mlSupport->translate('AI Hub');
 
         // Initialize Services
-        // Ensure files are loaded if autoloader misses them (though composer should handle it)
-        if (file_exists(APP_ROOT . '/app/Services/AI/AIManager.php')) {
-            require_once APP_ROOT . '/app/Services/AI/AIManager.php';
-        }
-        if (file_exists(APP_ROOT . '/app/Services/AI/AIToolsManager.php')) {
-            require_once APP_ROOT . '/app/Services/AI/AIToolsManager.php';
-        }
-        if (file_exists(APP_ROOT . '/app/Services/AI/AIEcosystemManager.php')) {
-            require_once APP_ROOT . '/app/Services/AI/AIEcosystemManager.php';
-        }
-
         $aiManager = new AIManager($this->db);
         // $toolsManager = new AIToolsManager($this->db); // Not used in view logic currently
         // $ecoManager = new AIEcosystemManager($this->db); // Not used in view logic currently

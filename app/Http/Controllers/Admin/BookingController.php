@@ -87,7 +87,7 @@ class BookingController extends AdminController
         $this->data['properties'] = $this->db->fetchAll("SELECT id, title FROM properties WHERE status = 'available' ORDER BY title");
 
         // Fetch customers
-        $this->data['customers'] = $this->db->fetchAll("SELECT uid, uname FROM user WHERE utype = 'customer' ORDER BY uname");
+        $this->data['customers'] = $this->db->fetchAll("SELECT id as uid, name as uname FROM customers ORDER BY name");
 
         $this->render('admin/bookings/create');
     }

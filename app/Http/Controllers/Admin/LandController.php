@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Services\NotificationService;
 
 class LandController extends AdminController
 {
+    protected $notificationService;
+
     public function __construct()
     {
         parent::__construct();
         $this->middleware('csrf', ['only' => ['store', 'update', 'delete']]);
+        $this->notificationService = new NotificationService();
     }
 
     public function index()
@@ -62,12 +66,12 @@ class LandController extends AdminController
 
             if (in_array($file_extension, $allowed_extensions)) {
                 $upload_dir = 'uploads/land_papers/';
-                if (!is_dir(ABSPATH . '/' . $upload_dir)) {
-                    mkdir(ABSPATH . '/' . $upload_dir, 0755, true);
+                if (!is_dir(APP_ROOT . '/' . $upload_dir)) {
+                    mkdir(APP_ROOT . '/' . $upload_dir, 0755, true);
                 }
 
                 $file_name = uniqid('land_', true) . '.' . $file_extension;
-                $target_path = ABSPATH . '/' . $upload_dir . $file_name;
+                $target_path = APP_ROOT . '/' . $upload_dir . $file_name;
 
                 if (move_uploaded_file($_FILES['land_paper']['tmp_name'], $target_path)) {
                     $file_path = $upload_dir . $file_name;
@@ -110,6 +114,28 @@ class LandController extends AdminController
                 $land_manager_mobile,
                 $agreement_status
             ]);
+
+            // Send notification
+            try {
+                $adminEmail = getenv('MAIL_ADMIN') ?: 'admin@apsdreamhome.com';
+                $subject = "New Land Record Added: " . $farmer_name;
+                $message = "A new land record has been added.\n\n";
+                $message .= "Farmer: " . $farmer_name . "\n";
+                $message .= "Site: " . $site_name . "\n";
+                $message .= "Area: " . $land_area . "\n";
+                $message .= "Total Price: " . $total_land_price . "\n";
+                $message .= "Added by: " . ($_SESSION['username'] ?? 'Admin');
+
+                $this->notificationService->sendEmail(
+                    $adminEmail,
+                    $subject,
+                    $message,
+                    'land_record_created'
+                );
+            } catch (\Exception $e) {
+                // Log error but don't fail the request
+                error_log("Failed to send land record notification: " . $e->getMessage());
+            }
 
             $this->setFlash('success', $this->mlSupport->translate('Land record added successfully.'));
             $this->redirect('admin/land');

@@ -51,11 +51,12 @@ class TaskController extends AdminController
         $taskStats = $this->taskService->getTaskStats();
         $users = $this->leadService->getAssignableUsers();
 
-        $this->data['title'] = 'Task Management';
+        $this->data['title'] = $this->mlSupport->translate('Task Management');
         $this->data['tasks'] = $tasks;
         $this->data['filters'] = $filters;
         $this->data['taskStats'] = $taskStats;
         $this->data['users'] = $users;
+        $this->data['mlSupport'] = $this->mlSupport;
 
         $this->render('admin/tasks/index');
     }
@@ -67,10 +68,11 @@ class TaskController extends AdminController
     {
         $users = $this->leadService->getAssignableUsers();
 
-        $this->data['title'] = 'Create New Task';
+        $this->data['title'] = $this->mlSupport->translate('Create New Task');
         $this->data['users'] = $users;
         $this->data['related_type'] = $_GET['related_type'] ?? null;
         $this->data['related_id'] = $_GET['related_id'] ?? null;
+        $this->data['mlSupport'] = $this->mlSupport;
 
         $this->render('admin/tasks/create');
     }
