@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services\Legacy;
-<?php
 /**
  * Query Cache System - APS Dream Homes
  * Improves database performance by caching frequent queries

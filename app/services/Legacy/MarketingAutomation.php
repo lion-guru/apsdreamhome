@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services\Legacy;
-<?php
 /**
  * Marketing Automation Tools - APS Dream Homes
  * Lead generation, email marketing, and automation

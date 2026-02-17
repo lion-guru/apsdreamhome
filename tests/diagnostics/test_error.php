@@ -6,7 +6,7 @@
 
 // Set 404 headers
 http_response_code(404);
-
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,71 +22,50 @@ http_response_code(404);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
         }
-        .error-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        .container {
             text-align: center;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             max-width: 500px;
+            width: 90%;
         }
-        .error-code {
-            font-size: 120px;
-            font-weight: bold;
+        h1 {
             color: #e74c3c;
+            font-size: 72px;
             margin: 0;
         }
-        .error-title {
-            font-size: 24px;
+        h2 {
             color: #333;
-            margin: 10px 0;
+            margin-top: 10px;
         }
-        .error-message {
+        p {
             color: #666;
-            margin: 20px 0;
-            line-height: 1.6;
+            margin-bottom: 30px;
         }
-        .back-button {
+        .btn {
             display: inline-block;
-            padding: 12px 24px;
-            background-color: #3498db;
-            color: white;
+            background: #3498db;
+            color: #fff;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background 0.3s;
         }
-        .back-button:hover {
-            background-color: #2980b9;
-        }
-        .test-info {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            font-size: 14px;
+        .btn:hover {
+            background: #2980b9;
         }
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <h1 class="error-code">404</h1>
-        <h2 class="error-title">Page Not Found</h2>
-        <p class="error-message">
-            The page you are looking for doesn't exist or has been moved.
-            Please check the URL or return to the homepage.
-        </p>
-        <a href="/" class="back-button">Go to Homepage</a>
-        
-        <div class="test-info">
-            <strong>Test Information:</strong><br>
-            This is a test error page for the 404 error handling system.<br>
-            Requested URL: <?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? 'Unknown'); ?><br>
-            Server Time: <?php echo date('Y-m-d H:i:s'); ?>
-        </div>
+    <div class="container">
+        <h1>404</h1>
+        <h2>Page Not Found</h2>
+        <p>This is a test error page to verify the system's error handling capabilities.</p>
+        <a href="/" class="btn">Go Home</a>
     </div>
 </body>
 </html>

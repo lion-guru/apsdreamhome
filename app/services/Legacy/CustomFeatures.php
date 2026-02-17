@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services\Legacy;
-<?php
 /**
  * Custom Features - APS Dream Homes
  * Specialized features for real estate business

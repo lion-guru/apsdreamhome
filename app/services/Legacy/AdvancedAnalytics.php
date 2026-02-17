@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services\Legacy;
-<?php
 /**
  * Advanced Analytics System - APS Dream Homes
  * Real-time tracking, user behavior analysis, and business intelligence
