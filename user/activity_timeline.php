@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ . '/../app/bootstrap.php';
+require_once __DIR__ . '/../app/core/autoload.php';
+use App\Core\App;
 $db = \App\Core\App::database();
 if (!isset($_SESSION['auser'])) { header('Location: ../login.php'); exit(); }
 $user_id = $_SESSION['auser'];

@@ -89,22 +89,22 @@ $webRoutes = [
 
         'POST' => [
             '/logout' => 'AuthController@logout',
-            '/leads' => 'LeadController@store',
-            '/leads/{id}/activity' => 'LeadController@addActivity',
-            '/leads/{id}/note' => 'LeadController@addNote',
-            '/leads/{id}/assign' => 'LeadController@assign',
-            '/leads/{id}/convert' => 'LeadController@convert',
-            '/farmers' => 'FarmerController@store',
+            // '/leads' => 'LeadController@store', // Moved
+            // '/leads/{id}/activity' => 'LeadController@addActivity',
+            // '/leads/{id}/note' => 'LeadController@addNote',
+            // '/leads/{id}/assign' => 'LeadController@assign',
+            // '/leads/{id}/convert' => 'LeadController@convert',
+            '/farmers' => 'User\FarmerController@store',
         ],
 
         'PUT' => [
             '/profile' => 'UserController@updateProfile',
-            '/leads/{id}' => 'LeadController@update',
-            '/farmers/{id}' => 'FarmerController@update',
+            // '/leads/{id}' => 'LeadController@update', // Moved
+            '/farmers/{id}' => 'User\FarmerController@update',
         ],
 
         'DELETE' => [
-            '/farmers/{id}' => 'FarmerController@delete',
+            '/farmers/{id}' => 'User\FarmerController@delete',
         ],
     ],
 
@@ -285,109 +285,109 @@ if (isset($app) && $app instanceof \App\Core\App) {
         }
     }
 
-    // Register associate routes with auth middleware
+    // Register associate routes with auth and associate middleware
     foreach ($webRoutes['associate'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
             $method = strtoupper($method);
             switch ($method) {
                 case 'GET':
-                    $router->get($path, $handler, ['middleware' => ['auth']]);
+                    $router->get($path, $handler, ['middleware' => ['auth', 'associate']]);
                     break;
                 case 'POST':
-                    $router->post($path, $handler, ['middleware' => ['auth']]);
+                    $router->post($path, $handler, ['middleware' => ['auth', 'associate']]);
                     break;
                 case 'PUT':
-                    $router->put($path, $handler, ['middleware' => ['auth']]);
+                    $router->put($path, $handler, ['middleware' => ['auth', 'associate']]);
                     break;
                 case 'DELETE':
-                    $router->delete($path, $handler, ['middleware' => ['auth']]);
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'associate']]);
                     break;
                 case 'PATCH':
-                    $router->patch($path, $handler, ['middleware' => ['auth']]);
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'associate']]);
                     break;
                 default:
-                    $router->match([$method], $path, $handler, ['middleware' => ['auth']]);
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'associate']]);
                     break;
             }
         }
     }
 
-    // Register employee routes with auth middleware
+    // Register employee routes with auth and employee middleware
     foreach ($webRoutes['employee'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
             $method = strtoupper($method);
             switch ($method) {
                 case 'GET':
-                    $router->get($path, $handler, ['middleware' => ['auth']]);
+                    $router->get($path, $handler, ['middleware' => ['auth', 'employee']]);
                     break;
                 case 'POST':
-                    $router->post($path, $handler, ['middleware' => ['auth']]);
+                    $router->post($path, $handler, ['middleware' => ['auth', 'employee']]);
                     break;
                 case 'PUT':
-                    $router->put($path, $handler, ['middleware' => ['auth']]);
+                    $router->put($path, $handler, ['middleware' => ['auth', 'employee']]);
                     break;
                 case 'DELETE':
-                    $router->delete($path, $handler, ['middleware' => ['auth']]);
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'employee']]);
                     break;
                 case 'PATCH':
-                    $router->patch($path, $handler, ['middleware' => ['auth']]);
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'employee']]);
                     break;
                 default:
-                    $router->match([$method], $path, $handler, ['middleware' => ['auth']]);
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'employee']]);
                     break;
             }
         }
     }
 
-    // Register customer routes with auth middleware
+    // Register customer routes with auth and customer middleware
     foreach ($webRoutes['customer'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
             $method = strtoupper($method);
             switch ($method) {
                 case 'GET':
-                    $router->get($path, $handler, ['middleware' => ['auth']]);
+                    $router->get($path, $handler, ['middleware' => ['auth', 'customer']]);
                     break;
                 case 'POST':
-                    $router->post($path, $handler, ['middleware' => ['auth']]);
+                    $router->post($path, $handler, ['middleware' => ['auth', 'customer']]);
                     break;
                 case 'PUT':
-                    $router->put($path, $handler, ['middleware' => ['auth']]);
+                    $router->put($path, $handler, ['middleware' => ['auth', 'customer']]);
                     break;
                 case 'DELETE':
-                    $router->delete($path, $handler, ['middleware' => ['auth']]);
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'customer']]);
                     break;
                 case 'PATCH':
-                    $router->patch($path, $handler, ['middleware' => ['auth']]);
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'customer']]);
                     break;
                 default:
-                    $router->match([$method], $path, $handler, ['middleware' => ['auth']]);
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'customer']]);
                     break;
             }
         }
     }
 
-    // Register admin routes with admin middleware
+    // Register admin routes with auth and admin middleware
     foreach ($webRoutes['admin'] as $method => $routes) {
         foreach ($routes as $path => $handler) {
             $method = strtoupper($method);
             switch ($method) {
                 case 'GET':
-                    $router->get($path, $handler, ['middleware' => ['admin']]);
+                    $router->get($path, $handler, ['middleware' => ['auth', 'admin']]);
                     break;
                 case 'POST':
-                    $router->post($path, $handler, ['middleware' => ['admin']]);
+                    $router->post($path, $handler, ['middleware' => ['auth', 'admin']]);
                     break;
                 case 'PUT':
-                    $router->put($path, $handler, ['middleware' => ['admin']]);
+                    $router->put($path, $handler, ['middleware' => ['auth', 'admin']]);
                     break;
                 case 'DELETE':
-                    $router->delete($path, $handler, ['middleware' => ['admin']]);
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'admin']]);
                     break;
                 case 'PATCH':
-                    $router->patch($path, $handler, ['middleware' => ['admin']]);
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'admin']]);
                     break;
                 default:
-                    $router->match([$method], $path, $handler, ['middleware' => ['admin']]);
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'admin']]);
                     break;
             }
         }

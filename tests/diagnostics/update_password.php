@@ -3,7 +3,8 @@
  * Script to update the password for the test user
  */
 
-require_once __DIR__ . '/../../app/bootstrap.php';
+require_once __DIR__ . '/../../app/core/autoload.php';
+use App\Core\App;
 $db = \App\Core\App::database();
 
 // Hash a known password

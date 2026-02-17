@@ -1,16 +1,26 @@
 <?php
+
 /**
  * Database Settings
  * Central configuration for database connections
  */
 
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASSWORD', '');
-define('DB_NAME', 'apsdreamhome');
+if (!defined('DB_HOST')) {
+    define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+}
+if (!defined('DB_USER')) {
+    define('DB_USER', getenv('DB_USER') ?: 'root');
+}
+if (!defined('DB_PASSWORD')) {
+    define('DB_PASSWORD', getenv('DB_PASSWORD') ?: '');
+}
+if (!defined('DB_NAME')) {
+    define('DB_NAME', getenv('DB_NAME') ?: 'apsdreamhome');
+}
 
 // Database connection function
-function get_db_connection() {
+function get_db_connection()
+{
     try {
         $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
@@ -27,7 +37,8 @@ function get_db_connection() {
 }
 
 // Database query function with error handling
-function db_query($sql, $params = []) {
+function db_query($sql, $params = [])
+{
     $conn = get_db_connection();
     if (!$conn) {
         return false;
@@ -67,7 +78,8 @@ function db_query($sql, $params = []) {
 }
 
 // Database insert/update function
-function db_execute($sql, $params = []) {
+function db_execute($sql, $params = [])
+{
     $conn = get_db_connection();
     if (!$conn) {
         return false;
@@ -112,12 +124,13 @@ function db_execute($sql, $params = []) {
 }
 
 // Get database table prefix
-function get_table_prefix() {
+function get_table_prefix()
+{
     return 'aps_';
 }
 
 // Get full table name with prefix
-function get_table_name($table_name) {
+function get_table_name($table_name)
+{
     return get_table_prefix() . $table_name;
 }
-?>

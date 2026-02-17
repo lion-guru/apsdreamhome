@@ -95,7 +95,7 @@ class Database
         $columns = implode(', ', array_keys($data));
         $placeholders = implode(', ', array_map(fn($key) => ":$key", array_keys($data)));
         $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
-        
+
         $this->execute($sql, $data);
         return $this->lastInsertId();
     }
@@ -104,7 +104,7 @@ class Database
     {
         $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
         $sql = "UPDATE {$table} SET {$set} WHERE {$where}";
-        
+
         $params = array_merge($data, $whereParams);
         return $this->execute($sql, $params)->rowCount();
     }

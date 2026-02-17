@@ -15,8 +15,8 @@ use App\Core\UnifiedModel;
 class ConsolidatedUser extends UnifiedModel
 {
     protected static $table = 'users';
-    
-    protected $fillable = [
+
+    protected array $fillable = [
         'name',
         'email',
         'password',
@@ -28,23 +28,23 @@ class ConsolidatedUser extends UnifiedModel
         'created_at',
         'updated_at'
     ];
-    
-    protected $hidden = [
+
+    protected array $hidden = [
         'password',
         'remember_token'
     ];
-    
+
     protected $casts = [
         'email_verified' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
-    
+
     /**
      * Legacy manager instances
      */
-    protected static $userManager = null;
-    
+    public static $userManager = null;
+
     /**
      * Initialize legacy managers if available
      */
@@ -63,7 +63,7 @@ class ConsolidatedUser extends UnifiedModel
         }
         return self::$userManager;
     }
-    
+
     /**
      * Map legacy field names to modern field names
      */
@@ -99,7 +99,7 @@ class ConsolidatedUser extends UnifiedModel
         }
         return $mapped;
     }
-    
+
     /**
      * Find user by ID (legacy method)
      */
@@ -115,7 +115,7 @@ class ConsolidatedUser extends UnifiedModel
         }
         return self::find($id);
     }
-    
+
     /**
      * Get all users (legacy method)
      */
@@ -124,14 +124,14 @@ class ConsolidatedUser extends UnifiedModel
         $manager = self::initLegacyManagers();
         if ($manager && method_exists($manager, 'getAllUsers')) {
             $users = $manager->getAllUsers();
-            return array_map(function($userData) {
+            return array_map(function ($userData) {
                 $userData = self::mapLegacyFields($userData);
                 return new static($userData);
             }, $users);
         }
         return self::all();
     }
-    
+
     /**
      * Save user (legacy method)
      */
@@ -145,7 +145,7 @@ class ConsolidatedUser extends UnifiedModel
         }
         return $this->save();
     }
-    
+
     /**
      * Delete user (legacy method)
      */
@@ -157,7 +157,7 @@ class ConsolidatedUser extends UnifiedModel
         }
         return $this->delete();
     }
-    
+
     /**
      * Authenticate user (consolidated method)
      */
@@ -171,7 +171,7 @@ class ConsolidatedUser extends UnifiedModel
                 return new static($userData);
             }
         }
-        
+
         // Fallback to modern method
         $user = self::whereStatic('email', $email)->first();
         if ($user && password_verify($password, $user->password)) {
@@ -179,7 +179,7 @@ class ConsolidatedUser extends UnifiedModel
         }
         return null;
     }
-    
+
     /**
      * Register new user (consolidated method)
      */
@@ -192,12 +192,12 @@ class ConsolidatedUser extends UnifiedModel
                 return self::find($userId);
             }
         }
-        
+
         // Fallback to modern method
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         return self::create($data);
     }
-    
+
     /**
      * Get full name
      */
@@ -205,7 +205,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return trim($this->first_name . ' ' . $this->last_name);
     }
-    
+
     /**
      * Get display name
      */
@@ -214,7 +214,7 @@ class ConsolidatedUser extends UnifiedModel
         $fullName = $this->getFullName();
         return $fullName ?: $this->username ?: $this->email;
     }
-    
+
     /**
      * Check if user is admin
      */
@@ -222,7 +222,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return $this->role === 'admin';
     }
-    
+
     /**
      * Check if user is associate
      */
@@ -230,7 +230,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return $this->role === 'associate';
     }
-    
+
     /**
      * Check if user is customer
      */
@@ -238,7 +238,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return $this->role === 'customer';
     }
-    
+
     /**
      * Check if email is verified
      */
@@ -246,7 +246,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return (bool) $this->email_verified;
     }
-    
+
     /**
      * Mark email as verified
      */
@@ -255,7 +255,7 @@ class ConsolidatedUser extends UnifiedModel
         $this->email_verified = true;
         $this->save();
     }
-    
+
     /**
      * Set password (handles hashing)
      */
@@ -263,7 +263,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         $this->password = password_hash($password, PASSWORD_DEFAULT);
     }
-    
+
     /**
      * Verify password
      */
@@ -271,7 +271,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return password_verify($password, $this->password);
     }
-    
+
     /**
      * Get user by email
      */
@@ -279,7 +279,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return self::whereStatic('email', $email)->first();
     }
-    
+
     /**
      * Get user by username
      */
@@ -287,7 +287,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return self::whereStatic('username', $username)->first();
     }
-    
+
     /**
      * Get active users
      */
@@ -295,7 +295,7 @@ class ConsolidatedUser extends UnifiedModel
     {
         return self::whereStatic('status', 'active')->get();
     }
-    
+
     /**
      * Get users by role
      */

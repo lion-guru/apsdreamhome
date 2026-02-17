@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "bmewburn.vscode-intelephense-client",
+    "devsense.composer-php-vscode",
+    "cweijan.vscode-mysql-client2",
+    "esbenp.prettier-vscode",
+    "xdebug.php-debug",
+    "ritwickdey.LiveServer",
+    "eamodio.gitlens",
+    "christian-kohler.path-intellisense"
+  ]
+}

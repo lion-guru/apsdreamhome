@@ -14,7 +14,7 @@ abstract class Model {
         $this->original = $this->attributes;
     }
 
-    protected function fill(array $attributes): void {
+    public function fill(array $attributes): void {
         foreach ($attributes as $key => $value) {
             if (in_array($key, $this->fillable)) {
                 $this->attributes[$key] = $value;

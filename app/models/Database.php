@@ -1,65 +1,68 @@
 <?php
 namespace App\Models;
 
-class Database {
-    private static ?Database $instance = null;
-    private \PDO $connection;
+use App\Core\Database as CoreDatabase;
 
-    private function __construct() {
-        $host = $_ENV['DB_HOST'] ?? 'localhost';
-        $dbname = $_ENV['DB_DATABASE'] ?? 'apsdreamhome';
-        $username = $_ENV['DB_USERNAME'] ?? 'root';
-        $password = $_ENV['DB_PASSWORD'] ?? '';
+/**
+ * Database Wrapper for Models
+ * Extends the Core Database class to provide backward compatibility
+ * for models using App\Models\Database directly.
+ */
+class Database extends CoreDatabase {
+    private static $instance = null;
 
-        try {
-            $this->connection = new \PDO(
-                "mysql:host={$host};dbname={$dbname};charset=utf8mb4",
-                $username,
-                $password,
-                [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
-            );
-        } catch (\PDOException $e) {
-            throw new \Exception("Database connection failed: " . $e->getMessage());
+    public function __construct($config = []) {
+        if (empty($config)) {
+            // Support both $_ENV and getenv for maximum compatibility
+            $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'localhost';
+            $dbname = $_ENV['DB_DATABASE'] ?? getenv('DB_NAME') ?: 'apsdreamhome';
+            $username = $_ENV['DB_USERNAME'] ?? getenv('DB_USER') ?: 'root';
+            $password = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASS') ?: '';
+            
+            $config = [
+                'host' => $host,
+                'database' => $dbname,
+                'username' => $username,
+                'password' => $password,
+                'charset' => 'utf8mb4'
+            ];
         }
+        parent::__construct($config);
     }
 
-    public static function getInstance(): Database {
+    public static function getInstance($config = []): self {
         if (self::$instance === null) {
-            self::$instance = new self();
+            self::$instance = new self($config);
         }
         return self::$instance;
     }
 
-    public function getConnection(): \PDO
-    {
-        return $this->connection;
-    }
-
     public function prepare(string $sql): \PDOStatement
     {
-        return $this->connection->prepare($sql);
+        return $this->getConnection()->prepare($sql);
     }
-
-    public function beginTransaction(): bool
+    
+    // Legacy method support
+    public function beginTransaction()
     {
-        return $this->connection->beginTransaction();
+        return $this->getConnection()->beginTransaction();
     }
 
-    public function commit(): bool
+    public function commit()
     {
-        return $this->connection->commit();
+        return $this->getConnection()->commit();
     }
 
-    public function rollBack(): bool
+    public function rollBack()
     {
-        return $this->connection->rollBack();
+        return $this->getConnection()->rollBack();
     }
 
-    public function lastInsertId(): string
+    public function lastInsertId()
     {
-        return $this->connection->lastInsertId();
+        return $this->getConnection()->lastInsertId();
     }
-
+    
     private function __clone() {}
     public function __wakeup() {}
 }

@@ -15,7 +15,7 @@ class ConsolidatedProperty extends UnifiedModel
 {
     protected static $table = 'properties';
 
-    protected $fillable = [
+    protected array $fillable = [
         'title',
         'description',
         'property_type_id',
@@ -71,7 +71,7 @@ class ConsolidatedProperty extends UnifiedModel
     /**
      * Legacy manager instances
      */
-    protected static $propertyManager = null;
+    public static $propertyManager = null;
 
     /**
      * Initialize legacy managers if available

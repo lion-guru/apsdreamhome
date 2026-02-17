@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\Core\DatabaseManager;
+use App\Core\Database;
 
 /**
  * Middleware Base Class
@@ -10,14 +10,14 @@ use App\Core\DatabaseManager;
  */
 abstract class Middleware
 {
-    protected ?DatabaseManager $db = null;
+    protected ?Database $db = null;
     
     /**
      * Middleware constructor
      */
     public function __construct()
     {
-        $this->db = DatabaseManager::getInstance();
+        $this->db = Database::getInstance();
     }
     
     /**

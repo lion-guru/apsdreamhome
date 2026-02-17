@@ -13,7 +13,7 @@ class Visit extends Model
     protected static $table = 'property_visits';
     protected static $primaryKey = 'id';
 
-    protected $fillable = [
+    protected array $fillable = [
         'customer_id',
         'property_id',
         'associate_id',

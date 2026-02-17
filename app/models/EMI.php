@@ -13,7 +13,7 @@ class EMI extends Model
     protected static $table = 'emi_plans';
     protected static $primaryKey = 'id';
 
-    protected $fillable = [
+    protected array $fillable = [
         'customer_id',
         'booking_id',
         'total_amount',
