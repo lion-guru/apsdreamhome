@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Models\Plot;
 use App\Core\Database;
 
-class PlotController extends BaseController
+class PlotController extends AdminController
 {
     protected $plotModel;
 
@@ -14,8 +14,6 @@ class PlotController extends BaseController
     {
         parent::__construct();
 
-        // Register middlewares
-        $this->middleware('role:admin');
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
 
         $this->plotModel = $this->model('Plot');

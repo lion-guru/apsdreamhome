@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Models\Project;
 use App\Core\Database;
 
-class ProjectController extends BaseController
+class ProjectController extends AdminController
 {
     protected $projectModel;
 
@@ -15,7 +14,8 @@ class ProjectController extends BaseController
         parent::__construct();
 
         // Register middlewares
-        $this->middleware('role:admin');
+        // AdminController likely handles basic auth, but we can keep specific ones
+        //$this->middleware('role:admin'); // AdminController usually checks this in index or constructor
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
 
         $this->projectModel = $this->model('Project');

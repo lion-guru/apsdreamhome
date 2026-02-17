@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Models\Property;
+use App\Models\PropertyType;
 use Exception;
 
-class PropertyController extends BaseController
+class PropertyController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        $this->data = [];
     }
 
     /**
@@ -43,6 +43,7 @@ class PropertyController extends BaseController
         }
 
         $this->data['page_title'] = 'Add New Property - ' . APP_NAME;
+        $this->data['propertyTypes'] = PropertyType::getForSelect();
         $this->render('admin/properties/create');
     }
 
@@ -104,6 +105,7 @@ class PropertyController extends BaseController
 
         $this->data['property'] = $property;
         $this->data['page_title'] = 'Edit Property - ' . APP_NAME;
+        $this->data['propertyTypes'] = PropertyType::getForSelect();
         $this->render('admin/properties/edit');
     }
 

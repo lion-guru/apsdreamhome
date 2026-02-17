@@ -2,22 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\NotificationService;
 use Exception;
 
-class BookingController extends BaseController
+class BookingController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        // Use the Core Database wrapper
-        $this->db = \App\Core\App::database();
-        // Use legacy admin layout for consistency
-        $this->layout = 'layouts/admin_legacy';
 
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-        }
+        // Register middlewares
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
 
     /**
@@ -135,14 +131,73 @@ class BookingController extends BaseController
                 $booking_number
             ]);
 
-            // TODO: Add notification logic (Customer & Admin)
-            // $this->sendNotifications($property_id, $customer_id, $amount, $booking_date);
+            $booking_id = $this->db->lastInsertId();
+
+            // Send notifications
+            $this->sendNotifications($booking_id, $property_id, $customer_id, $booking_amount, $booking_date, $booking_number);
 
             $this->setFlash('success', 'Booking added successfully!');
             $this->redirect('admin/bookings');
         } catch (Exception $e) {
             $this->setFlash('error', 'Error adding booking: ' . $e->getMessage());
             $this->redirect('admin/bookings/create');
+        }
+    }
+
+    /**
+     * Send booking notifications
+     */
+    private function sendNotifications($booking_id, $property_id, $customer_id, $amount, $date, $booking_number)
+    {
+        try {
+            $notificationService = new NotificationService();
+
+            // Fetch customer email
+            $customer = $this->db->fetchOne("SELECT * FROM user WHERE uid = ?", [$customer_id]);
+
+            if (!$customer) {
+                return;
+            }
+
+            // Fetch property details
+            $property = $this->db->fetchOne("SELECT * FROM properties WHERE id = ?", [$property_id]);
+            $property_title = $property['title'] ?? 'Property #' . $property_id;
+
+            // Send to Customer
+            $subject = ($this->mlSupport->translate('Booking Confirmation') ?? 'Booking Confirmation') . " - " . $booking_number;
+            $body = "Dear " . ($customer['uname'] ?? 'Customer') . ",<br><br>";
+            $body .= "Your booking for property '<strong>" . htmlspecialchars($property_title) . "</strong>' has been confirmed.<br>";
+            $body .= "Booking Number: <strong>" . htmlspecialchars($booking_number) . "</strong><br>";
+            $body .= "Date: " . htmlspecialchars($date) . "<br>";
+            $body .= "Amount: " . number_format($amount, 2) . "<br><br>";
+            $body .= "Thank you for choosing APS Dream Home.";
+
+            $notificationService->sendEmail(
+                $customer['uemail'],
+                $subject,
+                $body,
+                'booking_confirmation',
+                $customer_id,
+                ['booking_id' => $booking_id, 'property_id' => $property_id]
+            );
+
+            // Notify Admin
+            $admin_subject = "New Booking Alert - " . $booking_number;
+            $admin_body = "New booking received for property '<strong>" . htmlspecialchars($property_title) . "</strong>'.<br>";
+            $admin_body .= "Booking Number: " . htmlspecialchars($booking_number) . "<br>";
+            $admin_body .= "Customer: " . htmlspecialchars($customer['uname'] ?? 'Unknown') . " (ID: $customer_id)<br>";
+            $admin_body .= "Amount: " . number_format($amount, 2) . "<br>";
+            $admin_body .= "Date: " . htmlspecialchars($date);
+
+            $notificationService->notifyAdmin(
+                $admin_subject,
+                $admin_body,
+                'new_booking_alert',
+                ['booking_id' => $booking_id]
+            );
+        } catch (Exception $e) {
+            // Log error but don't stop execution
+            error_log("Booking notification failed: " . $e->getMessage());
         }
     }
 }

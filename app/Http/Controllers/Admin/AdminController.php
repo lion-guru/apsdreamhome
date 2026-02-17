@@ -14,13 +14,33 @@ use App\Models\Property;
 use App\Models\User;
 use Exception;
 
+use App\Services\Legacy\MultiLanguageSupport;
+
 class AdminController extends BaseController
 {
+    protected $mlSupport;
+
     public function __construct()
     {
         parent::__construct();
+        // Set admin layout
+        $this->layout = 'layouts/admin';
+
         // Initialize data array for view rendering
         $this->data = [];
+
+        // Initialize Multi-Language Support
+        if (file_exists(APP_ROOT . '/app/Services/Legacy/MultiLanguageSupport.php')) {
+            require_once APP_ROOT . '/app/Services/Legacy/MultiLanguageSupport.php';
+            $this->mlSupport = new MultiLanguageSupport($this->db);
+            $this->data['mlSupport'] = $this->mlSupport;
+        }
+
+        // Ensure only admins can access admin pages
+        if (!$this->isAdmin()) {
+            $this->redirect('/admin/login');
+            exit;
+        }
     }
 
     /**
@@ -280,7 +300,7 @@ class AdminController extends BaseController
         $this->data['end_index'] = min($filters['page'] * $filters['per_page'], $this->data['total_properties']);
 
         // Render the properties page
-        $this->render('admin/properties');
+        $this->render('admin/properties/index');
     }
 
     /**
@@ -323,7 +343,7 @@ class AdminController extends BaseController
         $this->data['end_index'] = min($filters['page'] * $filters['per_page'], $this->data['total_users']);
 
         // Render the users page
-        $this->render('admin/users');
+        $this->render('admin/users/index');
     }
 
     /**
@@ -360,7 +380,7 @@ class AdminController extends BaseController
         // Calculate pagination
         $this->data['total_pages'] = ceil($this->data['total_associates'] / $filters['per_page']);
 
-        $this->render('admin/associates');
+        $this->render('admin/associates/index');
     }
 
     /**
@@ -397,7 +417,7 @@ class AdminController extends BaseController
         // Calculate pagination
         $this->data['total_pages'] = ceil($this->data['total_customers'] / $filters['per_page']);
 
-        $this->render('admin/customers');
+        $this->render('admin/customers/index');
     }
 
     /**
@@ -434,7 +454,7 @@ class AdminController extends BaseController
         // Calculate pagination
         $this->data['total_pages'] = ceil($this->data['total_bookings'] / $filters['per_page']);
 
-        $this->render('admin/bookings');
+        $this->render('admin/bookings/index');
     }
 
     /**
@@ -471,7 +491,7 @@ class AdminController extends BaseController
         // Calculate pagination
         $this->data['total_pages'] = ceil($this->data['total_employees'] / $filters['per_page']);
 
-        $this->render('admin/employees');
+        $this->render('admin/employees/index');
     }
 
     /**

@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Models\Career;
 use App\Models\CareerApplication;
-use App\Helpers\AuthHelper;
 use App\Helpers\SecurityHelper;
 
-class CareerController extends BaseController
+class CareerController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        if (!AuthHelper::isAdmin()) {
-            $this->redirect('admin/login');
-        }
         $this->loadModel('Career');
         // $this->loadModel('CareerApplication'); // Assuming this model exists or we'll query DB directly
     }
@@ -26,20 +22,20 @@ class CareerController extends BaseController
         $this->render('admin/careers/index', [
             'careers' => $careers,
             'title' => 'Manage Careers'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function create()
     {
         $this->render('admin/careers/create', [
             'title' => 'Post New Job'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function store()
     {
         if (!$this->validateCsrfToken()) {
-            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->setFlash('error', 'Invalid CSRF token');
             $this->redirect('admin/careers/create');
             return;
         }
@@ -60,10 +56,10 @@ class CareerController extends BaseController
         $career->description = $description;
 
         if ($career->save()) {
-            $_SESSION['success'] = 'Job posted successfully';
+            $this->setFlash('success', 'Job posted successfully');
             $this->redirect('admin/careers');
         } else {
-            $_SESSION['error'] = 'Failed to post job';
+            $this->setFlash('error', 'Failed to post job');
             $this->redirect('admin/careers/create');
         }
     }
@@ -72,7 +68,7 @@ class CareerController extends BaseController
     {
         $career = Career::find($id);
         if (!$career) {
-            $_SESSION['error'] = 'Job not found';
+            $this->setFlash('error', 'Job not found');
             $this->redirect('admin/careers');
             return;
         }
@@ -80,20 +76,20 @@ class CareerController extends BaseController
         $this->render('admin/careers/edit', [
             'career' => $career,
             'title' => 'Edit Job'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function update($id)
     {
         if (!$this->validateCsrfToken()) {
-            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->setFlash('error', 'Invalid CSRF token');
             $this->redirect('admin/careers/edit/' . $id);
             return;
         }
 
         $career = Career::find($id);
         if (!$career) {
-            $_SESSION['error'] = 'Job not found';
+            $this->setFlash('error', 'Job not found');
             $this->redirect('admin/careers');
             return;
         }

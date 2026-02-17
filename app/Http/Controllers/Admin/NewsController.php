@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Models\News;
-use App\Helpers\AuthHelper;
 use App\Helpers\SecurityHelper;
 
-class NewsController extends BaseController
+class NewsController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        if (!AuthHelper::isAdmin()) {
-            $this->redirect('admin/login');
-        }
         $this->loadModel('News');
     }
 
@@ -24,20 +20,20 @@ class NewsController extends BaseController
         $this->render('admin/news/index', [
             'news' => $news,
             'title' => 'Manage News'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function create()
     {
         $this->render('admin/news/create', [
             'title' => 'Add News'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function store()
     {
         if (!$this->validateCsrfToken()) {
-            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->setFlash('error', 'Invalid CSRF token');
             $this->redirect('admin/news/create');
             return;
         }
@@ -69,10 +65,10 @@ class NewsController extends BaseController
         $news->image = $image;
 
         if ($news->save()) {
-            $_SESSION['success'] = 'News added successfully';
+            $this->setFlash('success', 'News added successfully');
             $this->redirect('admin/news');
         } else {
-            $_SESSION['error'] = 'Failed to add news';
+            $this->setFlash('error', 'Failed to add news');
             $this->redirect('admin/news/create');
         }
     }
@@ -81,7 +77,7 @@ class NewsController extends BaseController
     {
         $news = News::find($id);
         if (!$news) {
-            $_SESSION['error'] = 'News not found';
+            $this->setFlash('error', 'News not found');
             $this->redirect('admin/news');
             return;
         }
@@ -89,13 +85,13 @@ class NewsController extends BaseController
         $this->render('admin/news/edit', [
             'news' => $news,
             'title' => 'Edit News'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function update($id)
     {
         if (!$this->validateCsrfToken()) {
-            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->setFlash('error', 'Invalid CSRF token');
             $this->redirect('admin/news/edit/' . $id);
             return;
         }

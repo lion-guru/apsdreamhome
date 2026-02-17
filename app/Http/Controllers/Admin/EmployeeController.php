@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
-class EmployeeController extends BaseController
+class EmployeeController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
 
         // Register middlewares
-        $this->middleware('role:admin');
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'offboard']]);
     }
 

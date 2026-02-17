@@ -2,44 +2,39 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
-class LandController extends BaseController
+class LandController extends AdminController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('csrf', ['only' => ['store', 'update', 'delete']]);
+    }
 
     public function index()
     {
-        $land_records = $this->db->fetchAll("SELECT * FROM kisaan_land_management ORDER BY id DESC");
+        $this->data['page_title'] = $this->mlSupport->translate('Kissan Land Records');
+        $this->data['land_records'] = $this->db->fetchAll("SELECT * FROM kisaan_land_management ORDER BY id DESC");
 
-        $data = [
-            'page_title' => 'Kissan Land Records',
-            'land_records' => $land_records
-        ];
-
-        $this->view('admin/land/index', $data);
+        $this->render('admin/land/index');
     }
 
     public function create()
     {
-        $data = [
-            'page_title' => 'Add New Land Record'
-        ];
-        $this->view('admin/land/create', $data);
+        $this->data['page_title'] = $this->mlSupport->translate('Add New Land Record');
+        $this->render('admin/land/create');
     }
 
     public function store()
     {
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Invalid security token.');
-            $this->redirect('admin/land/create');
-            return;
-        }
+        // CSRF check handled by middleware
 
         $farmer_name = trim($_POST['farmer_name'] ?? '');
         $farmer_mobile = trim($_POST['farmer_mobile'] ?? '');
 
         if (empty($farmer_name) || empty($farmer_mobile)) {
-            $this->setFlash('error', 'Farmer name and mobile are required.');
+            set_flash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
             $this->redirect('admin/land/create');
             return;
         }
@@ -77,12 +72,12 @@ class LandController extends BaseController
                 if (move_uploaded_file($_FILES['land_paper']['tmp_name'], $target_path)) {
                     $file_path = $upload_dir . $file_name;
                 } else {
-                    $this->setFlash('error', 'Failed to upload file.');
+                    set_flash('error', $this->mlSupport->translate('Failed to upload file.'));
                     $this->redirect('admin/land/create');
                     return;
                 }
             } else {
-                $this->setFlash('error', 'Invalid file type.');
+                set_flash('error', $this->mlSupport->translate('Invalid file type.'));
                 $this->redirect('admin/land/create');
                 return;
             }
@@ -116,12 +111,105 @@ class LandController extends BaseController
                 $agreement_status
             ]);
 
-            $this->setFlash('success', 'Land record added successfully.');
+            set_flash('success', $this->mlSupport->translate('Land record added successfully.'));
             $this->redirect('admin/land');
         } catch (\Exception $e) {
-            $this->setFlash('error', 'Error adding record: ' . $e->getMessage());
+            set_flash('error', $this->mlSupport->translate('Error adding record: ') . $e->getMessage());
             $this->redirect('admin/land/create');
         }
+    }
+
+    public function transactions($id)
+    {
+        $id = intval($id);
+        $this->data['page_title'] = $this->mlSupport->translate('Land Transactions');
+
+        // Fetch land record details
+        $this->data['land_record'] = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
+
+        if (!$this->data['land_record']) {
+            set_flash('error', $this->mlSupport->translate('Land record not found.'));
+            $this->redirect('admin/land');
+            return;
+        }
+
+        // Fetch transactions
+        $this->data['transactions'] = $this->db->fetchAll("SELECT * FROM transactions WHERE kisaan_id = ? ORDER BY date DESC", [$id]);
+
+        $this->render('admin/land/transactions');
+    }
+
+    public function addTransaction($id)
+    {
+        $id = intval($id);
+        $this->data['page_title'] = $this->mlSupport->translate('Add Transaction');
+
+        // Fetch land record details
+        $this->data['land_record'] = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
+
+        if (!$this->data['land_record']) {
+            set_flash('error', $this->mlSupport->translate('Land record not found.'));
+            $this->redirect('admin/land');
+            return;
+        }
+
+        $this->render('admin/land/add_transaction');
+    }
+
+    public function storeTransaction($id)
+    {
+        $id = intval($id);
+
+        // CSRF check handled by middleware if added to __construct, otherwise check manually or add to middleware
+        if (!$this->validateCsrfToken()) {
+            set_flash('error', $this->mlSupport->translate('Invalid security token.'));
+            $this->redirect('admin/land/transactions/add/' . $id);
+            return;
+        }
+
+        $amount = floatval($_POST['amount'] ?? 0);
+        $date = $_POST['date'] ?? date('Y-m-d');
+        $description = trim($_POST['description'] ?? '');
+
+        if ($amount <= 0 || empty($description)) {
+            set_flash('error', $this->mlSupport->translate('Please fill in all required fields.'));
+            $this->redirect('admin/land/transactions/add/' . $id);
+            return;
+        }
+
+        $sql = "INSERT INTO transactions (kisaan_id, amount, date, description) VALUES (?, ?, ?, ?)";
+
+        try {
+            if ($this->db->execute($sql, [$id, $amount, $date, $description])) {
+                // Update total paid amount in kisaan_land_management
+                // We should recalculate total paid or just add to it. Recalculating is safer.
+                $this->updateTotalPaid($id);
+
+                set_flash('success', $this->mlSupport->translate('Transaction added successfully.'));
+                $this->redirect('admin/land/transactions/' . $id);
+            } else {
+                set_flash('error', $this->mlSupport->translate('Failed to record transaction.'));
+                $this->redirect('admin/land/transactions/add/' . $id);
+            }
+        } catch (\Exception $e) {
+            set_flash('error', $this->mlSupport->translate('Error: ') . $e->getMessage());
+            $this->redirect('admin/land/transactions/add/' . $id);
+        }
+    }
+
+    private function updateTotalPaid($id)
+    {
+        // Calculate total paid
+        $total_paid = $this->db->fetchOne("SELECT SUM(amount) as total FROM transactions WHERE kisaan_id = ?", [$id]);
+        $amount = $total_paid['total'] ?? 0;
+
+        // Get total land price to calculate pending
+        $land = $this->db->fetchOne("SELECT total_land_price FROM kisaan_land_management WHERE id = ?", [$id]);
+        $total_price = $land['total_land_price'] ?? 0;
+        $pending = $total_price - $amount;
+
+        // Update record
+        $this->db->execute("UPDATE kisaan_land_management SET total_paid_amount = ?, amount_pending = ? WHERE id = ?", [$amount, $pending, $id]);
     }
 
     public function edit($id)
@@ -129,32 +217,26 @@ class LandController extends BaseController
         $land_record = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
 
         if (!$land_record) {
-            $this->setFlash('error', 'Record not found.');
+            set_flash('error', $this->mlSupport->translate('Record not found.'));
             $this->redirect('admin/land');
             return;
         }
 
-        $data = [
-            'page_title' => 'Edit Land Record',
-            'record' => $land_record
-        ];
+        $this->data['page_title'] = $this->mlSupport->translate('Edit Land Record');
+        $this->data['record'] = $land_record;
 
-        $this->view('admin/land/edit', $data);
+        $this->render('admin/land/edit');
     }
 
     public function update($id)
     {
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Invalid security token.');
-            $this->redirect('admin/land/edit/' . $id);
-            return;
-        }
+        // CSRF check handled by middleware
 
         $farmer_name = trim($_POST['farmer_name'] ?? '');
         $farmer_mobile = trim($_POST['farmer_mobile'] ?? '');
 
         if (empty($farmer_name) || empty($farmer_mobile)) {
-            $this->setFlash('error', 'Farmer name and mobile are required.');
+            set_flash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
             $this->redirect('admin/land/edit/' . $id);
             return;
         }
@@ -207,26 +289,23 @@ class LandController extends BaseController
                 $id
             ]);
 
-            $this->setFlash('success', 'Land record updated successfully.');
+            set_flash('success', $this->mlSupport->translate('Land record updated successfully.'));
             $this->redirect('admin/land');
         } catch (\Exception $e) {
-            $this->setFlash('error', 'Error updating record: ' . $e->getMessage());
+            set_flash('error', $this->mlSupport->translate('Error updating record: ') . $e->getMessage());
             $this->redirect('admin/land/edit/' . $id);
         }
     }
 
     public function destroy($id)
     {
-        if (!$this->validateCsrfToken()) {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid security token']);
-            exit;
-        }
+        // CSRF check handled by middleware
 
         try {
             $this->db->execute("DELETE FROM kisaan_land_management WHERE id = ?", [$id]);
-            echo json_encode(['status' => 'success', 'message' => 'Record deleted successfully.']);
+            echo json_encode(['status' => 'success', 'message' => $this->mlSupport->translate('Record deleted successfully.')]);
         } catch (\Exception $e) {
-            echo json_encode(['status' => 'error', 'message' => 'Error deleting record: ' . $e->getMessage()]);
+            echo json_encode(['status' => 'error', 'message' => $this->mlSupport->translate('Error deleting record: ') . $e->getMessage()]);
         }
     }
 }

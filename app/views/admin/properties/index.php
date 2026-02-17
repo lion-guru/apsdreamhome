@@ -1,6 +1,4 @@
-<?php include APP_PATH . '/views/admin/layouts/header.php'; ?>
-
-<div class="container-fluid py-4">
+<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-building me-2"></i>Property Management</h2>
         <a href="<?php echo BASE_URL; ?>/admin/properties/create" class="btn btn-primary">
@@ -8,17 +6,10 @@
         </a>
     </div>
 
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0 admin-table">
                     <thead class="bg-light">
                         <tr>
                             <th>Property</th>
@@ -38,16 +29,17 @@
                             <?php foreach ($properties as $property): ?>
                                 <tr>
                                     <td>
-                                        <div class="fw-bold"><?php echo $property['title']; ?></div>
-                                        <small class="text-muted"><?php echo $property['property_type']; ?> | <?php echo $property['area']; ?> sq.ft</small>
+                                        <div class="fw-bold"><?php echo h($property['title']); ?></div>
+                                        <small class="text-muted"><?php echo h($property['property_type']); ?> | <?php echo h($property['area']); ?> sq.ft</small>
                                     </td>
-                                    <td><?php echo $property['location']; ?></td>
+                                    <td><?php echo h($property['location']); ?></td>
                                     <td><span class="fw-bold text-success">₹<?php echo number_format($property['price']); ?></span></td>
                                     <td>
-                                        <?php 
-                                            $statusClass = 'bg-info';
-                                            if ($property['status'] == 'active') $statusClass = 'bg-success';
-                                            if ($property['status'] == 'sold') $statusClass = 'bg-secondary';
+                                        <?php
+                                        $statusClass = 'bg-info';
+                                        if ($property['status'] == 'available') $statusClass = 'bg-success';
+                                        if ($property['status'] == 'sold') $statusClass = 'bg-secondary';
+                                        if ($property['status'] == 'booked') $statusClass = 'bg-warning';
                                         ?>
                                         <span class="badge <?php echo $statusClass; ?>"><?php echo ucfirst($property['status']); ?></span>
                                     </td>
@@ -71,11 +63,9 @@
 </div>
 
 <script>
-function confirmDelete(id) {
-    if (confirm('क्या आप वाकई इस प्रॉपर्टी को डिलीat करना चाहते हैं?')) {
-        window.location.href = '<?php echo BASE_URL; ?>/admin/properties/delete/' + id;
+    function confirmDelete(id) {
+        if (confirm('Are you sure you want to delete this property?')) {
+            window.location.href = '<?php echo BASE_URL; ?>/admin/properties/delete/' + id;
+        }
     }
-}
 </script>
-
-<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
