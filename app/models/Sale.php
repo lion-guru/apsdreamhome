@@ -114,8 +114,8 @@ class Sale extends Model
 
                         if ($uplineUser) {
                             static::query()
-                                ->from('user')
-                                ->where('uid', $uplineUser['user_id'])
+                                ->from('users')
+                                ->where('id', $uplineUser['user_id'])
                                 ->increment('ubalance', $amount);
                         }
 

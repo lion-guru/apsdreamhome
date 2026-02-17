@@ -1,8 +1,8 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Edit News</h1>
+        <h1 class="h3 mb-0 text-gray-800"><?= $mlSupport->translate('Edit News') ?></h1>
         <a href="/admin/news" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
+            <i class="fas fa-arrow-left"></i> <?= $mlSupport->translate('Back to List') ?>
         </a>
     </div>
 
@@ -19,39 +19,39 @@
                 <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
                 
                 <div class="mb-3">
-                    <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                    <label for="title" class="form-label"><?= $mlSupport->translate('Title') ?> <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="title" name="title" required value="<?= htmlspecialchars($news->title) ?>">
                 </div>
 
                 <div class="mb-3">
-                    <label for="date" class="form-label">Date <span class="text-danger">*</span></label>
+                    <label for="date" class="form-label"><?= $mlSupport->translate('Date') ?> <span class="text-danger">*</span></label>
                     <input type="date" class="form-control" id="date" name="date" required value="<?= $news->date ?>">
                 </div>
 
                 <div class="mb-3">
-                    <label for="image" class="form-label">Image</label>
+                    <label for="image" class="form-label"><?= $mlSupport->translate('Image') ?></label>
                     <?php if ($news->image): ?>
                         <div class="mb-2">
                             <img src="/<?= $news->image ?>" alt="Current Image" style="max-height: 100px;">
                         </div>
                     <?php endif; ?>
                     <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                    <small class="text-muted">Leave blank to keep current image</small>
+                    <small class="text-muted"><?= $mlSupport->translate('Leave blank to keep current image') ?></small>
                 </div>
 
                 <div class="mb-3">
-                    <label for="summary" class="form-label">Summary</label>
+                    <label for="summary" class="form-label"><?= $mlSupport->translate('Summary') ?></label>
                     <textarea class="form-control" id="summary" name="summary" rows="3"><?= htmlspecialchars($news->summary) ?></textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label for="content" class="form-label">Content</label>
+                    <label for="content" class="form-label"><?= $mlSupport->translate('Content') ?></label>
                     <textarea class="form-control" id="content" name="content" rows="10"><?= htmlspecialchars($news->content) ?></textarea>
                 </div>
 
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update News
+                        <i class="fas fa-save"></i> <?= $mlSupport->translate('Update News') ?>
                     </button>
                 </div>
             </form>
