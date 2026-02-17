@@ -89,6 +89,17 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->post('/leads/update/{id}', 'Admin\LeadController@update');
         $router->get('/leads/delete/{id}', 'Admin\LeadController@destroy');
 
+        // Land Management
+        $router->get('/land', 'Admin\LandController@index');
+        $router->get('/land/create', 'Admin\LandController@create');
+        $router->post('/land/store', 'Admin\LandController@store');
+        $router->get('/land/edit/{id}', 'Admin\LandController@edit');
+        $router->post('/land/update/{id}', 'Admin\LandController@update');
+        $router->get('/land/delete/{id}', 'Admin\LandController@destroy');
+        $router->get('/land/transactions/{id}', 'Admin\LandController@transactions');
+        $router->get('/land/transactions/create', 'Admin\LandController@createTransaction');
+        $router->post('/land/transactions/store', 'Admin\LandController@storeTransaction');
+
         // Support Ticket Management
         $router->get('/tickets', 'Admin\SupportTicketController@index');
         $router->get('/tickets/create', 'Admin\SupportTicketController@create');

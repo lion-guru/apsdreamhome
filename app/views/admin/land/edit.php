@@ -16,33 +16,34 @@
         <div class="col-md-12">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <?php if ($flash_success = get_flash('success')): ?>
+                    <?php if ($flash_success = $this->getFlash('success')): ?>
                         <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
                             <?php echo h($mlSupport->translate($flash_success)); ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
 
-                    <?php if ($flash_error = get_flash('error')): ?>
+                    <?php if ($flash_error = $this->getFlash('error')): ?>
                         <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
                             <?php echo h($mlSupport->translate($flash_error)); ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
 
-                    <form action="/admin/land/update/<?php echo $record['id']; ?>" method="POST" enctype="multipart/form-data">
+                    <form action="/admin/land/update/<?php echo $land_record['id']; ?>" method="POST" enctype="multipart/form-data">
                         <?php echo csrf_field(); ?>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Farmer Name')); ?> <span class="text-danger">*</span></label>
-                                    <input type="text" name="farmer_name" class="form-control" value="<?php echo h($record['farmer_name'] ?? ''); ?>" required>
+                                    <input type="text" name="farmer_name" class="form-control" value="<?php echo h($land_record['farmer_name']); ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Farmer Mobile')); ?> <span class="text-danger">*</span></label>
-                                    <input type="text" name="farmer_mobile" class="form-control" value="<?php echo h($record['farmer_mobile'] ?? ''); ?>" required>
+                                    <input type="text" name="farmer_mobile" class="form-control" value="<?php echo h($land_record['farmer_mobile']); ?>" required>
                                 </div>
                             </div>
                         </div>
@@ -51,13 +52,13 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Bank Name')); ?></label>
-                                    <input type="text" name="bank_name" class="form-control" value="<?php echo h($record['bank_name'] ?? ''); ?>">
+                                    <input type="text" name="bank_name" class="form-control" value="<?php echo h($land_record['bank_name']); ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Account Number')); ?></label>
-                                    <input type="text" name="account_number" class="form-control" value="<?php echo h($record['account_number'] ?? ''); ?>">
+                                    <input type="text" name="account_number" class="form-control" value="<?php echo h($land_record['account_number']); ?>">
                                 </div>
                             </div>
                         </div>
@@ -66,13 +67,13 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('IFSC Code')); ?></label>
-                                    <input type="text" name="bank_ifsc" class="form-control" value="<?php echo h($record['bank_ifsc'] ?? ''); ?>">
+                                    <input type="text" name="bank_ifsc" class="form-control" value="<?php echo h($land_record['bank_ifsc']); ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Site Name')); ?></label>
-                                    <input type="text" name="site_name" class="form-control" value="<?php echo h($record['site_name'] ?? ''); ?>">
+                                    <input type="text" name="site_name" class="form-control" value="<?php echo h($land_record['site_name']); ?>">
                                 </div>
                             </div>
                         </div>
@@ -81,13 +82,33 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Land Area (sqft)')); ?></label>
-                                    <input type="number" step="0.01" name="land_area" class="form-control" value="<?php echo h($record['land_area'] ?? ''); ?>">
+                                    <input type="number" step="0.01" name="land_area" class="form-control" value="<?php echo h($land_record['land_area']); ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Total Land Price')); ?></label>
-                                    <input type="number" step="0.01" name="total_land_price" class="form-control" value="<?php echo h($record['total_land_price'] ?? ''); ?>">
+                                    <input type="number" step="0.01" name="total_land_price" class="form-control" value="<?php echo h($land_record['total_land_price']); ?>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label"><?php echo h($mlSupport->translate('Total Paid Amount')); ?></label>
+                                    <input type="number" step="0.01" name="total_paid_amount" class="form-control" value="<?php echo h($land_record['total_paid_amount']); ?>">
+                                    <small class="text-muted"><?php echo h($mlSupport->translate('Manually update if needed, or use Transactions to add payments.')); ?></small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label"><?php echo h($mlSupport->translate('Agreement Status')); ?></label>
+                                    <select name="agreement_status" class="form-select">
+                                        <option value="Pending" <?php echo ($land_record['agreement_status'] == 'Pending') ? 'selected' : ''; ?>>Pending</option>
+                                        <option value="Completed" <?php echo ($land_record['agreement_status'] == 'Completed') ? 'selected' : ''; ?>>Completed</option>
+                                        <option value="Cancelled" <?php echo ($land_record['agreement_status'] == 'Cancelled') ? 'selected' : ''; ?>>Cancelled</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -96,13 +117,13 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Gata Number')); ?></label>
-                                    <input type="text" name="gata_number" class="form-control" value="<?php echo h($record['gata_number'] ?? ''); ?>">
+                                    <input type="text" name="gata_number" class="form-control" value="<?php echo h($land_record['gata_number']); ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('District')); ?></label>
-                                    <input type="text" name="district" class="form-control" value="<?php echo h($record['district'] ?? ''); ?>">
+                                    <input type="text" name="district" class="form-control" value="<?php echo h($land_record['district']); ?>">
                                 </div>
                             </div>
                         </div>
@@ -111,13 +132,13 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Tehsil')); ?></label>
-                                    <input type="text" name="tehsil" class="form-control" value="<?php echo h($record['tehsil'] ?? ''); ?>">
+                                    <input type="text" name="tehsil" class="form-control" value="<?php echo h($land_record['tehsil']); ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('City')); ?></label>
-                                    <input type="text" name="city" class="form-control" value="<?php echo h($record['city'] ?? ''); ?>">
+                                    <input type="text" name="city" class="form-control" value="<?php echo h($land_record['city']); ?>">
                                 </div>
                             </div>
                         </div>
@@ -126,33 +147,13 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Gram')); ?></label>
-                                    <input type="text" name="gram" class="form-control" value="<?php echo h($record['gram'] ?? ''); ?>">
+                                    <input type="text" name="gram" class="form-control" value="<?php echo h($land_record['gram']); ?>">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label class="form-label"><?php echo h($mlSupport->translate('Land Paper')); ?></label>
-                                    <input type="file" name="land_paper" class="form-control">
-                                    <?php if (!empty($record['land_paper'])): ?>
-                                        <div class="mt-2">
-                                            <small><?php echo h($mlSupport->translate('Current File')); ?>: <a href="/<?php echo h($record['land_paper']); ?>" target="_blank"><?php echo h($mlSupport->translate('View File')); ?></a></small>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="form-label"><?php echo h($mlSupport->translate('Land Manager Name')); ?></label>
-                                    <input type="text" name="land_manager_name" class="form-control" value="<?php echo h($record['land_manager_name'] ?? ''); ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label class="form-label"><?php echo h($mlSupport->translate('Land Manager Mobile')); ?></label>
-                                    <input type="text" name="land_manager_mobile" class="form-control" value="<?php echo h($record['land_manager_mobile'] ?? ''); ?>">
+                                    <input type="text" name="land_manager_name" class="form-control" value="<?php echo h($land_record['land_manager_name']); ?>">
                                 </div>
                             </div>
                         </div>
@@ -160,19 +161,29 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label class="form-label"><?php echo h($mlSupport->translate('Agreement Status')); ?></label>
-                                    <select name="agreement_status" class="form-select">
-                                        <option value="Pending" <?php echo ($record['agreement_status'] ?? '') == 'Pending' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Pending')); ?></option>
-                                        <option value="Registered" <?php echo ($record['agreement_status'] ?? '') == 'Registered' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Registered')); ?></option>
-                                        <option value="Done" <?php echo ($record['agreement_status'] ?? '') == 'Done' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Done')); ?></option>
-                                        <option value="Cancelled" <?php echo ($record['agreement_status'] ?? '') == 'Cancelled' ? 'selected' : ''; ?>><?php echo h($mlSupport->translate('Cancelled')); ?></option>
-                                    </select>
+                                    <label class="form-label"><?php echo h($mlSupport->translate('Land Manager Mobile')); ?></label>
+                                    <input type="text" name="land_manager_mobile" class="form-control" value="<?php echo h($land_record['land_manager_mobile']); ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Land Paper Display/Upload if needed -->
+                                <div class="form-group mb-3">
+                                    <label class="form-label"><?php echo h($mlSupport->translate('Land Paper')); ?></label>
+                                    <?php if (!empty($land_record['land_paper'])): ?>
+                                        <div class="mb-2">
+                                            <a href="/<?php echo h($land_record['land_paper']); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="fa fa-file"></i> <?php echo h($mlSupport->translate('View Current File')); ?>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <small class="text-muted"><?php echo h($mlSupport->translate('Upload feature for update not implemented in this form version.')); ?></small>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="text-end">
-                            <button type="submit" name="update_land_details" class="btn btn-primary"><?php echo h($mlSupport->translate('Update')); ?></button>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary"><?php echo h($mlSupport->translate('Update Record')); ?></button>
+                            <a href="/admin/land" class="btn btn-secondary"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>
