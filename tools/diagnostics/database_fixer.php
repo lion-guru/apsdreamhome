@@ -242,7 +242,7 @@ echo "\n5. 🗄️ DATABASE CREATION CHECK\n";
 echo "=============================\n";
 
 if ($connectionTest['success'] && $connectionTest['tables'] < 10) {
-    echo "   ⚠️  Database has few tables ($connectionTest['tables'] found)\n";
+    echo "   ⚠️  Database has few tables ({$connectionTest['tables']} found)\n";
     echo "   💡 You may need to run database migration:\n";
     echo "      1. Check database/ directory for SQL files\n";
     echo "      2. Import SQL files via phpMyAdmin\n";
