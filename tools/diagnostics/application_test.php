@@ -45,7 +45,6 @@ try {
     echo "   ✅ Bootstrap loaded\n";
     
     // Test App class instantiation
-    use App\Core\App;
     
     echo "   🔄 Creating App instance...\n";
     $app = new App(__DIR__);

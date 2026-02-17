@@ -321,7 +321,7 @@ if (empty($issues)) {
 } else {
     echo "   📋 Issues Found: " . count($issues) . "\n";
     foreach ($issues as $i => $issue) {
-        echo "   " . ($i + 1) . ". $issue . "\n";
+        echo "   " . ($i + 1) . ". " . $issue . "\n";
     }
     
     echo "\n   💡 Recommended Fixes:\n";

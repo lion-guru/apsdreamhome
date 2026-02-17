@@ -14,7 +14,18 @@ class AdminDashboardController extends AdminController
     }
 
     /**
-     * The index method is now inherited from AdminController.
-     * We keep this file to avoid breaking existing references.
+     * Display admin dashboard
      */
+    public function index()
+    {
+        parent::index();
+    }
+
+    /**
+     * Alias for index (Dashboard)
+     */
+    public function dashboard()
+    {
+        parent::dashboard();
+    }
 }
