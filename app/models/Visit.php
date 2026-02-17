@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Core\Model;
-
 /**
  * Visit Model
  * Handles property site visits, virtual tours and follow-ups

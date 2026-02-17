@@ -18,7 +18,7 @@ class Farmer extends Model
      */
     public function getAllFarmers()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "SELECT f.*, s.name as state_name, d.name as district_name,
                        COUNT(fh.id) as total_holdings,
                        SUM(fh.area) as total_area
@@ -40,7 +40,7 @@ class Farmer extends Model
      */
     public function getFarmerById($id)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "SELECT f.*, s.name as state_name, d.name as district_name
                 FROM " . static::$table . " f
                 LEFT JOIN states s ON f.state_id = s.id
@@ -57,7 +57,7 @@ class Farmer extends Model
      */
     public function getFarmerLandHoldings($farmerId)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "SELECT fh.*, lp.status as purchase_status, lp.purchase_date, lp.price as purchase_price
                 FROM farmer_land_holdings fh
                 LEFT JOIN land_purchases lp ON fh.id = lp.land_holding_id
@@ -74,7 +74,7 @@ class Farmer extends Model
      */
     public function createFarmer($data)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "INSERT INTO " . static::$table . " (
                     name, email, phone, address, state_id, district_id,
                     aadhar_number, pan_number, bank_account, ifsc_code,
@@ -95,7 +95,7 @@ class Farmer extends Model
      */
     public function updateFarmer($id, $data)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $data['updated_at'] = date('Y-m-d H:i:s');
         $setParts = [];
         $params = ['id' => $id];
@@ -118,7 +118,7 @@ class Farmer extends Model
      */
     public function deleteFarmer($id)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "UPDATE " . static::$table . " SET status = 'inactive', updated_at = NOW() WHERE id = :id";
         $stmt = $db->prepare($sql);
         return $stmt->execute(['id' => $id]);
@@ -129,7 +129,7 @@ class Farmer extends Model
      */
     public function getFarmersByState($stateId)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "SELECT f.*, d.name as district_name, COUNT(fh.id) as total_holdings
                 FROM " . static::$table . " f
                 LEFT JOIN districts d ON f.district_id = d.id
@@ -148,7 +148,7 @@ class Farmer extends Model
      */
     public function searchFarmers($searchTerm)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "SELECT f.*, s.name as state_name, d.name as district_name,
                        COUNT(fh.id) as total_holdings
                 FROM " . static::$table . " f
@@ -171,7 +171,7 @@ class Farmer extends Model
      */
     public function getFarmerStatistics()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $sql = "SELECT
                     COUNT(*) as total_farmers,
                     COUNT(CASE WHEN state_id IS NOT NULL THEN 1 END) as farmers_with_state,

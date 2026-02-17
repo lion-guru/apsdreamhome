@@ -11,7 +11,7 @@ class SiteSetting extends UnifiedModel
 
     protected array $fillable = [
         'setting_name',
-        'value'
+        'setting_value'
     ];
 
     /**
@@ -20,7 +20,31 @@ class SiteSetting extends UnifiedModel
     public static function getByName($name, $default = null)
     {
         $setting = self::where('setting_name', $name)->first();
-        return $setting ? $setting->value : $default;
+        return $setting ? $setting->setting_value : $default;
+    }
+
+    /**
+     * Get all settings
+     */
+    public static function getAllSettings()
+    {
+        try {
+            $settings = static::query()
+                ->select(['setting_name', 'setting_value'])
+                ->from(self::$table)
+                ->orderBy('setting_name')
+                ->get();
+
+            $results = [];
+            foreach ($settings as $row) {
+                // Handle both object and array return types
+                $item = is_object($row) ? (array)$row : $row;
+                $results[$item['setting_name']] = $item;
+            }
+            return $results;
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -31,14 +55,15 @@ class SiteSetting extends UnifiedModel
         if (empty($names)) return [];
 
         $settings = static::query()
-            ->select(['setting_name', 'value'])
+            ->select(['setting_name', 'setting_value'])
             ->from(self::$table)
             ->whereIn('setting_name', $names)
             ->get();
 
         $results = [];
         foreach ($settings as $row) {
-            $results[$row['setting_name']] = $row['value'];
+            $item = is_object($row) ? (array)$row : $row;
+            $results[$item['setting_name']] = $item['setting_value'];
         }
 
         return $results;

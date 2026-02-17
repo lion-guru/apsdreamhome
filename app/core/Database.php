@@ -27,12 +27,17 @@ class Database extends BaseDatabase
     {
         if (self::$instance === null) {
             if (empty($config)) {
-                // Use global constants if config is not provided
+                // Use global constants or environment variables if config is not provided
+                $host = defined('DB_HOST') ? DB_HOST : ($_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'localhost');
+                $dbname = defined('DB_NAME') ? DB_NAME : ($_ENV['DB_DATABASE'] ?? getenv('DB_NAME') ?: 'apsdreamhome');
+                $user = defined('DB_USER') ? DB_USER : ($_ENV['DB_USERNAME'] ?? getenv('DB_USER') ?: 'root');
+                $pass = defined('DB_PASS') ? DB_PASS : ($_ENV['DB_PASSWORD'] ?? getenv('DB_PASS') ?: '');
+
                 $config = [
-                    'host' => defined('DB_HOST') ? DB_HOST : 'localhost',
-                    'database' => defined('DB_NAME') ? DB_NAME : 'apsdreamhome',
-                    'username' => defined('DB_USER') ? DB_USER : 'root',
-                    'password' => defined('DB_PASS') ? DB_PASS : '',
+                    'host' => $host,
+                    'database' => $dbname,
+                    'username' => $user,
+                    'password' => $pass,
                 ];
             }
             self::$instance = new self($config);
@@ -76,5 +81,37 @@ class Database extends BaseDatabase
             'errors' => 0,
             'avg_execution_time' => 0
         ];
+    }
+
+    /**
+     * Prepare a statement
+     */
+    public function prepare(string $sql): \PDOStatement
+    {
+        return $this->getConnection()->prepare($sql);
+    }
+
+    /**
+     * Begin a transaction
+     */
+    public function beginTransaction()
+    {
+        return $this->getConnection()->beginTransaction();
+    }
+
+    /**
+     * Commit a transaction
+     */
+    public function commit()
+    {
+        return $this->getConnection()->commit();
+    }
+
+    /**
+     * Rollback a transaction
+     */
+    public function rollBack()
+    {
+        return $this->getConnection()->rollBack();
     }
 }

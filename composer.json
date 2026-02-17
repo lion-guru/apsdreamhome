@@ -33,30 +33,15 @@
     },
     "autoload": {
         "psr-4": {
-            "ApsDreamHome\\": "src/",
-            "App\\": "app/",
-            "ApsDreamHome\\Controllers\\": "src/Controllers/",
-            "ApsDreamHome\\Models\\": "src/Models/",
-            "ApsDreamHome\\Services\\": "src/Services/",
-            "ApsDreamHome\\Repositories\\": "src/Repositories/",
-            "ApsDreamHome\\Middleware\\": "src/Middleware/",
-            "ApsDreamHome\\Traits\\": "src/Traits/",
-            "ApsDreamHome\\Interfaces\\": "src/Interfaces/",
-            "ApsDreamHome\\Exceptions\\": "src/Exceptions/",
-            "ApsDreamHome\\Helpers\\": "src/Helpers/",
-            "ApsDreamHome\\Standards\\": "src/Standards/",
-            "Database\\": "src/Database/"
+            "App\\": "app/"
         },
         "files": [
-            "src/Helpers/functions.php",
-            "src/Standards/CodingStandards.php"
+            "app/helpers.php"
         ]
     },
     "autoload-dev": {
         "psr-4": {
-            "ApsDreamHome\\Tests\\": "tests/",
-            "Tests\\Database\\": "tests/Database/",
-            "Tests\\Database\\Migrations\\MigrationClasses\\": "tests/Database/MigrationClasses/"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -68,11 +53,11 @@
         ],
         "test": "phpunit",
         "test:coverage": "phpunit --coverage-html=coverage",
-        "lint": "phpcs --standard=PSR12 src/",
-        "lint:fix": "phpcbf --standard=PSR12 src/",
-        "analyze": "phpstan analyze src/",
-        "fix": "php-cs-fixer fix src/",
-        "rector": "rector process src/",
+        "lint": "phpcs --standard=PSR12 app/",
+        "lint:fix": "phpcbf --standard=PSR12 app/",
+        "analyze": "phpstan analyze app/",
+        "fix": "php-cs-fixer fix app/",
+        "rector": "rector process app/",
         "check": [
             "@lint",
             "@analyze",

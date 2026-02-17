@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Database;
+use App\Core\Database;
 use App\Services\NotificationService;
 use Exception;
 use PDO;
@@ -238,8 +238,9 @@ class PayoutService
                 );
                 $this->notifyFinance(
                     'Payout batch ready for disbursement',
-                    $summary,
-                    'finance_batch_processing'
+                    $this->buildBatchEmailBody('processing', $summary ?? []),
+                    'finance_batch_processing',
+                    $summary ?? []
                 );
             } elseif ($finalStatus === 'cancelled' && $previousStatus !== 'cancelled' && $decision === 'rejected') {
                 $message = 'Batch rejected and marked as cancelled.';
@@ -306,13 +307,15 @@ class PayoutService
                     'payout_batch_disbursed',
                     ['batch_id' => $batchId]
                 );
+                $data = array_merge($batch, [
+                    'disbursement_reference' => $reference,
+                    'processed_notes' => $notes,
+                ]);
                 $this->notifyFinance(
                     'Payout batch disbursed',
-                    array_merge($batch, [
-                        'disbursement_reference' => $reference,
-                        'processed_notes' => $notes,
-                    ]),
-                    'finance_batch_disbursed'
+                    $this->buildBatchEmailBody('disbursed', $data),
+                    'finance_batch_disbursed',
+                    $data
                 );
             }
 

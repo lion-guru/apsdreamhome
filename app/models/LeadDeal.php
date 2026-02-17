@@ -95,7 +95,7 @@ class LeadDeal extends Model
      */
     public function activities()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_activities WHERE related_id = :id AND related_type = 'deal'");
         $stmt->execute(['id' => $this->id]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -243,7 +243,7 @@ class LeadDeal extends Model
      */
     public static function status($status)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_deals WHERE status = :status");
         $stmt->execute(['status' => $status]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -261,7 +261,7 @@ class LeadDeal extends Model
      */
     public static function stage($stage)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_deals WHERE deal_stage = :stage");
         $stmt->execute(['stage' => $stage]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -280,7 +280,7 @@ class LeadDeal extends Model
     public static function upcoming()
     {
         $today = date('Y-m-d');
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_deals WHERE expected_close_date >= :today ORDER BY expected_close_date ASC");
         $stmt->execute(['today' => $today]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -299,7 +299,7 @@ class LeadDeal extends Model
     public static function overdue()
     {
         $today = date('Y-m-d');
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_deals WHERE expected_close_date < :today AND status NOT IN ('won', 'lost', 'cancelled') ORDER BY expected_close_date ASC");
         $stmt->execute(['today' => $today]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);

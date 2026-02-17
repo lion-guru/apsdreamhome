@@ -1,0 +1,24 @@
+Files recommended for deletion (legacy/duplicate/obsolete):
+
+- backup_duplicates/updated-associate_dashboard.php
+- backup_duplicates/updated-user_dashboard.php
+- backup_duplicates/updated-dash.php
+- backup_duplicates/updated-about.php
+- backup_duplicates/updated-contact.php
+- backup_duplicates/updated-example-page.php
+- backup_duplicates/updated-feature.php
+- backup_duplicates/updated-index.php
+- backup_duplicates/updated-login.php
+- backup_duplicates/updated-property.php
+- backup_duplicates/updated-submitproperty.php
+- include/updated-common-header.php
+- include/updated-common-footer.php
+- includes/updated-common-header.php
+- includes/updated-common-footer.php
+- admin/updated-admin-header.php
+- admin/updated-admin-footer.php
+- admin/updated-admin-sidebar.php
+- admin/updated-admin-wrapper.php
+- includes/templates/static_header.php
+
+All of these are either legacy backups, obsolete templates, or replaced by standardized files. Proceed to delete them for a clean codebase.

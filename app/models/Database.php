@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Core\Database as CoreDatabase;
@@ -7,18 +8,22 @@ use App\Core\Database as CoreDatabase;
  * Database Wrapper for Models
  * Extends the Core Database class to provide backward compatibility
  * for models using App\Models\Database directly.
+ *
+ * @deprecated Use App\Core\Database instead.
  */
-class Database extends CoreDatabase {
+class Database extends CoreDatabase
+{
     private static $instance = null;
 
-    public function __construct($config = []) {
+    public function __construct($config = [])
+    {
         if (empty($config)) {
             // Support both $_ENV and getenv for maximum compatibility
             $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'localhost';
             $dbname = $_ENV['DB_DATABASE'] ?? getenv('DB_NAME') ?: 'apsdreamhome';
             $username = $_ENV['DB_USERNAME'] ?? getenv('DB_USER') ?: 'root';
             $password = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASS') ?: '';
-            
+
             $config = [
                 'host' => $host,
                 'database' => $dbname,
@@ -30,18 +35,16 @@ class Database extends CoreDatabase {
         parent::__construct($config);
     }
 
-    public static function getInstance($config = []): self {
-        if (self::$instance === null) {
-            self::$instance = new self($config);
-        }
-        return self::$instance;
+    public static function getInstance($config = []): CoreDatabase
+    {
+        return CoreDatabase::getInstance($config);
     }
 
     public function prepare(string $sql): \PDOStatement
     {
         return $this->getConnection()->prepare($sql);
     }
-    
+
     // Legacy method support
     public function beginTransaction()
     {
@@ -62,7 +65,7 @@ class Database extends CoreDatabase {
     {
         return $this->getConnection()->lastInsertId();
     }
-    
+
     private function __clone() {}
     public function __wakeup() {}
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Core\Model;
 use PDO;
 
 class SupportTicket extends Model
@@ -34,8 +33,9 @@ class SupportTicket extends Model
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    public function getAllTicketsWithUser() {
+
+    public function getAllTicketsWithUser()
+    {
         $sql = "SELECT t.*, u.name as user_name, u.email as user_email 
                 FROM " . static::$table . " t 
                 JOIN users u ON t.user_id = u.id 

@@ -68,27 +68,11 @@ require_once CORE_PATH . '/ErrorHandler.php';
 require_once CORE_PATH . '/SystemIntegration.php';
 require_once CORE_PATH . '/Database.php';
 
+// Include global helper functions
+if (file_exists(APP_PATH . '/helpers.php')) {
+    require_once APP_PATH . '/helpers.php';
+}
 
 // Initialize the application
 // use App\Core\App;
 // $app = new App();
-
-// Define helper functions
-if (!function_exists('config')) {
-    function config($key = null, $default = null)
-    {
-        global $config;
-        if (is_null($key)) {
-            return $config;
-        }
-        return $config[$key] ?? $default;
-    }
-}
-
-if (!function_exists('app')) {
-    function app()
-    {
-        global $app;
-        return $app;
-    }
-}

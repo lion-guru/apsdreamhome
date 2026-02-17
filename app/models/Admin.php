@@ -97,14 +97,14 @@ class Admin extends Model
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $stats['total_users'] = $result ? (int)$result['total'] : 0;
 
-        // Total properties
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM properties");
+        // Total properties (active/available)
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM properties WHERE status = 'active' OR status = 'available'");
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $stats['total_properties'] = $result ? (int)$result['total'] : 0;
 
         // Total leads
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM leads");
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM leads WHERE status != 'deleted'");
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $stats['total_leads'] = $result ? (int)$result['total'] : 0;
@@ -115,7 +115,66 @@ class Admin extends Model
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $stats['total_farmers'] = $result ? (int)$result['total'] : 0;
 
+        // Placeholders for compatibility
+        $stats['new_notifications'] = 5;
+        $stats['revenue_this_month'] = '₹ 45.2L';
+
         return $stats;
+    }
+
+    /**
+     * Get recent activities
+     */
+    public function getRecentActivities()
+    {
+        $activities = [];
+
+        try {
+            // Recent Bookings
+            $stmt = $this->db->prepare("SELECT b.id, COALESCE(c.name, 'Unknown Customer') as customer, COALESCE(b.plot_id, b.property_id) as plot_id, COALESCE(b.amount, 0) as amount, b.status, b.booking_date FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id ORDER BY b.booking_date DESC, b.id DESC LIMIT 5");
+            $stmt->execute();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $activities[] = [
+                    'type' => 'booking',
+                    'message' => 'New Booking - ' . ucfirst($row['status']) . ' (₹' . number_format($row['amount']) . ') for ' . $row['customer'],
+                    'time' => date('M j, Y', strtotime($row['booking_date']))
+                ];
+            }
+        } catch (\Exception $e) {
+            // Silently fail
+        }
+
+        try {
+            // Recent Properties
+            $stmt = $this->db->prepare("SELECT title, created_at FROM properties ORDER BY created_at DESC LIMIT 3");
+            $stmt->execute();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $activities[] = [
+                    'type' => 'property_added',
+                    'message' => 'New property added: ' . htmlspecialchars($row['title']),
+                    'time' => date('M j, Y', strtotime($row['created_at']))
+                ];
+            }
+        } catch (\Exception $e) {
+            // Silently fail
+        }
+
+        try {
+            // Recent Users
+            $stmt = $this->db->prepare("SELECT name, created_at FROM users ORDER BY created_at DESC LIMIT 2");
+            $stmt->execute();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $activities[] = [
+                    'type' => 'user_registered',
+                    'message' => 'New user registered: ' . htmlspecialchars($row['name']),
+                    'time' => date('M j, Y', strtotime($row['created_at']))
+                ];
+            }
+        } catch (\Exception $e) {
+            // Silently fail
+        }
+
+        return $activities;
     }
 
     /**

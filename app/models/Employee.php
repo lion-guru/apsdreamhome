@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Core\Model;
 use PDO;
 use Exception;
 
@@ -396,6 +395,96 @@ class Employee extends Model
         } catch (Exception $e) {
             $this->db->rollBack();
             throw $e;
+        }
+    }
+
+    /**
+     * Get employees for admin with filters and pagination
+     */
+    public static function getAdminEmployees($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where = [];
+            $params = [];
+
+            if (!empty($filters['search'])) {
+                $where[] = "(name LIKE :search_name OR email LIKE :search_email OR phone LIKE :search_phone)";
+                $term = '%' . $filters['search'] . '%';
+                $params['search_name'] = $term;
+                $params['search_email'] = $term;
+                $params['search_phone'] = $term;
+            }
+
+            if (!empty($filters['status'])) {
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+            $allowed_sorts = ['id', 'name', 'email', 'created_at', 'status'];
+            $sort = in_array($filters['sort'] ?? '', $allowed_sorts) ? $filters['sort'] : 'created_at';
+            $order = strtoupper($filters['order'] ?? '') === 'ASC' ? 'ASC' : 'DESC';
+
+            $limit = (int)($filters['per_page'] ?? 10);
+            $offset = (int)((($filters['page'] ?? 1) - 1) * $limit);
+
+            $sql = "SELECT * FROM employees {$where_clause} ORDER BY {$sort} {$order} LIMIT :limit OFFSET :offset";
+
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Admin employees query error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total employees count for pagination
+     */
+    public static function getAdminTotalEmployees($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where = [];
+            $params = [];
+
+            if (!empty($filters['search'])) {
+                $where[] = "(name LIKE :search_name OR email LIKE :search_email OR phone LIKE :search_phone)";
+                $term = '%' . $filters['search'] . '%';
+                $params['search_name'] = $term;
+                $params['search_email'] = $term;
+                $params['search_phone'] = $term;
+            }
+
+            if (!empty($filters['status'])) {
+                $where[] = "status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            $where_clause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+            $sql = "SELECT COUNT(*) FROM employees {$where_clause}";
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->execute();
+
+            return (int)$stmt->fetchColumn();
+        } catch (Exception $e) {
+            error_log('Admin total employees query error: ' . $e->getMessage());
+            return 0;
         }
     }
 }
