@@ -91,6 +91,7 @@ class PropertyController extends AdminController
 
             // Set default values
             $data['status'] = $data['status'] ?? 'active';
+            $data['featured'] = isset($data['featured']) ? 1 : 0;
             $data['created_at'] = date('Y-m-d H:i:s');
 
             $property = Property::create($data);
@@ -155,6 +156,7 @@ class PropertyController extends AdminController
             }
 
             $data = $this->request->all();
+            $data['featured'] = isset($data['featured']) ? 1 : 0;
             $data['updated_at'] = date('Y-m-d H:i:s');
 
             $property->fill($data);
@@ -187,8 +189,14 @@ class PropertyController extends AdminController
     public function delete($id)
     {
         $this->checkWritePermission();
-        // CSRF check for delete usually via POST, but if GET, be careful.
-        // Assuming GET for now as per view code.
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+             if (!$this->validateCsrfToken()) {
+                $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed.') : 'Security validation failed.');
+                $this->redirect('admin/properties');
+                return;
+            }
+        }
 
         try {
             $property = Property::find($id);
