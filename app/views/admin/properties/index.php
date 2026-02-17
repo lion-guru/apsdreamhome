@@ -1,8 +1,8 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-building me-2"></i>Property Management</h2>
-        <a href="<?php echo BASE_URL; ?>/admin/properties/create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Add New Property
+        <h2><i class="fas fa-building me-2"></i><?php echo h($mlSupport->translate('Property Management')); ?></h2>
+        <a href="/admin/properties/create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> <?php echo h($mlSupport->translate('Add New Property')); ?>
         </a>
     </div>
 
@@ -12,18 +12,18 @@
                 <table class="table table-hover mb-0 admin-table">
                     <thead class="bg-light">
                         <tr>
-                            <th>Property</th>
-                            <th>Location</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th>Added On</th>
-                            <th class="text-end">Actions</th>
+                            <th><?php echo h($mlSupport->translate('Property')); ?></th>
+                            <th><?php echo h($mlSupport->translate('Location')); ?></th>
+                            <th><?php echo h($mlSupport->translate('Price')); ?></th>
+                            <th><?php echo h($mlSupport->translate('Status')); ?></th>
+                            <th><?php echo h($mlSupport->translate('Added On')); ?></th>
+                            <th class="text-end"><?php echo h($mlSupport->translate('Actions')); ?></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($properties)): ?>
                             <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">No properties found.</td>
+                                <td colspan="6" class="text-center py-4 text-muted"><?php echo h($mlSupport->translate('No properties found.')); ?></td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($properties as $property): ?>
@@ -45,12 +45,15 @@
                                     </td>
                                     <td><?php echo date('d M Y', strtotime($property['created_at'])); ?></td>
                                     <td class="text-end">
-                                        <a href="<?php echo BASE_URL; ?>/admin/properties/edit/<?php echo $property['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="/admin/properties/edit/<?php echo $property['id']; ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete(<?php echo $property['id']; ?>)">
                                             <i class="fas fa-trash"></i>
                                         </button>
+                                        <form id="delete-form-<?php echo $property['id']; ?>" action="/admin/properties/delete/<?php echo $property['id']; ?>" method="POST" style="display: none;">
+                                            <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
+                                        </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -64,8 +67,8 @@
 
 <script>
     function confirmDelete(id) {
-        if (confirm('Are you sure you want to delete this property?')) {
-            window.location.href = '<?php echo BASE_URL; ?>/admin/properties/delete/' + id;
+        if (confirm('<?php echo h($mlSupport->translate('Are you sure you want to delete this property?')); ?>')) {
+            document.getElementById('delete-form-' + id).submit();
         }
     }
 </script>

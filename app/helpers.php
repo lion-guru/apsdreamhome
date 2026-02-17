@@ -142,3 +142,33 @@ if (!function_exists('getCsrfField')) {
         return '<input type="hidden" name="csrf_token" value="' . h($token) . '">';
     }
 }
+
+if (!function_exists('csrf_field')) {
+    /**
+     * Generate CSRF field (Alias for getCsrfField)
+     * 
+     * @return string
+     */
+    function csrf_field()
+    {
+        return getCsrfField();
+    }
+}
+
+if (!function_exists('get_flash')) {
+    /**
+     * Get flash message from session
+     * 
+     * @param string $key
+     * @return string|null
+     */
+    function get_flash($key)
+    {
+        if (isset($_SESSION[$key])) {
+            $message = $_SESSION[$key];
+            unset($_SESSION[$key]);
+            return $message;
+        }
+        return null;
+    }
+}
