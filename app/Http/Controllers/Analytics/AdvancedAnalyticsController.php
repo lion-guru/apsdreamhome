@@ -283,6 +283,7 @@ class AdvancedAnalyticsController extends BaseController
         try {
             $associateMLM = new \App\Models\AssociateMLM();
             $chatbot = new \App\Models\AIChatbot();
+            $mlmAnalytics = new \App\Models\MLMAdvancedAnalytics();
 
             $data = [];
 
@@ -294,6 +295,12 @@ class AdvancedAnalyticsController extends BaseController
 
             // Commission trends
             $data['commission_trends'] = $this->getMLMCommissionTrends();
+
+            // Advanced Analytics
+            // Pass null for system-wide analytics, or get logged in user's ID if this is for a specific user.
+            // Assuming this controller method is for Admin dashboard overview (based on method name mlmAnalytics and isAdmin check in public method),
+            // so we want system-wide analytics or top-level analytics.
+            $data['advanced_analytics'] = $mlmAnalytics->generateMLMAnalytics(null, 'monthly');
 
             // Top performers
             $data['top_performers'] = $associateMLM->getTopPerformers(20);
