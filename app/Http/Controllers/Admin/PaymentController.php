@@ -9,19 +9,13 @@ use Exception;
  * PaymentController
  * Handles payment-related operations in the Admin panel
  */
-class PaymentController extends BaseController
+class PaymentController extends AdminController
 {
     protected $paymentModel;
 
     public function __construct()
     {
         parent::__construct();
-
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $this->paymentModel = $this->model('Payment');
     }
 
@@ -53,7 +47,7 @@ class PaymentController extends BaseController
     {
         // View handles data loading via AJAX
         $this->render('admin/payments/index', [
-            'page_title' => 'Payment Management'
+            'page_title' => $this->mlSupport->translate('Payment Management')
         ]);
     }
 

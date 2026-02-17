@@ -34,7 +34,7 @@ class LandController extends AdminController
         $farmer_mobile = trim($_POST['farmer_mobile'] ?? '');
 
         if (empty($farmer_name) || empty($farmer_mobile)) {
-            set_flash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
+            $this->setFlash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
             $this->redirect('admin/land/create');
             return;
         }
@@ -72,12 +72,12 @@ class LandController extends AdminController
                 if (move_uploaded_file($_FILES['land_paper']['tmp_name'], $target_path)) {
                     $file_path = $upload_dir . $file_name;
                 } else {
-                    set_flash('error', $this->mlSupport->translate('Failed to upload file.'));
+                    $this->setFlash('error', $this->mlSupport->translate('Failed to upload file.'));
                     $this->redirect('admin/land/create');
                     return;
                 }
             } else {
-                set_flash('error', $this->mlSupport->translate('Invalid file type.'));
+                $this->setFlash('error', $this->mlSupport->translate('Invalid file type.'));
                 $this->redirect('admin/land/create');
                 return;
             }

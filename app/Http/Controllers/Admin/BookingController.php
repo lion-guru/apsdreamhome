@@ -21,7 +21,7 @@ class BookingController extends AdminController
      */
     public function index()
     {
-        $this->data['page_title'] = 'Bookings Management';
+        $this->data['page_title'] = $this->mlSupport->translate('Bookings Management');
 
         $filters = [
             'search' => $_GET['search'] ?? '',
@@ -81,7 +81,7 @@ class BookingController extends AdminController
      */
     public function create()
     {
-        $this->data['page_title'] = 'Add New Booking';
+        $this->data['page_title'] = $this->mlSupport->translate('Add New Booking');
 
         // Fetch properties
         $this->data['properties'] = $this->db->fetchAll("SELECT id, title FROM properties WHERE status = 'available' ORDER BY title");

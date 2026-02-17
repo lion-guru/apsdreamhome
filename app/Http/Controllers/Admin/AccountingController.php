@@ -79,7 +79,7 @@ class AccountingController extends AdminController
     {
         // CSRF check is handled by middleware, but we can double check if needed
         if (!$this->validateCsrfToken()) {
-            set_flash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
             $this->redirect('admin/accounting/income/add');
             return;
         }
@@ -96,7 +96,7 @@ class AccountingController extends AdminController
         $created_by = $_SESSION['user_id'] ?? 1;
 
         if ($amount <= 0 || empty($category) || empty($income_date)) {
-            set_flash('error', $this->mlSupport->translate('Please fill in all required fields correctly.'));
+            $this->setFlash('error', $this->mlSupport->translate('Please fill in all required fields correctly.'));
             $this->redirect('admin/accounting/income/add');
             return;
         }

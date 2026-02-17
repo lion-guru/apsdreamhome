@@ -2,24 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * VisitController
  * Handles Visit Management in the Admin panel
  */
-class VisitController extends BaseController
+class VisitController extends AdminController
 {
     protected $visitModel;
 
     public function __construct()
     {
         parent::__construct();
-
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
 
         $this->visitModel = $this->model('Visit');
     }

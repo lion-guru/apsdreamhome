@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\CleanLeadService;
 use App\Services\EmailService;
 
-class LeadController extends BaseController
+class LeadController extends AdminController
 {
     private $leadService;
     private $emailService;
@@ -14,13 +14,6 @@ class LeadController extends BaseController
     public function __construct()
     {
         parent::__construct();
-
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
-        $this->layout = 'layouts/admin';
 
         $this->leadService = new CleanLeadService();
         $this->emailService = new EmailService();

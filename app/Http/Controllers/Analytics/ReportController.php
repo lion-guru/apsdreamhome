@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers\Analytics;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\ReportService;
 
-class ReportController extends BaseController
+class ReportController extends AdminController
 {
     private $reportService;
 
     public function __construct()
     {
         parent::__construct();
-
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
 
         $this->reportService = new ReportService();
     }

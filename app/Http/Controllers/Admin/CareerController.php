@@ -21,21 +21,21 @@ class CareerController extends AdminController
         $careers = Career::all();
         $this->render('admin/careers/index', [
             'careers' => $careers,
-            'title' => 'Manage Careers'
+            'title' => $this->mlSupport->translate('Manage Careers')
         ]);
     }
 
     public function create()
     {
         $this->render('admin/careers/create', [
-            'title' => 'Post New Job'
+            'title' => $this->mlSupport->translate('Post New Job')
         ]);
     }
 
     public function store()
     {
         if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Invalid CSRF token');
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/careers/create');
             return;
         }
@@ -56,10 +56,10 @@ class CareerController extends AdminController
         $career->description = $description;
 
         if ($career->save()) {
-            $this->setFlash('success', 'Job posted successfully');
+            $this->setFlash('success', $this->mlSupport->translate('Job posted successfully'));
             $this->redirect('admin/careers');
         } else {
-            $this->setFlash('error', 'Failed to post job');
+            $this->setFlash('error', $this->mlSupport->translate('Failed to post job'));
             $this->redirect('admin/careers/create');
         }
     }
@@ -68,28 +68,28 @@ class CareerController extends AdminController
     {
         $career = Career::find($id);
         if (!$career) {
-            $this->setFlash('error', 'Job not found');
+            $this->setFlash('error', $this->mlSupport->translate('Job not found'));
             $this->redirect('admin/careers');
             return;
         }
 
         $this->render('admin/careers/edit', [
             'career' => $career,
-            'title' => 'Edit Job'
+            'title' => $this->mlSupport->translate('Edit Job')
         ]);
     }
 
     public function update($id)
     {
         if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Invalid CSRF token');
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/careers/edit/' . $id);
             return;
         }
 
         $career = Career::find($id);
         if (!$career) {
-            $this->setFlash('error', 'Job not found');
+            $this->setFlash('error', $this->mlSupport->translate('Job not found'));
             $this->redirect('admin/careers');
             return;
         }
@@ -133,10 +133,10 @@ class CareerController extends AdminController
         // If ID is provided, get applications for that job
         // Otherwise get all applications
         // Assuming CareerApplication model exists, if not we'll create a basic view
-        
+
         // This is a placeholder for now as I need to check CareerApplication model
         // But for migration completeness of "admin_view_applicants.php", this is needed.
-        
+
         $this->render('admin/careers/applications', [
             'title' => 'Job Applications',
             'jobId' => $id

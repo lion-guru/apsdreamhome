@@ -14,7 +14,7 @@ use PDO;
  * NetworkController
  * Admin UI endpoints for MLM network management.
  */
-class NetworkController extends BaseController
+class NetworkController extends AdminController
 {
     private $referralService;
     private $agreementService;
@@ -24,11 +24,6 @@ class NetworkController extends BaseController
     {
         parent::__construct();
 
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $this->referralService = new ReferralService();
         $this->agreementService = new CommissionAgreementService();
         $this->rankService = new RankService();
@@ -37,7 +32,7 @@ class NetworkController extends BaseController
     public function index(): void
     {
         $this->data['ranks'] = $this->rankService->getRanks();
-        $this->data['page_title'] = 'MLM Network Inspector';
+        $this->data['page_title'] = $this->mlSupport->translate('MLM Network Inspector');
         $this->render('admin/mlm_network_inspector');
     }
 

@@ -2,25 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
 /**
  * EMI Controller
  * Handles EMI plans management in the Admin panel
  */
-class EMIController extends BaseController
+class EMIController extends AdminController
 {
     protected $emiModel;
 
     public function __construct()
     {
         parent::__construct();
-
-        // Check authentication
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
 
         $this->emiModel = $this->model('EMI');
     }
