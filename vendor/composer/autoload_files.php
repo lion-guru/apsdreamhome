@@ -24,6 +24,5 @@ return array(
     'ce9671a430e4846b44e1c68c7611f9f5' => $vendorDir . '/mockery/mockery/library/Mockery.php',
     'ec07570ca5a812141189b1fa81503674' => $vendorDir . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     '38143a9afc50997d55e4815db8489d1c' => $vendorDir . '/rector/rector/bootstrap.php',
-    '1c75bef5ab11ead1ae702352b5cd6c86' => $baseDir . '/src/Helpers/functions.php',
-    'e6653d12abc1189c4653a500a93af3d0' => $baseDir . '/src/Standards/CodingStandards.php',
+    '460f5fa9de34cf5056c24170ebfc107c' => $baseDir . '/app/helpers.php',
 );

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Core\Model;
-
 /**
  * EMI Model
  * Handles EMI plans, payments and scheduling

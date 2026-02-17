@@ -35,7 +35,7 @@ class LeadSource extends Model
      */
     public function leads()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM leads WHERE source = :source");
         $stmt->execute(['source' => $this->name]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -53,7 +53,7 @@ class LeadSource extends Model
      */
     public static function active()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_sources WHERE is_active = 1 ORDER BY sort_order ASC");
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);

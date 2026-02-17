@@ -32,7 +32,7 @@ class LeadTag extends Model
      */
     public function leads()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("
             SELECT l.* FROM leads l
             INNER JOIN lead_tag_mapping ltm ON l.id = ltm.lead_id
@@ -62,7 +62,7 @@ class LeadTag extends Model
      */
     public static function system()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_tags WHERE is_system = 1");
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -80,7 +80,7 @@ class LeadTag extends Model
      */
     public static function userCreated()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_tags WHERE is_system = 0");
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);

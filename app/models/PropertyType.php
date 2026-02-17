@@ -15,4 +15,15 @@ class PropertyType extends UnifiedModel {
             ->orderBy('name')
             ->get();
     }
+
+    /**
+     * Get property types for select dropdowns
+     */
+    public static function getForSelect() {
+        return static::query()
+            ->select(['id', 'name'])
+            ->from(static::$table)
+            ->orderBy('name')
+            ->get();
+    }
 }

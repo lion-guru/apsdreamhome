@@ -15,7 +15,7 @@ class BaseController extends CoreController
     public function __construct()
     {
         parent::__construct();
-        $this->db = \App\Models\Database::getInstance();
+        $this->db = \App\Core\Database::getInstance();
         $this->loadModels();
         // Ensure CSRF token is initialized
         $this->getCsrfToken();

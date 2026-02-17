@@ -131,13 +131,20 @@ class App
             throw new Exception('Config directory not found');
         }
 
-        // Skip loading bootstrap.php recursively
+        // Load bootstrap.php which sets up the global $config array and environment
         $bootstrapFile = $configDir . '/bootstrap.php';
         if (file_exists($bootstrapFile)) {
             require_once $bootstrapFile;
         }
 
-        // Load each PHP file in the config directory, excluding bootstrap.php
+        // Import global config if available (bridging legacy and new systems)
+        global $config;
+        if (is_array($config) && !empty($config)) {
+            $this->config = $config;
+            return;
+        }
+
+        // Fallback: Load each PHP file in the config directory if global config is empty
         foreach (glob($configDir . '/*.php') as $configFile) {
             $key = basename($configFile, '.php');
             if ($key !== 'bootstrap') { // Skip bootstrap as it's already loaded
@@ -205,6 +212,53 @@ class App
 
         // Initialize auth
         $this->auth = new Auth();
+
+        // Register middleware
+        $this->register('web', new class {
+            public function handle($request, $next)
+            {
+                return $next($request);
+            }
+        });
+
+        $this->register('auth', new class {
+            public function handle($request, $next)
+            {
+                // Check if user is logged in
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+
+                // Check for any authentication session
+                if (
+                    !isset($_SESSION['user_id']) &&
+                    !isset($_SESSION['admin_logged_in']) &&
+                    !isset($_SESSION['employee_id']) &&
+                    !isset($_SESSION['customer_id']) &&
+                    !isset($_SESSION['associate_id'])
+                ) {
+
+                    header('Location: /login');
+                    exit;
+                }
+                return $next($request);
+            }
+        });
+
+        $this->register('admin', new class {
+            public function handle($request, $next)
+            {
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+
+                if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+                    header('Location: /admin/login');
+                    exit;
+                }
+                return $next($request);
+            }
+        });
 
         // Initialize router
         $this->router = new Router($this);

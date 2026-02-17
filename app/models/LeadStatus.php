@@ -36,7 +36,7 @@ class LeadStatus extends Model
      */
     public static function find($id)
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_statuses WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -46,7 +46,7 @@ class LeadStatus extends Model
     /**
     public function leads()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM leads WHERE status = :status");
         $stmt->execute(['status' => $this->name]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -64,7 +64,7 @@ class LeadStatus extends Model
      */
     public function statusHistory()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_status_history WHERE status_id = :status_id");
         $stmt->execute(['status_id' => $this->id]);
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -82,7 +82,7 @@ class LeadStatus extends Model
      */
     public static function active()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_statuses WHERE is_active = 1 ORDER BY sort_order ASC");
         $stmt->execute();
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -100,7 +100,7 @@ class LeadStatus extends Model
      */
     public static function getDefault()
     {
-        $db = \App\Models\Database::getInstance();
+        $db = \App\Core\Database::getInstance();
         $stmt = $db->prepare("SELECT * FROM lead_statuses WHERE is_default = 1 LIMIT 1");
         $stmt->execute();
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);

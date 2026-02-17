@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Database;
+use App\Core\Database;
 use App\Services\NotificationService;
 use App\Services\MlmSettings;
 use PDO;

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Database;
+use App\Core\Database;
 
 class CleanLeadService
 {

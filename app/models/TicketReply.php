@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Core\Model;
 use PDO;
 
 class TicketReply extends Model

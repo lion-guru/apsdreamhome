@@ -405,10 +405,7 @@ abstract class Model
         $stmt->execute([$id]);
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $model = new static();
-            $model->fill($row);
-            $model->exists = true;
-            return $model;
+            return static::hydrate($row);
         }
 
         return null;
@@ -427,10 +424,7 @@ abstract class Model
         $results = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $model = new static();
-            $model->fill($row);
-            $model->exists = true;
-            $results[] = $model;
+            $results[] = static::hydrate($row);
         }
 
         return $results;
@@ -583,10 +577,7 @@ abstract class Model
         $stmt->execute($params);
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $model = new static();
-            $model->fill($row);
-            $model->exists = true;
-            return $model;
+            return static::hydrate($row);
         }
 
         return null;
@@ -633,10 +624,7 @@ abstract class Model
         $results = [];
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $model = new static();
-            $model->fill($row);
-            $model->exists = true;
-            $results[] = $model;
+            $results[] = static::hydrate($row);
         }
 
         return $results;
@@ -695,6 +683,19 @@ abstract class Model
     public function __isset($key)
     {
         return isset($this->attributes[$key]);
+    }
+
+    /**
+     * Create a new instance of the model from raw attributes
+     * Bypassing fillable checks for database hydration
+     */
+    public static function hydrate(array $attributes): self
+    {
+        $instance = new static();
+        $instance->attributes = $attributes;
+        $instance->original = $attributes;
+        $instance->exists = true;
+        return $instance;
     }
 
     /**

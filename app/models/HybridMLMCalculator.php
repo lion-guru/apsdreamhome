@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hybrid MLM Commission Calculator & Plan Builder
  * Advanced Multi-Level Marketing System for APS Dream Home
@@ -11,13 +12,19 @@ namespace App\Models;
  * Advanced MLM Commission Calculator
  * Supports multiple MLM plan types and calculations
  */
-class HybridMLMCalculator {
+class HybridMLMCalculator
+{
     private $db;
     private $planType;
+    /**
+     * Configuration for the current plan
+     * @var array
+     */
     private $planConfig;
 
-    public function __construct($planType = 'hybrid', $planConfig = []) {
-        $this->db = \App\Models\Database::getInstance();
+    public function __construct($planType = 'hybrid', $planConfig = [])
+    {
+        $this->db = \App\Core\Database::getInstance();
         $this->planType = $planType;
         $this->planConfig = $planConfig;
     }
@@ -25,7 +32,8 @@ class HybridMLMCalculator {
     /**
      * Calculate commission for any MLM plan type
      */
-    public function calculateCommission($associateId, $businessVolume, $level = 1) {
+    public function calculateCommission($associateId, $businessVolume, $level = 1)
+    {
         switch ($this->planType) {
             case 'binary':
                 return $this->calculateBinaryCommission($associateId, $businessVolume, $level);
@@ -43,7 +51,8 @@ class HybridMLMCalculator {
      * Binary Plan Commission Calculation
      * Left and Right legs with balancing
      */
-    private function calculateBinaryCommission($associateId, $businessVolume, $level) {
+    private function calculateBinaryCommission($associateId, $businessVolume, $level)
+    {
         $commission = 0;
 
         // Get associate's binary tree structure
@@ -76,7 +85,8 @@ class HybridMLMCalculator {
      * Unilevel Plan Commission Calculation
      * Unlimited width, limited depth
      */
-    private function calculateUnilevelCommission($associateId, $businessVolume, $level) {
+    private function calculateUnilevelCommission($associateId, $businessVolume, $level)
+    {
         $commission = 0;
 
         // Get downline structure
@@ -101,7 +111,8 @@ class HybridMLMCalculator {
      * Matrix Plan Commission Calculation
      * Fixed width, limited depth
      */
-    private function calculateMatrixCommission($associateId, $businessVolume, $level) {
+    private function calculateMatrixCommission($associateId, $businessVolume, $level)
+    {
         $commission = 0;
 
         // Matrix configuration (e.g., 3x9 matrix)
@@ -130,19 +141,30 @@ class HybridMLMCalculator {
      * Hybrid Plan Commission Calculation
      * Combines best features of Binary, Unilevel, and Matrix
      */
-    private function calculateHybridCommission($associateId, $businessVolume, $level) {
+    private function calculateHybridCommission($associateId, $businessVolume, $level)
+    {
         $results = [];
 
-        // Binary component (40% weight)
-        $binaryResult = $this->calculateBinaryCommission($associateId, $businessVolume * 0.4, $level);
+        // Get weights from config or use defaults
+        $weights = $this->planConfig['commission_rates'] ?? [
+            'binary' => ['weight' => 40],
+            'unilevel' => ['weight' => 35],
+            'matrix' => ['weight' => 25]
+        ];
+
+        // Binary component
+        $binaryWeight = ($weights['binary']['weight'] ?? 40) / 100;
+        $binaryResult = $this->calculateBinaryCommission($associateId, $businessVolume * $binaryWeight, $level);
         $results['binary'] = $binaryResult;
 
-        // Unilevel component (35% weight)
-        $unilevelResult = $this->calculateUnilevelCommission($associateId, $businessVolume * 0.35, $level);
+        // Unilevel component
+        $unilevelWeight = ($weights['unilevel']['weight'] ?? 35) / 100;
+        $unilevelResult = $this->calculateUnilevelCommission($associateId, $businessVolume * $unilevelWeight, $level);
         $results['unilevel'] = $unilevelResult;
 
-        // Matrix component (25% weight)
-        $matrixResult = $this->calculateMatrixCommission($associateId, $businessVolume * 0.25, $level);
+        // Matrix component
+        $matrixWeight = ($weights['matrix']['weight'] ?? 25) / 100;
+        $matrixResult = $this->calculateMatrixCommission($associateId, $businessVolume * $matrixWeight, $level);
         $results['matrix'] = $matrixResult;
 
         // Calculate total commission
@@ -167,7 +189,8 @@ class HybridMLMCalculator {
     /**
      * Calculate Hybrid Plan Bonuses
      */
-    private function calculateHybridBonuses($associateId, $businessVolume, $components) {
+    private function calculateHybridBonuses($associateId, $businessVolume, $components)
+    {
         $bonuses = [
             'leadership_bonus' => 0,
             'team_building_bonus' => 0,
@@ -176,22 +199,28 @@ class HybridMLMCalculator {
             'total_bonus' => 0
         ];
 
+        $bonusConfig = $this->planConfig['bonuses'] ?? [
+            'leadership_bonus' => 2,
+            'team_building_bonus' => 1000,
+            'volume_bonus' => 0.5
+        ];
+
         // Leadership Bonus - Based on team size and performance
         $teamSize = ($components['binary']['left_volume'] + $components['binary']['right_volume']) / 1000000;
         if ($teamSize >= 10) {
-            $bonuses['leadership_bonus'] = $businessVolume * 0.02; // 2% of personal volume
+            $bonuses['leadership_bonus'] = $businessVolume * (($bonusConfig['leadership_bonus'] ?? 2) / 100);
         }
 
         // Team Building Bonus - For balanced growth
         $leftTeam = $components['binary']['left_volume'] / 1000000;
         $rightTeam = $components['binary']['right_volume'] / 1000000;
         if ($leftTeam >= 5 && $rightTeam >= 5) {
-            $bonuses['team_building_bonus'] = min($leftTeam, $rightTeam) * 1000; // ₹1000 per million in weaker leg
+            $bonuses['team_building_bonus'] = min($leftTeam, $rightTeam) * ($bonusConfig['team_building_bonus'] ?? 1000);
         }
 
         // Volume Bonus - For high performers
         if ($businessVolume >= 10000000) { // 1 crore+
-            $bonuses['volume_bonus'] = $businessVolume * 0.005; // 0.5% bonus
+            $bonuses['volume_bonus'] = $businessVolume * (($bonusConfig['volume_bonus'] ?? 0.5) / 100);
         }
 
         // Rank Bonus - Based on current rank
@@ -206,7 +235,8 @@ class HybridMLMCalculator {
     /**
      * Get Binary Commission Rate
      */
-    private function getBinaryCommissionRate($level, $businessVolume) {
+    private function getBinaryCommissionRate($level, $businessVolume)
+    {
         $baseRate = 10; // 10% base rate
 
         // Increase rate based on volume
@@ -223,7 +253,8 @@ class HybridMLMCalculator {
     /**
      * Get Unilevel Commission Rate
      */
-    private function getUnilevelCommissionRate($level) {
+    private function getUnilevelCommissionRate($level)
+    {
         $rates = [
             1 => 10,  // Level 1: 10%
             2 => 8,   // Level 2: 8%
@@ -240,14 +271,16 @@ class HybridMLMCalculator {
     /**
      * Get Matrix Commission Rate
      */
-    private function getMatrixCommissionRate($level) {
+    private function getMatrixCommissionRate($level)
+    {
         return max(2, 12 - ($level - 1) * 0.5); // Decreases from 12% to 2%
     }
 
     /**
      * Get Associate Rank
      */
-    private function getAssociateRank($associateId) {
+    private function getAssociateRank($associateId)
+    {
         $sql = "
             SELECT current_level,
                    (SELECT COUNT(*) FROM mlm_agents ma2 WHERE ma2.sponsor_id = ma.id) as direct_referrals,
@@ -294,7 +327,8 @@ class HybridMLMCalculator {
     /**
      * Get Rank Bonus
      */
-    private function getRankBonus($rank, $businessVolume) {
+    private function getRankBonus($rank, $businessVolume)
+    {
         $rankBonuses = [
             'Crown Ambassador' => 0.05,      // 5%
             'Royal Ambassador' => 0.04,      // 4%
@@ -314,7 +348,8 @@ class HybridMLMCalculator {
     /**
      * Get Binary Structure
      */
-    private function getBinaryStructure($associateId) {
+    private function getBinaryStructure($associateId)
+    {
         // Simplified binary structure calculation
         return [
             'left_volume' => 2500000,  // Example data
@@ -327,7 +362,8 @@ class HybridMLMCalculator {
     /**
      * Get Downline Structure
      */
-    private function getDownlineStructure($associateId, $maxLevel = 7) {
+    private function getDownlineStructure($associateId, $maxLevel = 7)
+    {
         // Get downline associates up to specified level
         $downline = [];
 
@@ -357,7 +393,8 @@ class HybridMLMCalculator {
     /**
      * Get Matrix Structure
      */
-    private function getMatrixStructure($associateId, $matrixConfig) {
+    private function getMatrixStructure($associateId, $matrixConfig)
+    {
         // Get matrix structure based on configuration
         $matrixMembers = [];
 
@@ -379,7 +416,8 @@ class HybridMLMCalculator {
     /**
      * Calculate Payout Schedule
      */
-    public function calculatePayoutSchedule($associateId, $totalCommission) {
+    public function calculatePayoutSchedule($associateId, $totalCommission)
+    {
         $payoutSchedule = [];
 
         // Weekly payouts for smaller amounts
@@ -408,7 +446,8 @@ class HybridMLMCalculator {
     /**
      * Generate Commission Report
      */
-    public function generateCommissionReport($associateId, $period = 'monthly') {
+    public function generateCommissionReport($associateId, $period = 'monthly')
+    {
         $startDate = date('Y-m-01');
         $endDate = date('Y-m-t');
 
@@ -422,9 +461,9 @@ class HybridMLMCalculator {
                 SUM(commission_amount) as total_commission,
                 COUNT(*) as transaction_count,
                 AVG(commission_amount) as avg_commission,
-                MAX(commission_date) as last_commission_date
-            FROM commission_history
-            WHERE associate_id = ? AND commission_date BETWEEN ? AND ?
+                MAX(created_at) as last_commission_date
+            FROM commission_tracking
+            WHERE associate_id = ? AND created_at BETWEEN ? AND ?
         ";
 
         $stmt = $this->db->prepare($sql);
@@ -444,7 +483,8 @@ class HybridMLMCalculator {
     /**
      * Get Next Rank Requirements
      */
-    public function getNextRankRequirements($associateId) {
+    public function getNextRankRequirements($associateId)
+    {
         $currentRank = $this->getAssociateRank($associateId);
         $associateData = $this->getAssociateData($associateId);
 
@@ -538,7 +578,8 @@ class HybridMLMCalculator {
     /**
      * Get Associate Data
      */
-    private function getAssociateData($associateId) {
+    private function getAssociateData($associateId)
+    {
         $sql = "
             SELECT
                 current_level,
@@ -551,310 +592,5 @@ class HybridMLMCalculator {
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$associateId]);
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?? [];
-    }
-}
-
-/**
- * MLM Plan Templates
- */
-class MLMPlanTemplates {
-
-    public static function getPlanTemplates() {
-        return [
-            [
-                'id' => 'starter',
-                'name' => 'Starter Plan',
-                'type' => 'hybrid',
-                'description' => 'Perfect for new associates',
-                'joining_fee' => 1000,
-                'monthly_target' => 50000,
-                'commission_rates' => [
-                    'binary' => ['rate' => 10, 'weight' => 40],
-                    'unilevel' => ['rate' => 8, 'weight' => 35],
-                    'matrix' => ['rate' => 6, 'weight' => 25]
-                ],
-                'bonuses' => [
-                    'leadership_bonus' => 2,
-                    'team_building_bonus' => 1000,
-                    'volume_bonus' => 0.5
-                ]
-            ],
-            [
-                'id' => 'premium',
-                'name' => 'Premium Plan',
-                'type' => 'hybrid',
-                'description' => 'For serious business builders',
-                'joining_fee' => 5000,
-                'monthly_target' => 200000,
-                'commission_rates' => [
-                    'binary' => ['rate' => 15, 'weight' => 45],
-                    'unilevel' => ['rate' => 10, 'weight' => 35],
-                    'matrix' => ['rate' => 8, 'weight' => 20]
-                ],
-                'bonuses' => [
-                    'leadership_bonus' => 3,
-                    'team_building_bonus' => 2000,
-                    'volume_bonus' => 1
-                ]
-            ],
-            [
-                'id' => 'enterprise',
-                'name' => 'Enterprise Plan',
-                'type' => 'hybrid',
-                'description' => 'Maximum earning potential',
-                'joining_fee' => 10000,
-                'monthly_target' => 500000,
-                'commission_rates' => [
-                    'binary' => ['rate' => 20, 'weight' => 50],
-                    'unilevel' => ['rate' => 12, 'weight' => 30],
-                    'matrix' => ['rate' => 10, 'weight' => 20]
-                ],
-                'bonuses' => [
-                    'leadership_bonus' => 5,
-                    'team_building_bonus' => 5000,
-                    'volume_bonus' => 2
-                ]
-            ]
-        ];
-    }
-}
-
-/**
- * Advanced MLM Analytics
- */
-class MLMAdvancedAnalytics {
-
-    private $db;
-
-    public function __construct() {
-        $this->db = \App\Models\Database::getInstance();
-    }
-
-    /**
-     * Generate Comprehensive MLM Analytics
-     */
-    public function generateMLMAnalytics($associateId = null, $period = 'monthly') {
-        $analytics = [];
-
-        // Network Growth Analytics
-        $analytics['network_growth'] = $this->calculateNetworkGrowth($associateId, $period);
-
-        // Commission Analytics
-        $analytics['commission_analytics'] = $this->calculateCommissionAnalytics($associateId, $period);
-
-        // Rank Progression Analytics
-        $analytics['rank_progression'] = $this->calculateRankProgression($associateId);
-
-        // Team Performance Analytics
-        $analytics['team_performance'] = $this->calculateTeamPerformance($associateId);
-
-        // Business Volume Analytics
-        $analytics['business_volume'] = $this->calculateBusinessVolumeAnalytics($associateId, $period);
-
-        return $analytics;
-    }
-
-    private function calculateNetworkGrowth($associateId, $period) {
-        // Calculate network growth metrics
-        return [
-            'total_downline' => 0,
-            'new_joins' => 0,
-            'active_members' => 0,
-            'growth_rate' => 0
-        ];
-    }
-
-    private function calculateCommissionAnalytics($associateId, $period) {
-        // Calculate commission analytics
-        return [
-            'total_earned' => 0,
-            'monthly_average' => 0,
-            'top_earning_month' => 0,
-            'earning_trend' => 'up'
-        ];
-    }
-
-    private function calculateRankProgression($associateId) {
-        // Calculate rank progression
-        return [
-            'current_rank' => 'Associate',
-            'next_rank' => 'Senior Associate',
-            'progress_percentage' => 0,
-            'requirements_met' => []
-        ];
-    }
-
-    private function calculateTeamPerformance($associateId) {
-        // Calculate team performance metrics
-        return [
-            'team_size' => 0,
-            'active_team_members' => 0,
-            'team_business_volume' => 0,
-            'team_earnings' => 0
-        ];
-    }
-
-    private function calculateBusinessVolumeAnalytics($associateId, $period) {
-        // Calculate business volume analytics
-        return [
-            'personal_volume' => 0,
-            'team_volume' => 0,
-            'total_volume' => 0,
-            'volume_trend' => 'stable'
-        ];
-    }
-}
-
-/**
- * MLM Plan Comparison Tool
- */
-class MLMPlanComparison {
-
-    public static function comparePlans($planIds) {
-        $plans = [];
-
-        foreach ($planIds as $planId) {
-            $plans[] = self::getPlanDetails($planId);
-        }
-
-        return [
-            'plans' => $plans,
-            'comparison' => self::generateComparison($plans),
-            'recommendation' => self::generateRecommendation($plans)
-        ];
-    }
-
-    private static function getPlanDetails($planId) {
-        // Get plan details from database
-        return [
-            'id' => $planId,
-            'name' => 'Sample Plan',
-            'type' => 'hybrid',
-            'joining_fee' => 5000,
-            'potential_earnings' => 50000,
-            'risk_level' => 'medium',
-            'time_to_profit' => '3-6 months'
-        ];
-    }
-
-    private static function generateComparison($plans) {
-        return [
-            'best_earnings' => $plans[0]['id'],
-            'lowest_risk' => $plans[0]['id'],
-            'fastest_roi' => $plans[0]['id'],
-            'most_suitable' => $plans[0]['id']
-        ];
-    }
-
-    private static function generateRecommendation($plans) {
-        return [
-            'recommended_plan' => $plans[0]['id'],
-            'reason' => 'Best balance of risk and reward',
-            'expected_earnings' => '₹50,000/month',
-            'timeframe' => '6-12 months'
-        ];
-    }
-}
-
-/**
- * MLM Training System
- */
-class MLMTrainingSystem {
-
-    private $db;
-
-    public function __construct() {
-        $this->db = \App\Models\Database::getInstance();
-    }
-
-    public static function getTrainingModules() {
-        return [
-            [
-                'id' => 'basics',
-                'title' => 'MLM Fundamentals',
-                'description' => 'Learn the basics of multi-level marketing',
-                'duration' => '2 hours',
-                'difficulty' => 'Beginner',
-                'modules' => [
-                    'What is MLM?',
-                    'Understanding Compensation Plans',
-                    'Building Your Network',
-                    'Legal and Ethical Considerations'
-                ]
-            ],
-            [
-                'id' => 'advanced',
-                'title' => 'Advanced MLM Strategies',
-                'description' => 'Master advanced MLM techniques',
-                'duration' => '4 hours',
-                'difficulty' => 'Advanced',
-                'modules' => [
-                    'Leadership Development',
-                    'Team Building Strategies',
-                    'Commission Maximization',
-                    'Business Scaling'
-                ]
-            ],
-            [
-                'id' => 'digital',
-                'title' => 'Digital MLM Marketing',
-                'description' => 'Leverage digital tools for MLM success',
-                'duration' => '3 hours',
-                'difficulty' => 'Intermediate',
-                'modules' => [
-                    'Social Media Marketing',
-                    'Content Creation',
-                    'Online Lead Generation',
-                    'Digital Tools and Automation'
-                ]
-            ]
-        ];
-    }
-
-    public function trackProgress($associateId, $moduleId, $progress) {
-        // Track training progress
-        $sql = "INSERT INTO mlm_training_progress (associate_id, module_id, progress_percentage, completed_at)
-                VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE progress_percentage = ?, completed_at = ?";
-
-        $stmt = $this->db->prepare($sql);
-        $completedAt = $progress >= 100 ? date('Y-m-d H:i:s') : null;
-        $stmt->execute([$associateId, $moduleId, $progress, $completedAt, $progress, $completedAt]);
-
-        return ['success' => true, 'progress' => $progress];
-    }
-}
-
-/**
- * Hybrid MLM Dashboard Calculator
- */
-class HybridMLMDashboard {
-
-    public static function getDashboardData($associateId) {
-        $calculator = new HybridMLMCalculator('hybrid');
-
-        // Get current month business volume
-        $businessVolume = self::getCurrentMonthVolume($associateId);
-
-        // Calculate current commission
-        $commissionData = $calculator->calculateCommission($associateId, $businessVolume);
-
-        // Get rank information
-        $rankInfo = $calculator->generateCommissionReport($associateId);
-
-        // Get payout schedule
-        $payoutSchedule = $calculator->calculatePayoutSchedule($associateId, $commissionData['total_commission']);
-
-        return [
-            'current_commission' => $commissionData,
-            'rank_information' => $rankInfo,
-            'payout_schedule' => $payoutSchedule,
-            'business_volume' => $businessVolume,
-            'next_rank_requirements' => $calculator->getNextRankRequirements($associateId)
-        ];
-    }
-
-    private static function getCurrentMonthVolume($associateId) {
-        // Get current month's business volume
-        return 2500000; // Example: 25 lakhs
     }
 }

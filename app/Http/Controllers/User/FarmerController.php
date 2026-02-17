@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Farmer;
 use App\Models\FarmerLandHolding;
 use App\Models\LandPurchase;
-use App\Models\Database;
+use App\Core\Database;
 use PDO;
 
 /**

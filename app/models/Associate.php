@@ -1045,4 +1045,105 @@ class Associate extends Model
 
         return $progress;
     }
+
+    /**
+     * Get associates for admin with filters and pagination
+     */
+    public static function getAdminAssociates($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where_conditions = [];
+            $params = [];
+
+            // Search filter
+            if (!empty($filters['search'])) {
+                $where_conditions[] = "(u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+
+            // Status filter
+            if (!empty($filters['status'])) {
+                $where_conditions[] = "a.status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
+
+            // Build ORDER BY clause
+            $allowed_sorts = ['id', 'name', 'email', 'created_at', 'status'];
+            $sort = in_array($filters['sort'] ?? '', $allowed_sorts) ? $filters['sort'] : 'created_at';
+            // map sort fields to correct table aliases
+            if ($sort === 'name' || $sort === 'email') $sort = 'u.' . $sort;
+            elseif ($sort === 'id' || $sort === 'created_at' || $sort === 'status') $sort = 'a.' . $sort;
+
+            $order = strtoupper($filters['order'] ?? '') === 'ASC' ? 'ASC' : 'DESC';
+            $order_clause = "ORDER BY {$sort} {$order}";
+
+            $sql = "
+                SELECT a.*, u.name, u.email, u.phone, u.city
+                FROM associates a
+                LEFT JOIN users u ON a.user_id = u.id
+                {$where_clause}
+                {$order_clause}
+                LIMIT :limit OFFSET :offset";
+
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', (int)$filters['per_page'], \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log('Admin associates query error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total associates count for pagination
+     */
+    public static function getAdminTotalAssociates($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where_conditions = [];
+            $params = [];
+
+            // Search filter
+            if (!empty($filters['search'])) {
+                $where_conditions[] = "(u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+
+            // Status filter
+            if (!empty($filters['status'])) {
+                $where_conditions[] = "a.status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
+
+            $sql = "SELECT COUNT(*) as total 
+                    FROM associates a 
+                    LEFT JOIN users u ON a.user_id = u.id 
+                    {$where_clause}";
+
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return (int)($result['total'] ?? 0);
+        } catch (\Exception $e) {
+            error_log('Admin total associates query error: ' . $e->getMessage());
+            return 0;
+        }
+    }
 }

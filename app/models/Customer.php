@@ -99,6 +99,97 @@ class Customer extends Model
     }
 
     /**
+     * Get customers for admin with filters and pagination
+     */
+    public static function getAdminCustomers($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where_conditions = [];
+            $params = [];
+
+            // Search filter
+            if (!empty($filters['search'])) {
+                $where_conditions[] = "(name LIKE :search OR email LIKE :search OR phone LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+
+            // Status filter
+            if (!empty($filters['status'])) {
+                $where_conditions[] = "status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
+            
+            // Build ORDER BY clause
+            $allowed_sorts = ['id', 'name', 'email', 'created_at', 'status'];
+            $sort = in_array($filters['sort'] ?? '', $allowed_sorts) ? $filters['sort'] : 'created_at';
+            $order = strtoupper($filters['order'] ?? '') === 'ASC' ? 'ASC' : 'DESC';
+            $order_clause = "ORDER BY {$sort} {$order}";
+
+            $sql = "SELECT * FROM customers 
+                    {$where_clause} 
+                    {$order_clause} 
+                    LIMIT :limit OFFSET :offset";
+
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', (int)$filters['per_page'], \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log('Admin customers query error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total customers count for pagination
+     */
+    public static function getAdminTotalCustomers($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where_conditions = [];
+            $params = [];
+
+            // Search filter
+            if (!empty($filters['search'])) {
+                $where_conditions[] = "(name LIKE :search OR email LIKE :search OR phone LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+
+            // Status filter
+            if (!empty($filters['status'])) {
+                $where_conditions[] = "status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
+
+            $sql = "SELECT COUNT(*) as total FROM customers {$where_clause}";
+            
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return (int)($result['total'] ?? 0);
+        } catch (\Exception $e) {
+            error_log('Admin total customers query error: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get customer by email
      */
     public function getCustomerByEmail($email)
