@@ -25,15 +25,15 @@ class LeadController extends AdminController
     public function index()
     {
         $filters = [
-            'search' => $_GET['search'] ?? null,
-            'status' => $_GET['status'] ?? null,
-            'source' => $_GET['source'] ?? null,
-            'priority' => $_GET['priority'] ?? null,
-            'assigned_to' => $_GET['assigned_to'] ?? null,
-            'date_from' => $_GET['date_from'] ?? null,
-            'date_to' => $_GET['date_to'] ?? null,
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 20)
+            'search' => $this->request->get('search'),
+            'status' => $this->request->get('status'),
+            'source' => $this->request->get('source'),
+            'priority' => $this->request->get('priority'),
+            'assigned_to' => $this->request->get('assigned_to'),
+            'date_from' => $this->request->get('date_from'),
+            'date_to' => $this->request->get('date_to'),
+            'page' => (int)($this->request->get('page') ?? 1),
+            'per_page' => (int)($this->request->get('per_page') ?? 20)
         ];
 
         $leads = $this->leadService->getLeads($filters);
@@ -41,7 +41,7 @@ class LeadController extends AdminController
         $sources = $this->leadService->getSources();
         $statuses = $this->leadService->getStatuses();
 
-        $this->data['title'] = 'Lead Management';
+        $this->data['title'] = $this->mlSupport->translate('Lead Management');
         $this->data['leads'] = $leads;
         $this->data['filters'] = $filters;
         $this->data['leadStats'] = $leadStats;
@@ -67,7 +67,7 @@ class LeadController extends AdminController
         $notes = $this->leadService->getLeadNotes($id);
         $files = $this->leadService->getLeadFiles($id);
 
-        $this->data['title'] = 'Lead: ' . $lead['name'];
+        $this->data['title'] = $this->mlSupport->translate('Lead') . ': ' . $lead['name'];
         $this->data['lead'] = $lead;
         $this->data['activities'] = $activities;
         $this->data['notes'] = $notes;
@@ -85,7 +85,7 @@ class LeadController extends AdminController
         $statuses = $this->leadService->getStatuses();
         $users = $this->leadService->getAssignableUsers();
 
-        $this->data['title'] = 'Create New Lead';
+        $this->data['title'] = $this->mlSupport->translate('Create New Lead');
         $this->data['sources'] = $sources;
         $this->data['statuses'] = $statuses;
         $this->data['users'] = $users;

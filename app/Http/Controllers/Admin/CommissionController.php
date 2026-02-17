@@ -8,6 +8,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Models\HybridMLMCalculator;
+use App\Models\AuditLog;
 use App\Services\NotificationService;
 
 class CommissionController extends AdminController
@@ -36,7 +38,7 @@ class CommissionController extends AdminController
         $pendingCommissions = $this->db->fetchAll($query);
 
         return $this->render('admin/commissions/index', [
-            'page_title' => $this->mlSupport->translate('Commission Overview') . ' - ' . $this->getConfig('app_name'),
+            'page_title' => ($this->mlSupport ? $this->mlSupport->translate('Commission Overview') : 'Commission Overview') . ' - ' . APP_NAME,
             'pendingCommissions' => $pendingCommissions
         ]);
     }
@@ -47,7 +49,7 @@ class CommissionController extends AdminController
     public function calculate()
     {
         if (!$this->validateCsrfToken()) {
-            return $this->jsonError($this->mlSupport->translate('Security validation failed. Please try again.'));
+            return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.')], 400);
         }
 
         try {
@@ -60,7 +62,7 @@ class CommissionController extends AdminController
             $associates = $this->db->fetchAll($associatesQuery);
 
             $calculatedCount = 0;
-            $calculator = $this->model('HybridMLMCalculator');
+            $calculator = new HybridMLMCalculator();
 
             foreach ($associates as $associate) {
                 // Pass associate_id, not user_id
@@ -68,7 +70,9 @@ class CommissionController extends AdminController
                 $calculatedCount++;
             }
 
-            $this->logActivity('Commission Calculation', 'Triggered calculation for ' . $calculatedCount . ' associates');
+            // Log Activity
+            $auditLog = new AuditLog();
+            $auditLog->log($_SESSION['user_id'] ?? 0, 'Commission Calculation', 'commission', 0, 'Triggered calculation for ' . $calculatedCount . ' associates');
 
             // Invalidate dashboard cache
             if (function_exists('getPerformanceManager')) {
@@ -88,13 +92,13 @@ class CommissionController extends AdminController
                 error_log("Failed to send commission notification: " . $e->getMessage());
             }
 
-            return $this->jsonResponse([
+            return $this->json([
                 'success' => true,
-                'message' => $this->mlSupport->translate('Commission calculation triggered for ') . $calculatedCount . $this->mlSupport->translate(' associates'),
+                'message' => ($this->mlSupport ? $this->mlSupport->translate('Commission calculation triggered for ') : 'Commission calculation triggered for ') . $calculatedCount . ($this->mlSupport ? $this->mlSupport->translate(' associates') : ' associates'),
                 'count' => $calculatedCount
             ]);
         } catch (\Exception $e) {
-            return $this->jsonError($this->mlSupport->translate('Calculation failed: ') . h($e->getMessage()));
+            return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Calculation failed: ') : 'Calculation failed: ') . h($e->getMessage())], 500);
         }
     }
 
@@ -104,36 +108,45 @@ class CommissionController extends AdminController
     public function approve()
     {
         if (!$this->validateCsrfToken()) {
-            return $this->jsonError($this->mlSupport->translate('Security validation failed. Please try again.'));
+            return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.')], 400);
         }
 
-        $request = $this->request();
+        $request = $this->request;
         $id = intval($request->get('id'));
 
         if (!$id) {
-            return $this->jsonError($this->mlSupport->translate('No commission ID provided'));
+            return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('No commission ID provided') : 'No commission ID provided')], 400);
         }
 
         try {
             // Ensure we only approve pending commissions
-            $updated = $this->db->update('mlm_commission_ledger', ['status' => 'approved'], ['id' => $id, 'status' => 'pending']);
+            // Fix: update method requires WHERE clause as string
+            $updated = $this->db->update(
+                'mlm_commission_ledger',
+                ['status' => 'approved'],
+                'id = :id AND status = :status',
+                ['id' => $id, 'status' => 'pending']
+            );
 
             if ($updated) {
                 // Invalidate dashboard cache
                 if (function_exists('getPerformanceManager')) {
                     getPerformanceManager()->clearCache('query_');
                 }
-                $this->logActivity('Commission Approval', 'Approved commission ID: ' . $id);
 
-                return $this->jsonResponse([
+                // Log Activity
+                $auditLog = new AuditLog();
+                $auditLog->log($_SESSION['user_id'] ?? 0, 'Commission Approval', 'commission', $id, 'Approved commission ID: ' . $id);
+
+                return $this->json([
                     'success' => true,
-                    'message' => $this->mlSupport->translate('Commission approved successfully')
+                    'message' => ($this->mlSupport ? $this->mlSupport->translate('Commission approved successfully') : 'Commission approved successfully')
                 ]);
             } else {
-                return $this->jsonError($this->mlSupport->translate('Commission not found or already processed.'));
+                return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Commission not found or already processed.') : 'Commission not found or already processed.')], 404);
             }
         } catch (\Exception $e) {
-            return $this->jsonError($this->mlSupport->translate('Approval failed: ') . h($e->getMessage()));
+            return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Approval failed: ') : 'Approval failed: ') . h($e->getMessage())], 500);
         }
     }
 
@@ -142,10 +155,10 @@ class CommissionController extends AdminController
      */
     public function processPayout()
     {
-        $request = $this->request();
+        $request = $this->request;
         if ($request->method() === 'POST') {
             if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+                $this->setFlash('error', ($this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.'));
                 return $this->back();
             }
 
@@ -158,13 +171,17 @@ class CommissionController extends AdminController
                     if (function_exists('getPerformanceManager')) {
                         getPerformanceManager()->clearCache('query_');
                     }
-                    $this->logActivity('Payout Batch Created', 'Batch ID: ' . ($result['batch_id'] ?? 'unknown'));
-                    $this->setFlash('success', $this->mlSupport->translate('Payout batch created successfully: ') . h($result['batch_id']));
+
+                    // Log Activity
+                    $auditLog = new AuditLog();
+                    $auditLog->log($_SESSION['user_id'] ?? 0, 'Payout Batch Created', 'payout_batch', $result['batch_id'] ?? 0, 'Batch ID: ' . ($result['batch_id'] ?? 'unknown'));
+
+                    $this->setFlash('success', ($this->mlSupport ? $this->mlSupport->translate('Payout batch created successfully: ') : 'Payout batch created successfully: ') . h($result['batch_id']));
                 } else {
-                    $this->setFlash('error', $this->mlSupport->translate('Payout failed: ') . h($result['message']));
+                    $this->setFlash('error', ($this->mlSupport ? $this->mlSupport->translate('Payout failed: ') : 'Payout failed: ') . h($result['message']));
                 }
             } catch (\Exception $e) {
-                $this->setFlash('error', $this->mlSupport->translate('System error: ') . h($e->getMessage()));
+                $this->setFlash('error', ($this->mlSupport ? $this->mlSupport->translate('System error: ') : 'System error: ') . h($e->getMessage()));
             }
             return $this->redirect('admin/commissions/payout');
         }
@@ -179,7 +196,7 @@ class CommissionController extends AdminController
         $approvedCommissions = $this->db->fetchAll($query);
 
         return $this->render('admin/commissions/payout', [
-            'page_title' => $this->mlSupport->translate('Process Payouts') . ' - ' . $this->getConfig('app_name'),
+            'page_title' => ($this->mlSupport ? $this->mlSupport->translate('Process Payouts') : 'Process Payouts') . ' - ' . APP_NAME,
             'approvedCommissions' => $approvedCommissions
         ]);
     }

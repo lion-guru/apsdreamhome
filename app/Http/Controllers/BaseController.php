@@ -231,6 +231,11 @@ class BaseController extends CoreController
         $layout = $layout ?? $this->layout;
 
         if ($this->session && method_exists($this->session, 'getFlashBag')) {
+            // Add flash messages to all views
+            $data['flash'] = $this->session->getFlashBag()->all();
+            $this->session->getFlashBag()->clear(); // Clear flash messages after retrieving
+
+            // Add auth and user to all views
             $output = parent::view($view, $data, $layout);
             echo $output;
             return $output;

@@ -7,6 +7,8 @@ use App\Models\Property;
 use App\Models\PropertyType;
 use Exception;
 
+use App\Models\AuditLog;
+
 class PropertyController extends AdminController
 {
     public function __construct()
@@ -20,12 +22,41 @@ class PropertyController extends AdminController
      */
     public function index()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('Property Management') . ' - ' . APP_NAME;
+        $page = $this->request->get('page', 1);
+        $perPage = 10;
+        $search = $this->request->get('search', '');
+        $status = $this->request->get('status', '');
+        $type = $this->request->get('type', '');
 
-        $stmt = $this->db->query("SELECT * FROM properties ORDER BY created_at DESC");
-        $this->data['properties'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $filters = [
+            'page' => $page,
+            'per_page' => $perPage,
+            'search' => $search,
+            'status' => $status,
+            'type' => $type
+        ];
+
+        $this->data['page_title'] = ($this->mlSupport ? $this->mlSupport->translate('Property Management') : 'Property Management') . ' - ' . APP_NAME;
+
+        $propertyModel = new Property();
+        $this->data['properties'] = $propertyModel->getAdminProperties($filters);
+        $this->data['total_properties'] = $propertyModel->getAdminTotalProperties($filters);
+        $this->data['current_page'] = $page;
+        $this->data['total_pages'] = ceil($this->data['total_properties'] / $perPage);
+        $this->data['filters'] = $filters;
 
         $this->render('admin/properties/index');
+    }
+
+    private function checkWritePermission()
+    {
+        $allowedRoles = ['superadmin', 'manager'];
+        $currentRole = $_SESSION['admin_role'] ?? '';
+        if (!in_array($currentRole, $allowedRoles)) {
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Unauthorized access.') : 'Unauthorized access.');
+            $this->redirect('admin/properties');
+            exit;
+        }
     }
 
     /**
@@ -33,7 +64,8 @@ class PropertyController extends AdminController
      */
     public function create()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('Add New Property') . ' - ' . APP_NAME;
+        $this->checkWritePermission();
+        $this->data['page_title'] = ($this->mlSupport ? $this->mlSupport->translate('Add New Property') : 'Add New Property') . ' - ' . APP_NAME;
         $this->data['propertyTypes'] = PropertyType::getForSelect();
         $this->render('admin/properties/create');
     }
@@ -44,33 +76,43 @@ class PropertyController extends AdminController
     public function store()
     {
         if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.');
             $this->redirect('admin/properties/create');
             return;
         }
 
         try {
-            $propertyData = $_POST;
+            $data = $this->request->all();
 
-            $sql = "INSERT INTO properties (title, description, price, location, property_type, bedrooms, bathrooms, area, status, created_at) 
-                    VALUES (:title, :description, :price, :location, :property_type, :bedrooms, :bathrooms, :area, :status, NOW())";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':title' => $propertyData['title'] ?? '',
-                ':description' => $propertyData['description'] ?? '',
-                ':price' => $propertyData['price'] ?? 0,
-                ':location' => $propertyData['location'] ?? '',
-                ':property_type' => $propertyData['property_type'] ?? 'Residential',
-                ':bedrooms' => $propertyData['bedrooms'] ?? 0,
-                ':bathrooms' => $propertyData['bathrooms'] ?? 0,
-                ':area' => $propertyData['area'] ?? 0,
-                ':status' => $propertyData['status'] ?? 'active'
-            ]);
+            // Basic validation
+            if (empty($data['title']) || empty($data['price'])) {
+                throw new Exception($this->mlSupport ? $this->mlSupport->translate('Title and Price are required.') : 'Title and Price are required.');
+            }
 
-            $this->setFlash('success', $this->mlSupport->translate('Property added successfully!'));
-            $this->redirect('admin/properties');
+            // Set default values
+            $data['status'] = $data['status'] ?? 'active';
+            $data['created_at'] = date('Y-m-d H:i:s');
+
+            $property = Property::create($data);
+
+            if ($property) {
+                // Log the action
+                $auditLog = new AuditLog();
+                $auditLog->log(
+                    $_SESSION['user_id'] ?? 0,
+                    'create_property',
+                    'properties',
+                    $property->id,
+                    'Created property: ' . $property->title
+                );
+
+                $this->setFlash('success', $this->mlSupport ? $this->mlSupport->translate('Property added successfully!') : 'Property added successfully!');
+                $this->redirect('admin/properties');
+            } else {
+                throw new Exception($this->mlSupport ? $this->mlSupport->translate('Failed to create property.') : 'Failed to create property.');
+            }
         } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error adding property: ') . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Error adding property: ') : 'Error adding property: ' . $e->getMessage());
             $this->redirect('admin/properties/create');
         }
     }
@@ -80,18 +122,17 @@ class PropertyController extends AdminController
      */
     public function edit($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :id");
-        $stmt->execute([':id' => $id]);
-        $property = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $property = Property::find($id);
 
         if (!$property) {
-            $this->setFlash('error', $this->mlSupport->translate('Property not found!'));
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Property not found!') : 'Property not found!');
             $this->redirect('admin/properties');
             return;
         }
 
-        $this->data['property'] = $property;
-        $this->data['page_title'] = $this->mlSupport->translate('Edit Property') . ' - ' . APP_NAME;
+        // Convert to array for view compatibility
+        $this->data['property'] = $property->toArray();
+        $this->data['page_title'] = ($this->mlSupport ? $this->mlSupport->translate('Edit Property') : 'Edit Property') . ' - ' . APP_NAME;
         $this->data['propertyTypes'] = PropertyType::getForSelect();
         $this->render('admin/properties/edit');
     }
@@ -102,32 +143,40 @@ class PropertyController extends AdminController
     public function update($id)
     {
         if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.');
             $this->redirect("admin/properties/edit/{$id}");
             return;
         }
 
         try {
-            $propertyData = $_POST;
-            $sql = "UPDATE properties SET title = :title, description = :description, price = :price, location = :location, property_type = :property_type, bedrooms = :bedrooms, bathrooms = :bathrooms, area = :area, status = :status, updated_at = NOW() WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':title' => $propertyData['title'],
-                ':description' => $propertyData['description'],
-                ':price' => $propertyData['price'],
-                ':location' => $propertyData['location'],
-                ':property_type' => $propertyData['property_type'],
-                ':bedrooms' => $propertyData['bedrooms'],
-                ':bathrooms' => $propertyData['bathrooms'],
-                ':area' => $propertyData['area'],
-                ':status' => $propertyData['status'],
-                ':id' => $id
-            ]);
+            $property = Property::find($id);
+            if (!$property) {
+                throw new Exception($this->mlSupport ? $this->mlSupport->translate('Property not found!') : 'Property not found!');
+            }
 
-            $this->setFlash('success', $this->mlSupport->translate('Property updated successfully!'));
-            $this->redirect('admin/properties');
+            $data = $this->request->all();
+            $data['updated_at'] = date('Y-m-d H:i:s');
+
+            $property->fill($data);
+
+            if ($property->save()) {
+                // Log the action
+                $auditLog = new AuditLog();
+                $auditLog->log(
+                    $_SESSION['user_id'] ?? 0,
+                    'update_property',
+                    'properties',
+                    $property->id,
+                    'Updated property: ' . $property->title
+                );
+
+                $this->setFlash('success', $this->mlSupport ? $this->mlSupport->translate('Property updated successfully!') : 'Property updated successfully!');
+                $this->redirect('admin/properties');
+            } else {
+                throw new Exception($this->mlSupport ? $this->mlSupport->translate('Failed to update property.') : 'Failed to update property.');
+            }
         } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error updating property: ') . $e->getMessage());
+            $this->setFlash('error', ($this->mlSupport ? $this->mlSupport->translate('Error updating property: ') : 'Error updating property: ') . $e->getMessage());
             $this->redirect("admin/properties/edit/{$id}");
         }
     }
@@ -137,20 +186,37 @@ class PropertyController extends AdminController
      */
     public function delete($id)
     {
+        $this->checkWritePermission();
         // CSRF check for delete usually via POST, but if GET, be careful.
-        // Assuming GET for now as per view code, but ideally should be POST.
-        // The view uses window.location.href, so it is GET.
-        // We will skip CSRF for GET delete for now to match legacy behavior, or we can add it if we change view to form.
+        // Assuming GET for now as per view code.
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM properties WHERE id = :id");
-            $stmt->execute([':id' => $id]);
+            $property = Property::find($id);
+            if ($property) {
+                $title = $property->title;
+                if ($property->delete()) {
+                    // Log the action
+                    $auditLog = new AuditLog();
+                    $auditLog->log(
+                        $_SESSION['user_id'] ?? 0,
+                        'delete_property',
+                        'properties',
+                        $id,
+                        'Deleted property: ' . $title
+                    );
 
-            $this->setFlash('success', $this->mlSupport->translate('Property deleted successfully!'));
+                    $this->setFlash('success', $this->mlSupport ? $this->mlSupport->translate('Property deleted successfully!') : 'Property deleted successfully!');
+                } else {
+                    $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Failed to delete property.') : 'Failed to delete property.');
+                }
+            } else {
+                $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Property not found!') : 'Property not found!');
+            }
         } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error deleting property: ') . $e->getMessage());
+            $this->setFlash('error', ($this->mlSupport ? $this->mlSupport->translate('Error deleting property: ') : 'Error deleting property: ') . $e->getMessage());
         }
 
         $this->redirect('admin/properties');
     }
+}
 }

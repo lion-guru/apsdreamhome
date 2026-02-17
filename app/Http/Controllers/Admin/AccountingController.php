@@ -85,13 +85,13 @@ class AccountingController extends AdminController
         }
 
         // Basic validation
-        $amount = floatval($_POST['amount'] ?? 0);
-        $income_date = $_POST['income_date'] ?? date('Y-m-d');
-        $category = $_POST['category'] ?? '';
-        $description = $_POST['description'] ?? '';
-        $payment_method = $_POST['payment_method'] ?? 'cash';
-        $customer_id = !empty($_POST['customer_id']) ? intval($_POST['customer_id']) : null;
-        $project_id = !empty($_POST['project_id']) ? intval($_POST['project_id']) : null;
+        $amount = floatval($this->request->post('amount') ?? 0);
+        $income_date = $this->request->post('income_date') ?? date('Y-m-d');
+        $category = $this->request->post('category') ?? '';
+        $description = $this->request->post('description') ?? '';
+        $payment_method = $this->request->post('payment_method') ?? 'cash';
+        $customer_id = !empty($this->request->post('customer_id')) ? intval($this->request->post('customer_id')) : null;
+        $project_id = !empty($this->request->post('project_id')) ? intval($this->request->post('project_id')) : null;
 
         $created_by = $_SESSION['user_id'] ?? 1;
 
@@ -132,10 +132,10 @@ class AccountingController extends AdminController
             return;
         }
 
-        $amount = floatval($_POST['amount'] ?? 0);
-        $expense_date = $_POST['expense_date'] ?? date('Y-m-d');
-        $source = $_POST['source'] ?? ''; // This seems to be 'category' or 'payee'
-        $description = $_POST['description'] ?? '';
+        $amount = floatval($this->request->post('amount') ?? 0);
+        $expense_date = $this->request->post('expense_date') ?? date('Y-m-d');
+        $source = $this->request->post('source') ?? ''; // This seems to be 'category' or 'payee'
+        $description = $this->request->post('description') ?? '';
         $user_id = $_SESSION['user_id'] ?? 1;
 
         if ($amount <= 0 || empty($source) || empty($expense_date)) {

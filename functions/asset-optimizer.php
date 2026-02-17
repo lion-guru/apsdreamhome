@@ -8,36 +8,33 @@
 
 require_once __DIR__ . '/../core/functions.php';
 
+// Ensure core helpers are loaded
+$helpersPath = __DIR__ . '/../app/helpers.php';
+if (file_exists($helpersPath)) {
+    require_once $helpersPath;
+}
+
 /**
  * Get asset URL based on type and filename
  * 
- * @param string $filename The filename of the asset
- * @param string $type The type of asset (css, js, images, vendor)
- * @return string The complete URL to the asset
+ * DEPRECATED: This function is now handled by app/helpers.php
+ * But we keep this check to ensure no re-declaration errors
  */
 if (!function_exists('get_asset_url')) {
     function get_asset_url($filename, $type = '') {
-        // Base assets path
-        $base_assets = BASE_URL . '/assets';
+        // Fallback implementation if app/helpers.php not loaded
+        // This mirrors the logic in app/helpers.php
+        $filename = ltrim($filename, '/');
+        $base = defined('BASE_URL') ? BASE_URL : '/';
+        $base = rtrim($base, '/');
         
-        // Determine the correct path based on type
-        switch ($type) {
-            case 'css':
-                return BASE_URL . '/css/' . $filename;
-            case 'js':
-                return BASE_URL . '/js/' . $filename;
-            case 'images':
-                return $base_assets . '/images/' . $filename;
-            case 'vendor':
-                return $base_assets . '/vendor/' . $filename;
-            default:
-                // If type is a subdirectory path
-                if (!empty($type)) {
-                    return $base_assets . '/' . $type . '/' . $filename;
-                }
-                // Default to base assets directory
-                return $base_assets . '/' . $filename;
+        if (!empty($type)) {
+            if (strpos($filename, $type . '/') === 0) {
+                 return $base . '/public/assets/' . $filename;
+            }
+            return $base . '/public/assets/' . $type . '/' . $filename;
         }
+        return $base . '/public/assets/' . $filename;
     }
 }
 

@@ -19,9 +19,7 @@ class CustomerController extends AdminController
      */
     public function search()
     {
-        header('Content-Type: application/json');
-
-        $request = $this->request();
+        $request = $this->request;
         $search = $request->get('search', '');
         $page = (int)$request->get('page', 1);
         $limit = 10;
@@ -31,12 +29,12 @@ class CustomerController extends AdminController
             $customerModel = $this->model('Customer');
             $result = $customerModel->searchCustomers($search, $limit, $offset);
 
-            echo json_encode([
+            return $this->jsonResponse([
                 'items' => $result['items'],
                 'more' => ($page * $limit) < $result['total']
             ]);
         } catch (Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
+            return $this->jsonError($e->getMessage());
         }
     }
 
@@ -45,17 +43,17 @@ class CustomerController extends AdminController
      */
     public function index()
     {
-        $request = $this->request();
+        $request = $this->request;
         $searchTerm = $request->get('search');
 
         $customerModel = $this->model('Customer');
         $customers = $customerModel->getAllCustomers($searchTerm);
 
         return $this->render('admin/customers/index', [
-            'page_title' => $this->mlSupport->translate('Customer Management') . ' - ' . $this->getConfig('app_name'),
+            'page_title' => ($this->mlSupport ? $this->mlSupport->translate('Customer Management') : 'Customer Management') . ' - ' . APP_NAME,
             'customers' => $customers,
             'searchTerm' => $searchTerm,
-            'breadcrumbs' => [$this->mlSupport->translate("Customers") => "admin/customers"]
+            'breadcrumbs' => [($this->mlSupport ? $this->mlSupport->translate("Customers") : 'Customers') => "admin/customers"]
         ]);
     }
 
@@ -80,7 +78,7 @@ class CustomerController extends AdminController
             return $this->back();
         }
 
-        $request = $this->request();
+        $request = $this->request;
         $data = $request->post();
 
         // Basic Validation

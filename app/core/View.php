@@ -193,12 +193,6 @@ class View {
      * Get the asset URL
      */
     public function asset(string $path): string {
-        // Remove leading slash if present
-        $path = ltrim($path, '/');
-        
-        // Get base URL from config or use relative path
-        $baseUrl = config('app.url', '');
-        
-        return rtrim($baseUrl, '/') . '/public/' . $path;
+        return asset($path);
     }
 }

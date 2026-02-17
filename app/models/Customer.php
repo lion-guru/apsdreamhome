@@ -30,10 +30,11 @@ class Customer extends Model
         $db = Database::getInstance();
         $conn = $db->getConnection();
 
-        $sql = "SELECT id, name, email, phone 
-                FROM customers 
-                WHERE (name LIKE :search OR email LIKE :search OR phone LIKE :search)
-                ORDER BY name ASC 
+        $sql = "SELECT u.id, u.name, u.email, u.phone 
+                FROM users u
+                WHERE u.role = 'customer' 
+                AND (u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)
+                ORDER BY u.name ASC 
                 LIMIT :limit OFFSET :offset";
 
         $stmt = $conn->prepare($sql);
@@ -53,8 +54,9 @@ class Customer extends Model
 
         // Get total count
         $sqlCount = "SELECT COUNT(*) as count 
-                     FROM customers 
-                     WHERE (name LIKE :search OR email LIKE :search OR phone LIKE :search)";
+                     FROM users u
+                     WHERE u.role = 'customer' 
+                     AND (u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
         $stmtCount = $conn->prepare($sqlCount);
         $stmtCount->bindValue(':search', $searchTerm, PDO::PARAM_STR);
         $stmtCount->execute();
@@ -64,6 +66,32 @@ class Customer extends Model
             'items' => $items,
             'total' => $totalCount
         ];
+    }
+
+    /**
+     * Get all customers (used by Controller)
+     */
+    public function getAllCustomers($search = '')
+    {
+        $db = Database::getInstance();
+        $conn = $db->getConnection();
+
+        $sql = "SELECT u.*, cp.phone as profile_phone, cp.city, cp.state 
+                FROM users u
+                LEFT JOIN customer_profiles cp ON u.id = cp.user_id
+                WHERE u.role = 'customer'";
+
+        $params = [];
+        if (!empty($search)) {
+            $sql .= " AND (u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
+            $params['search'] = "%$search%";
+        }
+
+        $sql .= " ORDER BY u.created_at DESC";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -106,30 +134,32 @@ class Customer extends Model
         try {
             $db = \App\Core\Database::getInstance();
             $pdo = $db->getConnection();
-            $where_conditions = [];
+            $where_conditions = ["u.role = 'customer'"];
             $params = [];
 
             // Search filter
             if (!empty($filters['search'])) {
-                $where_conditions[] = "(name LIKE :search OR email LIKE :search OR phone LIKE :search)";
+                $where_conditions[] = "(u.name LIKE :search OR u.email LIKE :search OR u.phone LIKE :search)";
                 $params['search'] = '%' . $filters['search'] . '%';
             }
 
             // Status filter
             if (!empty($filters['status'])) {
-                $where_conditions[] = "status = :status";
+                $where_conditions[] = "u.status = :status";
                 $params['status'] = $filters['status'];
             }
 
-            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
-            
+            $where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
+
             // Build ORDER BY clause
             $allowed_sorts = ['id', 'name', 'email', 'created_at', 'status'];
             $sort = in_array($filters['sort'] ?? '', $allowed_sorts) ? $filters['sort'] : 'created_at';
             $order = strtoupper($filters['order'] ?? '') === 'ASC' ? 'ASC' : 'DESC';
-            $order_clause = "ORDER BY {$sort} {$order}";
+            $order_clause = "ORDER BY u.{$sort} {$order}";
 
-            $sql = "SELECT * FROM customers 
+            $sql = "SELECT u.*, cp.phone as profile_phone, cp.city 
+                    FROM users u
+                    LEFT JOIN customer_profiles cp ON u.id = cp.user_id
                     {$where_clause} 
                     {$order_clause} 
                     LIMIT :limit OFFSET :offset";
@@ -156,7 +186,7 @@ class Customer extends Model
         try {
             $db = \App\Core\Database::getInstance();
             $pdo = $db->getConnection();
-            $where_conditions = [];
+            $where_conditions = ["role = 'customer'"];
             $params = [];
 
             // Search filter
@@ -171,10 +201,10 @@ class Customer extends Model
                 $params['status'] = $filters['status'];
             }
 
-            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
+            $where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
 
-            $sql = "SELECT COUNT(*) as total FROM customers {$where_clause}";
-            
+            $sql = "SELECT COUNT(*) as total FROM users {$where_clause}";
+
             $stmt = $pdo->prepare($sql);
             foreach ($params as $key => $val) {
                 $stmt->bindValue(':' . $key, $val);
