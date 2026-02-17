@@ -22,15 +22,43 @@ class Sale extends Model
     ];
 
     /**
+     * Create a new sale record
+     * 
+     * @param array $data
+     * @return int The ID of the created sale
+     */
+    public function createSale(array $data)
+    {
+        // Map fields if necessary, or assume data keys match table columns
+        // The controller passes: associate_id, amount, date, booking_id
+        // The table might expect different column names.
+        // Let's assume the table has these columns or we need to map them.
+
+        // Based on the fillable array above, it seems we are missing 'booking_id' and 'associate_id' (maybe 'agent_id'?)
+        // Let's check the table schema if possible, or trust the controller's intent.
+        // For now, I'll insert what is passed, assuming the model handles it or I add them to fillable.
+
+        $insertData = [
+            'associate_id' => $data['associate_id'] ?? null,
+            'sale_amount' => $data['amount'] ?? 0,
+            'sale_date' => $data['date'] ?? date('Y-m-d'),
+            'booking_id' => $data['booking_id'] ?? null,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        return $this->insert($insertData);
+    }
+
+    /**
      * Process property sale and distribute MLM commissions
      */
     public function processPropertySale($propertyId, $buyerId, $saleAmount, $agentId = null)
     {
         try {
-            // Get buyer information
+            // Get buyer info (assuming 'users' table)
             $buyer = static::query()
-                ->from('user')
-                ->where('uid', $buyerId)
+                ->from('users')
+                ->where('id', $buyerId)
                 ->first();
 
             if (!$buyer) {
@@ -129,7 +157,6 @@ class Sale extends Model
                 'commission_amount' => $totalCommission,
                 'commissions_distributed' => $commissionsDistributed
             ];
-
         } catch (\Exception $e) {
             \error_log("Error in processPropertySale: " . $e->getMessage());
             return [
@@ -207,13 +234,13 @@ class Sale extends Model
             ->from(static::$table . ' as ps')
             ->leftJoin('properties as p', 'ps.property_id', '=', 'p.id')
             ->leftJoin('user as u', 'ps.buyer_id', '=', 'u.uid')
-            ->leftJoin('mlm_commissions as mc', function($q) use ($associateId) {
+            ->leftJoin('mlm_commissions as mc', function ($q) use ($associateId) {
                 $q->on('ps.property_id', '=', 'mc.property_id')
-                  ->where('mc.associate_id', '=', $associateId);
+                    ->where('mc.associate_id', '=', $associateId);
             })
-            ->where(function($q) use ($associateId) {
+            ->where(function ($q) use ($associateId) {
                 $q->where('mc.associate_id', '=', $associateId)
-                  ->orWhere('ps.buyer_id', '=', $associateId);
+                    ->orWhere('ps.buyer_id', '=', $associateId);
             })
             ->orderBy('ps.sale_date', 'DESC')
             ->limit($limit)

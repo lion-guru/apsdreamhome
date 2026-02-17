@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\AdminController;
 use App\Services\PayoutService;
 use Exception;
 use Throwable;
@@ -28,144 +27,155 @@ class PayoutController extends AdminController
         $this->render('admin/mlm_payouts');
     }
 
-    public function list(): void
+    public function list()
     {
-        header('Content-Type: application/json');
-
         try {
-            $filters = $this->parseFilters($_GET);
-            $limit = max(1, (int)($_GET['limit'] ?? 20));
-            $offset = max(0, (int)($_GET['offset'] ?? 0));
+            $filters = $this->parseFilters($this->request->get());
+            $limit = max(1, (int)($this->request->get('limit') ?? 20));
+            $offset = max(0, (int)($this->request->get('offset') ?? 0));
             $batches = $this->payoutService->listBatches($filters, $limit, $offset);
 
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => true,
                 'records' => $batches,
             ]);
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            return $this->jsonError($e->getMessage(), 500);
         }
     }
 
-    public function create(): void
+    public function create()
     {
-        header('Content-Type: application/json');
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonError('Invalid CSRF token', 403);
+        }
 
         try {
-            $filters = $this->parseFilters($_POST);
-            $filters['max_items'] = isset($_POST['max_items']) ? (int)$_POST['max_items'] : null;
-            $filters['min_amount'] = isset($_POST['min_amount']) ? (float)$_POST['min_amount'] : null;
-            $filters['batch_reference'] = $_POST['batch_reference'] ?? null;
-            if (!empty($_POST['required_approvals'])) {
-                $filters['required_approvals'] = (int) $_POST['required_approvals'];
+            $data = $this->request->post();
+            $filters = $this->parseFilters($data);
+            $filters['max_items'] = isset($data['max_items']) ? (int)$data['max_items'] : null;
+            $filters['min_amount'] = isset($data['min_amount']) ? (float)$data['min_amount'] : null;
+            $filters['batch_reference'] = $data['batch_reference'] ?? null;
+            if (!empty($data['required_approvals'])) {
+                $filters['required_approvals'] = (int) $data['required_approvals'];
             }
 
             $result = $this->payoutService->createBatch($filters);
-            echo json_encode($result);
+            return $this->jsonResponse($result);
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonError($e->getMessage(), 500);
         }
     }
 
-    public function approve(): void
+    public function approve()
     {
-        header('Content-Type: application/json');
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonError('Invalid CSRF token', 403);
+        }
 
-        $batchId = (int)($_POST['batch_id'] ?? 0);
+        $batchId = (int)($this->request->post('batch_id') ?? 0);
         if (!$batchId) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Batch ID required']);
-            return;
+            return $this->jsonError('Batch ID required', 400);
         }
 
         $userId = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
-        $decision = $_POST['decision'] ?? 'approved';
-        $notes = $_POST['notes'] ?? null;
-        $result = $this->payoutService->approveBatch($batchId, $userId, $decision, $notes);
+        $decision = $this->request->post('decision') ?? 'approved';
+        $notes = $this->request->post('notes') ?? null;
 
-        if ($result['success'] ?? false) {
-            echo json_encode($result);
-        } else {
-            http_response_code(400);
-            echo json_encode($result);
+        try {
+            $result = $this->payoutService->approveBatch($batchId, $userId, $decision, $notes);
+
+            if ($result['success'] ?? false) {
+                return $this->jsonResponse($result);
+            } else {
+                return $this->jsonError($result['message'] ?? 'Approval failed', 400);
+            }
+        } catch (Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
         }
     }
 
-    public function disburse(): void
+    public function disburse()
     {
-        header('Content-Type: application/json');
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonError('Invalid CSRF token', 403);
+        }
 
-        $batchId = (int)($_POST['batch_id'] ?? 0);
+        $batchId = (int)($this->request->post('batch_id') ?? 0);
         if (!$batchId) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Batch ID required']);
-            return;
+            return $this->jsonError('Batch ID required', 400);
         }
 
         try {
             $result = $this->payoutService->disburseBatch($batchId);
-            echo json_encode($result);
+            return $this->jsonResponse($result);
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonError($e->getMessage(), 500);
         }
     }
 
-    public function cancel(): void
+    public function cancel()
     {
-        header('Content-Type: application/json');
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonError('Invalid CSRF token', 403);
+        }
 
-        $batchId = (int)($_POST['batch_id'] ?? 0);
+        $batchId = (int)($this->request->post('batch_id') ?? 0);
         if (!$batchId) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Batch ID required']);
-            return;
+            return $this->jsonError('Batch ID required', 400);
         }
 
-        $result = $this->payoutService->cancelBatch($batchId);
-        echo json_encode($result);
+        try {
+            $result = $this->payoutService->cancelBatch($batchId);
+            return $this->jsonResponse($result);
+        } catch (Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
+        }
     }
 
-    public function items(): void
+    public function items()
     {
-        header('Content-Type: application/json');
-
-        $batchId = (int)($_GET['batch_id'] ?? 0);
+        $batchId = (int)($this->request->get('batch_id') ?? 0);
         if (!$batchId) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Batch ID required']);
-            return;
+            return $this->jsonError('Batch ID required', 400);
         }
 
-        $items = $this->payoutService->listBatchItems($batchId);
-        echo json_encode(['success' => true, 'records' => $items]);
+        try {
+            $items = $this->payoutService->listBatchItems($batchId);
+            return $this->jsonResponse(['success' => true, 'records' => $items]);
+        } catch (Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
+        }
     }
 
-    public function export(): void
+    public function export()
     {
-        $batchId = (int)($_GET['batch_id'] ?? 0);
+        $batchId = (int)($this->request->get('batch_id') ?? 0);
         if (!$batchId) {
             $this->redirect('admin/mlm-payouts');
             return;
         }
 
-        $items = $this->payoutService->listBatchItems($batchId);
-        $filename = 'payout_batch_' . $batchId . '_' . date('Ymd_His') . '.csv';
+        try {
+            $items = $this->payoutService->listBatchItems($batchId);
+            $filename = 'payout_batch_' . $batchId . '_' . date('Ymd_His') . '.csv';
 
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename=' . $filename);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename=' . $filename);
 
-        $out = fopen('php://output', 'w');
-        if (!empty($items)) {
-            fputcsv($out, array_keys($items[0]));
-            foreach ($items as $item) {
-                fputcsv($out, $item);
+            $out = fopen('php://output', 'w');
+            if (!empty($items)) {
+                fputcsv($out, array_keys($items[0]));
+                foreach ($items as $item) {
+                    fputcsv($out, $item);
+                }
             }
+            fclose($out);
+            exit;
+        } catch (Exception $e) {
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('admin/mlm-payouts');
         }
-        fclose($out);
-        exit;
     }
 
     private function parseFilters(array $input): array
