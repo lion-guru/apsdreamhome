@@ -38,21 +38,23 @@ class NewsController extends AdminController
             return;
         }
 
-        $title = SecurityHelper::sanitize($_POST['title']);
-        $date = SecurityHelper::sanitize($_POST['date']);
-        $summary = SecurityHelper::sanitize($_POST['summary']);
-        $content = $_POST['content']; // Allow HTML for content, sanitize in view or use purifier
+        $request = $this->request;
+        $title = SecurityHelper::sanitize($request->post('title'));
+        $date = SecurityHelper::sanitize($request->post('date'));
+        $summary = SecurityHelper::sanitize($request->post('summary'));
+        $content = $request->post('content'); // Allow HTML for content, sanitize in view or use purifier
 
         $image = '';
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $files = $request->files('image');
+        if (isset($files['error']) && $files['error'] == 0) {
             $uploadDir = 'uploads/news/';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            $fileName = time() . '_' . basename($_FILES['image']['name']);
+            $fileName = time() . '_' . basename($files['name']);
             $targetPath = $uploadDir . $fileName;
 
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+            if (move_uploaded_file($files['tmp_name'], $targetPath)) {
                 $image = $targetPath;
             }
         }
@@ -98,25 +100,27 @@ class NewsController extends AdminController
 
         $news = News::find($id);
         if (!$news) {
-            $_SESSION['error'] = 'News not found';
+            $this->setFlash('error', $this->mlSupport->translate('News not found'));
             $this->redirect('admin/news');
             return;
         }
 
-        $news->title = SecurityHelper::sanitize($_POST['title']);
-        $news->date = SecurityHelper::sanitize($_POST['date']);
-        $news->summary = SecurityHelper::sanitize($_POST['summary']);
-        $news->content = $_POST['content'];
+        $request = $this->request;
+        $news->title = SecurityHelper::sanitize($request->post('title'));
+        $news->date = SecurityHelper::sanitize($request->post('date'));
+        $news->summary = SecurityHelper::sanitize($request->post('summary'));
+        $news->content = $request->post('content');
 
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $files = $request->files('image');
+        if (isset($files['error']) && $files['error'] == 0) {
             $uploadDir = 'uploads/news/';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            $fileName = time() . '_' . basename($_FILES['image']['name']);
+            $fileName = time() . '_' . basename($files['name']);
             $targetPath = $uploadDir . $fileName;
 
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+            if (move_uploaded_file($files['tmp_name'], $targetPath)) {
                 // Delete old image if exists
                 if ($news->image && file_exists($news->image)) {
                     unlink($news->image);
@@ -126,10 +130,10 @@ class NewsController extends AdminController
         }
 
         if ($news->save()) {
-            $_SESSION['success'] = 'News updated successfully';
+            $this->setFlash('success', $this->mlSupport->translate('News updated successfully'));
             $this->redirect('admin/news');
         } else {
-            $_SESSION['error'] = 'Failed to update news';
+            $this->setFlash('error', $this->mlSupport->translate('Failed to update news'));
             $this->redirect('admin/news/edit/' . $id);
         }
     }
@@ -137,7 +141,7 @@ class NewsController extends AdminController
     public function delete($id)
     {
         if (!$this->validateCsrfToken()) {
-            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/news');
             return;
         }
@@ -148,9 +152,9 @@ class NewsController extends AdminController
                 unlink($news->image);
             }
             $news->delete();
-            $_SESSION['success'] = 'News deleted successfully';
+            $this->setFlash('success', $this->mlSupport->translate('News deleted successfully'));
         } else {
-            $_SESSION['error'] = 'News not found';
+            $this->setFlash('error', $this->mlSupport->translate('News not found'));
         }
         $this->redirect('admin/news');
     }
