@@ -14,6 +14,13 @@ if (!defined('BASE_URL')) {
 }
 define('ROOT', __DIR__ . '/../');
 
+// Security Configuration
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    ini_set('session.cookie_secure', isset($_SERVER['HTTPS']) ? 1 : 0);
+}
+
 // Database Configuration - Use defined() to prevent redefinition
 if (!defined('DB_HOST')) {
     define('DB_HOST', getenv('DB_HOST') ?: 'localhost');

@@ -26,6 +26,15 @@ class Database extends BaseDatabase
     public static function getInstance($config = []): self
     {
         if (self::$instance === null) {
+            if (empty($config)) {
+                // Use global constants if config is not provided
+                $config = [
+                    'host' => defined('DB_HOST') ? DB_HOST : 'localhost',
+                    'database' => defined('DB_NAME') ? DB_NAME : 'apsdreamhome',
+                    'username' => defined('DB_USER') ? DB_USER : 'root',
+                    'password' => defined('DB_PASS') ? DB_PASS : '',
+                ];
+            }
             self::$instance = new self($config);
         }
         return self::$instance;

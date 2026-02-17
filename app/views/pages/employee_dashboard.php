@@ -1,6 +1,6 @@
 <?php
 // Modern, AI-powered, feature-rich dashboard for Employees (2025 best practices)
-require_once 'header.php';
+require_once dirname(__DIR__) . '/layouts/header.php';
 session_start();
 if (!isset($_SESSION['uid']) || $_SESSION['utype'] !== 'employee') {
     header('Location: login.php');

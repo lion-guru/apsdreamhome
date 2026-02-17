@@ -4,6 +4,16 @@ use App\Core\App;
 use App\Core\View;
 use App\Core\Auth;
 
+if (!function_exists('h')) {
+    /**
+     * Escape HTML special characters
+     */
+    function h($string)
+    {
+        return htmlspecialchars((string)$string, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 if (!function_exists('app')) {
     /**
      * Get the application instance

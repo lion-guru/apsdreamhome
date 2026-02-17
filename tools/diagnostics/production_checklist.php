@@ -1,12 +1,21 @@
 <?php
+
 /**
  * Production Deployment Checklist - APS Dream Homes Employee Management System
  * Complete verification and deployment readiness check
  */
 
 require_once dirname(__DIR__, 2) . '/app/helpers.php';
-$config = AppConfig::getInstance();
-$conn = $config->getDatabaseConnection();
+require_once dirname(__DIR__, 2) . '/app/views/layouts/config.php';
+
+use App\Core\Database;
+
+try {
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
+} catch (Exception $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 echo "<!DOCTYPE html>
 <html lang='en'>
@@ -47,7 +56,8 @@ $failed_checks = 0;
 $warning_checks = 0;
 
 // Function to add checklist item
-function add_checklist_item($title, $description, $status, $details = '') {
+function add_checklist_item($title, $description, $status, $details = '')
+{
     global $total_checks, $passed_checks, $failed_checks, $warning_checks;
     $total_checks++;
 
@@ -55,7 +65,7 @@ function add_checklist_item($title, $description, $status, $details = '') {
     $badge_class = '';
     $icon = '';
 
-    switch($status) {
+    switch ($status) {
         case 'pass':
             $status_class = 'pass';
             $badge_class = 'status-pass';
@@ -114,7 +124,7 @@ $tables_missing = [];
 foreach ($tables as $table) {
     try {
         $result = $conn->query("SHOW TABLES LIKE '$table'");
-        if ($result->num_rows == 0) {
+        if ($result->rowCount() == 0) {
             $tables_status = 'fail';
             $tables_missing[] = $table;
         }
@@ -134,7 +144,7 @@ try {
     $result = $conn->query("DESCRIBE employees");
     $required_columns = ['id', 'name', 'email', 'password', 'department', 'role', 'status'];
     $existing_columns = [];
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         $existing_columns[] = $row['Field'];
     }
 
@@ -203,7 +213,7 @@ $admin_status = 'pass';
 $admin_count = 0;
 try {
     $result = $conn->query("SELECT COUNT(*) as count FROM admin");
-    $admin_count = $result->fetch_assoc()['count'];
+    $admin_count = $result->fetch(PDO::FETCH_ASSOC)['count'];
     if ($admin_count == 0) {
         $admin_status = 'fail';
     }
@@ -218,7 +228,8 @@ $employee_status = 'pass';
 $employee_count = 0;
 try {
     $result = $conn->query("SELECT COUNT(*) as count FROM employees WHERE status = 'active'");
-    $employee_count = $result->fetch_assoc()['count'];
+    $employee_count = $result->fetch(PDO::FETCH_ASSOC)['count'];
+    // echo "Debug: Employee count: $employee_count";
     if ($employee_count == 0) {
         $employee_status = 'warning';
     }
@@ -235,18 +246,18 @@ echo "<div class='checklist-section'>
     <h3><i class='fas fa-file-code me-2'></i>System Files</h3>";
 
 $required_files = [
-    'admin/index.php' => 'Admin login page',
-    'admin/enhanced_dashboard.php' => 'Admin dashboard',
-    'admin/manage_employees.php' => 'Employee management',
-    'employee_login.php' => 'Employee login',
-    'employee_dashboard.php' => 'Employee dashboard',
+    'app/Http/Controllers/Admin/AdminController.php' => 'Admin Controller',
+    'app/Http/Controllers/Admin/AdminDashboardController.php' => 'Admin Dashboard Controller',
+    'app/Http/Controllers/Admin/EmployeeController.php' => 'Employee Controller',
+    'app/Http/Controllers/Auth/AuthController.php' => 'Auth Controller',
+    'app/Http/Controllers/User/DashboardController.php' => 'User Dashboard Controller',
     'employee_logout.php' => 'Employee logout',
     'setup_employee_system.php' => 'System setup script',
     'fixed_employee_setup.php' => 'Fixed setup script'
 ];
 
 foreach ($required_files as $file => $description) {
-    $file_path = __DIR__ . '/' . $file;
+    $file_path = dirname(__DIR__, 2) . '/' . $file;
     $file_status = file_exists($file_path) ? 'pass' : 'fail';
     $file_details = $file_status === 'pass' ? 'File exists' : 'File missing - required for system functionality';
     add_checklist_item($description, "Check $file exists", $file_status, $file_details);
@@ -409,4 +420,3 @@ echo "<div class='text-center mt-4 mb-3'>
 </div>
 </body>
 </html>";
-?>
