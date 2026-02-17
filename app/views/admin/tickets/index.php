@@ -1,9 +1,3 @@
-<?php
-$title = 'Support Tickets';
-require_once APP_ROOT . '/views/admin/inc/header.php';
-require_once APP_ROOT . '/views/admin/inc/sidebar.php';
-?>
-
 <div class="main-content">
     <div class="page-header">
         <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -11,12 +5,12 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
                 <h2 class="page-title">Support Tickets</h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo url('admin/dashboard'); ?>">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Tickets</li>
                     </ol>
                 </nav>
             </div>
-            <a href="<?php echo url('admin/tickets/create'); ?>" class="btn btn-primary">
+            <a href="/admin/tickets/create" class="btn btn-primary">
                 <i class="fas fa-plus"></i> New Ticket
             </a>
         </div>
@@ -26,7 +20,7 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover admin-table">
                         <thead>
                             <tr>
                                 <th>Ticket #</th>
@@ -43,7 +37,7 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
                                 <?php foreach ($tickets as $ticket): ?>
                                     <tr>
                                         <td>
-                                            <a href="<?php echo url('admin/tickets/show/' . $ticket['id']); ?>">
+                                            <a href="/admin/tickets/show/<?php echo $ticket['id']; ?>">
                                                 <?php echo htmlspecialchars($ticket['ticket_number']); ?>
                                             </a>
                                         </td>
@@ -53,18 +47,16 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
                                             <small class="d-block text-muted"><?php echo htmlspecialchars($ticket['user_email'] ?? ''); ?></small>
                                         </td>
                                         <td>
-                                            <span class="badge badge-<?php 
-                                                echo $ticket['priority'] == 'high' ? 'danger' : 
-                                                    ($ticket['priority'] == 'medium' ? 'warning' : 'info'); 
-                                            ?>">
+                                            <span class="badge badge-<?php
+                                                                        echo $ticket['priority'] == 'high' ? 'danger' : ($ticket['priority'] == 'medium' ? 'warning' : 'info');
+                                                                        ?>">
                                                 <?php echo ucfirst($ticket['priority']); ?>
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="badge badge-<?php 
-                                                echo $ticket['status'] == 'open' ? 'success' : 
-                                                    ($ticket['status'] == 'closed' ? 'secondary' : 'primary'); 
-                                            ?>">
+                                            <span class="badge badge-<?php
+                                                                        echo $ticket['status'] == 'open' ? 'success' : ($ticket['status'] == 'closed' ? 'secondary' : 'primary');
+                                                                        ?>">
                                                 <?php echo ucfirst(str_replace('_', ' ', $ticket['status'])); ?>
                                             </span>
                                         </td>
@@ -88,5 +80,3 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
         </div>
     </div>
 </div>
-
-<?php require_once APP_ROOT . '/views/admin/inc/footer.php'; ?>

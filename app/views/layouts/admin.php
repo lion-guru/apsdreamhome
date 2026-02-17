@@ -76,6 +76,11 @@
                     </a>
                 </li>
                 <li class="nav-item mb-1">
+                    <a href="/admin/ai/hub" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/ai') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-robot me-2"></i>AI Hub
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
                     <a href="/admin/about" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/about') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-info-circle me-2"></i>About Us
                     </a>
@@ -83,6 +88,11 @@
                 <li class="nav-item mb-1">
                     <a href="/admin/users" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/users') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-users me-2"></i>Users
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="/admin/projects" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/projects') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-project-diagram me-2"></i>Projects
                     </a>
                 </li>
                 <li class="nav-item mb-1">
@@ -143,6 +153,11 @@
                 <li class="nav-item mb-1">
                     <a href="/admin/crm-dashboard" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/crm-dashboard') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-chart-line me-2"></i>CRM Dashboard
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a href="/admin/accounting" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/accounting') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-calculator me-2"></i>Accounting
                     </a>
                 </li>
                 <li class="nav-item mb-1">

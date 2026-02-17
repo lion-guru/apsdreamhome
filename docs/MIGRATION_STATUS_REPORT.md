@@ -31,7 +31,7 @@ The following modules are now fully operational in the `app/Http/Controllers/Adm
 - Legacy routes in `routes/web.php` are being deprecated.
 
 ## Legacy Cleanup Status
-- **Moved to Retired**: 459+ legacy admin files have been moved to `app/views/admin/legacy/` and `_admin_legacy_retired/`.
+- **Moved to Retired**: 459+ legacy admin files were moved to `app/views/admin/legacy/` and `_admin_legacy_retired/`. (Note: `_admin_legacy_retired` was deleted on 2026-02-17 as part of cleanup).
 - **Public Directory**: Cleaned of 35+ test/debug scripts.
 - **Root Directory**: SQL/CSV files and temporary scripts have been archived.
 
@@ -42,4 +42,4 @@ The following modules are now fully operational in the `app/Http/Controllers/Adm
 
 ## Recommendations
 - **Delete**: The `cleanup_legacy_files.txt` lists files that are confirmed for deletion.
-- **Archive**: Move any remaining `.php` files in the root that are not `index.php` or `bootstrap.php` to `_admin_legacy_retired`.
+- **Archive**: Any remaining `.php` files in the root that are not `index.php` or `bootstrap.php` have been processed.

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Core\Controller;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\SupportTicketService;
-// use App\Core\Auth; // Removed unused import
-// use App\Core\Request; // Removed unused import
 
-class SupportTicketController extends Controller
+class SupportTicketController extends AdminController
 {
     protected $ticketService;
 
@@ -22,7 +20,7 @@ class SupportTicketController extends Controller
         // Check if admin or regular user
         $user = $this->auth->user();
         if (!$user) {
-            $this->redirect('/login');
+            $this->redirect('login');
             return;
         }
 
@@ -32,23 +30,32 @@ class SupportTicketController extends Controller
             $tickets = $this->ticketService->getTicketsByUser($user->id);
         }
 
-        $this->view('admin/tickets/index', ['tickets' => $tickets]);
+        $this->data['tickets'] = $tickets;
+        $this->data['page_title'] = 'Support Tickets';
+        $this->render('admin/tickets/index');
     }
 
     public function create()
     {
-        $this->view('admin/tickets/create');
+        $this->data['page_title'] = 'Create Ticket';
+        $this->render('admin/tickets/create');
     }
 
     public function store()
     {
         $user = $this->auth->user();
         if (!$user) {
-            $this->redirect('/login');
+            $this->redirect('login');
             return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+                $this->data['error'] = 'Invalid CSRF token.';
+                $this->render('admin/tickets/create');
+                return;
+            }
+
             $data = [
                 'subject' => $_POST['subject'] ?? '',
                 'message' => $_POST['message'] ?? '',
@@ -58,7 +65,8 @@ class SupportTicketController extends Controller
             // Basic validation
             if (empty($data['subject']) || empty($data['message'])) {
                 // Flash error
-                $this->view('admin/tickets/create', ['error' => 'Subject and message are required.']);
+                $this->data['error'] = 'Subject and message are required.';
+                $this->render('admin/tickets/create');
                 return;
             }
 
@@ -68,7 +76,7 @@ class SupportTicketController extends Controller
             }
 
             $this->ticketService->createTicket($data, $user->id);
-            $this->redirect('/admin/tickets');
+            $this->redirect('admin/tickets');
         }
     }
 
@@ -77,29 +85,37 @@ class SupportTicketController extends Controller
         $ticket = $this->ticketService->getTicketById($id);
 
         if (!$ticket) {
-            $this->redirect('/admin/tickets'); // Or 404
+            $this->redirect('admin/tickets'); // Or 404
             return;
         }
 
         // Access control: only owner or admin/support can view
         $user = $this->auth->user();
         if ($user->role !== 'admin' && $user->role !== 'super_admin' && $user->role !== 'support' && $ticket['user_id'] != $user->id) {
-            $this->redirect('/admin/tickets'); // Unauthorized
+            $this->redirect('admin/tickets'); // Unauthorized
             return;
         }
 
-        $this->view('admin/tickets/show', ['ticket' => $ticket]);
+        $this->data['ticket'] = $ticket;
+        $this->data['page_title'] = 'Ticket #' . $ticket['ticket_number'];
+        $this->render('admin/tickets/show');
     }
 
     public function reply($id)
     {
         $user = $this->auth->user();
         if (!$user) {
-            $this->redirect('/login');
+            $this->redirect('login');
             return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+                // Should probably show error, but for reply just redirect back
+                $this->redirect('admin/tickets/' . $id);
+                return;
+            }
+
             $message = $_POST['message'] ?? '';
             $attachment = null;
 
@@ -111,7 +127,7 @@ class SupportTicketController extends Controller
                 $this->ticketService->addReply($id, $user->id, $message, $attachment);
             }
 
-            $this->redirect('/admin/tickets/' . $id);
+            $this->redirect('admin/tickets/' . $id);
         }
     }
 
@@ -120,20 +136,25 @@ class SupportTicketController extends Controller
         $user = $this->auth->user();
         // Only admin can update status usually, or user can close their own ticket
         if (!$user) {
-            $this->redirect('/login');
+            $this->redirect('login');
             return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+                $this->redirect('admin/tickets/' . $id);
+                return;
+            }
+
             $status = $_POST['status'] ?? '';
             if (in_array($status, ['open', 'in_progress', 'resolved', 'closed'])) {
                 $this->ticketService->updateTicketStatus($id, $status);
             }
-            $this->redirect('/admin/tickets/' . $id);
+            $this->redirect('admin/tickets/' . $id);
         }
     }
 
-    private function handleFileUpload($file)
+    protected function handleFileUpload($file, $allowedTypes = [], $maxSize = 5242880)
     {
         $uploadDir = 'storage/uploads/tickets/';
         if (!is_dir($uploadDir)) {

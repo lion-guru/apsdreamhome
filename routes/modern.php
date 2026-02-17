@@ -97,9 +97,25 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->post('/tickets/reply/{id}', 'Admin\SupportTicketController@reply');
         $router->post('/tickets/updateStatus/{id}', 'Admin\SupportTicketController@updateStatus');
 
-        // Task Management
-        $router->get('/tasks', 'Admin\TaskController@index');
-        $router->get('/tasks/create', 'Admin\TaskController@create');
+        // Accounting
+        $router->get('/accounting', 'Admin\AccountingController@index');
+        $router->get('/accounting/income/add', 'Admin\AccountingController@addIncome');
+        $router->post('/accounting/income/store', 'Admin\AccountingController@storeIncome');
+        $router->get('/accounting/expenses/add', 'Admin\AccountingController@addExpense');
+        $router->post('/accounting/expenses/store', 'Admin\AccountingController@storeExpense');
+        $router->get('/accounting/transactions', 'Admin\AccountingController@transactions');
+
+        // AI Hub
+        $router->get('/ai/hub', 'Admin\AiController@hub');
+        $router->get('/ai/agent', 'Admin\AiController@agent');
+        $router->get('/ai/lead-scoring', 'Admin\AiController@leadScoring');
+
+
+        // Accounting Module
+        $router->get('/accounting', 'Admin\AccountingController@index');
+
+        // AI Hub Module
+        $router->get('/ai/hub', 'Admin\AiController@hub');
 
         // News Management
         $router->get('/news', 'Admin\NewsController@index');
@@ -124,10 +140,6 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->get('/media/create', 'Admin\MediaController@create');
         $router->post('/media/store', 'Admin\MediaController@store');
         $router->post('/media/delete/{id}', 'Admin\MediaController@delete');
-        $router->post('/tasks/store', 'Admin\TaskController@store');
-        $router->get('/tasks/edit/{id}', 'Admin\TaskController@edit');
-        $router->post('/tasks/update/{id}', 'Admin\TaskController@update');
-        $router->get('/tasks/delete/{id}', 'Admin\TaskController@destroy');
 
         // Property Management
         $router->get('/properties', 'Admin\PropertyController@index');
@@ -190,7 +202,6 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
 
         // Task Management
         $router->get('/tasks', 'Admin\TaskController@index');
-        $router->get('/tasks/create', 'Admin\TaskController@create');
         $router->post('/tasks/store', 'Admin\TaskController@store');
         $router->get('/tasks/edit/{id}', 'Admin\TaskController@edit');
         $router->post('/tasks/update/{id}', 'Admin\TaskController@update');

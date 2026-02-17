@@ -1,103 +1,104 @@
 <?php
-if (!isAdmin()) {
-    header("Location: /admin/login");
-    exit();
-}
-$page_title = $page_title ?? $mlSupport->translate("Customer Profile");
-require_once ABSPATH . '/resources/views/admin/layouts/header.php';
-?>
 
-<div class="page-wrapper">
-    <div class="content container-fluid">
-        <div class="page-header">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h3 class="page-title"><?php echo h($page_title); ?></h3>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                        <li class="breadcrumb-item"><a href="/admin/customers"><?php echo h($mlSupport->translate('Customers')); ?></a></li>
-                        <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Profile')); ?></li>
-                    </ul>
-                </div>
+/**
+ * Customers Show View
+ */
+?>
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title"><?php echo h($page_title); ?></h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="/admin/customers"><?php echo h($mlSupport->translate('Customers')); ?></a></li>
+                    <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Profile')); ?></li>
+                </ul>
             </div>
         </div>
+    </div>
+    <!-- /Page Header -->
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="profile-header">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-body">
                     <div class="row align-items-center">
-                        <div class="col-auto profile-image">
-                            <a href="#">
-                                <img class="rounded-circle" alt="User Image" src="/assets/img/profiles/<?php echo h($customer['profile_image'] ?? 'default-avatar.jpg'); ?>" onerror="this.src='/assets/img/profiles/default-avatar.jpg'">
-                            </a>
+                        <div class="col-auto">
+                            <img class="rounded-circle" alt="User Image" src="/assets/img/profiles/<?php echo h($customer['profile_image'] ?? 'default-avatar.jpg'); ?>" width="80" height="80" onerror="this.src='/assets/img/profiles/default-avatar.jpg'">
                         </div>
-                        <div class="col ml-md-n2 profile-user-info">
+                        <div class="col">
                             <h4 class="user-name mb-0"><?php echo h($customer['name'] ?? 'N/A'); ?></h4>
                             <h6 class="text-muted"><?php echo h($mlSupport->translate('Customer')); ?></h6>
-                            <div class="user-Location"><i class="fas fa-map-marker-alt"></i> <?php echo h(($customer['city'] ?? '') . ', ' . ($customer['state'] ?? '')); ?></div>
-                            <div class="about-text"><?php echo h($customer['address'] ?? ''); ?></div>
+                            <div class="user-Location"><i class="fas fa-map-marker-alt me-1"></i> <?php echo h(($customer['city'] ?? '') . ', ' . ($customer['state'] ?? '')); ?></div>
+                            <div class="about-text text-muted"><?php echo h($customer['address'] ?? ''); ?></div>
                         </div>
-                        <div class="col-auto profile-btn">
+                        <div class="col-auto">
                             <a href="/admin/customers/edit/<?php echo h($customer['id']); ?>" class="btn btn-primary">
-                                <?php echo h($mlSupport->translate('Edit Profile')); ?>
+                                <i class="fas fa-pencil-alt me-2"></i> <?php echo h($mlSupport->translate('Edit Profile')); ?>
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="profile-menu">
-                    <ul class="nav nav-tabs nav-tabs-solid">
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#per_details_tab"><?php echo h($mlSupport->translate('About')); ?></a>
+                            <a class="nav-link active" data-bs-toggle="tab" href="#per_details_tab" role="tab"><?php echo h($mlSupport->translate('About')); ?></a>
                         </li>
                     </ul>
                 </div>
-                <div class="tab-content profile-tab-cont">
-                    <!-- Personal Details Tab -->
-                    <div class="tab-pane fade show active" id="per_details_tab">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title d-flex justify-content-between">
-                                            <span><?php echo h($mlSupport->translate('Personal Details')); ?></span>
-                                            <a class="edit-link" href="/admin/customers/edit/<?php echo h($customer['id']); ?>"><i class="fa fa-edit mr-1"></i><?php echo h($mlSupport->translate('Edit')); ?></a>
-                                        </h5>
-                                        <div class="row">
-                                            <p class="col-sm-2 text-muted mb-0 mb-sm-3"><?php echo h($mlSupport->translate('Name')); ?></p>
-                                            <p class="col-sm-10"><?php echo h($customer['name'] ?? 'N/A'); ?></p>
-                                        </div>
-                                        <div class="row">
-                                            <p class="col-sm-2 text-muted mb-0 mb-sm-3"><?php echo h($mlSupport->translate('Email')); ?></p>
-                                            <p class="col-sm-10"><?php echo h($customer['email'] ?? 'N/A'); ?></p>
-                                        </div>
-                                        <div class="row">
-                                            <p class="col-sm-2 text-muted mb-0 mb-sm-3"><?php echo h($mlSupport->translate('Phone')); ?></p>
-                                            <p class="col-sm-10"><?php echo h($customer['phone'] ?? 'N/A'); ?></p>
-                                        </div>
-                                        <div class="row">
-                                            <p class="col-sm-2 text-muted mb-0 mb-sm-3"><?php echo h($mlSupport->translate('Status')); ?></p>
-                                            <p class="col-sm-10">
-                                                <span class="badge bg-<?php echo h($customer['status'] == 'active' ? 'success' : 'danger'); ?>">
-                                                    <?php echo h($mlSupport->translate(ucwords($customer['status']))); ?>
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div class="row">
-                                            <p class="col-sm-2 text-muted mb-0"><?php echo h($mlSupport->translate('Address')); ?></p>
-                                            <p class="col-sm-10 mb-0"><?php echo h($customer['address'] ?? 'N/A'); ?>,<br>
-                                            <?php echo h($customer['city'] ?? ''); ?>,<br>
-                                            <?php echo h($customer['state'] ?? ''); ?> - <?php echo h($customer['pincode'] ?? ''); ?></p>
-                                        </div>
-                                    </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Personal Details Tab -->
+                        <div class="tab-pane fade show active" id="per_details_tab" role="tabpanel">
+                            <h5 class="card-title d-flex justify-content-between mb-3">
+                                <span><?php echo h($mlSupport->translate('Personal Details')); ?></span>
+                            </h5>
+                            <div class="row mb-3">
+                                <div class="col-sm-3 text-muted"><?php echo h($mlSupport->translate('Name')); ?></div>
+                                <div class="col-sm-9"><?php echo h($customer['name'] ?? 'N/A'); ?></div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3 text-muted"><?php echo h($mlSupport->translate('Email')); ?></div>
+                                <div class="col-sm-9"><?php echo h($customer['email'] ?? 'N/A'); ?></div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3 text-muted"><?php echo h($mlSupport->translate('Phone')); ?></div>
+                                <div class="col-sm-9"><?php echo h($customer['phone'] ?? 'N/A'); ?></div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3 text-muted"><?php echo h($mlSupport->translate('Status')); ?></div>
+                                <div class="col-sm-9">
+                                    <span class="badge bg-<?php echo h($customer['status'] == 'active' ? 'success' : 'danger'); ?>">
+                                        <?php echo h($mlSupport->translate(ucwords($customer['status']))); ?>
+                                    </span>
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3 text-muted"><?php echo h($mlSupport->translate('Address')); ?></div>
+                                <div class="col-sm-9">
+                                    <?php echo h($customer['address'] ?? 'N/A'); ?><br>
+                                    <?php echo h($customer['city'] ?? ''); ?><br>
+                                    <?php echo h($customer['state'] ?? ''); ?> - <?php echo h($customer['pincode'] ?? ''); ?>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3 text-muted"><?php echo h($mlSupport->translate('Occupation')); ?></div>
+                                <div class="col-sm-9"><?php echo h($customer['job_role'] ?? 'N/A'); ?></div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3 text-muted"><?php echo h($mlSupport->translate('KYC Status')); ?></div>
+                                <div class="col-sm-9"><?php echo h($customer['kyc_status'] ?? 'N/A'); ?></div>
+                            </div>
                         </div>
+                        <!-- /Personal Details Tab -->
                     </div>
-                    <!-- /Personal Details Tab -->
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<?php require_once ABSPATH . '/resources/views/admin/layouts/footer.php'; ?>

@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\BaseController;
 use \Exception;
 
-class CustomerController extends BaseController
+class CustomerController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-
+        
         // Register middlewares
-        $this->middleware('role:admin');
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
 

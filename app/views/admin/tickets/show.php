@@ -1,9 +1,3 @@
-<?php
-$title = 'Ticket Details';
-require_once APP_ROOT . '/views/admin/inc/header.php';
-require_once APP_ROOT . '/views/admin/inc/sidebar.php';
-?>
-
 <div class="main-content">
     <div class="page-header">
         <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -14,16 +8,20 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
                 </h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo url('admin/dashboard'); ?>">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="<?php echo url('admin/tickets'); ?>">Tickets</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/tickets">Tickets</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Details</li>
                     </ol>
                 </nav>
             </div>
 
-            <?php if (Auth::user()->role === 'admin' || Auth::user()->role === 'super_admin'): ?>
+            <?php
+            $currentUser = $this->auth->user();
+            if ($currentUser && ($currentUser->role === 'admin' || $currentUser->role === 'super_admin')):
+            ?>
                 <div>
-                    <form action="<?php echo url('admin/tickets/updateStatus/' . $ticket['id']); ?>" method="POST" class="d-inline">
+                    <form action="/admin/tickets/updateStatus/<?php echo $ticket['id']; ?>" method="POST" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="<?php echo $this->getCsrfToken(); ?>">
                         <select name="status" class="form-control d-inline-block w-auto mr-2" onchange="this.form.submit()">
                             <option value="open" <?php echo $ticket['status'] == 'open' ? 'selected' : ''; ?>>Open</option>
                             <option value="in_progress" <?php echo $ticket['status'] == 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
@@ -72,7 +70,7 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
                                 <p class="card-text"><?php echo nl2br(htmlspecialchars($reply['message'])); ?></p>
                                 <?php if (!empty($reply['attachment'])): ?>
                                     <div class="mt-3">
-                                        <i class="fa fa-paperclip"></i> <a href="<?php echo url($reply['attachment']); ?>" target="_blank">View Attachment</a>
+                                        <i class="fa fa-paperclip"></i> <a href="/<?php echo $reply['attachment']; ?>" target="_blank">View Attachment</a>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -89,7 +87,8 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
                             <strong>Add Reply</strong>
                         </div>
                         <div class="card-body">
-                            <form action="<?php echo url('admin/tickets/reply/' . $ticket['id']); ?>" method="POST" enctype="multipart/form-data">
+                            <form action="/admin/tickets/reply/<?php echo $ticket['id']; ?>" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="<?php echo $this->getCsrfToken(); ?>">
                                 <div class="form-group">
                                     <textarea class="form-control" name="message" rows="4" placeholder="Type your reply here..." required></textarea>
                                 </div>
@@ -128,5 +127,3 @@ require_once APP_ROOT . '/views/admin/inc/sidebar.php';
         </div>
     </div>
 </div>
-
-<?php require_once APP_ROOT . '/views/admin/inc/footer.php'; ?>

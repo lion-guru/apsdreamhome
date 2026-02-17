@@ -2,21 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
 use App\Models\User;
 use Exception;
 
-class UserController extends BaseController
+class UserController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-
-        // Ensure only admins can access these methods
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
+        // AdminController handles auth check
     }
 
     /**
@@ -24,11 +18,12 @@ class UserController extends BaseController
      */
     public function index()
     {
-        $users = $this->db->query("SELECT * FROM users ORDER BY created_at DESC")->fetchAll();
+        $stmt = $this->db->query("SELECT * FROM users ORDER BY created_at DESC");
+        $users = $stmt->fetchAll();
 
         return $this->render('admin/users/index', [
             'users' => $users,
-            'page_title' => 'User Management - APS Dream Home'
+            'page_title' => $this->mlSupport->translate('User Management') . ' - ' . $this->getConfig('app_name')
         ]);
     }
 
@@ -38,7 +33,7 @@ class UserController extends BaseController
     public function create()
     {
         return $this->render('admin/users/create', [
-            'page_title' => 'Add New User - APS Dream Home'
+            'page_title' => $this->mlSupport->translate('Add New User') . ' - ' . $this->getConfig('app_name')
         ]);
     }
 
@@ -48,12 +43,18 @@ class UserController extends BaseController
     public function store()
     {
         try {
+            if (!$this->validateCsrfToken()) {
+                $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
+                $this->redirect('/admin/users/create');
+                return;
+            }
+
             $data = $_POST;
 
             // Basic validation
             if (empty($data['username']) || empty($data['email']) || empty($data['password'])) {
-                $this->setFlash('error', "Username, Email and Password are required.");
-                $this->redirect('admin/users/create');
+                $this->setFlash('error', $this->mlSupport->translate("Username, Email and Password are required."));
+                $this->redirect('/admin/users/create');
                 return;
             }
 
@@ -64,28 +65,34 @@ class UserController extends BaseController
                 ':username' => $data['username']
             ]);
             if ($stmt->fetch()) {
-                $this->setFlash('error', "Email or Username already exists.");
-                $this->redirect('admin/users/create');
+                $this->setFlash('error', $this->mlSupport->translate("Email or Username already exists."));
+                $this->redirect('/admin/users/create');
                 return;
             }
 
-            $sql = "INSERT INTO users (username, email, password, mobile, role, status, created_at) 
-                    VALUES (:username, :email, :password, :mobile, :role, :status, NOW())";
+            // Default role and status
+            $role = $data['role'] ?? 'customer';
+            $status = $data['status'] ?? 'active';
+            $mobile = $data['mobile'] ?? '';
+
+            // Insert user
+            $sql = "INSERT INTO users (username, email, password, mobile, role, status, created_at, updated_at) 
+                    VALUES (:username, :email, :password, :mobile, :role, :status, NOW(), NOW())";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 ':username' => $data['username'],
                 ':email' => $data['email'],
                 ':password' => password_hash($data['password'], PASSWORD_DEFAULT),
-                ':mobile' => $data['mobile'] ?? '',
-                ':role' => $data['role'] ?? 'customer',
-                ':status' => $data['status'] ?? 'active'
+                ':mobile' => $mobile,
+                ':role' => $role,
+                ':status' => $status
             ]);
 
-            $this->setFlash('success', "User created successfully!");
-            $this->redirect('admin/users');
+            $this->setFlash('success', $this->mlSupport->translate("User created successfully!"));
+            $this->redirect('/admin/users');
         } catch (Exception $e) {
-            $this->setFlash('error', "Error creating user: " . $e->getMessage());
-            $this->redirect('admin/users/create');
+            $this->setFlash('error', $this->mlSupport->translate("Error creating user: ") . $e->getMessage());
+            $this->redirect('/admin/users/create');
         }
     }
 
@@ -94,19 +101,20 @@ class UserController extends BaseController
      */
     public function edit($id)
     {
+        $id = intval($id);
         $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
         $stmt->execute([':id' => $id]);
         $user = $stmt->fetch();
 
         if (!$user) {
-            $this->setFlash('error', "User not found.");
-            $this->redirect('admin/users');
+            $this->setFlash('error', $this->mlSupport->translate("User not found."));
+            $this->redirect('/admin/users');
             return;
         }
 
         return $this->render('admin/users/edit', [
             'user' => $user,
-            'page_title' => 'Edit User - APS Dream Home'
+            'page_title' => $this->mlSupport->translate('Edit User') . ' - ' . $this->getConfig('app_name')
         ]);
     }
 
@@ -116,33 +124,60 @@ class UserController extends BaseController
     public function update($id)
     {
         try {
+            $id = intval($id);
+            if (!$this->validateCsrfToken()) {
+                $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
+                $this->redirect("/admin/users/edit/$id");
+                return;
+            }
+
             $data = $_POST;
 
-            $sql = "UPDATE users SET username = :username, email = :email, mobile = :mobile, role = :role, status = :status, updated_at = NOW()";
+            // Basic validation
+            if (empty($data['username']) || empty($data['email'])) {
+                $this->setFlash('error', $this->mlSupport->translate("Username and Email are required."));
+                $this->redirect("/admin/users/edit/$id");
+                return;
+            }
+
+            // Check if email or username already exists (excluding current user)
+            $stmt = $this->db->prepare("SELECT id FROM users WHERE (email = :email OR username = :username) AND id != :id");
+            $stmt->execute([
+                ':email' => $data['email'],
+                ':username' => $data['username'],
+                ':id' => $id
+            ]);
+            if ($stmt->fetch()) {
+                $this->setFlash('error', $this->mlSupport->translate("Email or Username already exists."));
+                $this->redirect("/admin/users/edit/$id");
+                return;
+            }
+
+            // Update user
+            $sql = "UPDATE users SET username = :username, email = :email, mobile = :mobile, role = :role, status = :status, updated_at = NOW() WHERE id = :id";
             $params = [
                 ':username' => $data['username'],
                 ':email' => $data['email'],
                 ':mobile' => $data['mobile'] ?? '',
                 ':role' => $data['role'] ?? 'customer',
-                ':status' => $data['status'] ?? 'active'
+                ':status' => $data['status'] ?? 'active',
+                ':id' => $id
             ];
 
+            // Update password if provided
             if (!empty($data['password'])) {
-                $sql .= ", password = :password";
+                $sql = "UPDATE users SET username = :username, email = :email, password = :password, mobile = :mobile, role = :role, status = :status, updated_at = NOW() WHERE id = :id";
                 $params[':password'] = password_hash($data['password'], PASSWORD_DEFAULT);
             }
-
-            $sql .= " WHERE id = :id";
-            $params[':id'] = $id;
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
 
-            $this->setFlash('success', "User updated successfully!");
-            $this->redirect('admin/users');
+            $this->setFlash('success', $this->mlSupport->translate("User updated successfully!"));
+            $this->redirect('/admin/users');
         } catch (Exception $e) {
-            $this->setFlash('error', "Error updating user: " . $e->getMessage());
-            $this->redirect('admin/users/edit/' . $id);
+            $this->setFlash('error', $this->mlSupport->translate("Error updating user: ") . $e->getMessage());
+            $this->redirect("/admin/users/edit/$id");
         }
     }
 
@@ -152,13 +187,28 @@ class UserController extends BaseController
     public function destroy($id)
     {
         try {
+            $id = intval($id);
+            if (!$this->validateCsrfToken()) {
+                $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
+                $this->redirect('/admin/users');
+                return;
+            }
+
+            // Prevent deleting self
+            if ($id == $_SESSION['user_id']) {
+                $this->setFlash('error', $this->mlSupport->translate("You cannot delete yourself."));
+                $this->redirect('/admin/users');
+                return;
+            }
+
             $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
             $stmt->execute([':id' => $id]);
 
-            $this->setFlash('success', "User deleted successfully!");
+            $this->setFlash('success', $this->mlSupport->translate("User deleted successfully!"));
+            $this->redirect('/admin/users');
         } catch (Exception $e) {
-            $this->setFlash('error', "Error deleting user: " . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate("Error deleting user: ") . $e->getMessage());
+            $this->redirect('/admin/users');
         }
-        $this->redirect('admin/users');
     }
 }

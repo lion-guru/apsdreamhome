@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Models\Media;
-use App\Helpers\AuthHelper;
 use App\Helpers\SecurityHelper;
 
-class MediaController extends BaseController
+class MediaController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
-        if (!AuthHelper::isAdmin()) {
-            $this->redirect('admin/login');
-        }
         $this->loadModel('Media');
     }
 
@@ -24,20 +20,20 @@ class MediaController extends BaseController
         $this->render('admin/media/index', [
             'media' => $media,
             'title' => 'Media Library'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function create()
     {
         $this->render('admin/media/create', [
             'title' => 'Upload Media'
-        ], 'layouts/admin');
+        ]);
     }
 
     public function store()
     {
         if (!$this->validateCsrfToken()) {
-            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->setFlash('error', 'Invalid CSRF token');
             $this->redirect('admin/media/create');
             return;
         }
@@ -47,16 +43,16 @@ class MediaController extends BaseController
             // Assuming the Media model has an upload method that handles file movement and DB insertion
             // Based on previous file read, it does: upload($file, $userId)
             $userId = $_SESSION['admin_id'] ?? 0;
-            
+
             if ($media->upload($_FILES['file'], $userId)) {
-                $_SESSION['success'] = 'Media uploaded successfully';
+                $this->setFlash('success', 'Media uploaded successfully');
                 $this->redirect('admin/media');
             } else {
-                $_SESSION['error'] = 'Failed to upload media';
+                $this->setFlash('error', 'Failed to upload media');
                 $this->redirect('admin/media/create');
             }
         } else {
-            $_SESSION['error'] = 'No file selected or upload error';
+            $this->setFlash('error', 'No file selected or upload error');
             $this->redirect('admin/media/create');
         }
     }
@@ -64,16 +60,16 @@ class MediaController extends BaseController
     public function delete($id)
     {
         if (!$this->validateCsrfToken()) {
-            $_SESSION['error'] = 'Invalid CSRF token';
+            $this->setFlash('error', 'Invalid CSRF token');
             $this->redirect('admin/media');
             return;
         }
 
         $media = new Media();
         if ($media->delete($id)) {
-            $_SESSION['success'] = 'Media deleted successfully';
+            $this->setFlash('success', 'Media deleted successfully');
         } else {
-            $_SESSION['error'] = 'Failed to delete media';
+            $this->setFlash('error', 'Failed to delete media');
         }
         $this->redirect('admin/media');
     }
