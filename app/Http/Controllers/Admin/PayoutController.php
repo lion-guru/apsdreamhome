@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 use Throwable;
 
@@ -10,18 +10,13 @@ use Throwable;
  * PayoutController
  * Admin UI endpoints for MLM payout automation.
  */
-class PayoutController extends BaseController
+class PayoutController extends AdminController
 {
     private $payoutService;
 
     public function __construct()
     {
         parent::__construct();
-
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
 
         // Load legacy service
         require_once dirname(__DIR__, 3) . '/services/PayoutService.php';

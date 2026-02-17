@@ -54,7 +54,7 @@
                                 <td colspan="7" class="text-center py-4 text-muted"><?php echo h($mlSupport->translate('No land records found')); ?></td>
                             </tr>
                         <?php else: ?>
-                            <?php 
+                            <?php
                             $cnt = 1;
                             foreach ($land_records as $row):
                                 $total_price = number_format((float)($row['total_land_price'] ?? 0), 2);
@@ -91,11 +91,14 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                                <li><a class="dropdown-item" href="/admin/land/transactions/<?php echo h($row['id']); ?>"><i class="fas fa-exchange-alt me-2 text-muted"></i> <?php echo h($mlSupport->translate('Transactions')); ?></a></li>
                                                 <li><a class="dropdown-item" href="/admin/land/edit/<?php echo h($row['id']); ?>"><i class="fas fa-pencil-alt me-2 text-muted"></i> <?php echo h($mlSupport->translate('Edit')); ?></a></li>
                                                 <?php if (!empty($row['land_paper'])): ?>
                                                     <li><a class="dropdown-item" href="/<?php echo h($row['land_paper']); ?>" target="_blank"><i class="fas fa-file-pdf me-2 text-muted"></i> <?php echo h($mlSupport->translate('View Paper')); ?></a></li>
                                                 <?php endif; ?>
-                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
                                                 <li><a class="dropdown-item text-danger delete-record" href="#" data-id="<?php echo h($row['id']); ?>" data-name="<?php echo h($row['farmer_name']); ?>" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="fas fa-trash-alt me-2"></i> <?php echo h($mlSupport->translate('Delete')); ?></a></li>
                                             </ul>
                                         </div>
@@ -136,11 +139,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var deleteModal = document.getElementById('delete_modal');
-        deleteModal.addEventListener('show.bs.modal', function (event) {
+        deleteModal.addEventListener('show.bs.modal', function(event) {
             var button = event.relatedTarget;
             var id = button.getAttribute('data-id');
             var name = button.getAttribute('data-name');
-            
+
             document.getElementById('delete_id').value = id;
             document.getElementById('delete_farmer_name').textContent = name;
         });
@@ -151,24 +154,24 @@
             var csrf = document.querySelector('input[name="csrf_token"]').value;
 
             fetch('/admin/land/delete/' + id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'csrf_token=' + encodeURIComponent(csrf)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    location.reload();
-                } else {
-                    alert(data.message || 'Error deleting record');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error connecting to server');
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'csrf_token=' + encodeURIComponent(csrf)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Error deleting record');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error connecting to server');
+                });
         });
     });
 </script>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use Exception;
 use Throwable;
 use InvalidArgumentException;
@@ -11,20 +11,13 @@ use InvalidArgumentException;
  * EngagementController
  * Admin UI endpoints for MLM engagement metrics and goals.
  */
-class EngagementController extends BaseController
+class EngagementController extends AdminController
 {
     private $engagementService;
 
     public function __construct()
     {
         parent::__construct();
-
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
-        $this->layout = 'layouts/admin';
 
         // Load legacy service
         require_once dirname(__DIR__, 3) . '/services/EngagementService.php';

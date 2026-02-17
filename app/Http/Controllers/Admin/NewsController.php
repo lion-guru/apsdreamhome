@@ -19,21 +19,21 @@ class NewsController extends AdminController
         $news = News::all();
         $this->render('admin/news/index', [
             'news' => $news,
-            'title' => 'Manage News'
+            'title' => $this->mlSupport->translate('Manage News')
         ]);
     }
 
     public function create()
     {
         $this->render('admin/news/create', [
-            'title' => 'Add News'
+            'title' => $this->mlSupport->translate('Add News')
         ]);
     }
 
     public function store()
     {
         if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Invalid CSRF token');
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/news/create');
             return;
         }
@@ -42,7 +42,7 @@ class NewsController extends AdminController
         $date = SecurityHelper::sanitize($_POST['date']);
         $summary = SecurityHelper::sanitize($_POST['summary']);
         $content = $_POST['content']; // Allow HTML for content, sanitize in view or use purifier
-        
+
         $image = '';
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $uploadDir = 'uploads/news/';
@@ -51,7 +51,7 @@ class NewsController extends AdminController
             }
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             $targetPath = $uploadDir . $fileName;
-            
+
             if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
                 $image = $targetPath;
             }
@@ -65,10 +65,10 @@ class NewsController extends AdminController
         $news->image = $image;
 
         if ($news->save()) {
-            $this->setFlash('success', 'News added successfully');
+            $this->setFlash('success', $this->mlSupport->translate('News added successfully'));
             $this->redirect('admin/news');
         } else {
-            $this->setFlash('error', 'Failed to add news');
+            $this->setFlash('error', $this->mlSupport->translate('Failed to add news'));
             $this->redirect('admin/news/create');
         }
     }
@@ -77,21 +77,21 @@ class NewsController extends AdminController
     {
         $news = News::find($id);
         if (!$news) {
-            $this->setFlash('error', 'News not found');
+            $this->setFlash('error', $this->mlSupport->translate('News not found'));
             $this->redirect('admin/news');
             return;
         }
 
         $this->render('admin/news/edit', [
             'news' => $news,
-            'title' => 'Edit News'
+            'title' => $this->mlSupport->translate('Edit News')
         ]);
     }
 
     public function update($id)
     {
         if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', 'Invalid CSRF token');
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/news/edit/' . $id);
             return;
         }
@@ -115,7 +115,7 @@ class NewsController extends AdminController
             }
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             $targetPath = $uploadDir . $fileName;
-            
+
             if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
                 // Delete old image if exists
                 if ($news->image && file_exists($news->image)) {

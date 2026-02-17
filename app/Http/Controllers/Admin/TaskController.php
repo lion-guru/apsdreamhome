@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\TaskService;
 use App\Services\CleanLeadService; // For getting assignable users
 
-class TaskController extends BaseController
+class TaskController extends AdminController
 {
     private $taskService;
     private $leadService;
@@ -15,20 +15,9 @@ class TaskController extends BaseController
     {
         parent::__construct();
 
-        $user = $this->auth->user();
-        if (!$user) {
-            $this->redirect('login');
-            return;
-        }
-
-        // Access control: only employees/admins/managers can access tasks
-        // Assuming 'customer' role should not access admin tasks
-        if ($user->role === 'customer') {
-             $this->redirect('dashboard'); 
-             return;
-        }
-
-        $this->layout = 'layouts/admin';
+        // AdminController handles basic auth check.
+        // We can add specific role checks if needed, but AdminController ensures isAdmin() is true.
+        
         $this->taskService = new TaskService();
         $this->leadService = new CleanLeadService();
     }

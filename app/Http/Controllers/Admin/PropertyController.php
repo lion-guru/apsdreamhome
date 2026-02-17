@@ -12,6 +12,7 @@ class PropertyController extends AdminController
     public function __construct()
     {
         parent::__construct();
+        // AdminController handles authentication check
     }
 
     /**
@@ -19,12 +20,7 @@ class PropertyController extends AdminController
      */
     public function index()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
-        $this->data['page_title'] = 'Property Management - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('Property Management') . ' - ' . APP_NAME;
 
         $stmt = $this->db->query("SELECT * FROM properties ORDER BY created_at DESC");
         $this->data['properties'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -37,12 +33,7 @@ class PropertyController extends AdminController
      */
     public function create()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
-        $this->data['page_title'] = 'Add New Property - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('Add New Property') . ' - ' . APP_NAME;
         $this->data['propertyTypes'] = PropertyType::getForSelect();
         $this->render('admin/properties/create');
     }
@@ -52,8 +43,9 @@ class PropertyController extends AdminController
      */
     public function store()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->redirect('admin/properties/create');
             return;
         }
 
@@ -75,10 +67,10 @@ class PropertyController extends AdminController
                 ':status' => $propertyData['status'] ?? 'active'
             ]);
 
-            $this->setFlash('success', "Property added successfully!");
+            $this->setFlash('success', $this->mlSupport->translate('Property added successfully!'));
             $this->redirect('admin/properties');
         } catch (Exception $e) {
-            $this->setFlash('error', "Error adding property: " . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate('Error adding property: ') . $e->getMessage());
             $this->redirect('admin/properties/create');
         }
     }
@@ -88,23 +80,18 @@ class PropertyController extends AdminController
      */
     public function edit($id)
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :id");
         $stmt->execute([':id' => $id]);
         $property = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$property) {
-            $this->setFlash('error', "Property not found!");
+            $this->setFlash('error', $this->mlSupport->translate('Property not found!'));
             $this->redirect('admin/properties');
             return;
         }
 
         $this->data['property'] = $property;
-        $this->data['page_title'] = 'Edit Property - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('Edit Property') . ' - ' . APP_NAME;
         $this->data['propertyTypes'] = PropertyType::getForSelect();
         $this->render('admin/properties/edit');
     }
@@ -114,8 +101,9 @@ class PropertyController extends AdminController
      */
     public function update($id)
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->redirect("admin/properties/edit/{$id}");
             return;
         }
 
@@ -136,10 +124,10 @@ class PropertyController extends AdminController
                 ':id' => $id
             ]);
 
-            $this->setFlash('success', "Property updated successfully!");
+            $this->setFlash('success', $this->mlSupport->translate('Property updated successfully!'));
             $this->redirect('admin/properties');
         } catch (Exception $e) {
-            $this->setFlash('error', "Error updating property: " . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate('Error updating property: ') . $e->getMessage());
             $this->redirect("admin/properties/edit/{$id}");
         }
     }
@@ -149,18 +137,18 @@ class PropertyController extends AdminController
      */
     public function delete($id)
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
+        // CSRF check for delete usually via POST, but if GET, be careful.
+        // Assuming GET for now as per view code, but ideally should be POST.
+        // The view uses window.location.href, so it is GET.
+        // We will skip CSRF for GET delete for now to match legacy behavior, or we can add it if we change view to form.
 
         try {
             $stmt = $this->db->prepare("DELETE FROM properties WHERE id = :id");
             $stmt->execute([':id' => $id]);
 
-            $this->setFlash('success', "Property deleted successfully!");
+            $this->setFlash('success', $this->mlSupport->translate('Property deleted successfully!'));
         } catch (Exception $e) {
-            $this->setFlash('error', "Error deleting property: " . $e->getMessage());
+            $this->setFlash('error', $this->mlSupport->translate('Error deleting property: ') . $e->getMessage());
         }
 
         $this->redirect('admin/properties');

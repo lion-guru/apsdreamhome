@@ -31,13 +31,13 @@ class SupportTicketController extends AdminController
         }
 
         $this->data['tickets'] = $tickets;
-        $this->data['page_title'] = 'Support Tickets';
+        $this->data['page_title'] = $this->mlSupport->translate('Support Tickets');
         $this->render('admin/tickets/index');
     }
 
     public function create()
     {
-        $this->data['page_title'] = 'Create Ticket';
+        $this->data['page_title'] = $this->mlSupport->translate('Create Ticket');
         $this->render('admin/tickets/create');
     }
 
@@ -51,7 +51,7 @@ class SupportTicketController extends AdminController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-                $this->data['error'] = 'Invalid CSRF token.';
+                $this->data['error'] = $this->mlSupport->translate('Invalid CSRF token.');
                 $this->render('admin/tickets/create');
                 return;
             }
@@ -65,7 +65,7 @@ class SupportTicketController extends AdminController
             // Basic validation
             if (empty($data['subject']) || empty($data['message'])) {
                 // Flash error
-                $this->data['error'] = 'Subject and message are required.';
+                $this->data['error'] = $this->mlSupport->translate('Subject and message are required.');
                 $this->render('admin/tickets/create');
                 return;
             }
@@ -97,7 +97,7 @@ class SupportTicketController extends AdminController
         }
 
         $this->data['ticket'] = $ticket;
-        $this->data['page_title'] = 'Ticket #' . $ticket['ticket_number'];
+        $this->data['page_title'] = $this->mlSupport->translate('Ticket #') . $ticket['ticket_number'];
         $this->render('admin/tickets/show');
     }
 

@@ -15,14 +15,12 @@ class AiController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-        }
+        // AdminController handles auth check
     }
 
     public function hub()
     {
-        $this->data['page_title'] = 'AI Hub';
+        $this->data['page_title'] = $this->mlSupport->translate('AI Hub');
 
         // Initialize Services
         // Ensure files are loaded if autoloader misses them (though composer should handle it)

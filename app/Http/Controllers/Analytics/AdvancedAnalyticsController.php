@@ -7,9 +7,9 @@
 
 namespace App\Http\Controllers\Analytics;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
-class AdvancedAnalyticsController extends BaseController
+class AdvancedAnalyticsController extends AdminController
 {
 
     public function __construct()
@@ -22,15 +22,10 @@ class AdvancedAnalyticsController extends BaseController
      */
     public function dashboard()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         // Get comprehensive analytics data
         $analytics_data = $this->getComprehensiveAnalytics();
 
-        $this->data['page_title'] = 'Advanced Analytics - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('Advanced Analytics') . ' - ' . APP_NAME;
         $this->data['analytics_data'] = $analytics_data;
         $this->data['date_range'] = [
             'start' => $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')),
@@ -45,14 +40,9 @@ class AdvancedAnalyticsController extends BaseController
      */
     public function propertyAnalytics()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $property_data = $this->getPropertyAnalytics();
 
-        $this->data['page_title'] = 'Property Analytics - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('Property Analytics') . ' - ' . APP_NAME;
         $this->data['property_data'] = $property_data;
 
         $this->render('admin/property_analytics');
@@ -63,14 +53,9 @@ class AdvancedAnalyticsController extends BaseController
      */
     public function userAnalytics()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $user_data = $this->getUserAnalytics();
 
-        $this->data['page_title'] = 'User Analytics - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('User Analytics') . ' - ' . APP_NAME;
         $this->data['user_data'] = $user_data;
 
         $this->render('admin/user_analytics');
@@ -81,14 +66,9 @@ class AdvancedAnalyticsController extends BaseController
      */
     public function financialAnalytics()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $financial_data = $this->getFinancialAnalytics();
 
-        $this->data['page_title'] = 'Financial Analytics - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('Financial Analytics') . ' - ' . APP_NAME;
         $this->data['financial_data'] = $financial_data;
 
         $this->render('admin/financial_analytics');
@@ -99,14 +79,9 @@ class AdvancedAnalyticsController extends BaseController
      */
     public function mlmAnalytics()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $mlm_data = $this->getMLMAnalytics();
 
-        $this->data['page_title'] = 'MLM Analytics - ' . APP_NAME;
+        $this->data['page_title'] = $this->mlSupport->translate('MLM Analytics') . ' - ' . APP_NAME;
         $this->data['mlm_data'] = $mlm_data;
 
         $this->render('admin/mlm_analytics');

@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Models\Sale;
 use App\Models\Payout;
 use App\Models\Associate;
 use App\Core\Database;
 use Exception;
 
-class SalesController extends BaseController
+class SalesController extends AdminController
 {
     public function __construct()
     {
         parent::__construct();
 
         // Register middlewares
-        $this->middleware('role:admin');
+        // AdminController handles role check
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
 

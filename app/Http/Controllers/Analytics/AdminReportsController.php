@@ -7,9 +7,9 @@
 
 namespace App\Http\Controllers\Analytics;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
 
-class AdminReportsController extends BaseController
+class AdminReportsController extends AdminController
 {
     public function __construct()
     {
@@ -23,11 +23,8 @@ class AdminReportsController extends BaseController
      */
     public function index()
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
+        // Check if user is admin (AdminController handles this, but keeping double check if needed or removing)
+        // AdminController constructor already redirects if not admin.
 
         // Set page data
         $this->data['page_title'] = 'Reports & Analytics - ' . APP_NAME;
@@ -57,11 +54,7 @@ class AdminReportsController extends BaseController
      */
     public function properties()
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
+        // Check if user is admin (AdminController handles this)
 
         // Set page data
         $this->data['page_title'] = 'Property Performance Reports - ' . APP_NAME;
@@ -96,11 +89,7 @@ class AdminReportsController extends BaseController
      */
     public function users()
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
+        // Check if user is admin (AdminController handles this)
 
         // Set page data
         $this->data['page_title'] = 'User Analytics Reports - ' . APP_NAME;
