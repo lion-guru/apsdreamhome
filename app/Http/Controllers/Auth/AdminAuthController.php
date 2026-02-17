@@ -103,7 +103,17 @@ class AdminAuthController extends BaseController
             } elseif ($hash && preg_match('/^[a-f0-9]{40}$/i', $hash) && sha1($password) === $hash) {
                 // Legacy SHA1 support
                 $verified = true;
-                // TODO: Rehash password to bcrypt/argon2 here if possible
+
+                // Rehash password to bcrypt and update database
+                $newHash = password_hash($password, PASSWORD_DEFAULT);
+                $admin->password = $newHash;
+
+                // If using apass column for legacy compatibility, update it too if it exists in fillable
+                if ($admin->apass) {
+                    $admin->apass = $newHash;
+                }
+
+                $admin->save();
             }
 
             if (!$verified) {
