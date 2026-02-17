@@ -18,8 +18,12 @@ class Property extends Model
         'area',
         'area_unit',
         'is_featured',
+        'featured',
         'status',
         'image_path',
+        'city',
+        'state',
+        'pincode',
         'created_at',
         'updated_at'
     ];
@@ -176,7 +180,8 @@ class Property extends Model
                     p.price,
                     p.status,
                     p.featured,
-                    p.city,
+                    p.location,
+                    p.area,
                     p.created_at,
                     pt.type as property_type
                 FROM properties p
