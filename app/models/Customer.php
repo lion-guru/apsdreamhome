@@ -253,7 +253,7 @@ class Customer extends Model
     /**
      * Create new customer
      */
-    public function createCustomer($data)
+    public function registerCustomer($data)
     {
         // Start transaction
         $this->db->beginTransaction();
