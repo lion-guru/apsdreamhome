@@ -189,9 +189,9 @@ class PropertyController extends AdminController
     public function delete($id)
     {
         $this->checkWritePermission();
-        
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-             if (!$this->validateCsrfToken()) {
+            if (!$this->validateCsrfToken()) {
                 $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed.') : 'Security validation failed.');
                 $this->redirect('admin/properties');
                 return;
@@ -226,5 +226,4 @@ class PropertyController extends AdminController
 
         $this->redirect('admin/properties');
     }
-}
 }

@@ -44,10 +44,11 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate
      */
     public function getFlashBag()
     {
-        if (!$this->flashBag) {
-            $this->start();
-            $this->flashBag = new FlashBag($this);
+        $this->start();
+        if (!isset($this->data['_flash']) || !($this->data['_flash'] instanceof FlashBag)) {
+            $this->data['_flash'] = new FlashBag();
         }
+        $this->flashBag = $this->data['_flash'];
         return $this->flashBag;
     }
 
