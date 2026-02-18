@@ -23,7 +23,7 @@ class Booking extends Model
             $params = [];
 
             if (!empty($filters['search'])) {
-                $where[] = "(booking_number LIKE :search_booking OR customer_id IN (SELECT id FROM customers WHERE name LIKE :search_customer))";
+                $where[] = "(booking_number LIKE :search_booking OR customer_id IN (SELECT id FROM users WHERE role = 'customer' AND name LIKE :search_customer))";
                 $term = '%' . $filters['search'] . '%';
                 $params['search_booking'] = $term;
                 $params['search_customer'] = $term;
@@ -43,9 +43,9 @@ class Booking extends Model
             $limit = (int)($filters['per_page'] ?? 10);
             $offset = (int)((($filters['page'] ?? 1) - 1) * $limit);
 
-            $sql = "SELECT b.*, c.name as customer_name, p.title as property_title 
+            $sql = "SELECT b.*, u.name as customer_name, p.title as property_title 
                     FROM bookings b 
-                    LEFT JOIN customers c ON b.customer_id = c.id 
+                    LEFT JOIN users u ON b.customer_id = u.id 
                     LEFT JOIN properties p ON b.property_id = p.id 
                     {$where_clause} 
                     ORDER BY b.{$sort} {$order} 
@@ -78,7 +78,7 @@ class Booking extends Model
             $params = [];
 
             if (!empty($filters['search'])) {
-                $where[] = "(booking_number LIKE :search_booking OR customer_id IN (SELECT id FROM customers WHERE name LIKE :search_customer))";
+                $where[] = "(booking_number LIKE :search_booking OR customer_id IN (SELECT id FROM users WHERE role = 'customer' AND name LIKE :search_customer))";
                 $term = '%' . $filters['search'] . '%';
                 $params['search_booking'] = $term;
                 $params['search_customer'] = $term;
