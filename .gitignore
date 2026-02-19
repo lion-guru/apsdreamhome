@@ -86,8 +86,7 @@ _backup_legacy_files/
 .windsurf\rules\openmemory.md
 
 # Database dumps and snapshots
-*.sql
-*.bak
+.bak
 *.zip
 *.tar.gz
 storage/snapshots/
