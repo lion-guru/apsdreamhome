@@ -49,11 +49,22 @@ class VisitController extends AdminController
      */
     public function store()
     {
-        $data = $_POST;
+        if ($this->request->method() !== 'POST') {
+            $this->redirect('admin/visits/create');
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->session->setFlash('error', 'Invalid CSRF token.');
+            $this->redirect('admin/visits/create');
+            return;
+        }
+
+        $data = $this->request->post();
 
         // Add defaults and user info
         $data['status'] = 'scheduled';
-        $data['created_by'] = $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0;
+        $data['created_by'] = $this->session->get('admin_id') ?? $this->session->get('user_id') ?? 0;
 
         if ($this->visitModel) {
             $this->visitModel->fill($data);
@@ -63,8 +74,10 @@ class VisitController extends AdminController
         }
 
         if ($result) {
+            $this->session->setFlash('success', 'Visit scheduled successfully.');
             $this->redirect('admin/visits');
         } else {
+            $this->session->setFlash('error', 'Failed to schedule visit.');
             $this->redirect('admin/visits/create');
         }
     }
@@ -74,7 +87,15 @@ class VisitController extends AdminController
      */
     public function updateStatus($id)
     {
-        $status = $_POST['status'] ?? '';
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid request method']);
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid CSRF token.']);
+        }
+
+        $status = $this->request->post('status') ?? '';
         $sql = "UPDATE property_visits SET status = ?, updated_at = NOW() WHERE id = ?";
 
         $stmt = $this->db->prepare($sql);

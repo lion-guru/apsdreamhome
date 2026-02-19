@@ -3,7 +3,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/admin/leads">लीड्स</a></li>
+                <li class="breadcrumb-item"><a href="/admin/leads">Leads</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
                     <?= htmlspecialchars($lead['name']) ?>
                 </li>
@@ -44,7 +44,7 @@
                                 </div>
                                 <p class="text-muted mb-0">
                                     <i class="fas fa-clock mr-2"></i>
-                                    बनाया गया: <?= date('d M Y, h:i A', strtotime($lead['created_at'])) ?>
+                                    Created: <?= date('d M Y, h:i A', strtotime($lead['created_at'])) ?>
                                 </p>
                             </div>
                         </div>
@@ -52,28 +52,28 @@
                     <div class="col-md-4 text-right">
                         <div class="btn-group-vertical">
                             <button type="button" class="btn btn-primary" onclick="addActivity()">
-                                <i class="fas fa-plus mr-2"></i>गतिविधि जोड़ें
+                                <i class="fas fa-plus mr-2"></i>Add Activity
                             </button>
                             <button type="button" class="btn btn-info mt-2" onclick="addNote()">
-                                <i class="fas fa-sticky-note mr-2"></i>नोट जोड़ें
+                                <i class="fas fa-sticky-note mr-2"></i>Add Note
                             </button>
                             <div class="btn-group mt-2">
                                 <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                    <i class="fas fa-cog mr-2"></i>एक्शन
+                                    <i class="fas fa-cog mr-2"></i>Action
                                 </button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="/admin/leads/<?= $lead['id'] ?>/edit">
-                                        <i class="fas fa-edit mr-2"></i>एडिट करें
+                                        <i class="fas fa-edit mr-2"></i>Edit
                                     </a>
                                     <a class="dropdown-item" href="mailto:<?= htmlspecialchars($lead['email']) ?>">
-                                        <i class="fas fa-envelope mr-2"></i>ईमेल भेजें
+                                        <i class="fas fa-envelope mr-2"></i>Send Email
                                     </a>
                                     <a class="dropdown-item" href="tel:<?= htmlspecialchars($lead['phone']) ?>">
-                                        <i class="fas fa-phone mr-2"></i>कॉल करें
+                                        <i class="fas fa-phone mr-2"></i>Call
                                     </a>
                                     <div class="dropdown-divider"></div>
                                     <button class="dropdown-item text-danger" onclick="deleteLead()">
-                                        <i class="fas fa-trash mr-2"></i>डिलीट करें
+                                        <i class="fas fa-trash mr-2"></i>Delete
                                     </button>
                                 </div>
                             </div>
@@ -92,37 +92,37 @@
         <div class="card shadow mb-4">
             <div class="card-header">
                 <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-info-circle mr-2"></i>लीड जानकारी
+                    <i class="fas fa-info-circle mr-2"></i>Lead Information
                 </h6>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">पूरा नाम</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Full Name</label>
                         <p class="h5"><?= htmlspecialchars($lead['name']) ?></p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">फोन नंबर</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Phone Number</label>
                         <p class="h5">
                             <a href="tel:<?= htmlspecialchars($lead['phone']) ?>"><?= htmlspecialchars($lead['phone']) ?></a>
                         </p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">ईमेल पता</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Email Address</label>
                         <p class="h5">
                             <a href="mailto:<?= htmlspecialchars($lead['email']) ?>"><?= htmlspecialchars($lead['email'] ?: 'N/A') ?></a>
                         </p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">कंपनी</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Company</label>
                         <p class="h5"><?= htmlspecialchars($lead['company'] ?: 'N/A') ?></p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">सोर्स</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Source</label>
                         <p class="h5"><?= htmlspecialchars($lead['source_name'] ?: 'N/A') ?></p>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">असाइन किया गया</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Assigned To</label>
                         <p class="h5"><?= htmlspecialchars($lead['assigned_to_name'] ?: 'Unassigned') ?></p>
                     </div>
                 </div>
@@ -133,26 +133,26 @@
         <div class="card shadow mb-4">
             <div class="card-header">
                 <h6 class="m-0 font-weight-bold text-success">
-                    <i class="fas fa-building mr-2"></i>प्रॉपर्टी प्राथमिकताएं
+                    <i class="fas fa-building mr-2"></i>Property Preferences
                 </h6>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">प्रॉपर्टी टाइप</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Property Type</label>
                         <p class="h5"><?= htmlspecialchars($lead['property_type'] ?: 'N/A') ?></p>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">बजट</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Budget</label>
                         <p class="h5"><?= $lead['budget'] ? '₹' . number_format($lead['budget']) : 'N/A' ?></p>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="text-muted small text-uppercase font-weight-bold">लोकेशन</label>
+                        <label class="text-muted small text-uppercase font-weight-bold">Location</label>
                         <p class="h5"><?= htmlspecialchars($lead['location_preference'] ?: 'N/A') ?></p>
                     </div>
                     <div class="col-12">
-                        <label class="text-muted small text-uppercase font-weight-bold">नोट्स</label>
-                        <p><?= nl2br(htmlspecialchars($lead['notes'] ?: 'कोई नोट्स नहीं')) ?></p>
+                        <label class="text-muted small text-uppercase font-weight-bold">Notes</label>
+                        <p><?= nl2br(htmlspecialchars($lead['notes'] ?: 'No notes')) ?></p>
                     </div>
                 </div>
             </div>
@@ -165,7 +165,7 @@
         <div class="card shadow mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-history mr-2"></i>गतिविधियां
+                    <i class="fas fa-history mr-2"></i>Activities
                 </h6>
                 <button class="btn btn-sm btn-outline-primary" onclick="addActivity()">
                     <i class="fas fa-plus"></i>
@@ -174,7 +174,7 @@
             <div class="card-body p-0">
                 <div class="timeline p-3">
                     <?php if (empty($activities)): ?>
-                        <p class="text-center text-muted my-3">कोई गतिविधि नहीं मिली</p>
+                        <p class="text-center text-muted my-3">No activity found</p>
                     <?php else: ?>
                         <?php foreach ($activities as $activity): ?>
                             <div class="timeline-item mb-3">
@@ -206,7 +206,7 @@
         justify-content: center;
         font-size: 32px;
         font-weight: bold;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     .timeline-item {
@@ -239,25 +239,25 @@
     }
 
     function deleteLead() {
-        if (confirm('क्या आप वाकई इस लीड को डिलीट करना चाहते हैं?')) {
+        if (confirm('Are you sure you want to delete this lead?')) {
             fetch('/admin/leads/<?= $lead['id'] ?>/delete', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = '/admin/leads';
-                } else {
-                    alert('Failed to delete lead: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to delete lead. Please try again.');
-            });
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/admin/leads';
+                    } else {
+                        alert('Failed to delete lead: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to delete lead. Please try again.');
+                });
         }
     }
 </script>

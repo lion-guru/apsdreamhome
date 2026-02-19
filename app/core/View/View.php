@@ -99,7 +99,7 @@ class View
      */
     protected function getDefaultBasePath()
     {
-        return App::getInstance()->basePath('resources/views');
+        return App::getInstance()->basePath('app/views');
     }
 
     /**

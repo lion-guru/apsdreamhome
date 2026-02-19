@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Advanced Search - AJAX Endpoint
  * Advanced filtering and search across admin modules
@@ -49,7 +50,7 @@ try {
     if (!empty($searchQuery)) {
         $searchTerm = "%$searchQuery%";
         if ($module === 'users') {
-            $whereConditions[] = "(u.uname LIKE ? OR u.uemail LIKE ? OR u.job_role LIKE ?)";
+            $whereConditions[] = "(u.name LIKE ? OR u.email LIKE ? OR u.role LIKE ?)";
             $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
         } else {
             $whereConditions[] = "(title LIKE ? OR description LIKE ? OR location LIKE ?)";
@@ -68,7 +69,7 @@ try {
 
     // Date range filter
     if ($dateRange !== 'all') {
-        $dateColumn = ($module === 'users') ? 'u.join_date' : 'created_at';
+        $dateColumn = ($module === 'users') ? 'u.created_at' : 'created_at';
         switch ($dateRange) {
             case 'today':
                 $whereConditions[] = "DATE($dateColumn) = CURDATE()";
@@ -91,8 +92,8 @@ try {
     $sql = "";
     switch ($module) {
         case 'users':
-            $sortColumn = ($sortBy === 'date') ? 'u.join_date' : 'u.uname';
-            $sql = "SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role, COALESCE(a.status, 'active') as status, u.join_date as created_at FROM user u LEFT JOIN associates a ON u.uid = a.user_id $whereClause ORDER BY $sortColumn DESC LIMIT 20";
+            $sortColumn = ($sortBy === 'date') ? 'u.created_at' : 'u.name';
+            $sql = "SELECT u.id as id, u.name as name, u.email as email, u.role as role, COALESCE(a.status, 'active') as status, u.created_at as created_at FROM users u LEFT JOIN associates a ON u.id = a.user_id $whereClause ORDER BY $sortColumn DESC LIMIT 20";
             break;
         case 'properties':
             $sortColumn = ($sortBy === 'date') ? 'created_at' : 'title';
@@ -201,7 +202,6 @@ try {
             'sort' => h($sortBy)
         ]
     ]);
-
 } catch (Exception $e) {
     error_log('Advanced search error: ' . $e->getMessage());
     http_response_code(500);
@@ -210,4 +210,3 @@ try {
         'message' => 'Error performing advanced search'
     ]);
 }
-?>

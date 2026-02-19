@@ -122,6 +122,10 @@ class EMIController extends AdminController
      */
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonError($this->mlSupport->translate('Invalid request method.'));
+        }
+
         if (!$this->validateCsrfToken()) {
             return $this->jsonError($this->mlSupport->translate('Security validation failed.'));
         }
@@ -317,8 +321,12 @@ class EMIController extends AdminController
      */
     public function pay()
     {
-        if (!$this->request->isPost()) {
+        if ($this->request->method() !== 'POST') {
             return $this->jsonError($this->mlSupport->translate('Invalid request method'));
+        }
+
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonError($this->mlSupport->translate('Security validation failed.'));
         }
 
         try {
@@ -369,6 +377,10 @@ class EMIController extends AdminController
     {
         if (!$this->request->isPost()) {
             return $this->jsonError($this->mlSupport->translate('Invalid request method'));
+        }
+
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonError($this->mlSupport->translate('Security validation failed.'));
         }
 
         try {

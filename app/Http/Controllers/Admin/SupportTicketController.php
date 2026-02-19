@@ -49,17 +49,17 @@ class SupportTicketController extends AdminController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        if ($this->request->method() === 'POST') {
+            if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
                 $this->data['error'] = $this->mlSupport->translate('Invalid CSRF token.');
                 $this->render('admin/tickets/create');
                 return;
             }
 
             $data = [
-                'subject' => $_POST['subject'] ?? '',
-                'message' => $_POST['message'] ?? '',
-                'priority' => $_POST['priority'] ?? 'medium',
+                'subject' => $this->request->post('subject') ?? '',
+                'message' => $this->request->post('message') ?? '',
+                'priority' => $this->request->post('priority') ?? 'medium',
             ];
 
             // Basic validation
@@ -71,8 +71,9 @@ class SupportTicketController extends AdminController
             }
 
             // Handle file upload
-            if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-                $data['attachment'] = $this->handleFileUpload($_FILES['attachment']);
+            $attachment = $this->request->files('attachment');
+            if (isset($attachment) && $attachment['error'] === UPLOAD_ERR_OK) {
+                $data['attachment'] = $this->handleFileUpload($attachment);
             }
 
             $this->ticketService->createTicket($data, $user->id);
@@ -109,22 +110,36 @@ class SupportTicketController extends AdminController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-                // Should probably show error, but for reply just redirect back
+        if ($this->request->method() === 'POST') {
+            if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+                $this->session->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
                 $this->redirect('admin/tickets/' . $id);
                 return;
             }
 
-            $message = $_POST['message'] ?? '';
+            $message = $this->request->post('message') ?? '';
             $attachment = null;
+            $uploadedFile = $this->request->files('attachment');
 
-            if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-                $attachment = $this->handleFileUpload($_FILES['attachment']);
+            if (isset($uploadedFile) && $uploadedFile['error'] === UPLOAD_ERR_OK) {
+                $attachment = $this->handleFileUpload($uploadedFile);
             }
 
             if (!empty($message) || $attachment) {
+                // Assuming addReply handles the logic
+                // The original code was calling addReply directly on ticketService
+                // But looking at line 128, it seems correct.
+                // However, the original code had: $this->ticketService->addReply($id, $user->id, $message, $attachment);
+                // I need to make sure I keep that logic.
+                // Wait, I should verify if addReply exists in SupportTicketService.
+                // Assuming it does since I am just refactoring the controller.
+
+                // Let's implement the logic properly
+                // The service call was missing in my thought process but let's include it.
                 $this->ticketService->addReply($id, $user->id, $message, $attachment);
+                $this->session->setFlash('success', $this->mlSupport->translate('Reply added successfully.'));
+            } else {
+                $this->session->setFlash('error', $this->mlSupport->translate('Message or attachment is required.'));
             }
 
             $this->redirect('admin/tickets/' . $id);
@@ -140,15 +155,17 @@ class SupportTicketController extends AdminController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$this->verifyCsrfToken($_POST['csrf_token'] ?? '')) {
+        if ($this->request->method() === 'POST') {
+            if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+                $this->session->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
                 $this->redirect('admin/tickets/' . $id);
                 return;
             }
 
-            $status = $_POST['status'] ?? '';
+            $status = $this->request->post('status') ?? '';
             if (in_array($status, ['open', 'in_progress', 'resolved', 'closed'])) {
                 $this->ticketService->updateTicketStatus($id, $status);
+                $this->session->setFlash('success', $this->mlSupport->translate('Ticket status updated.'));
             }
             $this->redirect('admin/tickets/' . $id);
         }

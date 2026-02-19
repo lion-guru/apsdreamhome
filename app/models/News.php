@@ -22,20 +22,28 @@ class News extends UnifiedModel
      */
     public static function getPublished($limit = 10, $offset = 0, $category = 'all')
     {
-        $db = static::getConnection();
-        $params = [];
+        try {
+            $db = static::getConnection();
+            $params = [];
 
-        // Since status and category columns don't exist in the current schema,
-        // we select all news items ordered by date/created_at.
-        $sql = "SELECT * FROM news ORDER BY created_at DESC LIMIT ? OFFSET ?";
+            // Since status and category columns don't exist in the current schema,
+            // we select all news items ordered by date/created_at.
+            $sql = "SELECT * FROM news ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
 
-        $params[] = (int)$limit;
-        $params[] = (int)$offset;
+            $stmt = $db->prepare($sql);
+            
+            // Bind parameters as integers to avoid syntax errors with LIMIT
+            $stmt->bindValue(':limit', (int)$limit, \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, \PDO::PARAM_INT);
+            
+            $stmt->execute();
 
-        $stmt = $db->prepare($sql);
-        $stmt->execute($params);
-
-        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            // Log error and return empty array
+            error_log("News::getPublished error: " . $e->getMessage());
+            return [];
+        }
     }
 
     /**

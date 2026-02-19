@@ -15,6 +15,7 @@ use App\Models\Service;
 use App\Models\Gallery;
 use App\Models\Faq;
 use App\Models\Feedback;
+use App\Models\ResellProperty;
 
 class PageController extends BaseController
 {
@@ -53,10 +54,95 @@ class PageController extends BaseController
 
         // Fetch published news using the Model
         // Use getPublished() directly as it handles missing columns gracefully
-        $this->data['news'] = News::getPublished(3);
+        try {
+            $this->data['news'] = News::getPublished(3);
+        } catch (\Exception $e) {
+            // Log error but don't break page
+            error_log("Error loading news: " . $e->getMessage());
+            $this->data['news'] = [];
+        }
 
         // Render the homepage
         $this->render('pages/home');
+    }
+
+    /**
+     * Display Resell Properties page
+     */
+    public function resell()
+    {
+        $this->data['page_title'] = 'Resell Properties - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Resell Properties', 'url' => BASE_URL . '/resell']
+        ];
+
+        // Get filter parameters from request
+        $filters = [
+            'search' => $_GET['search'] ?? '',
+            'city' => $_GET['city'] ?? '',
+            'type' => $_GET['type'] ?? '',
+            'min_price' => $_GET['min_price'] ?? '',
+            'max_price' => $_GET['max_price'] ?? '',
+            'bedrooms' => $_GET['bedrooms'] ?? ''
+        ];
+
+        try {
+            // Fetch properties
+            $this->data['properties'] = ResellProperty::getActiveWithUser($filters);
+
+            // Fetch filter options
+            $this->data['cities'] = ResellProperty::getDistinct('city', ['status' => 'approved']);
+            $this->data['property_types'] = ResellProperty::getDistinct('property_type', ['status' => 'approved']);
+            $this->data['price_range'] = ResellProperty::getPriceRange('approved');
+        } catch (\Exception $e) {
+            error_log("Error loading resell properties: " . $e->getMessage());
+            $this->data['properties'] = [];
+            $this->data['cities'] = [];
+            $this->data['property_types'] = [];
+            $this->data['price_range'] = ['min_price' => 0, 'max_price' => 0];
+        }
+
+        // Pass filters back to view
+        $this->data['filters'] = $filters;
+
+        $this->render('pages/resell');
+    }
+
+    /**
+     * Display legal services page
+     */
+    public function legalServices()
+    {
+        $this->data['page_title'] = 'Legal Services - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Legal Services', 'url' => BASE_URL . '/legal-services']
+        ];
+
+        try {
+            // Get legal services
+            $stmt = $this->db->prepare("SELECT * FROM legal_services WHERE status = 'active' ORDER BY display_order ASC");
+            $stmt->execute();
+            $this->data['services'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get legal team members
+            $stmt = $this->db->prepare("SELECT * FROM team_members WHERE department = 'legal' AND status = 'active' ORDER BY display_order ASC LIMIT 4");
+            $stmt->execute();
+            $this->data['lawyers'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get legal services FAQs
+            $stmt = $this->db->prepare("SELECT * FROM faqs WHERE category = 'legal_services' AND status = 'active' ORDER BY display_order ASC LIMIT 6");
+            $stmt->execute();
+            $this->data['faqs'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $this->data['services'] = [];
+            $this->data['lawyers'] = [];
+            $this->data['faqs'] = [];
+            error_log("Error loading legal services: " . $e->getMessage());
+        }
+
+        $this->render('pages/legal_services');
     }
 
     /**
@@ -70,7 +156,7 @@ class PageController extends BaseController
                     p.*, 
                     (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as primary_image
                 FROM properties p 
-                WHERE p.is_featured = 1 AND p.status = 'active'
+                WHERE p.featured = 1 AND p.status = 'available'
                 ORDER BY p.created_at DESC 
                 LIMIT 6
             ");
@@ -87,7 +173,7 @@ class PageController extends BaseController
     private function getLocations()
     {
         try {
-            $stmt = $this->db->prepare("SELECT DISTINCT city FROM properties WHERE status = 'active' ORDER BY city ASC");
+            $stmt = $this->db->prepare("SELECT DISTINCT city FROM properties WHERE status = 'available' ORDER BY city ASC");
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
@@ -222,15 +308,6 @@ class PageController extends BaseController
         }
 
         $this->render('pages/gallery');
-    }
-
-    /**
-     * Display Resell page
-     */
-    public function resell()
-    {
-        $this->data['page_title'] = 'Resell Properties - ' . APP_NAME;
-        $this->render('pages/resell');
     }
 
     /**

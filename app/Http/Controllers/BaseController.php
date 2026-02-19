@@ -37,18 +37,20 @@ class BaseController extends CoreController
      */
     protected function getCsrfToken(): string
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (!$this->session->isStarted()) {
+            $this->session->start();
         }
-        if (empty($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        if (!$this->session->has('csrf_token')) {
+            $this->session->set('csrf_token', bin2hex(random_bytes(32)));
         }
-        return $_SESSION['csrf_token'];
+        return $this->session->get('csrf_token');
     }
 
     protected function verifyCsrfToken(?string $token): bool
     {
-        return isset($_SESSION['csrf_token']) && is_string($token) && hash_equals($_SESSION['csrf_token'], $token);
+        $storedToken = $this->session->get('csrf_token');
+        return !empty($storedToken) && is_string($token) && hash_equals($storedToken, $token);
     }
 
     /**
@@ -56,7 +58,7 @@ class BaseController extends CoreController
      */
     protected function setFlash(string $type, string $message): void
     {
-        $_SESSION[$type] = $message;
+        $this->session->set($type, $message);
     }
 
     /**
@@ -64,9 +66,9 @@ class BaseController extends CoreController
      */
     protected function getFlash(string $type): ?string
     {
-        if (isset($_SESSION[$type])) {
-            $message = $_SESSION[$type];
-            unset($_SESSION[$type]);
+        if ($this->session->has($type)) {
+            $message = $this->session->get($type);
+            $this->session->remove($type);
             return $message;
         }
         return null;
@@ -81,7 +83,7 @@ class BaseController extends CoreController
             if ($this->isAjaxRequest()) {
                 $this->json(['error' => 'Authentication required'], 401);
             } else {
-                $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+                $this->session->set('redirect_url', $_SERVER['REQUEST_URI']);
                 $this->redirect('login');
                 return;
             }
@@ -93,7 +95,7 @@ class BaseController extends CoreController
      */
     protected function isLoggedIn(): bool
     {
-        if (isset($_SESSION['user_id']) || isset($_SESSION['auser']) || isset($_SESSION['associate_id']) || isset($_SESSION['admin_logged_in'])) {
+        if ($this->session->has('user_id') || $this->session->has('auser') || $this->session->has('associate_id') || $this->session->has('admin_logged_in')) {
             return true;
         }
 

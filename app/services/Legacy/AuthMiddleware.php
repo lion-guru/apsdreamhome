@@ -37,8 +37,25 @@ class AuthMiddleware {
         try {
             // Database credential verification
             $db = \App\Core\App::database();
-            $sql = "SELECT upass as password_hash, salt FROM user WHERE uname = ?";
-            $user = $db->fetch($sql, [$username]);
+            
+            // Query users table (modern) instead of legacy user table
+            // Check both username and email for flexibility
+            $sql = "SELECT * FROM users WHERE username = :username OR email = :email";
+            $user = $db->fetch($sql, ['username' => $username, 'email' => $username]);
+
+            if (!$user) {
+                // Fallback check in admin table if not found in users
+                $sqlAdmin = "SELECT * FROM admin WHERE auser = :username OR email = :email";
+                $adminUser = $db->fetch($sqlAdmin, ['username' => $username, 'email' => $username]);
+                
+                if ($adminUser) {
+                    $user = $adminUser;
+                    // Map admin columns to user columns for consistency
+                    $user['password'] = $adminUser['apass'] ?? $adminUser['password'];
+                    $user['username'] = $adminUser['auser'] ?? $adminUser['username'];
+                    $user['role'] = $adminUser['role'] ?? 'admin';
+                }
+            }
 
             if (!$user) {
                 AdminLogger::log('LOGIN_ATTEMPT_NONEXISTENT_USER', [
@@ -50,13 +67,22 @@ class AuthMiddleware {
 
             // Verify password - support both modern and legacy hashing
             $password_verified = false;
-            if (password_verify($password, $user['password_hash'])) {
+            
+            // Modern bcrypt check
+            if (isset($user['password']) && password_verify($password, $user['password'])) {
                 $password_verified = true;
-            } else if (isset($user['salt'])) {
+            } 
+            // Legacy SHA1/MD5 check (fallback)
+            else if (isset($user['salt']) && isset($user['password_hash'])) {
+                // Legacy user table format
                 $hashedPassword = hash('sha256', $password . $user['salt']);
                 if (hash_equals($user['password_hash'], $hashedPassword)) {
                     $password_verified = true;
                 }
+            }
+            // Simple SHA1 check (legacy admin)
+            else if (isset($user['apass']) && sha1($password) === $user['apass']) {
+                $password_verified = true;
             }
 
             if (!$password_verified) {
@@ -66,9 +92,20 @@ class AuthMiddleware {
                 ]);
                 return false;
             }
+            
+            // Check if user has admin privileges
+            $role = $user['role'] ?? 'user';
+            if (!in_array($role, ['admin', 'super_admin', 'manager', 'employee'])) {
+                 AdminLogger::log('UNAUTHORIZED_ROLE_LOGIN', [
+                    'username' => $username,
+                    'role' => $role,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
+                ]);
+                return false;
+            }
 
             // Successful login
-            self::createSecureSession($username);
+            self::createSecureSession($user['username'] ?? $username);
             return true;
 
         } catch (Exception $e) {

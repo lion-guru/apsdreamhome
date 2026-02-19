@@ -54,7 +54,7 @@ class AiController extends AdminController
                     $this->data['msg'] = '<div class="alert alert-success">' . $this->mlSupport->translate('Workflow created successfully!') . '</div>';
                     // Log activity if function exists
                     if (function_exists('log_admin_activity')) {
-                        log_admin_activity($_SESSION['admin_id'] ?? 0, 'create_ai_workflow', "Created workflow: $name");
+                        log_admin_activity($this->session->get('admin_id') ?? 0, 'create_ai_workflow', "Created workflow: $name");
                     }
                 } else {
                     $this->data['msg'] = '<div class="alert alert-danger">' . $this->mlSupport->translate('Error creating workflow') . '</div>';
@@ -63,8 +63,8 @@ class AiController extends AdminController
         }
 
         // Update mode if changed in session
-        if (isset($_SESSION['ai_mode'])) {
-            $aiManager->setMode($_SESSION['ai_mode']);
+        if ($this->session->has('ai_mode')) {
+            $aiManager->setMode($this->session->get('ai_mode'));
         }
 
         // Pass manager to view for mode display

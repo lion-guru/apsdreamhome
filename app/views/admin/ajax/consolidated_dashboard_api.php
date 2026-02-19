@@ -229,15 +229,15 @@ function getUsersData($db)
     $offset = ($page - 1) * $limit;
 
     $search = $_GET['search'] ?? '';
-    $where = $search ? "WHERE u.uname LIKE :search OR u.uemail LIKE :search OR u.job_role LIKE :search" : "";
+    $where = $search ? "WHERE u.name LIKE :search OR u.email LIKE :search OR u.role LIKE :search" : "";
     $params = $search ? ['search' => "%$search%"] : [];
 
-    $sql = "SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role,
-                   COALESCE(a.status, 'active') as status, u.join_date as created_at
-            FROM user u
-            LEFT JOIN associates a ON u.uid = a.user_id
+    $sql = "SELECT u.id as id, u.name as name, u.email as email, u.role as role,
+                   COALESCE(a.status, 'active') as status, u.created_at as created_at
+            FROM users u
+            LEFT JOIN associates a ON u.id = a.user_id
             $where
-            ORDER BY u.join_date DESC
+            ORDER BY u.created_at DESC
             LIMIT $limit OFFSET $offset";
 
     $users = $db->fetchAll($sql, $params);
@@ -337,7 +337,7 @@ function getBookingsData($db)
     }
 
     // Get total count
-    $row = $db->fetch("SELECT COUNT(*) as total FROM bookings b LEFT JOIN user u ON b.user_id = u.uid LEFT JOIN properties p ON b.property_id = p.id $where", $params);
+    $row = $db->fetch("SELECT COUNT(*) as total FROM bookings b LEFT JOIN users u ON b.user_id = u.id LEFT JOIN properties p ON b.property_id = p.id $where", $params);
     $total = $row['total'] ?? 0;
 
     echo json_encode([
@@ -369,7 +369,7 @@ function globalSearch($db, $currentRole)
 
     // Search in users - Restricted to superadmin/manager
     if (in_array($currentRole, ['superadmin', 'manager'])) {
-        $rows = $db->fetchAll("SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role, COALESCE(a.status, 'active') as status FROM user u LEFT JOIN associates a ON u.uid = a.user_id WHERE u.uname LIKE :search OR u.uemail LIKE :search OR u.job_role LIKE :search LIMIT 5", ['search' => $searchTerm]);
+        $rows = $db->fetchAll("SELECT u.id as id, u.name as name, u.email as email, u.role as role, COALESCE(a.status, 'active') as status FROM users u LEFT JOIN associates a ON u.id = a.user_id WHERE u.name LIKE :search OR u.email LIKE :search OR u.role LIKE :search LIMIT 5", ['search' => $searchTerm]);
 
         foreach ($rows as $row) {
             $results[] = [

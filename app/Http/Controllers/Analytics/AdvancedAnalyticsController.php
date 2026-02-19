@@ -28,8 +28,8 @@ class AdvancedAnalyticsController extends AdminController
         $this->data['page_title'] = $this->mlSupport->translate('Advanced Analytics') . ' - ' . APP_NAME;
         $this->data['analytics_data'] = $analytics_data;
         $this->data['date_range'] = [
-            'start' => $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')),
-            'end' => $_GET['end_date'] ?? date('Y-m-d')
+            'start' => $this->request->get('start_date', date('Y-m-d', strtotime('-30 days'))),
+            'end' => $this->request->get('end_date', date('Y-m-d'))
         ];
 
         $this->render('admin/advanced_analytics');
@@ -92,13 +92,12 @@ class AdvancedAnalyticsController extends AdminController
      */
     public function apiGetRealtimeData()
     {
-        header('Content-Type: application/json');
-
         // AdminController handles auth check
+        $this->requireAdmin();
 
         $realtime_data = $this->getRealtimeAnalytics();
 
-        sendJsonResponse([
+        return $this->json([
             'success' => true,
             'data' => $realtime_data,
             'timestamp' => date('Y-m-d H:i:s')

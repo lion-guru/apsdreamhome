@@ -30,7 +30,7 @@ class PayoutController extends AdminController
     public function list()
     {
         try {
-            $filters = $this->parseFilters($this->request->get());
+            $filters = $this->parseFilters($this->request->all());
             $limit = max(1, (int)($this->request->get('limit') ?? 20));
             $offset = max(0, (int)($this->request->get('offset') ?? 0));
             $batches = $this->payoutService->listBatches($filters, $limit, $offset);
@@ -46,12 +46,16 @@ class PayoutController extends AdminController
 
     public function create()
     {
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonError('Invalid request method', 405);
+        }
+
         if (!$this->validateCsrfToken()) {
             return $this->jsonError('Invalid CSRF token', 403);
         }
 
         try {
-            $data = $this->request->post();
+            $data = $this->request->all();
             $filters = $this->parseFilters($data);
             $filters['max_items'] = isset($data['max_items']) ? (int)$data['max_items'] : null;
             $filters['min_amount'] = isset($data['min_amount']) ? (float)$data['min_amount'] : null;
@@ -69,6 +73,10 @@ class PayoutController extends AdminController
 
     public function approve()
     {
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonError('Invalid request method', 405);
+        }
+
         if (!$this->validateCsrfToken()) {
             return $this->jsonError('Invalid CSRF token', 403);
         }
@@ -78,7 +86,7 @@ class PayoutController extends AdminController
             return $this->jsonError('Batch ID required', 400);
         }
 
-        $userId = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+        $userId = (int)($this->session->get('admin_id') ?? $this->session->get('user_id') ?? 0);
         $decision = $this->request->post('decision') ?? 'approved';
         $notes = $this->request->post('notes') ?? null;
 
@@ -97,6 +105,10 @@ class PayoutController extends AdminController
 
     public function disburse()
     {
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonError('Invalid request method', 405);
+        }
+
         if (!$this->validateCsrfToken()) {
             return $this->jsonError('Invalid CSRF token', 403);
         }
@@ -116,6 +128,10 @@ class PayoutController extends AdminController
 
     public function cancel()
     {
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonError('Invalid request method', 405);
+        }
+
         if (!$this->validateCsrfToken()) {
             return $this->jsonError('Invalid CSRF token', 403);
         }
@@ -175,6 +191,7 @@ class PayoutController extends AdminController
         } catch (Exception $e) {
             $this->setFlash('error', $e->getMessage());
             $this->redirect('admin/mlm-payouts');
+            return;
         }
     }
 

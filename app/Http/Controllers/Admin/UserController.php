@@ -43,13 +43,19 @@ class UserController extends AdminController
     public function store()
     {
         try {
+            if ($this->request->method() !== 'POST') {
+                $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+                $this->redirect('/admin/users/create');
+                return;
+            }
+
             if (!$this->validateCsrfToken()) {
                 $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
                 $this->redirect('/admin/users/create');
                 return;
             }
 
-            $data = $_POST;
+            $data = $this->request->post();
 
             // Basic validation
             if (empty($data['username']) || empty($data['email']) || empty($data['password'])) {
@@ -125,13 +131,19 @@ class UserController extends AdminController
     {
         try {
             $id = intval($id);
+            if ($this->request->method() !== 'POST') {
+                $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+                $this->redirect("/admin/users/edit/$id");
+                return;
+            }
+
             if (!$this->validateCsrfToken()) {
                 $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
                 $this->redirect("/admin/users/edit/$id");
                 return;
             }
 
-            $data = $_POST;
+            $data = $this->request->post();
 
             // Basic validation
             if (empty($data['username']) || empty($data['email'])) {
@@ -188,6 +200,13 @@ class UserController extends AdminController
     {
         try {
             $id = intval($id);
+
+            if ($this->request->method() !== 'POST') {
+                $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+                $this->redirect('/admin/users');
+                return;
+            }
+
             if (!$this->validateCsrfToken()) {
                 $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
                 $this->redirect('/admin/users');
@@ -195,7 +214,7 @@ class UserController extends AdminController
             }
 
             // Prevent deleting self
-            if ($id == $_SESSION['user_id']) {
+            if ($id == $this->session->get('user_id')) {
                 $this->setFlash('error', $this->mlSupport->translate("You cannot delete yourself."));
                 $this->redirect('/admin/users');
                 return;

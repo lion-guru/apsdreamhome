@@ -49,7 +49,7 @@ class Auth
     {
         $user = $this->getUserByEmail($email);
 
-        if ($user && $user['status'] === 'active' && password_verify($password, $user['upass'])) {
+        if ($user && ($user['status'] === 'active') && password_verify($password, $user['password'])) {
             return $this->generateToken($user);
         }
 
@@ -106,9 +106,9 @@ class Auth
     {
         $header = json_encode(['typ' => 'JWT', 'alg' => $this->algorithm]);
         $payload = json_encode([
-            'sub' => $user['uid'] ?? $user['id'],
-            'email' => $user['uemail'] ?? $user['email'],
-            'role' => $user['utype'] ?? $user['role'] ?? 'user',
+            'sub' => $user['id'] ?? $user['uid'],
+            'email' => $user['email'] ?? $user['uemail'],
+            'role' => $user['role'] ?? $user['utype'] ?? 'user',
             'iat' => time(),
             'exp' => time() + $this->tokenExpiry
         ]);
@@ -161,10 +161,10 @@ class Auth
             $user = $this->validateApiKey($apiKey);
             if ($user) {
                 return [
-                    'sub' => $user['uid'],
-                    'id' => $user['uid'],
-                    'email' => $user['uemail'],
-                    'role' => $user['utype'],
+                    'sub' => $user['id'],
+                    'id' => $user['id'],
+                    'email' => $user['email'],
+                    'role' => $user['role'],
                     'type' => 'api_key'
                 ];
             }
@@ -266,7 +266,7 @@ class Auth
             $user = $db->query("
                 SELECT u.*
                 FROM api_keys ak
-                JOIN user u ON ak.user_id = u.uid
+                JOIN users u ON ak.user_id = u.id
                 WHERE ak.api_key = :api_key
                 AND ak.is_active = 1
                 AND (ak.expires_at IS NULL OR ak.expires_at > NOW())
@@ -318,10 +318,10 @@ class Auth
             ensureSessionStarted();
         }
 
-        $userId = $user['uid'] ?? $user['id'];
+        $userId = $user['id'] ?? $user['uid'];
         $_SESSION['user_id'] = $userId;
-        $_SESSION['user_role'] = $user['utype'] ?? $user['role'] ?? 'user';
-        $_SESSION['user_email'] = $user['uemail'] ?? $user['email'] ?? null;
+        $_SESSION['user_role'] = $user['role'] ?? $user['utype'] ?? 'user';
+        $_SESSION['user_email'] = $user['email'] ?? $user['uemail'] ?? null;
 
         return true;
     }
@@ -398,7 +398,7 @@ class Auth
         }
 
         try {
-            return $db->query("SELECT * FROM user WHERE uemail = :email", ['email' => $email])->fetch();
+            return $db->query("SELECT * FROM users WHERE email = :email", ['email' => $email])->fetch();
         } catch (\Exception $e) {
             error_log('Database error in Auth: ' . $e->getMessage());
             return false;

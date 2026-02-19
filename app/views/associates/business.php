@@ -6,8 +6,8 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">डैशबोर्ड</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">बिजनेस ओवरव्यू</li>
+                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Business Overview</li>
                 </ol>
             </nav>
         </div>
@@ -20,12 +20,12 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">टोटल सेल्स</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Sales</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 ₹<?= number_format($business_stats['personal']['total_sales_value'] ?? 0) ?>
                             </div>
                             <small class="text-success">
-                                <i class="fas fa-arrow-up"></i> +<?= $business_stats['personal']['completed_sales'] ?? 0 ?> कंप्लीटेड
+                                <i class="fas fa-arrow-up"></i> +<?= $business_stats['personal']['completed_sales'] ?? 0 ?> Completed
                             </small>
                         </div>
                         <div class="col-auto">
@@ -41,12 +41,12 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">टीम परफॉर्मेंस</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Team Performance</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                <?= $business_stats['team']['total_team_members'] ?? 0 ?> मेंबर्स
+                                <?= $business_stats['team']['total_team_members'] ?? 0 ?> Members
                             </div>
                             <small class="text-info">
-                                <i class="fas fa-users"></i> <?= $business_stats['team']['direct_members'] ?? 0 ?> डायरेक्ट
+                                <i class="fas fa-users"></i> <?= $business_stats['team']['direct_members'] ?? 0 ?> Direct
                             </small>
                         </div>
                         <div class="col-auto">
@@ -62,12 +62,12 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">कमिशन अर्निंग्स</div>
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Commission Earnings</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 ₹<?= number_format($commission_summary['total_commissions'] ?? 0) ?>
                             </div>
                             <small class="text-warning">
-                                <i class="fas fa-coins"></i> विभिन्न लेवल्स से
+                                <i class="fas fa-coins"></i> From various levels
                             </small>
                         </div>
                         <div class="col-auto">
@@ -83,7 +83,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">मंथली ग्रोथ</div>
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Monthly Growth</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?php
                                 $monthlyData = $business_stats['monthly'] ?? [];

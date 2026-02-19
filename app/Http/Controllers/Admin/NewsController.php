@@ -32,6 +32,12 @@ class NewsController extends AdminController
 
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method'));
+            $this->redirect('admin/news/create');
+            return;
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/news/create');
@@ -69,9 +75,11 @@ class NewsController extends AdminController
         if ($news->save()) {
             $this->setFlash('success', $this->mlSupport->translate('News added successfully'));
             $this->redirect('admin/news');
+            return;
         } else {
             $this->setFlash('error', $this->mlSupport->translate('Failed to add news'));
             $this->redirect('admin/news/create');
+            return;
         }
     }
 
@@ -92,6 +100,12 @@ class NewsController extends AdminController
 
     public function update($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method'));
+            $this->redirect('admin/news/edit/' . $id);
+            return;
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/news/edit/' . $id);
@@ -132,14 +146,22 @@ class NewsController extends AdminController
         if ($news->save()) {
             $this->setFlash('success', $this->mlSupport->translate('News updated successfully'));
             $this->redirect('admin/news');
+            return;
         } else {
             $this->setFlash('error', $this->mlSupport->translate('Failed to update news'));
             $this->redirect('admin/news/edit/' . $id);
+            return;
         }
     }
 
     public function delete($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method'));
+            $this->redirect('admin/news');
+            return;
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/news');
@@ -157,5 +179,6 @@ class NewsController extends AdminController
             $this->setFlash('error', $this->mlSupport->translate('News not found'));
         }
         $this->redirect('admin/news');
+        return;
     }
 }

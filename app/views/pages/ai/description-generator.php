@@ -4,7 +4,7 @@
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-header bg-primary text-white p-4">
                     <h2 class="mb-0"><i class="fas fa-magic me-2"></i> Property Description Generator</h2>
-                    <p class="mb-0 text-white-50 mt-1">AI की मदद से अपनी प्रॉपर्टी के लिए बेहतरीन विवरण तैयार करें।</p>
+                    <p class="mb-0 text-white-50 mt-1">Generate compelling descriptions for your property with the help of AI.</p>
                 </div>
                 
                 <div class="card-body p-4 p-lg-5">
@@ -13,7 +13,7 @@
                             <div class="col-md-4">
                                 <label for="propertyType" class="form-label fw-bold">Property Type</label>
                                 <select id="propertyType" class="form-select py-2" required>
-                                    <option value="">चुनें</option>
+                                    <option value="">Select</option>
                                     <?php foreach ($property_types as $type): ?>
                                         <option value="<?= h($type['type_name']); ?>">
                                             <?= h($type['type_name']); ?>
@@ -23,29 +23,29 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="location" class="form-label fw-bold">Location</label>
-                                <input type="text" id="location" class="form-control py-2" required placeholder="उदा. गोरखपुर, यूपी">
+                                <input type="text" id="location" class="form-control py-2" required placeholder="e.g. Gorakhpur, UP">
                             </div>
                             <div class="col-md-4">
                                 <label for="price" class="form-label fw-bold">Price (₹)</label>
-                                <input type="number" id="price" class="form-control py-2" required placeholder="उदा. 5000000">
+                                <input type="number" id="price" class="form-control py-2" required placeholder="e.g. 5000000">
                             </div>
                             
                             <div class="col-md-4">
                                 <label for="bedrooms" class="form-label fw-bold">Bedrooms</label>
-                                <input type="number" id="bedrooms" class="form-control py-2" placeholder="उदा. 3">
+                                <input type="number" id="bedrooms" class="form-control py-2" placeholder="e.g. 3">
                             </div>
                             <div class="col-md-4">
                                 <label for="bathrooms" class="form-label fw-bold">Bathrooms</label>
-                                <input type="number" id="bathrooms" class="form-control py-2" placeholder="उदा. 2">
+                                <input type="number" id="bathrooms" class="form-control py-2" placeholder="e.g. 2">
                             </div>
                             <div class="col-md-4">
                                 <label for="area" class="form-label fw-bold">Area (sq ft)</label>
-                                <input type="number" id="area" class="form-control py-2" required placeholder="उदा. 1200">
+                                <input type="number" id="area" class="form-control py-2" required placeholder="e.g. 1200">
                             </div>
                             
                             <div class="col-12">
                                 <label for="additionalFeatures" class="form-label fw-bold">Additional Features</label>
-                                <textarea id="additionalFeatures" class="form-control py-2" rows="4" placeholder="अन्य सुविधाएँ जैसे पार्किंग, गार्डन, सुरक्षा आदि दर्ज करें..."></textarea>
+                                <textarea id="additionalFeatures" class="form-control py-2" rows="4" placeholder="Enter additional features like parking, garden, security, etc..."></textarea>
                             </div>
                             
                             <div class="col-12 text-center mt-4">
@@ -58,7 +58,7 @@
 
                     <div class="loading text-center py-4 mt-4 border-top" id="loading" style="display: none;">
                         <div class="spinner-border text-primary mb-2" role="status"></div>
-                        <p class="text-muted">AI विवरण तैयार कर रहा है, कृपया प्रतीक्षा करें...</p>
+                        <p class="text-muted">AI is generating the description, please wait...</p>
                     </div>
                     
                     <div id="resultContainer" class="mt-5 pt-4 border-top" style="display: none;">

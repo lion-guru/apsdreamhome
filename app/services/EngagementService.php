@@ -167,7 +167,7 @@ class EngagementService
     /**
      * Fetch notification feed entries for a user.
      */
-    public function getNotificationFeed(int $userId, int $limit = 20, int $offset = 0, ?string $category = null): array
+    public function getNotificationFeed(int $userId, int $limit = 20, int $offset = 0, ?string $category = null, bool $unreadOnly = false): array
     {
         $sql = 'SELECT * FROM mlm_notification_feed WHERE user_id = ?';
         $params = [$userId];
@@ -175,6 +175,10 @@ class EngagementService
         if ($category) {
             $sql .= ' AND category = ?';
             $params[] = $category;
+        }
+
+        if ($unreadOnly) {
+            $sql .= ' AND read_at IS NULL';
         }
 
         $sql .= ' ORDER BY created_at DESC LIMIT ? OFFSET ?';

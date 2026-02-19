@@ -163,13 +163,13 @@ class Payment extends Model
 
         // Base query
         $sql = "SELECT p.*, 
-                       c.name as customer_name, c.email as customer_email, c.phone as customer_mobile
+                       u.name as customer_name, u.email as customer_email, u.phone as customer_mobile
                 FROM payments p
-                LEFT JOIN customers c ON p.customer_id = c.id";
+                LEFT JOIN users u ON p.customer_id = u.id";
 
         // Search
         if (!empty($search)) {
-            $conditions[] = "(p.transaction_id LIKE :search OR c.name LIKE :search OR c.phone LIKE :search OR p.amount LIKE :search)";
+            $conditions[] = "(p.transaction_id LIKE :search OR u.name LIKE :search OR u.phone LIKE :search OR p.amount LIKE :search)";
             $params['search'] = "%$search%";
         }
 
@@ -236,11 +236,11 @@ class Payment extends Model
 
         $sql = "SELECT COUNT(*) as count 
                 FROM payments p
-                LEFT JOIN customers c ON p.customer_id = c.id";
+                LEFT JOIN users u ON p.customer_id = u.id";
 
         // Search
         if (!empty($search)) {
-            $conditions[] = "(p.transaction_id LIKE :search OR c.name LIKE :search OR c.mobile LIKE :search OR p.amount LIKE :search)";
+            $conditions[] = "(p.transaction_id LIKE :search OR u.name LIKE :search OR u.phone LIKE :search OR p.amount LIKE :search)";
             $params['search'] = "%$search%";
         }
 
@@ -291,11 +291,11 @@ class Payment extends Model
         $conn = $db->getConnection();
 
         $sql = "SELECT p.*, 
-                       c.name as customer_name, c.email as customer_email, c.phone as customer_mobile,
-                       u.name as created_by_name
+                       u.name as customer_name, u.email as customer_email, u.phone as customer_mobile,
+                       creator.name as created_by_name
                 FROM payments p 
-                LEFT JOIN customers c ON p.customer_id = c.id 
-                LEFT JOIN users u ON p.created_by = u.id
+                LEFT JOIN users u ON p.customer_id = u.id 
+                LEFT JOIN users creator ON p.created_by = creator.id
                 WHERE p.id = :id";
 
         $stmt = $conn->prepare($sql);

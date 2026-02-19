@@ -6,8 +6,8 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">डैशबोर्ड</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">अर्निंग्स और कमिशन</li>
+                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Earnings and Commissions</li>
                 </ol>
             </nav>
         </div>
@@ -19,14 +19,14 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-wallet mr-2"></i>अर्निंग्स समरी
+                        <i class="fas fa-wallet mr-2"></i>Earnings Summary
                     </h6>
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportEarnings()">
-                            <i class="fas fa-download mr-1"></i>एक्सपोर्ट
+                            <i class="fas fa-download mr-1"></i>Export
                         </button>
                         <button type="button" class="btn btn-outline-info btn-sm" onclick="printEarnings()">
-                            <i class="fas fa-print mr-1"></i>प्रिंट
+                            <i class="fas fa-print mr-1"></i>Print
                         </button>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                                 <div class="h4 mb-2 text-success font-weight-bold">
                                     ₹<?= number_format($summary['total_commissions'] ?? 0) ?>
                                 </div>
-                                <small class="text-muted">टोटल कमिशन अर्न्ड</small>
+                                <small class="text-muted">Total Commission Earned</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -45,7 +45,7 @@
                                 <div class="h4 mb-2 text-info font-weight-bold">
                                     ₹<?= number_format($summary['level_1_earnings'] ?? 0) ?>
                                 </div>
-                                <small class="text-muted">लेवल 1 कमिशन</small>
+                                <small class="text-muted">Level 1 Commission</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -53,7 +53,7 @@
                                 <div class="h4 mb-2 text-warning font-weight-bold">
                                     ₹<?= number_format(($summary['level_2_earnings'] ?? 0) + ($summary['level_3_earnings'] ?? 0)) ?>
                                 </div>
-                                <small class="text-muted">टीम कमिशन</small>
+                                <small class="text-muted">Team Commission</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -61,7 +61,7 @@
                                 <div class="h4 mb-2 text-primary font-weight-bold">
                                     <?= $summary['total_commission_payments'] ?? 0 ?>
                                 </div>
-                                <small class="text-muted">टोटल पेमेंट्स</small>
+                                <small class="text-muted">Total Payments</small>
                             </div>
                         </div>
                     </div>
@@ -77,22 +77,22 @@
                 <div class="card-body">
                     <form method="GET" class="row">
                         <div class="col-md-3">
-                            <label for="date_from" class="form-label">डेट से</label>
+                            <label for="date_from" class="form-label">From Date</label>
                             <input type="date" class="form-control" id="date_from" name="date_from"
                                    value="<?= $filters['date_from'] ?? '' ?>">
                         </div>
                         <div class="col-md-3">
-                            <label for="date_to" class="form-label">डेट तक</label>
+                            <label for="date_to" class="form-label">To Date</label>
                             <input type="date" class="form-control" id="date_to" name="date_to"
                                    value="<?= $filters['date_to'] ?? '' ?>">
                         </div>
                         <div class="col-md-3">
-                            <label for="status" class="form-label">स्टेटस</label>
+                            <label for="status" class="form-label">Status</label>
                             <select class="form-control" id="status" name="status">
-                                <option value="">सभी</option>
-                                <option value="completed" <?= ($filters['status'] ?? '') === 'completed' ? 'selected' : '' ?>>कंप्लीटेड</option>
-                                <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>पेंडिंग</option>
-                                <option value="failed" <?= ($filters['status'] ?? '') === 'failed' ? 'selected' : '' ?>>फेल्ड</option>
+                                <option value="">All</option>
+                                <option value="completed" <?= ($filters['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
+                                <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
+                                <option value="failed" <?= ($filters['status'] ?? '') === 'failed' ? 'selected' : '' ?>>Failed</option>
                             </select>
                         </div>
                         <div class="col-md-3">

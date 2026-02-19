@@ -6,9 +6,15 @@ use App\Http\Controllers\Admin\AdminController;
 
 class AssociateController extends AdminController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
+    }
+
     public function index()
     {
-        $page = $_GET['page'] ?? 1;
+        $page = $this->request->get('page', 1);
         $per_page = 10;
         $offset = ($page - 1) * $per_page;
 
@@ -57,61 +63,65 @@ class AssociateController extends AdminController
 
     public function store()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
-                $this->redirect('/admin/associates/create');
-                return;
-            }
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('/admin/associates/create');
+            return;
+        }
 
-            $name = $_POST['name'] ?? '';
-            $email = $_POST['email'] ?? '';
-            $phone = $_POST['phone'] ?? '';
-            $password = $_POST['password'] ?? '';
-            $sponsor_id = !empty($_POST['sponsor_id']) ? $_POST['sponsor_id'] : null;
-            $commission_rate = $_POST['commission_rate'] ?? 0.00;
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
+            $this->redirect('/admin/associates/create');
+            return;
+        }
 
-            // Validate
-            if (empty($name) || empty($email) || empty($phone) || empty($password)) {
-                $this->setFlash('error', $this->mlSupport->translate('All fields are required.'));
-                $this->redirect('/admin/associates/create');
-                return;
-            }
+        $name = $this->request->post('name') ?? '';
+        $email = $this->request->post('email') ?? '';
+        $phone = $this->request->post('phone') ?? '';
+        $password = $this->request->post('password') ?? '';
+        $sponsor_id = !empty($this->request->post('sponsor_id')) ? $this->request->post('sponsor_id') : null;
+        $commission_rate = $this->request->post('commission_rate') ?? 0.00;
 
-            // Check if email exists
-            $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
-            if ($existing) {
-                $this->setFlash('error', $this->mlSupport->translate('Email already exists.'));
-                $this->redirect('/admin/associates/create');
-                return;
-            }
+        // Validate
+        if (empty($name) || empty($email) || empty($phone) || empty($password)) {
+            $this->setFlash('error', $this->mlSupport->translate('All fields are required.'));
+            $this->redirect('/admin/associates/create');
+            return;
+        }
 
-            try {
-                $this->db->beginTransaction();
+        // Check if email exists
+        $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ?", [$email]);
+        if ($existing) {
+            $this->setFlash('error', $this->mlSupport->translate('Email already exists.'));
+            $this->redirect('/admin/associates/create');
+            return;
+        }
 
-                // 1. Create User
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $this->db->query(
-                    "INSERT INTO users (name, email, phone, password, role_name, status, created_at) VALUES (?, ?, ?, ?, 'Associate', 'active', NOW())",
-                    [$name, $email, $phone, $hashed_password]
-                );
-                $user_id = $this->db->lastInsertId();
+        try {
+            $this->db->beginTransaction();
 
-                // 2. Create Associate Record
-                $associate_code = 'ASC' . str_pad($user_id, 6, '0', STR_PAD_LEFT);
-                $this->db->query(
-                    "INSERT INTO associates (user_id, associate_code, sponsor_id, commission_rate, status, created_at, updated_at) VALUES (?, ?, ?, ?, 'active', NOW(), NOW())",
-                    [$user_id, $associate_code, $sponsor_id, $commission_rate]
-                );
+            // 1. Create User
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $this->db->query(
+                "INSERT INTO users (name, email, phone, password, role_name, status, created_at) VALUES (?, ?, ?, ?, 'Associate', 'active', NOW())",
+                [$name, $email, $phone, $hashed_password]
+            );
+            $user_id = $this->db->lastInsertId();
 
-                $this->db->commit();
-                $this->setFlash('success', $this->mlSupport->translate('Associate created successfully.'));
-                $this->redirect('/admin/associates');
-            } catch (\Exception $e) {
-                $this->db->rollBack();
-                $this->setFlash('error', $this->mlSupport->translate('Error creating associate: ') . $e->getMessage());
-                $this->redirect('/admin/associates/create');
-            }
+            // 2. Create Associate Record
+            $associate_code = 'ASC' . str_pad($user_id, 6, '0', STR_PAD_LEFT);
+            $this->db->query(
+                "INSERT INTO associates (user_id, associate_code, sponsor_id, commission_rate, status, created_at, updated_at) VALUES (?, ?, ?, ?, 'active', NOW(), NOW())",
+                [$user_id, $associate_code, $sponsor_id, $commission_rate]
+            );
+
+            $this->db->commit();
+            $this->setFlash('success', $this->mlSupport->translate('Associate created successfully.'));
+            $this->redirect('/admin/associates');
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            $this->setFlash('error', $this->mlSupport->translate('Error creating associate: ') . $e->getMessage());
+            $this->redirect('/admin/associates/create');
         }
     }
 
@@ -148,61 +158,65 @@ class AssociateController extends AdminController
 
     public function update($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
-                $this->redirect('/admin/associates/edit/' . $id);
-                return;
-            }
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('/admin/associates/edit/' . $id);
+            return;
+        }
 
-            $name = $_POST['name'] ?? '';
-            $email = $_POST['email'] ?? '';
-            $phone = $_POST['phone'] ?? '';
-            $sponsor_id = !empty($_POST['sponsor_id']) ? $_POST['sponsor_id'] : null;
-            $commission_rate = $_POST['commission_rate'] ?? 0.00;
-            $status = $_POST['status'] ?? 'active';
-            $password = $_POST['password'] ?? '';
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
+            $this->redirect('/admin/associates/edit/' . $id);
+            return;
+        }
 
-            // Fetch associate to get user_id
-            $associate = $this->db->fetchOne("SELECT user_id FROM associates WHERE id = ?", [$id]);
-            if (!$associate) {
-                $this->setFlash('error', $this->mlSupport->translate('Associate not found.'));
-                $this->redirect('/admin/associates');
-                return;
-            }
-            $user_id = $associate['user_id'];
+        $name = $this->request->post('name') ?? '';
+        $email = $this->request->post('email') ?? '';
+        $phone = $this->request->post('phone') ?? '';
+        $sponsor_id = !empty($this->request->post('sponsor_id')) ? $this->request->post('sponsor_id') : null;
+        $commission_rate = $this->request->post('commission_rate') ?? 0.00;
+        $status = $this->request->post('status') ?? 'active';
+        $password = $this->request->post('password') ?? '';
 
-            try {
-                $this->db->beginTransaction();
+        // Fetch associate to get user_id
+        $associate = $this->db->fetchOne("SELECT user_id FROM associates WHERE id = ?", [$id]);
+        if (!$associate) {
+            $this->setFlash('error', $this->mlSupport->translate('Associate not found.'));
+            $this->redirect('/admin/associates');
+            return;
+        }
+        $user_id = $associate['user_id'];
 
-                // 1. Update User
-                if (!empty($password)) {
-                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                    $this->db->query(
-                        "UPDATE users SET name = ?, email = ?, phone = ?, status = ?, password = ? WHERE id = ?",
-                        [$name, $email, $phone, $status, $hashed_password, $user_id]
-                    );
-                } else {
-                    $this->db->query(
-                        "UPDATE users SET name = ?, email = ?, phone = ?, status = ? WHERE id = ?",
-                        [$name, $email, $phone, $status, $user_id]
-                    );
-                }
+        try {
+            $this->db->beginTransaction();
 
-                // 2. Update Associate
+            // 1. Update User
+            if (!empty($password)) {
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 $this->db->query(
-                    "UPDATE associates SET sponsor_id = ?, commission_rate = ?, status = ?, updated_at = NOW() WHERE id = ?",
-                    [$sponsor_id, $commission_rate, $status, $id]
+                    "UPDATE users SET name = ?, email = ?, phone = ?, status = ?, password = ? WHERE id = ?",
+                    [$name, $email, $phone, $status, $hashed_password, $user_id]
                 );
-
-                $this->db->commit();
-                $this->setFlash('success', $this->mlSupport->translate('Associate updated successfully.'));
-                $this->redirect('/admin/associates');
-            } catch (\Exception $e) {
-                $this->db->rollBack();
-                $this->setFlash('error', $this->mlSupport->translate('Error updating associate: ') . $e->getMessage());
-                $this->redirect('/admin/associates/edit/' . $id);
+            } else {
+                $this->db->query(
+                    "UPDATE users SET name = ?, email = ?, phone = ?, status = ? WHERE id = ?",
+                    [$name, $email, $phone, $status, $user_id]
+                );
             }
+
+            // 2. Update Associate
+            $this->db->query(
+                "UPDATE associates SET sponsor_id = ?, commission_rate = ?, status = ?, updated_at = NOW() WHERE id = ?",
+                [$sponsor_id, $commission_rate, $status, $id]
+            );
+
+            $this->db->commit();
+            $this->setFlash('success', $this->mlSupport->translate('Associate updated successfully.'));
+            $this->redirect('/admin/associates');
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            $this->setFlash('error', $this->mlSupport->translate('Error updating associate: ') . $e->getMessage());
+            $this->redirect('/admin/associates/edit/' . $id);
         }
     }
 
@@ -385,39 +399,43 @@ class AssociateController extends AdminController
 
     public function destroy($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
-                $this->redirect('/admin/associates');
-                return;
-            }
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('/admin/associates');
+            return;
+        }
 
-            // Fetch associate to get user_id
-            $associate = $this->db->fetchOne("SELECT user_id FROM associates WHERE id = ?", [$id]);
-            if (!$associate) {
-                $this->setFlash('error', $this->mlSupport->translate('Associate not found.'));
-                $this->redirect('/admin/associates');
-                return;
-            }
-            $user_id = $associate['user_id'];
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
+            $this->redirect('/admin/associates');
+            return;
+        }
 
-            try {
-                $this->db->beginTransaction();
+        // Fetch associate to get user_id
+        $associate = $this->db->fetchOne("SELECT user_id FROM associates WHERE id = ?", [$id]);
+        if (!$associate) {
+            $this->setFlash('error', $this->mlSupport->translate('Associate not found.'));
+            $this->redirect('/admin/associates');
+            return;
+        }
+        $user_id = $associate['user_id'];
 
-                // Delete associate record first
-                $this->db->query("DELETE FROM associates WHERE id = ?", [$id]);
+        try {
+            $this->db->beginTransaction();
 
-                // Delete user record
-                $this->db->query("DELETE FROM users WHERE id = ?", [$user_id]);
+            // Delete associate record first
+            $this->db->query("DELETE FROM associates WHERE id = ?", [$id]);
 
-                $this->db->commit();
-                $this->setFlash('success', $this->mlSupport->translate('Associate deleted successfully.'));
-                $this->redirect('/admin/associates');
-            } catch (\Exception $e) {
-                $this->db->rollBack();
-                $this->setFlash('error', $this->mlSupport->translate('Error deleting associate: ') . $e->getMessage());
-                $this->redirect('/admin/associates');
-            }
+            // Delete user record
+            $this->db->query("DELETE FROM users WHERE id = ?", [$user_id]);
+
+            $this->db->commit();
+            $this->setFlash('success', $this->mlSupport->translate('Associate deleted successfully.'));
+            $this->redirect('/admin/associates');
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            $this->setFlash('error', $this->mlSupport->translate('Error deleting associate: ') . $e->getMessage());
+            $this->redirect('/admin/associates');
         }
     }
 }

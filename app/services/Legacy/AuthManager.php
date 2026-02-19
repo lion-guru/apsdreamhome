@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * User Authentication and Management System
  * Complete user registration, login, and profile management
  */
 
-class AuthManager {
+class AuthManager
+{
     const ROLE_SUPERADMIN = 'superadmin';
     const ROLE_ADMIN = 'admin';
     const ROLE_ASSOCIATE = 'associate';
@@ -17,7 +19,8 @@ class AuthManager {
     private $logger;
     private $propertyAI;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->propertyAI = new PropertyAI($this->db);
@@ -26,7 +29,8 @@ class AuthManager {
     /**
      * User registration
      */
-    public function register($data) {
+    public function register($data)
+    {
         // Validate input
         if (!$this->validateRegistrationData($data)) {
             return ['success' => false, 'message' => 'Invalid registration data'];
@@ -41,20 +45,22 @@ class AuthManager {
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
         // Insert user
-        $sql = "INSERT INTO user (uname, uemail, upass, utype, uphone, job_role)
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (name, email, password, role, phone, status)
+                VALUES (?, ?, ?, ?, ?, 'active')";
 
-        $role = $data['role'] ?? '3'; // Default to Associate/User type
-        $job_role = $data['job_role'] ?? 'Associate';
+        $role = $data['job_role'] ?? 'associate'; // Default to Associate
+        // Ensure role is valid enum value
+        if (!in_array($role, ['admin', 'associate', 'customer', 'manager', 'employee'])) {
+            $role = 'associate';
+        }
 
         try {
             $this->db->execute($sql, [
-                $data['username'],
+                $data['full_name'] ?? $data['username'], // Use full_name if available, else username
                 $data['email'],
                 $hashedPassword,
                 $role,
-                $data['phone'],
-                $job_role
+                $data['phone']
             ]);
 
             $userId = $this->db->lastInsertId();
@@ -84,9 +90,10 @@ class AuthManager {
     /**
      * User login
      */
-    public function login($email, $password) {
-        $sql = "SELECT uid, uname, upass, utype, job_role
-                FROM user WHERE uemail = ?";
+    public function login($email, $password)
+    {
+        $sql = "SELECT id as uid, name as uname, password as upass, role as utype, role as job_role
+                FROM users WHERE email = ?";
 
         try {
             $user = $this->db->fetch($sql, [$email]);
@@ -122,7 +129,8 @@ class AuthManager {
     /**
      * Send welcome email
      */
-    private function sendWelcomeEmail($email, $name) {
+    private function sendWelcomeEmail($email, $name)
+    {
         $emailManager = new EmailService();
         $emailManager->send('welcome_user', ['name' => $name], $email, $name);
     }
@@ -130,7 +138,8 @@ class AuthManager {
     /**
      * Validate registration data
      */
-    private function validateRegistrationData($data) {
+    private function validateRegistrationData($data)
+    {
         if (empty($data['username']) || strlen($data['username']) < 3) {
             return false;
         }
@@ -153,8 +162,9 @@ class AuthManager {
     /**
      * Check if user exists
      */
-    private function userExists($email, $username) {
-        $sql = "SELECT uid FROM user WHERE uemail = ? OR uname = ?";
+    private function userExists($email, $username)
+    {
+        $sql = "SELECT id as uid FROM users WHERE email = ? OR name = ?";
         try {
             $user = $this->db->fetch($sql, [$email, $username]);
             return !empty($user);
@@ -166,7 +176,8 @@ class AuthManager {
     /**
      * Update last login time
      */
-    private function updateLastLogin($userId) {
+    private function updateLastLogin($userId)
+    {
         // user table does not have updated_at or last_login column in the export
         // skipping for now to avoid errors, or could use join_date if needed
     }
@@ -174,7 +185,8 @@ class AuthManager {
     /**
      * Logout user
      */
-    public function logout() {
+    public function logout()
+    {
         $userId = $_SESSION['user_id'] ?? null;
         $username = $_SESSION['username'] ?? 'unknown';
 
@@ -192,13 +204,14 @@ class AuthManager {
     /**
      * Get current user
      */
-    public function getCurrentUser() {
+    public function getCurrentUser()
+    {
         if (!isset($_SESSION['user_id'])) {
             return null;
         }
 
-        $sql = "SELECT uid, uname, uemail, uphone, utype, uimage, job_role
-                FROM user WHERE uid = ?";
+        $sql = "SELECT id as uid, name as uname, email as uemail, phone as uphone, role as utype, NULL as uimage, role as job_role
+                FROM users WHERE id = ?";
 
         try {
             return $this->db->fetch($sql, [$_SESSION['user_id']]);
@@ -210,8 +223,9 @@ class AuthManager {
     /**
      * Update user profile
      */
-    public function updateProfile($userId, $data) {
-        $sql = "UPDATE user SET uname = ?, uphone = ? WHERE uid = ?";
+    public function updateProfile($userId, $data)
+    {
+        $sql = "UPDATE users SET name = ?, phone = ? WHERE id = ?";
         try {
             $this->db->execute($sql, [$data['full_name'], $data['phone'], $userId]);
 
@@ -230,9 +244,10 @@ class AuthManager {
     /**
      * Change password
      */
-    public function changePassword($userId, $currentPassword, $newPassword) {
+    public function changePassword($userId, $currentPassword, $newPassword)
+    {
         // Get current password hash
-        $sql = "SELECT upass FROM user WHERE uid = ?";
+        $sql = "SELECT password as upass FROM users WHERE id = ?";
         try {
             $user = $this->db->fetch($sql, [$userId]);
 
@@ -249,7 +264,7 @@ class AuthManager {
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
             // Update password
-            $sql = "UPDATE user SET upass = ? WHERE uid = ?";
+            $sql = "UPDATE users SET password = ? WHERE id = ?";
             $this->db->execute($sql, [$hashedPassword, $userId]);
 
             if ($this->logger) {
@@ -265,9 +280,10 @@ class AuthManager {
     /**
      * Get user by ID
      */
-    public function getUserById($userId) {
-        $sql = "SELECT uid, uname, uemail, uphone, utype, join_date
-                FROM user WHERE uid = ?";
+    public function getUserById($userId)
+    {
+        $sql = "SELECT id as uid, name as uname, email as uemail, phone as uphone, role as utype, created_at as join_date
+                FROM users WHERE id = ?";
 
         try {
             return $this->db->fetch($sql, [$userId]);
@@ -279,8 +295,9 @@ class AuthManager {
     /**
      * Get user by email
      */
-    public function getUserByEmail($email) {
-        $sql = "SELECT * FROM user WHERE uemail = ?";
+    public function getUserByEmail($email)
+    {
+        $sql = "SELECT id as uid, name as uname, email as uemail, phone as uphone, role as utype, created_at as join_date, password as upass FROM users WHERE email = ?";
 
         try {
             return $this->db->fetch($sql, [$email]);
@@ -292,9 +309,10 @@ class AuthManager {
     /**
      * Get users with pagination
      */
-    public function getUsers($filters = [], $limit = 20, $offset = 0) {
-        $sql = "SELECT uid, uname, uemail, uphone, utype, join_date
-                FROM user WHERE 1=1";
+    public function getUsers($filters = [], $limit = 20, $offset = 0)
+    {
+        $sql = "SELECT id as uid, name as uname, email as uemail, phone as uphone, role as utype, created_at as join_date
+                FROM users WHERE 1=1";
 
         $params = [];
 
@@ -329,4 +347,3 @@ class AuthManager {
         }
     }
 }
-?>

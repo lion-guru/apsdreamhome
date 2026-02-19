@@ -5,6 +5,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="hi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -128,7 +129,7 @@
         /* Top Navbar */
         .top-navbar {
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 0.5rem 0;
         }
 
@@ -144,7 +145,7 @@
         /* Cards */
         .card {
             border: none;
-            box-shadow: 0 0 15px rgba(0,0,0,0.08);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
             border-radius: 10px;
         }
 
@@ -223,8 +224,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Custom Scrollbar */
@@ -265,7 +273,7 @@
         /* Dropdown */
         .dropdown-menu {
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         /* Footer */
@@ -278,6 +286,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
@@ -295,6 +304,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="/associate/leads" class="<?= (strpos($_SERVER['REQUEST_URI'], '/associate/leads') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-bullhorn"></i>लीड्स (CRM)
+                    </a>
+                </li>
+                <li>
                     <a href="/associate/team" class="<?= (strpos($_SERVER['REQUEST_URI'], '/associate/team') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-users"></i>टीम मैनेजमेंट
                     </a>
@@ -307,6 +321,11 @@
                 <li>
                     <a href="/associate/earnings" class="<?= (strpos($_SERVER['REQUEST_URI'], '/associate/earnings') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-money-bill-wave"></i>अर्निंग्स
+                    </a>
+                </li>
+                <li>
+                    <a href="/associate/expenses" class="<?= (strpos($_SERVER['REQUEST_URI'], '/associate/expenses') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-file-invoice-dollar"></i>एक्सपेंस (Expenses)
                     </a>
                 </li>
                 <li>
@@ -469,7 +488,7 @@
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
@@ -488,4 +507,5 @@
         }
     </script>
 </body>
+
 </html>

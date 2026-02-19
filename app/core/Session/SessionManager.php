@@ -45,10 +45,9 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate
     public function getFlashBag()
     {
         $this->start();
-        if (!isset($this->data['_flash']) || !($this->data['_flash'] instanceof FlashBag)) {
-            $this->data['_flash'] = new FlashBag();
+        if (!$this->flashBag) {
+            $this->flashBag = new FlashBag($this);
         }
-        $this->flashBag = $this->data['_flash'];
         return $this->flashBag;
     }
 
@@ -70,7 +69,7 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate
      */
     public function __construct(?SessionHandlerInterface $handler = null)
     {
-        $this->handler = $handler ?? new NativeSessionHandler;
+        $this->handler = $handler ?? new \SessionHandler();
         $this->started = false;
     }
 
@@ -79,7 +78,7 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate
      *
      * @return bool
      */
-    public function start()
+    public function start(array $options = [])
     {
         if ($this->started) {
             return true;
@@ -90,7 +89,22 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate
             return true;
         }
 
-        session_start();
+        // Default secure session options
+        $defaults = [
+            'cookie_lifetime' => 7200, // 2 hours
+            'cookie_secure' => isset($_SERVER['HTTPS']),
+            'cookie_httponly' => true,
+            'cookie_samesite' => 'Lax',
+            'use_strict_mode' => true,
+        ];
+
+        // Merge defaults with provided options
+        // Provided options take precedence, but we filter out nulls to allow defaults
+        $options = array_merge($defaults, array_filter($options, function ($v) {
+            return !is_null($v);
+        }));
+
+        session_start($options);
         $this->data = &$_SESSION;
         $this->started = true;
 
@@ -267,108 +281,5 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate
     public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->all());
-    }
-
-    /**
-     * Get the flash bag (for compatibility with Symfony-style flash messages)
-     *
-     * @return FlashBag
-     */
-    public function getFlashBag()
-    {
-        if (!isset($this->data['_flash'])) {
-            $this->data['_flash'] = new FlashBag();
-        }
-        return $this->data['_flash'];
-    }
-}
-
-/**
- * Flash message bag for temporary session messages.
- */
-class FlashBag
-{
-    private $messages = [];
-
-    /**
-     * Add a flash message.
-     *
-     * @param string $type
-     * @param string $message
-     * @return void
-     */
-    public function add($type, $message)
-    {
-        if (!isset($this->messages[$type])) {
-            $this->messages[$type] = [];
-        }
-        $this->messages[$type][] = $message;
-    }
-
-    /**
-     * Get all flash messages.
-     *
-     * @return array
-     */
-    public function all()
-    {
-        return $this->messages;
-    }
-
-    /**
-     * Get messages by type.
-     *
-     * @param string $type
-     * @return array
-     */
-    public function get($type)
-    {
-        return $this->messages[$type] ?? [];
-    }
-
-    /**
-     * Clear all flash messages.
-     *
-     * @return void
-     */
-    public function clear()
-    {
-        $this->messages = [];
-    }
-}
-
-/**
- * Native PHP session handler.
- */
-class NativeSessionHandler implements SessionHandlerInterface
-{
-    public function open($savePath, $sessionName): bool
-    {
-        return true;
-    }
-
-    public function close(): bool
-    {
-        return true;
-    }
-
-    public function read($sessionId): string|false
-    {
-        return '';
-    }
-
-    public function write($sessionId, $data): bool
-    {
-        return true;
-    }
-
-    public function destroy($sessionId): bool
-    {
-        return true;
-    }
-
-    public function gc($maxLifetime): int|false
-    {
-        return (int) ini_get('session.gc_maxlifetime');
     }
 }

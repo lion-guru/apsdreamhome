@@ -56,7 +56,7 @@ class AccountingController extends AdminController
         $this->data['today_expenses'] = $today_expenses;
         $this->data['recent_transactions'] = $recent_transactions;
 
-        $this->render('admin/accounting/index');
+        return $this->render('admin/accounting/index');
     }
 
     public function addIncome()
@@ -72,16 +72,20 @@ class AccountingController extends AdminController
             $this->data['projects'] = [];
         }
 
-        $this->render('admin/accounting/add_income');
+        return $this->render('admin/accounting/add_income');
     }
 
     public function storeIncome()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('admin/accounting/income/add');
+        }
+
         // CSRF check is handled by middleware, but we can double check if needed
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/accounting/income/add');
-            return;
+            return $this->redirect('admin/accounting/income/add');
         }
 
         // Basic validation
@@ -93,12 +97,11 @@ class AccountingController extends AdminController
         $customer_id = !empty($this->request->post('customer_id')) ? intval($this->request->post('customer_id')) : null;
         $project_id = !empty($this->request->post('project_id')) ? intval($this->request->post('project_id')) : null;
 
-        $created_by = $_SESSION['user_id'] ?? 1;
+        $created_by = $this->session->get('user_id', 1);
 
         if ($amount <= 0 || empty($category) || empty($income_date)) {
             $this->setFlash('error', $this->mlSupport->translate('Please fill in all required fields correctly.'));
-            $this->redirect('admin/accounting/income/add');
-            return;
+            return $this->redirect('admin/accounting/income/add');
         }
 
         try {
@@ -110,38 +113,41 @@ class AccountingController extends AdminController
             $this->db->execute($sql, [$income_number, $income_date, $category, $amount, $description, $payment_method, $customer_id, $project_id, $created_by]);
 
             $this->setFlash('success', $this->mlSupport->translate('Income recorded successfully.'));
-            $this->redirect('admin/accounting');
+            return $this->redirect('admin/accounting');
         } catch (Exception $e) {
             error_log("Store Income Error: " . $e->getMessage());
             $this->setFlash('error', $this->mlSupport->translate('Error recording income: ') . $e->getMessage());
-            $this->redirect('admin/accounting/income/add');
+            return $this->redirect('admin/accounting/income/add');
         }
     }
 
     public function addExpense()
     {
         $this->data['page_title'] = $this->mlSupport->translate('Add Expense');
-        $this->render('admin/accounting/add_expenses');
+        return $this->render('admin/accounting/add_expenses');
     }
 
     public function storeExpense()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('admin/accounting/expenses/add');
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/accounting/expenses/add');
-            return;
+            return $this->redirect('admin/accounting/expenses/add');
         }
 
         $amount = floatval($this->request->post('amount') ?? 0);
         $expense_date = $this->request->post('expense_date') ?? date('Y-m-d');
         $source = $this->request->post('source') ?? ''; // This seems to be 'category' or 'payee'
         $description = $this->request->post('description') ?? '';
-        $user_id = $_SESSION['user_id'] ?? 1;
+        $user_id = $this->session->get('user_id', 1);
 
         if ($amount <= 0 || empty($source) || empty($expense_date)) {
             $this->setFlash('error', $this->mlSupport->translate('Please fill in all required fields correctly.'));
-            $this->redirect('admin/accounting/expenses/add');
-            return;
+            return $this->redirect('admin/accounting/expenses/add');
         }
 
         try {
@@ -149,11 +155,11 @@ class AccountingController extends AdminController
             $this->db->execute($sql, [$user_id, $amount, $source, $expense_date, $description]);
 
             $this->setFlash('success', $this->mlSupport->translate('Expense recorded successfully.'));
-            $this->redirect('admin/accounting');
+            return $this->redirect('admin/accounting');
         } catch (Exception $e) {
             error_log("Store Expense Error: " . $e->getMessage());
             $this->setFlash('error', $this->mlSupport->translate('Error recording expense: ') . $e->getMessage());
-            $this->redirect('admin/accounting/expenses/add');
+            return $this->redirect('admin/accounting/expenses/add');
         }
     }
 
@@ -182,6 +188,6 @@ class AccountingController extends AdminController
             $this->data['transactions'] = [];
         }
 
-        $this->render('admin/accounting/transactions');
+        return $this->render('admin/accounting/transactions');
     }
 }

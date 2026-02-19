@@ -4,26 +4,26 @@
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
                 <div class="card-header bg-primary text-white p-4">
                     <h2 class="mb-0"><i class="fas fa-robot me-2"></i> Property Assistant</h2>
-                    <p class="mb-0 text-white-50 mt-1">आपका स्वागत है! मैं आपकी प्रॉपर्टी से जुड़े सवालों का जवाब देने में मदद कर सकता हूं।</p>
+                    <p class="mb-0 text-white-50 mt-1">Welcome! I can help you with your property related questions.</p>
                 </div>
                 
                 <div class="chat-container bg-light" style="height: 500px; display: flex; flex-direction: column;">
                     <div class="chat-messages p-4" id="chatMessages" style="flex: 1; overflow-y: auto;">
                         <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm" style="max-width: 80%; margin-right: auto;">
-                            नमस्ते! मैं APS Dream Homes का AI सहायक हूँ। मैं आपकी कैसे मदद कर सकता हूँ?
+                            Hello! I am the AI assistant for APS Dream Homes. How can I help you?
                         </div>
                     </div>
                     
                     <div class="loading text-center py-2 text-muted small" id="loading" style="display: none;">
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        जवाब दे रहा हूं...
+                        Typing...
                     </div>
                     
                     <div class="chat-input p-4 bg-white border-top">
                         <div class="input-group">
-                            <input type="text" id="userInput" class="form-control rounded-pill-start border-end-0 py-3" placeholder="अपना सवाल यहाँ टाइप करें..." />
+                            <input type="text" id="userInput" class="form-control rounded-pill-start border-end-0 py-3" placeholder="Type your question here..." />
                             <button class="btn btn-primary rounded-pill-end px-4" onclick="sendMessage()">
-                                <i class="fas fa-paper-plane"></i> भेजें
+                                <i class="fas fa-paper-plane"></i> Send
                             </button>
                         </div>
                     </div>

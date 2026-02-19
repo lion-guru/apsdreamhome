@@ -46,13 +46,17 @@ class PlotController extends AdminController
      */
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('/admin/plots/create');
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->redirect('/admin/plots/create');
         }
 
-        $request = $this->request();
-        $data = $request->post();
+        $data = $this->request->post();
 
         if (empty($data['plot_number'])) {
             $this->setFlash('error', $this->mlSupport->translate('Plot number is required.'));
@@ -61,8 +65,15 @@ class PlotController extends AdminController
 
         // Explicitly define fillable fields for security
         $fillableFields = [
-            'project_id', 'plot_number', 'size', 'size_unit', 'price',
-            'status', 'facing', 'dimension', 'description'
+            'project_id',
+            'plot_number',
+            'size',
+            'size_unit',
+            'price',
+            'status',
+            'facing',
+            'dimension',
+            'description'
         ];
 
         $plotData = [];
@@ -72,7 +83,7 @@ class PlotController extends AdminController
             }
         }
 
-        $plotData['created_by'] = $request->session('user_id') ?? 1;
+        $plotData['created_by'] = $this->session->get('user_id') ?? 1;
         $plotData['created_at'] = \date('Y-m-d H:i:s');
         $plotData['updated_at'] = \date('Y-m-d H:i:s');
 
@@ -121,13 +132,18 @@ class PlotController extends AdminController
     public function update($id)
     {
         $id = \intval($id);
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect("/admin/plots/edit/$id");
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->redirect("/admin/plots/edit/$id");
         }
 
-        $request = $this->request();
-        $data = $request->post();
+        $data = $this->request->post();
 
         if (empty($data['plot_number'])) {
             $this->setFlash('error', $this->mlSupport->translate('Plot number is required.'));
@@ -136,8 +152,15 @@ class PlotController extends AdminController
 
         // Explicitly define fillable fields for security
         $fillableFields = [
-            'project_id', 'plot_number', 'size', 'size_unit', 'price',
-            'status', 'facing', 'dimension', 'description'
+            'project_id',
+            'plot_number',
+            'size',
+            'size_unit',
+            'price',
+            'status',
+            'facing',
+            'dimension',
+            'description'
         ];
 
         $plotData = [];
@@ -174,6 +197,12 @@ class PlotController extends AdminController
     public function destroy($id)
     {
         $id = \intval($id);
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('/admin/plots');
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
             return $this->redirect('/admin/plots');

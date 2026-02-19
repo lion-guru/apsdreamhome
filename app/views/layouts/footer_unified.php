@@ -178,6 +178,10 @@ if (!isset($is_logged_in)) {
     <!-- AOS Animation -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
+    <!-- Helper Scripts -->
+    <script src="<?php echo BASE_URL ?? '/'; ?>assets/js/location-bank-helper.js"></script>
+    <script src="<?php echo BASE_URL ?? '/'; ?>js/lead-capture.js"></script>
+
     <script>
         // Initialize AOS
         AOS.init({
