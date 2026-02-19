@@ -12,7 +12,7 @@ class LandController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('csrf', ['only' => ['store', 'update', 'delete']]);
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'storeTransaction']]);
         $this->notificationService = new NotificationService();
     }
 
@@ -32,7 +32,17 @@ class LandController extends AdminController
 
     public function store()
     {
-        // CSRF check handled by middleware
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/land/create');
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->redirect('admin/land/create');
+            return;
+        }
 
         $farmer_name = trim($this->request->post('farmer_name'));
         $farmer_mobile = trim($this->request->post('farmer_mobile'));
@@ -126,7 +136,7 @@ class LandController extends AdminController
                 $message .= "Site: " . $site_name . "\n";
                 $message .= "Area: " . $land_area . "\n";
                 $message .= "Total Price: " . $total_land_price . "\n";
-                $message .= "Added by: " . ($_SESSION['username'] ?? 'Admin');
+                $message .= "Added by: " . ($this->session->get('username', 'Admin'));
 
                 $this->notificationService->sendEmail(
                     $adminEmail,
@@ -165,6 +175,18 @@ class LandController extends AdminController
 
     public function update($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect("admin/land/edit/$id");
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->redirect("admin/land/edit/$id");
+            return;
+        }
+
         $id = intval($id);
 
         $farmer_name = trim($this->request->post('farmer_name') ?? '');
@@ -233,6 +255,18 @@ class LandController extends AdminController
 
     public function destroy($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/land');
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->redirect('admin/land');
+            return;
+        }
+
         $id = intval($id);
 
         try {
@@ -283,6 +317,18 @@ class LandController extends AdminController
 
     public function storeTransaction()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/land/transactions/create');
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
+            $this->redirect('admin/land/transactions/create');
+            return;
+        }
+
         $kisan_id = intval($this->request->post('kisan_id'));
         $amount = floatval($this->request->post('amount'));
         $date = $this->request->post('date');
@@ -290,7 +336,7 @@ class LandController extends AdminController
 
         if (!$kisan_id || $amount <= 0 || empty($date)) {
             $this->setFlash('error', $this->mlSupport->translate('Please fill all required fields correctly.'));
-            $this->redirect('admin/land/transactions/create');
+            $this->redirect('admin/land/transactions/create?kisan_id=' . $kisan_id);
             return;
         }
 
@@ -310,7 +356,7 @@ class LandController extends AdminController
             $this->redirect("admin/land/transactions/$kisan_id");
         } catch (\Exception $e) {
             $this->setFlash('error', $this->mlSupport->translate('Error adding transaction: ') . $e->getMessage());
-            $this->redirect('admin/land/transactions/create');
+            $this->redirect('admin/land/transactions/create?kisan_id=' . $kisan_id);
         }
     }
 

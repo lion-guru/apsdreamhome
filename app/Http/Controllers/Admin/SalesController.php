@@ -47,18 +47,23 @@ class SalesController extends AdminController
      */
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->back();
         }
 
-        $request = $this->request();
+        $request = $this->request;
 
         // Validation
         $associate_id = intval($request->post('associate_id'));
         $amount = (float) $request->post('amount');
         $date = $request->post('date');
-        $booking_id = h(\trim($request->post('booking_id', '')));
+        $booking_id = htmlspecialchars(\trim($request->post('booking_id', '')), ENT_QUOTES, 'UTF-8');
 
         if ($associate_id <= 0 || $amount <= 0 || !$date) {
             $this->setFlash('error', $this->mlSupport->translate('All fields are required and must be valid.'));
@@ -114,7 +119,7 @@ class SalesController extends AdminController
             }
 
             // Log the action using BaseController logActivity
-            $this->logActivity('SALE_RECORDED', "Recorded sale ID: $sale_id for associate ID: $associate_id, amount: " . h($amount));
+            $this->logActivity('SALE_RECORDED', "Recorded sale ID: $sale_id for associate ID: $associate_id, amount: " . htmlspecialchars($amount, ENT_QUOTES, 'UTF-8'));
 
             $this->db->commit();
             // Invalidate dashboard cache
@@ -123,7 +128,8 @@ class SalesController extends AdminController
             }
 
             $this->setFlash('success', $this->mlSupport->translate('Sale and payouts recorded successfully!'));
-            return $this->redirect('/admin/sales/create');
+            $this->redirect('/admin/sales/create');
+            return;
         } catch (Exception $e) {
             try {
                 $this->db->rollBack();
@@ -131,7 +137,7 @@ class SalesController extends AdminController
                 // Ignore rollback errors if already rolled back or connection lost
             }
             \error_log("Sale recording error: " . $e->getMessage());
-            $this->setFlash('error', $this->mlSupport->translate('Error recording sale: ') . h($e->getMessage()));
+            $this->setFlash('error', $this->mlSupport->translate('Error recording sale: ') . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
             return $this->back();
         }
     }

@@ -23,14 +23,14 @@
 
                     <form method="POST" action="/associate/authenticate">
                         <div class="form-group mb-4">
-                            <label for="email" class="form-label">
-                                <i class="fas fa-envelope mr-2"></i>Email Address
+                            <label for="login_id" class="form-label">
+                                <i class="fas fa-user mr-2"></i>Email or Mobile
                             </label>
-                            <input type="email"
+                            <input type="text"
                                    class="form-control form-control-lg"
-                                   id="email"
-                                   name="email"
-                                   placeholder="Enter your email"
+                                   id="login_id"
+                                   name="login_id"
+                                   placeholder="Enter your email or mobile"
                                    required
                                    autofocus>
                         </div>

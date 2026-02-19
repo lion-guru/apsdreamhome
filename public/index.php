@@ -8,10 +8,10 @@ if (!isset($_SERVER['HTTP_HOST'])) {
 // Set the default timezone
 date_default_timezone_set('Asia/Manila');
 
-// Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Session is started by the App class with proper configuration
+// if (session_status() === PHP_SESSION_NONE) {
+//    session_start();
+// }
 
 // Set error reporting for development
 error_reporting(E_ALL);

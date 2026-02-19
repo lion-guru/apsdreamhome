@@ -57,7 +57,7 @@ class AdminController extends BaseController
         }
 
         // Get user role from session
-        $role = $_SESSION['admin_role'] ?? 'admin';
+        $role = $this->session->get('admin_role', 'admin');
 
         // Set page data
         $this->data['page_title'] = ucfirst($role) . ' Dashboard - ' . APP_NAME;
@@ -266,12 +266,6 @@ class AdminController extends BaseController
      */
     public function properties()
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         // Set page data
         $this->data['page_title'] = 'Properties Management - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
@@ -281,14 +275,14 @@ class AdminController extends BaseController
 
         // Get filter parameters
         $filters = [
-            'search' => $_GET['search'] ?? '',
-            'status' => $_GET['status'] ?? '',
-            'type' => $_GET['type'] ?? '',
-            'featured' => $_GET['featured'] ?? '',
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 10),
-            'sort' => $_GET['sort'] ?? 'created_at',
-            'order' => $_GET['order'] ?? 'DESC'
+            'search' => $this->request->get('search', ''),
+            'status' => $this->request->get('status', ''),
+            'type' => $this->request->get('type', ''),
+            'featured' => $this->request->get('featured', ''),
+            'page' => (int)$this->request->get('page', 1),
+            'per_page' => (int)$this->request->get('per_page', 10),
+            'sort' => $this->request->get('sort', 'created_at'),
+            'order' => $this->request->get('order', 'DESC')
         ];
 
         // Get properties data
@@ -310,12 +304,6 @@ class AdminController extends BaseController
      */
     public function users()
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         // Set page data
         $this->data['page_title'] = 'Users Management - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
@@ -325,13 +313,13 @@ class AdminController extends BaseController
 
         // Get filter parameters
         $filters = [
-            'search' => $_GET['search'] ?? '',
-            'role' => $_GET['role'] ?? '',
-            'status' => $_GET['status'] ?? '',
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 10),
-            'sort' => $_GET['sort'] ?? 'created_at',
-            'order' => $_GET['order'] ?? 'DESC'
+            'search' => $this->request->get('search', ''),
+            'role' => $this->request->get('role', ''),
+            'status' => $this->request->get('status', ''),
+            'page' => (int)$this->request->get('page', 1),
+            'per_page' => (int)$this->request->get('per_page', 10),
+            'sort' => $this->request->get('sort', 'created_at'),
+            'order' => $this->request->get('order', 'DESC')
         ];
 
         // Get users data
@@ -353,11 +341,6 @@ class AdminController extends BaseController
      */
     public function associates()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $this->data['page_title'] = 'Associates Management - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Admin', 'url' => $this->getBaseUrl() . 'admin'],
@@ -366,12 +349,12 @@ class AdminController extends BaseController
 
         // Get filter parameters
         $filters = [
-            'search' => $_GET['search'] ?? '',
-            'status' => $_GET['status'] ?? '',
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 10),
-            'sort' => $_GET['sort'] ?? 'created_at',
-            'order' => $_GET['order'] ?? 'DESC'
+            'search' => $this->request->get('search', ''),
+            'status' => $this->request->get('status', ''),
+            'page' => (int)$this->request->get('page', 1),
+            'per_page' => (int)$this->request->get('per_page', 10),
+            'sort' => $this->request->get('sort', 'created_at'),
+            'order' => $this->request->get('order', 'DESC')
         ];
 
         // Get associates data
@@ -390,11 +373,6 @@ class AdminController extends BaseController
      */
     public function customers()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $this->data['page_title'] = 'Customers Management - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Admin', 'url' => $this->getBaseUrl() . 'admin'],
@@ -403,12 +381,12 @@ class AdminController extends BaseController
 
         // Get filter parameters
         $filters = [
-            'search' => $_GET['search'] ?? '',
-            'status' => $_GET['status'] ?? '',
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 10),
-            'sort' => $_GET['sort'] ?? 'created_at',
-            'order' => $_GET['order'] ?? 'DESC'
+            'search' => $this->request->get('search', ''),
+            'status' => $this->request->get('status', ''),
+            'page' => (int)$this->request->get('page', 1),
+            'per_page' => (int)$this->request->get('per_page', 10),
+            'sort' => $this->request->get('sort', 'created_at'),
+            'order' => $this->request->get('order', 'DESC')
         ];
 
         // Get customers data
@@ -427,11 +405,6 @@ class AdminController extends BaseController
      */
     public function bookings()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $this->data['page_title'] = 'Bookings Management - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Admin', 'url' => $this->getBaseUrl() . 'admin'],
@@ -440,12 +413,12 @@ class AdminController extends BaseController
 
         // Get filter parameters
         $filters = [
-            'search' => $_GET['search'] ?? '',
-            'status' => $_GET['status'] ?? '',
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 10),
-            'sort' => $_GET['sort'] ?? 'created_at',
-            'order' => $_GET['order'] ?? 'DESC'
+            'search' => $this->request->get('search', ''),
+            'status' => $this->request->get('status', ''),
+            'page' => (int)$this->request->get('page', 1),
+            'per_page' => (int)$this->request->get('per_page', 10),
+            'sort' => $this->request->get('sort', 'created_at'),
+            'order' => $this->request->get('order', 'DESC')
         ];
 
         // Get bookings data
@@ -464,11 +437,6 @@ class AdminController extends BaseController
      */
     public function employees()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         $this->data['page_title'] = 'Employees Management - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Admin', 'url' => $this->getBaseUrl() . 'admin'],
@@ -477,12 +445,12 @@ class AdminController extends BaseController
 
         // Get filter parameters
         $filters = [
-            'search' => $_GET['search'] ?? '',
-            'status' => $_GET['status'] ?? '',
-            'page' => (int)($_GET['page'] ?? 1),
-            'per_page' => (int)($_GET['per_page'] ?? 10),
-            'sort' => $_GET['sort'] ?? 'created_at',
-            'order' => $_GET['order'] ?? 'DESC'
+            'search' => $this->request->get('search', ''),
+            'status' => $this->request->get('status', ''),
+            'page' => (int)$this->request->get('page', 1),
+            'per_page' => (int)$this->request->get('per_page', 10),
+            'sort' => $this->request->get('sort', 'created_at'),
+            'order' => $this->request->get('order', 'DESC')
         ];
 
         // Get employees data
@@ -501,12 +469,6 @@ class AdminController extends BaseController
      */
     public function settings()
     {
-        // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
         // Set page data
         $this->data['page_title'] = 'Settings - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
@@ -518,8 +480,8 @@ class AdminController extends BaseController
         $this->data['settings'] = $this->getSystemSettings();
 
         // Check for success/error messages
-        $this->data['success'] = $_GET['success'] ?? '';
-        $this->data['error'] = $_GET['error'] ?? '';
+        $this->data['success'] = $this->request->get('success', '');
+        $this->data['error'] = $this->request->get('error', '');
 
         // Render the settings page
         $this->render('admin/settings/index');
@@ -530,10 +492,6 @@ class AdminController extends BaseController
      */
     public function about()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
         $this->data['page_title'] = 'About Us - ' . APP_NAME;
 
         // Fetch about items
@@ -553,10 +511,6 @@ class AdminController extends BaseController
      */
     public function aboutCreate()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
         $this->data['page_title'] = 'Add About Content - ' . APP_NAME;
         $this->render('admin/about/create');
     }
@@ -566,15 +520,15 @@ class AdminController extends BaseController
      */
     public function aboutStore()
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($this->request->method() === 'POST') {
             try {
-                $title = trim($_POST['title'] ?? '');
-                $content = trim($_POST['content'] ?? '');
+                // Validate CSRF
+                if (!$this->validateCsrfToken()) {
+                    throw new Exception("Invalid CSRF token");
+                }
+
+                $title = trim($this->request->post('title', ''));
+                $content = trim($this->request->post('content', ''));
 
                 if (empty($title) || empty($content)) {
                     throw new Exception("Title and Content are required");
@@ -647,20 +601,20 @@ class AdminController extends BaseController
      */
     public function aboutUpdate($id)
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($this->request->method() === 'POST') {
             try {
+                // Validate CSRF
+                if (!$this->validateCsrfToken()) {
+                    throw new Exception("Invalid CSRF token");
+                }
+
                 $about = About::find($id);
                 if (!$about) {
                     throw new Exception("Content not found");
                 }
 
-                $title = trim($_POST['title'] ?? '');
-                $content = trim($_POST['content'] ?? '');
+                $title = trim($this->request->post('title', ''));
+                $content = trim($this->request->post('content', ''));
 
                 if (empty($title) || empty($content)) {
                     throw new Exception("Title and Content are required");
@@ -704,13 +658,13 @@ class AdminController extends BaseController
      */
     public function aboutDelete($id)
     {
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($this->request->method() === 'POST') {
             try {
+                // Validate CSRF
+                if (!$this->validateCsrfToken()) {
+                    throw new Exception("Invalid CSRF token");
+                }
+
                 $about = About::find($id);
                 if ($about) {
                     if ($about->image && file_exists('upload/' . $about->image)) {
@@ -1055,7 +1009,7 @@ class AdminController extends BaseController
             'database' => 'Connected',
             'php_version' => PHP_VERSION,
             'environment' => defined('ENVIRONMENT') ? ENVIRONMENT : 'production',
-            'server' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+            'server' => $this->request->server('SERVER_SOFTWARE', 'Unknown'),
             'last_backup' => date('Y-m-d H:i', strtotime('-1 day')),
             'system_version' => '1.0.0'
         ];

@@ -1,31 +1,15 @@
 <?php
-require_once __DIR__ . '/app/Core/Database/Database.php';
-require_once __DIR__ . '/app/Core/Database.php';
+require_once 'app/core/Database.php';
+require_once 'app/core/App.php';
+require_once 'config/config.php';
 
 use App\Core\Database;
 
-// Define DB constants if not defined
-if (!defined('DB_HOST')) define('DB_HOST', 'localhost');
-if (!defined('DB_NAME')) define('DB_NAME', 'apsdreamhome');
-if (!defined('DB_USER')) define('DB_USER', 'root');
-if (!defined('DB_PASS')) define('DB_PASS', '');
-
 $db = Database::getInstance();
+$stmt = $db->query("DESCRIBE associates");
+$columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+print_r($columns);
 
-echo "Checking 'careers' table columns:\n";
-try {
-    $stmt = $db->query("DESCRIBE careers");
-    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    print_r($columns);
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
-}
-
-echo "\nChecking 'news' table columns:\n";
-try {
-    $stmt = $db->query("DESCRIBE news");
-    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    print_r($columns);
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
-}
+$stmt = $db->query("DESCRIBE users");
+$columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+print_r($columns);

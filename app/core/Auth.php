@@ -86,6 +86,7 @@ class Auth {
         
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_role'] = $user->role ?? 'user';
+        $_SESSION['user_logged_in'] = true; // Compatibility with UnifiedAuthService
         
         $this->user = $user;
         

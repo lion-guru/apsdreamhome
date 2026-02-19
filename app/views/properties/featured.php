@@ -6,24 +6,34 @@ require_once __DIR__ . '/../includes/header.php';
 
 // Helper function to get status badge class
 if (!function_exists('getStatusBadgeClass')) {
-    function getStatusBadgeClass($status) {
+    function getStatusBadgeClass($status)
+    {
         switch ($status) {
-            case 'active': return 'success';
-            case 'inactive': return 'secondary';
-            case 'sold': return 'danger';
-            default: return 'info';
+            case 'active':
+                return 'success';
+            case 'inactive':
+                return 'secondary';
+            case 'sold':
+                return 'danger';
+            default:
+                return 'info';
         }
     }
 }
 
 // Helper function to get status text
 if (!function_exists('getStatusText')) {
-    function getStatusText($status) {
+    function getStatusText($status)
+    {
         switch ($status) {
-            case 'active': return 'उपलब्ध';
-            case 'inactive': return 'निष्क्रिय';
-            case 'sold': return 'बिका हुआ';
-            default: return 'जानकारी नहीं';
+            case 'active':
+                return 'Available';
+            case 'inactive':
+                return 'Inactive';
+            case 'sold':
+                return 'Sold';
+            default:
+                return 'Unknown';
         }
     }
 }
@@ -39,7 +49,7 @@ if (!isset($properties)) {
  */
 
 // Set page title and description for layout
-$page_title = 'फीचर्ड प्रॉपर्टीज़ - APS Dream Home';
+$page_title = 'Featured Properties - APS Dream Home';
 $page_description = 'Discover exceptional featured properties handpicked for you';
 ?>
 
@@ -50,10 +60,10 @@ $page_description = 'Discover exceptional featured properties handpicked for you
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h3 mb-0 text-gray-800">
                     <i class="fas fa-home mr-2"></i>
-                    फीचर्ड प्रॉपर्टीज़
+                    Featured Properties
                 </h1>
                 <a href="/properties" class="btn btn-outline-primary">
-                    <i class="fas fa-th-list mr-2"></i>सभी प्रॉपर्टीज़ देखें
+                    <i class="fas fa-th-list mr-2"></i>View All Properties
                 </a>
             </div>
         </div>
@@ -66,10 +76,10 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                 <div class="card shadow">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-home fa-4x text-muted mb-4"></i>
-                        <h4 class="text-muted">कोई फीचर्ड प्रॉपर्टी नहीं मिली</h4>
-                        <p class="text-muted mb-4">अभी तक कोई प्रॉपर्टी फीचर्ड नहीं की गई है।</p>
+                        <h4 class="text-muted">No featured properties found</h4>
+                        <p class="text-muted mb-4">No properties have been featured yet.</p>
                         <a href="/properties" class="btn btn-primary">
-                            <i class="fas fa-search mr-2"></i>प्रॉपर्टीज़ देखें
+                            <i class="fas fa-search mr-2"></i>View Properties
                         </a>
                     </div>
                 </div>
@@ -82,8 +92,8 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <div class="property-image-container">
                             <?php if ($property['featured_image']): ?>
                                 <img src="<?= BASE_URL ?><?= htmlspecialchars($property['featured_image']) ?>"
-                                     class="card-img-top property-image"
-                                     alt="<?= htmlspecialchars($property['title']) ?>">
+                                    class="card-img-top property-image"
+                                    alt="<?= htmlspecialchars($property['title']) ?>">
                             <?php else: ?>
                                 <div class="property-image-placeholder">
                                     <i class="fas fa-home fa-3x text-muted"></i>
@@ -100,7 +110,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                             <!-- Featured Badge -->
                             <div class="property-featured-badge">
                                 <span class="badge badge-warning">
-                                    <i class="fas fa-star mr-1"></i>फीचर्ड
+                                    <i class="fas fa-star mr-1"></i>Featured
                                 </span>
                             </div>
                         </div>
@@ -138,7 +148,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                                         <div class="col-4">
                                             <i class="fas fa-bed text-muted"></i>
                                             <small class="d-block text-muted">
-                                                <?= $property['bedrooms'] ?> बेडरूम
+                                                <?= $property['bedrooms'] ?> Bedrooms
                                             </small>
                                         </div>
                                     <?php endif; ?>
@@ -147,7 +157,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                                         <div class="col-4">
                                             <i class="fas fa-bath text-muted"></i>
                                             <small class="d-block text-muted">
-                                                <?= $property['bathrooms'] ?> बाथरूम
+                                                <?= $property['bathrooms'] ?> Bathrooms
                                             </small>
                                         </div>
                                     <?php endif; ?>
@@ -168,7 +178,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                                 <div class="property-owner mb-3">
                                     <small class="text-muted">
                                         <i class="fas fa-user mr-1"></i>
-                                        लिस्टेड बाय: <?= htmlspecialchars($property['owner_name']) ?>
+                                        Listed By: <?= htmlspecialchars($property['owner_name']) ?>
                                     </small>
                                 </div>
                             <?php endif; ?>
@@ -176,13 +186,13 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                             <!-- Action Buttons -->
                             <div class="property-actions">
                                 <a href="/properties/<?= $property['id'] ?>"
-                                   class="btn btn-primary btn-block">
-                                    <i class="fas fa-eye mr-2"></i>विवरण देखें
+                                    class="btn btn-primary btn-block">
+                                    <i class="fas fa-eye mr-2"></i>View Details
                                 </a>
                                 <button type="button"
-                                        class="btn btn-outline-secondary btn-block mt-2"
-                                        onclick="contactOwner(<?= $property['id'] ?>)">
-                                    <i class="fas fa-phone mr-2"></i>संपर्क करें
+                                    class="btn btn-outline-secondary btn-block mt-2"
+                                    onclick="contactOwner(<?= $property['id'] ?>)">
+                                    <i class="fas fa-phone mr-2"></i>Contact
                                 </button>
                             </div>
                         </div>
@@ -200,13 +210,13 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                     <div class="card-body">
                         <h4 class="card-title">
                             <i class="fas fa-search mr-2"></i>
-                            और प्रॉपर्टीज़ देखें
+                            View More Properties
                         </h4>
                         <p class="card-text">
-                            हजारों प्रॉपर्टीज़ में से अपनी पसंद की प्रॉपर्टी खोजें
+                            Find your favorite property from thousands of listings
                         </p>
                         <a href="/properties" class="btn btn-light btn-lg">
-                            <i class="fas fa-th-list mr-2"></i>सभी प्रॉपर्टीज़ देखें
+                            <i class="fas fa-th-list mr-2"></i>View All Properties
                         </a>
                     </div>
                 </div>
@@ -216,113 +226,114 @@ $page_description = 'Discover exceptional featured properties handpicked for you
 </div>
 
 <script>
-function contactOwner(propertyId) {
-    // Implement contact functionality
-    alert('संपर्क फीचर जल्द आ रहा है!');
-}
+    function contactOwner(propertyId) {
+        // Implement contact functionality
+        alert('Contact feature coming soon!');
+    }
 </script>
 
 <style>
-.property-card {
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    .property-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-.property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
+    .property-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
 
-.property-image-container {
-    position: relative;
-    height: 200px;
-    overflow: hidden;
-}
+    .property-image-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
 
-.property-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
+    .property-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
 
-.property-card:hover .property-image {
-    transform: scale(1.05);
-}
+    .property-card:hover .property-image {
+        transform: scale(1.05);
+    }
 
-.property-image-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .property-image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.property-status-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
+    .property-status-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
 
-.property-featured-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
+    .property-featured-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
 
-.property-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
+    .property-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
 
-.property-title a {
-    color: #2c3e50;
-}
+    .property-title a {
+        color: #2c3e50;
+    }
 
-.property-title a:hover {
-    color: #007bff;
-    text-decoration: none;
-}
+    .property-title a:hover {
+        color: #007bff;
+        text-decoration: none;
+    }
 
-.property-location {
-    color: #6c757d;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
+    .property-location {
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
 
-.property-price {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+    .property-price {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
 
-.property-details {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 0.75rem;
-}
+    .property-details {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 0.75rem;
+    }
 
-.property-owner {
-    padding: 0.5rem 0;
-    border-top: 1px solid #e9ecef;
-}
+    .property-owner {
+        padding: 0.5rem 0;
+        border-top: 1px solid #e9ecef;
+    }
 
-.property-actions .btn {
-    border-radius: 6px;
-    font-size: 0.9rem;
-}
+    .property-actions .btn {
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
 
-.badge {
-    font-size: 0.75rem;
-    padding: 0.375rem 0.5rem;
-}
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.5rem;
+    }
 </style>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

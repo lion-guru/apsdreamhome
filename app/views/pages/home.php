@@ -47,6 +47,32 @@
         </div>
     </section>
 
+    <!-- Quick Connect Section -->
+    <section class="py-4 bg-primary text-white position-relative overflow-hidden">
+        <div class="container position-relative z-index-2">
+             <div class="row align-items-center justify-content-center">
+                 <div class="col-lg-6 text-center text-lg-start mb-3 mb-lg-0">
+                     <h3 class="fw-bold mb-1">Looking for Property?</h3>
+                     <p class="mb-0 opacity-90">Get a quick callback from our experts. No long forms.</p>
+                 </div>
+                 <div class="col-lg-6">
+                     <form id="quickLeadForm" class="row g-2">
+                         <div class="col-md-5">
+                            <input type="text" name="name" class="form-control border-0" placeholder="Your Name" required>
+                         </div>
+                         <div class="col-md-5">
+                            <input type="tel" name="phone" class="form-control border-0" placeholder="Phone Number" required pattern="[0-9]{10}">
+                         </div>
+                         <div class="col-md-2">
+                            <button type="submit" class="btn btn-warning fw-bold w-100">Go</button>
+                         </div>
+                     </form>
+                     <div id="quickLeadMessage" class="mt-2 small text-warning fw-bold"></div>
+                 </div>
+             </div>
+        </div>
+    </section>
+
     <!-- Quick Stats -->
     <section class="py-5 bg-white">
         <div class="container mt-n5 position-relative z-index-2">

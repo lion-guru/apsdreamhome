@@ -51,7 +51,7 @@ class PropertyController extends AdminController
     private function checkWritePermission()
     {
         $allowedRoles = ['superadmin', 'manager'];
-        $currentRole = $_SESSION['admin_role'] ?? '';
+        $currentRole = $this->session->get('admin_role') ?? '';
         if (!in_array($currentRole, $allowedRoles)) {
             $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Unauthorized access.') : 'Unauthorized access.');
             $this->redirect('admin/properties');
@@ -75,6 +75,14 @@ class PropertyController extends AdminController
      */
     public function store()
     {
+        $this->checkWritePermission();
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Invalid request method.') : 'Invalid request method.');
+            $this->redirect('admin/properties/create');
+            return;
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.');
             $this->redirect('admin/properties/create');
@@ -100,7 +108,7 @@ class PropertyController extends AdminController
                 // Log the action
                 $auditLog = new AuditLog();
                 $auditLog->log(
-                    $_SESSION['user_id'] ?? 0,
+                    $this->session->get('user_id') ?? 0,
                     'create_property',
                     'properties',
                     $property->id,
@@ -116,6 +124,24 @@ class PropertyController extends AdminController
             $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Error adding property: ') : 'Error adding property: ' . $e->getMessage());
             $this->redirect('admin/properties/create');
         }
+    }
+
+    /**
+     * Show property details
+     */
+    public function show($id)
+    {
+        $property = Property::find($id);
+
+        if (!$property) {
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Property not found!') : 'Property not found!');
+            $this->redirect('admin/properties');
+            return;
+        }
+
+        $this->data['property'] = $property->toArray();
+        $this->data['page_title'] = ($this->mlSupport ? $this->mlSupport->translate('Property Details') : 'Property Details') . ' - ' . APP_NAME;
+        $this->render('admin/properties/show');
     }
 
     /**
@@ -143,6 +169,14 @@ class PropertyController extends AdminController
      */
     public function update($id)
     {
+        $this->checkWritePermission();
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Invalid request method.') : 'Invalid request method.');
+            $this->redirect("admin/properties/edit/{$id}");
+            return;
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.');
             $this->redirect("admin/properties/edit/{$id}");
@@ -165,7 +199,7 @@ class PropertyController extends AdminController
                 // Log the action
                 $auditLog = new AuditLog();
                 $auditLog->log(
-                    $_SESSION['user_id'] ?? 0,
+                    $this->session->get('user_id') ?? 0,
                     'update_property',
                     'properties',
                     $property->id,
@@ -190,12 +224,16 @@ class PropertyController extends AdminController
     {
         $this->checkWritePermission();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed.') : 'Security validation failed.');
-                $this->redirect('admin/properties');
-                return;
-            }
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Invalid request method.') : 'Invalid request method.');
+            $this->redirect('admin/properties');
+            return;
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Security validation failed.') : 'Security validation failed.');
+            $this->redirect('admin/properties');
+            return;
         }
 
         try {
@@ -206,7 +244,7 @@ class PropertyController extends AdminController
                     // Log the action
                     $auditLog = new AuditLog();
                     $auditLog->log(
-                        $_SESSION['user_id'] ?? 0,
+                        $this->session->get('user_id') ?? 0,
                         'delete_property',
                         'properties',
                         $id,

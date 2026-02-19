@@ -32,33 +32,48 @@ class MediaController extends AdminController
 
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method'));
+            $this->redirect('admin/media/create');
+            return;
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/media/create');
             return;
         }
 
-        if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
+        $file = $this->request->files('file');
+        if (isset($file['error']) && $file['error'] == 0) {
             $media = new Media();
             // Assuming the Media model has an upload method that handles file movement and DB insertion
-            // Based on previous file read, it does: upload($file, $userId)
-            $userId = $_SESSION['admin_id'] ?? 0;
+            $userId = $this->session->get('admin_id') ?? 0;
 
-            if ($media->upload($_FILES['file'], $userId)) {
+            if ($media->upload($file, $userId)) {
                 $this->setFlash('success', $this->mlSupport->translate('Media uploaded successfully'));
                 $this->redirect('admin/media');
+                return;
             } else {
                 $this->setFlash('error', $this->mlSupport->translate('Failed to upload media'));
                 $this->redirect('admin/media/create');
+                return;
             }
         } else {
             $this->setFlash('error', $this->mlSupport->translate('No file selected or upload error'));
             $this->redirect('admin/media/create');
+            return;
         }
     }
 
     public function delete($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method'));
+            $this->redirect('admin/media');
+            return;
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token'));
             $this->redirect('admin/media');
@@ -72,5 +87,6 @@ class MediaController extends AdminController
             $this->setFlash('error', $this->mlSupport->translate('Failed to delete media'));
         }
         $this->redirect('admin/media');
+        return;
     }
 }

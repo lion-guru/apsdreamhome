@@ -27,6 +27,20 @@ if (!defined('LOG_PATH')) define('LOG_PATH', STORAGE_PATH . '/logs');
 if (!defined('SESSION_PATH')) define('SESSION_PATH', STORAGE_PATH . '/sessions');
 if (!defined('UPLOAD_PATH')) define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
 
+if (!defined('BASE_URL')) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $script = dirname($_SERVER['SCRIPT_NAME']);
+    // Remove /public if it exists in the path
+    if (substr($script, -7) === '/public') {
+        $script = substr($script, 0, -7);
+    }
+    // Remove /index.php if it exists
+    $script = str_replace('/index.php', '', $script);
+    
+    define('BASE_URL', rtrim("$protocol://$host$script", '/') . '/');
+}
+
 // Environment detection
 $environment = getenv('APP_ENV') ?: 'development';
 define('APP_ENV', $environment);
@@ -63,10 +77,16 @@ if (file_exists(CONFIG_PATH . '/security.php')) {
 
 // Include core system files
 require_once CORE_PATH . '/Autoloader.php';
-require_once CORE_PATH . '/SessionManager.php';
-require_once CORE_PATH . '/ErrorHandler.php';
-require_once CORE_PATH . '/SystemIntegration.php';
-require_once CORE_PATH . '/Database.php';
+// SessionManager is now autoloaded
+// require_once CORE_PATH . '/SessionManager.php';
+if (file_exists(CORE_PATH . '/ErrorHandler.php')) {
+    require_once CORE_PATH . '/ErrorHandler.php';
+}
+if (file_exists(CORE_PATH . '/SystemIntegration.php')) {
+    require_once CORE_PATH . '/SystemIntegration.php';
+}
+// Database is autoloaded
+// require_once CORE_PATH . '/Database.php';
 
 // Include global helper functions
 if (file_exists(APP_PATH . '/helpers.php')) {

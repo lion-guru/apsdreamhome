@@ -22,6 +22,7 @@ $webRoutes = [
             '/properties/featured' => 'HomeController@featuredProperties',
             '/property/{id}' => 'HomeController@propertyDetail',
             '/services' => 'Public\PageController@services',
+            '/legal-services' => 'Public\PageController@legalServices',
             '/team' => 'Public\PageController@team',
             '/careers' => 'Public\PageController@careers',
             '/testimonials' => 'Public\PageController@testimonials',
@@ -35,6 +36,7 @@ $webRoutes = [
             '/terms' => 'HomeController@terms',
             '/notifications' => 'DashboardController@notifications', // Added notifications route
             '/associate/login' => 'AssociateController@login',
+            '/associate/register' => 'AssociateController@register', // Added registration route
             '/associate/logout' => 'AssociateController@logout',
             '/employee/login' => 'EmployeeController@login',
             '/employee/logout' => 'EmployeeController@logout',
@@ -56,6 +58,7 @@ $webRoutes = [
 
         'POST' => [
             '/associate/authenticate' => 'AssociateController@authenticate',
+            '/associate/store' => 'AssociateController@store', // Added registration store route
             '/employee/authenticate' => 'EmployeeController@authenticate',
             '/admin/authenticate' => 'AdminController@authenticate',
             '/login' => 'AuthController@login',
@@ -63,6 +66,8 @@ $webRoutes = [
             '/forgot-password' => 'AuthController@processForgotPassword',
             '/reset-password' => 'AuthController@processResetPassword',
             '/payment/{id}' => 'PaymentController@process',
+            '/quick-lead' => 'Public\LeadController@storeQuick', // Progressive Profiling Step 1
+            '/update-lead' => 'Public\LeadController@updateProgressive', // Progressive Profiling Step 2+
         ],
     ],
 
@@ -121,12 +126,31 @@ $webRoutes = [
             '/associate/rank' => 'AssociateController@rank',
             '/associate/support' => 'AssociateController@support',
             '/associate/reports' => 'AssociateController@reports',
+            '/associate/leads' => 'AssociateController@leads',
+            '/associate/crm' => 'AssociateController@crm', // CRM Dashboard
+            '/associate/expenses' => 'AssociateController@expenses', // Expense Management
+            '/associate/api/pincode' => 'AssociateController@lookupPincode', // Pincode Lookup API
+            '/associate/api/ifsc' => 'AssociateController@lookupIFSC', // IFSC Lookup API
         ],
 
         'POST' => [
             '/associate/request-payout' => 'AssociateController@requestPayout',
             '/associate/update-profile' => 'AssociateController@updateProfile',
             '/associate/submit-kyc' => 'AssociateController@submitKYC',
+            '/associate/leads/add' => 'AssociateController@addLead',
+            '/associate/expenses/store' => 'AssociateController@storeExpense', // Expense Store
+
+            // CRM Actions
+            '/associate/crm/lead/store' => 'AssociateController@storeLead',
+            '/associate/crm/lead/update' => 'AssociateController@updateLead',
+            '/associate/crm/customer/store' => 'AssociateController@storeCustomer',
+            '/associate/crm/note/store' => 'AssociateController@storeNote',
+            '/associate/crm/activity/store' => 'AssociateController@storeActivity',
+            '/associate/crm/appointment/store' => 'AssociateController@storeAppointment',
+            '/associate/crm/visit/store' => 'AssociateController@storeFieldVisit',
+            '/associate/crm/visit/client-location' => 'AssociateController@storeClientVisitLocation',
+            '/associate/crm/visit/schedule' => 'AssociateController@scheduleClientVisit',
+            '/associate/crm/message/send' => 'AssociateController@sendMessage',
         ],
     ],
 

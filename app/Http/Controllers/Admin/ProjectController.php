@@ -48,13 +48,17 @@ class ProjectController extends AdminController
      */
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('/admin/projects/create');
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->redirect('/admin/projects/create');
         }
 
-        $request = $this->request();
-        $data = $request->post();
+        $data = $this->request->post();
 
         // Basic validation
         if (empty($data['project_name']) || empty($data['project_code'])) {
@@ -97,7 +101,7 @@ class ProjectController extends AdminController
             }
         }
 
-        $projectData['created_by'] = $request->session('user_id') ?? 1;
+        $projectData['created_by'] = $this->session->get('user_id') ?? 1;
         $projectData['is_active'] = isset($data['is_active']) ? 1 : 0;
         $projectData['is_featured'] = isset($data['is_featured']) ? 1 : 0;
 
@@ -141,13 +145,18 @@ class ProjectController extends AdminController
     public function update($id)
     {
         $id = \intval($id);
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect("/admin/projects/edit/$id");
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
             return $this->redirect("/admin/projects/edit/$id");
         }
 
-        $request = $this->request();
-        $data = $request->post();
+        $data = $this->request->post();
 
         if (empty($data['project_name'])) {
             $this->setFlash('error', $this->mlSupport->translate('Project name is required.'));
@@ -214,6 +223,12 @@ class ProjectController extends AdminController
     public function destroy($id)
     {
         $id = \intval($id);
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('/admin/projects');
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->redirect('/admin/projects');

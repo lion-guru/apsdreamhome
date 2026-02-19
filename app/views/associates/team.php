@@ -6,8 +6,8 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">डैशबोर्ड</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">टीम मैनेजमेंट</li>
+                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Team Management</li>
                 </ol>
             </nav>
         </div>
@@ -19,14 +19,14 @@
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-users mr-2"></i>टीम स्टैटिस्टिक्स
+                        <i class="fas fa-users mr-2"></i>Team Statistics
                     </h6>
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="showView('hierarchy')">
-                            <i class="fas fa-sitemap mr-1"></i>हायरार्की व्यू
+                            <i class="fas fa-sitemap mr-1"></i>Hierarchy View
                         </button>
                         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="showView('list')">
-                            <i class="fas fa-list mr-1"></i>लिस्ट व्यू
+                            <i class="fas fa-list mr-1"></i>List View
                         </button>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                                 <div class="h4 mb-0 text-primary font-weight-bold">
                                     <?= $team_stats['total_team_members'] ?? 0 ?>
                                 </div>
-                                <small class="text-muted">टोटल टीम मेंबर्स</small>
+                                <small class="text-muted">Total Team Members</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -45,7 +45,7 @@
                                 <div class="h4 mb-0 text-success font-weight-bold">
                                     <?= $team_stats['direct_members'] ?? 0 ?>
                                 </div>
-                                <small class="text-muted">डायरेक्ट मेंबर्स</small>
+                                <small class="text-muted">Direct Members</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -53,7 +53,7 @@
                                 <div class="h4 mb-0 text-info font-weight-bold">
                                     <?= ($team_stats['level_2_members'] ?? 0) + ($team_stats['level_3_members'] ?? 0) ?>
                                 </div>
-                                <small class="text-muted">इनडायरेक्ट मेंबर्स</small>
+                                <small class="text-muted">Indirect Members</small>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -61,7 +61,7 @@
                                 <div class="h4 mb-0 text-warning font-weight-bold">
                                     <?= $team_stats['level_3_members'] ?? 0 ?>
                                 </div>
-                                <small class="text-muted">लेवल 3 मेंबर्स</small>
+                                <small class="text-muted">Level 3 Members</small>
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-sitemap mr-2"></i>टीम हायरार्की
+                            <i class="fas fa-sitemap mr-2"></i>Team Hierarchy
                         </h6>
                     </div>
                     <div class="card-body">
@@ -89,9 +89,9 @@
                         <?php else: ?>
                             <div class="text-center py-5">
                                 <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">आपकी टीम में अभी कोई मेंबर नहीं है</p>
+                                <p class="text-muted">No members in your team yet</p>
                                 <a href="/associate/recruit" class="btn btn-primary">
-                                    <i class="fas fa-user-plus mr-2"></i>नए मेंबर्स ऐड करें
+                                    <i class="fas fa-user-plus mr-2"></i>Add New Members
                                 </a>
                             </div>
                         <?php endif; ?>

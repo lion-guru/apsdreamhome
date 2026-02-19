@@ -19,9 +19,8 @@ class CustomerController extends AdminController
      */
     public function search()
     {
-        $request = $this->request;
-        $search = $request->get('search', '');
-        $page = (int)$request->get('page', 1);
+        $search = $this->request->get('search', '');
+        $page = (int)$this->request->get('page', 1);
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
@@ -43,8 +42,7 @@ class CustomerController extends AdminController
      */
     public function index()
     {
-        $request = $this->request;
-        $searchTerm = $request->get('search');
+        $searchTerm = $this->request->get('search');
 
         $customerModel = $this->model('Customer');
         $customers = $customerModel->getAllCustomers($searchTerm);
@@ -73,13 +71,17 @@ class CustomerController extends AdminController
      */
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->back();
         }
 
-        $request = $this->request;
-        $data = $request->post();
+        $data = $this->request->post();
 
         // Basic Validation
         if (empty($data['name'])) {
@@ -165,14 +167,18 @@ class CustomerController extends AdminController
      */
     public function update($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+
         $id = intval($id);
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->back();
         }
 
-        $request = $this->request();
-        $data = $request->post();
+        $data = $this->request->post();
 
         $customerModel = $this->model('Customer');
         $customer = $customerModel->getCustomerById($id);
@@ -265,6 +271,11 @@ class CustomerController extends AdminController
      */
     public function destroy($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('admin/customers');
+        }
+
         $id = intval($id);
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));

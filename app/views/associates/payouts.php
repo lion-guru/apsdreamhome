@@ -6,8 +6,8 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">डैशबोर्ड</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">पेआउट मैनेजमेंट</li>
+                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Payout Management</li>
                 </ol>
             </nav>
         </div>
@@ -20,11 +20,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">अवेलेबल बैलेंस</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Available Balance</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 ₹<?= number_format($available_balance) ?>
                             </div>
-                            <small class="text-muted">विद्ड्रॉ करने के लिए</small>
+                            <small class="text-muted">To Withdraw</small>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-wallet fa-2x text-gray-300"></i>
@@ -39,11 +39,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">मिनिमम पेआउट</div>
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Minimum Payout</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 ₹<?= number_format($minimum_payout) ?>
                             </div>
-                            <small class="text-muted">न्यूनतम राशि</small>
+                            <small class="text-muted">Minimum Amount</small>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-coins fa-2x text-gray-300"></i>
@@ -58,11 +58,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">पेंडिंग रिक्वेस्ट्स</div>
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pending Requests</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= count($payout_history) ?>
                             </div>
-                            <small class="text-muted">प्रोसेसिंग में</small>
+                            <small class="text-muted">Processing</small>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -80,13 +80,13 @@
             <div class="card shadow">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-money-bill-wave mr-2"></i>पेआउट रिक्वेस्ट करें
+                        <i class="fas fa-money-bill-wave mr-2"></i>Request Payout
                     </h6>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="/associate/request-payout" id="payoutForm">
                         <div class="form-group mb-3">
-                            <label for="amount" class="form-label">विद्ड्रॉ अमाउंट <span class="text-danger">*</span></label>
+                            <label for="amount" class="form-label">Withdrawal Amount <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">₹</span>

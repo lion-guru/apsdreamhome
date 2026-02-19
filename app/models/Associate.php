@@ -13,7 +13,7 @@ use PDO;
 class Associate extends Model
 {
     protected static string $table = 'associates';
-    protected $primaryKey = 'associate_id';
+    protected $primaryKey = 'id';
 
     /**
      * Get associate by ID with complete details
@@ -21,17 +21,17 @@ class Associate extends Model
     public function getAssociateById($id)
     {
         $sql = "
-            SELECT a.*, u.name as user_name, u.email as user_email, u.phone as user_phone,
+            SELECT a.*, a.id as associate_id, u.name as user_name, u.email as user_email, u.phone as user_phone,
                    u.city as user_city, u.state as user_state, u.pincode as user_pincode,
                    su.name as sponsor_name, su.email as sponsor_email,
-                   (SELECT COUNT(*) FROM associates WHERE sponsor_id = a.associate_id) as downline_count,
-                   (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE associate_id = a.associate_id AND status = 'completed') as total_earnings,
-                   (SELECT COUNT(*) FROM payments WHERE associate_id = a.associate_id AND status = 'completed') as total_sales
+                   (SELECT COUNT(*) FROM associates WHERE sponsor_id = a.id) as downline_count,
+                   (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE associate_id = a.id AND status = 'completed') as total_earnings,
+                   (SELECT COUNT(*) FROM payments WHERE associate_id = a.id AND status = 'completed') as total_sales
             FROM {$this->table} a
             LEFT JOIN users u ON a.user_id = u.id
-            LEFT JOIN associates s ON a.sponsor_id = s.associate_id
+            LEFT JOIN associates s ON a.sponsor_id = s.id
             LEFT JOIN users su ON s.user_id = su.id
-            WHERE a.associate_id = :id
+            WHERE a.id = :id
         ";
 
         $db = Database::getInstance();
@@ -40,12 +40,59 @@ class Associate extends Model
     }
 
     /**
+     * Get recent bookings for associate
+     */
+    public function getRecentBookings($associateId, $limit = 5)
+    {
+        $sql = "
+            SELECT c.name as customer_name, c.email, c.phone, b.total_amount, b.amount as paid_amount,
+                   (b.total_amount - b.amount) as remaining_amount, b.booking_date, b.status
+            FROM bookings b
+            JOIN customers c ON b.customer_id = c.id
+            WHERE b.associate_id = :associate_id
+            ORDER BY b.booking_date DESC LIMIT :limit
+        ";
+
+        // Since PDO limit binding can be tricky with some drivers, we cast to int
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':associate_id', $associateId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get recent transactions for associate
+     */
+    public function getRecentTransactions($associateId, $limit = 5)
+    {
+        // Check if mlm_transactions table exists first, or wrap in try-catch
+        try {
+            $sql = "
+                SELECT transaction_type, amount, description, created_at, status
+                FROM mlm_transactions 
+                WHERE associate_id = :associate_id
+                ORDER BY created_at DESC LIMIT :limit
+            ";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':associate_id', $associateId, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            // Table might not exist yet, return empty array
+            return [];
+        }
+    }
+
+    /**
      * Get associate by user ID
      */
     public function getAssociateByUserId($userId)
     {
         $sql = "
-            SELECT a.*, u.name, u.email, u.phone, u.city, u.state, u.pincode
+            SELECT a.*, a.id as associate_id, u.name, u.email, u.phone, u.city, u.state, u.pincode
             FROM {$this->table} a
             LEFT JOIN users u ON a.user_id = u.id
             WHERE a.user_id = :user_id
@@ -62,7 +109,7 @@ class Associate extends Model
     public function getAssociateByEmail($email)
     {
         $sql = "
-            SELECT a.*, u.name, u.email, u.phone
+            SELECT a.*, a.id as associate_id, u.name, u.email, u.phone
             FROM {$this->table} a
             JOIN users u ON a.user_id = u.id
             WHERE u.email = :email
@@ -74,11 +121,16 @@ class Associate extends Model
     }
 
     /**
-     * Authenticate associate
+     * Authenticate associate by email or mobile
      */
-    public function authenticateAssociate($email, $password)
+    public function authenticateAssociate($loginId, $password)
     {
-        $associate = $this->getAssociateByEmail($email);
+        // Check if input is email or mobile
+        if (filter_var($loginId, FILTER_VALIDATE_EMAIL)) {
+            $associate = $this->getAssociateByEmail($loginId);
+        } else {
+            $associate = $this->getAssociateByMobile($loginId);
+        }
 
         if ($associate && password_verify($password, $associate['password'])) {
             return $associate;
@@ -88,17 +140,87 @@ class Associate extends Model
     }
 
     /**
+     * Get associate by mobile
+     */
+    public function getAssociateByMobile($mobile)
+    {
+        $sql = "
+            SELECT a.*, a.id as associate_id, u.name, u.email, u.phone
+            FROM {$this->table} a
+            JOIN users u ON a.user_id = u.id
+            WHERE u.phone = :mobile
+        ";
+
+        // Note: Some systems store mobile in users table, some in associates table directly.
+        // Checking both for compatibility.
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['mobile' => $mobile]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Check if email exists
+     */
+    public function isEmailExists($email)
+    {
+        $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Check if mobile exists
+     */
+    public function isMobileExists($mobile)
+    {
+        $stmt = $this->db->prepare("SELECT id FROM users WHERE phone = ?");
+        $stmt->execute([$mobile]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Get associate by referral code
+     */
+    public function getAssociateByReferralCode($code)
+    {
+        $sql = "
+            SELECT a.*, a.id as associate_id, u.name as full_name, u.phone as mobile, a.current_level,
+                   (SELECT COUNT(*) FROM associates WHERE sponsor_id = a.id) as total_team_size
+            FROM associates a
+            JOIN users u ON a.user_id = u.id
+            WHERE a.associate_code = ? AND a.status = 'active'
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$code]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Create new associate user
+     */
+    public function createAssociateUser($userData)
+    {
+        $sql = "INSERT INTO users (name, email, phone, password, role, status, created_at, updated_at) 
+                VALUES (:name, :email, :phone, :password, 'associate', 'active', NOW(), NOW())";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($userData);
+        return $this->db->lastInsertId();
+    }
+
+    /**
      * Create new associate
      */
     public function createAssociate($data)
     {
         $sql = "
             INSERT INTO {$this->table} (
-                user_id, sponsor_id, associate_code, level, status, joining_date,
-                kyc_status, bank_details, created_at, updated_at
+                user_id, sponsor_id, associate_code, current_level, status, 
+                created_at, updated_at
             ) VALUES (
-                :user_id, :sponsor_id, :associate_code, :level, :status, NOW(),
-                :kyc_status, :bank_details, NOW(), NOW()
+                :user_id, :sponsor_id, :associate_code, :current_level, :status, 
+                NOW(), NOW()
             )
         ";
 
@@ -123,7 +245,7 @@ class Associate extends Model
             }
         }
 
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE associate_id = :id";
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);

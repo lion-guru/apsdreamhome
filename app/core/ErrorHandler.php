@@ -31,7 +31,7 @@ class ErrorHandler
         error_log("ErrorHandler::render() - Data: " . json_encode($data));
         
         // Determine the error page path
-        $errorView = __DIR__ . '/../../resources/views/errors/' . $code . '.php';
+        $errorView = __DIR__ . '/../../app/views/errors/' . $code . '.php';
         error_log("ErrorHandler::render() - Error view path: {$errorView}");
         
         // If specific error page doesn't exist, use a generic one

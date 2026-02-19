@@ -31,12 +31,13 @@ class AnalyticsController extends AdminController
     public function data()
     {
         try {
-            $filters = $this->parseFilters($_GET);
+            $filters = $this->parseFilters($this->request->all());
             $summary = $this->commissionService->getSummary($filters);
             $levelBreakdown = $this->commissionService->getLevelBreakdown($filters);
-            $topBeneficiaries = $this->commissionService->getTopBeneficiaries($filters, (int)($_GET['limit'] ?? 10));
-            $topReferrers = $this->commissionService->getTopReferrers($filters, (int)($_GET['limit'] ?? 10));
-            $timeline = $this->commissionService->getTimeline($filters, $_GET['group_by'] ?? 'day');
+            $limit = (int)($this->request->get('limit') ?? 10);
+            $topBeneficiaries = $this->commissionService->getTopBeneficiaries($filters, $limit);
+            $topReferrers = $this->commissionService->getTopReferrers($filters, $limit);
+            $timeline = $this->commissionService->getTimeline($filters, $this->request->get('group_by') ?? 'day');
 
             return $this->jsonResponse([
                 'success' => true,
@@ -55,9 +56,9 @@ class AnalyticsController extends AdminController
     public function ledger()
     {
         try {
-            $filters = $this->parseFilters($_GET);
-            $limit = max(1, (int)($_GET['limit'] ?? 50));
-            $offset = max(0, (int)($_GET['offset'] ?? 0));
+            $filters = $this->parseFilters($this->request->all());
+            $limit = max(1, (int)($this->request->get('limit') ?? 50));
+            $offset = max(0, (int)($this->request->get('offset') ?? 0));
             $records = $this->commissionService->getLedger($filters, $limit, $offset);
 
             return $this->jsonResponse([
@@ -71,8 +72,8 @@ class AnalyticsController extends AdminController
 
     public function export(): void
     {
-        $format = strtolower($_GET['format'] ?? 'csv');
-        $filters = $this->parseFilters($_GET);
+        $format = strtolower($this->request->get('format') ?? 'csv');
+        $filters = $this->parseFilters($this->request->all());
         $rows = $this->commissionService->exportLedger($filters);
 
         if ($format === 'csv') {

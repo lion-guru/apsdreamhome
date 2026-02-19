@@ -21,7 +21,7 @@ class ReportController extends AdminController
      */
     public function index()
     {
-        $this->view('reports/index', [
+        $this->render('reports/index', [
             'title' => 'Reports Dashboard'
         ]);
     }
@@ -32,20 +32,20 @@ class ReportController extends AdminController
     public function sales()
     {
         $filters = [
-            'start_date' => $_GET['start_date'] ?? date('Y-m-01'),
-            'end_date' => $_GET['end_date'] ?? date('Y-m-t')
+            'start_date' => $this->request->get('start_date', date('Y-m-01')),
+            'end_date' => $this->request->get('end_date', date('Y-m-t'))
         ];
 
         $report = $this->reportService->generateSalesReport($filters);
 
         // Export to CSV if requested
-        if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+        if ($this->request->get('export') === 'csv') {
             $filename = 'sales-report-' . date('Y-m-d') . '.csv';
             $this->reportService->exportToCsv($report, $filename);
             return;
         }
 
-        $this->view('reports/sales', [
+        $this->render('reports/sales', [
             'title' => 'Sales Report',
             'report' => $report,
             'filters' => $filters
@@ -58,21 +58,21 @@ class ReportController extends AdminController
     public function properties()
     {
         $filters = [
-            'location' => $_GET['location'] ?? null,
-            'min_price' => !empty($_GET['min_price']) ? (float)$_GET['min_price'] : null,
-            'max_price' => !empty($_GET['max_price']) ? (float)$_GET['max_price'] : null
+            'location' => $this->request->get('location'),
+            'min_price' => $this->request->get('min_price') ? (float)$this->request->get('min_price') : null,
+            'max_price' => $this->request->get('max_price') ? (float)$this->request->get('max_price') : null
         ];
 
         $report = $this->reportService->generatePropertyReport($filters);
 
         // Export to CSV if requested
-        if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+        if ($this->request->get('export') === 'csv') {
             $filename = 'property-report-' . date('Y-m-d') . '.csv';
             $this->reportService->exportToCsv($report, $filename);
             return;
         }
 
-        $this->view('reports/properties', [
+        $this->render('reports/properties', [
             'title' => 'Property Report',
             'report' => $report,
             'filters' => $filters
@@ -85,11 +85,11 @@ class ReportController extends AdminController
     public function userActivity()
     {
         $filters = [
-            'start_date' => $_GET['start_date'] ?? date('Y-m-01'),
-            'end_date' => $_GET['end_date'] ?? date('Y-m-d'),
-            'sort' => $_GET['sort'] ?? 'last_activity',
-            'order' => $_GET['order'] ?? 'DESC',
-            'page' => (int)($_GET['page'] ?? 1)
+            'start_date' => $this->request->get('start_date', date('Y-m-01')),
+            'end_date' => $this->request->get('end_date', date('Y-m-d')),
+            'sort' => $this->request->get('sort', 'last_activity'),
+            'order' => $this->request->get('order', 'DESC'),
+            'page' => (int)$this->request->get('page', 1)
         ];
 
         $report = $this->reportService->generateUserActivityReport($filters);
@@ -100,7 +100,7 @@ class ReportController extends AdminController
         $totalPages = ceil($totalUsers / $perPage);
 
         // Export to CSV if requested
-        if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+        if ($this->request->get('export') === 'csv') {
             $filename = 'user-activity-report-' . date('Y-m-d') . '.csv';
             $this->reportService->exportToCsv($report, $filename);
             return;
@@ -123,8 +123,6 @@ class ReportController extends AdminController
      */
     private function getTotalUsers(array $filters)
     {
-        $db = \App\Core\Database::getInstance();
-
         $query = "SELECT COUNT(DISTINCT u.id) as total 
                  FROM users u
                  LEFT JOIN property_views v ON u.id = v.user_id
@@ -145,7 +143,7 @@ class ReportController extends AdminController
             $params[] = $filters['end_date'] . ' 23:59:59';
         }
 
-        $stmt = $db->query($query, $params);
+        $stmt = $this->db->query($query, $params);
         $result = $stmt->fetch();
 
         return $result ? (int)$result['total'] : 0;

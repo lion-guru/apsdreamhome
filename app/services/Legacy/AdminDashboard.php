@@ -1,17 +1,20 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Admin Dashboard System
  * Complete admin panel with role-based access control
  */
 
-class AdminDashboard {
+class AdminDashboard
+{
     private $db;
     private $logger;
     private $authManager;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->authManager = new AuthManager($this->db, $logger);
@@ -20,7 +23,8 @@ class AdminDashboard {
     /**
      * Check if user is admin
      */
-    public function isAdmin($userId = null) {
+    public function isAdmin($userId = null)
+    {
         if (!$userId && isset($_SESSION['user_id'])) {
             $userId = $_SESSION['user_id'];
         }
@@ -30,17 +34,18 @@ class AdminDashboard {
         }
 
         $user = $this->authManager->getUserById($userId);
-        return $user && ($user['role'] === 'admin' || $user['utype'] === '1');
+        return $user && ($user['role'] === 'admin');
     }
 
     /**
      * Get dashboard statistics
      */
-    public function getDashboardStats() {
+    public function getDashboardStats()
+    {
         $stats = [];
 
         // Total users
-        $sql = "SELECT COUNT(*) as total_users FROM user";
+        $sql = "SELECT COUNT(*) as total_users FROM users";
         $result = $this->db->fetch($sql);
         $stats['total_users'] = $result['total_users'] ?? 0;
 
@@ -90,14 +95,15 @@ class AdminDashboard {
     /**
      * Get recent activities
      */
-    public function getRecentActivities($limit = 10) {
+    public function getRecentActivities($limit = 10)
+    {
         $activities = [];
 
         // Recent user registrations
-        $sql = "SELECT 'user_registered' as activity_type, uname as description,
-                       join_date as activity_time, uid as reference_id
-                FROM user WHERE join_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-                ORDER BY join_date DESC LIMIT ?";
+        $sql = "SELECT 'user_registered' as activity_type, name as description,
+                       created_at as activity_time, id as reference_id
+                FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                ORDER BY created_at DESC LIMIT ?";
 
         $activities = array_merge($activities, $this->db->fetchAll($sql, [$limit]));
 
@@ -119,7 +125,7 @@ class AdminDashboard {
         $activities = array_merge($activities, $this->db->fetchAll($sql, [$limit]));
 
         // Sort by activity time
-        usort($activities, function($a, $b) {
+        usort($activities, function ($a, $b) {
             return strtotime($b['activity_time']) - strtotime($a['activity_time']);
         });
 
@@ -129,7 +135,8 @@ class AdminDashboard {
     /**
      * Get property analytics
      */
-    public function getPropertyAnalytics() {
+    public function getPropertyAnalytics()
+    {
         $analytics = [];
 
         // Properties by type
@@ -166,20 +173,21 @@ class AdminDashboard {
     /**
      * Get user management data
      */
-    public function getUserManagementData() {
+    public function getUserManagementData()
+    {
         $data = [];
 
         // Users by role
-        $sql = "SELECT utype as role, COUNT(*) as count FROM user GROUP BY utype";
+        $sql = "SELECT role, COUNT(*) as count FROM users GROUP BY role";
         $data['users_by_role'] = $this->db->fetchAll($sql);
 
         // Users by status
-        $sql = "SELECT status, COUNT(*) as count FROM user GROUP BY status";
+        $sql = "SELECT status, COUNT(*) as count FROM users GROUP BY status";
         $data['users_by_status'] = $this->db->fetchAll($sql);
 
         // Recent users
-        $sql = "SELECT uid as id, uname as username, uname as full_name, utype as role, status, join_date as created_at
-                FROM user ORDER BY join_date DESC LIMIT 5";
+        $sql = "SELECT id, name as username, name as full_name, role, status, created_at
+                FROM users ORDER BY created_at DESC LIMIT 5";
         $data['recent_users'] = $this->db->fetchAll($sql);
 
         return $data;
@@ -188,7 +196,8 @@ class AdminDashboard {
     /**
      * Get lead management data
      */
-    public function getLeadManagementData() {
+    public function getLeadManagementData()
+    {
         $data = [];
 
         // Leads by status
@@ -210,7 +219,8 @@ class AdminDashboard {
     /**
      * Get booking management data
      */
-    public function getBookingManagementData() {
+    public function getBookingManagementData()
+    {
         $data = [];
 
         // Bookings by status
@@ -223,10 +233,10 @@ class AdminDashboard {
 
         // Recent bookings
         $sql = "SELECT b.id, b.booking_type, b.status, b.created_at,
-                       p.title as property_title, u.uname as customer_name
+                       p.title as property_title, u.name as customer_name
                 FROM bookings b
                 LEFT JOIN properties p ON b.property_id = p.id
-                LEFT JOIN user u ON b.user_id = u.uid
+                LEFT JOIN users u ON b.user_id = u.id
                 ORDER BY b.created_at DESC LIMIT 5";
         $data['recent_bookings'] = $this->db->fetchAll($sql);
 
@@ -236,7 +246,8 @@ class AdminDashboard {
     /**
      * Get system health status
      */
-    public function getSystemHealth() {
+    public function getSystemHealth()
+    {
         $health = [
             'status' => 'healthy',
             'checks' => []
@@ -260,7 +271,7 @@ class AdminDashboard {
         ];
 
         // Total users check
-        $sql = "SELECT COUNT(*) as count FROM user";
+        $sql = "SELECT COUNT(*) as count FROM users";
         $totalUsers = $this->db->fetch($sql)['count'] ?? 0;
         $health['checks']['users'] = [
             'status' => $totalUsers > 0 ? 'ok' : 'warning',
@@ -289,7 +300,8 @@ class AdminDashboard {
     /**
      * Get admin menu items based on user role
      */
-    public function getAdminMenu($userRole) {
+    public function getAdminMenu($userRole)
+    {
         $menu = [
             'dashboard' => [
                 'title' => 'Dashboard',
@@ -354,4 +366,3 @@ class AdminDashboard {
         return $menu;
     }
 }
-?>

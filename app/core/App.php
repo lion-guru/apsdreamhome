@@ -200,8 +200,16 @@ class App
     protected function initializeServices()
     {
         // Initialize session
+        $sessionOptions = [];
+        if (isset($_ENV['SESSION_TIMEOUT'])) {
+            $sessionOptions['cookie_lifetime'] = (int) $_ENV['SESSION_TIMEOUT'];
+        }
+        $sessionOptions['cookie_httponly'] = true;
+        $sessionOptions['cookie_samesite'] = 'Lax';
+        $sessionOptions['cookie_secure'] = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+
         $this->session = new SessionManager();
-        $this->session->start();
+        $this->session->start($sessionOptions);
 
         // Initialize request and response
         $this->request = Request::createFromGlobals();

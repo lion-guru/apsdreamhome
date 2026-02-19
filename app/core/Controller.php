@@ -92,6 +92,7 @@ class Controller
         $this->request = $app->request();
         $this->response = $app->response();
         $this->view = new View();
+        $this->session = $app->session();
 
         // Debug auth
         if (!isset($app->auth)) {

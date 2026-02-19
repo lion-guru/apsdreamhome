@@ -3,10 +3,10 @@
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="h3 mb-0 text-gray-800">
                 <i class="fas fa-user-tie mr-2"></i>
-                नया लीड बनाएं
+                Create New Lead
             </h1>
             <a href="/admin/leads" class="btn btn-secondary">
-                <i class="fas fa-arrow-left mr-2"></i>सभी लीड्स देखें
+                <i class="fas fa-arrow-left mr-2"></i>View All Leads
             </a>
         </div>
     </div>
@@ -18,7 +18,7 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-plus mr-2"></i>लीड जानकारी दर्ज करें
+                    <i class="fas fa-plus mr-2"></i>Enter Lead Information
                 </h6>
             </div>
             <div class="card-body">
@@ -29,55 +29,55 @@
                             <div class="card border-left-primary">
                                 <div class="card-header">
                                     <h6 class="m-0 font-weight-bold text-primary">
-                                        <i class="fas fa-info-circle mr-2"></i>बेसिक जानकारी
+                                        <i class="fas fa-info-circle mr-2"></i>Basic Information
                                     </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label for="name" class="form-label">
-                                            पूरा नाम <span class="text-danger">*</span>
+                                            Full Name <span class="text-danger">*</span>
                                         </label>
                                         <input type="text"
                                             class="form-control"
                                             id="name"
                                             name="name"
                                             required
-                                            placeholder="लीड का पूरा नाम">
+                                            placeholder="Lead Full Name">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="email" class="form-label">
-                                            ईमेल पता
+                                            Email Address
                                         </label>
                                         <input type="email"
                                             class="form-control"
                                             id="email"
                                             name="email"
-                                            placeholder="ईमेल पता">
+                                            placeholder="Email Address">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="phone" class="form-label">
-                                            फोन नंबर <span class="text-danger">*</span>
+                                            Phone Number <span class="text-danger">*</span>
                                         </label>
                                         <input type="tel"
                                             class="form-control"
                                             id="phone"
                                             name="phone"
                                             required
-                                            placeholder="मोबाइल नंबर"
+                                            placeholder="Mobile Number"
                                             pattern="[0-9]{10}">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="company" class="form-label">
-                                            कंपनी/ऑर्गेनाइजेशन
+                                            Company/Organization
                                         </label>
                                         <input type="text"
                                             class="form-control"
                                             id="company"
                                             name="company"
-                                            placeholder="कंपनी का नाम">
+                                            placeholder="Company Name">
                                     </div>
                                 </div>
                             </div>
@@ -88,16 +88,16 @@
                             <div class="card border-left-success">
                                 <div class="card-header">
                                     <h6 class="m-0 font-weight-bold text-success">
-                                        <i class="fas fa-chart-line mr-2"></i>लीड डिटेल्स
+                                        <i class="fas fa-chart-line mr-2"></i>Lead Details
                                     </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label for="source" class="form-label">
-                                            लीड स्रोत <span class="text-danger">*</span>
+                                            Lead Source <span class="text-danger">*</span>
                                         </label>
                                         <select class="form-control" id="source" name="source" required>
-                                            <option value="">स्रोत चुनें</option>
+                                            <option value="">Select Source</option>
                                             <?php foreach ($sources as $source): ?>
                                                 <option value="<?= $source['id'] ?>">
                                                     <?= htmlspecialchars($source['source_name']) ?>
@@ -108,10 +108,10 @@
 
                                     <div class="form-group mb-3">
                                         <label for="status" class="form-label">
-                                            स्टेटस <span class="text-danger">*</span>
+                                            Status <span class="text-danger">*</span>
                                         </label>
                                         <select class="form-control" id="status" name="status" required>
-                                            <option value="">स्टेटस चुनें</option>
+                                            <option value="">Select Status</option>
                                             <?php foreach ($statuses as $status): ?>
                                                 <option value="<?= $status['id'] ?>">
                                                     <?= htmlspecialchars($status['status_name']) ?>
@@ -122,25 +122,25 @@
 
                                     <div class="form-group mb-3">
                                         <label for="priority" class="form-label">
-                                            प्रायोरिटी
+                                            Priority
                                         </label>
                                         <select class="form-control" id="priority" name="priority">
-                                            <option value="low">कम</option>
-                                            <option value="medium" selected>मध्यम</option>
-                                            <option value="high">उच्च</option>
+                                            <option value="low">Low</option>
+                                            <option value="medium" selected>Medium</option>
+                                            <option value="high">High</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="assigned_to" class="form-label">
-                                            असाइन करें
+                                            Assign To
                                         </label>
                                         <select class="form-control" id="assigned_to" name="assigned_to">
-                                            <option value="">यूजर चुनें</option>
+                                            <option value="">Select User</option>
                                             <?php foreach ($users as $user): ?>
                                                 <option value="<?= $user['id'] ?>">
                                                     <?= htmlspecialchars($user['name']) ?>
-                                                    (<?= $user['lead_count'] ?> लीड्स)
+                                                    (<?= $user['lead_count'] ?> Leads)
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -152,56 +152,56 @@
                             <div class="card border-left-warning mt-3">
                                 <div class="card-header">
                                     <h6 class="m-0 font-weight-bold text-warning">
-                                        <i class="fas fa-rupee-sign mr-2"></i>वित्तीय जानकारी
+                                        <i class="fas fa-rupee-sign mr-2"></i>Financial Information
                                     </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label for="budget" class="form-label">
-                                            बजट (₹)
+                                            Budget (₹)
                                         </label>
                                         <input type="number"
                                             class="form-control"
                                             id="budget"
                                             name="budget"
-                                            placeholder="अपेक्षित बजट"
+                                            placeholder="Expected Budget"
                                             min="0"
                                             step="10000">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="property_type" class="form-label">
-                                            प्रॉपर्टी का प्रकार
+                                            Property Type
                                         </label>
                                         <select class="form-control" id="property_type" name="property_type">
-                                            <option value="">चुनें</option>
-                                            <option value="residential">रेजिडेंशियल</option>
-                                            <option value="commercial">कॉमर्शियल</option>
-                                            <option value="industrial">इंडस्ट्रियल</option>
-                                            <option value="land">जमीन</option>
+                                            <option value="">Select</option>
+                                            <option value="residential">Residential</option>
+                                            <option value="commercial">Commercial</option>
+                                            <option value="industrial">Industrial</option>
+                                            <option value="land">Land</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="location_preference" class="form-label">
-                                            लोकेशन प्रेफरेंस
+                                            Location Preference
                                         </label>
                                         <input type="text"
                                             class="form-control"
                                             id="location_preference"
                                             name="location_preference"
-                                            placeholder="पसंदीदा लोकेशन">
+                                            placeholder="Preferred Location">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="notes" class="form-label">
-                                            अतिरिक्त नोट्स
+                                            Additional Notes
                                         </label>
                                         <textarea class="form-control"
                                             id="notes"
                                             name="notes"
                                             rows="2"
-                                            placeholder="कोई अतिरिक्त जानकारी"></textarea>
+                                            placeholder="Any Additional Information"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -212,10 +212,10 @@
                     <div class="row mt-4">
                         <div class="col-12 text-center">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save mr-2"></i>लीड बनाएं
+                                <i class="fas fa-save mr-2"></i>Create Lead
                             </button>
                             <a href="/admin/leads" class="btn btn-secondary btn-lg ml-3">
-                                <i class="fas fa-times mr-2"></i>रद्द करें
+                                <i class="fas fa-times mr-2"></i>Cancel
                             </a>
                         </div>
                     </div>

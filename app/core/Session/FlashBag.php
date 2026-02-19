@@ -2,7 +2,8 @@
 
 namespace App\Core\Session;
 
-class FlashBag implements \IteratorAggregate, \Countable {
+class FlashBag implements \IteratorAggregate, \Countable
+{
     /**
      * The session store.
      *
@@ -38,7 +39,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      * @param  string  $key
      * @return void
      */
-    public function __construct(SessionManager $session, $key = '_flash') {
+    public function __construct(SessionManager $session, $key = '_flash')
+    {
         $this->key = $key;
         $this->session = $session;
         $this->load();
@@ -49,7 +51,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      *
      * @return void
      */
-    protected function load() {
+    protected function load()
+    {
         $this->messages = $this->session->get($this->key, []);
         $this->new = [];
     }
@@ -59,7 +62,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      *
      * @return void
      */
-    public function save() {
+    public function save()
+    {
         $this->session->set($this->key, $this->messages);
     }
 
@@ -70,30 +74,35 @@ class FlashBag implements \IteratorAggregate, \Countable {
      * @param  mixed   $value
      * @return void
      */
-    public function add($key, $value) {
+    public function add($key, $value)
+    {
         $this->messages[$key][] = $value;
         $this->new[$key] = true;
         $this->save();
     }
 
     /**
-     * Get a flash message by key.
+     * Get a flash message by key and remove it.
      *
      * @param  string  $key
      * @param  mixed   $default
      * @return mixed
      */
-    public function get($key, $default = null) {
-        return $this->messages[$key] ?? $default;
+    public function get($key, $default = null)
+    {
+        return $this->pull($key, $default);
     }
 
     /**
-     * Get all flash messages.
+     * Get all flash messages and clear the bag.
      *
      * @return array
      */
-    public function all() {
-        return $this->messages;
+    public function all()
+    {
+        $messages = $this->messages;
+        $this->clear();
+        return $messages;
     }
 
     /**
@@ -103,8 +112,9 @@ class FlashBag implements \IteratorAggregate, \Countable {
      * @param  mixed   $default
      * @return mixed
      */
-    public function pull($key, $default = null) {
-        $value = $this->get($key, $default);
+    public function pull($key, $default = null)
+    {
+        $value = $this->messages[$key] ?? $default;
         $this->remove($key);
         return $value;
     }
@@ -115,7 +125,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      * @param  string  $key
      * @return void
      */
-    public function remove($key) {
+    public function remove($key)
+    {
         unset($this->messages[$key]);
         unset($this->new[$key]);
         $this->save();
@@ -126,7 +137,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      *
      * @return void
      */
-    public function clear() {
+    public function clear()
+    {
         $this->messages = [];
         $this->new = [];
         $this->save();
@@ -138,7 +150,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      * @param  string  $key
      * @return bool
      */
-    public function has($key) {
+    public function has($key)
+    {
         return isset($this->messages[$key]);
     }
 
@@ -147,7 +160,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      *
      * @return int
      */
-    public function count(): int {
+    public function count(): int
+    {
         return count($this->messages);
     }
 
@@ -156,7 +170,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      *
      * @return \ArrayIterator
      */
-    public function getIterator(): \Traversable {
+    public function getIterator(): \Traversable
+    {
         return new \ArrayIterator($this->messages);
     }
 
@@ -165,7 +180,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      *
      * @return SessionManager
      */
-    public function getSession() {
+    public function getSession()
+    {
         return $this->session;
     }
 
@@ -175,7 +191,8 @@ class FlashBag implements \IteratorAggregate, \Countable {
      * @param  SessionManager  $session
      * @return void
      */
-    public function setSession(SessionManager $session) {
+    public function setSession(SessionManager $session)
+    {
         $this->session = $session;
     }
 }

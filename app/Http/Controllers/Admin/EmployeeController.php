@@ -19,10 +19,9 @@ class EmployeeController extends AdminController
      */
     public function index()
     {
-        $request = $this->request();
         $filters = [
-            'search' => $request->get('search', ''),
-            'department' => $request->get('department', '')
+            'search' => $this->request->get('search', ''),
+            'department' => $this->request->get('department', '')
         ];
 
         $employees = $this->model('Employee')->getAllEmployees($filters);
@@ -55,13 +54,17 @@ class EmployeeController extends AdminController
      */
     public function store()
     {
-        $request = $this->request();
-        $data = $request->all();
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
 
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->back();
         }
+
+        $data = $this->request->all();
 
         // Basic Validation
         if (empty($data['name']) || empty($data['email'])) {
@@ -98,7 +101,7 @@ class EmployeeController extends AdminController
             // The view likely sends 'role_id' and 'department_id' if using select dropdowns correctly
             // If view sends 'role' instead of 'role_id', we need to map it.
             // Assuming view is updated or sends correct IDs.
-            
+
             $employeeId = $employeeModel->createEmployee($data);
 
             if ($employeeId) {
@@ -150,13 +153,18 @@ class EmployeeController extends AdminController
     public function update($id)
     {
         $id = intval($id);
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->back();
         }
 
-        $request = $this->request();
-        $data = $request->all();
+        $data = $this->request->all();
         $employeeModel = $this->model('Employee');
         $employee = $employeeModel->getEmployeeById($id);
 
@@ -210,6 +218,12 @@ class EmployeeController extends AdminController
     public function destroy($id)
     {
         $id = intval($id);
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
             return $this->back();
@@ -243,6 +257,12 @@ class EmployeeController extends AdminController
     public function offboard($id)
     {
         $id = intval($id);
+
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
             return $this->back();
@@ -251,7 +271,7 @@ class EmployeeController extends AdminController
         try {
             $employeeModel = $this->model('Employee');
             $employee = $employeeModel->getEmployeeById($id);
-            
+
             if (!$employee) {
                 $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
                 return $this->redirect('admin/employees');
@@ -286,9 +306,9 @@ class EmployeeController extends AdminController
             if (file_exists(ABSPATH . '/includes/notification_manager.php')) {
                 require_once ABSPATH . '/includes/notification_manager.php';
                 require_once ABSPATH . '/includes/email_service.php';
-    
+
                 $nm = new \NotificationManager(null, new \EmailService());
-    
+
                 // Notify Admin
                 $nm->send([
                     'user_id' => 1, // Admin ID

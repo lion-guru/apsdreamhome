@@ -36,12 +36,12 @@ class BookingController extends AdminController
 
         $bookings = Booking::getAdminBookings($filters);
         $total_bookings = Booking::getAdminTotalBookings($filters);
-        
+
         // Handle total_bookings if it returns array/object (safety check)
         if (is_array($total_bookings)) {
-             $total_bookings = isset($total_bookings[0]['count']) ? $total_bookings[0]['count'] : count($bookings);
+            $total_bookings = isset($total_bookings[0]['count']) ? $total_bookings[0]['count'] : count($bookings);
         } elseif (is_object($total_bookings)) {
-             $total_bookings = $total_bookings->count ?? 0;
+            $total_bookings = $total_bookings->count ?? 0;
         }
 
         return $this->render('admin/bookings/index', [
@@ -78,13 +78,17 @@ class BookingController extends AdminController
      */
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('admin/bookings/create');
+        }
+
         if (!$this->validateCsrfToken()) {
             $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
             return $this->redirect('admin/bookings/create');
         }
 
-        $request = $this->request();
-        $data = $request->post();
+        $data = $this->request->post();
 
         $property_id = intval($data['property_id'] ?? 0);
         $customer_id = intval($data['customer_id'] ?? 0);
@@ -114,9 +118,9 @@ class BookingController extends AdminController
                 'status' => $status,
                 'booking_number' => $booking_number
             ]);
-            
+
             if ($booking->save()) {
-                $booking_id = $booking->id; 
+                $booking_id = $booking->id;
 
                 // Send notifications
                 $this->sendNotifications($booking_id, $property_id, $customer_id, $booking_amount, $booking_date, $booking_number);
@@ -161,8 +165,8 @@ class BookingController extends AdminController
             $body .= "Thank you for choosing APS Dream Home.";
 
             // Use email from customer object
-            $customerEmail = $customer->email ?? ''; 
-            
+            $customerEmail = $customer->email ?? '';
+
             if ($customerEmail) {
                 $notificationService->sendEmail(
                     $customerEmail,

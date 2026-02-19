@@ -6,8 +6,8 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">डैशबोर्ड</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">KYC वेरिफिकेशन</li>
+                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">KYC Verification</li>
                 </ol>
             </nav>
         </div>
@@ -19,7 +19,7 @@
             <div class="card shadow">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-id-card mr-2"></i>KYC स्टेटस ओवरव्यू
+                        <i class="fas fa-id-card mr-2"></i>KYC Status Overview
                     </h6>
                 </div>
                 <div class="card-body">
@@ -47,13 +47,13 @@
                                     <?php
                                     switch ($kycStatus) {
                                         case 'verified':
-                                            echo 'आपका KYC वेरिफाइड है। आप पेआउट रिक्वेस्ट कर सकते हैं।';
+                                            echo 'Your KYC is verified. You can request payouts.';
                                             break;
                                         case 'rejected':
-                                            echo 'आपका KYC रिजेक्ट हो गया है। कृपया दोबारा सबमिट करें।';
+                                            echo 'Your KYC has been rejected. Please resubmit.';
                                             break;
                                         default:
-                                            echo 'आपका KYC अभी वेरिफिकेशन के लिए पेंडिंग है।';
+                                            echo 'Your KYC is currently pending verification.';
                                     }
                                     ?>
                                 </p>
@@ -62,7 +62,7 @@
 
                         <div class="col-md-8">
                             <div class="kyc-requirements">
-                                <h6 class="font-weight-bold mb-3">KYC के लिए जरूरी डॉक्यूमेंट्स:</h6>
+                                <h6 class="font-weight-bold mb-3">Documents Required for KYC:</h6>
 
                                 <div class="requirement-item mb-3">
                                     <div class="d-flex align-items-center">
@@ -70,9 +70,9 @@
                                         <div class="flex-grow-1">
                                             <strong>Aadhaar Card</strong>
                                             <br>
-                                            <small class="text-muted">फ्रंट और बैक साइड की फोटो</small>
+                                            <small class="text-muted">Front and Back side photos</small>
                                         </div>
-                                        <span class="badge badge-info">जरूरी</span>
+                                        <span class="badge badge-info">Required</span>
                                     </div>
                                 </div>
 
@@ -82,9 +82,9 @@
                                         <div class="flex-grow-1">
                                             <strong>PAN Card</strong>
                                             <br>
-                                            <small class="text-muted">क्लियर फोटो अपलोड करें</small>
+                                            <small class="text-muted">Upload clear photo</small>
                                         </div>
-                                        <span class="badge badge-info">जरूरी</span>
+                                        <span class="badge badge-info">Required</span>
                                     </div>
                                 </div>
 
@@ -94,9 +94,9 @@
                                         <div class="flex-grow-1">
                                             <strong>Bank Details</strong>
                                             <br>
-                                            <small class="text-muted">कैंसिल्ड चेक या पासबुक की फोटो</small>
+                                            <small class="text-muted">Photo of Cancelled Cheque or Passbook</small>
                                         </div>
-                                        <span class="badge badge-secondary">ऑप्शनल</span>
+                                        <span class="badge badge-secondary">Optional</span>
                                     </div>
                                 </div>
 

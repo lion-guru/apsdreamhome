@@ -3,11 +3,11 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/admin/leads">लीड्स</a></li>
+                <li class="breadcrumb-item"><a href="/admin/leads">Leads</a></li>
                 <li class="breadcrumb-item"><a href="/admin/leads/<?= $lead['id'] ?>">
                         <?= htmlspecialchars($lead['name']) ?>
                     </a></li>
-                <li class="breadcrumb-item active" aria-current="page">एडिट करें</li>
+                <li class="breadcrumb-item active" aria-current="page">Edit</li>
             </ol>
         </nav>
     </div>
@@ -19,11 +19,11 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-edit mr-2"></i>लीड जानकारी एडिट करें
+                    <i class="fas fa-edit mr-2"></i>Edit Lead Information
                 </h6>
                 <div>
                     <a href="/admin/leads/<?= $lead['id'] ?>" class="btn btn-info btn-sm">
-                        <i class="fas fa-eye mr-1"></i>विवरण देखें
+                        <i class="fas fa-eye mr-1"></i>View Details
                     </a>
                 </div>
             </div>
@@ -35,13 +35,13 @@
                             <div class="card border-left-primary">
                                 <div class="card-header">
                                     <h6 class="m-0 font-weight-bold text-primary">
-                                        <i class="fas fa-info-circle mr-2"></i>बेसिक जानकारी
+                                        <i class="fas fa-info-circle mr-2"></i>Basic Information
                                     </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label for="name" class="form-label">
-                                            पूरा नाम <span class="text-danger">*</span>
+                                            Full Name <span class="text-danger">*</span>
                                         </label>
                                         <input type="text"
                                             class="form-control"
@@ -53,7 +53,7 @@
 
                                     <div class="form-group mb-3">
                                         <label for="email" class="form-label">
-                                            ईमेल पता
+                                            Email Address
                                         </label>
                                         <input type="email"
                                             class="form-control"
@@ -64,7 +64,7 @@
 
                                     <div class="form-group mb-3">
                                         <label for="phone" class="form-label">
-                                            फोन नंबर <span class="text-danger">*</span>
+                                            Phone Number <span class="text-danger">*</span>
                                         </label>
                                         <input type="tel"
                                             class="form-control"
@@ -77,7 +77,7 @@
 
                                     <div class="form-group mb-3">
                                         <label for="company" class="form-label">
-                                            कंपनी/ऑर्गेनाइजेशन
+                                            Company/Organization
                                         </label>
                                         <input type="text"
                                             class="form-control"
@@ -94,16 +94,16 @@
                             <div class="card border-left-success">
                                 <div class="card-header">
                                     <h6 class="m-0 font-weight-bold text-success">
-                                        <i class="fas fa-chart-line mr-2"></i>लीड डिटेल्स
+                                        <i class="fas fa-chart-line mr-2"></i>Lead Details
                                     </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label for="source" class="form-label">
-                                            लीड स्रोत <span class="text-danger">*</span>
+                                            Lead Source <span class="text-danger">*</span>
                                         </label>
                                         <select class="form-control" id="source" name="source" required>
-                                            <option value="">स्रोत चुनें</option>
+                                            <option value="">Select Source</option>
                                             <?php foreach ($sources as $source): ?>
                                                 <option value="<?= $source['id'] ?>"
                                                     <?= ($source['id'] == $lead['source'] || strtolower($source['source_name']) == strtolower($lead['source'])) ? 'selected' : '' ?>>
@@ -115,10 +115,10 @@
 
                                     <div class="form-group mb-3">
                                         <label for="status" class="form-label">
-                                            स्टेटस <span class="text-danger">*</span>
+                                            Status <span class="text-danger">*</span>
                                         </label>
                                         <select class="form-control" id="status" name="status" required>
-                                            <option value="">स्टेटस चुनें</option>
+                                            <option value="">Select Status</option>
                                             <?php foreach ($statuses as $status): ?>
                                                 <option value="<?= $status['id'] ?>"
                                                     <?= ($status['id'] == $lead['status'] || strtolower($status['status_name']) == strtolower($lead['status'])) ? 'selected' : '' ?>>
@@ -130,26 +130,26 @@
 
                                     <div class="form-group mb-3">
                                         <label for="priority" class="form-label">
-                                            प्रायोरिटी
+                                            Priority
                                         </label>
                                         <select class="form-control" id="priority" name="priority">
-                                            <option value="low" <?= $lead['priority'] == 'low' ? 'selected' : '' ?>>कम</option>
-                                            <option value="medium" <?= $lead['priority'] == 'medium' ? 'selected' : '' ?>>मध्यम</option>
-                                            <option value="high" <?= $lead['priority'] == 'high' ? 'selected' : '' ?>>उच्च</option>
+                                            <option value="low" <?= $lead['priority'] == 'low' ? 'selected' : '' ?>>Low</option>
+                                            <option value="medium" <?= $lead['priority'] == 'medium' ? 'selected' : '' ?>>Medium</option>
+                                            <option value="high" <?= $lead['priority'] == 'high' ? 'selected' : '' ?>>High</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="assigned_to" class="form-label">
-                                            असाइन करें
+                                            Assign To
                                         </label>
                                         <select class="form-control" id="assigned_to" name="assigned_to">
-                                            <option value="">यूजर चुनें</option>
+                                            <option value="">Select User</option>
                                             <?php foreach ($users as $user): ?>
                                                 <option value="<?= $user['id'] ?>"
                                                     <?= $user['id'] == $lead['assigned_to'] ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($user['name']) ?>
-                                                    (<?= $user['lead_count'] ?> लीड्स)
+                                                    (<?= $user['lead_count'] ?> Leads)
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -161,58 +161,58 @@
                             <div class="card border-left-warning mt-3">
                                 <div class="card-header">
                                     <h6 class="m-0 font-weight-bold text-warning">
-                                        <i class="fas fa-rupee-sign mr-2"></i>वित्तीय जानकारी
+                                        <i class="fas fa-rupee-sign mr-2"></i>Financial Information
                                     </h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label for="budget" class="form-label">
-                                            बजट (₹)
+                                            Budget (₹)
                                         </label>
                                         <input type="number"
                                             class="form-control"
                                             id="budget"
                                             name="budget"
                                             value="<?= htmlspecialchars($lead['budget'] ?? '') ?>"
-                                            placeholder="अपेक्षित बजट"
+                                            placeholder="Expected Budget"
                                             min="0"
                                             step="10000">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="property_type" class="form-label">
-                                            प्रॉपर्टी का प्रकार
+                                            Property Type
                                         </label>
                                         <select class="form-control" id="property_type" name="property_type">
-                                            <option value="">चुनें</option>
-                                            <option value="residential" <?= ($lead['property_type'] ?? '') == 'residential' ? 'selected' : '' ?>>रेजिडेंशियल</option>
-                                            <option value="commercial" <?= ($lead['property_type'] ?? '') == 'commercial' ? 'selected' : '' ?>>कॉमर्शियल</option>
-                                            <option value="industrial" <?= ($lead['property_type'] ?? '') == 'industrial' ? 'selected' : '' ?>>इंडस्ट्रियल</option>
-                                            <option value="land" <?= ($lead['property_type'] ?? '') == 'land' ? 'selected' : '' ?>>जमीन</option>
+                                            <option value="">Select</option>
+                                            <option value="residential" <?= ($lead['property_type'] ?? '') == 'residential' ? 'selected' : '' ?>>Residential</option>
+                                            <option value="commercial" <?= ($lead['property_type'] ?? '') == 'commercial' ? 'selected' : '' ?>>Commercial</option>
+                                            <option value="industrial" <?= ($lead['property_type'] ?? '') == 'industrial' ? 'selected' : '' ?>>Industrial</option>
+                                            <option value="land" <?= ($lead['property_type'] ?? '') == 'land' ? 'selected' : '' ?>>Land</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="location_preference" class="form-label">
-                                            लोकेशन प्रेफरेंस
+                                            Location Preference
                                         </label>
                                         <input type="text"
                                             class="form-control"
                                             id="location_preference"
                                             name="location_preference"
                                             value="<?= htmlspecialchars($lead['location_preference'] ?? '') ?>"
-                                            placeholder="पसंदीदा लोकेशन">
+                                            placeholder="Preferred Location">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="notes" class="form-label">
-                                            अतिरिक्त नोट्स
+                                            Additional Notes
                                         </label>
                                         <textarea class="form-control"
                                             id="notes"
                                             name="notes"
                                             rows="2"
-                                            placeholder="कोई अतिरिक्त जानकारी"><?= htmlspecialchars($lead['notes'] ?? '') ?></textarea>
+                                            placeholder="Any Additional Information"><?= htmlspecialchars($lead['notes'] ?? '') ?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -223,13 +223,13 @@
                     <div class="row mt-4">
                         <div class="col-12 text-center">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save mr-2"></i>परिवर्तन सेव करें
+                                <i class="fas fa-save mr-2"></i>Save Changes
                             </button>
                             <a href="/admin/leads/<?= $lead['id'] ?>" class="btn btn-secondary btn-lg ml-3">
-                                <i class="fas fa-times mr-2"></i>रद्द करें
+                                <i class="fas fa-times mr-2"></i>Cancel
                             </a>
                             <button type="button" class="btn btn-danger btn-lg ml-3" onclick="deleteLead()">
-                                <i class="fas fa-trash mr-2"></i>लीड डिलीट करें
+                                <i class="fas fa-trash mr-2"></i>Delete Lead
                             </button>
                         </div>
                     </div>
@@ -244,18 +244,18 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">लीड डिलीट करें</h5>
+                <h5 class="modal-title">Delete Lead</h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>क्या आप वाकई <strong><?= htmlspecialchars($lead['name']) ?></strong> को डिलीट करना चाहते हैं?</p>
-                <p class="text-danger">यह कार्रवाई वापस नहीं की जा सकती।</p>
+                <p>Are you sure you want to delete <strong><?= htmlspecialchars($lead['name']) ?></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">रद्द करें</button>
-                <button type="button" class="btn btn-danger" onclick="confirmDelete()">डिलीट करें</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
             </div>
         </div>
     </div>

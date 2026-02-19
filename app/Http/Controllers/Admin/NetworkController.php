@@ -37,7 +37,7 @@ class NetworkController extends AdminController
 
     public function searchUsers(): void
     {
-        $query = trim($_GET['query'] ?? '');
+        $query = trim($this->request->get('query') ?? '');
         if ($query === '') {
             $this->jsonResponse(['success' => true, 'data' => []]);
             return;
@@ -59,15 +59,15 @@ class NetworkController extends AdminController
 
     public function networkTree(): void
     {
-        $userId = (int) ($_GET['user_id'] ?? 0);
+        $userId = (int) ($this->request->get('user_id') ?? 0);
         if ($userId <= 0) {
             $this->jsonError('user_id required', 400);
             return;
         }
 
-        $maxDepth = (int) ($_GET['depth'] ?? 5);
-        $query = $_GET['query'] ?? null;
-        $rank = $_GET['rank'] ?? null;
+        $maxDepth = (int) ($this->request->get('depth') ?? 5);
+        $query = $this->request->get('query') ?? null;
+        $rank = $this->request->get('rank') ?? null;
 
         $options = [];
         if ($query) {

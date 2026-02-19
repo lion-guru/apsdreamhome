@@ -22,11 +22,12 @@ if (file_exists(APP_ROOT . '/vendor/autoload.php')) {
 // or for legacy non-namespaced classes.
 require_once __DIR__ . '/Autoloader.php';
 
-// The Autoloader class instance is usually created in bootstrap.php or implicitly handled.
-// However, the previous version just required the file.
-// Let's check if Autoloader.php actually registers itself or just defines the class.
-// If it just defines the class, we need to instantiate it.
-// Reading Autoloader.php (I recall it's a singleton or static).
+use App\Core\Autoloader;
+
+// Register the custom autoloader
+$loader = Autoloader::getInstance();
+$loader->register();
+$loader->addNamespace('App', APP_ROOT . '/app');
 
 // 3. Load application helpers if not loaded by Composer
 // Composer 'files' autoloading should handle this, but for safety:

@@ -6,8 +6,8 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">डैशबोर्ड</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">प्रोफाइल मैनेजमेंट</li>
+                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Profile Management</li>
                 </ol>
             </nav>
         </div>
@@ -19,24 +19,24 @@
             <div class="card shadow">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-user mr-2"></i>प्रोफाइल इंफॉर्मेशन
+                        <i class="fas fa-user mr-2"></i>Profile Information
                     </h6>
                     <button type="button" class="btn btn-primary btn-sm" onclick="editProfile()">
-                        <i class="fas fa-edit mr-1"></i>एडिट प्रोफाइल
+                        <i class="fas fa-edit mr-1"></i>Edit Profile
                     </button>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">फुल नेम:</label>
+                                <label class="font-weight-bold text-muted">Full Name:</label>
                                 <div class="profile-value">
                                     <?= htmlspecialchars($associate['name'] ?? '') ?>
                                 </div>
                             </div>
 
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">असोसिएट कोड:</label>
+                                <label class="font-weight-bold text-muted">Associate Code:</label>
                                 <div class="profile-value">
                                     <span class="badge badge-primary">
                                         <?= htmlspecialchars($associate['associate_code'] ?? '') ?>
@@ -45,14 +45,14 @@
                             </div>
 
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">लेवल:</label>
+                                <label class="font-weight-bold text-muted">Level:</label>
                                 <div class="profile-value">
                                     <span class="badge badge-info">Level <?= $associate['level'] ?? 1 ?></span>
                                 </div>
                             </div>
 
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">जॉइनिंग डेट:</label>
+                                <label class="font-weight-bold text-muted">Joining Date:</label>
                                 <div class="profile-value">
                                     <?= date('d M Y', strtotime($associate['joining_date'] ?? '')) ?>
                                 </div>
@@ -61,28 +61,28 @@
 
                         <div class="col-md-6">
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">ईमेल:</label>
+                                <label class="font-weight-bold text-muted">Email:</label>
                                 <div class="profile-value">
                                     <?= htmlspecialchars($associate['email'] ?? '') ?>
                                 </div>
                             </div>
 
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">फोन:</label>
+                                <label class="font-weight-bold text-muted">Phone:</label>
                                 <div class="profile-value">
                                     <?= htmlspecialchars($associate['phone'] ?? '') ?>
                                 </div>
                             </div>
 
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">सिटी:</label>
+                                <label class="font-weight-bold text-muted">City:</label>
                                 <div class="profile-value">
                                     <?= htmlspecialchars($associate['city'] ?? '') ?>
                                 </div>
                             </div>
 
                             <div class="profile-info-item mb-3">
-                                <label class="font-weight-bold text-muted">स्टेट:</label>
+                                <label class="font-weight-bold text-muted">State:</label>
                                 <div class="profile-value">
                                     <?= htmlspecialchars($associate['state'] ?? '') ?>
                                 </div>
@@ -93,7 +93,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="profile-info-item">
-                                <label class="font-weight-bold text-muted">एड्रेस:</label>
+                                <label class="font-weight-bold text-muted">Address:</label>
                                 <div class="profile-value">
                                     <?= htmlspecialchars($associate['address'] ?? '') ?>
                                 </div>

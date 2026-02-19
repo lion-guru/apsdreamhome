@@ -66,12 +66,12 @@ class AdminReportsController extends AdminController
 
         // Get filter parameters
         $filters = [
-            'period' => $_GET['period'] ?? '30days',
-            'property_type' => $_GET['property_type'] ?? 'all',
-            'city' => $_GET['city'] ?? 'all',
-            'status' => $_GET['status'] ?? 'all',
-            'sort' => $_GET['sort'] ?? 'views',
-            'order' => $_GET['order'] ?? 'DESC'
+            'period' => $this->request->get('period', '30days'),
+            'property_type' => $this->request->get('property_type', 'all'),
+            'city' => $this->request->get('city', 'all'),
+            'status' => $this->request->get('status', 'all'),
+            'sort' => $this->request->get('sort', 'views'),
+            'order' => $this->request->get('order', 'DESC')
         ];
 
         // Get property performance data
@@ -101,10 +101,10 @@ class AdminReportsController extends AdminController
 
         // Get filter parameters
         $filters = [
-            'period' => $_GET['period'] ?? '30days',
-            'user_type' => $_GET['user_type'] ?? 'all',
-            'registration_source' => $_GET['registration_source'] ?? 'all',
-            'activity_level' => $_GET['activity_level'] ?? 'all'
+            'period' => $this->request->get('period', '30days'),
+            'user_type' => $this->request->get('user_type', 'all'),
+            'registration_source' => $this->request->get('registration_source', 'all'),
+            'activity_level' => $this->request->get('activity_level', 'all')
         ];
 
         // Get user analytics data
@@ -123,10 +123,7 @@ class AdminReportsController extends AdminController
     public function financial()
     {
         // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
+        $this->requireAdmin();
 
         // Set page data
         $this->data['page_title'] = 'Financial Reports - ' . APP_NAME;
@@ -138,8 +135,8 @@ class AdminReportsController extends AdminController
 
         // Get filter parameters
         $filters = [
-            'period' => $_GET['period'] ?? '30days',
-            'report_type' => $_GET['report_type'] ?? 'revenue'
+            'period' => $this->request->get('period', '30days'),
+            'report_type' => $this->request->get('report_type', 'revenue')
         ];
 
         // Get financial data
@@ -159,10 +156,7 @@ class AdminReportsController extends AdminController
     public function inquiries()
     {
         // Check if user is admin
-        if (!$this->isAdmin()) {
-            $this->redirect('login');
-            return;
-        }
+        $this->requireAdmin();
 
         // Set page data
         $this->data['page_title'] = 'Inquiry Analytics - ' . APP_NAME;
@@ -174,10 +168,10 @@ class AdminReportsController extends AdminController
 
         // Get filter parameters
         $filters = [
-            'period' => $_GET['period'] ?? '30days',
-            'status' => $_GET['status'] ?? 'all',
-            'inquiry_type' => $_GET['inquiry_type'] ?? 'all',
-            'priority' => $_GET['priority'] ?? 'all'
+            'period' => $this->request->get('period', '30days'),
+            'status' => $this->request->get('status', 'all'),
+            'inquiry_type' => $this->request->get('inquiry_type', 'all'),
+            'priority' => $this->request->get('priority', 'all')
         ];
 
         // Get inquiry analytics data
@@ -197,19 +191,13 @@ class AdminReportsController extends AdminController
     public function export()
     {
         // Check if user is admin
-        if (!$this->isAdmin()) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-            return;
-        }
+        $this->requireAdmin();
 
-        $report_type = $_GET['type'] ?? '';
-        $format = $_GET['format'] ?? 'csv';
+        $report_type = $this->request->get('type', '');
+        $format = $this->request->get('format', 'csv');
 
         if (!$report_type) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Report type is required']);
-            return;
+            return $this->json(['success' => false, 'message' => 'Report type is required'], 400);
         }
 
         try {
@@ -234,12 +222,11 @@ class AdminReportsController extends AdminController
             if ($format === 'csv') {
                 $this->exportToCSV($data, $report_type);
             } else {
-                echo json_encode(['success' => true, 'data' => $data]);
+                return $this->json(['success' => true, 'data' => $data]);
             }
         } catch (\Exception $e) {
             error_log('Export report error: ' . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Export failed']);
+            return $this->json(['success' => false, 'message' => 'Export failed'], 500);
         }
     }
 

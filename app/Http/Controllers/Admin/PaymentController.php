@@ -52,15 +52,15 @@ class PaymentController extends AdminController
     public function data()
     {
         try {
-            $start = $_GET['start'] ?? 0;
-            $length = $_GET['length'] ?? 10;
-            $search = $_GET['search']['value'] ?? '';
-            $order = $_GET['order'][0] ?? [];
+            $start = $this->request->get('start', 0);
+            $length = $this->request->get('length', 10);
+            $search = $this->request->get('search', [])['value'] ?? '';
+            $order = $this->request->get('order', [])[0] ?? [];
 
             $filters = [
-                'dateRange' => $_GET['dateRange'] ?? '',
-                'status' => $_GET['status'] ?? '',
-                'type' => $_GET['type'] ?? ''
+                'dateRange' => $this->request->get('dateRange', ''),
+                'status' => $this->request->get('status', ''),
+                'type' => $this->request->get('type', '')
             ];
 
             $payments = $this->paymentModel->getPaginatedPayments($start, $length, $search, $order, $filters);
@@ -96,7 +96,7 @@ class PaymentController extends AdminController
             }
 
             return $this->jsonResponse([
-                'draw' => intval($_GET['draw'] ?? 1),
+                'draw' => intval($this->request->get('draw', 1)),
                 'recordsTotal' => $totalRecords,
                 'recordsFiltered' => $totalFiltered,
                 'data' => $data
@@ -111,27 +111,22 @@ class PaymentController extends AdminController
      */
     public function show($id)
     {
-        header('Content-Type: application/json');
-
         try {
             $payment = $this->paymentModel->getPaymentById($id);
 
             if ($payment) {
-                echo json_encode([
+                return $this->jsonResponse([
                     'success' => true,
                     'data' => $payment
                 ]);
             } else {
-                echo json_encode([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => 'Payment not found'
                 ]);
             }
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            return $this->jsonError($e->getMessage());
         }
     }
 
@@ -158,11 +153,12 @@ class PaymentController extends AdminController
      */
     public function destroy($id)
     {
-        header('Content-Type: application/json');
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            return;
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
         }
 
         try {
@@ -175,7 +171,7 @@ class PaymentController extends AdminController
             $result = $this->paymentModel->deletePayment($id);
 
             if ($result) {
-                echo json_encode([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => 'Payment deleted successfully'
                 ]);
@@ -183,10 +179,7 @@ class PaymentController extends AdminController
                 throw new Exception('Failed to delete payment');
             }
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            return $this->jsonError($e->getMessage());
         }
     }
 
@@ -213,15 +206,16 @@ class PaymentController extends AdminController
      */
     public function update($id)
     {
-        header('Content-Type: application/json');
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            return;
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
         }
 
         try {
-            $data = $_POST;
+            $data = $this->request->post();
 
             // Remove csrf_token and other non-db fields if necessary
             unset($data['csrf_token']);
@@ -237,7 +231,7 @@ class PaymentController extends AdminController
             $result = $this->paymentModel->updatePayment($id, $data);
 
             if ($result) {
-                echo json_encode([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => 'Payment updated successfully'
                 ]);
@@ -245,10 +239,7 @@ class PaymentController extends AdminController
                 throw new Exception('Failed to update payment');
             }
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            return $this->jsonError($e->getMessage());
         }
     }
 
@@ -257,17 +248,15 @@ class PaymentController extends AdminController
      */
     public function customers()
     {
-        header('Content-Type: application/json');
-
-        $search = $_GET['search'] ?? '';
-        $page = $_GET['page'] ?? 1;
+        $search = $this->request->get('search', '');
+        $page = $this->request->get('page', 1);
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
         $customerModel = $this->model('Customer');
         $result = $customerModel->searchCustomers($search, $limit, $offset);
 
-        echo json_encode([
+        return $this->jsonResponse([
             'items' => $result['items'],
             'more' => ($offset + $limit) < $result['total']
         ]);
@@ -278,15 +267,16 @@ class PaymentController extends AdminController
      */
     public function store()
     {
-        header('Content-Type: application/json');
+        if (!$this->validateCsrfToken()) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
+        }
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            return;
+        if ($this->request->method() !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
         }
 
         try {
-            $data = $_POST;
+            $data = $this->request->post();
 
             // Validate required fields
             $requiredFields = ['customer_id', 'amount', 'payment_type', 'payment_method'];
@@ -299,7 +289,7 @@ class PaymentController extends AdminController
             $paymentId = $this->paymentModel->recordPayment($data);
 
             if ($paymentId) {
-                echo json_encode([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => 'Payment recorded successfully',
                     'payment_id' => $paymentId
@@ -308,10 +298,10 @@ class PaymentController extends AdminController
                 throw new Exception('Failed to record payment');
             }
         } catch (Exception $e) {
-            echo json_encode([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
-            ]);
+            ], 500);
         }
     }
 

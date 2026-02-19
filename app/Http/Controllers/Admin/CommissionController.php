@@ -48,6 +48,10 @@ class CommissionController extends AdminController
      */
     public function calculate()
     {
+        if ($this->request->method() !== 'POST') {
+            return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Invalid request method.') : 'Invalid request method.')], 405);
+        }
+
         if (!$this->validateCsrfToken()) {
             return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.')], 400);
         }
@@ -72,7 +76,7 @@ class CommissionController extends AdminController
 
             // Log Activity
             $auditLog = new AuditLog();
-            $auditLog->log($_SESSION['user_id'] ?? 0, 'Commission Calculation', 'commission', 0, 'Triggered calculation for ' . $calculatedCount . ' associates');
+            $auditLog->log($this->session->get('user_id', 0), 'Commission Calculation', 'commission', 0, 'Triggered calculation for ' . $calculatedCount . ' associates');
 
             // Invalidate dashboard cache
             if (function_exists('getPerformanceManager')) {
@@ -84,7 +88,7 @@ class CommissionController extends AdminController
                 $this->notificationService->sendEmail(
                     getenv('MAIL_ADMIN') ?: 'admin@apsdreamhome.com',
                     'Commission Calculation Completed',
-                    "Commission calculation triggered for $calculatedCount associates by " . ($_SESSION['username'] ?? 'Admin'),
+                    "Commission calculation triggered for $calculatedCount associates by " . ($this->session->get('username', 'Admin')),
                     'commission_calc_report'
                 );
             } catch (\Exception $e) {
@@ -107,12 +111,15 @@ class CommissionController extends AdminController
      */
     public function approve()
     {
+        if ($this->request->method() !== 'POST') {
+            return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Invalid request method.') : 'Invalid request method.')], 405);
+        }
+
         if (!$this->validateCsrfToken()) {
             return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.')], 400);
         }
 
-        $request = $this->request;
-        $id = intval($request->get('id'));
+        $id = intval($this->request->get('id'));
 
         if (!$id) {
             return $this->json(['error' => ($this->mlSupport ? $this->mlSupport->translate('No commission ID provided') : 'No commission ID provided')], 400);
@@ -136,7 +143,7 @@ class CommissionController extends AdminController
 
                 // Log Activity
                 $auditLog = new AuditLog();
-                $auditLog->log($_SESSION['user_id'] ?? 0, 'Commission Approval', 'commission', $id, 'Approved commission ID: ' . $id);
+                $auditLog->log($this->session->get('user_id', 0), 'Commission Approval', 'commission', $id, 'Approved commission ID: ' . $id);
 
                 return $this->json([
                     'success' => true,
@@ -155,8 +162,7 @@ class CommissionController extends AdminController
      */
     public function processPayout()
     {
-        $request = $this->request;
-        if ($request->method() === 'POST') {
+        if ($this->request->method() === 'POST') {
             if (!$this->validateCsrfToken()) {
                 $this->setFlash('error', ($this->mlSupport ? $this->mlSupport->translate('Security validation failed. Please try again.') : 'Security validation failed.'));
                 return $this->back();
@@ -164,7 +170,7 @@ class CommissionController extends AdminController
 
             try {
                 $payoutService = new \App\Services\PayoutService();
-                $result = $payoutService->createBatch($request->all());
+                $result = $payoutService->createBatch($this->request->all());
 
                 if ($result['success']) {
                     // Invalidate dashboard cache
@@ -174,7 +180,7 @@ class CommissionController extends AdminController
 
                     // Log Activity
                     $auditLog = new AuditLog();
-                    $auditLog->log($_SESSION['user_id'] ?? 0, 'Payout Batch Created', 'payout_batch', $result['batch_id'] ?? 0, 'Batch ID: ' . ($result['batch_id'] ?? 'unknown'));
+                    $auditLog->log($this->session->get('user_id', 0), 'Payout Batch Created', 'payout_batch', $result['batch_id'] ?? 0, 'Batch ID: ' . ($result['batch_id'] ?? 'unknown'));
 
                     $this->setFlash('success', ($this->mlSupport ? $this->mlSupport->translate('Payout batch created successfully: ') : 'Payout batch created successfully: ') . h($result['batch_id']));
                 } else {

@@ -98,21 +98,33 @@ class LeadController extends AdminController
      */
     public function store()
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/leads/create');
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->redirect('admin/leads/create');
+            return;
+        }
+
         try {
             $data = [
-                'name' => $_POST['name'] ?? '',
-                'email' => $_POST['email'] ?? '',
-                'phone' => $_POST['phone'] ?? '',
-                'source' => $_POST['source'] ?? '',
-                'status' => $_POST['status'] ?? 'new',
-                'priority' => $_POST['priority'] ?? 'medium',
-                'budget' => !empty($_POST['budget']) ? (float)$_POST['budget'] : null,
-                'property_type' => $_POST['property_type'] ?? '',
-                'location_preference' => $_POST['location_preference'] ?? '',
-                'notes' => $_POST['notes'] ?? '',
-                'assigned_to' => $_POST['assigned_to'] ?? null,
-                'created_by' => $_SESSION['user_id'] ?? null,
-                'company' => $_POST['company'] ?? null
+                'name' => $this->request->post('name') ?? '',
+                'email' => $this->request->post('email') ?? '',
+                'phone' => $this->request->post('phone') ?? '',
+                'source' => $this->request->post('source') ?? '',
+                'status' => $this->request->post('status') ?? 'new',
+                'priority' => $this->request->post('priority') ?? 'medium',
+                'budget' => !empty($this->request->post('budget')) ? (float)$this->request->post('budget') : null,
+                'property_type' => $this->request->post('property_type') ?? '',
+                'location_preference' => $this->request->post('location_preference') ?? '',
+                'notes' => $this->request->post('notes') ?? '',
+                'assigned_to' => $this->request->post('assigned_to') ?? null,
+                'created_by' => $this->session->get('user_id'),
+                'company' => $this->request->post('company') ?? null
             ];
 
             $leadId = $this->leadService->createLead($data);
@@ -129,7 +141,7 @@ class LeadController extends AdminController
             throw new \Exception('Failed to create lead');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
-            $_SESSION['form_data'] = $_POST;
+            $this->session->set('form_data', $this->request->all());
             $this->redirect('admin/leads/create');
         }
     }
@@ -170,6 +182,18 @@ class LeadController extends AdminController
      */
     public function update($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect("admin/leads/edit/$id");
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->redirect("admin/leads/edit/$id");
+            return;
+        }
+
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -185,18 +209,18 @@ class LeadController extends AdminController
             }
 
             $data = [
-                'name' => $_POST['name'] ?? $lead['name'],
-                'email' => $_POST['email'] ?? $lead['email'],
-                'phone' => $_POST['phone'] ?? $lead['phone'],
-                'source' => $_POST['source'] ?? $lead['source'],
-                'status' => $_POST['status'] ?? $lead['status'],
-                'priority' => $_POST['priority'] ?? $lead['priority'],
-                'budget' => isset($_POST['budget']) ? (float)$_POST['budget'] : $lead['budget'],
-                'property_type' => $_POST['property_type'] ?? $lead['property_type'], // property_interest
-                'location_preference' => $_POST['location_preference'] ?? $lead['location_preference'],
-                'notes' => $_POST['notes'] ?? $lead['notes'],
-                'assigned_to' => $_POST['assigned_to'] ?? $lead['assigned_to'],
-                'company' => $_POST['company'] ?? $lead['company']
+                'name' => $this->request->post('name') ?? $lead['name'],
+                'email' => $this->request->post('email') ?? $lead['email'],
+                'phone' => $this->request->post('phone') ?? $lead['phone'],
+                'source' => $this->request->post('source') ?? $lead['source'],
+                'status' => $this->request->post('status') ?? $lead['status'],
+                'priority' => $this->request->post('priority') ?? $lead['priority'],
+                'budget' => !empty($this->request->post('budget')) ? (float)$this->request->post('budget') : $lead['budget'],
+                'property_type' => $this->request->post('property_type') ?? $lead['property_type'], // property_interest
+                'location_preference' => $this->request->post('location_preference') ?? $lead['location_preference'],
+                'notes' => $this->request->post('notes') ?? $lead['notes'],
+                'assigned_to' => $this->request->post('assigned_to') ?? $lead['assigned_to'],
+                'company' => $this->request->post('company') ?? $lead['company']
             ];
 
             $result = $this->leadService->updateLead($id, $data);
@@ -210,7 +234,7 @@ class LeadController extends AdminController
             throw new \Exception('Failed to update lead');
         } catch (\Exception $e) {
             $this->setFlash('error', $e->getMessage());
-            $_SESSION['form_data'] = $_POST;
+            $this->session->set('form_data', $this->request->all());
             $this->redirect("admin/leads/edit/$id");
         }
     }
@@ -220,6 +244,18 @@ class LeadController extends AdminController
      */
     public function addActivity($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -230,10 +266,10 @@ class LeadController extends AdminController
 
             $data = [
                 'lead_id' => $id,
-                'activity_type' => $_POST['activity_type'] ?? '',
-                'description' => $_POST['description'] ?? '',
-                'created_by' => $_SESSION['user_id'] ?? null,
-                'metadata' => !empty($_POST['metadata']) ? json_encode($_POST['metadata']) : null
+                'activity_type' => $this->request->post('activity_type') ?? '',
+                'description' => $this->request->post('description') ?? '',
+                'created_by' => $this->session->get('user_id'),
+                'metadata' => !empty($this->request->post('metadata')) ? json_encode($this->request->post('metadata')) : null
             ];
 
             $activityId = $this->leadService->addActivity($data);
@@ -255,6 +291,18 @@ class LeadController extends AdminController
      */
     public function destroy($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/leads');
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->redirect('admin/leads');
+            return;
+        }
+
         try {
             $result = $this->leadService->deleteLead($id);
 
@@ -275,6 +323,18 @@ class LeadController extends AdminController
      */
     public function addNote($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -285,8 +345,8 @@ class LeadController extends AdminController
 
             $data = [
                 'lead_id' => $id,
-                'note' => $_POST['note'] ?? '',
-                'created_by' => $_SESSION['user_id'] ?? null
+                'note' => $this->request->post('note') ?? '',
+                'created_by' => $this->session->get('user_id')
             ];
 
             $noteId = $this->leadService->addNote($data);
@@ -308,6 +368,18 @@ class LeadController extends AdminController
      */
     public function assign($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -316,7 +388,7 @@ class LeadController extends AdminController
                 return;
             }
 
-            $assignedTo = $_POST['assigned_to'] ?? null;
+            $assignedTo = $this->request->post('assigned_to') ?? null;
 
             if (!$assignedTo) {
                 throw new \Exception('Please select a user to assign the lead to');
@@ -341,6 +413,18 @@ class LeadController extends AdminController
      */
     public function convert($id)
     {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
+        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
+            $this->redirect('admin/leads/' . $id);
+            return;
+        }
+
         try {
             $lead = $this->leadService->getLeadById($id);
 
@@ -369,10 +453,10 @@ class LeadController extends AdminController
      */
     public function reports()
     {
-        $reportType = $_GET['type'] ?? 'summary';
+        $reportType = $this->request->get('type') ?? 'summary';
         $dateRange = [
-            'start' => $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')),
-            'end' => $_GET['end_date'] ?? date('Y-m-d')
+            'start' => $this->request->get('start_date') ?? date('Y-m-d', strtotime('-30 days')),
+            'end' => $this->request->get('end_date') ?? date('Y-m-d')
         ];
 
         $report = $this->leadService->generateReport($reportType, $dateRange);
@@ -395,13 +479,15 @@ class LeadController extends AdminController
             return true;
         }
 
+        $userId = $this->session->get('user_id');
+
         // Lead creator can edit
-        if ($lead['created_by'] == $_SESSION['user_id']) {
+        if ($lead['created_by'] == $userId) {
             return true;
         }
 
         // Assigned user can edit
-        if ($lead['assigned_to'] == $_SESSION['user_id']) {
+        if ($lead['assigned_to'] == $userId) {
             return true;
         }
 
