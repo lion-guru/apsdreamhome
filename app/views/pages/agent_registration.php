@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Agent Registration System - Freelancer Partner Program
  * APS Dream Homes - Agent Onboarding for Resell Properties
@@ -45,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message_type = "danger";
     } else {
         // Check if mobile or email already exists
-        $check_stmt = $conn->prepare("SELECT id FROM agents WHERE mobile = ? OR email = ?");
+        $check_stmt = $conn->prepare("SELECT id FROM users WHERE phone = ? OR email = ?");
         $check_stmt->bind_param("ss", $mobile, $email);
         $check_stmt->execute();
         if ($check_stmt->get_result()->num_rows > 0) {
@@ -56,11 +57,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $agent_code = 'AGT' . str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            // Insert new agent
-            $stmt = $conn->prepare("INSERT INTO agents (agent_code, full_name, mobile, email, company_name, experience_years, specialization, city, state, password, status, registration_date, total_properties, total_earnings) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), 0, 0.00)");
-            $stmt->bind_param("ssssssssss", $agent_code, $full_name, $mobile, $email, $company_name, $experience_years, $specialization, $city, $state, $hashed_password);
+            // Start transaction
+            $conn->begin_transaction();
 
-            if ($stmt->execute()) {
+            try {
+                // Insert new user
+                $stmt = $conn->prepare("INSERT INTO users (name, phone, email, password, role, status, created_at) VALUES (?, ?, ?, ?, 'associate', 'pending', NOW())");
+                $stmt->bind_param("ssss", $full_name, $mobile, $email, $hashed_password);
+
+                if (!$stmt->execute()) {
+                    throw new Exception("Failed to create user account");
+                }
+
+                $user_id = $conn->insert_id;
+
+                // Insert into associates
+                $stmt_assoc = $conn->prepare("INSERT INTO associates (user_id, associate_code, company_name, city, status, created_at) VALUES (?, ?, ?, ?, 'active', NOW())");
+                $stmt_assoc->bind_param("isss", $user_id, $agent_code, $company_name, $city);
+
+                if (!$stmt_assoc->execute()) {
+                    throw new Exception("Failed to create associate profile");
+                }
+
+                $conn->commit();
                 // Send welcome WhatsApp
                 $whatsapp_message = "🎉 Welcome to APS Dream Homes!\n\n";
                 $whatsapp_message .= "👤 Agent Registration Successful\n";
@@ -84,18 +103,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $whatsapp_message .= "• Email + Password\n\n";
 
                 $whatsapp_message .= "📞 Contact: +91-9876543210\n";
-                $whatsapp_message .= "🌐 Portal: http://localhost/apsdreamhome/agent_login.php\n\n";
+                $whatsapp_message .= "🌐 Portal: " . BASE_URL . "associate/login\n\n";
                 $whatsapp_message .= "Start uploading properties and earn commissions! 💰✨";
 
-                sendWhatsAppNotification($mobile, $whatsapp_message);
+                // sendWhatsAppNotification($mobile, $whatsapp_message); // Ensure function exists or remove
 
                 $message = "Registration successful! Your Agent Code is: <strong>" . $agent_code . "</strong>. WhatsApp notification sent with login details. Your account is under review.";
                 $message_type = "success";
 
                 // Clear form data
                 $_POST = array();
-            } else {
-                $message = "Registration failed. Please try again!";
+            } catch (Exception $e) {
+                $conn->rollback();
+                $message = "Registration failed: " . $e->getMessage();
                 $message_type = "danger";
             }
         }
@@ -103,23 +123,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // WhatsApp notification function
-function sendWhatsAppNotification($mobile, $message) {
+function sendWhatsAppNotification($mobile, $message)
+{
     error_log("WhatsApp Notification to: " . $mobile . "\nMessage: " . $message);
     return true;
 }
 
 // Get states for dropdown
 $indian_states = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
-    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
-    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh',
-    'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu and Kashmir', 'Ladakh'
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Delhi',
+    'Jammu and Kashmir',
+    'Ladakh'
 ];
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -132,19 +180,22 @@ $indian_states = [
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .registration-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             max-width: 900px;
         }
+
         .header-section {
             background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
             color: white;
             padding: 3rem 2rem 2rem;
             text-align: center;
         }
+
         .logo-section {
             background: linear-gradient(45deg, #17a2b8, #007bff);
             color: white;
@@ -152,10 +203,12 @@ $indian_states = [
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .form-control:focus {
             border-color: #ff6b35;
             box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
         }
+
         .btn-register {
             background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
             border: none;
@@ -165,11 +218,13 @@ $indian_states = [
             font-weight: 600;
             transition: all 0.3s;
         }
+
         .btn-register:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             color: white;
         }
+
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -177,12 +232,14 @@ $indian_states = [
             margin-bottom: 1rem;
             border-radius: 0 10px 10px 0;
         }
+
         .benefits-section {
             background: #f8f9fa;
             padding: 1.5rem;
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .commission-info {
             background: #d4edda;
             border-left: 4px solid #28a745;
@@ -190,6 +247,7 @@ $indian_states = [
             margin-bottom: 1rem;
             border-radius: 0 10px 10px 0;
         }
+
         .feature-icon {
             width: 50px;
             height: 50px;
@@ -204,6 +262,7 @@ $indian_states = [
         }
     </style>
 </head>
+
 <body>
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -225,10 +284,10 @@ $indian_states = [
                     <div class="p-4">
                         <!-- Messages -->
                         <?php if ($message): ?>
-                        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-                            <?php echo $message; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                            <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
+                                <?php echo $message; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                         <?php endif; ?>
 
                         <!-- Information Box -->
@@ -503,4 +562,5 @@ $indian_states = [
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

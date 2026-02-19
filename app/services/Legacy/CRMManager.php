@@ -77,7 +77,7 @@ class CRMManager {
             requirement_details TEXT,
             lead_score INT DEFAULT 0,
             lead_status ENUM('new','contacted','qualified','proposal_sent','negotiation','won','lost','nurturing') DEFAULT 'new',
-            assigned_to INT,
+            assigned_to BIGINT(20) UNSIGNED,
             next_follow_up_date DATETIME,
             last_contact_date DATETIME,
             conversion_probability DECIMAL(5,2) DEFAULT 0,
@@ -87,12 +87,12 @@ class CRMManager {
             competitor_info TEXT,
             tags JSON,
             custom_fields JSON,
-            created_by INT,
+            created_by BIGINT(20) UNSIGNED,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (lead_source_id) REFERENCES lead_sources(id) ON DELETE SET NULL,
-            FOREIGN KEY (assigned_to) REFERENCES user(uid) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
