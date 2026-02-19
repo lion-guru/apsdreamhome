@@ -396,191 +396,191 @@ if (!function_exists('is_active_path')) {
 
     <!-- Page Content Wrapper for Public Site -->
 <?php endif; ?>
-        <?php if (isset($_SESSION['flash_messages'])): ?>
-            <div class="container mt-3">
-                <?php foreach ($_SESSION['flash_messages'] as $message): ?>
-                    <div class="alert alert-<?php echo $message['type']; ?> alert-dismissible fade show">
-                        <?php echo htmlspecialchars($message['text']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <?php endforeach; ?>
-                <?php unset($_SESSION['flash_messages']); ?>
+<?php if (isset($_SESSION['flash_messages'])): ?>
+    <div class="container mt-3">
+        <?php foreach ($_SESSION['flash_messages'] as $message): ?>
+            <div class="alert alert-<?php echo $message['type']; ?> alert-dismissible fade show">
+                <?php echo htmlspecialchars($message['text']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        <?php endif; ?>
+        <?php endforeach; ?>
+        <?php unset($_SESSION['flash_messages']); ?>
+    </div>
+<?php endif; ?>
 
-        <!-- Main Content will be inserted here -->
-        <div class="content-wrapper">
-        <?php endif; ?>
+<!-- Main Content will be inserted here -->
+<div class="content-wrapper">
 
-        <!-- Sidebar Styles for Authenticated Users -->
-        <style>
-            /* Sidebar Styles */
+
+    <!-- Sidebar Styles for Authenticated Users -->
+    <style>
+        /* Sidebar Styles */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #0d6efd 0%, #6c757d 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            margin-left: -260px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            min-height: calc(100vh - 80px);
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            position: fixed;
+            top: 0;
+            left: 260px;
+            right: 0;
+            z-index: 999;
+        }
+
+        .top-navbar .navbar-toggler {
+            border: none;
+            color: #0d6efd;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
             .sidebar {
-                min-height: 100vh;
-                background: linear-gradient(180deg, #0d6efd 0%, #6c757d 100%);
-                color: white;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 260px;
-                z-index: 1000;
-                transition: all 0.3s ease;
-                overflow-y: auto;
-            }
-
-            .sidebar.collapsed {
                 margin-left: -260px;
             }
 
-            .sidebar-header {
-                padding: 1.5rem 1rem;
-                text-align: center;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .sidebar-menu {
-                padding: 1rem 0;
-            }
-
-            .sidebar-menu ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .sidebar-menu a {
-                display: block;
-                padding: 0.75rem 1rem;
-                color: rgba(255, 255, 255, 0.8);
-                text-decoration: none;
-                transition: all 0.3s ease;
-                border-left: 3px solid transparent;
-            }
-
-            .sidebar-menu a:hover,
-            .sidebar-menu a.active {
-                background-color: rgba(255, 255, 255, 0.1);
-                color: white;
-                border-left-color: white;
-            }
-
-            .sidebar-menu i {
-                width: 20px;
-                margin-right: 10px;
-            }
-
-            /* Main Content */
-            .main-content {
-                margin-left: 260px;
-                padding: 2rem;
-                transition: all 0.3s ease;
-                min-height: calc(100vh - 80px);
-            }
-
-            .main-content.expanded {
+            .sidebar.show {
                 margin-left: 0;
             }
 
-            /* Top Navbar */
+            .main-content {
+                margin-left: 0;
+            }
+
+            .main-content.expanded {
+                margin-left: 260px;
+            }
+
             .top-navbar {
-                background: white;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                padding: 0.5rem 0;
-                position: fixed;
-                top: 0;
-                left: 260px;
-                right: 0;
-                z-index: 999;
+                left: 0;
             }
+        }
 
-            .top-navbar .navbar-toggler {
-                border: none;
-                color: #0d6efd;
-            }
+        /* Alert Styles */
+        .alert {
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 1rem;
+        }
 
-            /* Responsive */
-            @media (max-width: 768px) {
-                .sidebar {
-                    margin-left: -260px;
-                }
+        /* Cards */
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+        }
 
-                .sidebar.show {
-                    margin-left: 0;
-                }
+        .card-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            border-bottom: none;
+        }
 
-                .main-content {
-                    margin-left: 0;
-                }
+        /* Stats Cards */
+        .stats-card {
+            background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
 
-                .main-content.expanded {
-                    margin-left: 260px;
-                }
+        /* Tables */
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border-top: none;
+            color: #495057;
+        }
 
-                .top-navbar {
-                    left: 0;
-                }
-            }
+        /* Form Controls */
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e3e6f0;
+        }
 
-            /* Alert Styles */
-            .alert {
-                border-radius: 8px;
-                border: none;
-                margin-bottom: 1rem;
-            }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
 
-            /* Cards */
-            .card {
-                border: none;
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
-                border-radius: 10px;
-            }
+        /* Custom Scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
 
-            .card-header {
-                background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
-                color: white;
-                border-radius: 10px 10px 0 0 !important;
-                border-bottom: none;
-            }
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-            /* Stats Cards */
-            .stats-card {
-                background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
-                color: white;
-                border-radius: 10px;
-                padding: 1.5rem;
-                margin-bottom: 1rem;
-            }
-
-            /* Tables */
-            .table th {
-                background-color: #f8f9fa;
-                font-weight: 600;
-                border-top: none;
-                color: #495057;
-            }
-
-            /* Form Controls */
-            .form-control {
-                border-radius: 8px;
-                border: 2px solid #e3e6f0;
-            }
-
-            .form-control:focus {
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-            }
-
-            /* Custom Scrollbar */
-            .sidebar::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            .sidebar::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            .sidebar::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.3);
-                border-radius: 3px;
-            }
-        </style>
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+    </style>

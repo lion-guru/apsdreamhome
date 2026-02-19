@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 
 <section class="py-5" style="background: radial-gradient(circle at top, rgba(34,197,94,.18), transparent 70%), #0f172a;">
     <div class="container py-4">
@@ -116,7 +116,7 @@
     </div>
 </section>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>
 
 <script>
 function toggleAuthPassword(inputId, toggleId) {

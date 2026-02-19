@@ -2,7 +2,7 @@
 if (!defined('BASE_URL')) {
     define('BASE_URL', 'http://localhost/apsdreamhome/');
 }
-include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/../layouts/header.php';
 
 $locationValue = htmlspecialchars($_GET['location'] ?? '');
 $typeValue = $_GET['type'] ?? '';
@@ -210,4 +210,4 @@ $maxPrice = htmlspecialchars($_GET['max_price'] ?? '');
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

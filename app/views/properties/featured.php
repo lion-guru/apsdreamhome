@@ -2,7 +2,7 @@
 if (!defined('BASE_URL')) {
     define('BASE_URL', 'http://localhost/apsdreamhome/');
 }
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../layouts/header.php';
 
 // Helper function to get status badge class
 if (!function_exists('getStatusBadgeClass')) {

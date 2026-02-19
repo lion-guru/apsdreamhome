@@ -31,7 +31,7 @@ if (!isset($property)) {
 $page_title = htmlspecialchars($property['title']) . ' - APS Dream Home';
 $page_description = htmlspecialchars($property['description']);
 
-include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="container py-5">
@@ -189,4 +189,4 @@ include __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

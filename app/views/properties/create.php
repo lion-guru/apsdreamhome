@@ -2,7 +2,7 @@
 if (!defined('BASE_URL')) {
     define('BASE_URL', 'http://localhost/apsdreamhome/');
 }
-include __DIR__ . '/../includes/header.php';
+include __DIR__ . '/../layouts/header.php';
 ?>
 <div class="container mt-4">
     <div class="row">
@@ -104,4 +104,4 @@ include __DIR__ . '/../includes/header.php';
         </div>
     </div>
 </div>
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

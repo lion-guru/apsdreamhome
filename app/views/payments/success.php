@@ -5,7 +5,7 @@ if (!isset($payment)) {
 if (!isset($property)) {
     $property = [];
 }
-include __DIR__ . '/../includes/header.php'; ?>
+include __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -92,4 +92,4 @@ include __DIR__ . '/../includes/header.php'; ?>
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>
