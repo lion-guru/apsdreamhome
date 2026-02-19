@@ -134,13 +134,9 @@ class App
         // Load bootstrap.php which sets up the global $config array and environment
         $bootstrapFile = $configDir . '/bootstrap.php';
         if (file_exists($bootstrapFile)) {
-            echo "Loading bootstrap file: " . $bootstrapFile . "\n";
-            echo "File size: " . filesize($bootstrapFile) . "\n";
-            echo "File content preview: " . substr(file_get_contents($bootstrapFile), 0, 50) . "\n";
             require $bootstrapFile; // Force require to ensure execution
-            echo "Bootstrap loaded. APP_NAME defined? " . (defined('APP_NAME') ? 'Yes' : 'No') . "\n";
         } else {
-            echo "Bootstrap file not found: " . $bootstrapFile . "\n";
+            // Bootstrap file not found, continue without it
         }
 
         // Import global config if available (bridging legacy and new systems)
@@ -156,7 +152,6 @@ class App
         foreach (glob($configDir . '/*.php') as $configFile) {
             $key = basename($configFile, '.php');
             if ($key !== 'bootstrap') { // Skip bootstrap as it's already loaded
-                echo "Loading config file: " . $configFile . "\n";
                 $fileConfig = require $configFile;
                 if (is_array($fileConfig)) {
                     $this->config[$key] = $fileConfig;
