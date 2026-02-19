@@ -84,3 +84,14 @@ _backup_legacy_files/
 
 # OpenMemory - IDE/Assistant specific rules
 .windsurf\rules\openmemory.md
+
+# Database dumps and snapshots
+*.sql
+*.bak
+*.zip
+*.tar.gz
+storage/snapshots/
+storage/backups/
+database/snapshots/
+database/backups/
+*.dump

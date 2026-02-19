@@ -46,7 +46,7 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
     $router->post('/admin/logout', 'Auth\AdminAuthController@logout');
 
     // Public routes
-    $router->get('/', 'Public\PageController@index');
+    $router->get('/', 'HomeController@index');
     $router->get('/about', 'Public\PageController@about');
     $router->get('/contact', 'Public\PageController@contact');
     $router->post('/contact', 'Public\PageController@processContact');

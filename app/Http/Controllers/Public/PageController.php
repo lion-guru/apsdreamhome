@@ -28,7 +28,9 @@ class PageController extends BaseController
 
     /**
      * Display homepage
+     * @deprecated Use HomeController::index() instead
      */
+    /*
     public function index()
     {
         // Set page data
@@ -63,8 +65,9 @@ class PageController extends BaseController
         }
 
         // Render the homepage
-        $this->render('pages/home');
+        return $this->render('pages/home', [], null, false);
     }
+    */
 
     /**
      * Display Resell Properties page

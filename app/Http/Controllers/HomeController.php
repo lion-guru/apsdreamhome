@@ -2,17 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Core\Controller;
+use App\Http\Controllers\BaseController;
 
-class HomeController extends Controller
+class HomeController extends BaseController
 {
     public function index()
     {
-        // Render the home view
-        $this->view('home', [
-            'title' => 'Welcome to APS Dream Home',
-            'description' => 'Find your dream property with us.'
-        ]);
+        error_log("HomeController::index() started");
+
+        // Get featured properties
+        try {
+            $propertyModel = new \App\Models\Property();
+            error_log("Property model instantiated");
+            $properties = $propertyModel->getFeaturedProperties();
+            error_log("Properties fetched: " . count($properties));
+        } catch (\Throwable $e) {
+            error_log("Error in HomeController::index: " . $e->getMessage());
+            $properties = [];
+        }
+
+        // Render the home view using BaseController's render method (uses layout)
+        $this->data['title'] = 'Welcome to APS Dream Home';
+        $this->data['description'] = 'Find your dream property with us.';
+        $this->data['properties'] = $properties;
+
+        error_log("Calling render('home/index')");
+        return $this->render('home/index', [], null, false);
     }
 
     public function projects()
