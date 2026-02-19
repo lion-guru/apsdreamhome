@@ -226,7 +226,7 @@ class BaseController extends CoreController
     /**
      * Render view with data, falling back to legacy renderer when core session utilities are unavailable
      */
-    public function render($view, $data = [], $layout = null)
+    public function render($view, $data = [], $layout = null, $echo = true)
     {
         $data = array_merge($this->data, $data);
         $this->data = $data;
@@ -239,7 +239,9 @@ class BaseController extends CoreController
 
             // Add auth and user to all views
             $output = parent::view($view, $data, $layout);
-            echo $output;
+            if ($echo) {
+                echo $output;
+            }
             return $output;
         }
 
@@ -259,13 +261,21 @@ class BaseController extends CoreController
         if ($layout) {
             $layoutPath = $basePath . ltrim(str_replace('\\', '/', $layout), '/') . '.php';
             if (file_exists($layoutPath)) {
-                $content = $content ?? '';
+                // If using layout, capture the layout output too
+                ob_start();
                 include $layoutPath;
-                return;
+                $output = ob_get_clean();
+                
+                if ($echo) {
+                    echo $output;
+                }
+                return $output;
             }
         }
 
-        echo $content;
+        if ($echo) {
+            echo $content;
+        }
         return $content;
     }
     /**

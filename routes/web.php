@@ -10,7 +10,7 @@ $webRoutes = [
     // Public routes (no authentication required)
     'public' => [
         'GET' => [
-            '/' => 'Public\PageController@index',
+            // '/' => 'HomeController@index', // Moved to modern.php
             '/about' => 'Public\PageController@about',
             '/contact' => 'Public\PageController@contact',
             '/gallery' => 'Public\PageController@gallery',

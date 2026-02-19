@@ -37,7 +37,7 @@ if (!defined('BASE_URL')) {
     }
     // Remove /index.php if it exists
     $script = str_replace('/index.php', '', $script);
-    
+
     define('BASE_URL', rtrim("$protocol://$host$script", '/') . '/');
 }
 
@@ -52,18 +52,30 @@ $config = [];
 // Load environment-specific configuration
 if (file_exists(CONFIG_PATH . '/environments/' . APP_ENV . '.php')) {
     $envConfig = require CONFIG_PATH . '/environments/' . APP_ENV . '.php';
+    if (!is_array($envConfig)) {
+        error_log("Environment config returned non-array: " . gettype($envConfig));
+        $envConfig = [];
+    }
     $config = array_merge($config, $envConfig);
 }
 
 // Load database configuration
 if (file_exists(CONFIG_PATH . '/database.php')) {
     $dbConfig = require CONFIG_PATH . '/database.php';
+    if (!is_array($dbConfig)) {
+        error_log("Database config returned non-array: " . gettype($dbConfig));
+        $dbConfig = [];
+    }
     $config = array_merge($config, $dbConfig);
 }
 
 // Load application configuration
 if (file_exists(CONFIG_PATH . '/application.php')) {
     $appConfig = require CONFIG_PATH . '/application.php';
+    if (!is_array($appConfig)) {
+        error_log("Application config returned non-array: " . gettype($appConfig));
+        $appConfig = [];
+    }
     $config = array_merge($config, $appConfig);
 }
 
@@ -92,7 +104,3 @@ if (file_exists(CORE_PATH . '/SystemIntegration.php')) {
 if (file_exists(APP_PATH . '/helpers.php')) {
     require_once APP_PATH . '/helpers.php';
 }
-
-// Initialize the application
-// use App\Core\App;
-// $app = new App();
