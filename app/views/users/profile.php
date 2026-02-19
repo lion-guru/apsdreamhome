@@ -23,7 +23,7 @@ if (!isset($user)) {
     ];
 }
 ?>
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="container mt-4">
     <div class="row">
@@ -167,4 +167,4 @@ if (!isset($user)) {
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

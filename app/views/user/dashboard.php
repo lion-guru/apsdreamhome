@@ -17,7 +17,7 @@ if (!isset($data)) {
     ];
 }
 ?>
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 <div class="container-fluid py-4 bg-light min-vh-100">
     <div class="row align-items-center mb-4">
         <div class="col-lg-8">
@@ -186,4 +186,4 @@ if (!isset($data)) {
         </div>
     </div>
 </div>
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

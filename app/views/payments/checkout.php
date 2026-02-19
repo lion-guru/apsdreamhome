@@ -7,7 +7,7 @@ if (!isset($property)) {
         'id' => 'N/A'
     ];
 }
-include __DIR__ . '/../includes/header.php'; ?>
+include __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -157,4 +157,4 @@ include __DIR__ . '/../includes/header.php'; ?>
     });
 </script>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

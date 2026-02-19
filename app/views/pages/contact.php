@@ -151,4 +151,4 @@ $contact = $contact_info ?? [
     </div>
 </section>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

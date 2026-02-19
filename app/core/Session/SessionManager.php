@@ -74,6 +74,14 @@ class SessionManager implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Check if session is started
+     */
+    public function isStarted()
+    {
+        return $this->started || session_status() === PHP_SESSION_ACTIVE;
+    }
+
+    /**
      * Start the session.
      *
      * @return bool

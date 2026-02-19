@@ -1,4 +1,4 @@
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<?php include __DIR__ . '/../layouts/header.php'; ?>
 
 <div class="container py-5">
     <div class="row">
@@ -58,4 +58,4 @@
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>
