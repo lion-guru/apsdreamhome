@@ -137,11 +137,23 @@ class View
     {
         $view = $view ?: $this->view;
 
+        try {
+            $path = $this->findView($view);
+            file_put_contents(dirname(__DIR__, 3) . '/debug_view.log', "View::render view: $view -> path: $path\n", FILE_APPEND);
+        } catch (\Exception $e) {
+            file_put_contents(dirname(__DIR__, 3) . '/debug_view.log', "View::render error finding view $view: " . $e->getMessage() . "\n", FILE_APPEND);
+            throw $e;
+        }
+
         // Update instance data so it persists for layout rendering
         $this->data = array_merge($this->data, $data);
         $data = $this->data;
 
-        $path = $this->findView($view);
+        try {
+            $path = $this->findView($view);
+        } catch (\Exception $e) {
+            throw $e;
+        }
 
         // Extract the data to be available in the view
         extract(array_merge(static::$shared, $data));
@@ -150,7 +162,12 @@ class View
         ob_start();
 
         // Include the view file
-        include $path;
+        try {
+            include $path;
+        } catch (\Throwable $e) {
+            ob_end_clean();
+            throw $e;
+        }
 
         $content = ob_get_clean();
 
@@ -204,19 +221,23 @@ class View
             // First check in the default base path (resources/views)
             $path = $this->basePath . '/' . $view . '.' . $extension;
 
+            // Normalize path separator
+            $path = str_replace(['\\', '//'], '/', $path);
+
             if (file_exists($path)) {
                 return $path;
             }
 
             // Also check in app/views directory for admin views
             $appViewsPath = App::getInstance()->basePath('app/views') . '/' . $view . '.' . $extension;
+            $appViewsPath = str_replace(['\\', '//'], '/', $appViewsPath);
 
             if (file_exists($appViewsPath)) {
                 return $appViewsPath;
             }
         }
 
-        throw new InvalidArgumentException("View [{$view}] not found.");
+        throw new InvalidArgumentException("View [{$view}] not found in paths: {$this->basePath}");
     }
 
     /**
@@ -265,11 +286,31 @@ class View
     }
 
     /**
-     * Append to a section
+     * Stop injecting content into a section
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function endSection()
+    {
+        if (empty($this->sectionStack)) {
+            throw new InvalidArgumentException('Cannot end a section without first starting one.');
+        }
+
+        $last = array_pop($this->sectionStack);
+        $content = ob_get_clean();
+
+        $this->extendSection($last, $content);
+        $this->currentSection = end($this->sectionStack);
+
+        return $last;
+    }
+
+    /**
+     * Extend a section with content
      *
      * @param string $name
      * @param string $content
-     * @return void
      */
     protected function extendSection($name, $content)
     {
@@ -281,85 +322,22 @@ class View
     }
 
     /**
-     * End a section
-     *
-     * @return string
-     */
-    public function endSection()
-    {
-        if (empty($this->sectionStack)) {
-            throw new \RuntimeException('Cannot end a section without first starting one.');
-        }
-
-        $name = array_pop($this->sectionStack);
-        $this->sections[$name] = ob_get_clean();
-        $this->currentSection = end($this->sectionStack) ?: null;
-
-        return $name;
-    }
-
-
-    /**
      * Get the content of a section
      *
      * @param string $name
      * @param string $default
      * @return string
      */
-    public function yieldContent($name, $default = '')
+    public function yieldSection($name, $default = '')
     {
         return $this->sections[$name] ?? $default;
     }
 
     /**
-     * Alias for yieldContent to support legacy view calls
-     */
-    public function yield($name, $default = '')
-    {
-        return $this->yieldContent($name, $default);
-    }
-
-    /**
-     * Check if a section exists
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function hasSection($name)
-    {
-        return isset($this->sections[$name]);
-    }
-
-    /**
-     * Get the content for a section
-     *
-     * @param string $name
-     * @param string $default
-     * @return string
-     */
-    public function getSection($name, $default = '')
-    {
-        return $this->sections[$name] ?? $default;
-    }
-
-    /**
-     * Include a sub-view
-     *
-     * @param string $view
-     * @param array $data
-     * @return void
-     */
-    public function include($view, $data = [])
-    {
-        echo $this->make($view, array_merge($this->data, $data))->render();
-    }
-
-    /**
-     * Share data across all views
+     * Share data with all views
      *
      * @param string|array $key
      * @param mixed $value
-     * @return void
      */
     public static function share($key, $value = null)
     {
@@ -375,23 +353,14 @@ class View
      *
      * @param string|array $views
      * @param \Closure|string $callback
-     * @return void
      */
     public static function composer($views, $callback)
     {
-        foreach ((array) $views as $view) {
+        $views = (array) $views;
+
+        foreach ($views as $view) {
             static::$composers[$view][] = $callback;
         }
-    }
-
-    /**
-     * Get the shared data
-     *
-     * @return array
-     */
-    public static function getShared()
-    {
-        return static::$shared;
     }
 
     /**
@@ -405,86 +374,8 @@ class View
         try {
             $this->findView($view);
             return true;
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             return false;
         }
-    }
-
-    /**
-     * Add a view extension
-     *
-     * @param string $extension
-     * @return void
-     */
-    public static function addExtension($extension)
-    {
-        if (!in_array($extension, static::$extensions)) {
-            static::$extensions[] = $extension;
-        }
-    }
-
-    /**
-     * Get the view extensions
-     *
-     * @return array
-     */
-    public static function getExtensions()
-    {
-        return static::$extensions;
-    }
-
-    /**
-     * Convert the view to a string
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->render();
-    }
-
-    /**
-     * Get a piece of data from the view
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function __get($key)
-    {
-        return $this->data[$key] ?? null;
-    }
-
-    /**
-     * Set a piece of data on the view
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function __set($key, $value)
-    {
-        $this->data[$key] = $value;
-    }
-
-    /**
-     * Check if a piece of data is bound to the view
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function __isset($key)
-    {
-        return isset($this->data[$key]);
-    }
-
-    /**
-     * Remove a piece of data from the view
-     *
-     * @param string $key
-     * @return void
-     */
-    public function __unset($key)
-    {
-        unset($this->data[$key]);
     }
 }

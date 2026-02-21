@@ -8,8 +8,8 @@ use PDO;
 
 class Booking extends Model
 {
-    protected static string $table = 'bookings';
-    protected $primaryKey = 'id';
+    protected static $table = 'bookings';
+    protected static $primaryKey = 'id';
 
     /**
      * Get bookings for admin with filters and pagination

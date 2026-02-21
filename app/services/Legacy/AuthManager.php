@@ -37,8 +37,8 @@ class AuthManager
         }
 
         // Check if user already exists
-        if ($this->userExists($data['email'], $data['username'])) {
-            return ['success' => false, 'message' => 'User already exists with this email or username'];
+        if ($this->userExists($data['email'], $data['username'] ?? $data['full_name'])) {
+            return ['success' => false, 'message' => 'User already exists with this email or name'];
         }
 
         // Hash password
@@ -55,8 +55,10 @@ class AuthManager
         }
 
         try {
+            $name = $data['full_name'] ?? $data['username'];
+
             $this->db->execute($sql, [
-                $data['full_name'] ?? $data['username'], // Use full_name if available, else username
+                $name,
                 $data['email'],
                 $hashedPassword,
                 $role,
@@ -66,16 +68,16 @@ class AuthManager
             $userId = $this->db->lastInsertId();
 
             // Send welcome email
-            $this->sendWelcomeEmail($data['email'], $data['full_name']);
+            $this->sendWelcomeEmail($data['email'], $name);
 
             // Start session
             $_SESSION['user_id'] = $userId;
-            $_SESSION['username'] = $data['username'];
-            $_SESSION['full_name'] = $data['full_name'];
+            $_SESSION['username'] = $name;
+            $_SESSION['full_name'] = $name;
             $_SESSION['role'] = $role;
 
             if ($this->logger) {
-                $this->logger->log("User registered: {$data['username']} (ID: $userId)", 'info', 'auth');
+                $this->logger->log("User registered: {$name} (ID: $userId)", 'info', 'auth');
             }
 
             return ['success' => true, 'message' => 'Registration successful', 'user_id' => $userId];
@@ -92,37 +94,34 @@ class AuthManager
      */
     public function login($email, $password)
     {
-        $sql = "SELECT id as uid, name as uname, password as upass, role as utype, role as job_role
+        $sql = "SELECT id, name, password, role, role as job_role
                 FROM users WHERE email = ?";
 
         try {
-            $user = $this->db->fetch($sql, [$email]);
+            $user = $this->db->fetchOne($sql, [$email]);
 
-            if (!$user) {
-                return ['success' => false, 'message' => 'Invalid email or password'];
+            if ($user && password_verify($password, $user['password'])) {
+                // Set session
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['name'];
+                $_SESSION['full_name'] = $user['name'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['job_role'] = $user['job_role'];
+                
+                // Log login
+                if ($this->logger) {
+                    $this->logger->log("User logged in: {$user['name']} (ID: {$user['id']})", 'info', 'auth');
+                }
+
+                return ['success' => true, 'user' => $user];
             }
 
-            // Verify password
-            if (!password_verify($password, $user['upass'])) {
-                return ['success' => false, 'message' => 'Invalid email or password'];
-            }
-
-            // Start session
-            $_SESSION['user_id'] = $user['uid'];
-            $_SESSION['username'] = $user['uname'];
-            $_SESSION['full_name'] = $user['uname'];
-            $_SESSION['role'] = $user['utype'];
-
-            if ($this->logger) {
-                $this->logger->log("User logged in: {$user['uname']} (ID: {$user['uid']})", 'info', 'auth');
-            }
-
-            return ['success' => true, 'message' => 'Login successful', 'user' => $user];
+            return ['success' => false, 'message' => 'Invalid credentials'];
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Login failed: " . $e->getMessage(), 'error', 'auth');
             }
-            return ['success' => false, 'message' => 'Login failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => 'Login failed'];
         }
     }
 
@@ -162,11 +161,11 @@ class AuthManager
     /**
      * Check if user exists
      */
-    private function userExists($email, $username)
+    private function userExists($email, $name)
     {
         $sql = "SELECT id as uid FROM users WHERE email = ? OR name = ?";
         try {
-            $user = $this->db->fetch($sql, [$email, $username]);
+            $user = $this->db->fetch($sql, [$email, $name]);
             return !empty($user);
         } catch (\Exception $e) {
             return false;

@@ -1,200 +1,165 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $page_title ?? 'Customer Panel - APS Dream Home' ?></title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><?= $title ?? 'Customer Dashboard - APS Dream Home' ?></title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --success-color: #28a745;
-            --info-color: #17a2b8;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-        }
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom Dashboard CSS -->
+    <link href="<?= BASE_URL ?>public/css/dashboard.css" rel="stylesheet">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            font-size: 14px;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            padding: 1.5rem 1rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-menu {
-            padding: 1rem 0;
-        }
-
-        .sidebar-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-menu a {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-menu a:hover, .sidebar-menu li.active a {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 4px solid white;
-        }
-
-        .sidebar-menu i {
-            width: 20px;
-            margin-right: 10px;
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-custom {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-            padding: 0.5rem 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                margin-left: -260px;
-            }
-            .sidebar.active {
-                margin-left: 0;
-            }
-            .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
+    <?php if (isset($extra_css) && is_array($extra_css)): ?>
+        <?php foreach ($extra_css as $css): ?>
+            <link href="<?= $css ?>" rel="stylesheet">
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
+
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h4>APS Dream Home</h4>
-            <small>Customer Panel</small>
-        </div>
-        <div class="sidebar-menu">
-            <ul>
-                <li class="<?= ($active_page ?? '') == 'dashboard' ? 'active' : '' ?>">
-                    <a href="/customer/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar customer-sidebar p-3">
+            <div class="text-center mb-4">
+                <h4><i class="fas fa-home me-2"></i>APS Home</h4>
+                <small class="text-light">Customer Panel</small>
+            </div>
+
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item mb-1">
+                    <a href="<?= BASE_URL ?>customer/dashboard" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/customer/dashboard') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
                 </li>
-                <li class="<?= ($active_page ?? '') == 'properties' ? 'active' : '' ?>">
-                    <a href="/customer/properties"><i class="fas fa-home"></i> My Properties</a>
+                <li class="nav-item mb-1">
+                    <a href="<?= BASE_URL ?>customer/properties" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/customer/properties') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-building me-2"></i>My Properties
+                    </a>
                 </li>
-                <li class="<?= ($active_page ?? '') == 'payments' ? 'active' : '' ?>">
-                    <a href="/customer/payments"><i class="fas fa-credit-card"></i> Payments</a>
+                <li class="nav-item mb-1">
+                    <a href="<?= BASE_URL ?>customer/payments" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/customer/payments') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-credit-card me-2"></i>Payments
+                    </a>
                 </li>
-                <li class="<?= ($active_page ?? '') == 'bookings' ? 'active' : '' ?>">
-                    <a href="/customer/bookings"><i class="fas fa-calendar-check"></i> Bookings</a>
+                <li class="nav-item mb-1">
+                    <a href="<?= BASE_URL ?>customer/bookings" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/customer/bookings') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-calendar-check me-2"></i>Bookings
+                    </a>
                 </li>
-                <li class="<?= ($active_page ?? '') == 'profile' ? 'active' : '' ?>">
-                    <a href="/customer/profile"><i class="fas fa-user"></i> My Profile</a>
-                </li>
-                <li>
-                    <a href="/customer/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <li class="nav-item mb-1">
+                    <a href="<?= BASE_URL ?>customer/profile" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/customer/profile') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-user me-2"></i>My Profile
+                    </a>
                 </li>
             </ul>
-        </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light navbar-custom rounded">
-            <button type="button" id="sidebarCollapse" class="btn btn-info d-md-none">
-                <i class="fas fa-align-left"></i>
-            </button>
-            <div class="ml-auto d-flex align-items-center">
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-                        <i class="fas fa-user-circle mr-1"></i>
-                        <?= h($_SESSION['customer_name'] ?? 'Customer') ?>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="/customer/profile"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profile</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/customer/logout"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout</a>
-                    </div>
-                </div>
+            <div class="mt-auto">
+                <a href="<?= BASE_URL ?>customer/logout" class="nav-link text-danger">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
             </div>
         </nav>
 
-        <!-- Flash Messages -->
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?= $_SESSION['success']; unset($_SESSION['success']); ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
-        <?php endif; ?>
+        <!-- Main Content -->
+        <div class="flex-grow-1">
+            <!-- Top Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-outline-secondary d-md-none me-3" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <?= $_SESSION['error']; unset($_SESSION['error']); ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
-        <?php endif; ?>
+                    <span class="navbar-brand mb-0 h1">
+                        <i class="fas fa-user-circle me-2"></i>
+                        Welcome, <?= htmlspecialchars($_SESSION['customer_name'] ?? 'Customer') ?>
+                    </span>
 
-        <!-- Page Content -->
-        <div class="container-fluid">
-            <?= $content ?? '' ?>
+                    <div class="d-flex align-items-center ms-auto">
+                        <span class="me-3 d-none d-md-inline">
+                            <i class="fas fa-clock me-1"></i>
+                            <?= date('M d, Y') ?>
+                        </span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="<?= BASE_URL ?>customer/profile">
+                                        <i class="fas fa-user me-2"></i>Profile
+                                    </a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>customer/logout">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <main class="p-4">
+                <!-- Flash Messages -->
+                <?php if (isset($_SESSION['success'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <?= $_SESSION['success'];
+                        unset($_SESSION['success']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <?= $_SESSION['error'];
+                        unset($_SESSION['error']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Content Injection -->
+                <?php
+                // This is where the view content will be injected
+                // If $content variable exists (from Output Buffering), echo it
+                if (isset($content)) {
+                    echo $content;
+                }
+                ?>
+            </main>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>public/js/dashboard.js"></script>
+
+    <?php if (isset($extra_js) && is_array($extra_js)): ?>
+        <?php foreach ($extra_js as $js): ?>
+            <script src="<?= $js ?>"></script>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
     <script>
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
+        $(document).ready(function() {
+            // Sidebar Toggle
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('collapsed');
+                $('.main-content').toggleClass('expanded');
             });
+
+            // Mobile responsive check
+            if ($(window).width() < 768) {
+                $('.sidebar').addClass('collapsed');
+            }
         });
-
-        // Format currency function for JS
-        function formatCurrency(amount) {
-            return '₹' + parseFloat(amount).toLocaleString('en-IN');
-        }
     </script>
-
-    <?php if (isset($extra_js)) echo $extra_js; ?>
 </body>
+
 </html>

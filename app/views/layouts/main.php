@@ -29,23 +29,23 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/">APS Dream Home</a>
+            <a class="navbar-brand" href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>">APS Dream Home</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/properties">Properties</a>
+                        <a class="nav-link" href="<?php echo defined('BASE_URL') ? BASE_URL . 'properties' : '/properties'; ?>">Properties</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
+                        <a class="nav-link" href="<?php echo defined('BASE_URL') ? BASE_URL . 'about' : '/about'; ?>">About Us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
+                        <a class="nav-link" href="<?php echo defined('BASE_URL') ? BASE_URL . 'contact' : '/contact'; ?>">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -54,7 +54,7 @@
 
     <!-- Main Content -->
     <main>
-        <?php echo $this->content(); ?>
+        <?php echo $content; ?>
     </main>
 
     <!-- Footer -->

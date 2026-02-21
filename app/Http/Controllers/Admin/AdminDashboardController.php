@@ -44,7 +44,7 @@ class AdminDashboardController extends AdminController
             $db = \App\Core\Database::getInstance();
 
             // Get total users
-            $users = $db->fetch("SELECT COUNT(*) as total FROM user u LEFT JOIN associates a ON u.uid = a.user_id WHERE COALESCE(a.status, 'active') = 'active'");
+            $users = $db->fetch("SELECT COUNT(*) as total FROM users u LEFT JOIN mlm_profiles a ON u.id = a.user_id WHERE COALESCE(a.status, 'active') = 'active'");
 
             // Get total properties
             $properties = $db->fetch("SELECT COUNT(*) as total FROM properties WHERE status = 'active'");

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Plotting and Land Subdivision Management System
  * Complete system for colonizer companies to manage land acquisition,
@@ -9,11 +10,13 @@ namespace App\Services\Legacy;
 
 use App\Core\Database;
 
-class PlottingManager {
+class PlottingManager
+{
     private $db;
     private $logger;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->createPlottingTables();
@@ -22,7 +25,8 @@ class PlottingManager {
     /**
      * Create all plotting related tables
      */
-    private function createPlottingTables() {
+    private function createPlottingTables()
+    {
         try {
             // Farmers/Kisans table - Unified with farmer_profiles
             // Note: We don't create 'farmers' table anymore, we use 'farmer_profiles'
@@ -54,7 +58,7 @@ class PlottingManager {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (farmer_id) REFERENCES farmer_profiles(id) ON DELETE SET NULL,
-                FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->db->query($sql);
 
@@ -93,7 +97,7 @@ class PlottingManager {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (land_acquisition_id) REFERENCES land_acquisitions(id) ON DELETE CASCADE,
-                FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->db->query($sql);
 
@@ -128,9 +132,9 @@ class PlottingManager {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (plot_id) REFERENCES plots(id) ON DELETE CASCADE,
-                FOREIGN KEY (customer_id) REFERENCES user(uid) ON DELETE SET NULL,
+                FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL,
                 FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE SET NULL,
-                FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->db->query($sql);
 
@@ -190,11 +194,10 @@ class PlottingManager {
                 created_by BIGINT(20) UNSIGNED,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (employee_id) REFERENCES user(uid) ON DELETE CASCADE,
-                FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+                FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+                FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->db->query($sql);
-
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error creating plotting tables: " . $e->getMessage(), 'error', 'plotting');
@@ -205,7 +208,8 @@ class PlottingManager {
     /**
      * Add land acquisition
      */
-    public function addLandAcquisition($data) {
+    public function addLandAcquisition($data)
+    {
         $sql = "INSERT INTO land_acquisitions (
             acquisition_number, farmer_id, land_area, land_area_unit, location, village, tehsil, district, state,
             acquisition_date, acquisition_cost, payment_status, land_type, soil_type, water_source,
@@ -255,7 +259,8 @@ class PlottingManager {
     /**
      * Add farmer/kisan
      */
-    public function addFarmer($data) {
+    public function addFarmer($data)
+    {
         $sql = "INSERT INTO farmer_profiles (
             farmer_number, full_name, father_name, phone, email, address, village, tehsil, district, state,
             aadhar_number, pan_number, bank_account_number, bank_name, ifsc_code, status, associate_id, created_by
@@ -301,7 +306,8 @@ class PlottingManager {
     /**
      * Create plots from land acquisition
      */
-    public function createPlots($landAcquisitionId, $plotsData) {
+    public function createPlots($landAcquisitionId, $plotsData)
+    {
         $createdPlots = [];
 
         foreach ($plotsData as $plotData) {
@@ -355,7 +361,8 @@ class PlottingManager {
     /**
      * Get all plots with filtering
      */
-    public function getPlots($filters = [], $limit = 50, $offset = 0) {
+    public function getPlots($filters = [], $limit = 50, $offset = 0)
+    {
         $sql = "SELECT p.*, la.acquisition_number, la.location as land_location,
                        f.full_name as farmer_name
                 FROM plots p
@@ -406,7 +413,8 @@ class PlottingManager {
     /**
      * Book a plot
      */
-    public function bookPlot($data) {
+    public function bookPlot($data)
+    {
         $sql = "INSERT INTO plot_bookings (
             plot_id, customer_id, associate_id, booking_number, booking_type,
             booking_amount, total_amount, payment_plan, installment_period, installment_amount,
@@ -463,7 +471,8 @@ class PlottingManager {
     /**
      * Calculate and create commission records
      */
-    private function calculateCommissions($bookingId, $bookingData) {
+    private function calculateCommissions($bookingId, $bookingData)
+    {
         // Get booking details
         $bookingSql = "SELECT pb.*, p.current_price, p.plot_number, la.farmer_id
                       FROM plot_bookings pb
@@ -523,7 +532,8 @@ class PlottingManager {
     /**
      * Calculate MLM commissions for upline associates
      */
-    private function calculateMLMCommissions($bookingId, $associateId, $totalAmount) {
+    private function calculateMLMCommissions($bookingId, $associateId, $totalAmount)
+    {
         // Get user_id for this associate
         $sql = "SELECT user_id FROM associates WHERE id = ?";
         try {
@@ -547,7 +557,8 @@ class PlottingManager {
     /**
      * Update plot status
      */
-    private function updatePlotStatus($plotId, $status) {
+    private function updatePlotStatus($plotId, $status)
+    {
         $sql = "UPDATE plots SET plot_status = ?, updated_at = NOW() WHERE id = ?";
         try {
             $this->db->execute($sql, [$status, $plotId]);
@@ -561,7 +572,8 @@ class PlottingManager {
     /**
      * Get plot booking details
      */
-    public function getPlotBooking($bookingId) {
+    public function getPlotBooking($bookingId)
+    {
         $sql = "SELECT pb.*, p.plot_number, p.colony_name, p.sector_block,
                        p.plot_area, p.current_price, u.full_name as customer_name,
                        u.phone as customer_phone, u.email as customer_email,
@@ -594,11 +606,12 @@ class PlottingManager {
     /**
      * Get booking commissions
      */
-    private function getBookingCommissions($bookingId) {
-        $sql = "SELECT ct.*, u.full_name as associate_name
+    private function getBookingCommissions($bookingId)
+    {
+        $sql = "SELECT ct.*, u.name as associate_name
                 FROM commission_tracking ct
                 LEFT JOIN associates a ON ct.associate_id = a.id
-                LEFT JOIN user u ON a.user_id = u.uid
+                LEFT JOIN users u ON a.user_id = u.id
                 WHERE ct.booking_id = ?
                 ORDER BY ct.commission_level, ct.commission_amount DESC";
 
@@ -615,7 +628,8 @@ class PlottingManager {
     /**
      * Get booking payments
      */
-    private function getBookingPayments($bookingId) {
+    private function getBookingPayments($bookingId)
+    {
         $sql = "SELECT * FROM plot_payments WHERE booking_id = ? ORDER BY payment_date ASC";
         try {
             return $this->db->fetchAll($sql, [$bookingId]);
@@ -630,7 +644,8 @@ class PlottingManager {
     /**
      * Add payment to booking
      */
-    public function addBookingPayment($bookingId, $paymentData) {
+    public function addBookingPayment($bookingId, $paymentData)
+    {
         $sql = "INSERT INTO plot_payments (
             booking_id, amount, payment_date, payment_method, transaction_id,
             installment_number, payment_status, receipt_number, bank_reference, remarks
@@ -672,7 +687,8 @@ class PlottingManager {
     /**
      * Update booking payment status
      */
-    private function updateBookingPaymentStatus($bookingId) {
+    private function updateBookingPaymentStatus($bookingId)
+    {
         $sql = "SELECT SUM(amount) as total_paid FROM plot_payments WHERE booking_id = ? AND payment_status = 'completed'";
         try {
             $row = $this->db->fetch($sql, [$bookingId]);
@@ -701,7 +717,8 @@ class PlottingManager {
     /**
      * Get dashboard statistics for plotting
      */
-    public function getPlottingStats() {
+    public function getPlottingStats()
+    {
         $stats = [];
 
         try {

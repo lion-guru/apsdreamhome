@@ -184,7 +184,7 @@ class AccountingController extends AdminController
             $transactions = $db->fetchAll($query);
             $this->data['transactions'] = $transactions;
         } catch (Exception $e) {
-            error_log("Transactions Error: " . $e->getMessage());
+            logger()->error("Transactions Error: " . $e->getMessage());
             $this->data['transactions'] = [];
         }
 

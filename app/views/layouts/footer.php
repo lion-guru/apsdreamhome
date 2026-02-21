@@ -37,7 +37,7 @@
                 <h5 class="footer-heading mb-4">About Us</h5>
                 <p class="text-light-muted">Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction. Building dreams into reality with trust and innovation.</p>
                 <div class="mt-3">
-                    <a href="<?php echo BASE_URL ?? '/'; ?>about" class="btn btn-outline-light btn-sm">Learn More</a>
+                    <a href="<?php echo BASE_URL; ?>about" class="btn btn-outline-light btn-sm">Learn More</a>
                 </div>
             </div>
 
@@ -46,20 +46,20 @@
                 <div class="row">
                     <div class="col-6">
                         <ul class="list-unstyled footer-links">
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>">Home</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>properties">Properties</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>projects">Projects</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>resell">Resell</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>gallery">Gallery</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>">Home</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>properties">Properties</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>projects">Projects</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>resell">Resell</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>gallery">Gallery</a></li>
                         </ul>
                     </div>
                     <div class="col-6">
                         <ul class="list-unstyled footer-links">
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>blog">Blog</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>career">Careers</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>team">Our Team</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>testimonials">Testimonials</a></li>
-                            <li><a href="<?php echo BASE_URL ?? '/'; ?>faq">FAQs</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>blog">Blog</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>careers">Careers</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>team">Our Team</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>testimonials">Testimonials</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>faq">FAQs</a></li>
                         </ul>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                     <li class="d-flex mb-3">
                         <i class="fas fa-map-marker-alt me-3 mt-1"></i>
                         <div>
-                            1st floor singhariya chauraha, Kunraghat, deoria  Road<br>
+                            1st floor singhariya chauraha, Kunraghat, deoria Road<br>
                             <br>
                             Gorakhpur, UP - 273008
                         </div>
@@ -114,10 +114,10 @@
                 <div class="download-apps">
                     <p class="mb-2">Download Our App:</p>
                     <a href="#" class="me-2">
-                        <img src="<?php echo BASE_URL ?? '/'; ?>assets/images/google-play.png" alt="Google Play" style="height: 35px;">
+                        <img src="<?php echo BASE_URL ?? '/'; ?>public/assets/images/google-play.png" alt="Google Play" style="height: 35px;">
                     </a>
                     <a href="#">
-                        <img src="<?php echo BASE_URL ?? '/'; ?>assets/images/app-store.png" alt="App Store" style="height: 35px;">
+                        <img src="<?php echo BASE_URL ?? '/'; ?>public/assets/images/app-store.png" alt="App Store" style="height: 35px;">
                     </a>
                 </div>
             </div>
@@ -135,11 +135,11 @@
             <div class="col-md-6">
                 <ul class="list-inline text-md-end mb-0">
                     <li class="list-inline-item">
-                        <a href="<?php echo BASE_URL ?? '/'; ?>privacy-policy" class="text-light-muted">Privacy Policy</a>
+                        <a href="<?php echo BASE_URL ?? '/'; ?>privacy" class="text-light-muted">Privacy Policy</a>
                     </li>
                     <li class="list-inline-item mx-3">|</li>
                     <li class="list-inline-item">
-                        <a href="<?php echo BASE_URL ?? '/'; ?>terms-of-service" class="text-light-muted">Terms of Service</a>
+                        <a href="<?php echo BASE_URL ?? '/'; ?>terms" class="text-light-muted">Terms of Service</a>
                     </li>
                     <li class="list-inline-item mx-3">|</li>
                     <li class="list-inline-item">

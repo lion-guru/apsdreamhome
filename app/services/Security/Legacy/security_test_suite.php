@@ -184,7 +184,7 @@ class SecurityTestSuite {
             }
 
             // Test ORM functionality
-            $test_query = "SELECT COUNT(*) as count FROM user WHERE uid = ?";
+            $test_query = "SELECT COUNT(*) as count FROM users WHERE id = ?";
             $row = $db->fetchOne($test_query, [1]); // Use a dummy ID
 
             if ($row !== false) {

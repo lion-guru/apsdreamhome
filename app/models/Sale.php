@@ -233,7 +233,7 @@ class Sale extends Model
             ])
             ->from(static::$table . ' as ps')
             ->leftJoin('properties as p', 'ps.property_id', '=', 'p.id')
-            ->leftJoin('user as u', 'ps.buyer_id', '=', 'u.uid')
+            ->leftJoin('users as u', 'ps.buyer_id', '=', 'u.id')
             ->leftJoin('mlm_commissions as mc', function ($q) use ($associateId) {
                 $q->on('ps.property_id', '=', 'mc.property_id')
                     ->where('mc.associate_id', '=', $associateId);

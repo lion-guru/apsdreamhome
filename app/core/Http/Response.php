@@ -33,6 +33,7 @@ use JsonSerializable;
  * $response->send();
  * ```
  */
+
 use SplFileInfo;
 use SplFileObject;
 use App\Core\Http\Request;
@@ -42,14 +43,15 @@ use App\Core\Http\Request;
  * 
  * @package App\Core\Http
  */
-class Response implements \JsonSerializable {
+class Response implements \JsonSerializable
+{
     /**
      * The response content
      * 
      * @var mixed The response content (string, array, or any other type that can be cast to string)
      */
     protected mixed $content = '';
-    
+
     /**
      * A callback for streaming the response
      * 
@@ -57,21 +59,21 @@ class Response implements \JsonSerializable {
      *                    The callback should output content directly.
      */
     protected $streamedCallback = null;
-    
+
     /**
      * The HTTP status code
      * 
      * @var int The HTTP status code (e.g., 200, 404, 500)
      */
     protected int $statusCode = 200;
-    
+
     /**
      * The HTTP status text
      * 
      * @var string The HTTP status text (e.g., 'OK', 'Not Found')
      */
     protected string $statusText = 'OK';
-    
+
     /**
      * The response headers
      * 
@@ -79,7 +81,7 @@ class Response implements \JsonSerializable {
      * where keys are header names and values are arrays of header values
      */
     protected array $headers = [];
-    
+
     /**
      * The response cookies
      * 
@@ -87,49 +89,49 @@ class Response implements \JsonSerializable {
      * where keys are cookie names and values are arrays of cookie options
      */
     protected array $cookies = [];
-    
+
     /**
      * The response charset
      * 
      * @var string The response charset (default: 'UTF-8')
      */
     protected string $charset = 'UTF-8';
-    
+
     /**
      * The response content type
      * 
      * @var string The response content type (default: 'text/html')
      */
     protected string $contentType = 'text/html';
-    
+
     /**
      * The response protocol version
      * 
      * @var string The HTTP protocol version (default: '1.1')
      */
     protected string $protocolVersion = '1.1';
-    
+
     /**
      * The ETag for the response
      * 
      * @var string|null The ETag value (including quotes)
      */
     protected ?string $etag = null;
-    
+
     /**
      * The Last-Modified date for the response
      * 
      * @var DateTimeInterface|null The Last-Modified date
      */
     protected ?DateTimeInterface $lastModified = null;
-    
+
     /**
      * The Cache-Control directives
      * 
      * @var array<string, mixed> The Cache-Control directives as key-value pairs
      */
     protected array $cacheControlDirectives = [];
-    
+
     /**
      * Default MIME types
      * 
@@ -154,7 +156,7 @@ class Response implements \JsonSerializable {
         'webp' => 'image/webp',
         'ico'  => 'image/x-icon',
     ];
-    
+
     /**
      * @var array Default CORS settings
      */
@@ -167,7 +169,7 @@ class Response implements \JsonSerializable {
         'supportsCredentials' => false,
         'allowedOriginsPatterns' => [],
     ];
-    
+
     /**
      * @var array Default file download headers
      */
@@ -178,35 +180,35 @@ class Response implements \JsonSerializable {
         'Pragma' => 'public',
         'X-Content-Type-Options' => 'nosniff',
     ];
-    
+
     /**
      * @var array Supported compression encodings
      */
     protected static array $supportedEncodings = ['gzip', 'deflate'];
-    
+
     /**
      * Download a file
      * @var bool Whether response compression is enabled
      */
     protected bool $compressionEnabled = true;
-    
+
     /**
      * @var int Compression level (0-9)
      */
     protected int $compressionLevel = 6;
-    
+
     /**
      * @var int Minimum content length to compress (in bytes)
      */
     protected int $minCompressionSize = 1024;
-    
+
     /**
      * Whether the response has been sent
      * 
      * @var bool True if the response has been sent, false otherwise
      */
     protected bool $sent = false;
-    
+
     /**
      * HTTP status codes and their corresponding status texts
      * 
@@ -276,28 +278,28 @@ class Response implements \JsonSerializable {
         510 => 'Not Extended',            // RFC2774
         511 => 'Network Authentication Required', // RFC6585
     ];
-    
+
     /**
      * The cache control header value
      * 
      * @var string The Cache-Control header value (default: 'no-cache, private')
      */
     protected string $cacheControl = 'no-cache, private';
-    
+
     /**
      * Whether the response is cacheable by HTTP caches
      * 
      * @var bool True if the response is cacheable, false otherwise
      */
     protected bool $cacheable = true;
-    
+
     /**
      * The date and time after which the response is considered stale
      * 
      * @var \DateTimeInterface|null The expiration date of the response
      */
     protected ?DateTimeInterface $expires = null;
-    
+
     /**
      * Set a cookie
      *
@@ -312,10 +314,10 @@ class Response implements \JsonSerializable {
             'value' => $value,
             'options' => $options
         ];
-        
+
         return $this;
     }
-    
+
     /**
      * Remove a cookie
      *
@@ -333,10 +335,10 @@ class Response implements \JsonSerializable {
             'secure' => false,
             'httponly' => true
         ]);
-        
+
         return $this;
     }
-    
+
     /**
      * Get all cookies
      *
@@ -346,7 +348,7 @@ class Response implements \JsonSerializable {
     {
         return $this->cookies;
     }
-    
+
     /**
      * Check if a cookie exists
      *
@@ -357,7 +359,7 @@ class Response implements \JsonSerializable {
     {
         return isset($this->cookies[$name]);
     }
-    
+
     /**
      * Send all cookies with the response
      * 
@@ -372,10 +374,10 @@ class Response implements \JsonSerializable {
                 }
             }
         }
-        
+
         foreach ($this->cookies as $name => $cookie) {
             $options = $cookie['options'];
-            
+
             // Set cookie with all options
             setcookie(
                 $name,
@@ -391,46 +393,50 @@ class Response implements \JsonSerializable {
             );
         }
     }
-    
+
     /**
      * Check if the response content should be compressed
      *
      * @param string $content The content to check
      * @return bool
      */
-    protected function shouldCompress(string $content): bool {
+    protected function shouldCompress(string $content): bool
+    {
+        return false; // Temporarily disabled to fix encoding issues
+
         // Don't compress if compression is disabled
         if (!$this->compressionEnabled) {
             return false;
         }
-        
+
         // Don't compress if content is too small
         if (strlen($content) < $this->minCompressionSize) {
             return false;
         }
-        
+
         // Check if client accepts compressed content
         if (!isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
             return false;
         }
-        
+
         // Check if any of the supported encodings are accepted
         foreach (self::$supportedEncodings as $encoding) {
             if (stripos($_SERVER['HTTP_ACCEPT_ENCODING'], $encoding) !== false) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Compress the response content
      *
      * @param string &$content The content to compress (passed by reference)
      * @return bool Whether compression was successful
      */
-    protected function compressContent(string &$content): bool {
+    protected function compressContent(string &$content): bool
+    {
         // Determine which encoding to use
         $encoding = '';
         foreach (self::$supportedEncodings as $enc) {
@@ -439,33 +445,33 @@ class Response implements \JsonSerializable {
                 break;
             }
         }
-        
+
         if (empty($encoding)) {
             return false;
         }
-        
+
         // Set the appropriate Content-Encoding header
         $this->setHeader('Content-Encoding', $encoding);
-        
+
         // Compress the content
         $compressed = false;
         switch (strtolower($encoding)) {
             case 'gzip':
                 $compressed = gzencode($content, $this->compressionLevel);
                 break;
-                
+
             case 'deflate':
                 $compressed = gzdeflate($content, $this->compressionLevel);
                 break;
         }
-        
+
         if ($compressed !== false) {
             // Update the content with compressed data
             $content = $compressed;
-            
+
             // Update the Content-Length header
             $this->setHeader('Content-Length', (string) strlen($content));
-            
+
             // Add Vary header to ensure caches handle the content correctly
             if ($this->hasHeader('Vary')) {
                 $vary = $this->getHeader('Vary');
@@ -475,13 +481,13 @@ class Response implements \JsonSerializable {
             } else {
                 $this->setHeader('Vary', 'Accept-Encoding');
             }
-            
+
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Configure response compression
      *
@@ -490,13 +496,14 @@ class Response implements \JsonSerializable {
      * @param int $minSize Minimum content length to compress (in bytes)
      * @return $this
      */
-    public function setCompression(bool $enabled, int $level = 6, int $minSize = 1024): self {
+    public function setCompression(bool $enabled, int $level = 6, int $minSize = 1024): self
+    {
         $this->compressionEnabled = $enabled;
         $this->compressionLevel = max(0, min(9, $level));
         $this->minCompressionSize = max(0, $minSize);
         return $this;
     }
-    
+
     /**
      * Enable response compression
      *
@@ -504,21 +511,23 @@ class Response implements \JsonSerializable {
      * @param int $minSize Minimum content length to compress (in bytes)
      * @return $this
      */
-    public function enableCompression(int $level = 6, int $minSize = 1024): self {
+    public function enableCompression(int $level = 6, int $minSize = 1024): self
+    {
         return $this->setCompression(true, $level, $minSize);
     }
-    
+
     /**
      * Disable response compression
      *
      * @return $this
      */
-    public function disableCompression(): self {
+    public function disableCompression(): self
+    {
         $this->compressionEnabled = false;
         return $this;
     }
-    
-    
+
+
     /**
      * Default Content Security Policy directives
      * 
@@ -543,9 +552,9 @@ class Response implements \JsonSerializable {
         'upgrade-insecure-requests' => [],
         'block-all-mixed-content' => [],
     ];
-    
-    
-    
+
+
+
     /**
      * Set the response content type to HTML
      *
@@ -556,7 +565,7 @@ class Response implements \JsonSerializable {
     {
         return $this->setContentType('text/html', $charset);
     }
-    
+
     /**
      * Set the response content type to plain text
      *
@@ -567,7 +576,7 @@ class Response implements \JsonSerializable {
     {
         return $this->setContentType('text/plain', $charset);
     }
-    
+
     /**
      * Set the response content type to XML
      *
@@ -578,7 +587,7 @@ class Response implements \JsonSerializable {
     {
         return $this->setContentType('application/xml', $charset);
     }
-    
+
     /**
      * Convert the response to a JSON string
      *
@@ -588,8 +597,8 @@ class Response implements \JsonSerializable {
     {
         return json_encode($this->jsonSerialize(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
-    
-    
+
+
     /**
      * Create a new Response instance
      *
@@ -597,21 +606,22 @@ class Response implements \JsonSerializable {
      * @param int $status The HTTP status code
      * @param array $headers An array of response headers
      */
-    public function __construct(mixed $content = '', int $status = 200, array $headers = []) {
+    public function __construct(mixed $content = '', int $status = 200, array $headers = [])
+    {
         $this->setContent($content);
         $this->setStatusCode($status);
-        
+
         // Set default headers if not already set
         if (!$this->hasHeader('Content-Type')) {
             $this->setContentType($this->contentType, $this->charset);
         }
-        
+
         // Set any custom headers
         foreach ($headers as $name => $value) {
             $this->setHeader($name, $value);
         }
     }
-    
+
     /**
      * Create a new JSON response
      *
@@ -624,15 +634,15 @@ class Response implements \JsonSerializable {
      * @throws \RuntimeException If JSON encoding fails
      */
     public static function json(
-        mixed $data, 
-        int $status = 200, 
-        array $headers = [], 
+        mixed $data,
+        int $status = 200,
+        array $headers = [],
         int $options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT,
         int $depth = 512
     ): static {
         // Encode the data to JSON
         $json = json_encode($data, $options, $depth);
-        
+
         // Check for JSON encoding errors
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \RuntimeException(
@@ -640,10 +650,10 @@ class Response implements \JsonSerializable {
                 json_last_error()
             );
         }
-        
+
         // Create response with JSON content first
         $response = new static($json, $status, $headers);
-        
+
         // Set the proper Content-Type header if not already set
         $contentTypeSet = false;
         foreach ($headers as $key => $value) {
@@ -652,14 +662,14 @@ class Response implements \JsonSerializable {
                 break;
             }
         }
-        
+
         if (!$contentTypeSet) {
             $response->setContentType('application/json', 'utf-8');
         }
-        
+
         return $response;
     }
-    
+
     /**
      * Create a new redirect response
      *
@@ -668,11 +678,12 @@ class Response implements \JsonSerializable {
      * @param array $headers Additional headers to set
      * @return static
      */
-    public static function redirect($url, $status = 302, array $headers = []) {
+    public static function redirect($url, $status = 302, array $headers = [])
+    {
         $headers['Location'] = $url;
         return new static('', $status, $headers);
     }
-    
+
     /**
      * Create a new error response
      *
@@ -681,10 +692,11 @@ class Response implements \JsonSerializable {
      * @param array $headers Additional headers to set
      * @return static
      */
-    public static function error($message, $status = 500, array $headers = []) {
+    public static function error($message, $status = 500, array $headers = [])
+    {
         return new static($message, $status, $headers);
     }
-    
+
     /**
      * Create a new not found response
      *
@@ -692,10 +704,11 @@ class Response implements \JsonSerializable {
      * @param array $headers Additional headers to set
      * @return static
      */
-    public static function notFound($message = 'Not Found', array $headers = []) {
+    public static function notFound($message = 'Not Found', array $headers = [])
+    {
         return new static($message, 404, $headers);
     }
-    
+
     /**
      * Create a new forbidden response
      *
@@ -703,10 +716,11 @@ class Response implements \JsonSerializable {
      * @param array $headers Additional headers to set
      * @return static
      */
-    public static function forbidden($message = 'Forbidden', array $headers = []) {
+    public static function forbidden($message = 'Forbidden', array $headers = [])
+    {
         return new static($message, 403, $headers);
     }
-    
+
     /**
      * Create a new unauthorized response
      *
@@ -714,17 +728,19 @@ class Response implements \JsonSerializable {
      * @param array $headers Additional headers to set
      * @return static
      */
-    public static function unauthorized($message = 'Unauthorized', array $headers = []) {
+    public static function unauthorized($message = 'Unauthorized', array $headers = [])
+    {
         return new static($message, 401, $headers);
     }
-    
+
     /**
      * Set the response content
      *
      * @param mixed $content The response content (string, array, object, or callable for streaming)
      * @return $this
      */
-    public function setContent(mixed $content): static {
+    public function setContent(mixed $content): static
+    {
         if (is_callable($content)) {
             $this->streamedCallback = $content;
             $this->content = '';
@@ -734,7 +750,7 @@ class Response implements \JsonSerializable {
         }
         return $this;
     }
-    
+
     /**
      * Set the content type for this response
      *
@@ -743,57 +759,60 @@ class Response implements \JsonSerializable {
      * @return $this
      * @throws \InvalidArgumentException If the content type is invalid
      */
-    public function setContentType(string $contentType, ?string $charset = null): static {
+    public function setContentType(string $contentType, ?string $charset = null): static
+    {
         // Basic MIME type validation
         if (!preg_match('#^[\w\-]+/[\w\-\.\+]+$#', $contentType)) {
             throw new \InvalidArgumentException(sprintf('Invalid content type "%s"', $contentType));
         }
-        
+
         $this->contentType = $contentType;
-        
+
         // Update charset if provided
         if ($charset !== null) {
             $this->charset = $charset;
         }
-        
+
         // Build the Content-Type header
         $contentTypeHeader = $contentType;
-        
+
         // Only append charset for text/* and application/* types that don't already specify charset
-        $shouldIncludeCharset = 
-            $this->charset && 
-            (str_starts_with($contentType, 'text/') || 
-             str_starts_with($contentType, 'application/')) &&
+        $shouldIncludeCharset =
+            $this->charset &&
+            (str_starts_with($contentType, 'text/') ||
+                str_starts_with($contentType, 'application/')) &&
             !preg_match('/;\s*charset\s*=/i', $contentType);
-        
+
         if ($shouldIncludeCharset) {
             $contentTypeHeader .= '; charset=' . $this->charset;
         }
-        
+
         $this->setHeader('Content-Type', $contentTypeHeader);
         return $this;
     }
-    
+
     /**
      * Get the response content type
      *
      * @return string
      */
-    public function getContentType(): string {
+    public function getContentType(): string
+    {
         return $this->contentType;
     }
-    
+
     /**
      * Specify data which should be serialized to JSON
      *
      * @return mixed Data which can be serialized by json_encode()
      */
-    public function jsonSerialize(): mixed {
+    public function jsonSerialize(): mixed
+    {
         // If content is set and is not empty, return it directly
         if (!empty($this->content)) {
             return $this->content;
         }
-        
+
         // Otherwise, return status information
         return [
             'status' => $this->statusCode,
@@ -804,7 +823,7 @@ class Response implements \JsonSerializable {
             'charset' => $this->charset
         ];
     }
-    
+
     /**
      * Create a file download response
      *
@@ -842,23 +861,23 @@ class Response implements \JsonSerializable {
         if (!$file instanceof SplFileInfo) {
             $file = new SplFileInfo($file);
         }
-        
+
         if (!$file->isReadable()) {
             throw new RuntimeException(sprintf('The file "%s" is not readable.', $file->getPathname()));
         }
-        
+
         $name = $name ?? $file->getBasename();
         $contentType = self::getMimeType($file->getExtension()) ?? 'application/octet-stream';
         $fileSize = $file->getSize();
         $lastModified = $file->getMTime();
-        
+
         $response = new static(null, 200, $headers);
-        
+
         // Set basic headers
         $response->setHeader('Content-Type', $contentType);
         $response->setHeader('Content-Length', (string)$fileSize);
         $response->setHeader('Accept-Ranges', 'bytes');
-        
+
         // Create content disposition header
         $filename = $response->isAscii($name) ? $name : $name . '.bin';
         $response->setHeader('Content-Disposition', sprintf(
@@ -866,33 +885,33 @@ class Response implements \JsonSerializable {
             $disposition,
             str_replace('"', '\\"', $filename)
         ));
-        
+
         // Set cache headers if enabled
         if ($autoEtag || $autoLastModified) {
             $cacheOptions = [
                 'max_age' => 31536000, // 1 year
                 'public' => true,
             ];
-            
+
             if ($autoEtag) {
                 $etag = sprintf('"%s-%s"', $lastModified, $fileSize);
                 $cacheOptions['etag'] = $etag;
                 $response->setHeader('ETag', $etag);
             }
-            
+
             if ($autoLastModified) {
                 $response->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
                 $cacheOptions['last_modified'] = $lastModified;
             }
-            
+
             $response->setCache($cacheOptions);
         }
-        
+
         // Handle range requests for resumable downloads
         $range = null;
         if ($resumable && isset($_SERVER['HTTP_RANGE'])) {
             $range = $response->parseRangeHeader($_SERVER['HTTP_RANGE'], $fileSize);
-            
+
             if ($range) {
                 $response->setStatusCode(206); // Partial Content
                 $response->setHeader('Content-Range', sprintf(
@@ -908,12 +927,12 @@ class Response implements \JsonSerializable {
                 return $response;
             }
         }
-        
+
         // Set the content to stream the file in chunks
         $response->setContent(function () use ($file, $range, $fileSize) {
             $handle = $file->openFile('rb');
             $chunkSize = 8 * 1024; // 8KB chunks
-            
+
             if ($range) {
                 // Seek to the start of the range
                 $handle->fseek($range['start']);
@@ -921,37 +940,37 @@ class Response implements \JsonSerializable {
             } else {
                 $bytesToSend = $fileSize;
             }
-            
+
             $bytesSent = 0;
-            
+
             while (!$handle->eof() && $bytesSent < $bytesToSend) {
                 $chunk = min($chunkSize, $bytesToSend - $bytesSent);
-                
+
                 if ($chunk <= 0) {
                     break;
                 }
-                
+
                 echo $handle->fread($chunk);
                 $bytesSent += $chunk;
-                
+
                 // Flush the output buffer to send data immediately
                 if (ob_get_level() > 0) {
                     ob_flush();
                 }
                 flush();
-                
+
                 // Prevent timeouts for large files
                 if (connection_aborted()) {
                     break;
                 }
             }
-            
+
             $handle = null; // Close the file handle
         });
-        
+
         return $response;
     }
-    
+
     /**
      * Create a JSONP response
      *
@@ -970,40 +989,42 @@ class Response implements \JsonSerializable {
         int $options = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
     ): static {
         $json = json_encode($data, $options);
-        
+
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \RuntimeException(
                 'Failed to encode JSON data: ' . json_last_error_msg(),
                 json_last_error()
             );
         }
-        
+
         $content = sprintf('/**/%s(%s);', $callback, $json);
         $headers['Content-Type'] = 'application/javascript; charset=utf-8';
-        
+
         return new static($content, $status, $headers);
     }
-    
+
     /**
      * Set the response charset
      *
      * @param string $charset The charset to set
      * @return $this
      */
-    public function setCharset(string $charset): static {
+    public function setCharset(string $charset): static
+    {
         $this->charset = $charset;
         return $this;
     }
-    
+
     /**
      * Get the response charset
      *
      * @return string
      */
-    public function getCharset(): string {
+    public function getCharset(): string
+    {
         return $this->charset;
     }
-    
+
     /**
      * Set the Content Security Policy for the response
      * 
@@ -1014,7 +1035,7 @@ class Response implements \JsonSerializable {
     public function setContentSecurityPolicy(array $directives, bool $reportOnly = false)
     {
         $headerValue = [];
-        
+
         foreach ($directives as $directive => $sources) {
             if (empty($sources) && $sources !== []) {
                 // Handle directives without values (like 'block-all-mixed-content')
@@ -1023,13 +1044,13 @@ class Response implements \JsonSerializable {
                 $headerValue[] = $directive . ' ' . (is_array($sources) ? implode(' ', $sources) : $sources);
             }
         }
-        
+
         $headerName = $reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
         $this->headers[$headerName] = [implode('; ', $headerValue)];
-        
+
         return $this;
     }
-    
+
     /**
      * Add a Content Security Policy directive
      * 
@@ -1040,20 +1061,20 @@ class Response implements \JsonSerializable {
      * @return $this
      */
     public function addContentSecurityPolicyDirective(
-        string $directive, 
-        $sources, 
+        string $directive,
+        $sources,
         bool $replace = false,
         bool $reportOnly = false
     ) {
         $headerName = $reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
         $currentPolicy = $this->headers[$headerName][0] ?? '';
-        
+
         // Parse existing policy
         $directives = [];
         foreach (explode(';', $currentPolicy) as $part) {
             $part = trim($part);
             if (empty($part)) continue;
-            
+
             $parts = explode(' ', $part, 2);
             if (count($parts) === 2) {
                 $directives[trim($parts[0])] = $parts[1];
@@ -1061,27 +1082,27 @@ class Response implements \JsonSerializable {
                 $directives[$parts[0]] = '';
             }
         }
-        
+
         // Add or update the directive
         $sources = is_array($sources) ? implode(' ', $sources) : $sources;
-        
+
         if ($replace || !isset($directives[$directive])) {
             $directives[$directive] = $sources;
         } else {
             $directives[$directive] .= ' ' . $sources;
         }
-        
+
         // Rebuild the header
         $headerValue = [];
         foreach ($directives as $dir => $src) {
             $headerValue[] = trim($dir . ' ' . $src);
         }
-        
+
         $this->headers[$headerName] = [implode('; ', $headerValue)];
-        
+
         return $this;
     }
-    
+
     /**
      * Remove a Content Security Policy directive
      * 
@@ -1092,13 +1113,13 @@ class Response implements \JsonSerializable {
     public function removeContentSecurityPolicyDirective(string $directive, bool $reportOnly = false)
     {
         $headerName = $reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
-        
+
         if (isset($this->headers[$headerName])) {
             $directives = [];
             foreach (explode(';', $this->headers[$headerName][0]) as $part) {
                 $part = trim($part);
                 if (empty($part)) continue;
-                
+
                 $parts = explode(' ', $part, 2);
                 if (count($parts) === 2 && $parts[0] !== $directive) {
                     $directives[$parts[0]] = $parts[1];
@@ -1106,22 +1127,22 @@ class Response implements \JsonSerializable {
                     $directives[$parts[0]] = '';
                 }
             }
-            
+
             $headerValue = [];
             foreach ($directives as $dir => $src) {
                 $headerValue[] = trim($dir . ' ' . $src);
             }
-            
+
             if (empty($headerValue)) {
                 unset($this->headers[$headerName]);
             } else {
                 $this->headers[$headerName] = [implode('; ', $headerValue)];
             }
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Enable CORS (Cross-Origin Resource Sharing) for the response
      *
@@ -1138,13 +1159,13 @@ class Response implements \JsonSerializable {
     public function enableCors(array $options = []): self
     {
         $options = array_merge(self::$defaultCorsSettings, $options);
-        
+
         // Handle allowed origins
         $origin = $_SERVER['HTTP_ORIGIN'] ?? null;
-        
+
         if ($origin) {
             $allowed = false;
-            
+
             // Check against allowed origins
             if (in_array('*', $options['allowedOrigins'], true)) {
                 $allowed = true;
@@ -1159,49 +1180,49 @@ class Response implements \JsonSerializable {
                     }
                 }
             }
-            
+
             if ($allowed) {
                 $this->headers['Access-Control-Allow-Origin'] = [$origin];
-                
+
                 if ($options['supportsCredentials']) {
                     $this->headers['Access-Control-Allow-Credentials'] = ['true'];
                 }
-                
+
                 // Handle preflight requests
                 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                     $this->setStatusCode(204); // No Content
-                    
+
                     if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
                         $this->headers['Access-Control-Allow-Methods'] = [
                             implode(', ', $options['allowedMethods'])
                         ];
                     }
-                    
+
                     if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
                         $this->headers['Access-Control-Allow-Headers'] = [
                             implode(', ', $options['allowedHeaders'])
                         ];
                     }
-                    
+
                     if ($options['maxAge'] > 0) {
                         $this->headers['Access-Control-Max-Age'] = [$options['maxAge']];
                     }
-                    
+
                     if (!empty($options['exposedHeaders'])) {
                         $this->headers['Access-Control-Expose-Headers'] = [
                             implode(', ', $options['exposedHeaders'])
                         ];
                     }
-                    
+
                     // Prevent any output for OPTIONS requests
                     $this->setContent('');
                 }
             }
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Set default CORS settings that will be used for all responses
      * 
@@ -1212,7 +1233,7 @@ class Response implements \JsonSerializable {
     {
         self::$defaultCorsSettings = array_merge(self::$defaultCorsSettings, $settings);
     }
-    
+
     /**
      * Set default file download headers that will be used for all file downloads
      * 
@@ -1223,7 +1244,7 @@ class Response implements \JsonSerializable {
     {
         self::$defaultFileHeaders = array_merge(self::$defaultFileHeaders, $headers);
     }
-    
+
     /**
      * Send a file for download
      *
@@ -1239,19 +1260,18 @@ class Response implements \JsonSerializable {
         if (!($file instanceof SplFileInfo)) {
             $file = new SplFileInfo($file);
         }
-        
+
         if (!$file->isReadable()) {
             throw new \RuntimeException(sprintf('File "%s" does not exist or is not readable', $file->getPathname()));
         }
-        
+
         $filename = $filename ?? $file->getFilename();
         $filePath = $file->getPathname();
         $fileSize = $file->getSize();
-        
+
         // Get MIME type
-        $mimeType = self::getMimeType($file->getExtension()) ?: 
-                   (function_exists('mime_content_type') ? mime_content_type($filePath) : 'application/octet-stream');
-        
+        $mimeType = self::getMimeType($file->getExtension()) ?: (function_exists('mime_content_type') ? mime_content_type($filePath) : 'application/octet-stream');
+
         // Set default headers
         $responseHeaders = array_merge(
             self::$defaultFileHeaders,
@@ -1264,21 +1284,21 @@ class Response implements \JsonSerializable {
             ],
             $headers
         );
-        
+
         // Handle range requests for resumable downloads
         if (isset($_SERVER['HTTP_RANGE'])) {
             $range = self::parseRangeHeader($_SERVER['HTTP_RANGE'], $fileSize);
             if ($range) {
                 $responseHeaders['Content-Range'] = sprintf('bytes %d-%d/%d', $range['start'], $range['end'], $fileSize);
                 $responseHeaders['Content-Length'] = $range['end'] - $range['start'] + 1;
-                
+
                 $response = new static('', 206, $responseHeaders);
-                $response->setContent(function() use ($filePath, $range) {
+                $response->setContent(function () use ($filePath, $range) {
                     $handle = fopen($filePath, 'rb');
                     fseek($handle, $range['start']);
                     $length = $range['end'] - $range['start'] + 1;
                     $bytesRead = 0;
-                    
+
                     while (!feof($handle) && $bytesRead < $length) {
                         $chunkSize = min(8192, $length - $bytesRead);
                         echo fread($handle, $chunkSize);
@@ -1288,17 +1308,17 @@ class Response implements \JsonSerializable {
                             break;
                         }
                     }
-                    
+
                     fclose($handle);
                 });
-                
+
                 return $response;
             }
         }
-        
+
         // If we get here, it's a regular file download
         $response = new static('', 200, $responseHeaders);
-        $response->setContent(function() use ($filePath) {
+        $response->setContent(function () use ($filePath) {
             $handle = fopen($filePath, 'rb');
             while (!feof($handle) && !connection_aborted()) {
                 echo fread($handle, 8192);
@@ -1306,10 +1326,10 @@ class Response implements \JsonSerializable {
             }
             fclose($handle);
         });
-        
+
         return $response;
     }
-    
+
     /**
      * Quote a filename for use in Content-Disposition header
      *
@@ -1322,11 +1342,11 @@ class Response implements \JsonSerializable {
         if (preg_match('/[\x00-\x20\x22\x27\x3c\x3e\x5c\x7c\x3a\x3b\x2c\x3d\x3f\x2a]/', $filename)) {
             return sprintf('"%s"', str_replace('"', '\\"', $filename));
         }
-        
+
         return $filename;
     }
-    
-    
+
+
     /**
      * Parse the Range header for resumable downloads
      *
@@ -1339,21 +1359,21 @@ class Response implements \JsonSerializable {
         if (preg_match('/bytes=\s*(\d+)-(\d*)[\D.*]?/i', $rangeHeader, $matches)) {
             $start = (int)$matches[1];
             $end = isset($matches[2]) && $matches[2] !== '' ? (int)$matches[2] : $fileSize - 1;
-            
+
             // Validate range
             if ($start < 0 || $end >= $fileSize || $start > $end) {
                 return null;
             }
-            
+
             return [
                 'start' => $start,
                 'end' => $end,
             ];
         }
-        
+
         return null;
     }
-    
+
     /**
      * Get the MIME type for a file extension
      *
@@ -1374,7 +1394,7 @@ class Response implements \JsonSerializable {
             'json' => 'application/json',
             'xml' => 'application/xml',
             'csv' => 'text/csv',
-            
+
             // Images
             'png' => 'image/png',
             'jpe' => 'image/jpeg',
@@ -1388,7 +1408,7 @@ class Response implements \JsonSerializable {
             'svg' => 'image/svg+xml',
             'svgz' => 'image/svg+xml',
             'webp' => 'image/webp',
-            
+
             // Archives
             'zip' => 'application/zip',
             'rar' => 'application/x-rar-compressed',
@@ -1399,7 +1419,7 @@ class Response implements \JsonSerializable {
             'tar' => 'application/x-tar',
             'gz' => 'application/gzip',
             'bz2' => 'application/x-bzip2',
-            
+
             // Audio/video
             'mp3' => 'audio/mpeg',
             'wav' => 'audio/wav',
@@ -1410,7 +1430,7 @@ class Response implements \JsonSerializable {
             'mov' => 'video/quicktime',
             'avi' => 'video/x-msvideo',
             'wmv' => 'video/x-ms-wmv',
-            
+
             // Documents
             'pdf' => 'application/pdf',
             'doc' => 'application/msword',
@@ -1424,7 +1444,7 @@ class Response implements \JsonSerializable {
             'odp' => 'application/vnd.oasis.opendocument.presentation',
             'rtf' => 'application/rtf',
             'txt' => 'text/plain',
-            
+
             // Source code
             'php' => 'application/x-httpd-php',
             'c' => 'text/x-csrc',
@@ -1442,11 +1462,11 @@ class Response implements \JsonSerializable {
             'kt' => 'text/x-kotlin',
             'rs' => 'text/rust',
         ];
-        
+
         return $mimeTypes[$extension] ?? null;
     }
-    
-    
+
+
     /**
      * Set cache headers for the response
      *
@@ -1463,7 +1483,8 @@ class Response implements \JsonSerializable {
      *   - no_transform: bool Whether to prevent transformations (default: false)
      * @return $this
      */
-    public function setCache(array $options = []): static {
+    public function setCache(array $options = []): static
+    {
         $options = array_merge([
             'etag' => null,
             'last_modified' => null,
@@ -1476,75 +1497,77 @@ class Response implements \JsonSerializable {
             'no_store' => false,
             'no_transform' => false,
         ], $options);
-        
+
         $directives = [];
-        
+
         if ($options['no_cache']) {
             $directives[] = 'no-cache';
         }
-        
+
         if ($options['no_store']) {
             $directives[] = 'no-store';
         }
-        
+
         if ($options['no_transform']) {
             $directives[] = 'no-transform';
         }
-        
+
         if ($options['must_revalidate']) {
             $directives[] = 'must-revalidate';
         }
-        
+
         if ($options['proxy_revalidate']) {
             $directives[] = 'proxy-revalidate';
         }
-        
+
         if ($options['public']) {
             $directives[] = 'public';
         } else {
             $directives[] = 'private';
         }
-        
+
         if (null !== $options['max_age']) {
             $directives[] = 'max-age=' . $options['max_age'];
         }
-        
+
         if (null !== $options['s_maxage']) {
             $directives[] = 's-maxage=' . $options['s_maxage'];
         }
-        
+
         $this->setHeader('Cache-Control', implode(', ', $directives));
-        
+
         if (null !== $options['etag']) {
             $this->setEtag($options['etag']);
         }
-        
+
         if (null !== $options['last_modified']) {
             $this->setLastModified($options['last_modified']);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Make the response expire immediately
      *
      * @return $this
      */
-    public function expire(): static {
+    public function expire(): static
+    {
         $this->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
         $this->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0');
         $this->setHeader('Pragma', 'no-cache');
-        
+
         return $this;
     }
-    
+
     /**
      * Set no-cache headers for the response
      *
      * @return $this
      */
-    public function setNoCache(): static {
+    public function setNoCache(): static
+    {
         return $this->setCache([
             'no_cache' => true,
             'no_store' => true,
@@ -1552,35 +1575,37 @@ class Response implements \JsonSerializable {
             'max_age' => 0,
         ]);
     }
-    
+
     /**
      * Get the response content
      *
      * @return string
      */
-    public function getContent(): string {
+    public function getContent(): string
+    {
         if (is_callable($this->content)) {
             ob_start();
             call_user_func($this->content);
             return ob_get_clean();
         }
-        
+
         // Handle streamed content
         if ($this->streamedCallback !== null) {
             ob_start();
             call_user_func($this->streamedCallback);
             return ob_get_clean();
         }
-        
+
         return (string) $this->content;
     }
-    
+
     /**
      * Convert the response to a string
      *
      * @return string
      */
-    public function __toString(): string {
+    public function __toString(): string
+    {
         try {
             return $this->getContent();
         } catch (\Throwable $e) {
@@ -1589,7 +1614,7 @@ class Response implements \JsonSerializable {
             return '';
         }
     }
-    
+
     /**
      * Set the HTTP status code
      *
@@ -1598,40 +1623,43 @@ class Response implements \JsonSerializable {
      * @return $this
      * @throws \InvalidArgumentException When the HTTP status code is not valid
      */
-    public function setStatusCode($code, $text = null) {
+    public function setStatusCode($code, $text = null)
+    {
         $this->statusCode = (int) $code;
-        
+
         if ($this->isInvalid()) {
             throw new \InvalidArgumentException(sprintf('The HTTP status code "%s" is not valid.', $code));
         }
-        
+
         if (null === $text) {
             $this->statusText = isset(self::$statusTexts[$code]) ? self::$statusTexts[$code] : 'unknown status';
         } else {
             $this->statusText = $text;
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Get the HTTP status code
      *
      * @return int
      */
-    public function getStatusCode() {
+    public function getStatusCode()
+    {
         return $this->statusCode;
     }
-    
+
     /**
      * Get the HTTP status text
      *
      * @return string
      */
-    public function getStatusText() {
+    public function getStatusText()
+    {
         return $this->statusText;
     }
-    
+
     /**
      * Sets a header by name.
      *
@@ -1640,20 +1668,21 @@ class Response implements \JsonSerializable {
      * @param bool $replace Whether to replace the header or add it
      * @return $this
      */
-    public function setHeader(string $key, $values, bool $replace = true): static {
+    public function setHeader(string $key, $values, bool $replace = true): static
+    {
         // Normalize the header key to lowercase with hyphens
         $key = str_replace('_', '-', strtolower($key));
-        
+
         if ($replace || !isset($this->headers[$key])) {
             $this->headers[$key] = (array) $values;
         } else {
             $this->headers[$key] = array_merge($this->headers[$key], (array) $values);
         }
-        
+
         return $this;
     }
-    
-    
+
+
     /**
      * Get a header by name
      *
@@ -1661,130 +1690,143 @@ class Response implements \JsonSerializable {
      * @param mixed $default The default value if the header does not exist
      * @return string|array|null
      */
-    public function getHeader($key, $default = null) {
+    public function getHeader($key, $default = null)
+    {
         $key = str_replace('_', '-', strtolower($key));
-        
+
         if (isset($this->headers[$key])) {
             return $this->headers[$key];
         }
-        
+
         return $default;
     }
-    
+
     /**
      * Check if a header exists
      *
      * @param string $key The header name
      * @return bool
      */
-    public function hasHeader($key) {
+    public function hasHeader($key)
+    {
         $key = str_replace('_', '-', strtolower($key));
         return isset($this->headers[$key]);
     }
-    
+
     /**
      * Remove a header
      *
      * @param string $key The header name
      * @return $this
      */
-    public function removeHeader($key) {
+    public function removeHeader($key)
+    {
         $key = str_replace('_', '-', strtolower($key));
         unset($this->headers[$key]);
         return $this;
     }
-    
+
     /**
      * Get all headers
      *
      * @return array
      */
-    public function getHeaders() {
+    public function getHeaders()
+    {
         return $this->headers;
     }
-    
-    
+
+
     /**
      * Check if the response is invalid
      *
      * @return bool
      */
-    public function isInvalid() {
+    public function isInvalid()
+    {
         return $this->statusCode < 100 || $this->statusCode >= 600;
     }
-    
+
     /**
      * Check if the response is successful
      *
      * @return bool
      */
-    public function isSuccessful() {
+    public function isSuccessful()
+    {
         return $this->statusCode >= 200 && $this->statusCode < 300;
     }
-    
+
     /**
      * Check if the response is a redirection
      *
      * @return bool
      */
-    public function isRedirection() {
+    public function isRedirection()
+    {
         return $this->statusCode >= 300 && $this->statusCode < 400;
     }
-    
+
     /**
      * Check if the response is a client error
      *
      * @return bool
      */
-    public function isClientError() {
+    public function isClientError()
+    {
         return $this->statusCode >= 400 && $this->statusCode < 500;
     }
-    
+
     /**
      * Check if the response is a server error
      *
      * @return bool
      */
-    public function isServerError() {
+    public function isServerError()
+    {
         return $this->statusCode >= 500 && $this->statusCode < 600;
     }
-    
+
     /**
      * Check if the response is OK (status code 200)
      *
      * @return bool
      */
-    public function isOk() {
+    public function isOk()
+    {
         return 200 === $this->statusCode;
     }
-    
+
     /**
      * Check if the response is a 404 Not Found
      *
      * @return bool
      */
-    public function isNotFound() {
+    public function isNotFound()
+    {
         return 404 === $this->statusCode;
     }
-    
+
     /**
      * Check if the response is a 403 Forbidden
      *
      * @return bool
      */
-    public function isForbidden() {
+    public function isForbidden()
+    {
         return 403 === $this->statusCode;
     }
-    
+
     /**
      * Check if the response is a 401 Unauthorized
      *
      * @return bool
      */
-    public function isUnauthorized() {
+    public function isUnauthorized()
+    {
         return 401 === $this->statusCode;
     }
-    
+
     /**
      * Sends HTTP headers and content.
      * 
@@ -1803,24 +1845,25 @@ class Response implements \JsonSerializable {
      * @param int $maxAge Maximum time in seconds the response is considered fresh
      * @return $this
      */
-    public function setFileCacheHeaders(string $filePath, ?string $etag = null, bool $public = false, int $maxAge = 3600): static {
+    public function setFileCacheHeaders(string $filePath, ?string $etag = null, bool $public = false, int $maxAge = 3600): static
+    {
         if (!file_exists($filePath)) {
             throw new \RuntimeException(sprintf('The file "%s" does not exist.', $filePath));
         }
-        
+
         $this->setEtag($etag ?: hash_file('sha256', $filePath));
         $this->setLastModified(\DateTime::createFromFormat('U', (string) filemtime($filePath)));
         $this->setMaxAge($maxAge);
-        
+
         if ($public) {
             $this->setPublic();
         } else {
             $this->setPrivate();
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Sets the ETag value.
      *
@@ -1828,46 +1871,50 @@ class Response implements \JsonSerializable {
      * @param bool $weak Whether the ETag should be weak
      * @return $this
      */
-    public function setEtag(?string $etag = null, bool $weak = false): static {
+    public function setEtag(?string $etag = null, bool $weak = false): static
+    {
         if (null === $etag) {
             $etag = hash('sha256', $this->getContent());
         }
-        
+
         $this->etag = $weak ? 'W/"' . $etag . '"' : '"' . $etag . '"';
         $this->setHeader('ETag', $this->etag);
-        
+
         return $this;
     }
-    
+
     /**
      * Gets the ETag value.
      *
      * @return string|null The ETag value or null if not set
      */
-    public function getEtag(): ?string {
+    public function getEtag(): ?string
+    {
         return $this->etag;
     }
-    
+
     /**
      * Removes a Cache-Control directive.
      *
      * @param string $key The directive to remove
      * @return $this
      */
-    public function removeCacheControlDirective(string $key): static {
+    public function removeCacheControlDirective(string $key): static
+    {
         $key = str_replace('_', '-', strtolower($key));
         unset($this->cacheControlDirectives[$key]);
         $this->updateCacheControlHeader();
-        
+
         return $this;
     }
-    
+
     /**
      * Updates the Cache-Control header based on the current directives.
      */
-    protected function updateCacheControlHeader(): void {
+    protected function updateCacheControlHeader(): void
+    {
         $parts = [];
-        
+
         foreach ($this->cacheControlDirectives as $key => $value) {
             if (true === $value) {
                 $parts[] = $key;
@@ -1875,14 +1922,14 @@ class Response implements \JsonSerializable {
                 if (preg_match('#[^a-zA-Z0-9._-]#', $value)) {
                     $value = '"' . $value . '"';
                 }
-                
+
                 $parts[] = "$key=$value";
             }
         }
-        
+
         $this->setHeader('Cache-Control', implode(', ', $parts) ?: 'no-cache, private');
     }
-    
+
     /**
      * Adds a Cache-Control directive.
      *
@@ -1890,21 +1937,23 @@ class Response implements \JsonSerializable {
      * @param mixed $value The directive value (true for flag, string/int for value)
      * @return $this
      */
-    public function addCacheControlDirective(string $key, $value = true): static {
+    public function addCacheControlDirective(string $key, $value = true): static
+    {
         $key = str_replace('_', '-', strtolower($key));
         $this->cacheControlDirectives[$key] = $value;
         $this->updateCacheControlHeader();
-        
+
         return $this;
     }
-    
+
     /**
      * Sets the Last-Modified HTTP header with a DateTime instance or timestamp.
      *
      * @param DateTimeInterface|int|null $date A DateTimeInterface instance, timestamp, or null to remove the header
      * @return $this
      */
-    public function setLastModified($date): static {
+    public function setLastModified($date): static
+    {
         if (null === $date) {
             $this->removeHeader('Last-Modified');
             $this->lastModified = null;
@@ -1932,97 +1981,104 @@ class Response implements \JsonSerializable {
 
         return $this;
     }
-    
+
     /**
      * Gets the Last-Modified HTTP header as a DateTime instance.
      *
      * @return \DateTimeInterface|null The Last-Modified header value or null if not set
      */
-    public function getLastModified(): ?\DateTimeInterface {
+    public function getLastModified(): ?\DateTimeInterface
+    {
         return $this->lastModified;
     }
-    
+
     /**
      * Marks the response as "public".
      *
      * @return $this
      */
-    public function setPublic(): static {
+    public function setPublic(): static
+    {
         $this->setHeader('Cache-Control', 'public');
         $this->removeCacheControlDirective('private');
-        
+
         return $this;
     }
-    
+
     /**
      * Marks the response as private.
      *
      * @return $this
      */
-    public function setPrivate(): static {
+    public function setPrivate(): static
+    {
         $this->setHeader('Cache-Control', 'private');
         $this->removeCacheControlDirective('public');
-        
+
         return $this;
     }
-    
+
     /**
      * Sets the number of seconds after which the response should no longer be considered fresh.
      *
      * @param int $value Number of seconds
      * @return $this
      */
-    public function setMaxAge(int $value): static {
+    public function setMaxAge(int $value): static
+    {
         $this->addCacheControlDirective('max-age', $value);
-        
+
         return $this;
     }
-    
+
     /**
      * Sets the number of seconds after which the response should no longer be considered fresh by shared caches.
      *
      * @param int $value Number of seconds
      * @return $this
      */
-    public function setSharedMaxAge(int $value): static {
+    public function setSharedMaxAge(int $value): static
+    {
         $this->setPublic();
         $this->addCacheControlDirective('s-maxage', $value);
-        
+
         return $this;
     }
-    
+
     /**
      * Marks the response as "not modified".
      *
      * @return $this
      */
-    public function setNotModified(): static {
+    public function setNotModified(): static
+    {
         $this->setStatusCode(304);
         $this->setContent(null);
-        
+
         // Remove headers that MUST NOT be included with 304 Not Modified responses
         $this->removeHeader('Content-Type');
         $this->removeHeader('Content-Length');
         $this->removeHeader('Transfer-Encoding');
-        
+
         return $this;
     }
-    
+
     /**
      * Checks if the response is still fresh based on the request's cache validation headers.
      *
      * @param Request $request The request to validate against
      * @return bool True if the response is still fresh, false otherwise
      */
-    public function isNotModified(Request $request): bool {
+    public function isNotModified(Request $request): bool
+    {
         if (!in_array($request->getMethod(), ['GET', 'HEAD'])) {
             return false;
         }
-        
+
         $notModified = false;
         $lastModified = $this->getLastModified();
         $ifModifiedSince = $request->getHeader('If-Modified-Since');
-        
+
         // Check ETag if available
         $etag = $this->getEtag();
         if ($etag) {
@@ -2034,7 +2090,7 @@ class Response implements \JsonSerializable {
                 $notModified = in_array($etag, $etags) || in_array('*', $etags);
             }
         }
-        
+
         // Check Last-Modified if available
         if ($lastModified && $ifModifiedSince) {
             $time = strtotime($ifModifiedSince);
@@ -2042,98 +2098,112 @@ class Response implements \JsonSerializable {
                 $notModified = $notModified || $lastModified->getTimestamp() <= $time;
             }
         }
-        
+
         if ($notModified) {
             $this->setNotModified();
         }
-        
+
         return $notModified;
     }
-    
-    public function send() {
+
+    public function send()
+    {
+        $logFile = dirname(dirname(dirname(__DIR__))) . '/logs/debug_output.log';
+        file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::send() called\n", FILE_APPEND);
+
         try {
-            // Send cookies before any output
-            $this->sendCookies();
-            
             // Handle conditional GET requests
             if ($this->isNotModified($this->request ?? new Request())) {
+                file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::send() - 304 Not Modified\n", FILE_APPEND);
                 $this->setStatusCode(304);
                 $this->setContent('');
             }
-            
+
             // Send the content (which will also send headers)
             $this->sendContent();
-            
+
             // Mark the response as sent
             $this->sent = true;
-            
+
             // Flush output buffer if needed
             if (ob_get_level() > 0) {
+                file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::send() - Flushing output buffer (level " . ob_get_level() . ")\n", FILE_APPEND);
                 ob_flush();
                 flush();
+            } else {
+                file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::send() - No output buffer to flush\n", FILE_APPEND);
             }
-            
+
             return $this;
-            
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Clean any output that was already sent
             if (ob_get_level() > 0) {
                 ob_clean();
             }
-            
-            // Re-throw the exception with additional context
-            throw new \RuntimeException(
-                sprintf('Failed to send the response: %s', $e->getMessage()),
-                $e->getCode(),
-                $e
-            );
+
+            // Log the error instead of re-throwing
+            error_log(sprintf('Failed to send the response: %s', $e->getMessage()));
+
+            // If headers haven't been sent, we can try to output a generic error
+            if (!headers_sent()) {
+                if (php_sapi_name() !== 'cli') {
+                    http_response_code(500);
+                }
+                echo "Internal Server Error: Failed to send response.";
+            }
         }
     }
-    
+
     /**
      * Send the response content
      *
      * @return $this
      * @throws \RuntimeException If output buffering is not active when required
      */
-    public function sendContent() {
+    public function sendContent()
+    {
+        $logFile = dirname(dirname(dirname(__DIR__))) . '/logs/debug_output.log';
+        file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::sendContent() called\n", FILE_APPEND);
+
         // Send headers first
         $this->sendHeaders();
-        
+
+        // Send cookies after headers but before content
+        $this->sendCookies();
+
         // Handle streamed content
         if (is_callable($this->content)) {
+            file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::sendContent() - Callable content detected\n", FILE_APPEND);
             ob_start();
             try {
                 call_user_func($this->content);
             } catch (\Exception $e) {
                 ob_end_clean(); // Clean the buffer on error
-                // Rethrow as RuntimeException to maintain the method\'s contract
+                // Rethrow as RuntimeException to maintain the method's contract
                 throw new \RuntimeException('Error executing response callback: ' . $e->getMessage(), 0, $e);
             }
             $this->content = ob_get_clean(); // Capture the output
             return $this;
         }
-        
+
         // Get the content as string
         $content = (string) $this->content;
-        
-        // Only attempt compression for non-empty content
-        if ($content !== '' && $this->shouldCompress($content)) {
-            $this->compressContent($content);
+        file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::sendContent() - Content length: " . strlen($content) . "\n", FILE_APPEND);
+
+        if (strlen($content) > 100) {
+            file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Content snippet: " . substr($content, 0, 100) . "...\n", FILE_APPEND);
+        } else {
+            file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Content: " . $content . "\n", FILE_APPEND);
         }
-        
+
         // Output the content with error suppression to avoid issues with output handlers
         echo @$content;
-        
-        // Flush output buffers if any
-        // if (ob_get_level() > 0) {
-        //     ob_flush();
-        //     flush();
-        // }
-        
+
+        file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] Response::sendContent() - Echo executed\n", FILE_APPEND);
+
         return $this;
     }
-    
+
     /**
      * Sends HTTP headers.
      *
@@ -2143,61 +2213,47 @@ class Response implements \JsonSerializable {
      * @return $this
      * @throws \RuntimeException When headers cannot be sent
      */
-    public function sendHeaders() {
+    public function sendHeaders()
+    {
         // Headers have already been sent by the developer
         if (headers_sent($file, $line)) {
-            throw new \RuntimeException(sprintf(
-                'Headers already sent in %s on line %d',
-                $file,
-                $line
-            ));
+            // Log the error but don't throw exception to allow content to be sent
+            error_log(sprintf('Headers already sent in %s on line %d', $file, $line));
+            return $this;
         }
 
         // Only send headers if not in a CLI environment
         if (php_sapi_name() !== 'cli') {
             try {
                 // Status line
-                if (!@header(sprintf('HTTP/1.1 %s %s', $this->statusCode, $this->statusText), true, $this->statusCode)) {
-                    throw new \RuntimeException('Failed to send HTTP status line');
-                }
-                
+                $statusLine = sprintf('HTTP/1.1 %s %s', $this->statusCode, $this->statusText);
+                header($statusLine, true, $this->statusCode);
+
                 // Headers
                 foreach ($this->headers as $name => $values) {
+                    // Skip Set-Cookie headers as they are handled by sendCookies()
+                    if (strcasecmp($name, 'Set-Cookie') === 0) {
+                        continue;
+                    }
+
                     $replace = 0 === strcasecmp($name, 'Content-Type');
-                    
+
                     foreach ((array) $values as $value) {
-                        if (!@header($name . ': ' . $value, $replace, $this->statusCode)) {
-                            throw new \RuntimeException(sprintf('Failed to send header: %s', $name));
-                        }
+                        header($name . ': ' . $value, $replace, $this->statusCode);
                     }
                 }
-                
-                // Cookies (handled separately as they have different header syntax)
-                if (isset($this->headers['Set-Cookie'])) {
-                    foreach ((array) $this->headers['Set-Cookie'] as $cookie) {
-                        if (!@header('Set-Cookie: ' . $cookie, false, $this->statusCode)) {
-                            throw new \RuntimeException('Failed to send cookie header');
-                        }
-                    }
-                }
-                
-            } catch (\Exception $e) {
-                // Clean any headers that might have been sent
-                if (headers_sent()) {
-                    header_remove();
-                }
-                
-                throw new \RuntimeException(
-                    sprintf('Failed to send headers: %s', $e->getMessage()),
-                    $e->getCode(),
-                    $e
-                );
+
+                // Cookies are handled by sendCookies() called from sendContent()
+
+            } catch (\Throwable $e) {
+                // Log error but continue
+                error_log(sprintf('Failed to send headers: %s', $e->getMessage()));
             }
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Stream a file or other streamable resource
      *
@@ -2252,7 +2308,7 @@ class Response implements \JsonSerializable {
     {
         return static::file($file, $name, $headers);
     }
-    
+
     /**
      * Create a response with no content (status 204)
      *
@@ -2262,29 +2318,31 @@ class Response implements \JsonSerializable {
     {
         return new static('', 204);
     }
-    
-    
+
+
     /**
      * Add a MIME type to the known types
      *
      * @param string $mimeType The MIME type
      * @return void
      */
-    public static function addMimeType(string $extension, string $mimeType): void {
+    public static function addMimeType(string $extension, string $mimeType): void
+    {
         self::$mimeTypes[strtolower($extension)] = $mimeType;
     }
-    
+
     /**
      * Check if a string is ASCII
      *
      * @param string $string The string to check
      * @return bool
      */
-    protected static function isAscii(string $string): bool {
+    protected static function isAscii(string $string): bool
+    {
         return !preg_match('/[^\x00-\x7F]/', $string);
     }
-    
-    
+
+
     /**
      * Check if the response has been sent
      *
@@ -2294,7 +2352,7 @@ class Response implements \JsonSerializable {
     {
         return $this->sent;
     }
-    
+
     /**
      * Cleans or flushes output buffers up to the target level.
      *
@@ -2307,35 +2365,36 @@ class Response implements \JsonSerializable {
      * @return void
      * @throws \RuntimeException If an output buffer cannot be closed
      */
-    public static function closeOutputBuffers(int $targetLevel, bool $flush): void {
+    public static function closeOutputBuffers(int $targetLevel, bool $flush): void
+    {
         // Get the current output buffer status
         $status = @ob_get_status(true);
-        
+
         // If there are no active output buffers, nothing to do
         if ($status === false) {
             return;
         }
-        
+
         $level = count($status);
         $flags = PHP_OUTPUT_HANDLER_REMOVABLE | ($flush ? PHP_OUTPUT_HANDLER_FLUSHABLE : PHP_OUTPUT_HANDLER_CLEANABLE);
-        
+
         // Process each output buffer from the top down
         while ($level-- > $targetLevel) {
             // Skip if no buffer exists at this level
             if (!isset($status[$level])) {
                 continue;
             }
-            
+
             $buffer = $status[$level];
-            
+
             // Check if we can operate on this buffer
-            $canOperate = !isset($buffer['del']) 
+            $canOperate = !isset($buffer['del'])
                 ? (!isset($buffer['flags']) || ($buffer['flags'] & $flags) === $flags)
                 : $buffer['del'];
-                
+
             if ($canOperate) {
                 $success = $flush ? @ob_end_flush() : @ob_end_clean();
-                
+
                 if ($success === false) {
                     throw new \RuntimeException(sprintf(
                         'Failed to %s output buffer at level %d',

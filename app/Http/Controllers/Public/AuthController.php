@@ -308,7 +308,7 @@ class AuthController extends BaseController
 
             return false;
         } catch (Exception $e) {
-            error_log('Authentication error: ' . $e->getMessage());
+            logger()->error('Authentication error: ' . $e->getMessage());
             return false;
         }
     }
@@ -370,7 +370,7 @@ class AuthController extends BaseController
 
             return (int)($result['count'] ?? 0) > 0;
         } catch (Exception $e) {
-            error_log('Email check error: ' . $e->getMessage());
+            logger()->error('Email check error: ' . $e->getMessage());
             return false;
         }
     }
@@ -412,7 +412,7 @@ class AuthController extends BaseController
             ");
             $stmt->execute(['id' => $user_id]);
         } catch (Exception $e) {
-            error_log('Last login update error: ' . $e->getMessage());
+            logger()->error('Last login update error: ' . $e->getMessage());
         }
     }
 

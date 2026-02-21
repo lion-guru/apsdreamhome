@@ -39,8 +39,8 @@ class AuthMiddleware {
             $db = \App\Core\App::database();
             
             // Query users table (modern) instead of legacy user table
-            // Check both username and email for flexibility
-            $sql = "SELECT * FROM users WHERE username = :username OR email = :email";
+            // Check both name and email for flexibility
+            $sql = "SELECT * FROM users WHERE name = :username OR email = :email";
             $user = $db->fetch($sql, ['username' => $username, 'email' => $username]);
 
             if (!$user) {

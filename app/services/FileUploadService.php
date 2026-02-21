@@ -88,30 +88,25 @@ class FileUploadService {
     }
 
     private function virusScan($filePath): void {
-        // Basic virus scan using file command
-        $output = [];
-        $returnVar = 0;
-        exec("file \"$filePath\" 2>&1", $output, $returnVar);
-
-        if ($returnVar !== 0) {
-            unlink($filePath);
-            throw new Exception('File scan failed');
-        }
-
-        $fileInfo = implode(' ', $output);
-
-        // Check for suspicious patterns
-        $suspiciousPatterns = [
-            'executable',
-            'script',
-            'archive',
-            'ELF',
-            'PE32',
-            'MS-DOS executable'
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($filePath) ?: '';
+        $blacklist = [
+            'application/x-dosexec',
+            'application/x-msdownload',
+            'application/x-executable',
+            'application/x-sh',
+            'application/x-bat',
+            'application/x-cmd'
         ];
-
-        foreach ($suspiciousPatterns as $pattern) {
-            if (stripos($fileInfo, $pattern) !== false) {
+        if (in_array($mime, $blacklist, true)) {
+            unlink($filePath);
+            throw new Exception('Suspicious file detected');
+        }
+        $handle = fopen($filePath, 'rb');
+        if ($handle) {
+            $chunk = fread($handle, 512);
+            fclose($handle);
+            if ($chunk !== false && preg_match('/<\\?php/i', $chunk)) {
                 unlink($filePath);
                 throw new Exception('Suspicious file detected');
             }

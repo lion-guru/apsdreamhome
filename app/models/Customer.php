@@ -12,8 +12,8 @@ use PDO;
  */
 class Customer extends Model
 {
-    protected static string $table = 'users';
-    protected $primaryKey = 'id';
+    protected static $table = 'users';
+    protected static $primaryKey = 'id';
     protected $db;
 
     public function __construct(array $attributes = [])

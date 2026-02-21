@@ -146,7 +146,7 @@ class LandController extends AdminController
                 );
             } catch (\Exception $e) {
                 // Log error but don't fail the request
-                error_log("Failed to send land record notification: " . $e->getMessage());
+                logger()->error("Failed to send land record notification: " . $e->getMessage());
             }
 
             $this->setFlash('success', $this->mlSupport->translate('Land record added successfully.'));

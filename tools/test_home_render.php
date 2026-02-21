@@ -36,18 +36,24 @@ try {
     }
     echo "Session started.\n";
 
-    echo "Initializing PageController...\n";
-    $controller = new \App\Http\Controllers\Public\PageController();
+    echo "Initializing HomeController...\n";
+    // Need to mock the request and response for the controller if it expects them
+    // But let's try instantiating it directly first
+    $controller = new \App\Http\Controllers\HomeController();
 
     echo "Calling index()...\n";
-    // Capture output to avoid flooding terminal
+    // Capture output if echoed, or get return value
     ob_start();
-    $controller->index();
-    $output = ob_get_clean();
+    $returnValue = $controller->index();
+    $echoedOutput = ob_get_clean();
+
+    // If index returns a string (MVC pattern), use that. If it echoes (Legacy), use captured output.
+    $output = !empty($returnValue) ? $returnValue : $echoedOutput;
 
     echo "Render successful! Output length: " . strlen($output) . " bytes.\n";
+    echo "Output content:\n----------------\n" . $output . "\n----------------\n";
 
-    if (strpos($output, 'Your Journey to the') !== false) {
+    if (strpos($output, 'Find Your Perfect Dream Home') !== false) {
         echo "✅ Hero section found.\n";
     } else {
         echo "❌ Hero section NOT found.\n";

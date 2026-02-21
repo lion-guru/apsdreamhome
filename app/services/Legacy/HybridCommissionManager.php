@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * APS Dream Home - Hybrid Commission System
  * Dual Commission System: MLM + Traditional Local Market
@@ -12,11 +13,13 @@ namespace App\Services\Legacy;
  * - Multi-tier commission distribution
  */
 
-class HybridCommissionManager {
+class HybridCommissionManager
+{
     private $db;
     private $logger;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->createHybridTables();
@@ -25,7 +28,8 @@ class HybridCommissionManager {
     /**
      * Create hybrid commission system tables
      */
-    private function createHybridTables() {
+    private function createHybridTables()
+    {
         // Create traditional commission system table
         $sql = "CREATE TABLE IF NOT EXISTS traditional_commissions (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,7 +42,7 @@ class HybridCommissionManager {
             status ENUM('pending', 'approved', 'paid') DEFAULT 'pending',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (agent_id) REFERENCES user(uid) ON DELETE CASCADE,
+            FOREIGN KEY (agent_id) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE SET NULL
         )";
         $this->db->execute($sql);
@@ -55,7 +59,7 @@ class HybridCommissionManager {
             year INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (agent_id) REFERENCES user(uid) ON DELETE CASCADE,
+            FOREIGN KEY (agent_id) REFERENCES users(id) ON DELETE CASCADE,
             INDEX idx_region_agent (region, agent_id),
             INDEX idx_quarter_year (quarter, year)
         )";
@@ -71,15 +75,15 @@ class HybridCommissionManager {
             minimum_payout_threshold DECIMAL(10,2) DEFAULT 1000.00,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES user(uid) ON DELETE CASCADE
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )";
         $this->db->execute($sql);
 
         // Add commission preference to user table if not exists
         try {
-            $check_column = $this->db->fetch("SHOW COLUMNS FROM user LIKE 'commission_preference'");
+            $check_column = $this->db->fetch("SHOW COLUMNS FROM users LIKE 'commission_preference'");
             if (!$check_column) {
-                $sql = "ALTER TABLE user ADD COLUMN commission_preference ENUM('mlm', 'traditional', 'hybrid') DEFAULT 'mlm' AFTER commission_rate";
+                $sql = "ALTER TABLE users ADD COLUMN commission_preference ENUM('mlm', 'traditional', 'hybrid') DEFAULT 'mlm'";
                 $this->db->execute($sql);
             }
         } catch (\Exception $e) {
@@ -90,7 +94,8 @@ class HybridCommissionManager {
     /**
      * Calculate commission based on user preference
      */
-    public function calculateCommission($propertySale, $user) {
+    public function calculateCommission($propertySale, $user)
+    {
         $preference = $user['commission_preference'] ?? 'mlm';
 
         if ($preference === 'hybrid') {
@@ -119,7 +124,8 @@ class HybridCommissionManager {
     /**
      * Calculate MLM commission
      */
-    private function calculateMLMCommission($propertySale, $user) {
+    private function calculateMLMCommission($propertySale, $user)
+    {
         // Fallback MLM calculation (standard 7% or user-specific rate)
         $commissionRate = $user['commission_rate'] ?? 7.0;
         $amount = $propertySale['amount'] * ($commissionRate / 100);
@@ -136,13 +142,14 @@ class HybridCommissionManager {
     /**
      * Calculate Traditional commission
      */
-    private function calculateTraditionalCommission($propertySale, $user) {
+    private function calculateTraditionalCommission($propertySale, $user)
+    {
         $region = $user['preferred_region'] ?? 'Default';
         $baseRate = $this->getRegionalCommissionRate($region);
         $amount = $propertySale['amount'] * ($baseRate / 100);
 
         // Add performance bonus if applicable
-        $performanceBonus = $this->calculatePerformanceBonus($user['uid'], $region);
+        $performanceBonus = $this->calculatePerformanceBonus($user['id'], $region);
         $totalAmount = $amount + $performanceBonus;
 
         return [
@@ -160,7 +167,8 @@ class HybridCommissionManager {
     /**
      * Calculate single type commission
      */
-    private function calculateSingleCommission($propertySale, $user, $type) {
+    private function calculateSingleCommission($propertySale, $user, $type)
+    {
         if ($type === 'traditional') {
             return $this->calculateTraditionalCommission($propertySale, $user);
         } else {
@@ -171,7 +179,8 @@ class HybridCommissionManager {
     /**
      * Get regional commission rate
      */
-    private function getRegionalCommissionRate($region) {
+    private function getRegionalCommissionRate($region)
+    {
         $regionalRates = [
             'North' => 8.0,
             'South' => 7.5,
@@ -184,7 +193,8 @@ class HybridCommissionManager {
         return $regionalRates[$region] ?? $regionalRates['Default'];
     }
 
-    private function calculatePerformanceBonus($userId, $region) {
+    private function calculatePerformanceBonus($userId, $region)
+    {
         $currentQuarter = date('Y-m');
         $currentYear = date('Y');
 
@@ -208,7 +218,8 @@ class HybridCommissionManager {
     /**
      * Update regional performance
      */
-    public function updateRegionalPerformance($userId, $region, $saleAmount, $commissionAmount) {
+    public function updateRegionalPerformance($userId, $region, $saleAmount, $commissionAmount)
+    {
         $currentQuarter = "Q" . ceil(date('n') / 3);
         $currentYear = date('Y');
 
@@ -238,7 +249,8 @@ class HybridCommissionManager {
     /**
      * Update performance bonus based on updated sales
      */
-    private function updatePerformanceBonus($userId, $region, $quarter, $year) {
+    private function updatePerformanceBonus($userId, $region, $quarter, $year)
+    {
         $sql = "SELECT total_sales FROM regional_performance
                 WHERE agent_id = ? AND region = ? AND quarter = ? AND year = ?";
         $performance = $this->db->fetch($sql, [$userId, $region, $quarter, $year]);
@@ -262,7 +274,8 @@ class HybridCommissionManager {
     /**
      * Get unified dashboard data
      */
-    public function getUnifiedDashboard($userId) {
+    public function getUnifiedDashboard($userId)
+    {
         $user = $this->getUserData($userId);
         $preference = $user['commission_preference'] ?? 'mlm';
 
@@ -300,18 +313,20 @@ class HybridCommissionManager {
     /**
      * Get user data
      */
-    private function getUserData($userId) {
+    private function getUserData($userId)
+    {
         $sql = "SELECT u.*, cp.commission_preference, cp.preferred_region
-                FROM user u
-                LEFT JOIN commission_preferences cp ON u.uid = cp.user_id
-                WHERE u.uid = ?";
+                FROM users u
+                LEFT JOIN commission_preferences cp ON u.id = cp.user_id
+                WHERE u.id = ?";
         return $this->db->fetch($sql, [$userId]) ?? [];
     }
 
     /**
      * Get MLM analytics
      */
-    private function getMLMAnalytics($userId) {
+    private function getMLMAnalytics($userId)
+    {
         // Fallback MLM analytics using common mlm_commissions table
         $sql = "SELECT
                 COUNT(*) as total_commissions,
@@ -326,7 +341,8 @@ class HybridCommissionManager {
     /**
      * Get Traditional analytics
      */
-    private function getTraditionalAnalytics($userId) {
+    private function getTraditionalAnalytics($userId)
+    {
         $sql = "SELECT
                 COUNT(*) as total_commissions,
                 COALESCE(SUM(commission_amount), 0) as total_earnings,
@@ -341,7 +357,8 @@ class HybridCommissionManager {
     /**
      * Get regional analytics
      */
-    private function getRegionalAnalytics($userId) {
+    private function getRegionalAnalytics($userId)
+    {
         $sql = "SELECT
                 region,
                 COUNT(*) as total_sales,
@@ -359,7 +376,8 @@ class HybridCommissionManager {
     /**
      * Update user commission preference
      */
-    public function updateCommissionPreference($userId, $preference, $region = null) {
+    public function updateCommissionPreference($userId, $preference, $region = null)
+    {
         $sql = "INSERT INTO commission_preferences
                 (user_id, commission_preference, preferred_region)
                 VALUES (?, ?, ?)
@@ -371,7 +389,7 @@ class HybridCommissionManager {
             $this->db->execute($sql, [$userId, $preference, $region]);
 
             // Also update user table
-            $sql = "UPDATE user SET commission_preference = ? WHERE uid = ?";
+            $sql = "UPDATE users SET commission_preference = ? WHERE id = ?";
             $this->db->execute($sql, [$preference, $userId]);
 
             return ['success' => true, 'message' => 'Commission preference updated successfully'];
@@ -382,7 +400,8 @@ class HybridCommissionManager {
 }
 
 // Helper functions for integration
-function getHybridCommissionManager($db = null) {
+function getHybridCommissionManager($db = null)
+{
     global $hybridCommissionManager;
     if (!isset($hybridCommissionManager)) {
         $hybridCommissionManager = new HybridCommissionManager($db);
@@ -390,13 +409,14 @@ function getHybridCommissionManager($db = null) {
     return $hybridCommissionManager;
 }
 
-function calculateHybridCommission($propertySale, $user) {
+function calculateHybridCommission($propertySale, $user)
+{
     $manager = getHybridCommissionManager();
     return $manager->calculateCommission($propertySale, $user);
 }
 
-function getUnifiedDashboard($userId) {
+function getUnifiedDashboard($userId)
+{
     $manager = getHybridCommissionManager();
     return $manager->getUnifiedDashboard($userId);
 }
-?>

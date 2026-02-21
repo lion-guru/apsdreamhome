@@ -245,6 +245,7 @@ class BaseController extends CoreController
             return $output;
         }
 
+        // Fallback implementation for when session/flash bag is not available
         extract($data, EXTR_SKIP);
 
         $basePath = rtrim($this->getViewsBasePath(), '/\\') . '/';
@@ -261,11 +262,13 @@ class BaseController extends CoreController
         if ($layout) {
             $layoutPath = $basePath . ltrim(str_replace('\\', '/', $layout), '/') . '.php';
             if (file_exists($layoutPath)) {
-                // If using layout, capture the layout output too
+                // Pass content to layout - layout expects $content variable
+                $data['content'] = $content;
+                extract($data, EXTR_SKIP);
                 ob_start();
                 include $layoutPath;
                 $output = ob_get_clean();
-                
+
                 if ($echo) {
                     echo $output;
                 }
@@ -511,7 +514,7 @@ class BaseController extends CoreController
                 ]);
             }
         } catch (Exception $e) {
-            error_log('Activity logging failed: ' . $e->getMessage());
+            logger()->error('Activity logging failed: ' . $e->getMessage());
         }
     }
 

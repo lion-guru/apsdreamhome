@@ -225,7 +225,7 @@ class PerformanceProfiler {
     public function demonstrateProfiler() {
         // Simulate some operations
         $this->beginOperation('database_query', [
-            'query' => 'SELECT * FROM user'
+            'query' => 'SELECT * FROM users'
         ]);
         usleep(100000);  // Simulate 100ms delay
         $this->endOperation('database_query');

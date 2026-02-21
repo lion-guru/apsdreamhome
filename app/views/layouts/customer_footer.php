@@ -7,6 +7,8 @@
 
     <!-- Custom Customer JS -->
     <script>
+        const BASE_URL = '<?= BASE_URL ?>';
+
         // Common functions for customer panel
 
         // Format currency
@@ -117,7 +119,7 @@
 
             // Auto-save calculation if customer is logged in
             <?php if (isset($_SESSION['customer_id'])): ?>
-                $.post('/customer/calculate-emi', {
+                $.post(BASE_URL + 'customer/calculate-emi', {
                     loan_amount: loanAmount,
                     interest_rate: interestRate,
                     loan_tenure: loanTenure,
@@ -131,14 +133,14 @@
         // Property search with filters
         function searchProperties() {
             var formData = $('#propertySearchForm').serialize();
-            $.get('/customer/properties?' + formData, function(data) {
+            $.get(BASE_URL + 'customer/properties?' + formData, function(data) {
                 $('#searchResults').html(data);
             });
         }
 
         // Add to favorites
         function addToFavorites(propertyId) {
-            $.post('/customer/toggle-favorite/' + propertyId, function(response) {
+            $.post(BASE_URL + 'customer/toggle-favorite/' + propertyId, function(response) {
                 if (response.success) {
                     location.reload();
                 } else {
@@ -157,7 +159,7 @@
                 return;
             }
 
-            $.post('/customer/submit-review/' + propertyId, {
+            $.post(BASE_URL + 'customer/submit-review/' + propertyId, {
                 rating: rating,
                 review_text: reviewText,
                 anonymous: $('#review_anonymous').is(':checked') ? 1 : 0

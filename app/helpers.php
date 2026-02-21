@@ -78,7 +78,7 @@ if (!function_exists('config')) {
     function config($key = null)
     {
         if (is_null($key)) {
-            return \App\Core\App::getInstance();
+            return \App\Core\App::getInstance()->config();
         }
         return \App\Core\App::getInstance()->config($key);
     }
@@ -98,77 +98,45 @@ if (!function_exists('storage_path')) {
     }
 }
 
-if (!function_exists('database_path')) {
-    function database_path($path = '')
+if (!function_exists('logger')) {
+    /**
+     * Get the logger instance or log a message
+     *
+     * @param string|null $message
+     * @param array $context
+     * @return \App\Services\SystemLogger|void
+     */
+    function logger($message = null, array $context = [])
     {
-        return dirname(__DIR__) . '/database/' . $path;
+        $logger = \App\Core\App::getInstance()->logger();
+
+        if (is_null($message)) {
+            return $logger;
+        }
+
+        $logger->info($message, $context);
     }
 }
 
 if (!function_exists('str_slug')) {
-    function str_slug($str, $separator = '-')
-    {
-        // Simple slug implementation if App\Helpers\Helpers doesn't exist or isn't loaded
-        $str = mb_strtolower($str, 'UTF-8');
-        $str = preg_replace('/[^\p{L}\p{N}]+/u', $separator, $str);
-        $str = trim($str, $separator);
-        return $str;
-    }
-}
-
-if (!function_exists('view')) {
-    function view($name, $data = [])
-    {
-        // Try to resolve View class from Core or appropriate namespace
-        if (class_exists('\App\Core\View\View')) {
-            return (new \App\Core\View\View())->render($name, $data);
-        } elseif (class_exists('\App\Core\View')) {
-            return (new \App\Core\View())->render($name, $data);
-        }
-        // Fallback or throw error if needed, but for now safe fail
-        return '';
-    }
-}
-
-if (!function_exists('getCsrfField')) {
     /**
-     * Generate CSRF field
-     * 
+     * Generate a URL friendly "slug" from a given string.
+     *
+     * @param  string  $title
+     * @param  string  $separator
      * @return string
      */
-    function getCsrfField()
+    function str_slug($title, $separator = '-')
     {
-        $token = $_SESSION['csrf_token'] ?? '';
-        return '<input type="hidden" name="csrf_token" value="' . h($token) . '">';
-    }
-}
-
-if (!function_exists('csrf_field')) {
-    /**
-     * Generate CSRF field (Alias for getCsrfField)
-     * 
-     * @return string
-     */
-    function csrf_field()
-    {
-        return getCsrfField();
-    }
-}
-
-if (!function_exists('get_flash')) {
-    /**
-     * Get flash message from session
-     * 
-     * @param string $key
-     * @return string|null
-     */
-    function get_flash($key)
-    {
-        if (isset($_SESSION[$key])) {
-            $message = $_SESSION[$key];
-            unset($_SESSION[$key]);
-            return $message;
-        }
-        return null;
+        // Convert all dashes/underscores into separator
+        $flip = $separator == '-' ? '_' : '-';
+        $title = preg_replace('![' . preg_quote($flip) . ']+!u', $separator, $title);
+        // Replace @ with the separator
+        $title = str_replace('@', $separator . 'at' . $separator, $title);
+        // Remove all characters that are not the separator, letters, numbers, or whitespace
+        $title = preg_replace('![^' . preg_quote($separator) . '\pL\pN\s]+!u', '', mb_strtolower($title));
+        // Replace all separator characters and whitespace by a single separator
+        $title = preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $title);
+        return trim($title, $separator);
     }
 }

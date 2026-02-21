@@ -194,7 +194,7 @@ class BookingController extends AdminController
             );
         } catch (Exception $e) {
             // Log error but don't stop execution
-            error_log("Notification Error: " . $e->getMessage());
+            logger()->error("Notification Error: " . $e->getMessage());
         }
     }
 }

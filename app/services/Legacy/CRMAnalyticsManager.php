@@ -1,16 +1,19 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * CRM Analytics and Reporting System
  * Advanced analytics and reporting for CRM data
  */
 
-class CRMAnalyticsManager {
+class CRMAnalyticsManager
+{
     private $db;
     private $logger;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
     }
@@ -18,7 +21,8 @@ class CRMAnalyticsManager {
     /**
      * Get comprehensive CRM analytics
      */
-    public function getComprehensiveAnalytics($filters = []) {
+    public function getComprehensiveAnalytics($filters = [])
+    {
         $analytics = [];
 
         // Lead Analytics
@@ -45,7 +49,8 @@ class CRMAnalyticsManager {
     /**
      * Get lead analytics
      */
-    private function getLeadAnalytics($filters = []) {
+    private function getLeadAnalytics($filters = [])
+    {
         $analytics = [];
 
         // Lead conversion funnel
@@ -118,7 +123,8 @@ class CRMAnalyticsManager {
     /**
      * Get sales analytics
      */
-    private function getSalesAnalytics($filters = []) {
+    private function getSalesAnalytics($filters = [])
+    {
         $analytics = [];
 
         // Sales pipeline analysis
@@ -136,14 +142,14 @@ class CRMAnalyticsManager {
         $analytics['pipeline_analysis'] = $this->db->fetchAll($sql);
 
         // Sales performance by user
-        $sql = "SELECT u.uname as user_name,
+        $sql = "SELECT u.name as user_name,
                        COUNT(o.id) as opportunity_count,
                        SUM(CASE WHEN o.stage = 'won' OR o.stage = 'closed_won' THEN 1 ELSE 0 END) as won_count,
                        SUM(o.expected_value) as total_value,
                        AVG(o.probability_percentage) as avg_probability
-                FROM user u
-                LEFT JOIN opportunities o ON u.uid = o.assigned_to
-                GROUP BY u.uid, u.uname
+                FROM users u
+                LEFT JOIN opportunities o ON u.id = o.assigned_to
+                GROUP BY u.id, u.name
                 ORDER BY won_count DESC";
 
         $results = $this->db->fetchAll($sql);
@@ -195,7 +201,8 @@ class CRMAnalyticsManager {
     /**
      * Get customer analytics
      */
-    private function getCustomerAnalytics($filters = []) {
+    private function getCustomerAnalytics($filters = [])
+    {
         $analytics = [];
 
         // Customer acquisition
@@ -268,7 +275,8 @@ class CRMAnalyticsManager {
     /**
      * Get campaign analytics
      */
-    private function getCampaignAnalytics($filters = []) {
+    private function getCampaignAnalytics($filters = [])
+    {
         $analytics = [];
 
         // Campaign performance
@@ -331,22 +339,23 @@ class CRMAnalyticsManager {
     /**
      * Get performance analytics
      */
-    private function getPerformanceAnalytics($filters = []) {
+    private function getPerformanceAnalytics($filters = [])
+    {
         $analytics = [];
 
         // User performance
         $sql = "SELECT
-            u.uname as user_name,
-            u.utype as role,
+            u.name as user_name,
+            u.role as role,
             COUNT(DISTINCT l.id) as leads_handled,
             COUNT(DISTINCT o.id) as opportunities_created,
             COUNT(DISTINCT CASE WHEN o.status = 'won' THEN o.id END) as deals_won,
             SUM(CASE WHEN o.status = 'won' THEN o.expected_value END) as revenue_generated,
             AVG(l.lead_score) as avg_lead_quality
-            FROM user u
-            LEFT JOIN leads l ON u.uid = l.assigned_to
-            LEFT JOIN opportunities o ON u.uid = o.assigned_to
-            GROUP BY u.uid, u.uname, u.utype
+            FROM users u
+            LEFT JOIN leads l ON u.id = l.assigned_to
+            LEFT JOIN opportunities o ON u.id = o.assigned_to
+            GROUP BY u.id, u.name, u.role
             ORDER BY revenue_generated DESC";
 
         $results = $this->db->fetchAll($sql);
@@ -359,16 +368,16 @@ class CRMAnalyticsManager {
 
         // Team performance
         $sql = "SELECT
-            u.utype as team_name,
-            COUNT(DISTINCT u.uid) as team_size,
+            u.role as team_name,
+            COUNT(DISTINCT u.id) as team_size,
             COUNT(DISTINCT l.id) as total_leads,
             COUNT(DISTINCT o.id) as total_opportunities,
             COUNT(DISTINCT CASE WHEN o.status = 'won' THEN o.id END) as total_wins,
             SUM(CASE WHEN o.status = 'won' THEN o.expected_value END) as total_revenue
-            FROM user u
-            LEFT JOIN leads l ON u.uid = l.assigned_to
-            LEFT JOIN opportunities o ON u.uid = o.assigned_to
-            GROUP BY u.utype";
+            FROM users u
+            LEFT JOIN leads l ON u.id = l.assigned_to
+            LEFT JOIN opportunities o ON u.id = o.assigned_to
+            GROUP BY u.role";
 
         $results = $this->db->fetchAll($sql);
         $analytics['team_performance'] = [];
@@ -381,13 +390,13 @@ class CRMAnalyticsManager {
 
         // Response time analysis
         $sql = "SELECT
-            u.uname as user_name,
+            u.name as user_name,
             AVG(TIMESTAMPDIFF(HOUR, la.created_at, l.updated_at)) as avg_response_time_hours,
             COUNT(la.id) as activities_count
-            FROM user u
-            LEFT JOIN lead_activities la ON u.uid = la.created_by
+            FROM users u
+            LEFT JOIN lead_activities la ON u.id = la.created_by
             LEFT JOIN leads l ON la.lead_id = l.id
-            GROUP BY u.uid, u.uname
+            GROUP BY u.id, u.name
             ORDER BY avg_response_time_hours";
 
         $analytics['response_time_analysis'] = $this->db->fetchAll($sql);
@@ -398,7 +407,8 @@ class CRMAnalyticsManager {
     /**
      * Get trend analysis
      */
-    private function getTrendAnalysis($filters = []) {
+    private function getTrendAnalysis($filters = [])
+    {
         $analytics = [];
 
         // Lead generation trends
@@ -478,7 +488,8 @@ class CRMAnalyticsManager {
     /**
      * Generate custom report
      */
-    public function generateCustomReport($reportType, $filters = []) {
+    public function generateCustomReport($reportType, $filters = [])
+    {
         switch ($reportType) {
             case 'lead_report':
                 return $this->generateLeadReport($filters);
@@ -498,7 +509,8 @@ class CRMAnalyticsManager {
     /**
      * Generate lead report
      */
-    private function generateLeadReport($filters = []) {
+    private function generateLeadReport($filters = [])
+    {
         $report = [
             'title' => 'Lead Generation Report',
             'generated_at' => date('Y-m-d H:i:s'),
@@ -543,7 +555,8 @@ class CRMAnalyticsManager {
     /**
      * Generate sales report
      */
-    private function generateSalesReport($filters = []) {
+    private function generateSalesReport($filters = [])
+    {
         $report = [
             'title' => 'Sales Performance Report',
             'generated_at' => date('Y-m-d H:i:s'),
@@ -571,10 +584,10 @@ class CRMAnalyticsManager {
         $report['pipeline_stages'] = $this->db->fetchAll($sql);
 
         // Sales by user
-        $sql = "SELECT u.uname as user_name, COUNT(o.id) as opportunities, SUM(CASE WHEN o.status = 'won' THEN 1 ELSE 0 END) as won_deals
-                FROM user u
-                LEFT JOIN opportunities o ON u.uid = o.assigned_to
-                GROUP BY u.uid, u.uname
+        $sql = "SELECT u.name as user_name, COUNT(o.id) as opportunities, SUM(CASE WHEN o.status = 'won' THEN 1 ELSE 0 END) as won_deals
+                FROM users u
+                LEFT JOIN opportunities o ON u.id = o.assigned_to
+                GROUP BY u.id, u.name
                 ORDER BY won_deals DESC
                 LIMIT 5";
 
@@ -586,7 +599,8 @@ class CRMAnalyticsManager {
     /**
      * Generate customer report
      */
-    private function generateCustomerReport($filters = []) {
+    private function generateCustomerReport($filters = [])
+    {
         $report = [
             'title' => 'Customer Analysis Report',
             'generated_at' => date('Y-m-d H:i:s'),
@@ -624,7 +638,8 @@ class CRMAnalyticsManager {
     /**
      * Generate campaign report
      */
-    private function generateCampaignReport($filters = []) {
+    private function generateCampaignReport($filters = [])
+    {
         $report = [
             'title' => 'Campaign Performance Report',
             'generated_at' => date('Y-m-d H:i:s'),
@@ -667,7 +682,8 @@ class CRMAnalyticsManager {
     /**
      * Generate performance report
      */
-    private function generatePerformanceReport($filters = []) {
+    private function generatePerformanceReport($filters = [])
+    {
         $report = [
             'title' => 'Team Performance Report',
             'generated_at' => date('Y-m-d H:i:s'),
@@ -685,14 +701,14 @@ class CRMAnalyticsManager {
 
         // User comparison
         $sql = "SELECT
-            u.uname as user_name,
-            u.utype as role,
+            u.name as user_name,
+            u.role as role,
             COUNT(o.id) as opportunities,
             SUM(CASE WHEN o.status = 'won' THEN 1 ELSE 0 END) as deals_won,
             SUM(CASE WHEN o.status = 'won' THEN o.expected_value END) as revenue_generated
-            FROM user u
-            LEFT JOIN opportunities o ON u.uid = o.assigned_to
-            GROUP BY u.uid, u.uname, u.utype";
+            FROM users u
+            LEFT JOIN opportunities o ON u.id = o.assigned_to
+            GROUP BY u.id, u.name, u.role";
 
         $results = $this->db->fetchAll($sql);
         $report['user_performance'] = [];
@@ -704,13 +720,13 @@ class CRMAnalyticsManager {
 
         // Team comparison
         $sql = "SELECT
-            u.utype as team_name,
+            u.role as team_name,
             COUNT(o.id) as opportunities,
             SUM(CASE WHEN o.status = 'won' THEN 1 ELSE 0 END) as total_wins,
             SUM(CASE WHEN o.status = 'won' THEN o.expected_value END) as total_revenue
-            FROM user u
-            LEFT JOIN opportunities o ON u.uid = o.assigned_to
-            GROUP BY u.utype";
+            FROM users u
+            LEFT JOIN opportunities o ON u.id = o.assigned_to
+            GROUP BY u.role";
 
         $report['team_performance'] = $this->db->fetchAll($sql);
 
@@ -720,7 +736,8 @@ class CRMAnalyticsManager {
     /**
      * Export data to CSV
      */
-    public function exportToCSV($data, $filename) {
+    public function exportToCSV($data, $filename)
+    {
         $filepath = '/tmp/' . $filename . '.csv';
 
         $file = fopen($filepath, 'w');
@@ -743,7 +760,8 @@ class CRMAnalyticsManager {
     /**
      * Get dashboard metrics
      */
-    public function getDashboardMetrics() {
+    public function getDashboardMetrics()
+    {
         return [
             'total_leads' => $this->getTotalCount('leads'),
             'total_opportunities' => $this->getTotalCount('opportunities'),
@@ -758,7 +776,8 @@ class CRMAnalyticsManager {
     /**
      * Get total count for a table
      */
-    public function getTotalCount($tableName) {
+    public function getTotalCount($tableName)
+    {
         $sql = "SELECT COUNT(*) as count FROM $tableName";
         $data = $this->db->fetch($sql);
         return $data['count'] ?? 0;
@@ -767,7 +786,8 @@ class CRMAnalyticsManager {
     /**
      * Get total revenue
      */
-    public function getTotalRevenue() {
+    public function getTotalRevenue()
+    {
         $sql = "SELECT SUM(expected_value) as revenue FROM opportunities WHERE status = 'won'";
         $data = $this->db->fetch($sql);
         return $data['revenue'] ?? 0;
@@ -776,7 +796,8 @@ class CRMAnalyticsManager {
     /**
      * Get conversion rate
      */
-    public function getConversionRate() {
+    public function getConversionRate()
+    {
         $sql = "SELECT
             COUNT(*) as total_leads,
             SUM(CASE WHEN status = 'won' OR status = 'converted' THEN 1 ELSE 0 END) as converted_leads
@@ -790,7 +811,8 @@ class CRMAnalyticsManager {
     /**
      * Get average deal size
      */
-    public function getAverageDealSize() {
+    public function getAverageDealSize()
+    {
         $sql = "SELECT AVG(expected_value) as avg_deal FROM opportunities WHERE status = 'won'";
         $data = $this->db->fetch($sql);
         return $data['avg_deal'] ?? 0;
@@ -799,7 +821,8 @@ class CRMAnalyticsManager {
     /**
      * Get average sales cycle
      */
-    public function getAverageSalesCycle() {
+    public function getAverageSalesCycle()
+    {
         $sql = "SELECT AVG(DATEDIFF(updated_at, created_at)) as avg_cycle
                 FROM opportunities WHERE status = 'won'";
         $data = $this->db->fetch($sql);
@@ -809,10 +832,10 @@ class CRMAnalyticsManager {
     /**
      * Get active campaigns count
      */
-    public function getActiveCampaignsCount() {
+    public function getActiveCampaignsCount()
+    {
         $sql = "SELECT COUNT(*) as count FROM campaigns WHERE status = 'active'";
         $data = $this->db->fetch($sql);
         return $data['count'] ?? 0;
     }
 }
-?>

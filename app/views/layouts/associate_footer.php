@@ -12,6 +12,8 @@
 
     <!-- Custom Associate JS -->
     <script>
+        const BASE_URL = '<?= BASE_URL ?>';
+        
         // Common functions for associate panel
 
         // Format currency

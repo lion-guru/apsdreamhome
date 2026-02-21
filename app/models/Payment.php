@@ -13,8 +13,8 @@ use Exception;
  */
 class Payment extends Model
 {
-    protected static string $table = 'payments';
-    protected $primaryKey = 'id';
+    protected static $table = 'payments';
+    protected static $primaryKey = 'id';
 
     /**
      * Get dashboard statistics for accounting

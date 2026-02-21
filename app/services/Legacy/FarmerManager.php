@@ -1,16 +1,19 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Farmer/Kisan Management System
  * Complete management system for farmers and agricultural land relationships
  */
 
-class FarmerManager {
+class FarmerManager
+{
     private $db;
     private $logger;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->createFarmerTables();
@@ -19,8 +22,9 @@ class FarmerManager {
     /**
      * Create farmer management tables
      */
-    private function createFarmerTables() {
-        $logError = function($message, $error) {
+    private function createFarmerTables()
+    {
+        $logError = function ($message, $error) {
             $errorMsg = "Error: $message - " . $error;
             if (PHP_SAPI === 'cli') {
                 echo $errorMsg . "\n";
@@ -74,7 +78,7 @@ class FarmerManager {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->db->query($sql);
@@ -134,7 +138,7 @@ class FarmerManager {
             FOREIGN KEY (farmer_id) REFERENCES farmer_profiles(id) ON DELETE CASCADE,
             FOREIGN KEY (land_acquisition_id) REFERENCES land_acquisitions(id) ON DELETE SET NULL,
             FOREIGN KEY (commission_id) REFERENCES commission_tracking(id) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->db->query($sql);
@@ -163,7 +167,7 @@ class FarmerManager {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (farmer_id) REFERENCES farmer_profiles(id) ON DELETE CASCADE,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->db->query($sql);
@@ -187,8 +191,8 @@ class FarmerManager {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (farmer_id) REFERENCES farmer_profiles(id) ON DELETE CASCADE,
-            FOREIGN KEY (assigned_to) REFERENCES user(uid) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->db->query($sql);
@@ -200,7 +204,8 @@ class FarmerManager {
     /**
      * Insert sample farmer data
      */
-    private function insertSampleFarmerData() {
+    private function insertSampleFarmerData()
+    {
         $checkSql = "SELECT COUNT(*) as count FROM farmer_profiles";
         $row = $this->db->fetch($checkSql);
 
@@ -280,7 +285,8 @@ class FarmerManager {
         }
     }
 
-    public function addFarmer($data) {
+    public function addFarmer($data)
+    {
         $sql = "INSERT INTO farmer_profiles (
             farmer_number, full_name, father_name, phone, alternate_phone,
             email, address, village, district, state, pincode,
@@ -289,32 +295,45 @@ class FarmerManager {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
-            $data['farmer_number'], $data['full_name'], $data['father_name'],
-            $data['phone'], $data['alternate_phone'] ?? null,
-            $data['email'] ?? null, $data['address'], $data['village'],
-            $data['district'], $data['state'], $data['pincode'],
-            $data['aadhar_number'], $data['pan_number'] ?? null,
-            $data['bank_account_number'], $data['bank_name'],
-            $data['ifsc_code'], $data['total_land_holding'] ?? 0,
-            $data['associate_id'] ?? null, $data['created_by']
+            $data['farmer_number'],
+            $data['full_name'],
+            $data['father_name'],
+            $data['phone'],
+            $data['alternate_phone'] ?? null,
+            $data['email'] ?? null,
+            $data['address'],
+            $data['village'],
+            $data['district'],
+            $data['state'],
+            $data['pincode'],
+            $data['aadhar_number'],
+            $data['pan_number'] ?? null,
+            $data['bank_account_number'],
+            $data['bank_name'],
+            $data['ifsc_code'],
+            $data['total_land_holding'] ?? 0,
+            $data['associate_id'] ?? null,
+            $data['created_by']
         ];
 
         $this->db->execute($sql, $params);
         return $this->db->lastInsertId();
     }
 
-    public function getAllFarmers($status = 'active') {
+    public function getAllFarmers($status = 'active')
+    {
         $sql = "SELECT fp.*, ua.name as associate_name
                 FROM farmer_profiles fp
                 LEFT JOIN associates a ON fp.associate_id = a.id
-                LEFT JOIN user ua ON a.user_id = ua.uid
+                LEFT JOIN users ua ON a.user_id = ua.id
                 WHERE fp.status = ?
                 ORDER BY fp.created_at DESC";
 
         return $this->db->fetchAll($sql, [$status]);
     }
 
-    public function updateFarmer($id, $data) {
+    public function updateFarmer($id, $data)
+    {
         $fields = [];
         $params = [];
 
@@ -332,38 +351,44 @@ class FarmerManager {
         return true;
     }
 
-    public function getFarmer($id) {
+    public function getFarmer($id)
+    {
         $sql = "SELECT fp.*, ua.name as associate_name, u.name as created_by_name
                 FROM farmer_profiles fp
                 LEFT JOIN associates a ON fp.associate_id = a.id
-                LEFT JOIN user ua ON a.user_id = ua.uid
-                LEFT JOIN user u ON fp.created_by = u.uid
+                LEFT JOIN users ua ON a.user_id = ua.id
+                LEFT JOIN users u ON fp.created_by = u.id
                 WHERE fp.id = ?";
 
         return $this->db->fetch($sql, [$id]);
     }
 
-    public function getFarmerLandHoldings($farmerId) {
+    public function getFarmerLandHoldings($farmerId)
+    {
         $sql = "SELECT * FROM farmer_land_holdings WHERE farmer_id = ? ORDER BY created_at DESC";
         return $this->db->fetchAll($sql, [$farmerId]);
     }
 
-    public function getFarmerTransactions($farmerId) {
+    public function getFarmerTransactions($farmerId)
+    {
         $sql = "SELECT * FROM farmer_transactions WHERE farmer_id = ? ORDER BY transaction_date DESC";
         return $this->db->fetchAll($sql, [$farmerId]);
     }
 
-    public function getFarmerLoans($farmerId) {
+    public function getFarmerLoans($farmerId)
+    {
         $sql = "SELECT * FROM farmer_loans WHERE farmer_id = ? ORDER BY sanction_date DESC";
         return $this->db->fetchAll($sql, [$farmerId]);
     }
 
-    public function getFarmerSupportRequests($farmerId) {
+    public function getFarmerSupportRequests($farmerId)
+    {
         $sql = "SELECT * FROM farmer_support_requests WHERE farmer_id = ? ORDER BY created_at DESC";
         return $this->db->fetchAll($sql, [$farmerId]);
     }
 
-    public function addLandHolding($data) {
+    public function addLandHolding($data)
+    {
         $sql = "INSERT INTO farmer_land_holdings (
             farmer_id, khasra_number, land_area, land_area_unit,
             land_type, location, village, district, state,
@@ -371,17 +396,25 @@ class FarmerManager {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
-            $data['farmer_id'], $data['khasra_number'], $data['land_area'],
-            $data['land_area_unit'], $data['land_type'], $data['location'],
-            $data['village'], $data['district'], $data['state'],
-            $data['land_value'], $data['acquisition_status'] ?? 'not_acquired'
+            $data['farmer_id'],
+            $data['khasra_number'],
+            $data['land_area'],
+            $data['land_area_unit'],
+            $data['land_type'],
+            $data['location'],
+            $data['village'],
+            $data['district'],
+            $data['state'],
+            $data['land_value'],
+            $data['acquisition_status'] ?? 'not_acquired'
         ];
 
         $this->db->execute($sql, $params);
         return $this->db->lastInsertId();
     }
 
-    public function updateAcquisitionStatus($holdingId, $status, $amount = null) {
+    public function updateAcquisitionStatus($holdingId, $status, $amount = null)
+    {
         if ($amount !== null) {
             $sql = "UPDATE farmer_land_holdings SET acquisition_status = ?, acquisition_amount = ? WHERE id = ?";
             $this->db->execute($sql, [$status, $amount, $holdingId]);
@@ -395,7 +428,8 @@ class FarmerManager {
     /**
      * Update farmer's total land holding
      */
-    private function updateFarmerTotalLand($farmerId) {
+    private function updateFarmerTotalLand($farmerId)
+    {
         $sql = "UPDATE farmer_profiles SET total_land_holding = (
             SELECT SUM(land_area) FROM farmer_land_holdings WHERE farmer_id = ?
         ) WHERE id = ?";
@@ -408,7 +442,8 @@ class FarmerManager {
         }
     }
 
-    public function addTransaction($data) {
+    public function addTransaction($data)
+    {
         $sql = "INSERT INTO farmer_transactions (
             farmer_id, transaction_type, transaction_number,
             amount, transaction_date, payment_method,
@@ -416,9 +451,14 @@ class FarmerManager {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         $params = [
-            $data['farmer_id'], $data['transaction_type'], $data['transaction_number'],
-            $data['amount'], $data['transaction_date'], $data['payment_method'],
-            $data['description'] ?? null, $data['created_by']
+            $data['farmer_id'],
+            $data['transaction_type'],
+            $data['transaction_number'],
+            $data['amount'],
+            $data['transaction_date'],
+            $data['payment_method'],
+            $data['description'] ?? null,
+            $data['created_by']
         ];
 
         $this->db->execute($sql, $params);
@@ -428,7 +468,8 @@ class FarmerManager {
     /**
      * Update farmer payment history
      */
-    private function updateFarmerPaymentHistory($farmerId, $transaction) {
+    private function updateFarmerPaymentHistory($farmerId, $transaction)
+    {
         // Get current payment history
         $sql = "SELECT payment_history FROM farmer_profiles WHERE id = ?";
         try {
@@ -461,7 +502,8 @@ class FarmerManager {
     /**
      * Create support request for farmer
      */
-    public function createSupportRequest($data) {
+    public function createSupportRequest($data)
+    {
         $sql = "INSERT INTO farmer_support_requests (
             farmer_id, request_number, request_type, priority, subject, description,
             status, assigned_to, created_by
@@ -499,7 +541,8 @@ class FarmerManager {
     /**
      * Get farmer dashboard data
      */
-    public function getFarmerDashboard($farmerId) {
+    public function getFarmerDashboard($farmerId)
+    {
         $dashboard = [];
 
         try {
@@ -537,7 +580,6 @@ class FarmerManager {
                 $row['repayment_schedule'] = json_decode($row['repayment_schedule'] ?? '[]', true);
             }
             $dashboard['active_loans'] = $activeLoans;
-
         } catch (Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error getting farmer dashboard: " . $e->getMessage(), 'error', 'farmer');
@@ -547,7 +589,8 @@ class FarmerManager {
         return $dashboard;
     }
 
-    public function getFarmerStats() {
+    public function getFarmerStats()
+    {
         $stats = [
             'total_farmers' => 0,
             'active_farmers' => 0,
@@ -578,4 +621,3 @@ class FarmerManager {
         return $stats;
     }
 }
-?>

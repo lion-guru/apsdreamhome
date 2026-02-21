@@ -1,19 +1,22 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Property Management System
  * Complete CRUD operations for properties
  */
 
-class PropertyManager {
+class PropertyManager
+{
     private $db;
     private $logger;
     private $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     private $maxFileSize = 5 * 1024 * 1024; // 5MB
     private $uploadPath = '/uploads/properties/';
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
 
@@ -24,14 +27,15 @@ class PropertyManager {
     /**
      * Get full property details by ID
      */
-    public function getPropertyDetails($pid) {
+    public function getPropertyDetails($pid)
+    {
         $sql = "SELECT p.*, pt.type as ptype_name, c.cname as cityname,
                        u.name as aname, u.phone as aphone, u.email as aemail, u.profile_image as aimage
-                FROM property p
-                LEFT JOIN property_type pt ON p.type = pt.id
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
                 LEFT JOIN city c ON p.city = c.cid
-                LEFT JOIN users u ON p.user_id = u.id
-                WHERE p.pid = ?";
+                LEFT JOIN users u ON p.agent_id = u.id
+                WHERE p.id = ?";
 
         $property = $this->db->fetch($sql, [$pid]);
 
@@ -45,20 +49,18 @@ class PropertyManager {
     /**
      * Get property images
      */
-    public function getPropertyImages($pid) {
-        // Handle both $pid as property ID (integer) or potentially other identifiers
-        // Use property_id or pid based on table structure
-        $sql = "SELECT * FROM property_images WHERE pid = ? OR property_id = ? ORDER BY is_primary DESC, sort_order ASC";
+    public function getPropertyImages($pid)
+    {
+        $sql = "SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC";
         try {
-            return $this->db->fetchAll($sql, [$pid, $pid]);
+            return $this->db->fetchAll($sql, [$pid]);
         } catch (\Exception $e) {
-            // Fallback to simple query if one column doesn't exist
+            // Fallback if column names are different
             try {
-                $sql = "SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC";
+                $sql = "SELECT * FROM property_images WHERE pid = ? ORDER BY is_primary DESC, sort_order ASC";
                 return $this->db->fetchAll($sql, [$pid]);
             } catch (\Exception $e2) {
-                $sql = "SELECT * FROM property_images WHERE pid = ? ORDER BY id ASC";
-                return $this->db->fetchAll($sql, [$pid]);
+                return [];
             }
         }
     }
@@ -66,115 +68,75 @@ class PropertyManager {
     /**
      * Get similar properties
      */
-    public function getSimilarProperties($pid, $limit = 3) {
+    public function getSimilarProperties($pid, $limit = 3)
+    {
         // First get current property details to match criteria
         $prop = $this->getPropertyDetails($pid);
         if (!$prop) return [];
 
         $sql = "SELECT p.*, c.cname as cityname
-                FROM property p
+                FROM properties p
                 LEFT JOIN city c ON p.city = c.cid
-                WHERE p.pid != ? AND (p.type = ? OR p.city = ?)
-                AND p.status_active = 1
+                WHERE p.id != ? AND (p.property_type_id = ? OR p.city = ?)
+                AND p.status = 'available'
                 ORDER BY p.created_at DESC LIMIT ?";
 
-        return $this->db->fetchAll($sql, [$pid, $prop['type'], $prop['city'], $limit]);
+        return $this->db->fetchAll($sql, [$pid, $prop['property_type_id'] ?? 0, $prop['city'] ?? 0, $limit]);
     }
 
     /**
      * Get properties with advanced filters
      */
-    public function getProperties($filters = [], $limit = 20, $offset = 0) {
-        // This is a merged version of the two getProperties methods
-        // It handles both table structures (property vs properties)
+    public function getProperties($filters = [], $limit = 20, $offset = 0)
+    {
+        $sql = "SELECT p.*, pt.type as property_type_name,
+                       u.name as agent_name,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_image,
+                       (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as image_count
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                LEFT JOIN users u ON p.agent_id = u.id
+                WHERE 1=1";
 
-        $table = "properties";
-        try {
-            // Check if 'properties' table exists, if not use 'property'
-            $this->db->query("SELECT 1 FROM properties LIMIT 1");
-        } catch (\Exception $e) {
-            $table = "property";
+        $params = [];
+
+        // Apply filters
+        if (!empty($filters['property_type_id'])) {
+            $sql .= " AND p.property_type_id = ?";
+            $params[] = $filters['property_type_id'];
         }
 
-        if ($table === "property") {
-            $sql = "SELECT p.*, pt.type as ptype_name, c.cname as cityname
-                    FROM property p
-                    LEFT JOIN property_type pt ON p.type = pt.id
-                    LEFT JOIN city c ON p.city = c.cid
-                    WHERE p.status_active = 1";
-
-            $params = [];
-
-            if (!empty($filters['type'])) {
-                $sql .= " AND p.type = ?";
-                $params[] = $filters['type'];
-            }
-            if (!empty($filters['location'])) {
-                $sql .= " AND (c.cname LIKE ? OR p.location LIKE ?)";
-                $loc = "%{$filters['location']}%";
-                $params[] = $loc;
-                $params[] = $loc;
-            }
-            if (!empty($filters['bedrooms'])) {
-                $sql .= " AND p.bedroom >= ?";
-                $params[] = $filters['bedrooms'];
-            }
-            if (!empty($filters['purpose'])) {
-                $sql .= " AND p.stype = ?";
-                $params[] = $filters['purpose'];
-            }
-
-            $sql .= " ORDER BY p.created_at DESC";
-        } else {
-            $sql = "SELECT p.*, pt.type as property_type_name,
-                           u.uname as agent_name,
-                           (SELECT image_path FROM property_images WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_image,
-                           (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as image_count
-                    FROM properties p
-                    LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                    LEFT JOIN user u ON p.agent_id = u.uid
-                    WHERE 1=1";
-
-            $params = [];
-
-            // Apply filters
-            if (!empty($filters['property_type_id'])) {
-                $sql .= " AND p.property_type_id = ?";
-                $params[] = $filters['property_type_id'];
-            }
-
-            if (!empty($filters['location'])) {
-                $sql .= " AND (p.location LIKE ? OR p.city LIKE ?)";
-                $params[] = "%" . $filters['location'] . "%";
-                $params[] = "%" . $filters['location'] . "%";
-            }
-
-            if (isset($filters['min_price'])) {
-                $sql .= " AND p.price >= ?";
-                $params[] = $filters['min_price'];
-            }
-
-            if (isset($filters['max_price'])) {
-                $sql .= " AND p.price <= ?";
-                $params[] = $filters['max_price'];
-            }
-
-            if (!empty($filters['bedrooms'])) {
-                $sql .= " AND p.bedrooms >= ?";
-                $params[] = $filters['bedrooms'];
-            }
-
-            if (!empty($filters['status'])) {
-                $sql .= " AND p.status = ?";
-                $params[] = $filters['status'];
-            }
-
-            if (!empty($filters['featured'])) {
-                $sql .= " AND p.featured = 1";
-            }
-
-            $sql .= " ORDER BY p.created_at DESC";
+        if (!empty($filters['location'])) {
+            $sql .= " AND (p.location LIKE ? OR p.city LIKE ?)";
+            $params[] = "%" . $filters['location'] . "%";
+            $params[] = "%" . $filters['location'] . "%";
         }
+
+        if (isset($filters['min_price'])) {
+            $sql .= " AND p.price >= ?";
+            $params[] = $filters['min_price'];
+        }
+
+        if (isset($filters['max_price'])) {
+            $sql .= " AND p.price <= ?";
+            $params[] = $filters['max_price'];
+        }
+
+        if (!empty($filters['bedrooms'])) {
+            $sql .= " AND p.bedrooms >= ?";
+            $params[] = $filters['bedrooms'];
+        }
+
+        if (!empty($filters['status'])) {
+            $sql .= " AND p.status = ?";
+            $params[] = $filters['status'];
+        }
+
+        if (!empty($filters['featured'])) {
+            $sql .= " AND p.featured = 1";
+        }
+
+        $sql .= " ORDER BY p.created_at DESC";
 
         if ($limit > 0) {
             $sql .= " LIMIT ?";
@@ -189,14 +151,16 @@ class PropertyManager {
         return $this->db->fetchAll($sql, $params);
     }
 
-    private function ensureUploadDirectory($path = null) {
+    private function ensureUploadDirectory($path = null)
+    {
         $path = $path ?: dirname(__DIR__) . $this->uploadPath;
         if (!file_exists($path)) {
             mkdir($path, 0755, true);
         }
     }
 
-    public function createProperty($data, $images = []) {
+    public function createProperty($data, $images = [])
+    {
         $sql = "INSERT INTO properties (
             title, description, property_type_id, price, location, city, state,
             bedrooms, bathrooms, area, area_unit, features, amenities, agent_id, status, featured
@@ -238,11 +202,12 @@ class PropertyManager {
     /**
      * Get single property by ID
      */
-    public function getProperty($id) {
-        $sql = "SELECT p.*, pt.type as property_type_name, u.uname as agent_name, u.uphone as agent_phone, u.uemail as agent_email
+    public function getProperty($id)
+    {
+        $sql = "SELECT p.*, pt.type as property_type_name, u.name as agent_name, u.phone as agent_phone, u.email as agent_email
                 FROM properties p
                 LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                LEFT JOIN user u ON p.agent_id = u.uid
+                LEFT JOIN users u ON p.agent_id = u.id
                 WHERE p.id = ?";
 
         $property = $this->db->fetch($sql, [$id]);
@@ -261,7 +226,8 @@ class PropertyManager {
     /**
      * Update property
      */
-    public function updateProperty($id, $data, $images = []) {
+    public function updateProperty($id, $data, $images = [])
+    {
         $sql = "UPDATE properties SET
             title = ?, description = ?, property_type_id = ?, price = ?, location = ?,
             city = ?, state = ?, bedrooms = ?, bathrooms = ?, area = ?, area_unit = ?,
@@ -313,7 +279,8 @@ class PropertyManager {
     /**
      * Delete property
      */
-    public function deleteProperty($id) {
+    public function deleteProperty($id)
+    {
         try {
             // First delete property images
             $this->deletePropertyImages($id);
@@ -338,7 +305,8 @@ class PropertyManager {
     /**
      * Handle property image uploads
      */
-    private function handlePropertyImages($propertyId, $images) {
+    private function handlePropertyImages($propertyId, $images)
+    {
         foreach ($images as $index => $imageFile) {
             if ($imageFile['error'] === UPLOAD_ERR_OK) {
                 $this->uploadPropertyImage($propertyId, $imageFile, $index === 0);
@@ -349,7 +317,8 @@ class PropertyManager {
     /**
      * Upload property image
      */
-    private function uploadPropertyImage($propertyId, $file, $isPrimary = false) {
+    private function uploadPropertyImage($propertyId, $file, $isPrimary = false)
+    {
         $fileName = $file['name'];
         $fileSize = $file['size'];
         $fileTmpName = $file['tmp_name'];
@@ -398,7 +367,8 @@ class PropertyManager {
     /**
      * Delete property images
      */
-    private function deletePropertyImages($propertyId) {
+    private function deletePropertyImages($propertyId)
+    {
         // Get image files to delete
         $images = $this->getPropertyImages($propertyId);
 
@@ -419,7 +389,8 @@ class PropertyManager {
     /**
      * Get next image sort order
      */
-    private function getNextImageSortOrder($propertyId) {
+    private function getNextImageSortOrder($propertyId)
+    {
         $sql = "SELECT MAX(sort_order) as max_order FROM property_images WHERE property_id = ?";
         try {
             $row = $this->db->fetch($sql, [$propertyId]);
@@ -432,7 +403,8 @@ class PropertyManager {
     /**
      * Get property types
      */
-    public function getPropertyTypes() {
+    public function getPropertyTypes()
+    {
         $sql = "SELECT * FROM property_types WHERE status = 'active' ORDER BY name";
         try {
             return $this->db->fetchAll($sql);
@@ -447,7 +419,8 @@ class PropertyManager {
     /**
      * Search properties
      */
-    public function searchProperties($query, $limit = 20) {
+    public function searchProperties($query, $limit = 20)
+    {
         $searchTerm = "%$query%";
 
         $sql = "SELECT p.*, pt.type as property_type_name,
@@ -472,7 +445,8 @@ class PropertyManager {
     /**
      * Get featured properties
      */
-    public function getFeaturedProperties($limit = 6) {
+    public function getFeaturedProperties($limit = 6)
+    {
         $sql = "SELECT p.*, pt.type as property_type_name,
                        (SELECT image_path FROM property_images WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_image
                 FROM properties p
@@ -494,7 +468,8 @@ class PropertyManager {
     /**
      * List a new property (from public form)
      */
-    public function listProperty($data, $files = null) {
+    public function listProperty($data, $files = null)
+    {
         $owner_name = trim($data['owner_name'] ?? '');
         $email = trim($data['email'] ?? '');
         $phone = trim($data['phone'] ?? '');
@@ -550,9 +525,20 @@ class PropertyManager {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
 
         $params = [
-            $owner_name, $email, $phone, $property_type, $property_title, $location,
-            $bedrooms, $bathrooms, $area, $price, $description, $amenities,
-            $availability, $images_json
+            $owner_name,
+            $email,
+            $phone,
+            $property_type,
+            $property_title,
+            $location,
+            $bedrooms,
+            $bathrooms,
+            $area,
+            $price,
+            $description,
+            $amenities,
+            $availability,
+            $images_json
         ];
 
         $this->db->execute($sql, $params);
@@ -560,4 +546,3 @@ class PropertyManager {
         return true;
     }
 }
-?>

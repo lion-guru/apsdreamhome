@@ -3,36 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
+use App\Models\Project;
+use App\Models\Property;
 
 class HomeController extends BaseController
 {
     public function index()
     {
-        error_log("HomeController::index() started");
+        logger()->info('HomeController::index called');
 
-        // Get featured properties
         try {
-            $propertyModel = new \App\Models\Property();
-            error_log("Property model instantiated");
+            $propertyModel = new Property();
             $properties = $propertyModel->getFeaturedProperties();
-            error_log("Properties fetched: " . count($properties));
         } catch (\Throwable $e) {
-            error_log("Error in HomeController::index: " . $e->getMessage());
             $properties = [];
         }
 
-        // Render the home view using BaseController's render method (uses layout)
         $this->data['title'] = 'Welcome to APS Dream Home';
         $this->data['description'] = 'Find your dream property with us.';
         $this->data['properties'] = $properties;
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
 
-        error_log("Calling render('home/index')");
-        return $this->render('home/index', [], null, false);
+        return $this->render('home/index', [], 'layouts/base', true);
     }
 
     public function projects()
     {
-        $projectModel = new \App\Models\Project();
+        $projectModel = new Project();
         $projects = $projectModel->getAllActiveProjects();
 
         // If no projects in DB, use fallback static data (from legacy colonies.php)
@@ -89,7 +86,7 @@ class HomeController extends BaseController
             ];
         }
 
-        $this->view('home/projects', [
+        return $this->render('pages/projects', [
             'title' => 'Our Colonies - APS Dream Home',
             'projects' => $projects
         ]);
@@ -104,51 +101,85 @@ class HomeController extends BaseController
 
     public function featuredProperties()
     {
-        $propertyModel = new \App\Models\Property();
+        $propertyModel = new Property();
         $properties = $propertyModel->getFeaturedProperties();
 
-        $this->view('home/properties', [
+        return $this->render('pages/properties', [
             'title' => 'Featured Properties - APS Dream Home',
             'properties' => $properties,
-            'is_featured' => true
+            'is_featured' => true,
+            'extra_css' => '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">'
         ]);
     }
 
     public function propertyDetail($id)
     {
-        $propertyModel = new \App\Models\Property();
+        $propertyModel = new Property();
         $property = $propertyModel->getPropertyById($id);
 
         if (!$property) {
             // Handle not found
-            $this->view('errors/404');
-            return;
+            return $this->render('errors/404', [], 'layouts/base');
         }
 
-        $this->view('home/property_detail', [
+        $property_images = $property->getImages();
+
+        return $this->render('pages/property_detail', [
             'title' => $property->title . ' - APS Dream Home',
-            'property' => $property
+            'property' => $property,
+            'property_images' => $property_images,
+            'extra_css' => '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">'
         ]);
     }
 
     public function sitemap()
     {
-        $this->view('home/sitemap');
+        return $this->render('pages/sitemap');
     }
 
     public function privacy()
     {
-        $this->view('home/privacy');
+        $breadcrumbs = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Privacy Policy']
+        ];
+        return $this->render('pages/privacy_policy', ['breadcrumbs' => $breadcrumbs]);
     }
 
     public function terms()
     {
-        $this->view('home/terms');
+        $breadcrumbs = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Terms of Service']
+        ];
+        return $this->render('pages/terms-of-service', ['breadcrumbs' => $breadcrumbs]);
     }
 
     public function blogShow($slug)
     {
         // TODO: Implement blog show
         $this->redirect('/news');
+    }
+
+    public function about()
+    {
+        return $this->render('pages/about', [
+            'title' => 'About Us - APS Dream Home',
+            'extra_css' => '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">'
+        ]);
+    }
+
+    public function contact()
+    {
+        return $this->render('pages/contact', [
+            'title' => 'Contact Us - APS Dream Home',
+            'contact_info' => [
+                'phone' => '+91-9554224022',
+                'email' => 'contact@apsdreamhome.com',
+                'address' => 'Gorakhpur, Uttar Pradesh',
+                'hours' => '9:00 AM - 6:00 PM'
+            ],
+            'extra_css' => '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">'
+        ]);
     }
 }

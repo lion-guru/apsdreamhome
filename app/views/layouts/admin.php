@@ -9,61 +9,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            border-radius: 0;
-            padding: 15px 20px;
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .main-content {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .stat-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card .card-body {
-            padding: 2rem;
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-    </style>
+    <link href="<?= BASE_URL ?>public/css/dashboard.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="d-flex">
         <!-- Sidebar -->
-        <nav class="sidebar p-3">
+        <nav class="sidebar admin-sidebar p-3">
             <div class="text-center mb-4">
                 <h4><i class="fas fa-crown me-2"></i>Admin Panel</h4>
                 <small class="text-light">APS Dream Home</small>
@@ -71,129 +23,129 @@
 
             <ul class="nav nav-pills flex-column">
                 <li class="nav-item mb-1">
-                    <a href="/admin/dashboard" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/dashboard') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/dashboard" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/dashboard') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/ai/hub" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/ai') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/ai/hub" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/ai') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-robot me-2"></i>AI Hub
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/about" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/about') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/about" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/about') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-info-circle me-2"></i>About Us
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/users" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/users') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/users" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/users') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-users me-2"></i>Users
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/projects" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/projects') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/projects" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/projects') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-project-diagram me-2"></i>Projects
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/properties" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/properties') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/properties" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/properties') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-building me-2"></i>Properties
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/emi" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/emi') !== false && strpos($_SERVER['REQUEST_URI'], 'foreclosure') === false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/emi" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/emi') !== false && strpos($_SERVER['REQUEST_URI'], 'foreclosure') === false) ? 'active' : '' ?>">
                         <i class="fas fa-money-check-alt me-2"></i>EMI Management
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/emi/foreclosure-report" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/emi/foreclosure-report') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/emi/foreclosure-report" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/emi/foreclosure-report') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-file-invoice-dollar me-2"></i>Foreclosure Reports
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/leads" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/leads') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/leads" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/leads') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-user-plus me-2"></i>Leads
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/mlm-analytics" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-analytics') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/mlm-analytics" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-analytics') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-chart-pie me-2"></i>MLM Analytics
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/mlm-engagement" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-engagement') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/mlm-engagement" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-engagement') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-handshake me-2"></i>MLM Engagement
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/customers" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/customers') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/customers" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/customers') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-users-cog me-2"></i>Customers
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/news" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/news') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/news" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/news') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-newspaper me-2"></i>News
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/careers" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/careers') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/careers" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/careers') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-briefcase me-2"></i>Careers
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/media" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/media') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/media" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/media') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-images me-2"></i>Media
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/associates" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/associates') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/associates" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/associates') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-network-wired me-2"></i>Associates
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/employees" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/employees') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/employees" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/employees') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-user-tie me-2"></i>Employees
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/reports" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/reports') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/reports" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/reports') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-chart-bar me-2"></i>Reports
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/crm-dashboard" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/crm-dashboard') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/crm-dashboard" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/crm-dashboard') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-chart-line me-2"></i>CRM Dashboard
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/accounting" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/accounting') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/accounting" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/accounting') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-calculator me-2"></i>Accounting
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/mlm-plan-builder" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-plan-builder') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/mlm-plan-builder" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mlm-plan-builder') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-tools me-2"></i>MLM Builder
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/settings" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/settings') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/settings" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/settings') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-cog me-2"></i>Settings
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/database" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/database') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/database" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/database') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-database me-2"></i>Database
                     </a>
                 </li>
                 <li class="nav-item mb-1">
-                    <a href="/admin/logs" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/logs') !== false) ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>admin/logs" class="nav-link <?= (strpos($_SERVER['REQUEST_URI'], '/admin/logs') !== false) ? 'active' : '' ?>">
                         <i class="fas fa-file-alt me-2"></i>Logs
                     </a>
                 </li>
             </ul>
 
             <div class="mt-auto">
-                <a href="/admin/logout" class="nav-link text-danger">
+                <a href="<?= BASE_URL ?>admin/logout" class="nav-link text-danger">
                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                 </a>
             </div>
@@ -219,19 +171,19 @@
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/admin/settings">
+                                <li><a class="dropdown-item" href="<?= BASE_URL ?>admin/settings">
                                         <i class="fas fa-cog me-2"></i>Settings
                                     </a></li>
-                                <li><a class="dropdown-item" href="/admin/database">
+                                <li><a class="dropdown-item" href="<?= BASE_URL ?>admin/database">
                                         <i class="fas fa-database me-2"></i>Database
                                     </a></li>
-                                <li><a class="dropdown-item" href="/admin/logs">
+                                <li><a class="dropdown-item" href="<?= BASE_URL ?>admin/logs">
                                         <i class="fas fa-file-alt me-2"></i>Logs
                                     </a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item text-danger" href="/admin/logout">
+                                <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>admin/logout">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </a></li>
                             </ul>

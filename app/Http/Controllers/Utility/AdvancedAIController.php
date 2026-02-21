@@ -478,7 +478,7 @@ class AdvancedAIController extends BaseController
 
             return $stmt->fetch();
         } catch (Exception $e) {
-            error_log('Get user preferences error: ' . $e->getMessage());
+            logger()->error('Get user preferences error: ' . $e->getMessage());
             return [];
         }
     }
@@ -562,7 +562,7 @@ class AdvancedAIController extends BaseController
 
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            error_log('Find matching properties error: ' . $e->getMessage());
+            logger()->error('Find matching properties error: ' . $e->getMessage());
             return [];
         }
     }
@@ -923,7 +923,7 @@ class AdvancedAIController extends BaseController
 
             return $stmt->fetch();
         } catch (Exception $e) {
-            error_log('Get property prediction error: ' . $e->getMessage());
+            logger()->error('Get property prediction error: ' . $e->getMessage());
             return null;
         }
     }

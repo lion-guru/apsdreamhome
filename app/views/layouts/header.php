@@ -43,7 +43,8 @@ if (!function_exists('get_setting')) {
 if (!function_exists('is_current_page')) {
     function is_current_page($path)
     {
-        $current_path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $current_path = trim(parse_url($uri, PHP_URL_PATH), '/');
         $check_path = trim($path, '/');
         return $current_path === $check_path;
     }
@@ -53,7 +54,8 @@ if (!function_exists('is_current_page')) {
 if (!function_exists('is_active_path')) {
     function is_active_path($path)
     {
-        $current_path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $current_path = trim(parse_url($uri, PHP_URL_PATH), '/');
         $check_path = trim($path, '/');
         return strpos($current_path, $check_path) === 0;
     }
@@ -78,22 +80,22 @@ if (!function_exists('is_active_path')) {
             <ul>
                 <?php if ($user_type === 'employee'): ?>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/employee/dashboard') !== false) ? 'active' : '' ?>">
+                        <a href="<?php echo BASE_URL; ?>employee/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/dashboard') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-tachometer-alt"></i>Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/profile" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/employee/profile') !== false) ? 'active' : '' ?>">
+                        <a href="<?php echo BASE_URL; ?>employee/profile" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/profile') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-user"></i>Profile
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/tasks" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/employee/tasks') !== false) ? 'active' : '' ?>">
+                        <a href="<?php echo BASE_URL; ?>employee/tasks" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/tasks') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-tasks"></i>Tasks
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/attendance" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/employee/attendance') !== false) ? 'active' : '' ?>">
+                        <a href="<?php echo BASE_URL; ?>employee/attendance" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/attendance') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-clock"></i>Attendance
                         </a>
                     </li>
@@ -217,6 +219,8 @@ if (!function_exists('is_active_path')) {
         </div>
     </nav>
 
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/dashboard.css">
+
 <?php else: ?>
     <?php
     $site_title = get_setting('site_title', 'APS Dream Home') ?: 'APS Dream Home';
@@ -255,13 +259,17 @@ if (!function_exists('is_active_path')) {
     $logo_setting = get_setting('logo_path', '');
     $logo_url = !empty($logo_setting)
         ? (str_starts_with($logo_setting, 'http') ? $logo_setting : BASE_URL . ltrim($logo_setting, '/'))
-        : BASE_URL . 'assets/images/logo/apslogo.png';
+        : BASE_URL . 'public/assets/images/logo/apslogo.png';
 
     if (!empty($raw_logo_path)) {
         if (str_starts_with($raw_logo_path, 'http')) {
             $logo_url = $raw_logo_path;
         } else {
-            $logo_url = BASE_URL . ltrim($raw_logo_path, '/');
+            $path = ltrim($raw_logo_path, '/');
+            if (str_starts_with($path, 'assets/') && !str_starts_with($path, 'public/')) {
+                $path = 'public/' . $path;
+            }
+            $logo_url = BASE_URL . $path;
         }
     }
 
@@ -409,178 +417,4 @@ if (!function_exists('is_active_path')) {
 <?php endif; ?>
 
 <!-- Main Content will be inserted here -->
-<div class="content-wrapper">
-
-
-    <!-- Sidebar Styles for Authenticated Users -->
-    <style>
-        /* Sidebar Styles */
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #0d6efd 0%, #6c757d 100%);
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 260px;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .sidebar.collapsed {
-            margin-left: -260px;
-        }
-
-        .sidebar-header {
-            padding: 1.5rem 1rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-menu {
-            padding: 1rem 0;
-        }
-
-        .sidebar-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar-menu a {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-left-color: white;
-        }
-
-        .sidebar-menu i {
-            width: 20px;
-            margin-right: 10px;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            min-height: calc(100vh - 80px);
-        }
-
-        .main-content.expanded {
-            margin-left: 0;
-        }
-
-        /* Top Navbar */
-        .top-navbar {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 0.5rem 0;
-            position: fixed;
-            top: 0;
-            left: 260px;
-            right: 0;
-            z-index: 999;
-        }
-
-        .top-navbar .navbar-toggler {
-            border: none;
-            color: #0d6efd;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                margin-left: -260px;
-            }
-
-            .sidebar.show {
-                margin-left: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .main-content.expanded {
-                margin-left: 260px;
-            }
-
-            .top-navbar {
-                left: 0;
-            }
-        }
-
-        /* Alert Styles */
-        .alert {
-            border-radius: 8px;
-            border: none;
-            margin-bottom: 1rem;
-        }
-
-        /* Cards */
-        .card {
-            border: none;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
-            border-radius: 10px;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
-            color: white;
-            border-radius: 10px 10px 0 0 !important;
-            border-bottom: none;
-        }
-
-        /* Stats Cards */
-        .stats-card {
-            background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
-            color: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Tables */
-        .table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            border-top: none;
-            color: #495057;
-        }
-
-        /* Form Controls */
-        .form-control {
-            border-radius: 8px;
-            border: 2px solid #e3e6f0;
-        }
-
-        .form-control:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-        /* Custom Scrollbar */
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
-        }
-    </style>
+<div class="content-wrapper <?php echo ($is_logged_in && in_array($user_type, ['employee', 'customer', 'associate'])) ? 'main-content' : ''; ?>">

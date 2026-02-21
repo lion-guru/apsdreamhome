@@ -7,7 +7,7 @@
 namespace App\Models;
 
 class AIChatbot extends Model {
-    protected static string $table = 'chatbot_conversations';
+    protected static $table = 'chatbot_conversations';
 
     /**
      * Process user message and generate response

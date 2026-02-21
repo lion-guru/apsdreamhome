@@ -26,7 +26,8 @@ if (isset($_POST['update_basic'])) {
 
     if (!empty($name) && !empty($email)) {
         try {
-            $success = $db->query("UPDATE user SET uname = :name, uemail = :email, uphone = :phone WHERE uid = :uid", [
+            // Using 'users' table with correct column names: name, email, phone
+            $success = $db->query("UPDATE users SET name = :name, email = :email, phone = :phone WHERE id = :uid", [
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone,
@@ -40,7 +41,7 @@ if (isset($_POST['update_basic'])) {
                 $error = "Failed to update profile.";
             }
         } catch (Exception $e) {
-            $error = "An error occurred while updating profile.";
+            $error = "An error occurred while updating profile: " . $e->getMessage();
         }
     } else {
         $error = "Name and Email are required.";
@@ -55,11 +56,12 @@ if (isset($_POST['update_password'])) {
 
     if (!empty($old_pass) && !empty($new_pass) && $new_pass === $conf_pass) {
         try {
-            $user = $db->fetch("SELECT upassword FROM user WHERE uid = :uid", ['uid' => $uid]);
+            // Check 'users' table password column
+            $user = $db->fetch("SELECT password FROM users WHERE id = :uid", ['uid' => $uid]);
 
-            if ($user && password_verify($old_pass, $user['upassword'])) {
+            if ($user && password_verify($old_pass, $user['password'])) {
                 $hashed_pass = password_hash($new_pass, PASSWORD_DEFAULT);
-                $success = $db->query("UPDATE user SET upassword = :password WHERE uid = :uid", [
+                $success = $db->query("UPDATE users SET password = :password WHERE id = :uid", [
                     'password' => $hashed_pass,
                     'uid' => $uid
                 ]);
@@ -72,20 +74,27 @@ if (isset($_POST['update_password'])) {
                 $error = "Incorrect old password.";
             }
         } catch (Exception $e) {
-            $error = "An error occurred while updating password.";
+            $error = "An error occurred while updating password: " . $e->getMessage();
         }
     } else {
         $error = "Please ensure all password fields are filled and match.";
     }
 }
 
-// Fetch current user data
-$user_data = $db->fetch("SELECT * FROM user WHERE uid = :uid", ['uid' => $uid]);
+// Fetch current user data from 'users' table
+$user_data = $db->fetch("SELECT * FROM users WHERE id = :uid", ['uid' => $uid]);
 
 if (!$user_data) {
     header("Location: login.php?error=user_not_found");
     exit;
 }
+
+// Map modern columns to legacy variables for view compatibility
+$user_data['uid'] = $user_data['id'];
+$user_data['uname'] = $user_data['name'];
+$user_data['utype'] = $user_data['role'];
+$user_data['uemail'] = $user_data['email'];
+$user_data['uphone'] = $user_data['phone'];
 
 // Page variables
 $page_title = 'Edit Profile | APS Dream Homes';

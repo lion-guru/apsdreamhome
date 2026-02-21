@@ -20,7 +20,7 @@ class MobileApiController extends BaseController
         parent::__construct();
 
         if (!$this->db) {
-            error_log('MobileApiController: Failed to initialize database connection');
+            logger()->error('MobileApiController: Failed to initialize database connection');
         }
     }
 
@@ -517,7 +517,7 @@ class MobileApiController extends BaseController
 
             return false;
         } catch (Exception $e) {
-            error_log('Create inquiry error: ' . $e->getMessage());
+            logger()->error('Create inquiry error: ' . $e->getMessage());
             return false;
         }
     }
@@ -631,7 +631,7 @@ class MobileApiController extends BaseController
             $stmt->execute(['userId' => $user_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            error_log('Get user favorites error: ' . $e->getMessage());
+            logger()->error('Get user favorites error: ' . $e->getMessage());
             return [];
         }
     }
@@ -667,7 +667,7 @@ class MobileApiController extends BaseController
             $stmt = $this->db->query("SELECT DISTINCT city FROM properties WHERE status = 'available' AND city IS NOT NULL ORDER BY city");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
-            error_log('Get available cities error: ' . $e->getMessage());
+            logger()->error('Get available cities error: ' . $e->getMessage());
             return [];
         }
     }
@@ -716,7 +716,7 @@ class MobileApiController extends BaseController
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int)($result['count'] ?? 0);
         } catch (Exception $e) {
-            error_log('Get properties count error: ' . $e->getMessage());
+            logger()->error('Get properties count error: ' . $e->getMessage());
             return 0;
         }
     }

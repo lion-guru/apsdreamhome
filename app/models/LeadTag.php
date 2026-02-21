@@ -4,7 +4,7 @@ namespace App\Models;
 
 class LeadTag extends Model
 {
-    protected static string $table = 'lead_tags';
+    protected static $table = 'lead_tags';
 
     /**
      * The attributes that are mass assignable.

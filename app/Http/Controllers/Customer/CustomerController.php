@@ -138,7 +138,7 @@ class CustomerController extends Controller
             'page_title' => 'Customer Dashboard - APS Dream Home'
         ];
 
-        $this->view('customers/dashboard', $data);
+        $this->view('customers/dashboard', $data, 'layouts/customer');
     }
 
     /**

@@ -136,7 +136,7 @@ class SalesController extends AdminController
             } catch (Exception $re) {
                 // Ignore rollback errors if already rolled back or connection lost
             }
-            \error_log("Sale recording error: " . $e->getMessage());
+            logger()->error("Sale recording error: " . $e->getMessage());
             $this->setFlash('error', $this->mlSupport->translate('Error recording sale: ') . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8'));
             return $this->back();
         }

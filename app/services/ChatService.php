@@ -102,7 +102,7 @@ class ChatService
                            a.auser as agent_name, a.aemail as agent_email,
                            p.title as property_title, p.image_url as property_image
                     FROM chat_sessions cs
-                    LEFT JOIN user u ON cs.user_id = u.uid
+                    LEFT JOIN users u ON cs.user_id = u.id
                     LEFT JOIN admin a ON cs.agent_id = a.aid
                     LEFT JOIN properties p ON cs.property_id = p.id
                     WHERE cs.id = ?";
@@ -360,9 +360,15 @@ class ChatService
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            $sessionId, $senderType, $senderId, $messageType, $message,
-            $attachment['url'] ?? null, $attachment['name'] ?? null,
-            $attachment['size'] ?? null, $attachment['mime_type'] ?? null
+            $sessionId,
+            $senderType,
+            $senderId,
+            $messageType,
+            $message,
+            $attachment['url'] ?? null,
+            $attachment['name'] ?? null,
+            $attachment['size'] ?? null,
+            $attachment['mime_type'] ?? null
         ]);
         return $this->db->lastInsertId();
     }
@@ -431,9 +437,9 @@ class ChatService
 
     private function getSessionMessages($sessionId, $limit = 50)
     {
-        $sql = "SELECT cm.*, CASE WHEN cm.sender_type = 'user' THEN u.uname WHEN cm.sender_type = 'agent' THEN a.auser ELSE 'System' END as sender_name
+        $sql = "SELECT cm.*, CASE WHEN cm.sender_type = 'user' THEN u.name WHEN cm.sender_type = 'agent' THEN a.auser ELSE 'System' END as sender_name
                 FROM chat_messages cm
-                LEFT JOIN user u ON cm.sender_id = u.uid AND cm.sender_type = 'user'
+                LEFT JOIN users u ON cm.sender_id = u.id AND cm.sender_type = 'user'
                 LEFT JOIN admin a ON cm.sender_id = a.aid AND cm.sender_type = 'agent'
                 WHERE cm.session_id = ? ORDER BY cm.created_at ASC LIMIT ?";
         $stmt = $this->db->prepare($sql);
@@ -478,7 +484,10 @@ class WebSocketServer
 class MessageQueue
 {
     private $db;
-    public function __construct($db) { $this->db = $db; }
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
     public function enqueue($sessionId, $messageData)
     {
         $stmt = $this->db->prepare("INSERT INTO message_queue (session_id, message_data, created_at) VALUES (?, ?, NOW())");
@@ -489,7 +498,10 @@ class MessageQueue
 class AgentManager
 {
     private $db;
-    public function __construct($db) { $this->db = $db; }
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
     public function setAgentStatus($agentId, $isOnline, $isAvailable)
     {
         $stmt = $this->db->prepare("UPDATE agent_availability SET is_online = ?, is_available = ?, last_activity = NOW() WHERE agent_id = ?");

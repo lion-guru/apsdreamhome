@@ -8,7 +8,7 @@ use App\Models\Model;
 use App\Core\Database;
 
 class PropertyInquiry extends Model {
-    protected static string $table = 'property_inquiries';
+    protected static $table = 'property_inquiries';
 
     /**
      * Create new inquiry

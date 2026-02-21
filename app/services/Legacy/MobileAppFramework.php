@@ -7,11 +7,13 @@ namespace App\Services\Legacy;
  * RESTful API for mobile applications
  */
 
-class MobileAppFramework {
+class MobileAppFramework
+{
     private $db;
     private $apiVersion = "v1";
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = \App\Core\App::database();
         $this->initMobileAPI();
     }
@@ -19,7 +21,8 @@ class MobileAppFramework {
     /**
      * Initialize mobile API
      */
-    private function initMobileAPI() {
+    private function initMobileAPI()
+    {
         // Create mobile API tables
         $this->createMobileTables();
 
@@ -30,7 +33,8 @@ class MobileAppFramework {
     /**
      * Create mobile API tables
      */
-    private function createMobileTables() {
+    private function createMobileTables()
+    {
         $tables = [
             "CREATE TABLE IF NOT EXISTS mobile_users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -43,7 +47,7 @@ class MobileAppFramework {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 INDEX idx_user (user_id),
                 INDEX idx_device (device_id),
-                CONSTRAINT fk_mobile_user FOREIGN KEY (user_id) REFERENCES user(uid) ON DELETE CASCADE
+                CONSTRAINT fk_mobile_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )",
 
             "CREATE TABLE IF NOT EXISTS mobile_sessions (
@@ -55,7 +59,7 @@ class MobileAppFramework {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 INDEX idx_token (session_token),
                 INDEX idx_user (user_id),
-                CONSTRAINT fk_mobile_session_user FOREIGN KEY (user_id) REFERENCES user(uid) ON DELETE CASCADE
+                CONSTRAINT fk_mobile_session_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )",
 
             "CREATE TABLE IF NOT EXISTS mobile_notifications (
@@ -70,7 +74,7 @@ class MobileAppFramework {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 INDEX idx_user (user_id),
                 INDEX idx_type (type),
-                CONSTRAINT fk_mobile_notification_user FOREIGN KEY (user_id) REFERENCES user(uid) ON DELETE CASCADE
+                CONSTRAINT fk_mobile_notification_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             )"
         ];
 
@@ -82,7 +86,8 @@ class MobileAppFramework {
     /**
      * Setup API endpoints
      */
-    private function setupAPIEndpoints() {
+    private function setupAPIEndpoints()
+    {
         // This would setup routes for mobile API
         // For now, we'll create the API structure
     }
@@ -90,13 +95,14 @@ class MobileAppFramework {
     /**
      * Authenticate mobile user
      */
-    public function authenticateUser($email, $password, $deviceId) {
-        $sql = "SELECT uid, upass FROM user WHERE uemail = ? AND status = 'active'";
+    public function authenticateUser($email, $password, $deviceId)
+    {
+        $sql = "SELECT id, password FROM users WHERE email = ? AND status = 'active'";
         $user = $this->db->fetch($sql, [$email]);
 
         if ($user) {
-            if (password_verify($password, $user['upass'])) {
-                return $this->createMobileSession($user['uid'], $deviceId);
+            if (password_verify($password, $user['password'])) {
+                return $this->createMobileSession($user['id'], $deviceId);
             }
         }
 
@@ -106,7 +112,8 @@ class MobileAppFramework {
     /**
      * Create mobile session
      */
-    private function createMobileSession($userId, $deviceId) {
+    private function createMobileSession($userId, $deviceId)
+    {
         $sessionToken = \bin2hex(\App\Helpers\SecurityHelper::secureRandomBytes(32));
         $expiresAt = \date('Y-m-d H:i:s', \strtotime('+30 days'));
 
@@ -123,7 +130,8 @@ class MobileAppFramework {
     /**
      * Get properties for mobile
      */
-    public function getMobileProperties($filters = []) {
+    public function getMobileProperties($filters = [])
+    {
         $sql = "SELECT p.*, pi.image_url FROM properties p
                 LEFT JOIN property_images pi ON p.id = pi.property_id
                 WHERE p.status = 'available'";
@@ -153,4 +161,3 @@ class MobileAppFramework {
 
 // Initialize mobile framework
 $mobileFramework = new MobileAppFramework();
-?>

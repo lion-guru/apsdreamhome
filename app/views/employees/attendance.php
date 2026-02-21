@@ -1,108 +1,78 @@
 <?php
 /**
  * Employee Attendance View
- * Shows employee attendance records and allows check-in/check-out
+ * Shows employee attendance records with location-based check-in/out
  */
 ?>
-
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-calendar-check me-2"></i>My Attendance</h2>
-        <div class="d-flex gap-2">
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-filter me-2"></i>Filter by Month
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $page_title ?? 'Employee Attendance'; ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .stats-card { border-radius: 12px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .check-in-btn { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none; }
+        .check-out-btn { background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); border: none; }
+        .location-indicator { font-size: 0.8em; color: #6c757d; }
+        .attendance-status-present { color: #28a745; }
+        .attendance-status-late { color: #ffc107; }
+        .attendance-status-absent { color: #dc3545; }
+        .attendance-status-half-day { color: #fd7e14; }
+        .attendance-status-early-leave { color: #6f42c1; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1"><i class="fas fa-calendar-check me-2 text-primary"></i>My Attendance</h2>
+                <p class="text-muted mb-0">Track your daily attendance with location verification</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn check-in-btn text-white" id="checkInBtn" onclick="handleCheckIn()">
+                    <i class="fas fa-sign-in-alt me-2"></i>Check In
                 </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="?month=">All Months</a></li>
-                    <li><a class="dropdown-item" href="?month=<?= date('Y-m') ?>">This Month</a></li>
-                    <li><a class="dropdown-item" href="?month=<?= date('Y-m', strtotime('-1 month')) ?>">Last Month</a></li>
-                    <li><a class="dropdown-item" href="?month=<?= date('Y-m', strtotime('-2 months')) ?>">2 Months Ago</a></li>
-                </ul>
+                <button class="btn check-out-btn text-white" id="checkOutBtn" onclick="handleCheckOut()" disabled>
+                    <i class="fas fa-sign-out-alt me-2"></i>Check Out
+                </button>
             </div>
-            <button class="btn btn-success" onclick="recordAttendance('check_in')">
-                <i class="fas fa-sign-in-alt me-2"></i>Check In
-            </button>
-            <button class="btn btn-warning" onclick="recordAttendance('check_out')">
-                <i class="fas fa-sign-out-alt me-2"></i>Check Out
-            </button>
         </div>
-    </div>
 
-    <!-- Attendance Stats -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stats-card card text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0"><?= $stats['total_days'] ?></h4>
-                            <small>Total Days</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-calendar fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0"><?= $stats['present_days'] ?></h4>
-                            <small>Present</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-check-circle fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0"><?= $stats['absent_days'] ?></h4>
-                            <small>Absent</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-times-circle fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0 text-dark fw-bold">
-                                <?= number_format($stats['attendance_rate'], 1) ?>%
-                            </h4>
-                            <small class="text-dark">Attendance Rate</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-percentage fa-2x text-dark"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Attendance Records -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="fas fa-list me-2"></i>Attendance Records</h5>
-                </div>
+        <!-- Current Status -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Today's Status</h5>
+                        <div class="row" id="todayStatus">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="fas fa-clock fa-2x text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Check-in Time</h6>
+                                        <p class="mb-0 text-muted" id="checkInTime">Not checked in yet</p>
+                                        <small class="location-indicator" id="checkInLocation"></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="fas fa-clock fa-2x text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Check-out Time</h6>
+                                        <p class="mb-0 text-muted" id="checkOutTime">Not checked out yet</p>
+                                        <small class="location-indicator" id="checkOutLocation"></small>
+                                    </div>
+                                </div>
+                            </div>
                 <div class="card-body">
                     <?php if (empty($attendance)): ?>
                         <div class="alert alert-info">

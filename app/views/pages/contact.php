@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contact Page Template
  * Displays contact information and contact form
@@ -13,7 +14,7 @@ $contact = $contact_info ?? [
 ];
 ?>
 
-<section class="py-5" style="background: radial-gradient(circle at top, rgba(14,165,233,.18), transparent 70%), #0f172a;">
+<section class="contact-hero py-5">
     <div class="container py-4">
         <div class="row align-items-center g-4">
             <div class="col-lg-6 text-white">
@@ -22,7 +23,7 @@ $contact = $contact_info ?? [
                 <p class="lead text-white-50 mb-4">Speak with our property advisors to get personalised recommendations, arrange site visits or clarify any questions.</p>
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-center gap-3">
-                        <span class="bg-primary-subtle text-primary-emphasis rounded-circle d-inline-flex align-items-center justify-content-center" style="width:56px;height:56px;">
+                        <span class="contact-icon-circle bg-primary-subtle text-primary-emphasis rounded-circle d-inline-flex align-items-center justify-content-center">
                             <i class="fas fa-phone"></i>
                         </span>
                         <div>
@@ -31,7 +32,7 @@ $contact = $contact_info ?? [
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-3">
-                        <span class="bg-primary-subtle text-primary-emphasis rounded-circle d-inline-flex align-items-center justify-content-center" style="width:56px;height:56px;">
+                        <span class="contact-icon-circle">
                             <i class="fas fa-envelope"></i>
                         </span>
                         <div>
@@ -132,7 +133,7 @@ $contact = $contact_info ?? [
     </div>
 </section>
 
-<section class="py-5" style="background: linear-gradient(135deg, #1a237e 0%, #0ea5e9 100%);">
+<section class="py-5 contact-cta-section">
     <div class="container">
         <div class="row align-items-center g-4">
             <div class="col-lg-8 text-white">

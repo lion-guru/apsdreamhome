@@ -31,7 +31,7 @@ $action = $_GET['action'] ?? $_POST['action'] ?? '';
 $currentRole = $_SESSION['admin_role'] ?? '';
 
 try {
-    $db = \App\Core\App::database();
+    $db = \App\Core\App::getInstance()->db();
 
     switch ($action) {
         case 'get_stats':
@@ -106,7 +106,7 @@ function getDashboardStats($db)
     $stats = [];
 
     // Total users
-    $row = $db->fetch("SELECT COUNT(*) as total FROM user");
+    $row = $db->fetch("SELECT COUNT(*) as total FROM users");
     $stats['total_users'] = $row['total'] ?? 0;
 
     // Total properties
@@ -122,7 +122,7 @@ function getDashboardStats($db)
     $stats['monthly_revenue'] = $row['total'] ?? 0;
 
     // Recent activity
-    $row = $db->fetch("SELECT COUNT(*) as total FROM user_activity WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+    $row = $db->fetch("SELECT COUNT(*) as total FROM user_activity WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
     $stats['recent_activity'] = $row['total'] ?? 0;
 
     echo json_encode([
@@ -251,7 +251,7 @@ function getUsersData($db)
     }
 
     // Get total count
-    $row = $db->fetch("SELECT COUNT(*) as total FROM user u $where", $params);
+    $row = $db->fetch("SELECT COUNT(*) as total FROM users u $where", $params);
     $total = $row['total'] ?? 0;
 
     echo json_encode([
@@ -316,12 +316,12 @@ function getBookingsData($db)
     $offset = ($page - 1) * $limit;
 
     $search = $_GET['search'] ?? '';
-    $where = $search ? "WHERE b.status LIKE :search OR u.uname LIKE :search OR p.title LIKE :search" : "";
+    $where = $search ? "WHERE b.status LIKE :search OR u.name LIKE :search OR p.title LIKE :search" : "";
     $params = $search ? ['search' => "%$search%"] : [];
 
-    $sql = "SELECT b.*, u.uname as customer_name, p.title as property_title
+    $sql = "SELECT b.*, u.name as customer_name, p.title as property_title
             FROM bookings b
-            LEFT JOIN user u ON b.user_id = u.uid
+            LEFT JOIN users u ON b.customer_id = u.id
             LEFT JOIN properties p ON b.property_id = p.id
             $where
             ORDER BY b.created_at DESC
@@ -337,7 +337,7 @@ function getBookingsData($db)
     }
 
     // Get total count
-    $row = $db->fetch("SELECT COUNT(*) as total FROM bookings b LEFT JOIN users u ON b.user_id = u.id LEFT JOIN properties p ON b.property_id = p.id $where", $params);
+    $row = $db->fetch("SELECT COUNT(*) as total FROM bookings b LEFT JOIN users u ON b.customer_id = u.id LEFT JOIN properties p ON b.property_id = p.id $where", $params);
     $total = $row['total'] ?? 0;
 
     echo json_encode([

@@ -4,7 +4,7 @@ namespace App\Models;
 
 class LeadStatusHistory extends Model
 {
-    protected static string $table = 'lead_status_history';
+    protected static $table = 'lead_status_history';
 
     /**
      * The attributes that are mass assignable.

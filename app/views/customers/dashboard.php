@@ -1,6 +1,4 @@
-<?php require_once 'app/views/layouts/customer_header.php'; ?>
-
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4 fade-in">
     <!-- Welcome Section -->
     <div class="row mb-4">
         <div class="col-12">
@@ -10,14 +8,14 @@
                         <div class="col-md-8">
                             <h4 class="card-title mb-2">स्वागत है, <?= htmlspecialchars($customer['name']) ?>!</h4>
                             <p class="card-text mb-2">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                <i class="fas fa-map-marker-alt me-2"></i>
                                 <?= htmlspecialchars($customer['city'] ?? '') ?>, <?= htmlspecialchars($customer['state'] ?? '') ?>
                             </p>
                             <p class="card-text">
-                                <i class="fas fa-calendar mr-2"></i>
+                                <i class="fas fa-calendar me-2"></i>
                                 मेंबरशिप: <?= date('M Y', strtotime($customer['customer_since'] ?? $customer['created_at'])) ?> से
                                 <?php if (isset($customer['occupation'])): ?>
-                                    | <i class="fas fa-briefcase mr-2"></i><?= htmlspecialchars($customer['occupation']) ?>
+                                    | <i class="fas fa-briefcase me-2"></i><?= htmlspecialchars($customer['occupation']) ?>
                                 <?php endif; ?>
                             </p>
                         </div>
@@ -39,8 +37,8 @@
                                     $levelColor = 'silver';
                                 }
                                 ?>
-                                <span class="badge badge-<?= $levelColor ?> p-2">
-                                    <i class="fas fa-crown mr-1"></i><?= $level ?> Member
+                                <span class="badge bg-<?= $levelColor ?> p-2">
+                                    <i class="fas fa-crown me-1"></i><?= $level ?> Member
                                 </span>
                                 <br>
                                 <small class="text-white-50 mt-1 d-block">
@@ -57,10 +55,10 @@
     <!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card border-start border-primary border-3 shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
+                        <div class="col me-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">फेवरिट प्रॉपर्टीज</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= $stats['total_favorites'] ?? 0 ?>
@@ -78,10 +76,10 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card border-start border-success border-3 shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
+                        <div class="col me-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">टोटल बुकिंग्स</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                 <?= $stats['total_bookings'] ?? 0 ?>
@@ -150,7 +148,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-history mr-2"></i>रिसेंट एक्टिविटीज
                     </h6>
-                    <a href="/customer/property-views" class="btn btn-sm btn-outline-primary">सभी देखें</a>
+                    <a href="<?= BASE_URL ?>customer/property-views" class="btn btn-sm btn-outline-primary">सभी देखें</a>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($recent_activities)): ?>
@@ -215,22 +213,22 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="/customer/properties" class="btn btn-outline-primary">
+                        <a href="<?= BASE_URL ?>customer/properties" class="btn btn-outline-primary">
                             <i class="fas fa-search mr-2"></i>प्रॉपर्टी सर्च करें
                         </a>
-                        <a href="/customer/favorites" class="btn btn-outline-danger">
+                        <a href="<?= BASE_URL ?>customer/favorites" class="btn btn-outline-danger">
                             <i class="fas fa-heart mr-2"></i>मेरे फेवरिट्स
                         </a>
-                        <a href="/customer/bookings" class="btn btn-outline-success">
+                        <a href="<?= BASE_URL ?>customer/bookings" class="btn btn-outline-success">
                             <i class="fas fa-calendar mr-2"></i>मेरी बुकिंग्स
                         </a>
-                        <a href="/customer/payments" class="btn btn-outline-info">
+                        <a href="<?= BASE_URL ?>customer/payments" class="btn btn-outline-info">
                             <i class="fas fa-credit-card mr-2"></i>मेरे पेमेंट्स
                         </a>
-                        <a href="/customer/alerts" class="btn btn-outline-warning">
+                        <a href="<?= BASE_URL ?>customer/alerts" class="btn btn-outline-warning">
                             <i class="fas fa-bell mr-2"></i>प्रॉपर्टी अलर्ट्स
                         </a>
-                        <a href="/customer/emi-calculator" class="btn btn-outline-secondary">
+                        <a href="<?= BASE_URL ?>customer/emi-calculator" class="btn btn-outline-secondary">
                             <i class="fas fa-calculator mr-2"></i>EMI कैल्कुलेटर
                         </a>
                     </div>
@@ -245,7 +243,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-thumbs-up mr-2"></i>आपके लिए रेकमेंडेड
                     </h6>
-                    <a href="/customer/properties" class="btn btn-sm btn-outline-primary">सभी देखें</a>
+                    <a href="<?= BASE_URL ?>customer/properties" class="btn btn-sm btn-outline-primary">सभी देखें</a>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($recommendations)): ?>
@@ -253,13 +251,13 @@
                             <div class="property-card-small mb-3">
                                 <div class="row no-gutters">
                                     <div class="col-md-4">
-                                        <img src="<?= $property['main_image'] ?? '/assets/images/no-image.jpg' ?>"
-                                             class="img-fluid rounded" alt="Property" style="height: 80px; object-fit: cover;">
+                                        <img src="<?= $property['main_image'] ?? BASE_URL . 'assets/images/no-image.jpg' ?>"
+                                            class="img-fluid rounded" alt="Property" style="height: 80px; object-fit: cover;">
                                     </div>
                                     <div class="col-md-8">
                                         <div class="property-info">
                                             <h6 class="property-title mb-1">
-                                                <a href="/customer/property/<?= $property['id'] ?>" class="text-decoration-none">
+                                                <a href="<?= BASE_URL ?>customer/property/<?= $property['id'] ?>" class="text-decoration-none">
                                                     <?= htmlspecialchars($property['title']) ?>
                                                 </a>
                                             </h6>
@@ -279,7 +277,7 @@
                         <div class="text-center py-4">
                             <i class="fas fa-home fa-3x text-muted mb-2"></i>
                             <p class="text-muted mb-0">कोई रेकमेंडेशन नहीं मिला</p>
-                            <a href="/customer/properties" class="btn btn-primary btn-sm mt-2">
+                            <a href="<?= BASE_URL ?>customer/properties" class="btn btn-primary btn-sm mt-2">
                                 प्रॉपर्टी सर्च करें
                             </a>
                         </div>
@@ -317,7 +315,7 @@
                         </div>
                         <div class="progress mb-2">
                             <div class="progress-bar bg-primary" role="progressbar"
-                                 style="width: <?= $progress ?>%"></div>
+                                style="width: <?= $progress ?>%"></div>
                         </div>
                         <small class="text-muted">
                             ₹<?= number_format($totalSpent) ?> / ₹<?= number_format($nextLevel) ?>
@@ -355,7 +353,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-calendar-check mr-2"></i>रिसेंट बुकिंग्स
                     </h6>
-                    <a href="/customer/bookings" class="btn btn-sm btn-outline-primary">सभी देखें</a>
+                    <a href="<?= BASE_URL ?>customer/bookings" class="btn btn-sm btn-outline-primary">सभी देखें</a>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($recent_bookings)): ?>
@@ -363,8 +361,8 @@
                             <div class="booking-item mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="mr-3">
-                                        <img src="<?= $booking['main_image'] ?? '/assets/images/no-image.jpg' ?>"
-                                             class="rounded" alt="Property" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="<?= $booking['main_image'] ?? BASE_URL . 'assets/images/no-image.jpg' ?>"
+                                            class="rounded" alt="Property" style="width: 50px; height: 50px; object-fit: cover;">
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="font-weight-bold small">
@@ -403,7 +401,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-heart mr-2"></i>मेरे फेवरिट्स
                     </h6>
-                    <a href="/customer/favorites" class="btn btn-sm btn-outline-primary">सभी देखें</a>
+                    <a href="<?= BASE_URL ?>customer/favorites" class="btn btn-sm btn-outline-primary">सभी देखें</a>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($favorite_properties)): ?>
@@ -411,8 +409,8 @@
                             <div class="favorite-item mb-3">
                                 <div class="d-flex align-items-center">
                                     <div class="mr-3">
-                                        <img src="<?= $property['main_image'] ?? '/assets/images/no-image.jpg' ?>"
-                                             class="rounded" alt="Property" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="<?= $property['main_image'] ?? BASE_URL . 'assets/images/no-image.jpg' ?>"
+                                            class="rounded" alt="Property" style="width: 50px; height: 50px; object-fit: cover;">
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="font-weight-bold small">
@@ -423,8 +421,8 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <a href="/customer/property/<?= $property['id'] ?>"
-                                           class="btn btn-sm btn-outline-primary">
+                                        <a href="<?= BASE_URL ?>customer/property/<?= $property['id'] ?>"
+                                            class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                     </div>
@@ -506,128 +504,46 @@
 </div>
 
 <style>
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.customer-level .badge {
-    font-size: 1.1em;
-    padding: 0.5em 1em;
-}
-
-.icon-circle {
-    height: 2.5rem;
-    width: 2.5rem;
-    border-radius: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.card {
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 0 20px rgba(0,0,0,0.08);
-}
-
-.card-header {
-    border-radius: 10px 10px 0 0 !important;
-    border-bottom: 2px solid rgba(0,0,0,0.1);
-}
-
-.property-card-small {
-    border: 1px solid #e3e6f0;
-    border-radius: 8px;
-    padding: 10px;
-    transition: all 0.3s ease;
-}
-
-.property-card-small:hover {
-    border-color: #667eea;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
-}
-
-.property-title {
-    font-size: 0.9em;
-    margin-bottom: 0.2rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.property-location {
-    font-size: 0.8em;
-}
-
-.property-price {
-    font-size: 0.9em;
-}
-
-.booking-item, .favorite-item {
-    padding: 10px;
-    border: 1px solid #e3e6f0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.booking-item:hover, .favorite-item:hover {
-    border-color: #667eea;
-    background-color: #f8f9fa;
-}
-
-.insight-item {
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-.insight-item ul li {
-    margin-bottom: 8px;
-}
-
-.progress {
-    height: 8px;
-    border-radius: 4px;
-}
-
-.progress-bar {
-    border-radius: 4px;
-}
-
-.alert {
-    border-radius: 10px;
-}
-
-.text-gray-900 {
-    color: #212529 !important;
-}
-
-.badge-bronze {
-    background-color: #cd7f32;
-    color: white;
-}
-
-.badge-silver {
-    background-color: #c0c0c0;
-    color: #333;
-}
-
-.d-grid .btn {
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .d-grid {
-        display: block !important;
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
-    .d-grid .btn {
-        display: block;
-        width: 100%;
+    .customer-level .badge {
+        font-size: 1.1em;
+        padding: 0.5em 1em;
     }
-}
+
+    .icon-circle {
+        height: 2.5rem;
+        width: 2.5rem;
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .property-card-small {
+        border: 1px solid #e3e6f0;
+        border-radius: 8px;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .property-card-small:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    }
 </style>
 
 <?php require_once 'app/views/layouts/customer_footer.php'; ?>

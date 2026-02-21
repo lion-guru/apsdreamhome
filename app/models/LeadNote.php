@@ -4,7 +4,7 @@ namespace App\Models;
 
 class LeadNote extends Model
 {
-    protected static string $table = 'lead_notes';
+    protected static $table = 'lead_notes';
 
     /**
      * The attributes that are mass assignable.

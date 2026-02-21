@@ -1,16 +1,19 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * APS Dream Home - Property Management System
  * Enhanced property handling with advanced features
  */
 
-class PropertyManager {
+class PropertyManager
+{
     private $db;
     private $config;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = \App\Core\App::database();
         $this->config = AppConfig::getInstance();
     }
@@ -18,10 +21,11 @@ class PropertyManager {
     /**
      * Get properties with advanced filtering
      */
-    public function getProperties($filters = [], $limit = null, $offset = 0) {
-        $sql = "SELECT p.*, u.uname as agent_name, u.uemail as agent_email, u.uphone as agent_phone
+    public function getProperties($filters = [], $limit = null, $offset = 0)
+    {
+        $sql = "SELECT p.*, u.name as agent_name, u.email as agent_email, u.phone as agent_phone
                 FROM properties p
-                LEFT JOIN user u ON p.agent_id = u.uid
+                LEFT JOIN users u ON p.agent_id = u.id
                 WHERE p.status = 'active'";
 
         $params = [];
@@ -110,24 +114,27 @@ class PropertyManager {
     /**
      * Get featured properties
      */
-    public function getFeaturedProperties($limit = 6) {
+    public function getFeaturedProperties($limit = 6)
+    {
         return $this->getProperties(['featured' => true], $limit);
     }
 
     /**
      * Get recent properties
      */
-    public function getRecentProperties($limit = 8) {
+    public function getRecentProperties($limit = 8)
+    {
         return $this->getProperties([], $limit);
     }
 
     /**
      * Get property by ID
      */
-    public function getProperty($id) {
-        $sql = "SELECT p.*, u.uname, u.uemail as agent_email, u.uphone as agent_phone
+    public function getProperty($id)
+    {
+        $sql = "SELECT p.*, u.name as uname, u.email as agent_email, u.phone as agent_phone
                 FROM properties p
-                LEFT JOIN user u ON p.agent_id = u.uid
+                LEFT JOIN users u ON p.agent_id = u.id
                 WHERE p.id = ?";
 
         try {
@@ -141,7 +148,8 @@ class PropertyManager {
     /**
      * Search properties with scoring
      */
-    public function searchPropertiesAdvanced($query, $filters = []) {
+    public function searchPropertiesAdvanced($query, $filters = [])
+    {
         $search_terms = explode(' ', $query);
         $properties = $this->getProperties($filters);
 
@@ -185,7 +193,7 @@ class PropertyManager {
         }
 
         // Sort by score descending
-        usort($scored_properties, function($a, $b) {
+        usort($scored_properties, function ($a, $b) {
             return $b['search_score'] <=> $a['search_score'];
         });
 
@@ -195,7 +203,8 @@ class PropertyManager {
     /**
      * Get property statistics
      */
-    public function getPropertyStats() {
+    public function getPropertyStats()
+    {
         $stats = [];
 
         try {
@@ -221,7 +230,6 @@ class PropertyManager {
                     COUNT(CASE WHEN price > 10000000 THEN 1 END) as above_1cr
                 FROM properties WHERE status = 'active'
             ");
-
         } catch (Exception $e) {
             error_log("Property stats error: " . $e->getMessage());
         }
@@ -232,7 +240,8 @@ class PropertyManager {
     /**
      * Get similar properties
      */
-    public function getSimilarProperties($property_id, $limit = 4) {
+    public function getSimilarProperties($property_id, $limit = 4)
+    {
         $property = $this->getProperty($property_id);
         if (!$property) return [];
 
@@ -243,7 +252,7 @@ class PropertyManager {
 
         // Remove the current property from results
         $all_similar = $this->getProperties($filters, $limit + 1);
-        return array_filter($all_similar, function($prop) use ($property_id) {
+        return array_filter($all_similar, function ($prop) use ($property_id) {
             return $prop['id'] != $property_id;
         });
     }
@@ -251,7 +260,8 @@ class PropertyManager {
     /**
      * Get properties by agent
      */
-    public function getPropertiesByAgent($agent_id, $limit = null) {
+    public function getPropertiesByAgent($agent_id, $limit = null)
+    {
         $sql = "SELECT * FROM properties WHERE agent_id = ? AND status = 'active' ORDER BY created_at DESC";
 
         $params = [$agent_id];
@@ -272,11 +282,13 @@ class PropertyManager {
 /**
  * User Management System
  */
-class UserManager {
+class UserManager
+{
     private $db;
     private $config;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = \App\Core\App::database();
         $this->config = AppConfig::getInstance();
     }
@@ -284,9 +296,14 @@ class UserManager {
     /**
      * Authenticate user
      */
-    public function authenticate($email, $password) {
+    public function authenticate($email, $password)
+    {
         try {
-            $user = $this->db->fetchOne("SELECT * FROM user WHERE uemail = ? AND status = 'active'", [$email]);
+            // Map modern columns to legacy aliases for backward compatibility
+            $sql = "SELECT id as uid, name as uname, email as uemail, phone as uphone, 
+                           password as upass, role as utype, status, created_at as join_date 
+                    FROM users WHERE email = ? AND status = 'active'";
+            $user = $this->db->fetchOne($sql, [$email]);
 
             if ($user && password_verify($password, $user['upass'])) {
                 return $user;
@@ -302,16 +319,19 @@ class UserManager {
     /**
      * Register new user
      */
-    public function register($user_data) {
+    public function register($user_data)
+    {
         try {
             // Hash password
             $hashed_password = password_hash($user_data['password'], PASSWORD_ARGON2ID);
 
-            $role = $user_data['role'] ?? '4'; // 4 for customer based on User.php model
+            $role = $user_data['role'] ?? 'customer';
+            if ($role == '4') $role = 'customer'; // Legacy mapping
+
             $status = 'active';
             $name = $user_data['first_name'] . ' ' . ($user_data['last_name'] ?? '');
 
-            $sql = "INSERT INTO user (uname, uemail, uphone, upass, utype, status, join_date)
+            $sql = "INSERT INTO users (name, email, phone, password, role, status, created_at)
                     VALUES (?, ?, ?, ?, ?, ?, NOW())";
 
             $success = $this->db->execute($sql, [
@@ -337,9 +357,13 @@ class UserManager {
     /**
      * Get user profile
      */
-    public function getUserProfile($user_id) {
+    public function getUserProfile($user_id)
+    {
         try {
-            return $this->db->fetchOne("SELECT * FROM user WHERE uid = ?", [$user_id]);
+            $sql = "SELECT id as uid, name as uname, email as uemail, phone as uphone, 
+                           password as upass, role as utype, status, created_at as join_date 
+                    FROM users WHERE id = ?";
+            return $this->db->fetchOne($sql, [$user_id]);
         } catch (Exception $e) {
             error_log("Get user profile error: " . $e->getMessage());
             return null;
@@ -349,18 +373,19 @@ class UserManager {
     /**
      * Update user profile
      */
-    public function updateProfile($user_id, $user_data) {
+    public function updateProfile($user_id, $user_data)
+    {
         try {
             $updates = [];
             $params = [];
 
             if (isset($user_data['name'])) {
-                $updates[] = 'uname = ?';
+                $updates[] = 'name = ?';
                 $params[] = $user_data['name'];
             }
 
             if (isset($user_data['phone'])) {
-                $updates[] = 'uphone = ?';
+                $updates[] = 'phone = ?';
                 $params[] = $user_data['phone'];
             }
 
@@ -373,7 +398,7 @@ class UserManager {
                 return false;
             }
 
-            $sql = "UPDATE user SET " . implode(', ', $updates) . " WHERE uid = ?";
+            $sql = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = ?";
             $params[] = $user_id;
 
             return $this->db->execute($sql, $params);
@@ -387,11 +412,13 @@ class UserManager {
 /**
  * Contact Management System
  */
-class ContactManager {
+class ContactManager
+{
     private $db;
     private $config;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = \App\Core\App::database();
         $this->config = AppConfig::getInstance();
     }
@@ -399,7 +426,8 @@ class ContactManager {
     /**
      * Submit contact form
      */
-    public function submitContact($contact_data) {
+    public function submitContact($contact_data)
+    {
         try {
             $sql = "INSERT INTO contacts (name, email, phone, subject, message, ip_address, user_agent, created_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
@@ -430,7 +458,8 @@ class ContactManager {
     /**
      * Send contact notification email
      */
-    private function sendContactNotification($contact_data) {
+    private function sendContactNotification($contact_data)
+    {
         $to = config('admin_email');
         $subject = 'New Contact Form Submission - APS Dream Home';
         $message = "
@@ -453,7 +482,8 @@ class ContactManager {
     /**
      * Get recent contacts
      */
-    public function getRecentContacts($limit = 10) {
+    public function getRecentContacts($limit = 10)
+    {
         try {
             return $this->db->fetchAll("
                 SELECT * FROM contacts
@@ -471,4 +501,3 @@ class ContactManager {
 $property_manager = new PropertyManager();
 $user_manager = new UserManager();
 $contact_manager = new ContactManager();
-?>

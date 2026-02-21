@@ -61,7 +61,7 @@
                                 </div>
                             </div>
 
-                            <a href="project-details.php?id=<?= $project['id'] ?>" class="btn btn-primary w-100 rounded-pill fw-bold">Project Details</a>
+                            <a href="<?= BASE_URL ?>projects/<?= $project['id'] ?>" class="btn btn-primary w-100 rounded-pill fw-bold">Project Details</a>
                         </div>
                     </div>
                 </div>

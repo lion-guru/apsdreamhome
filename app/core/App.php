@@ -9,6 +9,8 @@ use App\Core\Routing\Router;
 use App\Core\Database;
 use App\Core\Session\SessionManager;
 use App\Core\Auth;
+use App\Http\Middleware\RateLimitMiddleware;
+use App\Http\Middleware\ThrottleLoginMiddleware;
 
 class App
 {
@@ -63,6 +65,11 @@ class App
     public $auth;
 
     /**
+     * The logger instance
+     */
+    public $logger;
+
+    /**
      * Create a new application instance
      */
     public function __construct($basePath = null)
@@ -77,6 +84,19 @@ class App
         $this->bootstrap();
 
         self::$instance = $this;
+    }
+
+    /**
+     * Get the logger instance
+     *
+     * @return \App\Services\SystemLogger
+     */
+    public function logger()
+    {
+        if (!$this->logger) {
+            $this->logger = new \App\Services\SystemLogger($this->config['logging'] ?? []);
+        }
+        return $this->logger;
     }
 
     /**
@@ -218,6 +238,28 @@ class App
         $this->session = new SessionManager();
         $this->session->start($sessionOptions);
 
+        if (!headers_sent()) {
+            header('X-Content-Type-Options: nosniff');
+            header('X-Frame-Options: SAMEORIGIN');
+            header('Referrer-Policy: strict-origin-when-cross-origin');
+            header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+            header("Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;");
+            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+                header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+            }
+        }
+
+        // Enforce CSRF validation on state-changing requests if enabled
+        try {
+            $csrfEnabled = $this->config('security.csrf.enabled', true);
+            if ($csrfEnabled && class_exists('\App\Services\Security\Legacy\CSRFProtection')) {
+                \App\Services\Security\Legacy\CSRFProtection::validateRequest();
+            }
+        } catch (\Throwable $e) {
+            // Fail-safe: don't block bootstrapping due to CSRF init errors
+            error_log('CSRF initialization error: ' . $e->getMessage());
+        }
+
         // Initialize request and response
         $this->request = Request::createFromGlobals();
         $this->response = new Response();
@@ -274,6 +316,8 @@ class App
                 return $next($request);
             }
         });
+
+        $this->register('throttle', new RateLimitMiddleware());
 
         // Initialize router
         $this->router = new Router($this);
@@ -342,6 +386,11 @@ class App
         try {
             // Handle the request through the router
             $response = $this->router->dispatch($this->request);
+
+            // If response is a string, wrap it in a Response object
+            if (is_string($response)) {
+                $response = new Response($response);
+            }
 
             // Send the response
             $response->send();
@@ -506,6 +555,11 @@ class App
     {
         if (isset($this->container[$name])) {
             return $this->container[$name];
+        }
+
+        // Auto-resolve class if it exists
+        if (class_exists($name)) {
+            return new $name(...$parameters);
         }
 
         throw new Exception("Service {$name} not found");

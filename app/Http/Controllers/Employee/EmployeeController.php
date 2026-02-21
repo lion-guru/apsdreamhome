@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Employee;
 use App\Http\Controllers\BaseController;
 use App\Models\Employee;
 use App\Models\Admin;
+use App\Models\EmployeeAttendance;
+use App\Models\Leave;
+use App\Models\Document;
+use App\Models\Shift;
 
 /**
  * Employee Controller
@@ -14,6 +18,10 @@ class EmployeeController extends BaseController
 {
     private $employeeModel;
     private $adminModel;
+    private $attendanceModel;
+    private $leaveModel;
+    private $documentModel;
+    private $shiftModel;
 
     public function __construct()
     {
@@ -21,6 +29,10 @@ class EmployeeController extends BaseController
 
         $this->employeeModel = new Employee();
         $this->adminModel = new Admin();
+        $this->attendanceModel = new EmployeeAttendance();
+        $this->leaveModel = new Leave();
+        $this->documentModel = new Document();
+        $this->shiftModel = new Shift();
     }
 
     /**
@@ -590,6 +602,715 @@ class EmployeeController extends BaseController
         }
 
         $this->redirect('employee/profile');
+    }
+
+    /**
+     * Display employee attendance page
+     */
+    public function attendance()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        // Get attendance history for current month
+        $startDate = date('Y-m-01');
+        $endDate = date('Y-m-t');
+        $attendanceHistory = $this->attendanceModel->getHistory($employeeId, $startDate, $endDate);
+
+        // Get monthly summary
+        $summary = $this->attendanceModel->getMonthlySummary($employeeId, $currentMonth, $currentYear);
+
+        $this->data['page_title'] = 'My Attendance - APS Dream Home';
+        $this->data['attendance_history'] = $attendanceHistory;
+        $this->data['summary'] = $summary;
+        $this->data['current_month'] = $currentMonth;
+        $this->data['current_year'] = $currentYear;
+
+        $this->render('employees/attendance');
+    }
+
+    /**
+     * API endpoint for check-in
+     */
+    public function checkIn()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!$data) {
+            $data = $_POST;
+        }
+
+        $checkInData = [
+            'latitude' => $data['latitude'] ?? null,
+            'longitude' => $data['longitude'] ?? null,
+            'address' => $data['address'] ?? null,
+            'photo' => $data['photo'] ?? null,
+            'notes' => $data['notes'] ?? null,
+            'status' => $data['status'] ?? null
+        ];
+
+        $result = $this->attendanceModel->checkIn($employeeId, $checkInData);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Checked in successfully!',
+                'data' => $result
+            ]);
+        } else {
+            $this->jsonResponse([
+                'success' => false,
+                'message' => $result['message'] ?? 'Check-in failed'
+            ], 400);
+        }
+    }
+
+    /**
+     * API endpoint for check-out
+     */
+    public function checkOut()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!$data) {
+            $data = $_POST;
+        }
+
+        $checkOutData = [
+            'latitude' => $data['latitude'] ?? null,
+            'longitude' => $data['longitude'] ?? null,
+            'address' => $data['address'] ?? null,
+            'photo' => $data['photo'] ?? null
+        ];
+
+        $result = $this->attendanceModel->checkOut($employeeId, $checkOutData);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Checked out successfully!',
+                'data' => $result
+            ]);
+        } else {
+            $this->jsonResponse([
+                'success' => false,
+                'message' => $result['message'] ?? 'Check-out failed'
+            ], 400);
+        }
+    }
+
+    /**
+     * Get today's attendance status
+     */
+    public function getAttendanceStatus()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+
+        // Check if already checked in today
+        $todayRecord = $this->attendanceModel->where('employee_id', $employeeId)
+            ->where('DATE(check_in_time)', date('Y-m-d'))
+            ->first();
+
+        $status = [
+            'checked_in' => false,
+            'checked_out' => false,
+            'check_in_time' => null,
+            'check_out_time' => null,
+            'work_hours' => 0,
+            'status' => null
+        ];
+
+        if ($todayRecord) {
+            $status['checked_in'] = true;
+            $status['check_in_time'] = $todayRecord['check_in_time'];
+            $status['status'] = $todayRecord['status'];
+
+            if ($todayRecord['check_out_time']) {
+                $status['checked_out'] = true;
+                $status['check_out_time'] = $todayRecord['check_out_time'];
+                $status['work_hours'] = $todayRecord['work_hours'];
+            }
+        }
+
+        $this->jsonResponse(['success' => true, 'data' => $status]);
+    }
+
+    /**
+     * Get attendance history for a specific period
+     */
+    public function getAttendanceHistory()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $startDate = $_GET['start_date'] ?? date('Y-m-01');
+        $endDate = $_GET['end_date'] ?? date('Y-m-t');
+
+        $history = $this->attendanceModel->getHistory($employeeId, $startDate, $endDate);
+
+        $this->jsonResponse(['success' => true, 'data' => $history]);
+    }
+
+    /**
+     * Get attendance statistics
+     */
+    public function getAttendanceStats()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $month = (int)($_GET['month'] ?? date('m'));
+        $year = (int)($_GET['year'] ?? date('Y'));
+
+        $stats = $this->attendanceModel->getMonthlySummary($employeeId, $month, $year);
+
+        $this->jsonResponse(['success' => true, 'data' => $stats]);
+    }
+
+    /**
+     * Display employee leave page
+     */
+    public function leaves()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+
+        // Initialize leave balance if not exists
+        $this->leaveModel->initializeLeaveBalance($employeeId);
+
+        // Get leave balance
+        $leaveBalance = $this->leaveModel->getLeaveBalance($employeeId);
+
+        // Get leave requests
+        $leaveRequests = $this->leaveModel->getEmployeeRequests($employeeId);
+
+        // Get leave types
+        $leaveTypes = $this->leaveModel->getActiveLeaveTypes();
+
+        $this->data['page_title'] = 'My Leaves - APS Dream Home';
+        $this->data['leave_balance'] = $leaveBalance;
+        $this->data['leave_requests'] = $leaveRequests;
+        $this->data['leave_types'] = $leaveTypes;
+
+        $this->render('employees/leaves');
+    }
+
+    /**
+     * API endpoint to submit leave request
+     */
+    public function applyLeave()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!$data) {
+            $data = $_POST;
+        }
+
+        // Validate required fields
+        $required = ['leave_type_id', 'start_date', 'end_date', 'reason'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $this->jsonResponse(['success' => false, 'message' => "Field '$field' is required"], 400);
+            }
+        }
+
+        $leaveData = [
+            'employee_id' => $employeeId,
+            'leave_type_id' => $data['leave_type_id'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'reason' => $data['reason'],
+            'emergency_contact' => $data['emergency_contact'] ?? null,
+            'work_coverage' => $data['work_coverage'] ?? null
+        ];
+
+        $result = $this->leaveModel->submitRequest($leaveData);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => $result['message'],
+                'data' => $result
+            ]);
+        } else {
+            $this->jsonResponse([
+                'success' => false,
+                'message' => $result['message']
+            ], 400);
+        }
+    }
+
+    /**
+     * Get leave balance
+     */
+    public function getLeaveBalance()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $year = (int)($_GET['year'] ?? date('Y'));
+
+        $balance = $this->leaveModel->getLeaveBalance($employeeId, $year);
+
+        $this->jsonResponse(['success' => true, 'data' => $balance]);
+    }
+
+    /**
+     * Get leave calendar data
+     */
+    public function getLeaveCalendar()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $year = (int)($_GET['year'] ?? date('Y'));
+        $month = (int)($_GET['month'] ?? date('m'));
+
+        $calendar = $this->leaveModel->getLeaveCalendar($employeeId, $year, $month);
+
+        $this->jsonResponse(['success' => true, 'data' => $calendar]);
+    }
+
+    /**
+     * Cancel leave request
+     */
+    public function cancelLeave()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+        $requestId = $_POST['request_id'] ?? null;
+
+        if (!$requestId) {
+            $this->jsonResponse(['success' => false, 'message' => 'Request ID is required'], 400);
+        }
+
+        // Check if request belongs to employee and is pending
+        $request = $this->leaveModel->find($requestId);
+
+        if (!$request || $request['employee_id'] != $employeeId) {
+            $this->jsonResponse(['success' => false, 'message' => 'Leave request not found'], 404);
+        }
+
+        if ($request['status'] !== 'pending') {
+            $this->jsonResponse(['success' => false, 'message' => 'Only pending requests can be cancelled'], 400);
+        }
+
+        // Update status to cancelled
+        $this->leaveModel->update($requestId, [
+            'status' => Leave::STATUS_CANCELLED,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+
+        $this->jsonResponse([
+            'success' => true,
+            'message' => 'Leave request cancelled successfully'
+        ]);
+    }
+
+    /**
+     * Display employee documents page
+     */
+    public function documents()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+
+        // Get document statistics
+        $stats = $this->documentModel->getDocumentStats($employeeId);
+
+        // Get employee documents
+        $documents = $this->documentModel->getEmployeeDocuments($employeeId);
+
+        // Get document categories and types
+        $categories = $this->documentModel->getCategories();
+        $documentTypes = $this->documentModel->getDocumentTypes();
+
+        $this->data['page_title'] = 'My Documents - APS Dream Home';
+        $this->data['documents'] = $documents;
+        $this->data['stats'] = $stats;
+        $this->data['categories'] = $categories;
+        $this->data['document_types'] = $documentTypes;
+
+        $this->render('employees/documents');
+    }
+
+    /**
+     * Upload a document
+     */
+    public function uploadDocument()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+
+        // Check if file was uploaded
+        if (!isset($_FILES['document']) || $_FILES['document']['error'] !== UPLOAD_ERR_OK) {
+            $this->jsonResponse(['success' => false, 'message' => 'No file uploaded or upload failed'], 400);
+        }
+
+        $file = $_FILES['document'];
+        $data = $_POST;
+
+        $uploadData = [
+            'employee_id' => $employeeId,
+            'document_type_id' => $data['document_type_id'] ?? null,
+            'title' => $data['title'] ?? $file['name'],
+            'description' => $data['description'] ?? null,
+            'uploaded_by' => $_SESSION['employee_id'], // Employee uploading their own document
+            'expires_at' => !empty($data['expires_at']) ? $data['expires_at'] : null,
+            'metadata' => [
+                'uploaded_via' => 'employee_portal',
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null
+            ]
+        ];
+
+        $result = $this->documentModel->uploadDocument($uploadData, $file);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => $result['message'],
+                'data' => $result
+            ]);
+        } else {
+            $this->jsonResponse([
+                'success' => false,
+                'message' => $result['message']
+            ], 400);
+        }
+    }
+
+    /**
+     * Download a document
+     */
+    public function downloadDocument($documentId)
+    {
+        $this->middleware('employee.auth');
+
+        $userId = $_SESSION['employee_id'];
+
+        $result = $this->documentModel->downloadDocument((int)$documentId, $userId);
+
+        if ($result['success']) {
+            // Set headers for file download
+            header('Content-Type: ' . $result['mime_type']);
+            header('Content-Disposition: attachment; filename="' . $result['file_name'] . '"');
+            header('Content-Length: ' . filesize($result['file_path']));
+            header('Cache-Control: private, max-age=0, must-revalidate');
+            header('Pragma: public');
+
+            // Clear output buffer
+            ob_clean();
+            flush();
+
+            // Output file
+            readfile($result['file_path']);
+            exit;
+        } else {
+            $this->setFlash('error', $result['message']);
+            $this->redirect('/employee/documents');
+        }
+    }
+
+    /**
+     * Get document categories and types (AJAX)
+     */
+    public function getDocumentCategories()
+    {
+        $this->middleware('employee.auth');
+
+        $categories = $this->documentModel->getCategories();
+        $documentTypes = $this->documentModel->getDocumentTypes();
+
+        $this->jsonResponse([
+            'success' => true,
+            'categories' => $categories,
+            'document_types' => $documentTypes
+        ]);
+    }
+
+    /**
+     * Get employee documents (AJAX)
+     */
+    public function getDocuments()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $filters = [
+            'document_type_id' => $_GET['document_type_id'] ?? null,
+            'category_id' => $_GET['category_id'] ?? null,
+            'search' => $_GET['search'] ?? null,
+            'limit' => $_GET['limit'] ?? 50
+        ];
+
+        $documents = $this->documentModel->getEmployeeDocuments($employeeId, $filters);
+
+        $this->jsonResponse(['success' => true, 'data' => $documents]);
+    }
+
+    /**
+     * Delete a document (soft delete)
+     */
+    public function deleteDocument()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $documentId = $_POST['document_id'] ?? null;
+        $userId = $_SESSION['employee_id'];
+
+        if (!$documentId) {
+            $this->jsonResponse(['success' => false, 'message' => 'Document ID is required'], 400);
+        }
+
+        $result = $this->documentModel->deleteDocument((int)$documentId, $userId);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => $result['message']
+            ]);
+        } else {
+            $this->jsonResponse([
+                'success' => false,
+                'message' => $result['message']
+            ], 400);
+        }
+    }
+
+    /**
+     * Get document statistics
+     */
+    public function getDocumentStats()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $stats = $this->documentModel->getDocumentStats($employeeId);
+
+        $this->jsonResponse(['success' => true, 'data' => $stats]);
+    }
+
+    /**
+     * Display employee shifts page
+     */
+    public function shifts()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        // Get shifts for current month
+        $startDate = date('Y-m-01');
+        $endDate = date('Y-m-t');
+        $shifts = $this->shiftModel->getEmployeeShifts($employeeId, $startDate, $endDate);
+
+        // Get current shift status
+        $currentShift = $this->shiftModel->getCurrentShift($employeeId);
+
+        // Get shift types for reference
+        $shiftTypes = $this->shiftModel->getShiftTypes();
+
+        $this->data['page_title'] = 'My Shifts - APS Dream Home';
+        $this->data['shifts'] = $shifts;
+        $this->data['current_shift'] = $currentShift;
+        $this->data['shift_types'] = $shiftTypes;
+        $this->data['current_month'] = $currentMonth;
+        $this->data['current_year'] = $currentYear;
+
+        $this->render('employees/shifts');
+    }
+
+    /**
+     * API endpoint for clock in/out
+     */
+    public function clockInOut()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+        $action = $_POST['action'] ?? null;
+
+        if (!$action || !in_array($action, ['clock_in', 'clock_out'])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid action'], 400);
+        }
+
+        $result = $this->shiftModel->clockInOut($employeeId, $action);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => $result['message'],
+                'data' => $result
+            ]);
+        } else {
+            $this->jsonResponse([
+                'success' => false,
+                'message' => $result['message']
+            ], 400);
+        }
+    }
+
+    /**
+     * Get current shift status
+     */
+    public function getCurrentShiftStatus()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $currentShift = $this->shiftModel->getCurrentShift($employeeId);
+
+        $this->jsonResponse([
+            'success' => true,
+            'data' => $currentShift
+        ]);
+    }
+
+    /**
+     * Get shifts for a specific period
+     */
+    public function getShifts()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $startDate = $_GET['start_date'] ?? date('Y-m-01');
+        $endDate = $_GET['end_date'] ?? date('Y-m-t');
+
+        $shifts = $this->shiftModel->getEmployeeShifts($employeeId, $startDate, $endDate);
+
+        $this->jsonResponse(['success' => true, 'data' => $shifts]);
+    }
+
+    /**
+     * Display time-off requests page
+     */
+    public function timeOff()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+
+        // Get time-off requests
+        $timeOffRequests = $this->shiftModel->getTimeOffRequests($employeeId);
+
+        $this->data['page_title'] = 'Time Off Requests - APS Dream Home';
+        $this->data['time_off_requests'] = $timeOffRequests;
+
+        $this->render('employees/time_off');
+    }
+
+    /**
+     * Request time off
+     */
+    public function requestTimeOff()
+    {
+        $this->middleware('employee.auth');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
+        }
+
+        $employeeId = $_SESSION['employee_id'];
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!$data) {
+            $data = $_POST;
+        }
+
+        // Validate required fields
+        $required = ['request_type', 'start_date', 'end_date', 'reason'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $this->jsonResponse(['success' => false, 'message' => "Field '$field' is required"], 400);
+            }
+        }
+
+        $timeOffData = [
+            'employee_id' => $employeeId,
+            'request_type' => $data['request_type'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'start_time' => $data['start_time'] ?? null,
+            'end_time' => $data['end_time'] ?? null,
+            'reason' => $data['reason']
+        ];
+
+        $result = $this->shiftModel->requestTimeOff($timeOffData);
+
+        if ($result['success']) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => $result['message'],
+                'data' => $result
+            ]);
+        } else {
+            $this->jsonResponse([
+                'success' => false,
+                'message' => $result['message']
+            ], 400);
+        }
+    }
+
+    /**
+     * Get time-off requests
+     */
+    public function getTimeOffRequests()
+    {
+        $this->middleware('employee.auth');
+
+        $employeeId = $_SESSION['employee_id'];
+        $requests = $this->shiftModel->getTimeOffRequests($employeeId);
+
+        $this->jsonResponse(['success' => true, 'data' => $requests]);
     }
 
     /**

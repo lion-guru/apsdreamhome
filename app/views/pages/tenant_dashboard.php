@@ -16,13 +16,20 @@ if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype']
 $db = \App\Core\App::database();
 $uid = $_SESSION['uid'];
 
-// Fetch tenant profile
-$tenant = $db->fetch("SELECT * FROM user WHERE uid = :uid AND utype = 'tenant'", ['uid' => $uid]);
+// Fetch tenant profile from 'users' table
+$tenant = $db->fetch("SELECT * FROM users WHERE id = :uid AND role = 'tenant'", ['uid' => $uid]);
 
 if (!$tenant) {
     header("Location: login.php?error=tenant_not_found");
     exit;
 }
+
+// Map modern columns to legacy variables for view compatibility
+$tenant['uid'] = $tenant['id'];
+$tenant['uname'] = $tenant['name'];
+$tenant['utype'] = $tenant['role'];
+$tenant['uemail'] = $tenant['email'];
+$tenant['uimage'] = $tenant['profile_image'] ?? null;
 
 // Fetch real stats from DB (with fallbacks)
 $stats = [

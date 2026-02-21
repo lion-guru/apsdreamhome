@@ -117,7 +117,7 @@ class BaseApiController extends BaseController
 
             return null;
         } catch (\Exception $e) {
-            error_log("API Key Validation Error: " . $e->getMessage());
+            logger()->error("API Key Validation Error: " . $e->getMessage());
             return $this->jsonError('Internal server error during API key validation', 500);
         }
     }

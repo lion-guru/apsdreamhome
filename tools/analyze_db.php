@@ -1,71 +1,57 @@
 <?php
-// Hardcoded for XAMPP environment
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'apsdreamhome');
+require_once __DIR__ . '/../config/bootstrap.php';
+
+use App\Core\Database;
+
+$db = Database::getInstance();
+$conn = $db->getConnection();
+
+echo "Analyzing database tables structure...\n";
 
 try {
-    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
-    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-
-    echo "Connected to database: " . DB_NAME . "\n";
-
-    // Get all tables
-    $stmt = $pdo->query("SHOW TABLES");
+    $stmt = $conn->query("SHOW TABLES");
     $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    echo "Total Tables: " . count($tables) . "\n\n";
+    $totalTables = count($tables);
+    echo "Total tables found: $totalTables\n\n";
 
-    echo "Table Analysis:\n";
-    echo str_pad("Table Name", 40) . str_pad("Rows", 10) . "Columns\n";
-    echo str_repeat("-", 60) . "\n";
-
+    $prefixes = [];
     foreach ($tables as $table) {
-        try {
-            $countStmt = $pdo->query("SELECT COUNT(*) FROM `$table`");
-            $rowCount = $countStmt->fetchColumn();
-
-            $colStmt = $pdo->query("DESCRIBE `$table`");
-            $columns = $colStmt->fetchAll(PDO::FETCH_COLUMN);
-            $colCount = count($columns);
-
-            echo str_pad($table, 40) . str_pad($rowCount, 10) . $colCount . "\n";
-        } catch (Exception $e) {
-            echo str_pad($table, 40) . "ERROR: " . $e->getMessage() . "\n";
+        $parts = explode('_', $table);
+        $prefix = $parts[0];
+        if (!isset($prefixes[$prefix])) {
+            $prefixes[$prefix] = 0;
         }
+        $prefixes[$prefix]++;
     }
 
-    echo "\nPotential Duplicates Analysis:\n";
-    $suspects = [
-        ['user', 'users'],
-        ['agent', 'agents'],
-        ['associate', 'associates'],
-        ['customer', 'customers'],
-        ['plot', 'plots'],
-        ['property', 'properties']
-    ];
+    arsort($prefixes);
 
-    foreach ($suspects as $pair) {
-        $t1 = $pair[0];
-        $t2 = $pair[1];
-        if (in_array($t1, $tables) && in_array($t2, $tables)) {
-            echo "WARNING: Both '$t1' and '$t2' exist!\n";
-            // Compare columns
-            $c1 = $pdo->query("DESCRIBE `$t1`")->fetchAll(PDO::FETCH_COLUMN);
-            $c2 = $pdo->query("DESCRIBE `$t2`")->fetchAll(PDO::FETCH_COLUMN);
+    echo "--- Table Groups by Prefix (Top 20) ---\n";
+    $count = 0;
+    foreach ($prefixes as $prefix => $num) {
+        echo "$prefix: $num tables\n";
+        $count++;
+        if ($count >= 20) break;
+    }
 
-            // Check rows to see which one is active
-            $r1 = $pdo->query("SELECT COUNT(*) FROM `$t1`")->fetchColumn();
-            $r2 = $pdo->query("SELECT COUNT(*) FROM `$t2`")->fetchColumn();
-
-            echo "  $t1 ($r1 rows): " . implode(', ', $c1) . "\n";
-            echo "  $t2 ($r2 rows): " . implode(', ', $c2) . "\n";
+    echo "\n--- Sample Tables for Top Prefixes ---\n";
+    $count = 0;
+    foreach ($prefixes as $prefix => $num) {
+        if ($num > 5) {
+            echo "\nPrefix '$prefix' ($num tables): ";
+            $samples = [];
+            foreach ($tables as $t) {
+                if (strpos($t, $prefix . '_') === 0) {
+                    $samples[] = $t;
+                    if (count($samples) >= 3) break;
+                }
+            }
+            echo implode(', ', $samples) . "...\n";
         }
+        $count++;
+        if ($count >= 5) break;
     }
 } catch (PDOException $e) {
-    echo "Database Error: " . $e->getMessage();
+    echo "Error: " . $e->getMessage();
 }

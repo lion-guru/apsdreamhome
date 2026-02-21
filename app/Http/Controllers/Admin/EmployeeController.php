@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Models\Performance;
 
 class EmployeeController extends AdminController
 {
@@ -299,6 +300,288 @@ class EmployeeController extends AdminController
         }
     }
 
+    /**
+     * Display employee performance reviews
+     */
+    public function performance()
+    {
+        $employeeId = $this->request->get('employee_id');
+        $reviewType = $this->request->get('type', 'all');
+        $status = $this->request->get('status', 'all');
+
+        $performanceModel = new Performance();
+
+        $filters = [];
+        if ($reviewType !== 'all') $filters['review_type'] = $reviewType;
+        if ($status !== 'all') $filters['status'] = $status;
+
+        $reviews = [];
+        $employees = [];
+
+        if ($employeeId) {
+            $reviews = $performanceModel->getEmployeeReviews($employeeId);
+            $employee = $this->model('Employee')->getEmployeeById($employeeId);
+            $employees = $employee ? [$employee] : [];
+        } else {
+            $employees = $this->model('Employee')->getAllEmployees();
+        }
+
+        return $this->render('admin/employees/performance', [
+            'reviews' => $reviews,
+            'employees' => $employees,
+            'selected_employee' => $employeeId,
+            'filters' => [
+                'type' => $reviewType,
+                'status' => $status
+            ],
+            'page_title' => $this->mlSupport->translate('Employee Performance') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Create new performance review
+     */
+    public function createPerformanceReview()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+
+            $performanceModel = new Performance();
+            $result = $performanceModel->createReview([
+                'employee_id' => $data['employee_id'],
+                'reviewer_id' => $this->request->session('auth')['id'],
+                'review_period_start' => $data['review_period_start'],
+                'review_period_end' => $data['review_period_end'],
+                'review_type' => $data['review_type']
+            ]);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Performance review created successfully');
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+
+            return $this->redirect('/admin/employees/performance');
+        }
+
+        $employees = $this->model('Employee')->getAllEmployees();
+
+        return $this->render('admin/employees/create_performance_review', [
+            'employees' => $employees,
+            'page_title' => $this->mlSupport->translate('Create Performance Review') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Edit performance review
+     */
+    public function editPerformanceReview($reviewId)
+    {
+        $performanceModel = new Performance();
+        $review = $performanceModel->find($reviewId);
+
+        if (!$review) {
+            $this->setFlash('error', 'Performance review not found');
+            return $this->redirect('/admin/employees/performance');
+        }
+
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+
+            $result = $performanceModel->updateReview($reviewId, [
+                'overall_rating' => $data['overall_rating'],
+                'performance_level' => $data['performance_level'],
+                'goals_achievement' => $data['goals_achievement'],
+                'strengths' => $data['strengths'],
+                'areas_for_improvement' => $data['areas_for_improvement'],
+                'development_plan' => $data['development_plan'],
+                'reviewer_comments' => $data['reviewer_comments'],
+                'status' => $data['status'],
+                'review_date' => $data['review_date'],
+                'next_review_date' => $data['next_review_date']
+            ]);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Performance review updated successfully');
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+
+            return $this->redirect('/admin/employees/performance');
+        }
+
+        $employee = $this->model('Employee')->getEmployeeById($review['employee_id']);
+        $feedback = $performanceModel->getReviewFeedback($reviewId);
+
+        return $this->render('admin/employees/edit_performance_review', [
+            'review' => $review,
+            'employee' => $employee,
+            'feedback' => $feedback,
+            'page_title' => $this->mlSupport->translate('Edit Performance Review') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display KPIs management
+     */
+    public function kpis()
+    {
+        $performanceModel = new Performance();
+        $kpis = $performanceModel->query("SELECT * FROM kpis WHERE is_active = 1 ORDER BY category, name")->fetchAll();
+
+        return $this->render('admin/employees/kpis', [
+            'kpis' => $kpis,
+            'page_title' => $this->mlSupport->translate('KPI Management') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Set employee KPIs
+     */
+    public function setEmployeeKPIs()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+
+            $performanceModel = new Performance();
+            $result = $performanceModel->setEmployeeKPIs(
+                $data['employee_id'],
+                $data['kpis'],
+                $data['period_start'],
+                $data['period_end']
+            );
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Employee KPIs set successfully');
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+
+            return $this->redirect('/admin/employees/kpis');
+        }
+
+        $employees = $this->model('Employee')->getAllEmployees();
+        $performanceModel = new Performance();
+        $availableKPIs = $performanceModel->query("SELECT * FROM kpis WHERE is_active = 1 ORDER BY category, name")->fetchAll();
+
+        return $this->render('admin/employees/set_employee_kpis', [
+            'employees' => $employees,
+            'available_kpis' => $availableKPIs,
+            'page_title' => $this->mlSupport->translate('Set Employee KPIs') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display performance goals
+     */
+    public function goals()
+    {
+        $employeeId = $this->request->get('employee_id');
+        $status = $this->request->get('status', 'all');
+
+        $performanceModel = new Performance();
+
+        $goals = [];
+        $employees = [];
+
+        if ($employeeId) {
+            $goals = $performanceModel->getEmployeeGoals($employeeId);
+            $employee = $this->model('Employee')->getEmployeeById($employeeId);
+            $employees = $employee ? [$employee] : [];
+        } else {
+            $employees = $this->model('Employee')->getAllEmployees();
+            // Get all goals if no specific employee selected
+            $goals = $performanceModel->query(
+                "SELECT pg.*, e.name as employee_name, a.auser as assigned_by_name
+                 FROM performance_goals pg
+                 LEFT JOIN employees e ON pg.employee_id = e.id
+                 LEFT JOIN admin a ON pg.assigned_by = a.aid
+                 ORDER BY pg.created_at DESC LIMIT 50"
+            )->fetchAll();
+        }
+
+        return $this->render('admin/employees/goals', [
+            'goals' => $goals,
+            'employees' => $employees,
+            'selected_employee' => $employeeId,
+            'status_filter' => $status,
+            'page_title' => $this->mlSupport->translate('Performance Goals') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Create performance goal
+     */
+    public function createGoal()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+
+            $performanceModel = new Performance();
+            $result = $performanceModel->createGoal([
+                'employee_id' => $data['employee_id'],
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'category' => $data['category'],
+                'priority' => $data['priority'],
+                'target_date' => $data['target_date'],
+                'assigned_by' => $this->request->session('auth')['id']
+            ]);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Performance goal created successfully');
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+
+            return $this->redirect('/admin/employees/goals');
+        }
+
+        $employees = $this->model('Employee')->getAllEmployees();
+
+        return $this->render('admin/employees/create_goal', [
+            'employees' => $employees,
+            'page_title' => $this->mlSupport->translate('Create Performance Goal') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Performance analytics dashboard
+     */
+    public function performanceAnalytics()
+    {
+        $performanceModel = new Performance();
+
+        // Get overall analytics
+        $analytics = $performanceModel->getPerformanceAnalytics();
+
+        // Get recent reviews
+        $recentReviews = $performanceModel->query(
+            "SELECT pr.*, e.name as employee_name
+             FROM performance_reviews pr
+             LEFT JOIN employees e ON pr.employee_id = e.id
+             WHERE pr.status = 'completed'
+             ORDER BY pr.review_date DESC LIMIT 10"
+        )->fetchAll();
+
+        // Get top performers
+        $topPerformers = $performanceModel->query(
+            "SELECT e.name, AVG(pr.overall_rating) as avg_rating, COUNT(*) as review_count
+             FROM performance_reviews pr
+             LEFT JOIN employees e ON pr.employee_id = e.id
+             WHERE pr.status = 'completed' AND pr.overall_rating >= 4.0
+             GROUP BY pr.employee_id
+             ORDER BY avg_rating DESC LIMIT 10"
+        )->fetchAll();
+
+        return $this->render('admin/employees/performance_analytics', [
+            'analytics' => $analytics,
+            'recent_reviews' => $recentReviews,
+            'top_performers' => $topPerformers,
+            'page_title' => $this->mlSupport->translate('Performance Analytics') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
     protected function sendOffboardNotification($employee)
     {
         try {
@@ -322,7 +605,7 @@ class EmployeeController extends AdminController
             }
         } catch (\Exception $e) {
             // Log notification error but don't fail the offboarding process
-            \error_log("Failed to send offboard notification: " . $e->getMessage());
+            logger()->error("Failed to send offboard notification: " . $e->getMessage());
         }
     }
 }

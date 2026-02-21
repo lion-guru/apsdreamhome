@@ -113,9 +113,9 @@ class AccessControlMiddleware {
             
             // Fetch allowed IPs for user
             $userData = $db->fetch("
-                SELECT utype 
-                FROM user 
-                WHERE uid = ?
+                SELECT role 
+                FROM users 
+                WHERE id = ?
             ", [$userId]);
 
             // No IP restrictions column in user table, skipping check

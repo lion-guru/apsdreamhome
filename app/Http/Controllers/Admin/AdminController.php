@@ -12,6 +12,10 @@ use App\Models\Admin;
 use App\Models\About;
 use App\Models\Property;
 use App\Models\User;
+use App\Models\Invoice;
+use App\Models\Tax;
+use App\Models\FinancialReports;
+use App\Models\Budget;
 use Exception;
 
 use App\Services\Legacy\MultiLanguageSupport;
@@ -35,7 +39,7 @@ class AdminController extends BaseController
             $this->data['mlSupport'] = $this->mlSupport;
         } catch (Exception $e) {
             // Fallback or log error if needed
-            error_log("MultiLanguageSupport init failed: " . $e->getMessage());
+            logger()->error("MultiLanguageSupport init failed: " . $e->getMessage());
         }
 
         // Ensure only admins can access admin pages
@@ -1013,5 +1017,968 @@ class AdminController extends BaseController
             'last_backup' => date('Y-m-d H:i', strtotime('-1 day')),
             'system_version' => '1.0.0'
         ];
+    }
+
+    /**
+     * Display invoices management page
+     */
+    public function invoices()
+    {
+        $filters = [
+            'status' => $this->request->get('status', ''),
+            'client_type' => $this->request->get('client_type', ''),
+            'date_from' => $this->request->get('date_from', ''),
+            'date_to' => $this->request->get('date_to', ''),
+            'search' => $this->request->get('search', '')
+        ];
+
+        $invoiceModel = new Invoice();
+        $invoices = $invoiceModel->getInvoices($filters);
+
+        return $this->render('admin/invoices/index', [
+            'invoices' => $invoices,
+            'filters' => $filters,
+            'page_title' => $this->mlSupport->translate('Invoice Management') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Show create invoice form
+     */
+    public function createInvoice()
+    {
+        // Get clients for dropdown
+        $customers = $this->model('Customer')->getAllCustomers();
+        $associates = $this->model('Associate')->getAllAssociates();
+
+        return $this->render('admin/invoices/create', [
+            'customers' => $customers,
+            'associates' => $associates,
+            'page_title' => $this->mlSupport->translate('Create Invoice') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Store new invoice
+     */
+    public function storeInvoice()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+            $items = json_decode($data['items'], true);
+
+            if (!$items || empty($items)) {
+                $this->setFlash('error', 'At least one item is required');
+                return $this->redirect('/admin/invoices/create');
+            }
+
+            $invoiceModel = new Invoice();
+            $result = $invoiceModel->createInvoice([
+                'client_id' => $data['client_id'] ?? null,
+                'client_type' => $data['client_type'] ?? 'customer',
+                'client_name' => $data['client_name'],
+                'client_email' => $data['client_email'] ?? null,
+                'client_phone' => $data['client_phone'] ?? null,
+                'client_address' => $data['client_address'] ?? null,
+                'billing_address' => $data['billing_address'] ?? null,
+                'due_date' => $data['due_date'],
+                'payment_terms' => $data['payment_terms'] ?? null,
+                'notes' => $data['notes'] ?? null,
+                'currency' => $data['currency'] ?? 'INR',
+                'generated_by' => $this->request->session('auth')['id']
+            ], $items);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Invoice created successfully');
+                return $this->redirect('/admin/invoices');
+            } else {
+                $this->setFlash('error', $result['message']);
+                return $this->redirect('/admin/invoices/create');
+            }
+        }
+
+        return $this->redirect('/admin/invoices/create');
+    }
+
+    /**
+     * Show invoice details
+     */
+    public function showInvoice($invoiceId)
+    {
+        $invoiceModel = new Invoice();
+        $invoice = $invoiceModel->getInvoiceDetails($invoiceId);
+
+        if (!$invoice) {
+            $this->setFlash('error', 'Invoice not found');
+            return $this->redirect('/admin/invoices');
+        }
+
+        return $this->render('admin/invoices/show', [
+            'invoice' => $invoice,
+            'page_title' => 'Invoice ' . $invoice['invoice_number'] . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Generate invoice PDF/HTML
+     */
+    public function generateInvoicePDF($invoiceId)
+    {
+        $invoiceModel = new Invoice();
+        $html = $invoiceModel->generateInvoiceHTML($invoiceId);
+
+        if (!$html) {
+            $this->setFlash('error', 'Invoice not found');
+            return $this->redirect('/admin/invoices');
+        }
+
+        // Set headers for PDF download
+        header('Content-Type: text/html');
+        header('Content-Disposition: attachment; filename="invoice_' . $invoiceId . '.html"');
+
+        echo $html;
+        exit;
+    }
+
+    /**
+     * Send invoice to client
+     */
+    public function sendInvoice()
+    {
+        if ($this->request->isMethod('post')) {
+            $invoiceId = $this->request->post('invoice_id');
+
+            $invoiceModel = new Invoice();
+            $result = $invoiceModel->sendInvoice($invoiceId);
+
+            if ($result['success']) {
+                $this->setFlash('success', $result['message']);
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+        }
+
+        return $this->redirect('/admin/invoices');
+    }
+
+    /**
+     * Record payment for invoice
+     */
+    public function recordPayment()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+
+            $invoiceModel = new Invoice();
+            $result = $invoiceModel->recordPayment($data['invoice_id'], [
+                'payment_date' => $data['payment_date'],
+                'amount' => $data['amount'],
+                'payment_method' => $data['payment_method'],
+                'reference_number' => $data['reference_number'] ?? null,
+                'notes' => $data['notes'] ?? null,
+                'received_by' => $this->request->session('auth')['id']
+            ]);
+
+            if ($result['success']) {
+                $this->setFlash('success', $result['message']);
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+        }
+
+        return $this->redirect('/admin/invoices');
+    }
+
+    /**
+     * Send payment reminder
+     */
+    public function sendPaymentReminder()
+    {
+        if ($this->request->isMethod('post')) {
+            $invoiceId = $this->request->post('invoice_id');
+
+            $invoiceModel = new Invoice();
+            $result = $invoiceModel->sendPaymentReminder($invoiceId);
+
+            if ($result['success']) {
+                $this->setFlash('success', $result['message']);
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+        }
+
+        return $this->redirect('/admin/invoices');
+    }
+
+    /**
+     * Get overdue invoices
+     */
+    public function getOverdueInvoices()
+    {
+        $invoiceModel = new Invoice();
+        $overdueInvoices = $invoiceModel->getOverdueInvoices();
+
+        return $this->render('admin/invoices/overdue', [
+            'overdue_invoices' => $overdueInvoices,
+            'page_title' => $this->mlSupport->translate('Overdue Invoices') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Invoice analytics and reports
+     */
+    public function invoiceAnalytics()
+    {
+        $invoiceModel = new Invoice();
+
+        // Get various statistics
+        $totalInvoices = count($invoiceModel->getInvoices());
+        $paidInvoices = count($invoiceModel->getInvoices(['status' => 'paid']));
+        $pendingInvoices = count($invoiceModel->getInvoices(['status' => 'sent']));
+        $overdueInvoices = count($invoiceModel->getOverdueInvoices());
+
+        // Calculate total amounts
+        $allInvoices = $invoiceModel->getInvoices();
+        $totalAmount = array_sum(array_column($allInvoices, 'total_amount'));
+        $paidAmount = array_sum(array_column(array_filter($allInvoices, function($inv) {
+            return $inv['status'] === 'paid';
+        }), 'total_amount'));
+
+        $analytics = [
+            'total_invoices' => $totalInvoices,
+            'paid_invoices' => $paidInvoices,
+            'pending_invoices' => $pendingInvoices,
+            'overdue_invoices' => $overdueInvoices,
+            'total_amount' => $totalAmount,
+            'paid_amount' => $paidAmount,
+            'pending_amount' => $totalAmount - $paidAmount,
+            'payment_rate' => $totalAmount > 0 ? round(($paidAmount / $totalAmount) * 100, 2) : 0
+        ];
+
+        return $this->render('admin/invoices/analytics', [
+            'analytics' => $analytics,
+            'page_title' => $this->mlSupport->translate('Invoice Analytics') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display GST settings page
+     */
+    public function gstSettings()
+    {
+        $taxModel = new Tax();
+        $gstSettings = $taxModel->getGstSettings();
+
+        return $this->render('admin/tax/gst_settings', [
+            'gst_settings' => $gstSettings,
+            'page_title' => $this->mlSupport->translate('GST Settings') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Update GST settings
+     */
+    public function updateGstSettings()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+
+            $taxModel = new Tax();
+            $result = $taxModel->updateGstSettings([
+                'gstin' => $data['gstin'],
+                'business_name' => $data['business_name'],
+                'business_address' => $data['business_address'],
+                'state_code' => $data['state_code'],
+                'state_name' => $data['state_name'],
+                'contact_person' => $data['contact_person'],
+                'contact_email' => $data['contact_email'],
+                'contact_phone' => $data['contact_phone'],
+                'gst_type' => $data['gst_type'],
+                'registration_date' => $data['registration_date'],
+                'threshold_limit' => $data['threshold_limit']
+            ]);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'GST settings updated successfully');
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+        }
+
+        return $this->redirect('/admin/tax/gst-settings');
+    }
+
+    /**
+     * Display GSTR-1 report
+     */
+    public function gstr1Report()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $taxModel = new Tax();
+        $gstr1Data = $taxModel->generateGSTR1($fromDate, $toDate);
+
+        return $this->render('admin/tax/gstr1_report', [
+            'gstr1_data' => $gstr1Data,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('GSTR-1 Report') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display GSTR-3B report
+     */
+    public function gstr3bReport()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $taxModel = new Tax();
+        $gstr3bData = $taxModel->generateGSTR3B($fromDate, $toDate);
+
+        return $this->render('admin/tax/gstr3b_report', [
+            'gstr3b_data' => $gstr3bData,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('GSTR-3B Report') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Export GSTR-1 as JSON for GST portal
+     */
+    public function exportGstr1Json()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $taxModel = new Tax();
+        $jsonContent = $taxModel->exportGSTR1Json($fromDate, $toDate);
+
+        // Set headers for JSON download
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="gstr1_' . date('Ym', strtotime($fromDate)) . '.json"');
+        header('Content-Length: ' . strlen($jsonContent));
+
+        echo $jsonContent;
+        exit;
+    }
+
+    /**
+     * Display HSN/SAC wise summary
+     */
+    public function hsnSummary()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $taxModel = new Tax();
+        $hsnSummary = $taxModel->getHsnWiseSummary($fromDate, $toDate);
+
+        return $this->render('admin/tax/hsn_summary', [
+            'hsn_summary' => $hsnSummary,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('HSN/SAC Summary') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display tax ledger
+     */
+    public function taxLedger()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+        $ledgerType = $this->request->get('ledger_type', 'all');
+
+        $taxModel = new Tax();
+        $ledgerSummary = $taxModel->getTaxLedgerSummary($fromDate, $toDate);
+
+        // Filter by ledger type if specified
+        if ($ledgerType !== 'all') {
+            $ledgerSummary = array_filter($ledgerSummary, function($ledger) use ($ledgerType) {
+                return $ledger['ledger_type'] === $ledgerType;
+            });
+        }
+
+        return $this->render('admin/tax/tax_ledger', [
+            'ledger_summary' => $ledgerSummary,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'ledger_type' => $ledgerType,
+            'page_title' => $this->mlSupport->translate('Tax Ledger') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display tax reconciliation report
+     */
+    public function taxReconciliation()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $taxModel = new Tax();
+        $reconciliation = $taxModel->generateTaxReconciliation($fromDate, $toDate);
+
+        return $this->render('admin/tax/tax_reconciliation', [
+            'reconciliation' => $reconciliation,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('Tax Reconciliation') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display TDS report
+     */
+    public function tdsReport()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $taxModel = new Tax();
+        $tdsReport = $taxModel->generateTDSReport($fromDate, $toDate);
+
+        return $this->render('admin/tax/tds_report', [
+            'tds_report' => $tdsReport,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('TDS Report') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display GST returns management
+     */
+    public function gstReturns()
+    {
+        $status = $this->request->get('status', 'all');
+        $returnType = $this->request->get('return_type', 'all');
+
+        // Get GST returns from database
+        $db = $this->model('Database');
+        $query = "SELECT * FROM gst_returns WHERE 1=1";
+        $params = [];
+
+        if ($status !== 'all') {
+            $query .= " AND status = ?";
+            $params[] = $status;
+        }
+
+        if ($returnType !== 'all') {
+            $query .= " AND return_type = ?";
+            $params[] = $returnType;
+        }
+
+        $query .= " ORDER BY created_at DESC";
+
+        $gstReturns = $db->query($query, $params)->fetchAll();
+
+        return $this->render('admin/tax/gst_returns', [
+            'gst_returns' => $gstReturns,
+            'status_filter' => $status,
+            'return_type_filter' => $returnType,
+            'page_title' => $this->mlSupport->translate('GST Returns') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Generate tax compliance dashboard
+     */
+    public function taxComplianceDashboard()
+    {
+        $taxModel = new Tax();
+        $gstSettings = $taxModel->getGstSettings();
+
+        // Get current month data
+        $currentMonth = date('Y-m');
+        $fromDate = date('Y-m-01');
+        $toDate = date('Y-m-t');
+
+        $monthlyReport = $taxModel->generateGSTR3B($fromDate, $toDate);
+
+        // Get compliance status
+        $compliance = [
+            'gstr1_filed' => false, // Would check gst_returns table
+            'gstr3b_filed' => false,
+            'tds_deducted' => 0,
+            'tds_deposited' => 0,
+            'pending_returns' => 0,
+            'overdue_returns' => 0
+        ];
+
+        return $this->render('admin/tax/compliance_dashboard', [
+            'gst_settings' => $gstSettings,
+            'monthly_report' => $monthlyReport,
+            'compliance' => $compliance,
+            'current_month' => $currentMonth,
+            'page_title' => $this->mlSupport->translate('Tax Compliance Dashboard') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display Profit & Loss report
+     */
+    public function profitLossReport()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $financialModel = new FinancialReports();
+        $pnlData = $financialModel->generateProfitLoss($fromDate, $toDate);
+
+        return $this->render('admin/finance/profit_loss', [
+            'pnl_data' => $pnlData,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('Profit & Loss Report') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display Balance Sheet
+     */
+    public function balanceSheet()
+    {
+        $asOfDate = $this->request->get('as_of_date', date('Y-m-d'));
+
+        $financialModel = new FinancialReports();
+        $balanceSheet = $financialModel->generateBalanceSheet($asOfDate);
+
+        return $this->render('admin/finance/balance_sheet', [
+            'balance_sheet' => $balanceSheet,
+            'as_of_date' => $asOfDate,
+            'page_title' => $this->mlSupport->translate('Balance Sheet') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display Cash Flow statement
+     */
+    public function cashFlowStatement()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $financialModel = new FinancialReports();
+        $cashFlow = $financialModel->generateCashFlow($fromDate, $toDate);
+
+        return $this->render('admin/finance/cash_flow', [
+            'cash_flow' => $cashFlow,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('Cash Flow Statement') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display Trial Balance
+     */
+    public function trialBalance()
+    {
+        $asOfDate = $this->request->get('as_of_date', date('Y-m-d'));
+
+        $financialModel = new FinancialReports();
+        $trialBalance = $financialModel->getTrialBalance($asOfDate);
+
+        return $this->render('admin/finance/trial_balance', [
+            'trial_balance' => $trialBalance,
+            'as_of_date' => $asOfDate,
+            'page_title' => $this->mlSupport->translate('Trial Balance') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display Chart of Accounts
+     */
+    public function chartOfAccounts()
+    {
+        $financialModel = new FinancialReports();
+        $accounts = $financialModel->getChartOfAccounts();
+
+        // Group by account type
+        $groupedAccounts = [];
+        foreach ($accounts as $account) {
+            $type = $account['account_type'];
+            if (!isset($groupedAccounts[$type])) {
+                $groupedAccounts[$type] = [];
+            }
+            $groupedAccounts[$type][] = $account;
+        }
+
+        return $this->render('admin/finance/chart_of_accounts', [
+            'grouped_accounts' => $groupedAccounts,
+            'page_title' => $this->mlSupport->translate('Chart of Accounts') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display Journal Entries
+     */
+    public function journalEntries()
+    {
+        $status = $this->request->get('status', 'all');
+        $fromDate = $this->request->get('from_date', '');
+        $toDate = $this->request->get('to_date', '');
+
+        $query = "SELECT je.*, a.auser as posted_by_name
+                  FROM journal_entries je
+                  LEFT JOIN admin a ON je.posted_by = a.aid
+                  WHERE 1=1";
+
+        $params = [];
+
+        if ($status !== 'all') {
+            $query .= " AND je.status = ?";
+            $params[] = $status;
+        }
+
+        if ($fromDate) {
+            $query .= " AND je.entry_date >= ?";
+            $params[] = $fromDate;
+        }
+
+        if ($toDate) {
+            $query .= " AND je.entry_date <= ?";
+            $params[] = $toDate;
+        }
+
+        $query .= " ORDER BY je.created_at DESC LIMIT 50";
+
+        $db = $this->model('Database');
+        $journalEntries = $db->query($query, $params)->fetchAll();
+
+        return $this->render('admin/finance/journal_entries', [
+            'journal_entries' => $journalEntries,
+            'status_filter' => $status,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('Journal Entries') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Create new journal entry
+     */
+    public function createJournalEntry()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+            $lines = json_decode($data['lines'], true);
+
+            if (!$lines || empty($lines)) {
+                $this->setFlash('error', 'At least one journal line is required');
+                return $this->redirect('/admin/finance/journal-entries/create');
+            }
+
+            $financialModel = new FinancialReports();
+            $result = $financialModel->createJournalEntry([
+                'entry_date' => $data['entry_date'],
+                'description' => $data['description'],
+                'reference_type' => $data['reference_type'] ?? 'journal',
+                'reference_id' => $data['reference_id'] ?? null,
+                'status' => $data['status'] ?? 'draft'
+            ], $lines);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Journal entry created successfully');
+                return $this->redirect('/admin/finance/journal-entries');
+            } else {
+                $this->setFlash('error', $result['message']);
+                return $this->redirect('/admin/finance/journal-entries/create');
+            }
+        }
+
+        $financialModel = new FinancialReports();
+        $accounts = $financialModel->getChartOfAccounts();
+
+        return $this->render('admin/finance/create_journal_entry', [
+            'accounts' => $accounts,
+            'page_title' => $this->mlSupport->translate('Create Journal Entry') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Post journal entry
+     */
+    public function postJournalEntry()
+    {
+        if ($this->request->isMethod('post')) {
+            $entryId = $this->request->post('entry_id');
+
+            $financialModel = new FinancialReports();
+            $result = $financialModel->postJournalEntry($entryId);
+
+            if ($result['success']) {
+                $this->setFlash('success', $result['message']);
+            } else {
+                $this->setFlash('error', $result['message']);
+            }
+        }
+
+        return $this->redirect('/admin/finance/journal-entries');
+    }
+
+    /**
+     * Financial Reports dashboard
+     */
+    public function financialDashboard()
+    {
+        $financialModel = new FinancialReports();
+
+        // Current month P&L summary
+        $currentMonthPL = $financialModel->generateProfitLoss(date('Y-m-01'), date('Y-m-t'));
+
+        // Current assets and liabilities summary
+        $balanceSheet = $financialModel->generateBalanceSheet(date('Y-m-d'));
+
+        // Recent journal entries
+        $db = $this->model('Database');
+        $recentEntries = $db->query(
+            "SELECT je.*, a.auser as posted_by_name
+             FROM journal_entries je
+             LEFT JOIN admin a ON je.posted_by = a.aid
+             ORDER BY je.created_at DESC LIMIT 5"
+        )->fetchAll();
+
+        // Account balances summary
+        $accountBalances = $db->query(
+            "SELECT account_type, COUNT(*) as count, SUM(current_balance) as total_balance
+             FROM chart_of_accounts
+             WHERE is_active = 1
+             GROUP BY account_type"
+        )->fetchAll();
+
+        return $this->render('admin/finance/dashboard', [
+            'current_month_pl' => $currentMonthPL,
+            'balance_sheet' => $balanceSheet,
+            'recent_entries' => $recentEntries,
+            'account_balances' => $accountBalances,
+            'page_title' => $this->mlSupport->translate('Financial Dashboard') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Display budgets management page
+     */
+    public function budgets()
+    {
+        $filters = [
+            'period_type' => $this->request->get('period_type', ''),
+            'is_active' => $this->request->get('is_active', '1'),
+            'year' => $this->request->get('year', date('Y'))
+        ];
+
+        $budgetModel = new Budget();
+        $budgets = $budgetModel->getBudgets($filters);
+
+        return $this->render('admin/budget/index', [
+            'budgets' => $budgets,
+            'filters' => $filters,
+            'page_title' => $this->mlSupport->translate('Budget Management') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Create new budget
+     */
+    public function createBudget()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+            $budgetItems = json_decode($data['budget_items'], true);
+
+            if (!$budgetItems || empty($budgetItems)) {
+                $this->setFlash('error', 'At least one budget item is required');
+                return $this->redirect('/admin/budget/create');
+            }
+
+            $budgetModel = new Budget();
+            $result = $budgetModel->createBudget([
+                'budget_name' => $data['budget_name'],
+                'period_type' => $data['period_type'],
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'is_active' => $data['is_active'] ?? 1,
+                'created_by' => $this->request->session('auth')['id']
+            ], $budgetItems);
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Budget created successfully');
+                return $this->redirect('/admin/budget');
+            } else {
+                $this->setFlash('error', $result['message']);
+                return $this->redirect('/admin/budget/create');
+            }
+        }
+
+        $financialModel = new FinancialReports();
+        $accounts = $financialModel->getChartOfAccounts();
+
+        return $this->render('admin/budget/create', [
+            'accounts' => $accounts,
+            'page_title' => $this->mlSupport->translate('Create Budget') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Show budget details
+     */
+    public function showBudget($budgetId)
+    {
+        $budgetModel = new Budget();
+        $budget = $budgetModel->getBudgetDetails($budgetId);
+
+        if (!$budget) {
+            $this->setFlash('error', 'Budget not found');
+            return $this->redirect('/admin/budget');
+        }
+
+        return $this->render('admin/budget/show', [
+            'budget' => $budget,
+            'page_title' => $budget['budget_name'] . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Generate budget variance report
+     */
+    public function budgetVarianceReport($budgetId)
+    {
+        $fromDate = $this->request->get('from_date', '');
+        $toDate = $this->request->get('to_date', '');
+
+        $budgetModel = new Budget();
+        $report = $budgetModel->generateBudgetVarianceReport($budgetId, $fromDate, $toDate);
+
+        if (!$report['budget']) {
+            $this->setFlash('error', 'Budget not found');
+            return $this->redirect('/admin/budget');
+        }
+
+        return $this->render('admin/budget/variance_report', [
+            'report' => $report,
+            'budget_id' => $budgetId,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => 'Budget Variance Report - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Create budget from historical data
+     */
+    public function createBudgetFromHistory()
+    {
+        if ($this->request->isMethod('post')) {
+            $data = $this->request->all();
+
+            $budgetModel = new Budget();
+            $result = $budgetModel->createBudgetFromHistory(
+                $data['budget_name'],
+                $data['start_date'],
+                $data['end_date'],
+                $data['adjustment_percentage'] ?? 0
+            );
+
+            if ($result['success']) {
+                $this->setFlash('success', 'Budget created from historical data successfully');
+                return $this->redirect('/admin/budget');
+            } else {
+                $this->setFlash('error', $result['message']);
+                return $this->redirect('/admin/budget/create-from-history');
+            }
+        }
+
+        return $this->render('admin/budget/create_from_history', [
+            'page_title' => $this->mlSupport->translate('Create Budget from History') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Budget forecast
+     */
+    public function budgetForecast()
+    {
+        $months = (int)$this->request->get('months', 12);
+        $startDate = $this->request->get('start_date', date('Y-m-01'));
+
+        $budgetModel = new Budget();
+        $forecast = $budgetModel->generateBudgetForecast($startDate, $months);
+
+        return $this->render('admin/budget/forecast', [
+            'forecast' => $forecast,
+            'months' => $months,
+            'start_date' => $startDate,
+            'page_title' => $this->mlSupport->translate('Budget Forecast') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Budget alerts and warnings
+     */
+    public function budgetAlerts()
+    {
+        $budgetModel = new Budget();
+        $alerts = $budgetModel->getBudgetAlerts();
+
+        return $this->render('admin/budget/alerts', [
+            'alerts' => $alerts,
+            'page_title' => $this->mlSupport->translate('Budget Alerts') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Budget utilization report
+     */
+    public function budgetUtilization()
+    {
+        $fromDate = $this->request->get('from_date', date('Y-m-01'));
+        $toDate = $this->request->get('to_date', date('Y-m-t'));
+
+        $budgetModel = new Budget();
+        $utilization = $budgetModel->getBudgetUtilizationReport($fromDate, $toDate);
+
+        return $this->render('admin/budget/utilization', [
+            'utilization' => $utilization,
+            'from_date' => $fromDate,
+            'to_date' => $toDate,
+            'page_title' => $this->mlSupport->translate('Budget Utilization') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+
+    /**
+     * Budget comparison tool
+     */
+    public function budgetComparison()
+    {
+        $budgetIds = $this->request->get('budget_ids', '');
+        $budgetIdsArray = !empty($budgetIds) ? explode(',', $budgetIds) : [];
+
+        $budgetModel = new Budget();
+        $budgets = [];
+
+        if (!empty($budgetIdsArray)) {
+            foreach ($budgetIdsArray as $budgetId) {
+                $budget = $budgetModel->getBudgetDetails((int)$budgetId);
+                if ($budget) {
+                    $budgets[] = $budget;
+                }
+            }
+        }
+
+        // Get all active budgets for selection
+        $allBudgets = $budgetModel->getBudgets(['is_active' => 1], 100);
+
+        return $this->render('admin/budget/comparison', [
+            'budgets' => $budgets,
+            'all_budgets' => $allBudgets,
+            'selected_budget_ids' => $budgetIds,
+            'page_title' => $this->mlSupport->translate('Budget Comparison') . ' - ' . $this->getConfig('app_name')
+        ]);
     }
 }

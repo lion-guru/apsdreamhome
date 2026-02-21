@@ -1,7 +1,12 @@
 <?php
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+$__env = getenv('APP_ENV') ?: 'production';
+if ($__env === 'development') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+} else {
+    error_reporting(0);
+    ini_set('display_errors', '0');
+}
 
 // Get the file path from the query string
 $filePath = $_GET['file'] ?? '';
@@ -44,7 +49,7 @@ if (!file_exists($fullPath)) {
 // Get file info
 $fileName = basename($fullPath);
 $fileSize = filesize($fullPath);
-$mimeType = mime_content_type($fullPath);
+$mimeType = mime_content_type($fullPath) ?: 'application/octet-stream';
 
 // Check if we should view inline or force download
 $view = isset($_GET['view']) && $_GET['view'] == '1';
@@ -55,9 +60,11 @@ header('Content-Type: ' . $mimeType);
 header('Content-Length: ' . $fileSize);
 header('Pragma: public');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: SAMEORIGIN');
 
 // Set Content-Disposition based on view parameter
-if ($view && $mimeType == 'application/pdf') {
+if ($view && $mimeType === 'application/pdf') {
     // For PDFs, show in browser
     header('Content-Disposition: inline; filename="' . $fileName . '"');
 } else {

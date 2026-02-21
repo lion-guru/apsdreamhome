@@ -81,7 +81,12 @@ if (!function_exists('db_fetch_all')) {
 function countUsersByType($type) {
     try {
         $db = \App\Core\App::database();
-        $sql = "SELECT COUNT(*) as count FROM user WHERE utype = ?";
+        
+        // Map legacy numeric types
+        if ($type == '1') $type = 'admin';
+        if ($type == '4') $type = 'customer';
+        
+        $sql = "SELECT COUNT(*) as count FROM users WHERE role = ?";
         $row = $db->fetchOne($sql, [$type]);
         return (int)($row['count'] ?? 0);
     } catch (Exception $e) {

@@ -4,7 +4,7 @@ namespace App\Models;
 
 class LeadFile extends Model
 {
-    protected static string $table = 'lead_files';
+    protected static $table = 'lead_files';
 
     /**
      * The attributes that are mass assignable.

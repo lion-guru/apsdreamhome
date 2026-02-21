@@ -16,13 +16,20 @@ if (!isset($_SESSION['uid']) || (isset($_SESSION['utype']) && $_SESSION['utype']
 $db = \App\Core\App::database();
 $uid = $_SESSION['uid'];
 
-// Fetch investor profile
-$investor = $db->fetch("SELECT * FROM user WHERE uid = :uid AND utype = 'investor'", ['uid' => $uid]);
+// Fetch investor profile from 'users' table
+$investor = $db->fetch("SELECT * FROM users WHERE id = :uid AND role = 'investor'", ['uid' => $uid]);
 
 if (!$investor) {
     header("Location: login.php?error=investor_not_found");
     exit;
 }
+
+// Map modern columns to legacy variables for view compatibility
+$investor['uid'] = $investor['id'];
+$investor['uname'] = $investor['name'];
+$investor['utype'] = $investor['role'];
+$investor['uemail'] = $investor['email'];
+$investor['uimage'] = $investor['profile_image'] ?? null;
 
 // Fetch real stats from DB (with fallbacks)
 $stats = [

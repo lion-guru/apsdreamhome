@@ -1,28 +1,32 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * Salary Management System
  * Handles employee payroll, attendance, and financial tracking
  */
 
-class SalaryManager {
+class SalaryManager
+{
     private $db;
     private $logger;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->insertSampleSalaryData();
     }
 
-    private function insertSampleSalaryData() {
+    private function insertSampleSalaryData()
+    {
         $checkSql = "SELECT COUNT(*) as count FROM employee_salary_structure";
         $row = $this->db->fetch($checkSql);
 
         if ($row && $row['count'] == 0) {
             // Get admin user for sample data
-            $adminSql = "SELECT uid as id FROM user WHERE utype = '1' LIMIT 1";
+            $adminSql = "SELECT id FROM users WHERE role = 'admin' LIMIT 1";
             $admin = $this->db->fetch($adminSql);
 
             if ($admin) {
@@ -58,7 +62,8 @@ class SalaryManager {
     /**
      * Create salary structure for employee
      */
-    public function createSalaryStructure($data) {
+    public function createSalaryStructure($data)
+    {
         $sql = "INSERT INTO employee_salary_structure (
             employee_id, basic_salary, hra, da, ta, medical_allowance, special_allowance, other_allowance,
             pf_deduction, esi_deduction, professional_tax, tds_deduction, other_deduction,
@@ -111,7 +116,8 @@ class SalaryManager {
     /**
      * Deactivate previous salary structures
      */
-    private function deactivatePreviousSalaryStructures($employeeId, $effectiveFrom) {
+    private function deactivatePreviousSalaryStructures($employeeId, $effectiveFrom)
+    {
         $sql = "UPDATE employee_salary_structure SET is_active = FALSE
                 WHERE employee_id = ? AND effective_from < ? AND is_active = TRUE";
         try {
@@ -126,7 +132,8 @@ class SalaryManager {
     /**
      * Process monthly salary payment
      */
-    public function processMonthlySalary($employeeId, $month, $year) {
+    public function processMonthlySalary($employeeId, $month, $year)
+    {
         // Get current salary structure
         $salaryStructure = $this->getCurrentSalaryStructure($employeeId);
         if (!$salaryStructure) {
@@ -144,13 +151,13 @@ class SalaryManager {
 
         $basicAmount = $salaryStructure['basic_salary'] * $attendanceData['present_days'] / $attendanceData['total_days'];
         $allowanceAmount = ($salaryStructure['hra'] + $salaryStructure['da'] + $salaryStructure['ta'] +
-                           $salaryStructure['medical_allowance'] + $salaryStructure['special_allowance']) *
-                           $attendanceData['present_days'] / $attendanceData['total_days'];
+            $salaryStructure['medical_allowance'] + $salaryStructure['special_allowance']) *
+            $attendanceData['present_days'] / $attendanceData['total_days'];
 
         $grossAmount = $basicAmount + $allowanceAmount;
         $deductionAmount = $salaryStructure['pf_deduction'] + $salaryStructure['esi_deduction'] +
-                          $salaryStructure['professional_tax'] + $salaryStructure['tds_deduction'] +
-                          $adjustments['total_deductions'];
+            $salaryStructure['professional_tax'] + $salaryStructure['tds_deduction'] +
+            $adjustments['total_deductions'];
 
         $netAmount = $grossAmount - $deductionAmount + $adjustments['total_additions'];
 
@@ -212,21 +219,24 @@ class SalaryManager {
     /**
      * Get current salary structure for employee
      */
-    private function getCurrentSalaryStructure($employeeId) {
+    private function getCurrentSalaryStructure($employeeId)
+    {
         $sql = "SELECT * FROM employee_salary_structure
                 WHERE employee_id = ? AND is_active = TRUE
                 ORDER BY effective_from DESC LIMIT 1";
         return $this->db->fetch($sql, [$employeeId]);
     }
 
-    private function isSalaryProcessed($employeeId, $month, $year) {
+    private function isSalaryProcessed($employeeId, $month, $year)
+    {
         $sql = "SELECT id FROM salary_payments
                 WHERE employee_id = ? AND payment_month = ? AND payment_year = ?";
         $row = $this->db->fetch($sql, [$employeeId, $month, $year]);
         return !empty($row);
     }
 
-    private function calculateAttendanceData($employeeId, $month, $year) {
+    private function calculateAttendanceData($employeeId, $month, $year)
+    {
         $startDate = date('Y-m-d', strtotime("$year-$month-01"));
         $endDate = date('Y-m-t', strtotime("$year-$month-01"));
         $totalDays = date('t', strtotime("$year-$month-01"));
@@ -247,7 +257,8 @@ class SalaryManager {
         return $attendance;
     }
 
-    private function calculateAdjustments($employeeId, $month, $year) {
+    private function calculateAdjustments($employeeId, $month, $year)
+    {
         $adjustments = [
             'total_additions' => 0,
             'total_deductions' => 0,
@@ -279,7 +290,8 @@ class SalaryManager {
     /**
      * Mark salary as paid
      */
-    public function markSalaryAsPaid($paymentId, $transactionId = null, $bankReference = null) {
+    public function markSalaryAsPaid($paymentId, $transactionId = null, $bankReference = null)
+    {
         $sql = "UPDATE salary_payments SET
             payment_status = 'paid',
             transaction_id = ?,
@@ -311,7 +323,8 @@ class SalaryManager {
     /**
      * Record employee attendance
      */
-    public function recordAttendance($data) {
+    public function recordAttendance($data)
+    {
         $sql = "INSERT INTO employee_attendance (
             employee_id, attendance_date, check_in_time, check_out_time, total_hours,
             attendance_status, leave_type, remarks, created_by
@@ -354,7 +367,8 @@ class SalaryManager {
     /**
      * Create employee advance
      */
-    public function createAdvance($data) {
+    public function createAdvance($data)
+    {
         $sql = "INSERT INTO employee_advances (
             employee_id, advance_number, advance_amount, advance_date, reason,
             repayment_method, installment_amount, total_installments, status, approved_by, created_by
@@ -399,7 +413,8 @@ class SalaryManager {
     /**
      * Update advance outstanding amount
      */
-    private function updateAdvanceOutstandingAmount($advanceId, $amount) {
+    private function updateAdvanceOutstandingAmount($advanceId, $amount)
+    {
         $sql = "UPDATE employee_advances SET outstanding_amount = ? WHERE id = ?";
         try {
             $this->db->execute($sql, [$amount, $advanceId]);
@@ -413,7 +428,8 @@ class SalaryManager {
     /**
      * Create employee bonus
      */
-    public function createBonus($data) {
+    public function createBonus($data)
+    {
         $sql = "INSERT INTO employee_bonuses (
             employee_id, bonus_number, bonus_type, bonus_amount, bonus_month, bonus_year,
             reason, approved_by, created_by
@@ -450,7 +466,8 @@ class SalaryManager {
     /**
      * Get salary report for employee
      */
-    public function getSalaryReport($employeeId, $startMonth, $startYear, $endMonth, $endYear) {
+    public function getSalaryReport($employeeId, $startMonth, $startYear, $endMonth, $endYear)
+    {
         $report = [];
 
         // Salary payments
@@ -477,7 +494,8 @@ class SalaryManager {
     /**
      * Calculate salary summary
      */
-    public function calculateSalarySummary($month, $year) {
+    public function calculateSalarySummary($month, $year)
+    {
         $sql = "SELECT
             COUNT(DISTINCT employee_id) as total_employees,
             SUM(basic_amount) as total_basic,
@@ -494,7 +512,8 @@ class SalaryManager {
     /**
      * Get payroll dashboard data
      */
-    public function getPayrollDashboard() {
+    public function getPayrollDashboard()
+    {
         $dashboard = [];
 
         // Monthly payroll summary
@@ -515,19 +534,19 @@ class SalaryManager {
         $dashboard['pending_salaries'] = $this->db->fetch($sql);
 
         // Department wise salary
-        $sql = "SELECT u.utype as role,
+        $sql = "SELECT u.role,
                 COUNT(DISTINCT sp.employee_id) as employees,
                 SUM(sp.net_amount) as total_salary
                 FROM salary_payments sp
-                JOIN user u ON sp.employee_id = u.uid
+                JOIN users u ON sp.employee_id = u.id
                 WHERE sp.payment_month = ? AND sp.payment_year = ? AND sp.payment_status = 'paid'
-                GROUP BY u.utype";
+                GROUP BY u.role";
         $dashboard['department_salary'] = $this->db->fetchAll($sql, [$currentMonth, $currentYear]);
 
         // Upcoming salary payments
-        $sql = "SELECT sp.*, u.uname as full_name, u.utype as role
+        $sql = "SELECT sp.*, u.name as full_name, u.role
                 FROM salary_payments sp
-                JOIN user u ON sp.employee_id = u.uid
+                JOIN users u ON sp.employee_id = u.id
                 WHERE sp.payment_status = 'pending'
                 ORDER BY sp.payment_date LIMIT 10";
         $dashboard['upcoming_payments'] = $this->db->fetchAll($sql);

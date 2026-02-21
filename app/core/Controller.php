@@ -14,6 +14,7 @@ use App\Core\Session\SessionManager;
  * 
  * All controllers should extend this base controller
  */
+#[\AllowDynamicProperties]
 class Controller
 {
     /**
@@ -64,6 +65,20 @@ class Controller
      * @var array
      */
     protected $middleware = [];
+
+    /**
+     * The logger instance
+     *
+     * @var \App\Services\SystemLogger
+     */
+    protected $logger;
+
+    /**
+     * The application instance
+     *
+     * @var App
+     */
+    protected $app;
 
     /**
      * Register middleware for the controller

@@ -1,21 +1,23 @@
 <?php
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+$__env = getenv('APP_ENV') ?: 'production';
+if ($__env === 'development') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+} else {
+    error_reporting(0);
+    ini_set('display_errors', '0');
+}
 
 // Bootstrap the application
 require_once __DIR__ . '/../../../app/core/autoload.php';
 
-use App\Core\Http\Response;
 use App\Core\Database;
-
-// Set JSON content type
-header('Content-Type: application/json');
 
 // Get document ID from URL
 $documentId = $_GET['id'] ?? null;
 
 if (!$documentId) {
+    header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
         'message' => 'Document ID is required',
@@ -66,6 +68,7 @@ try {
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         header('Content-Length: ' . $fileSize);
         header('Pragma: public');
+        header('X-Content-Type-Options: nosniff');
         
         // Clear output buffer
         if (ob_get_level()) {
@@ -81,6 +84,7 @@ try {
     
 } catch (Exception $e) {
     http_response_code($e->getCode() ?: 500);
+    header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage(),

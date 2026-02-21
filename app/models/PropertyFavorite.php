@@ -7,7 +7,7 @@
 namespace App\Models;
 
 class PropertyFavorite extends Model {
-    protected static string $table = 'property_favorites';
+    protected static $table = 'property_favorites';
 
     /**
      * Add property to favorites

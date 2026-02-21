@@ -35,8 +35,9 @@ if (!defined('GOOGLE_CLIENT_SECRET')) {
 
 // Set appropriate redirect URL based on environment
 // Set protocol based on environment
-$protocol = ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? 'http' : 'https';
-$host = $_SERVER['HTTP_HOST'];
+$http_host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$protocol = ($http_host === 'localhost' || strpos($http_host, '127.0.0.1') !== false) ? 'http' : 'https';
+$host = $http_host;
 $path = '/march2025apssite/google_callback.php';
 
 // Set the redirect URL

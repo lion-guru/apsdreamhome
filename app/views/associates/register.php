@@ -1,5 +1,3 @@
-<?php require_once 'app/views/layouts/header.php'; ?>
-
 <div class="container-fluid py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">

@@ -80,8 +80,11 @@ class Autoloader
      */
     public function loadClass($className)
     {
+        // error_log("Autoloader: Request to load class: " . $className);
+
         // Check class map first
         if (isset($this->classMap[$className])) {
+            // error_log("Autoloader: Found in class map: " . $this->classMap[$className]);
             require_once $this->classMap[$className];
             return;
         }
@@ -101,30 +104,30 @@ class Autoloader
      */
     private function loadNamespacedClass($className)
     {
-        // Iterate through namespaces
+        // error_log("Autoloader: Attempting to load class: " . $className);
         foreach ($this->namespaces as $prefix => $baseDirs) {
-            // Check if class uses this namespace prefix
             $len = strlen($prefix);
             if (strncmp($prefix, $className, $len) !== 0) {
                 continue;
             }
 
-            // Get relative class name
             $relativeClass = substr($className, $len);
-
-            // Try to load from base directories
             foreach ($baseDirs as $baseDir) {
                 $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
-
+                // error_log("Autoloader: Checking file: " . $file);
                 if (file_exists($file)) {
+                    // error_log("Autoloader: Found file: " . $file);
                     require_once $file;
                     return;
+                } else {
+                    // error_log("Autoloader: File not found: " . $file);
                 }
             }
         }
 
-        // Default to App namespace structure
+        // Fallback for non-namespaced or legacy structure
         $filePath = APP_ROOT . '/app/' . strtolower(str_replace('\\', '/', $className)) . '.php';
+        // error_log("Autoloader: Checking fallback: " . $filePath);
         if (file_exists($filePath)) {
             require_once $filePath;
         }

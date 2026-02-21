@@ -19,7 +19,7 @@ $config['app'] = [
 
 // URL and Path helpers
 if (!defined('BASE_URL')) define('BASE_URL', rtrim($config['app']['url'], '/') . '/');
-if (!defined('ASSET_URL')) define('ASSET_URL', BASE_URL . 'assets/');
+if (!defined('ASSET_URL')) define('ASSET_URL', BASE_URL . 'public/assets/');
 
 // File upload settings
 $config['upload'] = [
