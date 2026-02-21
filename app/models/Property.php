@@ -24,6 +24,8 @@ class Property extends Model
         'city',
         'state',
         'pincode',
+        'latitude',
+        'longitude',
         'created_at',
         'updated_at'
     ];
@@ -34,15 +36,17 @@ class Property extends Model
             $db = \App\Core\Database::getInstance();
             $stmt = $db->query(
                 "SELECT * FROM properties
-                 WHERE is_featured = 1
-                 AND status = 'active'
+                 WHERE featured = 1
+                 -- AND status = 'available'  -- Show all featured properties regardless of status
                  ORDER BY created_at DESC
-                 LIMIT ?",
-                [$limit]
+                 LIMIT " . (int)$limit
             );
 
-            $results = $stmt->fetchAll();
-            return array_map(fn($result) => new static($result), $results);
+            if ($stmt) {
+                $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                return array_map(fn($result) => new static($result), $results);
+            }
+            return [];
         } catch (\Exception $e) {
             error_log("Error in getFeaturedProperties: " . $e->getMessage());
             return [];
@@ -56,6 +60,27 @@ class Property extends Model
         } catch (\Exception $e) {
             error_log("Error in getPropertyById: " . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Get images for this property
+     * @return array
+     */
+    public function getImages()
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            // Use the global database connection if available, otherwise use the model's connection
+            $pdo = $db->getConnection();
+
+            $stmt = $pdo->prepare("SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC");
+            $stmt->execute([$this->id]);
+
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("Error in getImages: " . $e->getMessage());
+            return [];
         }
     }
 

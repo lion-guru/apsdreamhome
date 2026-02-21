@@ -34,12 +34,12 @@ class LeadController extends BaseController
 
         // Check if lead already exists
         $existingLead = Lead::where('phone', $phone)->first();
-        
+
         if ($existingLead) {
             // Update source if needed or just return success
             // We might want to update the 'last_contacted' or similar
             $this->jsonResponse([
-                'status' => 'success', 
+                'status' => 'success',
                 'message' => 'Welcome back! We have your details.',
                 'lead_id' => $existingLead['id'],
                 'is_new' => false
@@ -62,12 +62,11 @@ class LeadController extends BaseController
             setcookie('visitor_lead_id', $leadId, time() + (86400 * 30), "/"); // 30 days
 
             $this->jsonResponse([
-                'status' => 'success', 
+                'status' => 'success',
                 'message' => 'Thank you! We will contact you shortly.',
                 'lead_id' => $leadId,
                 'is_new' => true
             ]);
-
         } catch (\Exception $e) {
             error_log("Error creating quick lead: " . $e->getMessage());
             $this->jsonResponse(['status' => 'error', 'message' => 'Something went wrong. Please try again.'], 500);
@@ -85,7 +84,7 @@ class LeadController extends BaseController
         }
 
         $leadId = $_POST['lead_id'] ?? $_COOKIE['visitor_lead_id'] ?? null;
-        
+
         if (!$leadId) {
             $this->jsonResponse(['status' => 'error', 'message' => 'Lead not identified'], 400);
             return;
@@ -105,22 +104,21 @@ class LeadController extends BaseController
 
         try {
             Lead::update($leadId, $data);
-            
+
             // If email is provided and they want to register as User
             if (!empty($_POST['create_account']) && !empty($_POST['email'])) {
                 // Check if user exists
                 $existingUser = User::where('email', $_POST['email'])->orWhere('phone', $_POST['phone'])->first();
                 if (!$existingUser) {
-                     // We can't create a user without password easily in standard auth, 
-                     // but we can prompt them to complete registration on the next screen.
-                     // For now, just return success.
+                    // We can't create a user without password easily in standard auth, 
+                    // but we can prompt them to complete registration on the next screen.
+                    // For now, just return success.
                 }
             }
 
             $this->jsonResponse(['status' => 'success', 'message' => 'Details updated successfully']);
-
         } catch (\Exception $e) {
-            error_log("Error updating lead: " . $e->getMessage());
+            logger()->error("Error updating lead: " . $e->getMessage());
             $this->jsonResponse(['status' => 'error', 'message' => 'Update failed'], 500);
         }
     }

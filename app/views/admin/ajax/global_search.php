@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Global Search - AJAX Endpoint
  * Searches across all admin modules and returns relevant results
@@ -38,7 +39,7 @@ try {
     $searchTerm = "%$query%";
 
     // Search in users
-    $userRows = $db->fetchAll("SELECT u.uid as id, u.uname as name, u.uemail as email, u.job_role as role, COALESCE(a.status, 'active') as status FROM user u LEFT JOIN associates a ON u.uid = a.user_id WHERE u.uname LIKE :search OR u.uemail LIKE :search OR u.job_role LIKE :search LIMIT 5", ['search' => $searchTerm]);
+    $userRows = $db->fetchAll("SELECT u.id, u.name, u.email, u.role, COALESCE(a.status, 'active') as status FROM users u LEFT JOIN associates a ON u.id = a.user_id WHERE u.name LIKE :search OR u.email LIKE :search OR u.role LIKE :search LIMIT 5", ['search' => $searchTerm]);
 
     foreach ($userRows as $row) {
         $results[] = [
@@ -91,7 +92,6 @@ try {
         'query' => h($query),
         'total_results' => count($results)
     ]);
-
 } catch (Exception $e) {
     error_log('Global search error: ' . $e->getMessage());
     http_response_code(500);
@@ -100,4 +100,3 @@ try {
         'message' => h($mlSupport->translate('Error performing search'))
     ]);
 }
-?>

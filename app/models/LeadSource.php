@@ -4,7 +4,7 @@ namespace App\Models;
 
 class LeadSource extends Model
 {
-    protected static string $table = 'lead_sources';
+    protected static $table = 'lead_sources';
 
     /**
      * The attributes that are mass assignable.

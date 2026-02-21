@@ -450,15 +450,10 @@ class Router
         $method = $request->getMethod();
         $uri = $request->path();
 
-        error_log("Router::dispatch() - Method: {$method}, URI: {$uri}");
-
         // Find the matching route
         $route = $this->findRoute($method, $uri);
 
-        error_log("Router::dispatch() - Route found: " . ($route ? 'yes' : 'no'));
-
         if (!$route) {
-            error_log("Router::dispatch() - No route found, trying legacy fallback");
             // Try legacy fallback if modern route not found
             return $this->handleLegacyFallback($method, $uri);
         }
@@ -466,19 +461,15 @@ class Router
         $this->currentRoute = $route;
 
         // Apply route middleware
-        error_log("Router::dispatch() - Running route middleware");
         $response = $this->runRouteMiddleware($route);
 
         if ($response instanceof Response) {
-            error_log("Router::dispatch() - Middleware returned response");
             return $response;
         }
 
-        error_log("Router::dispatch() - Executing route action");
         // Execute the route action
         $response = $this->runRoute($route);
 
-        error_log("Router::dispatch() - Preparing response");
         return $this->prepareResponse($response);
     }
 
@@ -673,18 +664,15 @@ class Router
     {
         list($class, $method) = explode('@', $controller);
 
-        // Add default controller namespace if not present
         if (!str_contains($class, '\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
         } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\') || str_starts_with($class, 'Public\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
         }
 
-        // Try to get controller from container first
         try {
             $controller = $this->app->make($class);
         } catch (Exception $e) {
-            // If not found in container, try to instantiate directly
             if (class_exists($class)) {
                 $controller = new $class();
             } else {

@@ -351,7 +351,7 @@ class AdminReportsController extends AdminController
 
             return $metrics;
         } catch (\Exception $e) {
-            error_log('User metrics query error: ' . $e->getMessage());
+            logger()->error('User metrics query error: ' . $e->getMessage());
             return $this->getDefaultUserMetrics();
         }
     }
@@ -525,7 +525,7 @@ class AdminReportsController extends AdminController
 
             return $stats;
         } catch (\Exception $e) {
-            error_log('Inquiry stats query error: ' . $e->getMessage());
+            logger()->error('Inquiry stats query error: ' . $e->getMessage());
             return $this->getDefaultInquiryStats();
         }
     }

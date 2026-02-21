@@ -158,5 +158,5 @@ class ConfigurationManager {
     /**
      * Prevent unserialize of the singleton
      */
-    private function __wakeup() {}
+    public function __wakeup() {}
 }

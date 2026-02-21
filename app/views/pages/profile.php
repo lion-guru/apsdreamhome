@@ -42,9 +42,9 @@ if (isset($_POST['insert'])) {
     }
 }
 
-// Fetch user data from 'user' table (standardized for this project)
+// Fetch user data from 'users' table (modern schema)
 try {
-    $user_data = $db->fetch("SELECT * FROM user WHERE uid = :uid", ['uid' => $uid]);
+    $user_data = $db->fetch("SELECT * FROM users WHERE id = :uid", ['uid' => $uid]);
 } catch (Exception $e) {
     error_log('Profile data fetch error: ' . $e->getMessage());
 }
@@ -53,6 +53,14 @@ if (!$user_data) {
     header("Location: login.php?error=user_not_found");
     exit;
 }
+
+// Map modern columns to legacy variables for view compatibility
+// TODO: Refactor view to use modern column names directly
+$user_data['uid'] = $user_data['id'];
+$user_data['uname'] = $user_data['name'];
+$user_data['utype'] = $user_data['role'];
+$user_data['uemail'] = $user_data['email'];
+$user_data['uimage'] = $user_data['profile_image'] ?? null; // Handle missing image column gracefully
 
 // Page variables
 $page_title = 'My Profile | APS Dream Homes';

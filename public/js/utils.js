@@ -60,7 +60,21 @@ async function fetchIfscDetails(ifsc) {
     }
 }
 
+// Sidebar Toggle Function
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const body = document.body;
+    
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+        body.classList.toggle('sidebar-open');
+        
+        // Save state if needed
+        // localStorage.setItem('sidebarState', sidebar.classList.contains('active') ? 'open' : 'closed');
+    }
+}
+
 // Export for module usage if needed, otherwise global
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { fetchPincodeDetails, fetchIfscDetails };
+    module.exports = { fetchPincodeDetails, fetchIfscDetails, toggleSidebar };
 }

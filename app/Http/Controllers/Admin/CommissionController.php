@@ -93,7 +93,7 @@ class CommissionController extends AdminController
                 );
             } catch (\Exception $e) {
                 // Log error
-                error_log("Failed to send commission notification: " . $e->getMessage());
+                logger()->error("Failed to send commission notification: " . $e->getMessage());
             }
 
             return $this->json([

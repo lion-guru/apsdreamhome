@@ -43,7 +43,9 @@ if (!defined('BASE_URL')) {
 
 // Environment detection
 $environment = getenv('APP_ENV') ?: 'development';
-define('APP_ENV', $environment);
+if (!defined('APP_ENV')) {
+    define('APP_ENV', $environment);
+}
 
 // Initialize global configuration array
 global $config;

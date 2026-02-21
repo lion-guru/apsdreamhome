@@ -10,7 +10,7 @@ use App\Core\Database;
 
 class CRMLead extends Model
 {
-    protected static string $table = 'crm_leads';
+    protected static $table = 'crm_leads';
 
     /**
      * Lead status constants

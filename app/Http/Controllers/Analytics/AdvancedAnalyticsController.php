@@ -242,7 +242,7 @@ class AdvancedAnalyticsController extends AdminController
 
             return $data;
         } catch (\Exception $e) {
-            error_log('Financial analytics error: ' . $e->getMessage());
+            logger()->error('Financial analytics error: ' . $e->getMessage());
             return [];
         }
     }
@@ -325,7 +325,7 @@ class AdvancedAnalyticsController extends AdminController
 
             return $data;
         } catch (\Exception $e) {
-            error_log('Realtime analytics error: ' . $e->getMessage());
+            logger()->error('Realtime analytics error: ' . $e->getMessage());
             return [];
         }
     }

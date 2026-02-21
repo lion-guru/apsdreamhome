@@ -95,9 +95,65 @@ a {
   border-radius: 20px;
 }
 
-/* Feature Icons */
-.feature-icon {
-  width: 60px;
+/* Sidebar Styles */
+.sidebar {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebar a {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 15px 20px;
+  display: block;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left-color: white;
+}
+
+.sidebar-header {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Main Content Adjustment for Sidebar */
+body.sidebar-open main {
+    margin-left: 260px;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    body.sidebar-open main {
+        margin-left: 0;
+    }
+}
   height: 60px;
   border-radius: 50%;
   display: flex;

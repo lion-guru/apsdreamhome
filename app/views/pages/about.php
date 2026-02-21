@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Enhanced About Page - APS Dream Home
  * Modern UI/UX for company information and team details
@@ -8,368 +9,6 @@
 $page_title = $title ?? 'About Us - APS Dream Home';
 $page_description = 'Learn about APS Dream Home - your trusted real estate partner since 2009. Discover our story, values, and commitment to excellence.';
 ?>
-
-<style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-            --info-gradient: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
-        }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #2c3e50;
-            background: #f8f9fa;
-        }
-
-        /* Modern Hero Section */
-        .hero-about {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 5rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-about::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="500" cy="500" r="300" fill="rgba(255,255,255,0.05)"/></svg>');
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-        }
-
-        /* Enhanced Buttons */
-        .btn-about-cta {
-            border-radius: 25px;
-            padding: 1rem 2rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .btn-contact {
-            background: white;
-            color: #667eea;
-        }
-
-        .btn-contact:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-properties {
-            background: transparent;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-properties:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
-        /* Company Story Section */
-        .story-section {
-            background: white;
-            padding: 5rem 0;
-        }
-
-        .story-card {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            position: relative;
-            margin-bottom: 3rem;
-        }
-
-        .story-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            margin: 0 auto 2rem;
-        }
-
-        .story-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        .story-text {
-            color: #6c757d;
-            line-height: 1.8;
-        }
-
-        /* Values Section */
-        .values-section {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 5rem 0;
-        }
-
-        .value-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .value-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .value-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            margin: 0 auto 1.5rem;
-        }
-
-        .value-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        .value-text {
-            color: #6c757d;
-            line-height: 1.6;
-        }
-
-        /* Team Section */
-        .team-section {
-            background: white;
-            padding: 5rem 0;
-        }
-
-        .team-member {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-        }
-
-        .team-member:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .team-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: white;
-            margin: 0 auto 1.5rem;
-        }
-
-        .team-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .team-role {
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .team-description {
-            color: #6c757d;
-            line-height: 1.6;
-        }
-
-        /* Stats Section */
-        .stats-about {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 4rem 0;
-        }
-
-        .stat-about-card {
-            text-align: center;
-            position: relative;
-        }
-
-        .stat-about-number {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .stat-about-label {
-            font-size: 1rem;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--primary-gradient);
-            transform: translateX(-50%);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 3rem;
-            padding-left: 50%;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            border: 4px solid white;
-            box-shadow: 0 0 0 4px #667eea;
-            transform: translateX(-50%);
-            z-index: 2;
-        }
-
-        .timeline-content {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .timeline-year {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        .timeline-text {
-            color: #6c757d;
-            line-height: 1.6;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero-about {
-                padding: 3rem 0;
-                text-align: center;
-            }
-
-            .timeline-item {
-                padding-left: 0;
-                padding-right: 0;
-                text-align: center;
-            }
-
-            .timeline-marker {
-                left: 50%;
-            }
-
-            .value-card,
-            .team-member {
-                margin-bottom: 2rem;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .animate-fade-up {
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .animate-slide-right {
-            animation: slideInRight 0.8s ease-out;
-        }
-    </style>
 
 <?php include __DIR__ . '/../layouts/modern_header.php'; ?>
 
@@ -403,9 +42,9 @@ $page_description = 'Learn about APS Dream Home - your trusted real estate partn
             <div class="col-lg-6 animate-slide-right">
                 <div class="hero-image position-relative">
                     <img src="<?php echo ASSET_URL ?? '/assets/'; ?>images/about-hero.jpg"
-                         alt="APS Dream Home Team"
-                         class="img-fluid rounded shadow"
-                         onerror="this.src='https://via.placeholder.com/600x400/667eea/ffffff?text=APS+Dream+Home+Team'">
+                        alt="APS Dream Home Team"
+                        class="img-fluid rounded shadow"
+                        onerror="this.src='https://via.placeholder.com/600x400/667eea/ffffff?text=APS+Dream+Home+Team'">
                     <div class="position-absolute top-0 end-0 m-3">
                         <span class="badge bg-success px-3 py-2">
                             <i class="fas fa-check-circle me-1"></i>15+ Years Experience
@@ -786,7 +425,7 @@ $page_description = 'Learn about APS Dream Home - your trusted real estate partn
 </section>
 
 <!-- Call to Action Section -->
-<section class="py-5" style="background: linear-gradient(135deg, #2c3e50, #34495e); color: white;">
+<section class="py-5 cta-about-section">
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
@@ -863,7 +502,7 @@ $page_description = 'Learn about APS Dream Home - your trusted real estate partn
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
@@ -894,7 +533,9 @@ $page_description = 'Learn about APS Dream Home - your trusted real estate partn
                 entry.target.style.transform = 'translateY(0)';
             }
         });
-    }, { threshold: 0.1 });
+    }, {
+        threshold: 0.1
+    });
 
     // Observe timeline items
     document.querySelectorAll('.timeline-item').forEach(item => {

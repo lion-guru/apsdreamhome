@@ -700,7 +700,7 @@ class LanguageController extends BaseController
             $result = $stmt->fetch();
             return $result ? (int)$result['count'] : 0;
         } catch (Exception $e) {
-            error_log('Get language usage count error: ' . $e->getMessage());
+            logger()->error('Get language usage count error: ' . $e->getMessage());
             return 0;
         }
     }

@@ -1,4 +1,3 @@
-<?php require_once 'app/views/layouts/associate_header.php'; ?>
 
 <div class="container-fluid mt-4">
     <!-- Page Header -->

@@ -67,7 +67,7 @@ class AIChatbotController extends BaseController {
             ]);
 
         } catch (\Exception $e) {
-            error_log('Chatbot message error: ' . $e->getMessage());
+            logger()->error('Chatbot message error: ' . $e->getMessage());
             sendJsonResponse([
                 'success' => false,
                 'error' => 'Internal server error',

@@ -66,9 +66,9 @@ class CommunicationController extends BaseApiController
     }
 
     /**
-     * Send SMS
+     * Send WhatsApp message
      */
-    public function sendSms()
+    public function sendWhatsApp()
     {
         if ($this->request()->getMethod() !== 'POST') {
             return $this->jsonError('Method not allowed', 405);
@@ -76,30 +76,31 @@ class CommunicationController extends BaseApiController
 
         try {
             // Apply rate limiting
-            $this->rateLimiter->handle('sms');
+            $this->rateLimiter->handle('whatsapp');
 
             $to = $this->validateInput($this->request()->input('to', ''), 'phone');
-            $message = $this->validateInput($this->request()->input('message', ''), 'message', 160);
+            $message = $this->validateInput($this->request()->input('message', ''), 'message', 1000);
+            $type = $this->request()->input('type', 'text'); // text, template, interactive, etc.
 
             if (!$to) return $this->jsonError('Invalid phone number format. Must be 10-15 digits.', 400);
             if (!$message) return $this->jsonError('Invalid message format or too long', 400);
 
             // Check for suspicious patterns
             if ($this->hasSuspiciousPatterns(\json_encode($this->request()->all()))) {
-                $this->logSecurityEvent('Suspicious Input Pattern Detected in SMS API', [
+                $this->logSecurityEvent('Suspicious Input Pattern Detected in WhatsApp API', [
                     'ip_address' => $this->request()->getClientIp()
                 ]);
                 return $this->jsonError('Suspicious content detected', 400);
             }
 
-            // Send SMS
-            $smsService = new \SMSService(null, $this->db);
-            $sent = $smsService->send($to, $message);
+            // Send WhatsApp message
+            $whatsappService = new \App\Services\Communication\WhatsAppService();
+            $result = $whatsappService->sendTextMessage($to, $message);
 
-            if ($sent) {
-                return $this->jsonSuccess(null, 'SMS sent successfully');
+            if ($result['success']) {
+                return $this->jsonSuccess(['message_id' => $result['message_id']], 'WhatsApp message sent successfully');
             } else {
-                return $this->jsonError('Failed to send SMS. Please try again.', 500);
+                return $this->jsonError('Failed to send WhatsApp message: ' . ($result['error'] ?? 'Unknown error'), 500);
             }
         } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
@@ -176,17 +177,18 @@ class CommunicationController extends BaseApiController
 
         // Handle verification (GET)
         if ($method === 'GET') {
-            $verifyToken = $this->request()->input('hub_verify_token', '');
+            $mode = $this->request()->input('hub_mode', '');
+            $token = $this->request()->input('hub_verify_token', '');
             $challenge = $this->request()->input('hub_challenge', '');
 
-            // In a real app, this would come from a config/env
-            $expectedToken = $_ENV['WHATSAPP_VERIFY_TOKEN'] ?? 'aps_dream_home_verify';
+            $whatsappService = new \App\Services\Communication\WhatsAppService();
+            $verified = $whatsappService->verifyWebhook($mode, $token);
 
-            if ($verifyToken === $expectedToken) {
+            if ($verified) {
                 if (!\headers_sent()) {
                     \header('Content-Type: text/plain');
                 }
-                echo $challenge;
+                echo $verified;
                 exit;
             } else {
                 return $this->jsonError('Invalid verification token', 403);
@@ -202,18 +204,18 @@ class CommunicationController extends BaseApiController
                     return $this->jsonError('Invalid JSON data', 400);
                 }
 
-                // Process via WhatsAppIntegration class
-                $whatsapp = new \WhatsAppIntegration();
-                if (method_exists($whatsapp, 'handleIncomingWebhook')) {
-                    $whatsapp->handleIncomingWebhook($data);
+                // Process via WhatsAppService
+                $whatsappService = new \App\Services\Communication\WhatsAppService();
+                $result = $whatsappService->handleWebhook($data);
+
+                if ($result['success']) {
+                    return $this->jsonSuccess(['processed' => $result['processed']], 'Webhook processed successfully');
                 } else {
-                    $this->logWebhook($data);
+                    return $this->jsonError('Failed to process webhook: ' . ($result['error'] ?? 'Unknown error'), 500);
                 }
 
-                return $this->jsonSuccess(['status' => 'success']);
-
             } catch (Exception $e) {
-                error_log('WhatsApp webhook error: ' . $e->getMessage());
+                logger()->error('WhatsApp webhook error: ' . $e->getMessage());
                 return $this->jsonError('Internal server error', 500);
             }
         }

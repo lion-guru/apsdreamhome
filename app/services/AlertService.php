@@ -158,8 +158,8 @@ class AlertService
     private function getSystemSubscribers($system, $level)
     {
         $query = "SELECT u.*
-                 FROM user u
-                 JOIN alert_subscriptions s ON u.uid = s.user_id
+                 FROM users u
+                 JOIN alert_subscriptions s ON u.id = s.user_id
                  WHERE s.system = ?
                    AND s.level = ?
                    AND s.email_enabled = 1";
@@ -322,7 +322,7 @@ class AlertService
         ];
 
         // Get admin recipients
-        $query = "SELECT uid, uemail, uphone FROM user WHERE utype = 1";
+        $query = "SELECT id, email, phone FROM users WHERE role = 'admin'";
         $recipients = $this->db->fetchAll($query);
 
         $this->notificationService->sendTemplateNotification('alert_created', $variables, $recipients);
@@ -402,16 +402,16 @@ class AlertService
         switch ($notify_type) {
             case 'assigned_user':
                 $query = "SELECT u.*
-                         FROM user u
-                         JOIN alert_assignments aa ON u.uid = aa.user_id
+                         FROM users u
+                         JOIN alert_assignments aa ON u.id = aa.user_id
                          WHERE aa.alert_id = ?";
                 $params = [$alert['id']];
                 break;
 
             case 'team_lead':
                 $query = "SELECT u.*
-                         FROM user u
-                         JOIN teams t ON u.uid = t.lead_id
+                         FROM users u
+                         JOIN teams t ON u.id = t.lead_id
                          JOIN alert_assignments aa ON t.id = aa.team_id
                          WHERE aa.alert_id = ?";
                 $params = [$alert['id']];
@@ -419,8 +419,8 @@ class AlertService
 
             case 'department_head':
                 $query = "SELECT u.*
-                         FROM user u
-                         JOIN departments d ON u.uid = d.head_id
+                         FROM users u
+                         JOIN departments d ON u.id = d.head_id
                          JOIN teams t ON d.id = t.department_id
                          JOIN alert_assignments aa ON t.id = aa.team_id
                          WHERE aa.alert_id = ?";
@@ -428,7 +428,7 @@ class AlertService
                 break;
 
             case 'all_admins':
-                $query = "SELECT * FROM user WHERE utype = 1";
+                $query = "SELECT * FROM users WHERE role = 'admin'";
                 $params = [];
                 break;
         }
@@ -473,7 +473,7 @@ class AlertService
             $alert['title']
         );
 
-        $this->notificationService->sendSms($recipient['uphone'], $message, 'alert_escalated', $recipient['uid'] ?? null);
+        $this->notificationService->sendSms($recipient['phone'], $message, 'alert_escalated', $recipient['id'] ?? null);
     }
 
     /**

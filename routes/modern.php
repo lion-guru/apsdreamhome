@@ -42,7 +42,7 @@ $app->router()->group(['prefix' => 'system'], function ($router) {
 $app->router()->group(['middleware' => 'web'], function ($router) {
     // Admin Login Routes (Public)
     $router->get('/admin/login', 'Auth\AdminAuthController@showLogin');
-    $router->post('/admin/login', 'Auth\AdminAuthController@processLogin');
+    $router->post('/admin/login', ['middleware' => 'throttle_login', 'uses' => 'Auth\AdminAuthController@processLogin']);
     $router->post('/admin/logout', 'Auth\AdminAuthController@logout');
 
     // Public routes
@@ -52,6 +52,18 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
     $router->post('/contact', 'Public\PageController@processContact');
     $router->get('/careers', 'Public\PageController@careers');
     $router->get('/news', 'Public\PageController@news');
+    $router->get('/gallery', 'Public\PageController@gallery');
+    $router->get('/resell', 'Public\PageController@resell');
+    $router->get('/services', 'Public\PageController@services');
+    $router->get('/legal-services', 'Public\PageController@legalServices');
+    $router->get('/team', 'Public\PageController@team');
+    $router->get('/testimonials', 'Public\PageController@testimonials');
+    $router->get('/faq', 'Public\PageController@faq');
+
+    // Project routes
+    $router->get('/projects', 'HomeController@projects');
+    $router->get('/projects/{id}', 'Public\ProjectController@show');
+    $router->get('/projects/city/{city}', 'HomeController@projects');
 
     // Property routes
     $router->get('/properties', 'Property\PropertyController@index');
@@ -60,8 +72,53 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
     $router->get('/properties/featured', 'Property\PropertyController@featured');
 
     // Blog routes
-    $router->get('/blog', 'Blog\BlogController@index');
-    $router->get('/blog/{slug}', 'Blog\BlogController@show');
+    $router->get('/blog', 'Public\PageController@blog');
+    $router->get('/blog/{slug}', 'Public\PageController@blogShow');
+
+    // Utility & Footer Pages
+    $router->get('/sitemap', 'Public\PageController@sitemap');
+    $router->get('/privacy', 'Public\PageController@privacy');
+    $router->get('/privacy-settings', 'Public\PageController@privacy');
+    $router->get('/terms', 'Public\PageController@terms');
+    $router->get('/downloads', 'Public\PageController@downloads');
+    $router->get('/notifications', 'User\DashboardController@notifications');
+
+    // Payment Routes
+    $router->get('/payment/{id}', 'Payment\PaymentController@show');
+    $router->get('/payment/success/{id}', 'Payment\PaymentController@success');
+    $router->get('/payment/cancel/{id}', 'Payment\PaymentController@cancel');
+    $router->post('/payment/{id}', 'Payment\PaymentController@process');
+
+    // Associate Authentication
+    $router->get('/associate/login', 'AssociateController@login');
+    $router->get('/associate/register', 'AssociateController@register');
+    $router->post('/associate/store', 'AssociateController@store');
+    $router->get('/associate/logout', 'AssociateController@logout');
+    $router->post('/associate/authenticate', 'AssociateController@authenticate');
+
+    // Agent Authentication
+    $router->get('/agent/login', 'AgentController@login');
+    $router->get('/agent/logout', 'AgentController@logout');
+
+    // Employee Authentication
+    $router->get('/employee/login', 'Employee\EmployeeController@login');
+    $router->get('/employee/logout', 'Employee\EmployeeController@logout');
+    $router->post('/employee/authenticate', 'Employee\EmployeeController@authenticate');
+
+    // Lead Capture
+    $router->post('/quick-lead', 'Public\LeadController@storeQuick');
+    $router->post('/update-lead', 'Public\LeadController@updateProgressive');
+
+    // Error Testing (Dev only)
+    if (getenv('APP_ENV') !== 'production') {
+        $router->get('/test/error/404', 'Utility\ErrorTestController@test404');
+        $router->get('/test/error/500', 'Utility\ErrorTestController@test500');
+        $router->get('/test/error/403', 'Utility\ErrorTestController@test403');
+        $router->get('/test/error/401', 'Utility\ErrorTestController@test401');
+        $router->get('/test/error/400', 'Utility\ErrorTestController@test400');
+        $router->get('/test/error/generic', 'Utility\ErrorTestController@testGeneric');
+        $router->get('/test/error/exception', 'Utility\ErrorTestController@testException');
+    }
 
     // Authentication routes
     $router->get('/login', 'Public\AuthController@login');
@@ -69,6 +126,8 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
     $router->post('/logout', 'Public\AuthController@logout');
     $router->get('/register', 'Public\AuthController@register');
     $router->post('/register', 'Public\AuthController@processRegister');
+    $router->post('/forgot-password', 'AuthController@processForgotPassword');
+    $router->post('/reset-password', 'AuthController@processResetPassword');
 
     // Protected routes
     $router->group(['middleware' => 'auth'], function ($router) {
@@ -80,10 +139,159 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->delete('/bookmarks/{id}', 'User\UserController@removeBookmark');
     });
 
+    // Associate Routes (MLM Partner Portal)
+    $router->group(['prefix' => 'associate', 'middleware' => 'auth'], function ($router) {
+        $router->get('/dashboard', 'AssociateController@dashboard');
+        $router->get('/team', 'AssociateController@team');
+        $router->get('/business', 'AssociateController@business');
+        $router->get('/earnings', 'AssociateController@earnings');
+        $router->get('/payouts', 'AssociateController@payouts');
+        $router->get('/profile', 'AssociateController@profile');
+        $router->get('/kyc', 'AssociateController@kyc');
+        $router->get('/rank', 'AssociateController@rank');
+        $router->get('/support', 'AssociateController@support');
+        $router->get('/reports', 'AssociateController@reports');
+        $router->get('/leads', 'AssociateController@leads');
+        $router->get('/crm', 'AssociateController@crm');
+        $router->get('/expenses', 'AssociateController@expenses');
+        $router->get('/api/pincode', 'AssociateController@lookupPincode');
+        $router->get('/api/ifsc', 'AssociateController@lookupIFSC');
+
+        $router->post('/request-payout', 'AssociateController@requestPayout');
+        $router->post('/update-profile', 'AssociateController@updateProfile');
+        $router->post('/submit-kyc', 'AssociateController@submitKYC');
+        $router->post('/leads/add', 'AssociateController@addLead');
+        $router->post('/expenses/store', 'AssociateController@storeExpense');
+
+        // CRM Actions
+        $router->post('/crm/lead/store', 'AssociateController@storeLead');
+        $router->post('/crm/lead/update', 'AssociateController@updateLead');
+        $router->post('/crm/customer/store', 'AssociateController@storeCustomer');
+        $router->post('/crm/note/store', 'AssociateController@storeNote');
+        $router->post('/crm/activity/store', 'AssociateController@storeActivity');
+        $router->post('/crm/appointment/store', 'AssociateController@storeAppointment');
+        $router->post('/crm/visit/store', 'AssociateController@storeFieldVisit');
+        $router->post('/crm/visit/client-location', 'AssociateController@storeClientVisitLocation');
+        $router->post('/crm/visit/schedule', 'AssociateController@scheduleClientVisit');
+        $router->post('/crm/message/send', 'AssociateController@sendMessage');
+    });
+
+    // Employee Routes (Employee Portal)
+    $router->group(['prefix' => 'employee', 'middleware' => 'auth'], function ($router) {
+        $router->get('/dashboard', 'Employee\EmployeeController@dashboard');
+        $router->get('/profile', 'Employee\EmployeeController@profile');
+        $router->get('/tasks', 'Employee\EmployeeController@tasks');
+        $router->get('/attendance', 'Employee\EmployeeController@attendance');
+        $router->get('/leaves', 'Employee\EmployeeController@leaves');
+        $router->get('/documents', 'Employee\EmployeeController@documents');
+        $router->get('/activities', 'Employee\EmployeeController@activities');
+        $router->get('/performance', 'Employee\EmployeeController@performance');
+        $router->get('/salary-history', 'Employee\EmployeeController@salaryHistory');
+        $router->get('/reporting-structure', 'Employee\EmployeeController@reportingStructure');
+
+        $router->post('/update-profile', 'Employee\EmployeeController@updateProfile');
+        $router->post('/update-task/{id}', 'Employee\EmployeeController@updateTask');
+        $router->post('/record-attendance', 'Employee\EmployeeController@recordAttendance');
+        $router->post('/apply-leave', 'Employee\EmployeeController@applyLeave');
+        $router->post('/change-password', 'Employee\EmployeeController@changePassword');
+
+        // Attendance API Routes
+        $router->post('/attendance/check-in', 'Employee\EmployeeController@checkIn');
+        $router->post('/attendance/check-out', 'Employee\EmployeeController@checkOut');
+        $router->get('/attendance/status', 'Employee\EmployeeController@getAttendanceStatus');
+        $router->get('/attendance/history', 'Employee\EmployeeController@getAttendanceHistory');
+        $router->get('/attendance/stats', 'Employee\EmployeeController@getAttendanceStats');
+
+        // Leave API Routes
+        $router->post('/leave/apply', 'Employee\EmployeeController@applyLeave');
+        $router->get('/leave/balance', 'Employee\EmployeeController@getLeaveBalance');
+        $router->get('/leave/calendar', 'Employee\EmployeeController@getLeaveCalendar');
+        $router->post('/leave/cancel', 'Employee\EmployeeController@cancelLeave');
+
+        // Document API Routes
+        $router->post('/documents/upload', 'Employee\EmployeeController@uploadDocument');
+        $router->get('/documents/download/{id}', 'Employee\EmployeeController@downloadDocument');
+        $router->get('/documents/categories', 'Employee\EmployeeController@getDocumentCategories');
+        $router->get('/documents/list', 'Employee\EmployeeController@getDocuments');
+        $router->post('/documents/delete', 'Employee\EmployeeController@deleteDocument');
+        $router->get('/documents/stats', 'Employee\EmployeeController@getDocumentStats');
+    });
+
+    // Customer Routes (Customer Portal)
+    $router->group(['prefix' => 'customer', 'middleware' => 'auth'], function ($router) {
+        $router->get('/dashboard', 'Customer\CustomerController@dashboard');
+        $router->get('/properties', 'Customer\CustomerController@properties');
+        $router->get('/property/{id}', 'Customer\CustomerController@propertyDetails');
+        $router->get('/favorites', 'Customer\CustomerController@favorites');
+        $router->get('/bookings', 'Customer\CustomerController@bookings');
+        $router->get('/payments', 'Customer\CustomerController@payments');
+        $router->get('/reviews', 'Customer\CustomerController@reviews');
+        $router->get('/alerts', 'Customer\CustomerController@alerts');
+        $router->get('/emi-calculator', 'Customer\CustomerController@emiCalculator');
+        $router->get('/property-views', 'Customer\CustomerController@propertyViews');
+        $router->get('/emi-history', 'Customer\CustomerController@emiHistory');
+        $router->get('/profile', 'Customer\CustomerController@profile');
+        $router->get('/associate-benefits', 'Customer\CustomerController@associateBenefits');
+        $router->get('/associate-invitations', 'Customer\CustomerController@associateInvitations');
+        $router->get('/become-associate', 'Customer\CustomerController@becomeAssociate');
+
+        $router->post('/toggle-favorite/{id}', 'Customer\CustomerController@toggleFavorite');
+        $router->post('/submit-review/{id}', 'Customer\CustomerController@submitReview');
+        $router->post('/create-alert', 'Customer\CustomerController@createAlert');
+        $router->post('/calculate-emi', 'Customer\CustomerController@calculateEMI');
+        $router->post('/update-profile', 'Customer\CustomerController@updateProfile');
+        $router->post('/accept-invitation/{id}', 'Customer\CustomerController@acceptInvitation');
+        $router->post('/send-invitation', 'Customer\CustomerController@sendInvitation');
+        $router->get('/logout', 'Customer\CustomerController@logout');
+    });
+
+    // Generic Authenticated Routes (Migrated from web.php)
+    $router->group(['middleware' => 'auth'], function ($router) {
+        $router->get('/my-properties', 'UserController@myProperties');
+        $router->get('/payment-history', 'UserController@paymentHistory');
+
+        // Farmers Management
+        $router->get('/farmers', 'User\FarmerController@index');
+        $router->get('/farmers/list', 'User\FarmerController@list');
+        $router->get('/farmers/create', 'User\FarmerController@create');
+        $router->get('/farmers/{id}', 'User\FarmerController@show');
+        $router->get('/farmers/{id}/edit', 'User\FarmerController@edit');
+        $router->get('/farmers/search', 'User\FarmerController@search');
+        $router->get('/farmers/state/{id}', 'User\FarmerController@getByState');
+        $router->post('/farmers', 'User\FarmerController@store');
+        $router->put('/farmers/{id}', 'User\FarmerController@update');
+        $router->delete('/farmers/{id}', 'User\FarmerController@delete');
+    });
+
     // Admin Dashboards
     $router->group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function ($router) {
         $router->get('/', 'Admin\AdminController@index');
         $router->get('/dashboard', 'Admin\AdminController@dashboard');
+
+        // System Administration
+        $router->get('/export/{type}', 'Admin\AdminController@export');
+        $router->post('/backup', 'Admin\AdminController@createBackup');
+        $router->post('/clear-cache', 'Admin\AdminController@clearCache');
+        $router->get('/logs', 'Admin\AdminController@logs');
+        $router->get('/database', 'Admin\AdminController@database');
+
+        // MLM Management
+        $router->get('/mlm-plan-builder', 'Admin\AdminController@hybridMLMPlanBuilder');
+        $router->get('/mlm-analytics', 'Admin\AdminController@mlmAnalytics');
+        $router->post('/mlm-plans', 'Admin\AdminController@createMLMPlan');
+
+        // Employee Management (Admin)
+        $router->get('/employees', 'Admin\AdminController@employees');
+        $router->get('/employees/create', 'Admin\AdminController@createEmployee');
+        $router->get('/employees/{id}', 'Admin\AdminController@showEmployee');
+        $router->get('/employees/{id}/edit', 'Admin\AdminController@editEmployee');
+        $router->get('/employees/department/{id}', 'Admin\AdminController@getEmployeesByDepartment');
+        $router->post('/employees', 'Admin\AdminController@storeEmployee');
+        $router->post('/employees/{id}/deactivate', 'Admin\AdminController@deactivateEmployee');
+        $router->post('/employees/{id}/reactivate', 'Admin\AdminController@reactivateEmployee');
+        $router->post('/employees/{id}/tasks', 'Admin\AdminController@createEmployeeTask');
+        $router->post('/employees/{id}/password', 'Admin\AdminController@updateEmployeePassword');
+        $router->put('/employees/{id}', 'Admin\AdminController@updateEmployee');
 
         // Lead Management
         $router->get('/leads', 'Admin\LeadController@index');
@@ -187,21 +395,6 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->post('/payments/delete/{id}', 'Admin\PaymentController@destroy');
         $router->get('/payments/receipt/{id}', 'Admin\PaymentController@receipt');
         $router->get('/payments/show/{id}', 'Admin\PaymentController@show');
-
-
-        $router->get('/projects/create', 'Admin\ProjectController@create');
-        $router->post('/projects/store', 'Admin\ProjectController@store');
-        $router->get('/projects/edit/{id}', 'Admin\ProjectController@edit');
-        $router->post('/projects/update/{id}', 'Admin\ProjectController@update');
-        $router->post('/projects/delete/{id}', 'Admin\ProjectController@delete');
-
-        // Land/Farmer Management
-        $router->get('/land', 'Admin\LandController@index');
-        $router->get('/land/create', 'Admin\LandController@create');
-        $router->post('/land/store', 'Admin\LandController@store');
-        $router->get('/land/edit/{id}', 'Admin\LandController@edit');
-        $router->post('/land/update/{id}', 'Admin\LandController@update');
-        $router->post('/land/delete/{id}', 'Admin\LandController@destroy');
 
         // Static Pages
         $router->get('/about', 'Admin\AdminController@about');
@@ -370,13 +563,15 @@ $app->router()->group(['middleware' => 'web'], function ($router) {
         $router->post('/mlm-engagement/notifications/mark-all-read', 'Admin\EngagementController@markAllNotificationsRead');
     });
 
-    // Associate routes
+    // Associate routes - Using routes/web.php for now as they are complete
+    /*
     $router->group(['prefix' => 'associate', 'middleware' => ['auth', 'associate']], function ($router) {
         $router->get('/', 'Associate\DashboardController@index');
         $router->get('/leads', 'Associate\LeadController@index');
         $router->get('/commissions', 'Associate\CommissionController@index');
         $router->get('/referrals', 'Associate\ReferralController@index');
     });
+    */
 
     // Customer Portal Routes (Restored)
     $router->group(['prefix' => 'customer'], function ($router) {

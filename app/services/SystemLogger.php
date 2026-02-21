@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Services;
 
-use App\Core\Database\Database;
+use App\Core\Database;
 use Exception;
 use JsonSerializable;
 
-class SystemLogger {
+class SystemLogger
+{
     // Log levels
     public const EMERGENCY = 'emergency';
     public const ALERT = 'alert';
@@ -30,7 +32,8 @@ class SystemLogger {
      * 
      * @param array $config Optional configuration
      */
-    public function __construct(array $config = []) {
+    public function __construct(array $config = [])
+    {
         // Initialize database connection
         $this->db = Database::getInstance();
 
@@ -38,6 +41,10 @@ class SystemLogger {
         $configManager = \App\Services\ConfigurationManager::getInstance();
         $loggingConfig = $configManager->get('logging');
         $this->config = array_merge($loggingConfig ?? [], $config);
+
+        // Ensure default configuration values
+        $this->config['log_to_database'] = $this->config['log_to_database'] ?? false;
+        $this->config['log_to_file'] = $this->config['log_to_file'] ?? true;
 
         // Ensure log directory exists
         $filePath = $this->config['targets']['file']['path'] ?? (__DIR__ . '/../../logs/');
@@ -54,7 +61,8 @@ class SystemLogger {
     /**
      * Set user context for logging
      */
-    private function setUserContext() {
+    private function setUserContext()
+    {
         // Implement user context retrieval
         // This could be from session, authentication service, etc.
         $this->user = [
@@ -71,7 +79,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function emergency(string $message, array $context = []): bool {
+    public function emergency(string $message, array $context = []): bool
+    {
         return $this->log(self::EMERGENCY, $message, $context);
     }
 
@@ -82,7 +91,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function alert(string $message, array $context = []): bool {
+    public function alert(string $message, array $context = []): bool
+    {
         return $this->log(self::ALERT, $message, $context);
     }
 
@@ -93,7 +103,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function critical(string $message, array $context = []): bool {
+    public function critical(string $message, array $context = []): bool
+    {
         return $this->log(self::CRITICAL, $message, $context);
     }
 
@@ -104,7 +115,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function error(string $message, array $context = []): bool {
+    public function error(string $message, array $context = []): bool
+    {
         return $this->log(self::ERROR, $message, $context);
     }
 
@@ -115,7 +127,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function warning(string $message, array $context = []): bool {
+    public function warning(string $message, array $context = []): bool
+    {
         return $this->log(self::WARNING, $message, $context);
     }
 
@@ -126,7 +139,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function notice(string $message, array $context = []): bool {
+    public function notice(string $message, array $context = []): bool
+    {
         return $this->log(self::NOTICE, $message, $context);
     }
 
@@ -137,7 +151,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function info(string $message, array $context = []): bool {
+    public function info(string $message, array $context = []): bool
+    {
         return $this->log(self::INFO, $message, $context);
     }
 
@@ -148,7 +163,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    public function debug(string $message, array $context = []): bool {
+    public function debug(string $message, array $context = []): bool
+    {
         return $this->log(self::DEBUG, $message, $context);
     }
 
@@ -160,7 +176,8 @@ class SystemLogger {
      * @param array $context Additional context
      * @return bool
      */
-    private function log(string $level, string $message, array $context = []): bool {
+    private function log(string $level, string $message, array $context = []): bool
+    {
         try {
             // Generate unique trace ID
             $traceId = $this->generateTraceId();
@@ -200,7 +217,8 @@ class SystemLogger {
      * 
      * @param array $logEntry Log entry details
      */
-    private function logToDatabase(array $logEntry) {
+    private function logToDatabase(array $logEntry)
+    {
         try {
             $stmt = $this->db->prepare(
                 "INSERT INTO comprehensive_audit_log 
@@ -232,7 +250,8 @@ class SystemLogger {
      * 
      * @param array $logEntry Log entry details
      */
-    private function logToFile(array $logEntry) {
+    private function logToFile(array $logEntry)
+    {
         try {
             // Create log filename with daily rotation
             $logFilename = $this->config['log_file_path'] . 'system_' . date('Y-m-d') . '.log';
@@ -263,7 +282,8 @@ class SystemLogger {
      * 
      * @param string $logFilename Log file path
      */
-    private function rotateLogFile(string $logFilename) {
+    private function rotateLogFile(string $logFilename)
+    {
         if (file_exists($logFilename) && filesize($logFilename) >= $this->config['max_log_file_size']) {
             $backupFilename = $logFilename . '.' . date('YmdHis') . '.bak';
             rename($logFilename, $backupFilename);
@@ -275,14 +295,18 @@ class SystemLogger {
      * 
      * @return string
      */
-    private function generateTraceId(): string {
+    private function generateTraceId(): string
+    {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
             mt_rand(0, 0x0fff) | 0x4000,
             mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
         );
     }
 
@@ -292,15 +316,16 @@ class SystemLogger {
      * @param string $message Original message
      * @return string Sanitized message
      */
-    private function sanitizeMessage(string $message): string {
+    private function sanitizeMessage(string $message): string
+    {
         // Remove sensitive information
         $sanitized = preg_replace([
             '/password=[\'"]?[^&\'"]+/i',
             '/token=[\'"]?[^&\'"]+/i',
             '/secret=[\'"]?[^&\'"]+/i'
         ], [
-            'password=***', 
-            'token=***', 
+            'password=***',
+            'token=***',
             'secret=***'
         ], $message);
 
@@ -314,7 +339,8 @@ class SystemLogger {
      * @param array $context Original context
      * @return array Sanitized context
      */
-    private function sanitizeContext(array $context): array {
+    private function sanitizeContext(array $context): array
+    {
         $sanitized = [];
         $sensitiveKeys = ['password', 'token', 'secret', 'api_key'];
 
@@ -336,4 +362,3 @@ class SystemLogger {
         return $sanitized;
     }
 }
-

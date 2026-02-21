@@ -6,7 +6,7 @@ use App\Core\App;
 
 // API Route Definitions
 
-$app->router()->group(['prefix' => 'api'], function ($router) {
+$app->router()->group(['prefix' => 'api', 'middleware' => 'throttle'], function ($router) {
 
     // Health check
     $router->get('/health', function () {

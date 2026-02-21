@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * APS Dream Home - SelForce Style CRM System
  * Comprehensive Customer Relationship Management for Real Estate & Colonizer Business
@@ -14,14 +15,16 @@ namespace App\Services\Legacy;
  * - Integration with Property, Plotting, and Farmer systems
  */
 
-class CRMManager {
+class CRMManager
+{
     private $db;
     private $logger;
     private $emailManager;
     private $propertyManager;
     private $plottingManager;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->emailManager = new EmailService();
@@ -33,7 +36,8 @@ class CRMManager {
     /**
      * Create CRM system tables
      */
-    private function createCRMTables() {
+    private function createCRMTables()
+    {
         // Lead sources table
         $sql = "CREATE TABLE IF NOT EXISTS lead_sources (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -112,7 +116,7 @@ class CRMManager {
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -157,8 +161,8 @@ class CRMManager {
             FOREIGN KEY (pipeline_stage_id) REFERENCES sales_pipeline_stages(id) ON DELETE SET NULL,
             FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE SET NULL,
             FOREIGN KEY (plot_id) REFERENCES plots(id) ON DELETE SET NULL,
-            FOREIGN KEY (assigned_to) REFERENCES user(uid) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -194,7 +198,7 @@ class CRMManager {
             custom_fields JSON,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES user(uid) ON DELETE SET NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
             FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE SET NULL
         )";
 
@@ -216,8 +220,8 @@ class CRMManager {
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (customer_id) REFERENCES customer_profiles(id) ON DELETE CASCADE,
-            FOREIGN KEY (assigned_to) REFERENCES user(uid) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -242,8 +246,8 @@ class CRMManager {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (customer_id) REFERENCES customer_profiles(id) ON DELETE CASCADE,
-            FOREIGN KEY (assigned_to) REFERENCES user(uid) ON DELETE SET NULL,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -261,7 +265,7 @@ class CRMManager {
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -285,7 +289,7 @@ class CRMManager {
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -297,7 +301,8 @@ class CRMManager {
     /**
      * Insert default CRM data
      */
-    private function insertDefaultCRMData() {
+    private function insertDefaultCRMData()
+    {
         // Check if default data already exists
         $checkSql = "SELECT COUNT(*) as count FROM lead_sources";
         $row = $this->db->fetch($checkSql);
@@ -366,12 +371,18 @@ class CRMManager {
         if ($row && $row['count'] == 0) {
             $templates = [
                 [
-                    'welcome_lead', 'email', 'lead_nurturing', 'Welcome to APS Dream Home!',
+                    'welcome_lead',
+                    'email',
+                    'lead_nurturing',
+                    'Welcome to APS Dream Home!',
                     'Dear {{first_name}},\n\nThank you for your interest in APS Dream Home. We have received your inquiry and our team will contact you shortly.\n\nIn the meantime, you can explore our available properties at: {{website_url}}\n\nIf you have any immediate questions, please call us at: {{contact_number}}\n\nBest regards,\nAPS Dream Home Team',
                     '["first_name", "website_url", "contact_number"]'
                 ],
                 [
-                    'follow_up_call', 'call_script', 'follow_up', 'Lead Follow-up Call Script',
+                    'follow_up_call',
+                    'call_script',
+                    'follow_up',
+                    'Lead Follow-up Call Script',
                     'Hi {{first_name}},\n\nThis is {{agent_name}} from APS Dream Home calling regarding your inquiry about {{property_interest}}.\n\nI wanted to check if you had any specific requirements or questions about our properties.\n\nAre you available for a quick discussion about your requirements?\n\n[Listen to customer needs]\n\nThank you for your time. I will send you more details via email/WhatsApp.\n\nBest regards,\n{{agent_name}}',
                     '["first_name", "agent_name", "property_interest"]'
                 ]
@@ -396,7 +407,8 @@ class CRMManager {
     /**
      * Add new lead
      */
-    public function addLead($leadData) {
+    public function addLead($leadData)
+    {
         $sql = "INSERT INTO leads (
             lead_number, lead_source_id, name, email, phone, alternate_phone,
             date_of_birth, gender, marital_status, occupation, company, designation,
@@ -470,11 +482,11 @@ class CRMManager {
 
                         // 2. Send Slack/Telegram Notification to Admin
                         $adminMsg = "🚀 *New Lead Created!*\n" .
-                                   "*Name:* {$leadData['name']}\n" .
-                                   "*Phone:* {$leadData['phone']}\n" .
-                                   "*Interest:* {$leadData['property_interest']}\n" .
-                                   "*Source:* {$leadData['lead_source_id']}";
-                        
+                            "*Name:* {$leadData['name']}\n" .
+                            "*Phone:* {$leadData['phone']}\n" .
+                            "*Interest:* {$leadData['property_interest']}\n" .
+                            "*Source:* {$leadData['lead_source_id']}";
+
                         if (\function_exists('send_slack_notification')) {
                             send_slack_notification($adminMsg);
                         }
@@ -506,7 +518,8 @@ class CRMManager {
     /**
      * Calculate lead score
      */
-    private function calculateLeadScore($leadId) {
+    private function calculateLeadScore($leadId)
+    {
         $sql = "SELECT budget_min, email, alternate_phone, property_interest, preferred_location, annual_income FROM leads WHERE id = :id";
         try {
             $lead = $this->db->fetch($sql, [':id' => $leadId]);
@@ -551,7 +564,8 @@ class CRMManager {
     /**
      * Send welcome email to lead
      */
-    private function sendLeadWelcomeEmail($leadId) {
+    private function sendLeadWelcomeEmail($leadId)
+    {
         $sql = "SELECT name, email FROM leads WHERE id = :id";
         try {
             $lead = $this->db->fetch($sql, [':id' => $leadId]);
@@ -569,11 +583,12 @@ class CRMManager {
     /**
      * Get leads with filtering and pagination
      */
-    public function getLeads($filters = [], $limit = 50, $offset = 0) {
-        $sql = "SELECT l.*, ls.source_name, u.uname as assigned_to_name
+    public function getLeads($filters = [], $limit = 50, $offset = 0)
+    {
+        $sql = "SELECT l.*, ls.source_name, u.name as assigned_to_name
                 FROM leads l
                 LEFT JOIN lead_sources ls ON l.lead_source_id = ls.id
-                LEFT JOIN user u ON l.assigned_to = u.uid
+                LEFT JOIN users u ON l.assigned_to = u.id
                 WHERE 1=1";
 
         $params = [];
@@ -642,7 +657,8 @@ class CRMManager {
     /**
      * Add lead activity
      */
-    public function addLeadActivity($activityData) {
+    public function addLeadActivity($activityData)
+    {
         $sql = "INSERT INTO lead_activities (
             lead_id, activity_type, activity_date, subject, description, duration,
             outcome, next_action, next_action_date, created_by
@@ -693,7 +709,8 @@ class CRMManager {
     /**
      * Schedule follow-up
      */
-    private function scheduleFollowUp($leadId, $followUpDate, $nextAction) {
+    private function scheduleFollowUp($leadId, $followUpDate, $nextAction)
+    {
         $sql = "UPDATE leads SET next_follow_up_date = ?, lead_status = 'nurturing' WHERE id = ?";
         try {
             $this->db->execute($sql, [$followUpDate, $leadId]);
@@ -707,7 +724,8 @@ class CRMManager {
     /**
      * Create opportunity from lead
      */
-    public function createOpportunity($opportunityData) {
+    public function createOpportunity($opportunityData)
+    {
         $sql = "INSERT INTO opportunities (
             opportunity_number, lead_id, opportunity_title, opportunity_type, pipeline_stage_id,
             property_id, plot_id, expected_value, probability_percentage, expected_closure_date,
@@ -756,17 +774,18 @@ class CRMManager {
     /**
      * Get opportunities with filtering
      */
-    public function getOpportunities($filters = [], $limit = 50, $offset = 0) {
-        $sql = "SELECT o.*, l.name, l.phone, l.email,
+    public function getOpportunities($filters = [], $limit = 50, $offset = 0)
+    {
+        $sql = "SELECT o.*, l.name, l.phone, l.email, 
                        s.stage_name, s.probability_percentage as stage_probability,
-                       u.uname as assigned_to_name, p.title as property_title,
+                       u.name as assigned_to_name, p.title as property_title,
                        pl.plot_number, pl.colony_name
-                FROM opportunities o
-                LEFT JOIN leads l ON o.lead_id = l.id
-                LEFT JOIN sales_pipeline_stages s ON o.pipeline_stage_id = s.id
-                LEFT JOIN user u ON o.assigned_to = u.uid
-                LEFT JOIN properties p ON o.property_id = p.id
-                LEFT JOIN plots pl ON o.plot_id = pl.id
+                FROM opportunities o 
+                LEFT JOIN leads l ON o.lead_id = l.id 
+                LEFT JOIN sales_pipeline_stages s ON o.pipeline_stage_id = s.id 
+                LEFT JOIN users u ON o.assigned_to = u.id 
+                LEFT JOIN properties p ON o.property_id = p.id 
+                LEFT JOIN plots pl ON o.plot_id = pl.id 
                 WHERE 1=1";
 
         $params = [];
@@ -818,7 +837,8 @@ class CRMManager {
     /**
      * Convert lead to customer
      */
-    public function convertLeadToCustomer($leadId, $customerData = []) {
+    public function convertLeadToCustomer($leadId, $customerData = [])
+    {
         try {
             // Get lead details
             $sql = "SELECT * FROM leads WHERE id = :id";
@@ -894,7 +914,8 @@ class CRMManager {
     /**
      * Create support ticket
      */
-    public function createSupportTicket($ticketData) {
+    public function createSupportTicket($ticketData)
+    {
         $sql = "INSERT INTO support_tickets (
             ticket_number, customer_id, ticket_type, priority, subject, description,
             status, assigned_to, created_by
@@ -941,7 +962,8 @@ class CRMManager {
     /**
      * Send ticket acknowledgment email
      */
-    private function sendTicketAcknowledgment($ticketId) {
+    private function sendTicketAcknowledgment($ticketId)
+    {
         $sql = "SELECT st.*, cp.name, cp.email
                 FROM support_tickets st
                 JOIN customer_profiles cp ON st.customer_id = cp.id
@@ -962,7 +984,8 @@ class CRMManager {
     /**
      * Get CRM dashboard data
      */
-    public function getCRMDashboard() {
+    public function getCRMDashboard()
+    {
         $dashboard = [];
 
         try {
@@ -1041,7 +1064,8 @@ class CRMManager {
     /**
      * Get lead sources
      */
-    public function getLeadSources() {
+    public function getLeadSources()
+    {
         $sql = "SELECT * FROM lead_sources WHERE status = 'active' ORDER BY source_name";
         try {
             return $this->db->fetchAll($sql);
@@ -1056,11 +1080,12 @@ class CRMManager {
     /**
      * Get single lead by ID
      */
-    public function getLead($leadId) {
-        $sql = "SELECT l.*, ls.source_name, u.uname as assigned_to_name
+    public function getLead($leadId)
+    {
+        $sql = "SELECT l.*, ls.source_name, u.name as assigned_to_name
                 FROM leads l
                 LEFT JOIN lead_sources ls ON l.lead_source_id = ls.id
-                LEFT JOIN user u ON l.assigned_to = u.uid
+                LEFT JOIN users u ON l.assigned_to = u.id
                 WHERE l.id = ?";
 
         try {
@@ -1082,7 +1107,8 @@ class CRMManager {
     /**
      * Get pipeline stages
      */
-    public function getPipelineStages() {
+    public function getPipelineStages()
+    {
         $sql = "SELECT * FROM sales_pipeline_stages WHERE is_active = TRUE ORDER BY stage_order";
         try {
             return $this->db->fetchAll($sql);
@@ -1097,7 +1123,8 @@ class CRMManager {
     /**
      * Update opportunity stage
      */
-    public function updateOpportunityStage($opportunityId, $stageId, $notes = '') {
+    public function updateOpportunityStage($opportunityId, $stageId, $notes = '')
+    {
         $sql = "UPDATE opportunities SET pipeline_stage_id = ?, updated_at = NOW() WHERE id = ?";
         try {
             $this->db->execute($sql, [$stageId, $opportunityId]);
@@ -1130,7 +1157,8 @@ class CRMManager {
     /**
      * Get opportunity lead ID
      */
-    private function getOpportunityLeadId($opportunityId) {
+    private function getOpportunityLeadId($opportunityId)
+    {
         $sql = "SELECT lead_id FROM opportunities WHERE id = ?";
         try {
             $row = $this->db->fetch($sql, [$opportunityId]);
@@ -1147,7 +1175,8 @@ class CRMManager {
     /**
      * Generate lead number
      */
-    public function generateLeadNumber() {
+    public function generateLeadNumber()
+    {
         $prefix = 'LEAD';
         $year = date('Y');
         $month = date('m');
@@ -1172,7 +1201,8 @@ class CRMManager {
     /**
      * Generate opportunity number
      */
-    public function generateOpportunityNumber() {
+    public function generateOpportunityNumber()
+    {
         $prefix = 'OPP';
         $year = date('Y');
         $month = date('m');
@@ -1194,4 +1224,3 @@ class CRMManager {
         }
     }
 }
-?>

@@ -4,7 +4,7 @@ namespace App\Models;
 
 class LeadCustomFieldValue extends Model
 {
-    protected static string $table = 'lead_custom_field_values';
+    protected static $table = 'lead_custom_field_values';
 
     /**
      * The attributes that are mass assignable.

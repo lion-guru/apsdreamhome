@@ -25,7 +25,7 @@ class AIPropertyRecommendationEngine {
             SELECT p.*, u.uname as agent_name, c.name as city_name,
                    pt.name as property_type_name
             FROM properties p
-            LEFT JOIN user u ON p.agent_id = u.uid
+            LEFT JOIN users u ON p.agent_id = u.id
             LEFT JOIN cities c ON p.city_id = c.id
             LEFT JOIN property_types pt ON p.property_type_id = pt.id
             WHERE p.status = 'active'

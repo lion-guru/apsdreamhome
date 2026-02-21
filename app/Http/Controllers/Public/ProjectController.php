@@ -52,6 +52,42 @@ class ProjectController extends BaseController
         return $this->render('pages/varanasi-ganga-nagri');
     }
 
+    /**
+     * Show project details
+     * 
+     * @param int $id
+     */
+    public function show($id)
+    {
+        $db = \App\Core\Database::getInstance();
+        $id = (int)$id;
+
+        try {
+            // Get project details
+            $sql = "SELECT * FROM projects WHERE id = ? AND status = 'active'";
+            $project = $db->fetch($sql, [$id]);
+
+            if (!$project) {
+                return $this->redirect('/projects');
+            }
+
+            // Get related projects (same location)
+            $sql = "SELECT id, name, image_path, location, status FROM projects 
+                    WHERE location = ? AND id != ? AND status = 'active' LIMIT 3";
+            $relatedProjects = $db->fetchAll($sql, [$project['location'], $id]);
+
+            $this->data['project'] = $project;
+            $this->data['relatedProjects'] = $relatedProjects;
+            $this->data['page_title'] = ($project['name'] ?? 'Project Details') . ' - APS Dream Homes';
+            
+            return $this->render('pages/project-details');
+
+        } catch (Exception $e) {
+            logger()->error("Error loading project details: " . $e->getMessage());
+            return $this->redirect('/projects');
+        }
+    }
+
     private function getProjectAmenities($table)
     {
         try {

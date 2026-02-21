@@ -77,7 +77,7 @@ class ApiEnquiryController extends BaseApiController
                 'enquiry_id' => $enquiryId,
             ], 'Enquiry submitted successfully.', 201);
         } catch (\Exception $e) {
-            \error_log('ApiEnquiryController::store error - ' . $e->getMessage());
+            logger()->error('ApiEnquiryController::store error - ' . $e->getMessage());
             $this->jsonError('Unable to submit enquiry at this time.', 500);
         }
     }

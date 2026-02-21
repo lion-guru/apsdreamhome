@@ -165,7 +165,7 @@ class VisitController extends BaseApiController
                     );
                 } catch (\Exception $e) {
                     // Log notification error but don't fail the visit scheduling
-                    \error_log('Notification error: ' . $e->getMessage());
+                    logger()->error('Notification error: ' . $e->getMessage());
                 }
             }
 

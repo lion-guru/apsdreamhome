@@ -27,177 +27,6 @@ class PageController extends BaseController
     }
 
     /**
-     * Display homepage
-     * @deprecated Use HomeController::index() instead
-     */
-    /*
-    public function index()
-    {
-        // Set page data
-        $this->data['page_title'] = 'Home - ' . APP_NAME;
-        $this->data['breadcrumbs'] = [
-            ['title' => 'Home', 'url' => BASE_URL]
-        ];
-
-        // Get featured properties
-        $this->data['featured_properties'] = $this->getFeaturedProperties();
-
-        // Get locations for search dropdown
-        $this->data['locations'] = $this->getLocations();
-
-        // Get company statistics
-        $this->data['company_stats'] = $this->getCompanyStats();
-
-        // Get counts for home page
-        $this->data['counts'] = [
-            'total' => $this->data['company_stats']['total_properties'],
-            'agents' => 50 // Mock or fetch real count
-        ];
-
-        // Fetch published news using the Model
-        // Use getPublished() directly as it handles missing columns gracefully
-        try {
-            $this->data['news'] = News::getPublished(3);
-        } catch (\Exception $e) {
-            // Log error but don't break page
-            error_log("Error loading news: " . $e->getMessage());
-            $this->data['news'] = [];
-        }
-
-        // Render the homepage
-        return $this->render('pages/home', [], null, false);
-    }
-    */
-
-    /**
-     * Display Resell Properties page
-     */
-    public function resell()
-    {
-        $this->data['page_title'] = 'Resell Properties - ' . APP_NAME;
-        $this->data['breadcrumbs'] = [
-            ['title' => 'Home', 'url' => BASE_URL],
-            ['title' => 'Resell Properties', 'url' => BASE_URL . '/resell']
-        ];
-
-        // Get filter parameters from request
-        $filters = [
-            'search' => $_GET['search'] ?? '',
-            'city' => $_GET['city'] ?? '',
-            'type' => $_GET['type'] ?? '',
-            'min_price' => $_GET['min_price'] ?? '',
-            'max_price' => $_GET['max_price'] ?? '',
-            'bedrooms' => $_GET['bedrooms'] ?? ''
-        ];
-
-        try {
-            // Fetch properties
-            $this->data['properties'] = ResellProperty::getActiveWithUser($filters);
-
-            // Fetch filter options
-            $this->data['cities'] = ResellProperty::getDistinct('city', ['status' => 'approved']);
-            $this->data['property_types'] = ResellProperty::getDistinct('property_type', ['status' => 'approved']);
-            $this->data['price_range'] = ResellProperty::getPriceRange('approved');
-        } catch (\Exception $e) {
-            error_log("Error loading resell properties: " . $e->getMessage());
-            $this->data['properties'] = [];
-            $this->data['cities'] = [];
-            $this->data['property_types'] = [];
-            $this->data['price_range'] = ['min_price' => 0, 'max_price' => 0];
-        }
-
-        // Pass filters back to view
-        $this->data['filters'] = $filters;
-
-        $this->render('pages/resell');
-    }
-
-    /**
-     * Display legal services page
-     */
-    public function legalServices()
-    {
-        $this->data['page_title'] = 'Legal Services - ' . APP_NAME;
-        $this->data['breadcrumbs'] = [
-            ['title' => 'Home', 'url' => BASE_URL],
-            ['title' => 'Legal Services', 'url' => BASE_URL . '/legal-services']
-        ];
-
-        try {
-            // Get legal services
-            $stmt = $this->db->prepare("SELECT * FROM legal_services WHERE status = 'active' ORDER BY display_order ASC");
-            $stmt->execute();
-            $this->data['services'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-            // Get legal team members
-            $stmt = $this->db->prepare("SELECT * FROM team_members WHERE department = 'legal' AND status = 'active' ORDER BY display_order ASC LIMIT 4");
-            $stmt->execute();
-            $this->data['lawyers'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-            // Get legal services FAQs
-            $stmt = $this->db->prepare("SELECT * FROM faqs WHERE category = 'legal_services' AND status = 'active' ORDER BY display_order ASC LIMIT 6");
-            $stmt->execute();
-            $this->data['faqs'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
-            $this->data['services'] = [];
-            $this->data['lawyers'] = [];
-            $this->data['faqs'] = [];
-            error_log("Error loading legal services: " . $e->getMessage());
-        }
-
-        $this->render('pages/legal_services');
-    }
-
-    /**
-     * Get featured properties for homepage
-     */
-    private function getFeaturedProperties()
-    {
-        try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    p.*, 
-                    (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as primary_image
-                FROM properties p 
-                WHERE p.featured = 1 AND p.status = 'available'
-                ORDER BY p.created_at DESC 
-                LIMIT 6
-            ");
-            $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
-            return [];
-        }
-    }
-
-    /**
-     * Get locations for search dropdown
-     */
-    private function getLocations()
-    {
-        try {
-            $stmt = $this->db->prepare("SELECT DISTINCT city FROM properties WHERE status = 'available' ORDER BY city ASC");
-            $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
-            return [];
-        }
-    }
-
-    /**
-     * Get company statistics
-     */
-    private function getCompanyStats()
-    {
-        return [
-            'total_properties' => 1200,
-            'happy_clients' => 850,
-            'years_experience' => 15,
-            'awards_won' => 25
-        ];
-    }
-
-    /**
      * Display About page
      */
     public function about()
@@ -208,6 +37,12 @@ class PageController extends BaseController
             ['title' => 'Home', 'url' => BASE_URL],
             ['title' => 'About', 'url' => BASE_URL . 'about']
         ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        // Add company stats
+        $this->data['company_stats'] = $this->getCompanyStats();
 
         // Render the about page
         $this->render('pages/about');
@@ -225,6 +60,9 @@ class PageController extends BaseController
             ['title' => 'Contact', 'url' => BASE_URL . 'contact']
         ];
 
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         // Contact information
         $this->data['contact_info'] = [
             'phone' => '+91-1234567890',
@@ -235,6 +73,29 @@ class PageController extends BaseController
 
         // Render the contact page
         $this->render('pages/contact');
+    }
+
+    /**
+     * Process Contact form
+     */
+    public function processContact()
+    {
+        // Basic validation
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $message = $_POST['message'] ?? '';
+
+        if (empty($name) || empty($email) || empty($message)) {
+            $this->setFlash('error', 'Please fill in all required fields.');
+            $this->redirect('/contact');
+            return;
+        }
+
+        // Logic to save message or send email would go here
+        // For now, just simulate success
+
+        $this->setFlash('success', 'Thank you for contacting us. We will get back to you soon.');
+        $this->redirect('/contact');
     }
 
     /**
@@ -319,6 +180,10 @@ class PageController extends BaseController
     public function careers()
     {
         $this->data['page_title'] = 'Careers - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Careers', 'url' => BASE_URL . 'careers']
+        ];
 
         // Fetch active careers using the Model
         $this->data['careers'] = Career::query()->where('status', 'active')->get();
@@ -450,6 +315,85 @@ class PageController extends BaseController
     }
 
     /**
+     * Display Resell Properties page
+     */
+    public function resell()
+    {
+        $this->data['page_title'] = 'Resell Properties - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Resell Properties', 'url' => BASE_URL . '/resell']
+        ];
+
+        // Get filter parameters from request
+        $filters = [
+            'search' => $_GET['search'] ?? '',
+            'city' => $_GET['city'] ?? '',
+            'type' => $_GET['type'] ?? '',
+            'min_price' => $_GET['min_price'] ?? '',
+            'max_price' => $_GET['max_price'] ?? '',
+            'bedrooms' => $_GET['bedrooms'] ?? ''
+        ];
+
+        try {
+            // Fetch properties
+            $this->data['properties'] = ResellProperty::getActiveWithUser($filters);
+
+            // Fetch filter options
+            $this->data['cities'] = ResellProperty::getDistinct('city', ['status' => 'approved']);
+            $this->data['property_types'] = ResellProperty::getDistinct('property_type', ['status' => 'approved']);
+            $this->data['price_range'] = ResellProperty::getPriceRange('approved');
+        } catch (\Exception $e) {
+            error_log("Error loading resell properties: " . $e->getMessage());
+            $this->data['properties'] = [];
+            $this->data['cities'] = [];
+            $this->data['property_types'] = [];
+            $this->data['price_range'] = ['min_price' => 0, 'max_price' => 0];
+        }
+
+        // Pass filters back to view
+        $this->data['filters'] = $filters;
+
+        $this->render('pages/resell');
+    }
+
+    /**
+     * Display legal services page
+     */
+    public function legalServices()
+    {
+        $this->data['page_title'] = 'Legal Services - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Legal Services', 'url' => BASE_URL . '/legal-services']
+        ];
+
+        try {
+            // Get legal services
+            $stmt = $this->db->prepare("SELECT * FROM legal_services WHERE status = 'active' ORDER BY display_order ASC");
+            $stmt->execute();
+            $this->data['services'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get legal team members
+            $stmt = $this->db->prepare("SELECT * FROM team_members WHERE department = 'legal' AND status = 'active' ORDER BY display_order ASC LIMIT 4");
+            $stmt->execute();
+            $this->data['lawyers'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get legal services FAQs
+            $stmt = $this->db->prepare("SELECT * FROM faqs WHERE category = 'legal_services' AND status = 'active' ORDER BY display_order ASC LIMIT 6");
+            $stmt->execute();
+            $this->data['faqs'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            $this->data['services'] = [];
+            $this->data['lawyers'] = [];
+            $this->data['faqs'] = [];
+            error_log("Error loading legal services: " . $e->getMessage());
+        }
+
+        $this->render('pages/legal_services');
+    }
+
+    /**
      * Display Downloads page
      */
     public function downloads()
@@ -482,6 +426,55 @@ class PageController extends BaseController
     public function terms()
     {
         $this->data['page_title'] = 'Terms of Service - ' . APP_NAME;
-        $this->render('pages/terms_of_service');
+        $this->render('pages/terms-of-service');
+    }
+
+    /**
+     * Get featured properties for homepage
+     */
+    private function getFeaturedProperties()
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    p.*, 
+                    (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as primary_image
+                FROM properties p 
+                WHERE p.featured = 1 AND p.status = 'available'
+                ORDER BY p.created_at DESC 
+                LIMIT 6
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get locations for search dropdown
+     */
+    private function getLocations()
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT DISTINCT city FROM properties WHERE status = 'available' ORDER BY city ASC");
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Get company statistics
+     */
+    private function getCompanyStats()
+    {
+        return [
+            'total_properties' => 1200,
+            'happy_clients' => 850,
+            'years_experience' => 15,
+            'awards_won' => 25
+        ];
     }
 }

@@ -4,7 +4,8 @@ namespace App\Models;
 
 class Lead extends Model
 {
-    protected static string $table = 'leads';
+    protected static $table = 'leads';
+    protected static $primaryKey = 'id';
 
     /**
      * The attributes that are mass assignable.

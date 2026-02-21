@@ -1,16 +1,19 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * MLM Commission Management System
  * Advanced commission tracking and payout system for associates
  */
 
-class MLMCommissionManager {
+class MLMCommissionManager
+{
     private $db;
     private $logger;
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->createCommissionTables();
@@ -19,7 +22,8 @@ class MLMCommissionManager {
     /**
      * Create commission management tables
      */
-    private function createCommissionTables() {
+    private function createCommissionTables()
+    {
         // Associate levels and commission structure
         $sql = "CREATE TABLE IF NOT EXISTS associate_levels (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -59,7 +63,7 @@ class MLMCommissionManager {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE CASCADE,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -81,7 +85,7 @@ class MLMCommissionManager {
             approved_at TIMESTAMP NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE CASCADE,
-            FOREIGN KEY (approved_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -93,7 +97,8 @@ class MLMCommissionManager {
     /**
      * Insert default commission levels
      */
-    private function insertDefaultCommissionLevels() {
+    private function insertDefaultCommissionLevels()
+    {
         $checkSql = "SELECT COUNT(*) as count FROM associate_levels";
         try {
             $row = $this->db->fetch($checkSql);
@@ -125,7 +130,8 @@ class MLMCommissionManager {
     /**
      * Calculate commission for a plot booking
      */
-    public function calculateBookingCommission($bookingId) {
+    public function calculateBookingCommission($bookingId)
+    {
         // Get booking details
         $bookingSql = "SELECT pb.*, p.current_price, a.user_id
                       FROM plot_bookings pb
@@ -188,7 +194,8 @@ class MLMCommissionManager {
     /**
      * Calculate direct commission
      */
-    private function calculateDirectCommission($associateId, $totalAmount, $booking) {
+    private function calculateDirectCommission($associateId, $totalAmount, $booking)
+    {
         // Get associate level and commission percentage
         $levelInfo = $this->getAssociateLevelInfo($associateId);
         if (!$levelInfo) return 0;
@@ -200,7 +207,8 @@ class MLMCommissionManager {
     /**
      * Calculate level commissions (MLM)
      */
-    private function calculateLevelCommissions($associateId, $totalAmount, $booking) {
+    private function calculateLevelCommissions($associateId, $totalAmount, $booking)
+    {
         $commissions = [];
         $hierarchy = $this->getAssociateHierarchy($associateId);
 
@@ -238,7 +246,8 @@ class MLMCommissionManager {
     /**
      * Calculate bonus commissions
      */
-    private function calculateBonusCommissions($associateId, $totalAmount, $booking) {
+    private function calculateBonusCommissions($associateId, $totalAmount, $booking)
+    {
         $commissions = [];
 
         if (!$associateId) return $commissions;
@@ -283,7 +292,8 @@ class MLMCommissionManager {
     /**
      * Calculate override commissions
      */
-    private function calculateOverrideCommissions($associateId, $totalAmount, $booking) {
+    private function calculateOverrideCommissions($associateId, $totalAmount, $booking)
+    {
         $commissions = [];
 
         if (!$associateId) return $commissions;
@@ -313,7 +323,8 @@ class MLMCommissionManager {
     /**
      * Insert commission record
      */
-    private function insertCommissionRecord($bookingId, $commission) {
+    private function insertCommissionRecord($bookingId, $commission)
+    {
         $sql = "INSERT INTO commission_tracking (
             booking_id, associate_id, commission_type, commission_level,
             commission_amount, payment_status, remarks
@@ -338,7 +349,8 @@ class MLMCommissionManager {
     /**
      * Get associate level info
      */
-    private function getAssociateLevelInfo($associateId) {
+    private function getAssociateLevelInfo($associateId)
+    {
         $sql = "SELECT al.* FROM associates a
                 JOIN associate_levels al ON a.level = al.level_number
                 WHERE a.id = ? AND al.status = 'active'";
@@ -355,9 +367,10 @@ class MLMCommissionManager {
     /**
      * Get associate info
      */
-    private function getAssociateInfo($associateId) {
-        $sql = "SELECT a.*, u.uname as full_name, u.uemail as email, u.uphone as phone FROM associates a
-                JOIN user u ON a.user_id = u.uid WHERE a.id = ?";
+    private function getAssociateInfo($associateId)
+    {
+        $sql = "SELECT a.*, u.name as full_name, u.email as email, u.phone as phone FROM associates a 
+                JOIN users u ON a.user_id = u.id WHERE a.id = ?";
         try {
             return $this->db->fetch($sql, [$associateId]);
         } catch (\Exception $e) {
@@ -371,7 +384,8 @@ class MLMCommissionManager {
     /**
      * Get associate hierarchy
      */
-    private function getAssociateHierarchy($associateId, $maxLevels = 5) {
+    private function getAssociateHierarchy($associateId, $maxLevels = 5)
+    {
         $hierarchy = [];
         $currentId = $associateId;
         $level = 0;
@@ -403,7 +417,8 @@ class MLMCommissionManager {
     /**
      * Get associate monthly sales
      */
-    private function getAssociateMonthlySales($associateId) {
+    private function getAssociateMonthlySales($associateId)
+    {
         $currentMonth = date('Y-m-01');
         $nextMonth = date('Y-m-01', strtotime('+1 month'));
 
@@ -425,7 +440,8 @@ class MLMCommissionManager {
     /**
      * Get associate team size
      */
-    private function getAssociateTeamSize($associateId) {
+    private function getAssociateTeamSize($associateId)
+    {
         $sql = "SELECT COUNT(*) as team_size FROM associates WHERE sponsor_id = ?";
         try {
             $row = $this->db->fetch($sql, [$associateId]);
@@ -441,7 +457,8 @@ class MLMCommissionManager {
     /**
      * Process commission payouts
      */
-    public function processCommissionPayouts($associateId, $periodStart, $periodEnd) {
+    public function processCommissionPayouts($associateId, $periodStart, $periodEnd)
+    {
         // Get all pending commissions for the period
         $sql = "SELECT ct.*, pb.total_amount as booking_amount
                 FROM commission_tracking ct
@@ -529,7 +546,8 @@ class MLMCommissionManager {
     /**
      * Get commission summary for associate
      */
-    public function getCommissionSummary($associateId, $periodStart = null, $periodEnd = null) {
+    public function getCommissionSummary($associateId, $periodStart = null, $periodEnd = null)
+    {
         if (!$periodStart) $periodStart = date('Y-m-01');
         if (!$periodEnd) $periodEnd = date('Y-m-t');
 
@@ -557,7 +575,6 @@ class MLMCommissionManager {
                     ORDER BY year DESC, month DESC
                     LIMIT 12";
             $summary['monthly_breakdown'] = $this->db->fetchAll($sql, [$associateId]);
-
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error getting commission summary: " . $e->getMessage(), 'error', 'commission');
@@ -570,7 +587,8 @@ class MLMCommissionManager {
     /**
      * Get associate dashboard data
      */
-    public function getAssociateDashboard($associateId) {
+    public function getAssociateDashboard($associateId)
+    {
         $dashboard = [];
 
         // Associate info
@@ -605,7 +623,8 @@ class MLMCommissionManager {
     /**
      * Get active team members
      */
-    private function getActiveTeamMembers($associateId) {
+    private function getActiveTeamMembers($associateId)
+    {
         $sql = "SELECT COUNT(*) as active_count FROM associates
                 WHERE sponsor_id = ? AND status = 'active'";
         $row = $this->db->fetch($sql, [$associateId]);
@@ -615,7 +634,8 @@ class MLMCommissionManager {
     /**
      * Get team sales
      */
-    private function getTeamSales($associateId) {
+    private function getTeamSales($associateId)
+    {
         $sql = "SELECT SUM(pb.total_amount) as team_sales
                 FROM plot_bookings pb
                 JOIN associates a ON pb.associate_id = a.id
@@ -627,7 +647,8 @@ class MLMCommissionManager {
     /**
      * Get associate achievements
      */
-    private function getAssociateAchievements($associateId) {
+    private function getAssociateAchievements($associateId)
+    {
         $sql = "SELECT * FROM associate_achievements
                 WHERE associate_id = ? AND status = 'approved'
                 ORDER BY achievement_date DESC";
@@ -637,7 +658,8 @@ class MLMCommissionManager {
     /**
      * Get associate performance metrics
      */
-    public function getAssociatePerformance($associateId) {
+    public function getAssociatePerformance($associateId)
+    {
         $performance = [];
 
         try {
@@ -664,7 +686,6 @@ class MLMCommissionManager {
             $nextLevelNumber = ($performance['current_level']['level_number'] ?? 0) + 1;
             $sql = "SELECT * FROM associate_levels WHERE level_number = ?";
             $performance['next_level'] = $this->db->fetch($sql, [$nextLevelNumber]);
-
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error getting associate performance: " . $e->getMessage(), 'error', 'commission');
@@ -677,7 +698,8 @@ class MLMCommissionManager {
     /**
      * Generate commission report
      */
-    public function generateCommissionReport($associateId, $startDate, $endDate) {
+    public function generateCommissionReport($associateId, $startDate, $endDate)
+    {
         $report = [];
 
         try {
@@ -706,7 +728,6 @@ class MLMCommissionManager {
                     ORDER BY total DESC
                     LIMIT 5";
             $report['top_months'] = $this->db->fetchAll($sql, [$associateId, $startDate, $endDate]);
-
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->log("Error generating commission report: " . $e->getMessage(), 'error', 'commission');

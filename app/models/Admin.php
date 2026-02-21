@@ -11,8 +11,8 @@ use PDO;
  */
 class Admin extends Model
 {
-    protected static string $table = 'admin';
-    protected $primaryKey = 'id';
+    protected static $table = 'admin';
+    protected static $primaryKey = 'id';
     protected $db;
 
     protected array $fillable = [

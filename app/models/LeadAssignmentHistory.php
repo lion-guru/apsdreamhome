@@ -4,7 +4,7 @@ namespace App\Models;
 
 class LeadAssignmentHistory extends Model
 {
-    protected static string $table = 'lead_assignment_history';
+    protected static $table = 'lead_assignment_history';
     protected array $fillable = [
         'lead_id',
         'assigned_to',

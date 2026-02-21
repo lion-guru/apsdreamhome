@@ -11,7 +11,7 @@ use PDO;
  */
 class Farmer extends Model
 {
-    protected static string $table = 'farmers';
+    protected static $table = 'farmers';
 
     /**
      * Get all farmers with their land holdings

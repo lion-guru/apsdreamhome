@@ -1,0 +1,423 @@
+<?php
+
+/**
+ * Web Routes Configuration
+ * Custom Framework Web Routes (Converted from Laravel)
+ */
+
+// Web Route Definitions
+$webRoutes = [
+    // Public routes (no authentication required)
+    'public' => [
+        'GET' => [
+            // '/' => 'HomeController@index', // Moved to modern.php
+            '/about' => 'Public\PageController@about',
+            '/contact' => 'Public\PageController@contact',
+            '/gallery' => 'Public\PageController@gallery',
+            '/resell' => 'Public\PageController@resell',
+            '/projects' => 'HomeController@projects',
+            '/projects/{projectCode}' => 'HomeController@project',
+            '/projects/city/{city}' => 'HomeController@projects',
+            '/properties' => 'HomeController@projects', // Alias for projects
+            '/properties/featured' => 'HomeController@featuredProperties',
+            '/property/{id}' => 'HomeController@propertyDetail',
+            '/services' => 'Public\PageController@services',
+            '/legal-services' => 'Public\PageController@legalServices',
+            '/team' => 'Public\PageController@team',
+            '/careers' => 'Public\PageController@careers',
+            '/testimonials' => 'Public\PageController@testimonials',
+            '/news' => 'Public\PageController@news',
+            '/blog' => 'Public\PageController@news', // Alias for news
+            '/blog/{slug}' => 'HomeController@blogShow',
+            '/faq' => 'Public\PageController@faq',
+            '/sitemap' => 'HomeController@sitemap',
+            '/privacy' => 'HomeController@privacy',
+            '/privacy-settings' => 'HomeController@privacy', // Added alias for privacy settings
+            '/terms' => 'HomeController@terms',
+            '/notifications' => 'DashboardController@notifications', // Added notifications route
+            '/associate/login' => 'AssociateController@login',
+            '/associate/register' => 'AssociateController@register', // Added registration route
+            '/associate/logout' => 'AssociateController@logout',
+            '/agent/login' => 'AgentController@login',
+            '/agent/logout' => 'AgentController@logout',
+            '/employee/login' => 'Employee\EmployeeController@login',
+            '/employee/logout' => 'Employee\EmployeeController@logout',
+            '/admin/login' => 'Admin\AdminController@login',
+            '/admin/logout' => 'Admin\AdminController@logout',
+            '/payment/{id}' => 'Payment\PaymentController@show',
+            '/payment/success/{id}' => 'Payment\PaymentController@success',
+            '/payment/cancel/{id}' => 'Payment\PaymentController@cancel',
+
+            // Error page tests
+            '/test/error/404' => 'Utility\ErrorTestController@test404',
+            '/test/error/500' => 'Utility\ErrorTestController@test500',
+            '/test/error/403' => 'Utility\ErrorTestController@test403',
+            '/test/error/401' => 'Utility\ErrorTestController@test401',
+            '/test/error/400' => 'Utility\ErrorTestController@test400',
+            '/test/error/generic' => 'Utility\ErrorTestController@testGeneric',
+            '/test/error/exception' => 'Utility\ErrorTestController@testException',
+        ],
+
+        'POST' => [
+            '/associate/authenticate' => 'AssociateController@authenticate',
+            '/associate/store' => 'AssociateController@store', // Added registration store route
+            '/employee/authenticate' => 'Employee\EmployeeController@authenticate',
+            '/admin/authenticate' => 'Admin\AdminController@authenticate',
+            '/login' => 'AuthController@login',
+            '/register' => 'AuthController@register',
+            '/forgot-password' => 'AuthController@processForgotPassword',
+            '/reset-password' => 'AuthController@processResetPassword',
+            '/payment/{id}' => 'Payment\PaymentController@process',
+            '/quick-lead' => 'Public\LeadController@storeQuick', // Progressive Profiling Step 1
+            '/update-lead' => 'Public\LeadController@updateProgressive', // Progressive Profiling Step 2+
+        ],
+    ],
+
+    // Authenticated routes (require login)
+    'authenticated' => [
+        'GET' => [
+            '/dashboard' => 'UserController@dashboard',
+            '/associate/dashboard' => 'AssociateController@dashboard', // Associate Dashboard
+            '/agent/dashboard' => 'AgentController@dashboard', // Agent Dashboard
+            '/profile' => 'UserController@profile',
+            '/my-properties' => 'UserController@myProperties',
+            '/bookmarks' => 'UserController@bookmarks',
+            '/payment-history' => 'UserController@paymentHistory',
+            '/leads' => 'Admin\LeadController@index',
+            '/leads/{id}' => 'Admin\LeadController@show',
+            '/leads/{id}/edit' => 'Admin\LeadController@edit',
+            '/leads/reports' => 'Admin\LeadController@reports',
+            '/farmers' => 'User\FarmerController@index',
+            '/farmers/list' => 'User\FarmerController@list',
+            '/farmers/create' => 'User\FarmerController@create',
+            '/farmers/{id}' => 'User\FarmerController@show',
+            '/farmers/{id}/edit' => 'User\FarmerController@edit',
+            '/farmers/search' => 'User\FarmerController@search',
+            '/farmers/state/{id}' => 'User\FarmerController@getByState',
+        ],
+
+        'POST' => [
+            '/logout' => 'AuthController@logout',
+            // '/leads' => 'LeadController@store', // Moved
+            // '/leads/{id}/activity' => 'LeadController@addActivity',
+            // '/leads/{id}/note' => 'LeadController@addNote',
+            // '/leads/{id}/assign' => 'LeadController@assign',
+            // '/leads/{id}/convert' => 'LeadController@convert',
+            '/farmers' => 'User\FarmerController@store',
+        ],
+
+        'PUT' => [
+            '/profile' => 'UserController@updateProfile',
+            // '/leads/{id}' => 'LeadController@update', // Moved
+            '/farmers/{id}' => 'User\FarmerController@update',
+        ],
+
+        'DELETE' => [
+            '/farmers/{id}' => 'User\FarmerController@delete',
+        ],
+    ],
+
+    // Associate routes (MLM Partner Portal - authenticated)
+    'associate' => [
+        'GET' => [
+            '/associate/dashboard' => 'AssociateController@dashboard',
+            '/associate/team' => 'AssociateController@team',
+            '/associate/business' => 'AssociateController@business',
+            '/associate/earnings' => 'AssociateController@earnings',
+            '/associate/payouts' => 'AssociateController@payouts',
+            '/associate/profile' => 'AssociateController@profile',
+            '/associate/kyc' => 'AssociateController@kyc',
+            '/associate/rank' => 'AssociateController@rank',
+            '/associate/support' => 'AssociateController@support',
+            '/associate/reports' => 'AssociateController@reports',
+            '/associate/leads' => 'AssociateController@leads',
+            '/associate/crm' => 'AssociateController@crm', // CRM Dashboard
+            '/associate/expenses' => 'AssociateController@expenses', // Expense Management
+            '/associate/api/pincode' => 'AssociateController@lookupPincode', // Pincode Lookup API
+            '/associate/api/ifsc' => 'AssociateController@lookupIFSC', // IFSC Lookup API
+        ],
+
+        'POST' => [
+            '/associate/request-payout' => 'AssociateController@requestPayout',
+            '/associate/update-profile' => 'AssociateController@updateProfile',
+            '/associate/submit-kyc' => 'AssociateController@submitKYC',
+            '/associate/leads/add' => 'AssociateController@addLead',
+            '/associate/expenses/store' => 'AssociateController@storeExpense', // Expense Store
+
+            // CRM Actions
+            '/associate/crm/lead/store' => 'AssociateController@storeLead',
+            '/associate/crm/lead/update' => 'AssociateController@updateLead',
+            '/associate/crm/customer/store' => 'AssociateController@storeCustomer',
+            '/associate/crm/note/store' => 'AssociateController@storeNote',
+            '/associate/crm/activity/store' => 'AssociateController@storeActivity',
+            '/associate/crm/appointment/store' => 'AssociateController@storeAppointment',
+            '/associate/crm/visit/store' => 'AssociateController@storeFieldVisit',
+            '/associate/crm/visit/client-location' => 'AssociateController@storeClientVisitLocation',
+            '/associate/crm/visit/schedule' => 'AssociateController@scheduleClientVisit',
+            '/associate/crm/message/send' => 'AssociateController@sendMessage',
+        ],
+    ],
+
+    // Employee routes (Employee Portal - authenticated)
+    'employee' => [
+        'GET' => [
+            '/employee/dashboard' => 'Employee\EmployeeController@dashboard',
+            '/employee/profile' => 'Employee\EmployeeController@profile',
+            '/employee/tasks' => 'Employee\EmployeeController@tasks',
+            '/employee/attendance' => 'Employee\EmployeeController@attendance',
+            '/employee/leaves' => 'Employee\EmployeeController@leaves',
+            '/employee/documents' => 'Employee\EmployeeController@documents',
+            '/employee/activities' => 'Employee\EmployeeController@activities',
+            '/employee/performance' => 'Employee\EmployeeController@performance',
+            '/employee/salary-history' => 'Employee\EmployeeController@salaryHistory',
+            '/employee/reporting-structure' => 'Employee\EmployeeController@reportingStructure',
+        ],
+
+        'POST' => [
+            '/employee/update-profile' => 'Employee\EmployeeController@updateProfile',
+            '/employee/update-task/{id}' => 'Employee\EmployeeController@updateTask',
+            '/employee/record-attendance' => 'Employee\EmployeeController@recordAttendance',
+            '/employee/apply-leave' => 'Employee\EmployeeController@applyLeave',
+            '/employee/change-password' => 'Employee\EmployeeController@changePassword',
+        ],
+    ],
+
+    // Customer routes (Customer Portal - authenticated)
+    'customer' => [
+        'GET' => [
+            '/customer/dashboard' => 'Customer\CustomerController@dashboard',
+            '/customer/properties' => 'Customer\CustomerController@properties',
+            '/customer/property/{id}' => 'Customer\CustomerController@propertyDetails',
+            '/customer/favorites' => 'Customer\CustomerController@favorites',
+            '/customer/bookings' => 'Customer\CustomerController@bookings',
+            '/customer/payments' => 'Customer\CustomerController@payments',
+            '/customer/reviews' => 'Customer\CustomerController@reviews',
+            '/customer/alerts' => 'Customer\CustomerController@alerts',
+            '/customer/emi-calculator' => 'Customer\CustomerController@emiCalculator',
+            '/customer/property-views' => 'Customer\CustomerController@propertyViews',
+            '/customer/emi-history' => 'Customer\CustomerController@emiHistory',
+            '/customer/profile' => 'Customer\CustomerController@profile',
+            '/customer/associate-benefits' => 'Customer\CustomerController@associateBenefits',
+            '/customer/associate-invitations' => 'Customer\CustomerController@associateInvitations',
+            '/customer/become-associate' => 'Customer\CustomerController@becomeAssociate',
+        ],
+
+        'POST' => [
+            '/customer/toggle-favorite/{id}' => 'Customer\CustomerController@toggleFavorite',
+            '/customer/submit-review/{id}' => 'Customer\CustomerController@submitReview',
+            '/customer/create-alert' => 'Customer\CustomerController@createAlert',
+            '/customer/calculate-emi' => 'Customer\CustomerController@calculateEMI',
+            '/customer/update-profile' => 'Customer\CustomerController@updateProfile',
+            '/customer/accept-invitation/{id}' => 'Customer\CustomerController@acceptInvitation',
+            '/customer/send-invitation' => 'Customer\CustomerController@sendInvitation',
+        ],
+    ],
+
+    // Admin routes (Admin Portal - requires admin authentication)
+    'admin' => [
+        'GET' => [
+            '/admin' => 'Admin\AdminController@dashboard',
+            '/admin/dashboard' => 'Admin\AdminController@dashboard',
+            '/admin/users' => 'Admin\AdminController@users',
+            '/admin/properties' => 'Admin\AdminController@properties',
+            '/admin/leads' => 'Admin\AdminController@leads',
+            '/admin/associates' => 'Admin\AdminController@associates',
+            '/admin/customers' => 'Admin\AdminController@customers',
+            '/admin/reports' => 'Admin\AdminController@reports',
+            '/admin/settings' => 'Admin\AdminController@settings',
+            '/admin/database' => 'Admin\AdminController@database',
+            '/admin/logs' => 'Admin\AdminController@logs',
+            '/admin/employees' => 'Admin\AdminController@employees',
+            '/admin/employees/create' => 'Admin\AdminController@createEmployee',
+            '/admin/employees/{id}' => 'Admin\AdminController@showEmployee',
+            '/admin/employees/{id}/edit' => 'Admin\AdminController@editEmployee',
+            '/admin/employees/department/{id}' => 'Admin\AdminController@getEmployeesByDepartment',
+            '/admin/mlm-plan-builder' => 'Admin\AdminController@hybridMLMPlanBuilder',
+            '/admin/mlm-analytics' => 'Admin\AdminController@mlmAnalytics',
+            '/admin/export/{type}' => 'Admin\AdminController@export',
+        ],
+
+        'POST' => [
+            '/admin/settings' => 'Admin\AdminController@updateSettings',
+            '/admin/backup' => 'Admin\AdminController@createBackup',
+            '/admin/clear-cache' => 'Admin\AdminController@clearCache',
+            '/admin/employees' => 'Admin\AdminController@storeEmployee',
+            '/admin/employees/{id}/deactivate' => 'Admin\AdminController@deactivateEmployee',
+            '/admin/employees/{id}/reactivate' => 'Admin\AdminController@reactivateEmployee',
+            '/admin/employees/{id}/tasks' => 'Admin\AdminController@createEmployeeTask',
+            '/admin/employees/{id}/password' => 'Admin\AdminController@updateEmployeePassword',
+            '/admin/mlm-plans' => 'Admin\AdminController@createMLMPlan',
+        ],
+
+        'PUT' => [
+            '/admin/employees/{id}' => 'Admin\AdminController@updateEmployee',
+        ],
+    ],
+];
+
+// Register routes with the router
+if (isset($app) && $app instanceof \App\Core\App) {
+    $router = $app->router();
+
+    // Register public routes
+    foreach ($webRoutes['public'] as $method => $routes) {
+        foreach ($routes as $path => $handler) {
+            $method = strtoupper($method);
+            switch ($method) {
+                case 'GET':
+                    $router->get($path, $handler);
+                    break;
+                case 'POST':
+                    $router->post($path, $handler);
+                    break;
+                case 'PUT':
+                    $router->put($path, $handler);
+                    break;
+                case 'DELETE':
+                    $router->delete($path, $handler);
+                    break;
+                case 'PATCH':
+                    $router->patch($path, $handler);
+                    break;
+                default:
+                    $router->match([$method], $path, $handler);
+                    break;
+            }
+        }
+    }
+
+    // Register authenticated routes with auth middleware
+    foreach ($webRoutes['authenticated'] as $method => $routes) {
+        foreach ($routes as $path => $handler) {
+            $method = strtoupper($method);
+            switch ($method) {
+                case 'GET':
+                    $router->get($path, $handler, ['middleware' => ['auth']]);
+                    break;
+                case 'POST':
+                    $router->post($path, $handler, ['middleware' => ['auth']]);
+                    break;
+                case 'PUT':
+                    $router->put($path, $handler, ['middleware' => ['auth']]);
+                    break;
+                case 'DELETE':
+                    $router->delete($path, $handler, ['middleware' => ['auth']]);
+                    break;
+                case 'PATCH':
+                    $router->patch($path, $handler, ['middleware' => ['auth']]);
+                    break;
+                default:
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth']]);
+                    break;
+            }
+        }
+    }
+
+    // Register associate routes with auth and associate middleware
+    foreach ($webRoutes['associate'] as $method => $routes) {
+        foreach ($routes as $path => $handler) {
+            $method = strtoupper($method);
+            switch ($method) {
+                case 'GET':
+                    $router->get($path, $handler, ['middleware' => ['auth', 'associate']]);
+                    break;
+                case 'POST':
+                    $router->post($path, $handler, ['middleware' => ['auth', 'associate']]);
+                    break;
+                case 'PUT':
+                    $router->put($path, $handler, ['middleware' => ['auth', 'associate']]);
+                    break;
+                case 'DELETE':
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'associate']]);
+                    break;
+                case 'PATCH':
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'associate']]);
+                    break;
+                default:
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'associate']]);
+                    break;
+            }
+        }
+    }
+
+    // Register employee routes with auth and employee middleware
+    foreach ($webRoutes['employee'] as $method => $routes) {
+        foreach ($routes as $path => $handler) {
+            $method = strtoupper($method);
+            switch ($method) {
+                case 'GET':
+                    $router->get($path, $handler, ['middleware' => ['auth', 'employee']]);
+                    break;
+                case 'POST':
+                    $router->post($path, $handler, ['middleware' => ['auth', 'employee']]);
+                    break;
+                case 'PUT':
+                    $router->put($path, $handler, ['middleware' => ['auth', 'employee']]);
+                    break;
+                case 'DELETE':
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'employee']]);
+                    break;
+                case 'PATCH':
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'employee']]);
+                    break;
+                default:
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'employee']]);
+                    break;
+            }
+        }
+    }
+
+    // Register customer routes with auth and customer middleware
+    foreach ($webRoutes['customer'] as $method => $routes) {
+        foreach ($routes as $path => $handler) {
+            $method = strtoupper($method);
+            switch ($method) {
+                case 'GET':
+                    $router->get($path, $handler, ['middleware' => ['auth', 'customer']]);
+                    break;
+                case 'POST':
+                    $router->post($path, $handler, ['middleware' => ['auth', 'customer']]);
+                    break;
+                case 'PUT':
+                    $router->put($path, $handler, ['middleware' => ['auth', 'customer']]);
+                    break;
+                case 'DELETE':
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'customer']]);
+                    break;
+                case 'PATCH':
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'customer']]);
+                    break;
+                default:
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'customer']]);
+                    break;
+            }
+        }
+    }
+
+    // Register admin routes with auth and admin middleware
+    foreach ($webRoutes['admin'] as $method => $routes) {
+        foreach ($routes as $path => $handler) {
+            $method = strtoupper($method);
+            switch ($method) {
+                case 'GET':
+                    $router->get($path, $handler, ['middleware' => ['auth', 'admin']]);
+                    break;
+                case 'POST':
+                    $router->post($path, $handler, ['middleware' => ['auth', 'admin']]);
+                    break;
+                case 'PUT':
+                    $router->put($path, $handler, ['middleware' => ['auth', 'admin']]);
+                    break;
+                case 'DELETE':
+                    $router->delete($path, $handler, ['middleware' => ['auth', 'admin']]);
+                    break;
+                case 'PATCH':
+                    $router->patch($path, $handler, ['middleware' => ['auth', 'admin']]);
+                    break;
+                default:
+                    $router->match([$method], $path, $handler, ['middleware' => ['auth', 'admin']]);
+                    break;
+            }
+        }
+    }
+}

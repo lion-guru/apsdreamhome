@@ -1,26 +1,31 @@
 # APS Dream Home - Comprehensive Fix Guide
 
 ## Project Overview
+
 This document provides a comprehensive guide to fix all critical issues identified in the APS Dream Home project, ensuring security, performance, and maintainability.
 
 ## 🚨 Critical Issues Identified
 
 ### 1. Database Security Vulnerabilities
+
 - **SQL Injection Risks**: Multiple files using string concatenation in SQL queries
 - **Database Connection Issues**: Inconsistent password constant usage (DB_PASSWORD vs DB_PASS)
 - **Missing Input Validation**: Direct user input in database queries
 
 ### 2. Frontend Asset Bloat
+
 - **Duplicate Files**: Multiple versions of same libraries (moment.js/moment.min.js, slick.js/slick.min.js)
 - **Unoptimized Build**: No modern build system for asset optimization
 - **Mixed Content**: PHP and frontend assets mixed together
 
 ### 3. Routing Fragmentation
+
 - **Multiple Routing Systems**: Inconsistent routing approaches across the project
 - **404 Errors**: Improper error handling for missing routes
 - **No Centralized Router**: Fragmented routing logic
 
 ### 4. Security Headers Missing
+
 - **No CSP**: Content Security Policy not implemented
 - **Missing Security Headers**: XSS protection, CSRF tokens absent
 - **CDN Dependencies**: External CDN links without integrity checks
@@ -30,6 +35,7 @@ This document provides a comprehensive guide to fix all critical issues identifi
 ### Phase 1: Database Security (Priority: HIGH)
 
 #### 1.1 Fix Database Connection
+
 **File**: `includes/db_connection.php`
 
 ```php
@@ -42,7 +48,7 @@ if (!defined('DB_PASSWORD') && defined('DB_PASS')) {
 class Database {
     private static $instance = null;
     private $pdo;
-    
+
     private function __construct() {
         try {
             $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
@@ -56,14 +62,14 @@ class Database {
             die("Database connection failed. Please check configuration.");
         }
     }
-    
+
     public static function getInstance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-    
+
     public function getConnection() {
         return $this->pdo;
     }
@@ -77,14 +83,17 @@ function getDb() {
 ```
 
 #### 1.2 Fix SQL Injection in Admin Files
+
 **Files**: All admin files with SQL queries
 
 **Before (Vulnerable)**:
+
 ```php
 $query = "SELECT * FROM users WHERE id = " . $_GET['id'];
 ```
 
 **After (Secure)**:
+
 ```php
 <?php
 require_once __DIR__ . '/../includes/db_connection.php';
@@ -107,40 +116,42 @@ function updateUser($id, $data) {
 ### Phase 2: Frontend Asset Optimization (Priority: HIGH)
 
 #### 2.1 Set Up Modern Build System
+
 **File**: `vite.config.js`
 
 ```javascript
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import { defineConfig } from "vite";
+import { resolve } from "path";
 
 export default defineConfig({
   build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
+    outDir: "dist",
+    assetsDir: "assets",
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'src/js/app.js'),
-        style: resolve(__dirname, 'src/css/style.css')
+        main: resolve(__dirname, "src/js/app.js"),
+        style: resolve(__dirname, "src/css/style.css"),
       },
       output: {
         manualChunks: {
-          vendor: ['jquery', 'moment', 'chart.js'],
-          utilities: ['lodash', 'axios']
-        }
-      }
-    }
+          vendor: ["jquery", "moment", "chart.js"],
+          utilities: ["lodash", "axios"],
+        },
+      },
+    },
   },
-  publicDir: 'public_assets', // Separate from PHP files
+  publicDir: "public_assets", // Separate from PHP files
   server: {
     port: 3000,
     proxy: {
-      '/api': 'http://localhost:8080'
-    }
-  }
+      "/api": "http://localhost:8080",
+    },
+  },
 });
 ```
 
 #### 2.2 Clean Duplicate Assets
+
 **Script**: `scripts/cleanup-assets.php`
 
 ```php
@@ -161,7 +172,7 @@ $removedFiles = [];
 foreach ($duplicates as $original => $minified) {
     $originalPath = "assets/js/$original";
     $minifiedPath = "assets/js/$minified";
-    
+
     if (file_exists($originalPath) && file_exists($minifiedPath)) {
         // Keep minified version, remove original
         if (unlink($originalPath)) {
@@ -180,6 +191,7 @@ foreach ($removedFiles as $file) {
 ### Phase 3: Routing System Unification (Priority: HIGH)
 
 #### 3.1 Create Modern Router
+
 **File**: `app/core/Routing/Router.php`
 
 ```php
@@ -190,48 +202,48 @@ class Router {
     private $routes = [];
     private $middleware = [];
     private $currentGroup = [];
-    
+
     public function get($uri, $action) {
         return $this->addRoute('GET', $uri, $action);
     }
-    
+
     public function post($uri, $action) {
         return $this->addRoute('POST', $uri, $action);
     }
-    
+
     public function group($attributes, $callback) {
         $previousGroup = $this->currentGroup;
         $this->currentGroup = array_merge($previousGroup, $attributes);
         $callback($this);
         $this->currentGroup = $previousGroup;
     }
-    
+
     private function addRoute($method, $uri, $action) {
         $route = new Route($method, $uri, $action);
-        
+
         // Apply group middleware
         if (isset($this->currentGroup['middleware'])) {
             $route->middleware($this->currentGroup['middleware']);
         }
-        
+
         $this->routes[] = $route;
         return $route;
     }
-    
+
     public function dispatch() {
         $requestMethod = $_SERVER['REQUEST_METHOD'];
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        
+
         foreach ($this->routes as $route) {
             if ($route->matches($requestMethod, $requestUri)) {
                 return $route->dispatch();
             }
         }
-        
+
         // Handle 404
         $this->handle404();
     }
-    
+
     private function handle404() {
         http_response_code(404);
         require_once __DIR__ . '/../../views/errors/404.php';
@@ -245,48 +257,48 @@ class Route {
     private $action;
     private $middleware = [];
     private $parameters = [];
-    
+
     public function __construct($method, $uri, $action) {
         $this->method = $method;
         $this->uri = $uri;
         $this->action = $action;
     }
-    
+
     public function matches($method, $uri) {
         if ($this->method !== $method) {
             return false;
         }
-        
+
         // Convert route parameters to regex
         $pattern = preg_replace('/\{([^}]+)\}/', '([^/]+)', $this->uri);
         $pattern = '#^' . $pattern . '$#';
-        
+
         if (preg_match($pattern, $uri, $matches)) {
             array_shift($matches); // Remove full match
             $this->parameters = $matches;
             return true;
         }
-        
+
         return false;
     }
-    
+
     public function dispatch() {
         // Apply middleware
         foreach ($this->middleware as $middleware) {
             $middleware->handle();
         }
-        
+
         if (is_callable($this->action)) {
             return call_user_func_array($this->action, $this->parameters);
         }
-        
+
         if (is_string($this->action) && strpos($this->action, '@') !== false) {
             list($controller, $method) = explode('@', $this->action);
             $controllerInstance = new $controller();
             return call_user_func_array([$controllerInstance, $method], $this->parameters);
         }
     }
-    
+
     public function middleware($middleware) {
         $this->middleware[] = $middleware;
         return $this;
@@ -296,6 +308,7 @@ class Route {
 ```
 
 #### 3.2 Implement Router in Main Entry Point
+
 **File**: `public/index.php`
 
 ```php
@@ -339,6 +352,7 @@ $router->dispatch();
 ### Phase 4: Security Headers Implementation (Priority: MEDIUM)
 
 #### 4.1 Create Security Configuration
+
 **File**: `config/security.php`
 
 ```php
@@ -397,6 +411,7 @@ function validateCSRFToken($token) {
 ```
 
 #### 4.2 Implement Input Validation
+
 **File**: `app/core/Validation/Validator.php`
 
 ```php
@@ -407,60 +422,60 @@ class Validator {
     private $data = [];
     private $errors = [];
     private $rules = [];
-    
+
     public function __construct($data) {
         $this->data = $data;
     }
-    
+
     public function rule($field, $rule, $params = []) {
         $this->rules[$field][] = ['rule' => $rule, 'params' => $params];
         return $this;
     }
-    
+
     public function validate() {
         foreach ($this->rules as $field => $rules) {
             foreach ($rules as $ruleData) {
                 $this->applyRule($field, $ruleData['rule'], $ruleData['params']);
             }
         }
-        
+
         return empty($this->errors);
     }
-    
+
     private function applyRule($field, $rule, $params) {
         $value = $this->data[$field] ?? null;
-        
+
         switch ($rule) {
             case 'required':
                 if (empty($value)) {
                     $this->errors[$field][] = "The $field field is required.";
                 }
                 break;
-                
+
             case 'email':
                 if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     $this->errors[$field][] = "The $field field must be a valid email.";
                 }
                 break;
-                
+
             case 'min':
                 if (strlen($value) < $params[0]) {
                     $this->errors[$field][] = "The $field field must be at least {$params[0]} characters.";
                 }
                 break;
-                
+
             case 'max':
                 if (strlen($value) > $params[0]) {
                     $this->errors[$field][] = "The $field field must not exceed {$params[0]} characters.";
                 }
                 break;
-                
+
             case 'numeric':
                 if (!is_numeric($value)) {
                     $this->errors[$field][] = "The $field field must be numeric.";
                 }
                 break;
-                
+
             case 'alphanumeric':
                 if (!ctype_alnum($value)) {
                     $this->errors[$field][] = "The $field field must be alphanumeric.";
@@ -468,11 +483,11 @@ class Validator {
                 break;
         }
     }
-    
+
     public function errors() {
         return $this->errors;
     }
-    
+
     public function sanitized($field) {
         $value = $this->data[$field] ?? '';
         return htmlspecialchars(strip_tags(trim($value)), ENT_QUOTES, 'UTF-8');
@@ -484,6 +499,7 @@ class Validator {
 ### Phase 5: Environment Configuration (Priority: MEDIUM)
 
 #### 5.1 Create Environment Template
+
 **File**: `.env.example`
 
 ```bash
@@ -535,6 +551,7 @@ RECAPTCHA_SECRET_KEY=
 ```
 
 #### 5.2 Create Environment Loader
+
 **File**: `config/env.php`
 
 ```php
@@ -545,33 +562,33 @@ RECAPTCHA_SECRET_KEY=
 
 class Env {
     private static $variables = [];
-    
+
     public static function load($file) {
         if (!file_exists($file)) {
             throw new Exception("Environment file not found: $file");
         }
-        
+
         $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        
+
         foreach ($lines as $line) {
             if (strpos($line, '#') === 0) {
                 continue; // Skip comments
             }
-            
+
             list($key, $value) = explode('=', $line, 2);
             $key = trim($key);
             $value = trim($value, '"\'');
-            
+
             self::$variables[$key] = $value;
             $_ENV[$key] = $value;
             $_SERVER[$key] = $value;
         }
     }
-    
+
     public static function get($key, $default = null) {
         return self::$variables[$key] ?? $_ENV[$key] ?? $default;
     }
-    
+
     public static function set($key, $value) {
         self::$variables[$key] = $value;
         $_ENV[$key] = $value;
@@ -631,6 +648,7 @@ apsdreamhome/
 ## 🚀 Deployment Commands
 
 ### Development Setup
+
 ```bash
 # Install dependencies
 npm install
@@ -649,6 +667,7 @@ npm run dev
 ```
 
 ### Production Build
+
 ```bash
 # Build optimized assets
 npm run build
@@ -668,6 +687,7 @@ chmod -R 644 config/*.php
 ## 🔍 Testing Checklist
 
 ### Security Tests
+
 - [ ] SQL injection prevention verified
 - [ ] CSRF tokens working on all forms
 - [ ] XSS protection headers active
@@ -675,6 +695,7 @@ chmod -R 644 config/*.php
 - [ ] File upload restrictions enforced
 
 ### Performance Tests
+
 - [ ] Asset optimization completed
 - [ ] Duplicate files removed
 - [ ] CDN links integrity checked
@@ -682,6 +703,7 @@ chmod -R 644 config/*.php
 - [ ] Caching implemented
 
 ### Functionality Tests
+
 - [ ] All routes working correctly
 - [ ] 404 errors handled properly
 - [ ] Admin panel accessible
@@ -693,12 +715,14 @@ chmod -R 644 config/*.php
 This project is now compatible with MCP (Model Context Protocol) builders with the following features:
 
 ### Standardized Structure
+
 - Clear separation of concerns (MVC pattern)
 - Consistent naming conventions
 - Modular architecture
 - Environment-based configuration
 
 ### Development Commands
+
 ```bash
 # Quick setup for MCP builders
 npm run setup:dev
@@ -708,6 +732,7 @@ npm run lint:fix
 ```
 
 ### Configuration Files
+
 - `.env.example` - Environment template
 - `vite.config.js` - Build configuration
 - `config/security.php` - Security settings
@@ -726,6 +751,7 @@ npm run lint:fix
 ## 📞 Support
 
 For issues or questions regarding these fixes:
+
 1. Check the troubleshooting section in each phase
 2. Verify all environment variables are set correctly
 3. Ensure proper file permissions are applied
@@ -734,3 +760,249 @@ For issues or questions regarding these fixes:
 ---
 
 **Note**: This guide provides comprehensive fixes for all critical issues identified. Implement phases in order of priority for best results.
+
+---
+
+# 🚀 APS Dream Home - Feature Enhancement Roadmap
+
+## Project Status: Active Development
+
+This roadmap outlines the feature enhancements planned for the APS Dream Home Real Estate Management System.
+
+---
+
+## ✅ Currently Implemented Features
+
+### 1. Property Management
+
+- Property listing, search, filtering
+- Project management
+- Property inquiries & visits
+- Favorite properties
+
+### 2. Lead & CRM System
+
+- Lead capture & tracking
+- Lead assignment & distribution
+- Custom fields & tags
+- Activity tracking
+- Deal management
+
+### 3. Associate/Agent Management
+
+- Associate registration & profiles
+- MLM (Multi-Level Marketing) system
+- Commission tracking
+- Network tree visualization
+- Payout management
+
+### 4. Employee Management
+
+- Employee CRUD operations
+- Role-based access
+- Task management
+- Performance tracking
+
+### 5. Finance & Accounting
+
+- EMI management
+- Payment tracking
+- Expense tracking
+- Commission calculations
+
+### 6. AI Features
+
+- AI Chatbot integration
+- AI Workflow automation
+- Gemini AI service integration
+
+### 7. Communication
+
+- Email notifications
+- WhatsApp integration
+- Newsletter subscriptions
+- Support tickets
+
+---
+
+## 🎯 Phase 1: HIGH Priority Features (Immediate)
+
+### Property Management
+
+| Feature             | Status     | Priority |
+| ------------------- | ---------- | -------- |
+| Mortgage Calculator | 🔴 MISSING | HIGH     |
+| Advanced Filters    | 🔴 MISSING | HIGH     |
+
+### Lead & CRM System
+
+| Feature             | Status     | Priority |
+| ------------------- | ---------- | -------- |
+| Lead Scoring System | 🔴 MISSING | HIGH     |
+| Follow-up Reminders | 🔴 MISSING | HIGH     |
+| Deal Stage Pipeline | 🔴 MISSING | HIGH     |
+
+### Employee Management
+
+| Feature             | Status     | Priority |
+| ------------------- | ---------- | -------- |
+| Attendance Tracking | 🔴 MISSING | HIGH     |
+| Leave Management    | 🔴 MISSING | HIGH     |
+| KPI Dashboard       | 🔴 MISSING | HIGH     |
+
+### Finance & Accounting
+
+| Feature            | Status     | Priority |
+| ------------------ | ---------- | -------- |
+| Invoice Generation | 🔴 MISSING | HIGH     |
+
+### AI Features
+
+| Feature                     | Status     | Priority |
+| --------------------------- | ---------- | -------- |
+| Smart Chatbot (NLP)         | 🔴 MISSING | HIGH     |
+| AI Property Recommendations | 🔴 MISSING | HIGH     |
+| AI Lead Scoring             | 🔴 MISSING | HIGH     |
+
+### Communication
+
+| Feature            | Status     | Priority |
+| ------------------ | ---------- | -------- |
+| SMS Campaigns      | 🔴 MISSING | HIGH     |
+| Push Notifications | 🔴 MISSING | HIGH     |
+| Live Chat Widget   | 🔴 MISSING | HIGH     |
+| Auto-Responders    | 🔴 MISSING | HIGH     |
+
+---
+
+## 🎯 Phase 2: MEDIUM Priority Features (3-6 months)
+
+### Property Management
+
+- Virtual Tours (360°)
+- Property Comparison Tool
+- Price Trends & Analytics
+- Neighborhood Analytics
+
+### Lead & CRM System
+
+- Lead Nurturing Sequences
+- Conversion Funnel Analytics
+- Campaign Management
+
+### Associate/Agent Management
+
+- Performance Analytics Dashboard
+- Leaderboard System
+- Target Setting & Tracking
+
+### Finance & Accounting
+
+- Profit & Loss Reports
+- Tax Management (GST)
+- Financial Dashboard
+
+### AI Features
+
+- AI Price Prediction
+- AI Content Generation
+- AI Market Analysis
+
+### Communication
+
+- In-App Messaging
+- Video Calling
+- Bulk WhatsApp Sender
+
+---
+
+## 🎯 Phase 3: LOW Priority Features (6-12 months)
+
+### Property Management
+
+- Walkthrough Videos
+- Property Badge System
+- Property Documents Vault
+- Property Alerts
+
+### Associate/Agent Management
+
+- Training & Certification
+- Territory/Zone Management
+- Gamification
+- ID Card Generation
+
+### Employee Management
+
+- Performance Review System
+- Org Chart Visualization
+- Payroll Integration
+
+### Finance & Accounting
+
+- Budget Planning
+- Bank Reconciliation
+- Multi-Company Support
+
+### AI Features
+
+- Image AI Enhancement
+- Voice Search
+- Chatbot Analytics
+
+### Communication
+
+- Social Media Integration
+- Email Templates
+- Feedback Collection
+
+---
+
+## 📊 Implementation Progress
+
+### Completed Fixes (Recent)
+
+- ✅ Fixed missing `routes/web.php` - routing now works properly
+- ✅ Fixed home page layout rendering - content now displays correctly
+
+### Testing Commands
+
+```bash
+# Test home page
+php -S localhost:8000 -t public
+# Visit http://localhost:8000/
+
+# Run PHP syntax check
+php -l app/Http/Controllers/HomeController.php
+
+# Run tests
+npm test
+```
+
+---
+
+## 🔧 Development Guidelines
+
+1. **Database Changes**: Always create migration scripts in `database/sql/schema/`
+2. **New Features**: Add to appropriate module (app/services/, app/models/)
+3. **Testing**: Add test cases in `tests/` directory
+4. **Documentation**: Update relevant docs in `docs/`
+
+---
+
+## 📁 Key Directories
+
+| Directory               | Purpose                  |
+| ----------------------- | ------------------------ |
+| `app/Http/Controllers/` | All controllers          |
+| `app/models/`           | All models (130+)        |
+| `app/services/`         | Business logic           |
+| `app/views/`            | View templates           |
+| `routes/`               | Route definitions        |
+| `config/`               | Configuration files      |
+| `database/`             | SQL schemas & migrations |
+| `public/`               | Web root & assets        |
+
+---
+
+_Last Updated: Auto-generated from project analysis_

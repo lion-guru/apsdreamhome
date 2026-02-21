@@ -11,8 +11,8 @@ use PDO;
  */
 class FarmerLandHolding extends Model
 {
-    protected $table = 'farmer_land_holdings';
-    protected $primaryKey = 'id';
+    protected static $table = 'farmer_land_holdings';
+    protected static $primaryKey = 'id';
 
     /**
      * Get all land holdings with farmer details

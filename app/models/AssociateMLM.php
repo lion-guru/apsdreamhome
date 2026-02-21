@@ -7,7 +7,7 @@
 namespace App\Models;
 
 class AssociateMLM extends Model {
-    protected static string $table = 'associate_mlm';
+    protected static $table = 'associate_mlm';
 
     /**
      * MLM Levels Configuration

@@ -214,8 +214,8 @@ class SecurityConfiguration {
 
             $sql = "
                 SELECT two_factor_enabled
-                FROM user
-                WHERE uid = ?
+                FROM users
+                WHERE id = ?
             ";
             $userData = $db->fetch($sql, [$userId]);
 

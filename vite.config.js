@@ -3,12 +3,13 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   root: '.',
   build: {
-    outDir: 'dist',
+    outDir: 'public/dist',
     emptyOutDir: true,
+    manifest: true,
     rollupOptions: {
       input: {
-        app: 'src/js/app.js',           // main JS entry
-        style: 'src/css/style.css'      // main CSS entry
+        main: 'assets/js/main.js',
+        style: 'assets/css/style.css'
       }
     }
   },
@@ -17,5 +18,5 @@ export default defineConfig({
     port: 3000,
     open: false
   },
-  publicDir: 'public'                  // static files (images, fonts)
+  publicDir: false
 });

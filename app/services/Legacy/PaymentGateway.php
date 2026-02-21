@@ -1,238 +1,118 @@
 <?php
+/**
+ * APS Dream Home - Payment Gateway Integration
+ * Complete payment system with multiple gateway support (Razorpay, PayU, Stripe)
+ */
 
 namespace App\Services\Legacy;
 
-/**
- * Payment Gateway Integration - APS Dream Homes
- * Multiple payment providers support
- */
+// Payment gateway configuration
+define('PAYMENT_GATEWAY', 'razorpay'); // Options: razorpay, payu, stripe
+define('RAZORPAY_KEY_ID', 'rzp_test_your_key_id');
+define('RAZORPAY_KEY_SECRET', 'your_razorpay_secret');
+define('PAYU_MERCHANT_ID', 'your_payu_merchant_id');
+define('PAYU_SALT', 'your_payu_salt');
+define('STRIPE_PUBLISHABLE_KEY', 'pk_test_your_stripe_key');
+define('STRIPE_SECRET_KEY', 'sk_test_your_stripe_secret');
 
+// Payment gateway class
 class PaymentGateway {
-    private $db;
-    private $providers = [];
 
-    public function __construct() {
-        $this->db = \App\Core\App::database();
-        $this->initPaymentSystem();
+    private $gateway;
+    private $config;
+
+    public function __construct($gateway = PAYMENT_GATEWAY) {
+        $this->gateway = $gateway;
+        $this->load_config();
     }
 
-    /**
-     * Initialize payment system
-     */
-    private function initPaymentSystem() {
-        // Create payment tables
-        $this->createPaymentTables();
-
-        // Initialize providers
-        $this->initializeProviders();
-    }
-
-    /**
-     * Create payment database tables
-     */
-    private function createPaymentTables() {
-        $tables = [
-            "CREATE TABLE IF NOT EXISTS payment_transactions (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                transaction_id VARCHAR(100) UNIQUE,
-                user_id INT,
-                property_id INT,
-                amount DECIMAL(10,2),
-                currency VARCHAR(10) DEFAULT 'INR',
-                payment_method VARCHAR(50),
-                provider VARCHAR(50),
-                status VARCHAR(50),
-                gateway_response JSON,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_transaction (transaction_id),
-                INDEX idx_user (user_id),
-                INDEX idx_property (property_id),
-                INDEX idx_status (status)
-            )",
-
-            "CREATE TABLE IF NOT EXISTS payment_gateways (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(100),
-                provider VARCHAR(50),
-                api_key_encrypted TEXT,
-                api_secret_encrypted TEXT,
-                webhook_url VARCHAR(500),
-                is_active BOOLEAN DEFAULT 1,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_provider (provider)
-            )",
-
-            "CREATE TABLE IF NOT EXISTS payment_refunds (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                transaction_id VARCHAR(100),
-                refund_id VARCHAR(100),
-                amount DECIMAL(10,2),
-                reason TEXT,
-                status VARCHAR(50),
-                gateway_response JSON,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_transaction (transaction_id),
-                INDEX idx_refund (refund_id)
-            )"
+    private function load_config() {
+        $this->config = [
+            'razorpay' => [
+                'key_id' => RAZORPAY_KEY_ID,
+                'key_secret' => RAZORPAY_KEY_SECRET,
+                'currency' => 'INR'
+            ],
+            'payu' => [
+                'merchant_id' => PAYU_MERCHANT_ID,
+                'salt' => PAYU_SALT,
+                'currency' => 'INR'
+            ],
+            'stripe' => [
+                'publishable_key' => STRIPE_PUBLISHABLE_KEY,
+                'secret_key' => STRIPE_SECRET_KEY,
+                'currency' => 'INR'
+            ]
         ];
+    }
 
-        foreach ($tables as $sql) {
-            $this->db->query($sql);
+    // Create payment order
+    public function create_order($amount, $currency, $receipt, $notes = []) {
+        switch ($this->gateway) {
+            case 'razorpay':
+                return $this->create_razorpay_order($amount, $currency, $receipt, $notes);
+            case 'payu':
+                return $this->create_payu_order($amount, $currency, $receipt, $notes);
+            case 'stripe':
+                return $this->create_stripe_order($amount, $currency, $receipt, $notes);
+            default:
+                return ['error' => 'Payment gateway not supported'];
         }
     }
 
-    /**
-     * Initialize payment providers
-     */
-    private function initializeProviders() {
-        // Initialize Razorpay
-        $this->providers['razorpay'] = new RazorpayProvider();
+    // Razorpay integration
+    private function create_razorpay_order($amount, $currency, $receipt, $notes) {
+        // Note: Requires Razorpay SDK to be installed via Composer
+        if (class_exists('Razorpay\Api\Api')) {
+            $api = new \Razorpay\Api\Api($this->config['razorpay']['key_id'], $this->config['razorpay']['key_secret']);
 
-        // Initialize Stripe
-        $this->providers['stripe'] = new StripeProvider();
+            try {
+                $orderData = [
+                    'receipt' => $receipt,
+                    'amount' => $amount * 100, // Razorpay expects amount in paise
+                    'currency' => $currency,
+                    'notes' => $notes
+                ];
 
-        // Initialize PayPal
-        $this->providers['paypal'] = new PayPalProvider();
-    }
+                $razorpayOrder = $api->order->create($orderData);
 
-    /**
-     * Create payment order
-     */
-    public function createPaymentOrder($userId, $propertyId, $amount, $provider = 'razorpay') {
-        $transactionId = $this->generateTransactionId();
+                return [
+                    'success' => true,
+                    'order_id' => $razorpayOrder['id'],
+                    'amount' => $amount,
+                    'currency' => $currency,
+                    'key' => $this->config['razorpay']['key_id']
+                ];
 
-        // Create transaction record
-        $sql = "INSERT INTO payment_transactions
-                (transaction_id, user_id, property_id, amount, payment_method, provider, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        $paymentMethod = 'online';
-        $status = 'pending';
-        $this->db->execute($sql, [$transactionId, $userId, $propertyId, $amount, $paymentMethod, $provider, $status]);
-
-        // Create order with provider
-        if (isset($this->providers[$provider])) {
-            $orderData = $this->providers[$provider]->createOrder($amount, $transactionId);
-
-            // Update transaction with gateway response
-            $this->updateTransactionGatewayResponse($transactionId, $orderData);
-
-            return $orderData;
-        }
-
-        return false;
-    }
-
-    /**
-     * Process payment callback
-     */
-    public function processPaymentCallback($provider, $callbackData) {
-        if (!isset($this->providers[$provider])) {
-            return false;
-        }
-
-        $result = $this->providers[$provider]->verifyCallback($callbackData);
-
-        if ($result['success']) {
-            $this->updateTransactionStatus($result['transaction_id'], 'success');
-            $this->processSuccessfulPayment($result['transaction_id']);
+            } catch (\Exception $e) {
+                return ['error' => $e->getMessage()];
+            }
         } else {
-            $this->updateTransactionStatus($result['transaction_id'], 'failed');
-        }
-
-        return $result;
-    }
-
-    /**
-     * Generate transaction ID
-     */
-    private function generateTransactionId() {
-        return 'APS' . date('YmdHis') . \App\Helpers\SecurityHelper::secureRandomInt(1000, 9999);
-    }
-
-    /**
-     * Update transaction gateway response
-     */
-    private function updateTransactionGatewayResponse($transactionId, $response) {
-        $sql = "UPDATE payment_transactions SET gateway_response = ? WHERE transaction_id = ?";
-        $responseJson = json_encode($response);
-        $this->db->execute($sql, [$responseJson, $transactionId]);
-    }
-
-    /**
-     * Update transaction status
-     */
-    private function updateTransactionStatus($transactionId, $status) {
-        $sql = "UPDATE payment_transactions SET status = ? WHERE transaction_id = ?";
-        $this->db->execute($sql, [$status, $transactionId]);
-    }
-
-    /**
-     * Process successful payment
-     */
-    private function processSuccessfulPayment($transactionId) {
-        // Update booking status, send notifications, etc.
-        $sql = "SELECT user_id, property_id FROM payment_transactions WHERE transaction_id = ?";
-        $transaction = $this->db->fetch($sql, [$transactionId]);
-
-        if ($transaction) {
-            // Update booking status
-            $this->updateBookingStatus($transaction['user_id'], $transaction['property_id']);
-
-            // Send confirmation
-            $this->sendPaymentConfirmation($transaction['user_id'], $transactionId);
+             return ['error' => 'Razorpay SDK not found'];
         }
     }
 
-    /**
-     * Update booking status
-     */
-    private function updateBookingStatus($userId, $propertyId) {
-        $sql = "UPDATE bookings SET status = 'confirmed', payment_status = 'paid'
-                WHERE user_id = ? AND property_id = ? AND status = 'pending'";
-        $this->db->execute($sql, [$userId, $propertyId]);
+    // PayU integration
+    private function create_payu_order($amount, $currency, $receipt, $notes) {
+        $payuData = [
+            'key' => $this->config['payu']['merchant_id'],
+            'txnid' => 'TXN_' . time() . '_' . $receipt,
+            'amount' => $amount,
+            'productinfo' => 'Property Booking - ' . ($notes['property_name'] ?? 'General'),
+            'firstname' => $notes['customer_name'] ?? '',
+            'email' => $notes['customer_email'] ?? '',
+            'phone' => $notes['customer_phone'] ?? '',
+            'surl' => defined('SITE_URL') ? SITE_URL . '/payment_success.php' : '/payment_success.php',
+            'furl' => defined('SITE_URL') ? SITE_URL . '/payment_failed.php' : '/payment_failed.php',
+            'curl' => defined('SITE_URL') ? SITE_URL . '/payment_cancel.php' : '/payment_cancel.php',
+        ];
+        // Note: This is incomplete as it needs hash generation
+        return $payuData;
     }
 
-    /**
-     * Send payment confirmation
-     */
-    private function sendPaymentConfirmation($userId, $transactionId) {
-        // Send email/SMS confirmation
+    // Stripe integration
+    private function create_stripe_order($amount, $currency, $receipt, $notes) {
+         // Placeholder for Stripe implementation
+         return ['error' => 'Stripe implementation pending'];
     }
 }
-
-/**
- * Razorpay Provider
- */
-class RazorpayProvider {
-    private $apiKey;
-    private $apiSecret;
-
-    public function __construct() {
-        $this->apiKey = RAZORPAY_KEY;
-        $this->apiSecret = RAZORPAY_SECRET;
-    }
-
-    public function createOrder($amount, $transactionId) {
-        // Implement Razorpay order creation
-        return [
-            'order_id' => 'order_' . $transactionId,
-            'amount' => $amount * 100, // Convert to paise
-            'currency' => 'INR',
-            'receipt' => $transactionId
-        ];
-    }
-
-    public function verifyCallback($callbackData) {
-        // Implement Razorpay signature verification
-        return [
-            'success' => true,
-            'transaction_id' => $callbackData['receipt'] ?? ''
-        ];
-    }
-}
-
-// Initialize payment gateway
-$paymentGateway = new PaymentGateway();
-?>

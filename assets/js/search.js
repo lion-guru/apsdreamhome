@@ -60,7 +60,7 @@ function initPriceRangeSlider() {
 /**
  * Initialize property search functionality
  */
-function initPropertySearch() {
+export function initPropertySearch() {
   const searchForm = document.getElementById("propertySearchForm");
   const searchResults = document.getElementById("searchResults");
 
@@ -438,62 +438,6 @@ function displaySearchResults(properties, total, append = false) {
     searchResults.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
   updateLoadingState(false);
-}
-
-/**
- * Create a property card element
- * @param {Object} property - Property data
- * @returns {HTMLElement} Property card element
- */
-function createPropertyCard(property) {
-  const col = document.createElement("div");
-  col.className = "col-md-6 col-lg-4 mb-4";
-
-  col.innerHTML = `
-    <div class="card property-card h-100">
-      ${
-        property.image_url
-          ? `<img src="${property.image_url}" class="card-img-top" alt="${property.title}">`
-          : '<div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">' +
-            '<i class="fas fa-home fa-4x text-muted"></i></div>'
-      }
-      <div class="card-body">
-        <h5 class="card-title">${property.title || "Property"}</h5>
-        <p class="text-muted">
-          <i class="fas fa-map-marker-alt me-2"></i>${
-            property.location || "Location not specified"
-          }
-        </p>
-        <div class="property-features mb-3">
-          ${
-            property.bedrooms
-              ? `<span><i class="fas fa-bed me-1"></i> ${property.bedrooms} Beds</span>`
-              : ""
-          }
-          ${
-            property.bathrooms
-              ? `<span><i class="fas fa-bath me-1"></i> ${property.bathrooms} Baths</span>`
-              : ""
-          }
-          ${
-            property.area
-              ? `<span><i class="fas fa-ruler-combined me-1"></i> ${property.area} sq.ft</span>`
-              : ""
-          }
-        </div>
-        <div class="d-flex justify-content-between align-items-center">
-          <h6 class="mb-0 text-primary">${
-            property.price ? formatPrice(property.price) : "Contact for price"
-          }</h6>
-          <a href="/property-details.php?id=${
-            property.id
-          }" class="btn btn-sm btn-outline-primary">View Details</a>
-        </div>
-      </div>
-    </div>
-  `;
-
-  return col;
 }
 
 /**

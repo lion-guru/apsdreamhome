@@ -4,105 +4,43 @@
  * Shows employee leave records and allows leave applications
  */
 ?>
-
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-calendar-alt me-2"></i>My Leaves</h2>
-        <button class="btn btn-primary" onclick="showApplyLeaveModal()">
-            <i class="fas fa-plus me-2"></i>Apply for Leave
-        </button>
-    </div>
-
-    <!-- Leave Stats -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalApproved = count(array_filter($leaves, function($l) {
-                                    return $l['status'] === 'approved';
-                                }));
-                                echo $totalApproved;
-                                ?>
-                            </h4>
-                            <small>Approved</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-check-circle fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $page_title ?? 'Employee Leaves'; ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <style>
+        .stats-card { border-radius: 12px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .leave-balance-card { transition: transform 0.2s; }
+        .leave-balance-card:hover { transform: translateY(-2px); }
+        .status-approved { color: #28a745; }
+        .status-pending { color: #ffc107; }
+        .status-rejected { color: #dc3545; }
+        .status-cancelled { color: #6c757d; }
+        .calendar-container { max-height: 600px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1"><i class="fas fa-calendar-alt me-2 text-primary"></i>My Leaves</h2>
+                <p class="text-muted mb-0">Manage your leave requests and track your leave balance</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary" onclick="loadLeaveCalendar()">
+                    <i class="fas fa-calendar me-2"></i>Calendar View
+                </button>
+                <button class="btn btn-primary" onclick="showApplyLeaveModal()">
+                    <i class="fas fa-plus me-2"></i>Apply for Leave
+                </button>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalPending = count(array_filter($leaves, function($l) {
-                                    return $l['status'] === 'pending';
-                                }));
-                                echo $totalPending;
-                                ?>
-                            </h4>
-                            <small>Pending</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-clock fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalRejected = count(array_filter($leaves, function($l) {
-                                    return $l['status'] === 'rejected';
-                                }));
-                                echo $totalRejected;
-                                ?>
-                            </h4>
-                            <small>Rejected</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-times-circle fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stats-card card text-white" style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-0">
-                                <?php
-                                $totalDays = array_sum(array_column($leaves, 'total_days'));
-                                echo $totalDays;
-                                ?>
-                            </h4>
-                            <small>Total Days</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-calendar-day fa-2x"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Leave Records -->
     <div class="row">

@@ -13,17 +13,17 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo BASE_URL ?? '/'; ?>">
+    <meta property="og:url" content="<?php echo BASE_URL; ?>">
     <meta property="og:title" content="APS Dream Home - Premium Real Estate in UP">
     <meta property="og:description" content="Discover exclusive properties with the most trusted real estate platform in Uttar Pradesh.">
-    <meta property="og:image" content="<?php echo BASE_URL; ?>assets/images/og-image.jpg">
+    <meta property="og:image" content="<?php echo BASE_URL; ?>public/assets/images/logo/apslogo.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="<?php echo BASE_URL ?? '/'; ?>">
     <meta property="twitter:title" content="APS Dream Home - Premium Real Estate">
     <meta property="twitter:description" content="Find your dream home with APS Dream Home - Premium properties in UP">
-    <meta property="twitter:image" content="<?php echo BASE_URL; ?>assets/images/twitter-card.jpg">
+    <meta property="twitter:image" content="<?php echo BASE_URL; ?>public/assets/images/logo/apslogo.png">
 
     <!-- Modern CSS Framework -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -31,7 +31,10 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/animations.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/loading.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/assets/css/style.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/style.css">
 
     <style>
@@ -91,6 +94,7 @@
     </main>
 
     <?php include __DIR__ . '/footer.php'; ?>
+    </div><!-- .content-wrapper -->
 
     <!-- Core Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -102,7 +106,7 @@
     <script src="<?php echo BASE_URL; ?>public/js/lead-capture.js"></script>
     <script src="<?php echo BASE_URL; ?>public/assets/js/location-bank-helper.js"></script>
     <script src="<?php echo BASE_URL; ?>public/js/layout.js"></script>
-    
+
     <?php if (isset($extra_js)) echo $extra_js; ?>
 </body>
 

@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Services\Legacy;
+
 /**
  * APS Dream Home - WhatsApp Integration Manager
  * Complete WhatsApp Business API integration for CRM and customer communication
  */
 
-class WhatsAppManager {
+class WhatsAppManager
+{
     private $db;
     private $logger;
 
@@ -21,7 +23,8 @@ class WhatsAppManager {
         // ... (keeping existing templates)
     ];
 
-    public function __construct($db = null, $logger = null) {
+    public function __construct($db = null, $logger = null)
+    {
         $this->db = $db ?: \App\Core\App::database();
         $this->logger = $logger;
         $this->createWhatsAppTables();
@@ -31,7 +34,8 @@ class WhatsAppManager {
     /**
      * Create WhatsApp related tables
      */
-    private function createWhatsAppTables() {
+    private function createWhatsAppTables()
+    {
         // WhatsApp messages table
         $sql = "CREATE TABLE IF NOT EXISTS whatsapp_messages (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -52,7 +56,7 @@ class WhatsAppManager {
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -70,7 +74,7 @@ class WhatsAppManager {
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -112,7 +116,7 @@ class WhatsAppManager {
             created_by INT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (created_by) REFERENCES user(uid) ON DELETE SET NULL
+            FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
         )";
 
         $this->db->execute($sql);
@@ -124,7 +128,8 @@ class WhatsAppManager {
     /**
      * Insert default WhatsApp templates
      */
-    private function insertDefaultWhatsAppTemplates() {
+    private function insertDefaultWhatsAppTemplates()
+    {
         $checkSql = "SELECT COUNT(*) as count FROM whatsapp_templates";
         $row = $this->db->fetch($checkSql);
 
@@ -142,7 +147,8 @@ class WhatsAppManager {
     /**
      * Setup WhatsApp configuration
      */
-    private function setupWhatsAppConfiguration() {
+    private function setupWhatsAppConfiguration()
+    {
         // Load WhatsApp configuration from database or config file
         $configSql = "SELECT * FROM site_settings WHERE setting_name LIKE 'whatsapp_%'";
         $results = $this->db->fetchAll($configSql);
@@ -169,7 +175,8 @@ class WhatsAppManager {
     /**
      * Send WhatsApp message
      */
-    public function sendWhatsAppMessage($recipientPhone, $messageData, $messageType = 'text') {
+    public function sendWhatsAppMessage($recipientPhone, $messageData, $messageType = 'text')
+    {
         $messageId = 'MSG' . time() . \App\Helpers\SecurityHelper::secureRandomInt(1000, 9999);
 
         // Clean phone number
@@ -180,9 +187,12 @@ class WhatsAppManager {
                    (message_id, recipient_phone, recipient_name, message_type, message_content, status, created_by)
                    VALUES (?, ?, ?, ?, ?, 'pending', ?)";
         $params = [
-            $messageId, $cleanPhone,
-            $messageData['name'] ?? '', $messageType,
-            $messageData['content'] ?? '', $_SESSION['user_id'] ?? 1
+            $messageId,
+            $cleanPhone,
+            $messageData['name'] ?? '',
+            $messageType,
+            $messageData['content'] ?? '',
+            $_SESSION['user_id'] ?? 1
         ];
         $this->db->execute($logSql, $params);
 
@@ -209,7 +219,8 @@ class WhatsAppManager {
     /**
      * Send WhatsApp template message
      */
-    public function sendWhatsAppTemplate($recipientPhone, $templateName, $templateData = []) {
+    public function sendWhatsAppTemplate($recipientPhone, $templateName, $templateData = [])
+    {
         $template = $this->getWhatsAppTemplate($templateName);
         if (!$template) {
             return ['error' => 'Template not found'];
@@ -225,7 +236,7 @@ class WhatsAppManager {
                 }
                 $components[] = [
                     'type' => 'body',
-                    'parameters' => array_map(function($value) {
+                    'parameters' => array_map(function ($value) {
                         return ['type' => 'text', 'text' => $value];
                     }, array_values($templateData))
                 ];
@@ -246,7 +257,8 @@ class WhatsAppManager {
     /**
      * Send WhatsApp message to lead
      */
-    public function sendWhatsAppToLead($leadId, $messageType, $customMessage = '') {
+    public function sendWhatsAppToLead($leadId, $messageType, $customMessage = '')
+    {
         $lead = $this->getLead($leadId);
         if (!$lead || empty($lead['phone'])) {
             return ['error' => 'Lead phone number not found'];
@@ -300,7 +312,8 @@ class WhatsAppManager {
     /**
      * Send WhatsApp message to customer
      */
-    public function sendWhatsAppToCustomer($customerId, $messageType, $additionalData = []) {
+    public function sendWhatsAppToCustomer($customerId, $messageType, $additionalData = [])
+    {
         $customer = $this->getCustomer($customerId);
         if (!$customer || empty($customer['phone'])) {
             return ['error' => 'Customer phone number not found'];
@@ -353,7 +366,8 @@ class WhatsAppManager {
     /**
      * Send WhatsApp to farmer
      */
-    public function sendWhatsAppToFarmer($farmerId, $messageType, $additionalData = []) {
+    public function sendWhatsAppToFarmer($farmerId, $messageType, $additionalData = [])
+    {
         $farmer = $this->getFarmer($farmerId);
         if (!$farmer || empty($farmer['phone'])) {
             return ['error' => 'Farmer phone number not found'];
@@ -388,7 +402,8 @@ class WhatsAppManager {
     /**
      * Send WhatsApp to associate
      */
-    public function sendWhatsAppToAssociate($associateId, $messageType, $additionalData = []) {
+    public function sendWhatsAppToAssociate($associateId, $messageType, $additionalData = [])
+    {
         $associate = $this->getAssociate($associateId);
         if (!$associate || empty($associate['phone'])) {
             return ['error' => 'Associate phone number not found'];
@@ -423,7 +438,8 @@ class WhatsAppManager {
     /**
      * Send WhatsApp campaign
      */
-    public function sendWhatsAppCampaign($campaignId, $phoneNumbers) {
+    public function sendWhatsAppCampaign($campaignId, $phoneNumbers)
+    {
         $campaign = $this->getWhatsAppCampaign($campaignId);
         if (!$campaign) {
             return ['error' => 'Campaign not found'];
@@ -452,7 +468,8 @@ class WhatsAppManager {
     /**
      * Get WhatsApp conversation history
      */
-    public function getWhatsAppConversation($customerPhone) {
+    public function getWhatsAppConversation($customerPhone)
+    {
         $sql = "SELECT * FROM whatsapp_messages
                 WHERE recipient_phone = ?
                 ORDER BY created_at DESC
@@ -463,7 +480,8 @@ class WhatsAppManager {
     /**
      * Get WhatsApp templates
      */
-    public function getWhatsAppTemplates() {
+    public function getWhatsAppTemplates()
+    {
         $sql = "SELECT * FROM whatsapp_templates WHERE status = 'APPROVED' ORDER BY template_name";
         $templates = $this->db->fetchAll($sql);
         foreach ($templates as &$row) {
@@ -476,7 +494,8 @@ class WhatsAppManager {
     /**
      * Get WhatsApp template
      */
-    private function getWhatsAppTemplate($templateName) {
+    private function getWhatsAppTemplate($templateName)
+    {
         $sql = "SELECT * FROM whatsapp_templates WHERE template_name = ? AND status = 'APPROVED'";
         $template = $this->db->fetch($sql, [$templateName]);
 
@@ -491,7 +510,8 @@ class WhatsAppManager {
     /**
      * Create WhatsApp campaign
      */
-    public function createWhatsAppCampaign($campaignData) {
+    public function createWhatsAppCampaign($campaignData)
+    {
         $sql = "INSERT INTO whatsapp_campaigns
                 (campaign_name, campaign_type, template_name, message_content, media_url,
                  status, total_recipients, created_by)
@@ -520,7 +540,8 @@ class WhatsAppManager {
     /**
      * Get WhatsApp campaigns
      */
-    public function getWhatsAppCampaigns($filters = []) {
+    public function getWhatsAppCampaigns($filters = [])
+    {
         $sql = "SELECT * FROM whatsapp_campaigns WHERE 1=1";
         $params = [];
 
@@ -542,7 +563,8 @@ class WhatsAppManager {
     /**
      * Get WhatsApp campaign
      */
-    private function getWhatsAppCampaign($campaignId) {
+    private function getWhatsAppCampaign($campaignId)
+    {
         $sql = "SELECT * FROM whatsapp_campaigns WHERE id = ?";
         return $this->db->fetch($sql, [$campaignId]);
     }
@@ -550,7 +572,8 @@ class WhatsAppManager {
     /**
      * Update campaign statistics
      */
-    private function updateCampaignStats($campaignId, $results) {
+    private function updateCampaignStats($campaignId, $results)
+    {
         $sentCount = count(array_filter($results, fn($r) => $r['status'] === 'sent'));
         $deliveredCount = count(array_filter($results, fn($r) => $r['status'] === 'delivered'));
         $readCount = count(array_filter($results, fn($r) => $r['status'] === 'read'));
@@ -567,7 +590,8 @@ class WhatsAppManager {
     }
 
     // Helper methods
-    private function cleanPhoneNumber($phone) {
+    private function cleanPhoneNumber($phone)
+    {
         // Remove all non-digit characters except +
         $phone = preg_replace('/[^\d+]/', '', $phone);
 
@@ -579,7 +603,8 @@ class WhatsAppManager {
         return $phone;
     }
 
-    private function sendToWhatsAppAPI($phone, $messageData, $messageType) {
+    private function sendToWhatsAppAPI($phone, $messageData, $messageType)
+    {
         $url = $this->apiUrl . $this->phoneNumberId . '/messages';
 
         $data = [
@@ -617,37 +642,43 @@ class WhatsAppManager {
         }
     }
 
-    private function getLead($leadId) {
+    private function getLead($leadId)
+    {
         $sql = "SELECT * FROM leads WHERE id = ?";
         return $this->db->fetch($sql, [$leadId]);
     }
 
-    private function getCustomer($customerId) {
+    private function getCustomer($customerId)
+    {
         $sql = "SELECT * FROM customer_profiles WHERE id = ?";
         return $this->db->fetch($sql, [$customerId]);
     }
 
-    private function getFarmer($farmerId) {
+    private function getFarmer($farmerId)
+    {
         $sql = "SELECT * FROM farmer_profiles WHERE id = ?";
         return $this->db->fetch($sql, [$farmerId]);
     }
 
-    private function getAssociate($associateId) {
-        $sql = "SELECT a.*, u.uname as name, u.uphone as phone
+    private function getAssociate($associateId)
+    {
+        $sql = "SELECT a.*, u.name as name, u.phone as phone
                 FROM associates a
-                LEFT JOIN user u ON a.user_id = u.uid
+                LEFT JOIN users u ON a.user_id = u.id
                 WHERE a.id = ?";
         return $this->db->fetch($sql, [$associateId]);
     }
 
-    private function getCurrentUserName() {
+    private function getCurrentUserName()
+    {
         return $_SESSION['user_name'] ?? 'APS Team';
     }
 
     /**
      * Get WhatsApp dashboard statistics
      */
-    public function getWhatsAppDashboard() {
+    public function getWhatsAppDashboard()
+    {
         $dashboard = [];
 
         // Message statistics
@@ -692,4 +723,3 @@ class WhatsAppManager {
         return $dashboard;
     }
 }
-?>

@@ -12,8 +12,8 @@ use PDO;
  */
 class Associate extends Model
 {
-    protected static string $table = 'associates';
-    protected $primaryKey = 'id';
+    protected static $table = 'associates';
+    protected static $primaryKey = 'id';
 
     /**
      * Get associate by ID with complete details

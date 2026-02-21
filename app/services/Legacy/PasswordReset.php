@@ -117,14 +117,14 @@ class PasswordReset
 
             // Update user password
             $stmt = $db->prepare("
-                UPDATE user
-                SET upass = :upass,
-                    last_password_change = NOW()
-                WHERE uid = :uid
+                UPDATE users
+                SET password = :password,
+                    updated_at = NOW()
+                WHERE id = :id
             ");
             $stmt->execute([
-                'upass' => $passwordData['hash'],
-                'uid' => $tokenData['user_id']
+                'password' => $passwordData['hash'],
+                'id' => $tokenData['user_id']
             ]);
 
             // Mark token as used
@@ -166,7 +166,7 @@ class PasswordReset
     {
         try {
             $db = \App\Core\App::database();
-            $stmt = $db->prepare("SELECT uid as id FROM user WHERE uemail = :email");
+            $stmt = $db->prepare("SELECT id FROM users WHERE email = :email");
             $stmt->execute(['email' => $email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
