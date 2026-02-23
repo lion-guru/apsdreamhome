@@ -481,16 +481,11 @@ abstract class Model
     }
 
     /**
-     * Static method to create a query with where clause
+     * Static where clause for query building
      */
-    public static function whereStatic($column, $operator = null, $value = null, $boolean = 'AND')
+    public static function where($column, $operator = null, $value = null, $boolean = 'AND')
     {
         $instance = new static();
-        // Handle dynamic where clauses (when operator is the value and operator defaults to '=')
-        if ($operator !== null && $value === null && func_num_args() === 2) {
-            $value = $operator;
-            $operator = '=';
-        }
         return $instance->where($column, $operator, $value, $boolean);
     }
 
@@ -503,17 +498,7 @@ abstract class Model
             if (is_numeric($key) && is_array($value)) {
                 $this->addWhere(...array_values($value));
             } else {
-                $this->addWhere($key, '=', $value, $boolean);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add an order by clause to the query
-     */
-    public function orderBy($column, $direction = 'ASC')
+                $this->addWhere($PLACEHOLDER_SECRET_VALUEASC')
     {
         $this->orders[] = [
             'column' => $column,

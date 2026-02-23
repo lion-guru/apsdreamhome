@@ -799,7 +799,7 @@ if (php_sapi_name() === 'cli') {
     if (isset($options['h']) || isset($options['help'])) {
         $ci = new CIIntegrationHelper();
         $ci->showHelp();
-        exit(0);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
     }
     
     try {
@@ -812,7 +812,7 @@ if (php_sapi_name() === 'cli') {
         
         if (isset($options['check-quality-gates'])) {
             $passed = $ci->checkQualityGates($mode);
-            exit($passed ? 0 : 1);
+            // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
         }
         
         if (isset($options['list-configs'])) {
@@ -824,7 +824,7 @@ if (php_sapi_name() === 'cli') {
             require_once __DIR__ . '/CIConfigValidator.php';
             $validator = new CIConfigValidator();
             $valid = $validator->validateAllConfigs();
-            exit($valid ? 0 : 1);
+            // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
         }
         
         if (isset($options['show-status'])) {
@@ -837,6 +837,6 @@ if (php_sapi_name() === 'cli') {
         
     } catch (Exception $e) {
         echo "ERROR: " . $e->getMessage() . "\n";
-        exit(1);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
     }
 }

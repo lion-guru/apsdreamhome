@@ -1,0 +1,177 @@
+{
+    "scan_time": "2026-02-21 23:21:00",
+    "vulnerabilities_found": 37,
+    "vulnerabilities_fixed": 2,
+    "manual_fixes_required": 37,
+    "risk_level": "CRITICAL",
+    "critical_issues": [
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\maximum_deep_scan.php",
+            "issue": "eval() usage",
+            "fix": "Replace eval() with safe code execution methods"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\project_deep_scan.php",
+            "issue": "eval() usage",
+            "fix": "Replace eval() with safe code execution methods"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\security_fixes.php",
+            "issue": "eval() usage",
+            "fix": "Replace eval() with safe code execution methods"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\archive\\legacy_scripts\\db_schema_version_control.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\archive\\legacy_scripts\\final_migration.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\create_missing_tables_safe.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\create_services_database_tables.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\final_database_fix.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\fix_missing_tables.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\fix_visits_and_leads.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\maintenance\\create_farmers_tables.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\project_deep_scan.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\project_deep_scan.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\project_deep_scan.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\seeds\\seeder_enhancement.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\seeds\\seed_data.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\setup\\create_visits_table.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\setup\\install.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\setup\\setup_mlm_commissions.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\setup\\setup_mlm_test_users.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\tools\\backup_db.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\tools\\backup_db.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\tools\\export_import.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\tools\\import_sql.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\updates\\create_missing_legal_tables.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\updates\\create_test_associates.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\updates\\create_test_users.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\updates\\migration_legacy_tables.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\updates\\update_database_for_new_features.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome\\database\\scripts\/..\\scripts\\updates\\update_mlm_tables.php",
+            "issue": "System command execution",
+            "fix": "Remove or properly validate system commands"
+        }
+    ],
+    "fixed_issues": [
+        ".env.example created",
+        ".gitignore updated",
+        "Basic auth middleware created",
+        "Security headers added to .htaccess"
+    ],
+    "recommendations": [
+        "Implement prepared statements for all database queries",
+        "Use environment variables for all sensitive data",
+        "Implement proper input validation and sanitization",
+        "Add rate limiting for API endpoints",
+        "Implement proper session management",
+        "Add security headers middleware",
+        "Regular security audits and updates",
+        "Use HTTPS in production",
+        "Implement proper error handling (no sensitive data in errors)",
+        "Regular dependency updates and security patches"
+    ]
+}

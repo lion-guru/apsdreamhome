@@ -13,11 +13,7 @@ class RazorpayGateway {
     private $api;
 
     public function __construct() {
-        $this->key_id = env('RAZORPAY_KEY_ID', '');
-        $this->key_secret = env('RAZORPAY_KEY_SECRET', '');
-
-        if (empty($this->key_id) || empty($this->key_secret)) {
-            throw new \Exception('Razorpay credentials not configured');
+        $this->PLACEHOLDER_SECRET_VALUE);
         }
 
         // Initialize Razorpay API (in production, use composer package)

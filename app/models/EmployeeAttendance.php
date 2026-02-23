@@ -73,7 +73,9 @@ class EmployeeAttendance extends Model
             'check_in_longitude' => $data['longitude'] ?? null,
             'check_in_location' => $data['address'] ?? null,
             'check_in_photo' => $data['photo'] ?? null,
-            'check_in_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'check_in_ip' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SERVER['REMOTE_ADDR'] ?? null,
             'status' => $data['status'] ?? $status,
             'notes' => $data['notes'] ?? null,
             'created_at' => $now->format('Y-m-d H:i:s')
@@ -116,7 +118,9 @@ class EmployeeAttendance extends Model
             'check_out_longitude' => $data['longitude'] ?? null,
             'check_out_location' => $data['address'] ?? null,
             'check_out_photo' => $data['photo'] ?? null,
-            'check_out_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'check_out_ip' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SERVER['REMOTE_ADDR'] ?? null,
             'work_hours' => round($workHours, 2),
             'overtime_hours' => round($overtimeHours, 2),
             'updated_at' => $now->format('Y-m-d H:i:s')

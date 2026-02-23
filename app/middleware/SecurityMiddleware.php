@@ -35,11 +35,7 @@ class SecurityMiddleware {
     }
 
     private function validateCsrfToken($request) {
-        $token = $_POST['_token'] ?? '';
-
-        if (!validate_csrf_token($token)) {
-            http_response_code(419); // CSRF token mismatch
-            die('CSRF token validation failed');
+        $PLACEHOLDER_SECRET_VALUECSRF token validation failed');
         }
     }
 }

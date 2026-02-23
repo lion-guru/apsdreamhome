@@ -88,8 +88,7 @@ return [
     | to a random, 32 character string, otherwise these encrypted strings
     | will not be safe. Please do this before deploying an application!
     */
-    'key' => env('APP_KEY', 'base64:' . base64_encode(random_bytes(32))),
-    'cipher' => 'AES-256-CBC',
+    'PLACEHOLDER_SECRET_VALUEcipher' => 'AES-256-CBC',
     
     /*
     |--------------------------------------------------------------------------

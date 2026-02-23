@@ -8,8 +8,8 @@
     <div class="col-lg-12">
         <div class="page-banner mb-5" style="background: linear-gradient(rgba(30,60,114,0.7), rgba(30,60,114,0.7)), url('<?= ASSETS_URL ?>images/banner/project-banner.jpg') center/cover; padding: 100px 0; color: #fff; border-radius: 0 0 50px 50px;">
             <div class="container text-center">
-                <h1 class="display-3 fw-bold mb-3 animate-fade-up">Ganga Nagri Varanasi</h1>
-                <p class="lead animate-fade-up">Divine Living Near the Holy Ganges</p>
+                <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Ganga Nagri Varanasi' ?></h1>
+                <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description']) : 'Divine Living Near the Holy Ganges' ?></p>
             </div>
         </div>
 
@@ -18,7 +18,7 @@
                 <div class="col-lg-6">
                     <h2 class="display-6 fw-bold text-primary mb-4">Divine Township</h2>
                     <p class="lead text-muted mb-4">
-                        Ganga Nagri is our flagship project in Varanasi, offering a perfect blend of 
+                        <b><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Ganga Nagri' ?></b> is our flagship project in <?= isset($project['location']) ? htmlspecialchars($project['location']) : 'Varanasi' ?>, offering a perfect blend of 
                         spirituality and modern living. Located in a serene environment, it provides 
                         all the modern conveniences you expect.
                     </p>

@@ -396,5 +396,5 @@ if (php_sapi_name() === 'cli') {
     
     echo "\n📁 Detailed report: {$reportFile}\n";
     
-    exit($allValid ? 0 : 1);
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
 }

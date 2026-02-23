@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\BaseController;
+use App\Models\Project;
 use App\Core\Database\Model;
 use Exception;
 
@@ -18,8 +19,21 @@ class ProjectController extends BaseController
      */
     public function raghunathNagri()
     {
-        $this->data['page_title'] = 'Raghunath Nagri Gorakhpur - APS Dream Homes';
+        $slug = 'gorakhpur-raghunath-nagri';
+        $project = Project::query()->where('slug', $slug)->first();
 
+        // If project not found in DB, we can use fallback data or redirect.
+        // For now, we assume check_db.php has seeded it.
+
+        $this->data['page_title'] = ($project['name'] ?? 'Raghunath Nagri') . ' - APS Dream Homes';
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Projects', 'url' => BASE_URL . 'projects'],
+            ['title' => 'Raghunath Nagri', 'url' => BASE_URL . 'projects/gorakhpur-raghunath-nagri']
+        ];
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        $this->data['project'] = $project;
         $this->data['amenities'] = $this->getProjectAmenities('amenities_gorakhpur');
         $this->data['videos'] = $this->getProjectVideos('project_videos_gorakhpur');
 
@@ -31,8 +45,18 @@ class ProjectController extends BaseController
      */
     public function suryodayColony()
     {
-        $this->data['page_title'] = 'Suryoday Colony Gorakhpur - APS Dream Homes';
+        $slug = 'gorakhpur-suryoday-colony';
+        $project = Project::query()->where('slug', $slug)->first();
 
+        $this->data['page_title'] = ($project['name'] ?? 'Suryoday Colony') . ' - APS Dream Homes';
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Projects', 'url' => BASE_URL . 'projects'],
+            ['title' => 'Suryoday Colony', 'url' => BASE_URL . 'projects/gorakhpur-suryoday-colony']
+        ];
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        $this->data['project'] = $project;
         $this->data['amenities'] = $this->getProjectAmenities('amenities_suryoday');
         $this->data['videos'] = $this->getProjectVideos('project_videos_suryoday');
 
@@ -44,8 +68,18 @@ class ProjectController extends BaseController
      */
     public function gangaNagri()
     {
-        $this->data['page_title'] = 'Ganga Nagri Varanasi - APS Dream Homes';
+        $slug = 'varanasi-ganga-nagri';
+        $project = Project::query()->where('slug', $slug)->first();
 
+        $this->data['page_title'] = ($project['name'] ?? 'Ganga Nagri') . ' - APS Dream Homes';
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Projects', 'url' => BASE_URL . 'projects'],
+            ['title' => 'Ganga Nagri', 'url' => BASE_URL . 'projects/varanasi-ganga-nagri']
+        ];
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        $this->data['project'] = $project;
         $this->data['amenities'] = $this->getProjectAmenities('amenities_varanasi');
         $this->data['videos'] = $this->getProjectVideos('project_videos_varanasi');
 
@@ -59,31 +93,38 @@ class ProjectController extends BaseController
      */
     public function show($id)
     {
-        $db = \App\Core\Database::getInstance();
         $id = (int)$id;
 
         try {
             // Get project details
-            $sql = "SELECT * FROM projects WHERE id = ? AND status = 'active'";
-            $project = $db->fetch($sql, [$id]);
+            $project = Project::find($id);
 
-            if (!$project) {
+            if (!$project || $project['status'] !== 'active') {
                 return $this->redirect('/projects');
             }
 
             // Get related projects (same location)
-            $sql = "SELECT id, name, image_path, location, status FROM projects 
-                    WHERE location = ? AND id != ? AND status = 'active' LIMIT 3";
-            $relatedProjects = $db->fetchAll($sql, [$project['location'], $id]);
+            $relatedProjects = Project::query()
+                ->where('location', $project['location'])
+                ->where('id', '!=', $id)
+                ->where('status', 'active')
+                ->limit(3)
+                ->get();
 
             $this->data['project'] = $project;
             $this->data['relatedProjects'] = $relatedProjects;
             $this->data['page_title'] = ($project['name'] ?? 'Project Details') . ' - APS Dream Homes';
-            
-            return $this->render('pages/project-details');
 
+            $this->data['breadcrumbs'] = [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Projects', 'url' => BASE_URL . 'projects'],
+                ['title' => $project['name'], 'url' => BASE_URL . 'projects/' . $id]
+            ];
+            $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+            return $this->render('pages/project-details');
         } catch (Exception $e) {
-            logger()->error("Error loading project details: " . $e->getMessage());
+            error_log("Error loading project details: " . $e->getMessage());
             return $this->redirect('/projects');
         }
     }

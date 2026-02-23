@@ -65,7 +65,7 @@ function log_message($message, $level = 'error', array $context = []) {
     
     // Add stack trace for errors
     if (in_array($level, ['error', 'critical', 'emergency'])) {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+        $backtrace = // DEBUG CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
         $logMessage .= 'Stack Trace:\n';
         foreach ($backtrace as $i => $trace) {
             $file = $trace['file'] ?? 'unknown';
@@ -227,7 +227,7 @@ set_exception_handler(function($e) {
         include __DIR__ . '/../views/errors/500.php';
     }
     
-    exit(1);
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
 });
 
 // Register shutdown function to catch fatal errors

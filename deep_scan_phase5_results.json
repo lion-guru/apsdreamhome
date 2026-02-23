@@ -1,0 +1,57 @@
+{
+    "timestamp": "2026-02-22 19:13:25",
+    "phase": "database_scan",
+    "summary": {
+        "status": "needs_attention",
+        "total_issues": 3,
+        "migration_files": 24,
+        "model_files": 131
+    },
+    "issues": [
+        "MySQL connection not configured in database.php",
+        "Potentially missing core tables: users",
+        "Database seeders directory not found - consider creating seeders for test data"
+    ],
+    "schema_analysis": {
+        "migration_tables": [
+            "agents",
+            "commissions",
+            "payouts",
+            "mlm_profiles",
+            "mlm_referrals",
+            "mlm_network_tree",
+            "leads",
+            "lead_scores",
+            "properties",
+            "email_tracking",
+            "lead_visits",
+            "badges",
+            "user_points",
+            "training_courses",
+            "training_modules",
+            "training_lessons",
+            "training_enrollments",
+            "training_certificates",
+            "messages",
+            "conversations",
+            "conversation_participants",
+            "property_comparisons",
+            "whatsapp_messages",
+            "whatsapp_templates"
+        ],
+        "performance_metrics": {
+            "indexes": 70,
+            "unique_constraints": 14,
+            "foreign_keys": 32,
+            "performance_issues": []
+        }
+    },
+    "relationship_analysis": {
+        "model_relationships": {
+            "FieldVisit": {
+                "belongsTo": 3
+            }
+        }
+    },
+    "recommendations": []
+}

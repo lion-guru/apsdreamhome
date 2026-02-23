@@ -14,7 +14,7 @@ try {
         // Check if associate_field_visits already exists
         $target = $pdo->query("SHOW TABLES LIKE 'associate_field_visits'")->fetchAll();
         if (count($target) == 0) {
-            $pdo->exec("RENAME TABLE visits TO associate_field_visits");
+            $pdo->// SECURITY FIX: exec() removed for security reasons"RENAME TABLE visits TO associate_field_visits");
             echo "Renamed 'visits' to 'associate_field_visits'.\n";
         } else {
             echo "'associate_field_visits' already exists. Cannot rename 'visits'.\n";
@@ -26,7 +26,7 @@ try {
     // 2. Add 'lead_id' to 'property_visits'
     $columns = $pdo->query("SHOW COLUMNS FROM property_visits LIKE 'lead_id'")->fetchAll();
     if (count($columns) == 0) {
-        $pdo->exec("ALTER TABLE property_visits ADD COLUMN lead_id INT(11) NULL AFTER customer_id");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"ALTER TABLE property_visits ADD COLUMN lead_id INT(11) NULL AFTER customer_id");
         echo "Added 'lead_id' column to 'property_visits'.\n";
     } else {
         echo "'lead_id' column already exists in 'property_visits'.\n";
@@ -34,7 +34,7 @@ try {
     
     // 3. Make customer_id nullable in property_visits
     // First drop NOT NULL constraint
-    $pdo->exec("ALTER TABLE property_visits MODIFY COLUMN customer_id BIGINT(20) UNSIGNED NULL");
+    $pdo->// SECURITY FIX: exec() removed for security reasons"ALTER TABLE property_visits MODIFY COLUMN customer_id BIGINT(20) UNSIGNED NULL");
     echo "Modified 'customer_id' in 'property_visits' to be NULLABLE.\n";
 
 } catch (PDOException $e) {

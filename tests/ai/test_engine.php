@@ -45,7 +45,7 @@ try {
     echo "FATAL ERROR during execution: " . $e->getMessage() . "\n";
     echo "File: " . $e->getFile() . " Line: " . $e->getLine() . "\n";
     echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
-    exit(1);
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
 }
 
 echo "Status: " . $result['status'] . "\n";

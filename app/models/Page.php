@@ -14,8 +14,7 @@ class Page extends Model {
             'content' => $data['content'],
             'layout' => $data['layout'] ?? 'default',
             'meta_description' => $data['meta_description'] ?? '',
-            'meta_keywords' => $data['meta_keywords'] ?? '',
-            'status' => $data['status'] ?? 'draft',
+            'meta_PLACEHOLDER_SECRET_VALUEstatus' => $data['status'] ?? 'draft',
             'created_by' => $data['user_id']
         ]);
     }
@@ -28,8 +27,7 @@ class Page extends Model {
                 'content' => $data['content'],
                 'layout' => $data['layout'],
                 'meta_description' => $data['meta_description'],
-                'meta_keywords' => $data['meta_keywords'],
-                'status' => $data['status'],
+                'meta_PLACEHOLDER_SECRET_VALUEstatus' => $data['status'],
                 'updated_by' => $data['user_id']
             ]);
     }

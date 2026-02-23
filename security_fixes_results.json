@@ -1,0 +1,312 @@
+{
+    "timestamp": "2026-02-22 19:44:04",
+    "phase": "security_fixes",
+    "files_fixed": [
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfigdatabase.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfigdatabase.php.backup.2026-02-22-19-44-04",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Database Configuration\r\n * Simple d..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhometestsconfigdatabase.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhometestsconfigdatabase.php.backup.2026-02-22-19-44-04",
+            "changes": "Replaced: <?php\r\n\r\nreturn [\r\n    'driver' => 'mysql',\r\n    '..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhome.env",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhome.env.backup.2026-02-22-19-44-05",
+            "changes": "Replaced: # APS Dream Home \u2013 Environment Template\r\n# Copy ..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreApp.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreApp.php.backup.2026-02-22-19-44-05",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Core;\r\n\r\nuse Exception;\r\nus..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreAuth.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreAuth.php.backup.2026-02-22-19-44-05",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Core;\r\n\r\nuse App\\Models\\Use..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreCache.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreCache.php.backup.2026-02-22-19-44-06",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Core;\r\n\r\n\/**\r\n * Comprehens..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreConfig.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreConfig.php.backup.2026-02-22-19-44-06",
+            "changes": "Replaced: <?php\n\/**\n * Legacy Config\/Env Loader - Shim for b..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreEmailManager.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreEmailManager.php.backup.2026-02-22-19-44-07",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Core;\r\n\r\n\/**\r\n * Email Noti..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreModel.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreModel.php.backup.2026-02-22-19-44-07",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Core;\r\n\r\nuse PDO;\r\nuse PDOE..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCorePaymentGateway.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCorePaymentGateway.php.backup.2026-02-22-19-44-08",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Razorpay Payment Gateway Integratio..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCorePerformanceMonitor.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCorePerformanceMonitor.php.backup.2026-02-22-19-44-08",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Performance Monitor & Analytics\r\n *..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreRazorpayGateway.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreRazorpayGateway.php.backup.2026-02-22-19-44-09",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Razorpay Payment Gateway\r\n * Handle..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreSEOOptimizer.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreSEOOptimizer.php.backup.2026-02-22-19-44-09",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Core;\r\n\r\n\/**\r\n * SEO Optimi..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappCoreSecurityAudit.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappCoreSecurityAudit.php.backup.2026-02-22-19-44-10",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Core;\r\n\r\n\/**\r\n * Comprehens..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappHelpersSecurityHelper.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappHelpersSecurityHelper.php.backup.2026-02-22-19-44-10",
+            "changes": "Replaced: <?php\n\nnamespace App\\Helpers;\n\nclass SecurityHelpe..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappHelperssecurity.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappHelperssecurity.php.backup.2026-02-22-19-44-10",
+            "changes": "Replaced: <?php\r\n\/\/ app\/helpers\/security.php\r\n\r\nif (!functio..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappMiddlewareSecurityMiddleware.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappMiddlewareSecurityMiddleware.php.backup.2026-02-22-19-44-10",
+            "changes": "Replaced: <?php\r\n\/\/ app\/middleware\/SecurityMiddleware.php\r\n\r..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsAIChatbot.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsAIChatbot.php.backup.2026-02-22-19-44-10",
+            "changes": "Replaced: <?php\r\n\/**\r\n * AI Chatbot Model\r\n * Handles intell..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsAssociate.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsAssociate.php.backup.2026-02-22-19-44-11",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\M..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsCRMLead.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsCRMLead.php.backup.2026-02-22-19-44-11",
+            "changes": "Replaced: <?php\r\n\r\n\/**\r\n * CRM Lead Management Model\r\n * Han..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsConsolidatedUser.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsConsolidatedUser.php.backup.2026-02-22-19-44-12",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Core\\Uni..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsCoreFunctions.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsCoreFunctions.php.backup.2026-02-22-19-44-12",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Core Functions\r\n * Essential utilit..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsCustomer.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsCustomer.php.backup.2026-02-22-19-44-12",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\M..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsDatabase.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsDatabase.php.backup.2026-02-22-19-44-13",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Core\\Dat..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsEmailVerification.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsEmailVerification.php.backup.2026-02-22-19-44-14",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nclass EmailVerif..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsEmployee.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsEmployee.php.backup.2026-02-22-19-44-15",
+            "changes": "Replaced: <?php\n\nnamespace App\\Models;\n\nuse PDO;\nuse Excepti..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsFarmer.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsFarmer.php.backup.2026-02-22-19-44-15",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\M..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsFarmerLandHolding.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsFarmerLandHolding.php.backup.2026-02-22-19-44-15",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\M..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsLandPurchase.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsLandPurchase.php.backup.2026-02-22-19-44-16",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\M..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPage.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPage.php.backup.2026-02-22-19-44-17",
+            "changes": "Replaced: <?php\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\Mod..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPayment.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPayment.php.backup.2026-02-22-19-44-17",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\M..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsProject.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsProject.php.backup.2026-02-22-19-44-18",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nuse PDO;\r\n\r\nclas..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsProperty.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsProperty.php.backup.2026-02-22-19-44-19",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Models;\r\n\r\nclass Property e..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPropertyComparison.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPropertyComparison.php.backup.2026-02-22-19-44-19",
+            "changes": "Replaced: <?php\n\nnamespace App\\Models;\n\nuse App\\Core\\Databas..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPropertyRecommendation.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPropertyRecommendation.php.backup.2026-02-22-19-44-20",
+            "changes": "Replaced: <?php\n\nnamespace App\\Models;\n\nuse App\\Core\\Databas..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPushNotification.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsPushNotification.php.backup.2026-02-22-19-44-20",
+            "changes": "Replaced: <?php\n\nnamespace App\\Models;\n\nuse App\\Core\\Databas..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsSystemAnalytics.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsSystemAnalytics.php.backup.2026-02-22-19-44-21",
+            "changes": "Replaced: <?php\n\nnamespace App\\Models;\n\nuse App\\Core\\Databas..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsTraining.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsTraining.php.backup.2026-02-22-19-44-21",
+            "changes": "Replaced: <?php\n\nnamespace App\\Models;\n\nuse App\\Core\\Databas..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappModelsUserPermission.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappModelsUserPermission.php.backup.2026-02-22-19-44-22",
+            "changes": "Replaced: <?php\r\nnamespace App\\Models;\r\n\r\nuse App\\Models\\Mod..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappServicesConfigurationManager.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappServicesConfigurationManager.php.backup.2026-02-22-19-44-23",
+            "changes": "Replaced: <?php\r\nnamespace App\\Services;\r\n\r\nuse Exception;\r\n..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappServicesEmailService.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappServicesEmailService.php.backup.2026-02-22-19-44-23",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Services;\r\n\r\nuse PHPMailer\\..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappServicesGeminiService.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappServicesGeminiService.php.backup.2026-02-22-19-44-24",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Services;\r\n\r\nclass GeminiSe..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappServicesMicrositeAssembler.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappServicesMicrositeAssembler.php.backup.2026-02-22-19-44-24",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Services;\r\n\r\nuse App\\DTO\\Pr..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappServicesMlmSettings.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappServicesMlmSettings.php.backup.2026-02-22-19-44-25",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Services;\r\n\r\nuse App\\Core\\D..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappServicesSystemLogger.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappServicesSystemLogger.php.backup.2026-02-22-19-44-25",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Services;\r\n\r\nuse App\\Core\\D..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappServicesUserService.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappServicesUserService.php.backup.2026-02-22-19-44-26",
+            "changes": "Replaced: <?php\r\n\r\nnamespace App\\Services;\r\n\r\nuse App\\Models..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappconfigadmin.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappconfigadmin.php.backup.2026-02-22-19-44-26",
+            "changes": "Replaced: <?php\n\n\/**\n * Modern Admin & Security Configuratio..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappconfigenv.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappconfigenv.php.backup.2026-02-22-19-44-27",
+            "changes": "Replaced: <?php\r\n\r\nfunction loadEnv() {\r\n    $envFile = __DI..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappconfiggemini_config.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappconfiggemini_config.php.backup.2026-02-22-19-44-27",
+            "changes": "Replaced: <?php\n\nreturn [\n    'api_key' => getenv('GEMINI_AP..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeappconfigsecurity.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeappconfigsecurity.php.backup.2026-02-22-19-44-27",
+            "changes": "Replaced: <?php\n\/**\n * Security Configuration\n *\/\n\nreturn [\n..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfigapp.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfigapp.php.backup.2026-02-22-19-44-28",
+            "changes": "Replaced: <?php\r\n\r\nreturn [\r\n    \/*\r\n    |------------------..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfigapplication.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfigapplication.php.backup.2026-02-22-19-44-29",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Application Configuration\r\n * Gener..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfigcache.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfigcache.php.backup.2026-02-22-19-44-29",
+            "changes": "Replaced: <?php\n\/**\n * Cache Configuration\n *\/\n\nreturn [\n   ..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfigdatabase.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfigdatabase.php.backup.2026-02-22-19-44-30",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Database Configuration\r\n * Simple d..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfiggoogle_oauth_config.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfiggoogle_oauth_config.php.backup.2026-02-22-19-44-30",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Google OAuth Configuration\r\n * \r\n *..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfiggoogle_oauth_config_associate.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfiggoogle_oauth_config_associate.php.backup.2026-02-22-19-44-30",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Google OAuth Configuration for Asso..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfiglogging.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfiglogging.php.backup.2026-02-22-19-44-31",
+            "changes": "Replaced: <?php\r\n\/**\r\n * Comprehensive Logging Configuration..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfigmail.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfigmail.php.backup.2026-02-22-19-44-31",
+            "changes": "Replaced: <?php\n\/**\n * Mail Configuration\n *\/\n\nreturn [\n    ..."
+        },
+        {
+            "file": "C:\\xampp\\htdocs\\apsdreamhomeconfigsecurity.php",
+            "backup": "C:\\xampp\\htdocs\\apsdreamhomeconfigsecurity.php.backup.2026-02-22-19-44-31",
+            "changes": "Replaced: <?php\r\n\r\n\/**\r\n * Security Configuration\r\n * Centra..."
+        }
+    ],
+    "secrets_removed": 5,
+    "issues_found": [
+        "Manual review needed for localhost+password in: config\/database.php",
+        "Manual review needed for localhost+password in: tests\/config\/database.php"
+    ],
+    "recommendations": [],
+    "summary": {
+        "secrets_removed": 5,
+        "files_secured": 59,
+        "manual_review_needed": 2
+    }
+}

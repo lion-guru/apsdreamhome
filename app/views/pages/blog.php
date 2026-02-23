@@ -1,170 +1,75 @@
-<?php
-/**
- * Blog Page - APS Dream Homes
- * Real estate blog and industry insights
- */
-
-session_start();
-require_once 'core/functions.php';
-require_once 'includes/db_connection.php';
-
-try {
-    $pdo = getMysqliConnection();
-
-    // Get blog posts
-    $blogQuery = "SELECT * FROM blog_posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 12";
-    $blogStmt = $pdo->query($blogQuery);
-    $blog_posts = $blogStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Get categories for filter
-    $categoriesQuery = "SELECT DISTINCT category FROM blog_posts WHERE status = 'published'";
-    $categoriesStmt = $pdo->query($categoriesQuery);
-    $categories = $categoriesStmt->fetchAll(PDO::FETCH_ASSOC);
-
-} catch (Exception $e) {
-    error_log('Blog page database error: ' . $e->getMessage());
-    $blog_posts = [];
-    $categories = [];
-}
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - Real Estate Insights - APS Dream Homes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-        }
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 100px 0 60px;
-            text-align: center;
-        }
-        .section-padding {
-            padding: 80px 0;
-        }
-        .blog-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 30px;
-            height: 100%;
-        }
-        .blog-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-        }
-        .blog-image {
-            height: 200px;
-            object-fit: cover;
-        }
-        .category-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(102, 126, 234, 0.9);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        .read-more-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        .read-more-btn:hover {
-            transform: translateY(-2px);
-            color: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .newsletter-section {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 60px 0;
-        }
-        .filter-btn {
-            border: 2px solid #667eea;
-            background: transparent;
-            color: #667eea;
-            padding: 8px 20px;
-            border-radius: 25px;
-            margin: 0 5px 10px;
-            transition: all 0.3s;
-        }
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: #667eea;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <?php include 'includes/templates/header.php'; ?>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-4">Real Estate Insights</h1>
-                    <p class="lead mb-4">Stay updated with the latest trends, tips, and news in the real estate industry</p>
-                    <p class="mb-0">From market analysis to investment strategies, our expert insights help you make informed decisions about your property journey.</p>
-                </div>
+<!-- Hero Section -->
+<section class="blog-hero-section text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-2.jpg') ?>'); background-size: cover; background-position: center;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">Real Estate Insights</h1>
+                <p class="lead mb-4">Stay updated with the latest trends, tips, and news in the real estate industry</p>
+                <p class="mb-0">From market analysis to investment strategies, our expert insights help you make informed decisions about your property journey.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter-section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 text-center">
-                    <h3 class="mb-3">Subscribe to Our Newsletter</h3>
-                    <p class="mb-4">Get the latest real estate insights and market updates delivered to your inbox</p>
-                    <form class="d-flex gap-2">
-                        <input type="email" class="form-control" placeholder="Enter your email" required>
-                        <button type="submit" class="btn btn-light">
-                            <i class="fas fa-envelope me-1"></i>Subscribe
-                        </button>
-                    </form>
-                </div>
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Blog</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <h3 class="mb-3">Subscribe to Our Newsletter</h3>
+                <p class="mb-4">Get the latest real estate insights and market updates delivered to your inbox</p>
+                <form class="d-flex gap-2">
+                    <input type="email" class="form-control" placeholder="Enter your email" required>
+                    <button type="submit" class="btn btn-light">
+                        <i class="fas fa-envelope me-1"></i>Subscribe
+                    </button>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Main Content -->
-    <section class="section-padding">
-        <div class="container">
-            <!-- Filter Buttons -->
-            <div class="row mb-5">
-                <div class="col-12">
-                    <div class="text-center">
-                        <button class="filter-btn active" data-category="all">All Posts</button>
-                        <?php foreach ($categories as $category): ?>
+<!-- Main Content -->
+<section class="section-padding">
+    <div class="container">
+        <!-- Filter Buttons -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="text-center">
+                    <button class="filter-btn active" data-category="all">All Posts</button>
+                    <?php foreach ($categories as $category): ?>
                         <button class="filter-btn" data-category="<?php echo htmlspecialchars($category['category']); ?>">
                             <?php echo ucfirst(htmlspecialchars($category['category'])); ?>
                         </button>
-                        <?php endforeach; ?>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
+        </div>
 
-            <!-- Featured Post -->
-            <?php if (!empty($blog_posts)): ?>
+        <!-- Featured Post -->
+        <?php if (!empty($blog_posts)): ?>
             <div class="row mb-5">
                 <div class="col-12">
                     <h3 class="mb-4">Featured Post</h3>
@@ -172,8 +77,12 @@ try {
                 <div class="col-12">
                     <div class="card blog-card shadow-sm">
                         <div class="position-relative">
-                            <img src="<?php echo htmlspecialchars($blog_posts[0]['featured_image'] ?? 'assets/images/blog-placeholder.jpg'); ?>"
-                                 class="card-img-top blog-image" alt="Featured Post">
+                            <?php
+                            $featuredImage = !empty($blog_posts[0]['featured_image']) ? $blog_posts[0]['featured_image'] : 'assets/images/blog-placeholder.jpg';
+                            $featuredImageUrl = get_asset_url($featuredImage);
+                            ?>
+                            <img src="<?php echo htmlspecialchars($featuredImageUrl); ?>"
+                                class="card-img-top blog-image" alt="Featured Post">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[0]['category'])); ?>
                             </div>
@@ -198,20 +107,20 @@ try {
                     </div>
                 </div>
             </div>
-            <?php endif; ?>
+        <?php endif; ?>
 
-            <!-- All Posts -->
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <h3>Latest Posts</h3>
-                </div>
+        <!-- All Posts -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <h3>Latest Posts</h3>
+            </div>
 
-                <?php for ($i = 1; $i < count($blog_posts); $i++): ?>
+            <?php for ($i = 1; $i < count($blog_posts); $i++): ?>
                 <div class="col-lg-4 col-md-6" data-category="<?php echo htmlspecialchars($blog_posts[$i]['category']); ?>">
                     <div class="card blog-card shadow-sm h-100">
                         <div class="position-relative">
                             <img src="<?php echo htmlspecialchars($blog_posts[$i]['featured_image'] ?? 'assets/images/blog-placeholder.jpg'); ?>"
-                                 class="card-img-top blog-image" alt="Blog Post">
+                                class="card-img-top blog-image" alt="Blog Post">
                             <div class="category-badge">
                                 <?php echo ucfirst(htmlspecialchars($blog_posts[$i]['category'])); ?>
                             </div>
@@ -237,97 +146,91 @@ try {
                         </div>
                     </div>
                 </div>
-                <?php endfor; ?>
-            </div>
+            <?php endfor; ?>
+        </div>
 
-            <!-- Load More Button -->
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <button class="btn btn-outline-primary btn-lg" id="loadMore">
-                        <i class="fas fa-plus me-2"></i>Load More Posts
-                    </button>
+        <!-- Load More Button -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <button class="btn btn-outline-primary btn-lg" id="loadMore">
+                    <i class="fas fa-plus me-2"></i>Load More Posts
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h3 class="fw-bold">Explore by Category</h3>
+                <p class="lead text-muted">Find articles that interest you most</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                    <h6>Market Trends</h6>
+                    <p class="small text-muted">Latest market analysis and price trends</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-coins fa-3x text-success mb-3"></i>
+                    <h6>Investment Tips</h6>
+                    <p class="small text-muted">Smart investment strategies and advice</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-home fa-3x text-info mb-3"></i>
+                    <h6>Buying Guide</h6>
+                    <p class="small text-muted">Complete guides for first-time buyers</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center p-4 h-100">
+                    <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
+                    <h6>Legal & Finance</h6>
+                    <p class="small text-muted">Legal aspects and financing options</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Categories Section -->
-    <section class="section-padding bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h3 class="fw-bold">Explore by Category</h3>
-                    <p class="lead text-muted">Find articles that interest you most</p>
-                </div>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="card text-center p-4 h-100">
-                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
-                        <h6>Market Trends</h6>
-                        <p class="small text-muted">Latest market analysis and price trends</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card text-center p-4 h-100">
-                        <i class="fas fa-coins fa-3x text-success mb-3"></i>
-                        <h6>Investment Tips</h6>
-                        <p class="small text-muted">Smart investment strategies and advice</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card text-center p-4 h-100">
-                        <i class="fas fa-home fa-3x text-info mb-3"></i>
-                        <h6>Buying Guide</h6>
-                        <p class="small text-muted">Complete guides for first-time buyers</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card text-center p-4 h-100">
-                        <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
-                        <h6>Legal & Finance</h6>
-                        <p class="small text-muted">Legal aspects and financing options</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const blogCards = document.querySelectorAll('[data-category]');
 
-    <!-- Footer -->
-    <?php include 'includes/templates/footer.php'; ?>
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Filter functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            const blogCards = document.querySelectorAll('[data-category]');
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
 
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const category = this.getAttribute('data-category');
-
-                    // Update active button
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // Filter posts
-                    blogCards.forEach(card => {
-                        if (category === 'all' || card.getAttribute('data-category') === category) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+                // Filter posts
+                blogCards.forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
                 });
             });
-
-            // Load more functionality
-            document.getElementById('loadMore').addEventListener('click', function() {
-                // In a real application, this would load more posts via AJAX
-                alert('Load more functionality would be implemented here');
-            });
         });
-    </script>
-</body>
-</html>
+
+        // Load more functionality
+        document.getElementById('loadMore').addEventListener('click', function() {
+            // In a real application, this would load more posts via AJAX
+            alert('Load more functionality would be implemented here');
+        });
+    });
+</script>

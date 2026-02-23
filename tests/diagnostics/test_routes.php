@@ -8,4 +8,4 @@ $routeConfig($router);
 
 echo 'Routes loaded: ' . count($router->getRoutes()) . PHP_EOL;
 $routes = $router->getRoutes();
-print_r($routes);
+// DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19

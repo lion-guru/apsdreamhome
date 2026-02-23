@@ -592,7 +592,7 @@ if (php_sapi_name() === 'cli') {
         echo "  php CronScheduler.php              # Run scheduler\n";
         echo "  php CronScheduler.php --status      # Show status\n";
         echo "  php CronScheduler.php --statistics  # Show statistics\n";
-        exit(0);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
     }
     
     try {
@@ -650,7 +650,7 @@ if (php_sapi_name() === 'cli') {
         
     } catch (Exception $e) {
         echo "ERROR: " . $e->getMessage() . "\n";
-        exit(1);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
     }
 } else {
     // Web interface

@@ -1,4 +1,8 @@
-<!-- Privacy Policy - APS Dream Home -->
+<?php
+// app/views/pages/privacy_policy.php
+?>
+
+<!-- Hero Section -->
 <section class="privacy-hero-section section-padding bg-primary text-white text-center rounded-bottom-4 py-5" data-aos="fade-down">
     <div class="container py-4">
         <h1 class="display-5 fw-bold mb-2">Privacy Policy</h1>
@@ -7,24 +11,21 @@
 </section>
 
 <!-- Breadcrumb -->
-<nav class="bg-light border-bottom py-2">
+<div class="bg-light py-2">
     <div class="container">
-        <ol class="breadcrumb mb-0">
-            <?php if (isset($breadcrumbs)): ?>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
                 <?php foreach ($breadcrumbs as $crumb): ?>
                     <?php if (isset($crumb['url'])): ?>
                         <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
                     <?php else: ?>
-                        <li class="breadcrumb-item active"><?= $crumb['title'] ?></li>
+                        <li class="breadcrumb-item active" aria-current="page"><?= $crumb['title'] ?></li>
                     <?php endif; ?>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                <li class="breadcrumb-item active">Privacy Policy</li>
-            <?php endif; ?>
-        </ol>
+            </ol>
+        </nav>
     </div>
-</nav>
+</div>
 
 <section class="section-padding py-5">
     <div class="container">

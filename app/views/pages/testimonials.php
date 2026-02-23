@@ -1,15 +1,32 @@
-
 <!-- Hero Section -->
-<section class="bg-primary text-white py-5">
+<section class="testimonial-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
     <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-4">Client Testimonials</h1>
-                <p class="lead">See what our valued clients have to say about their experience with APS Dream Homes.</p>
-            </div>
-        </div>
+        <h1 class="display-4 fw-bold">Client Testimonials</h1>
+        <p class="lead mb-0">What our clients say about us</p>
     </div>
 </section>
+
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Testimonials</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
+    </div>
+</div>
 
 <!-- Testimonials Grid -->
 <section class="py-5">
@@ -17,19 +34,19 @@
         <div class="row g-4">
             <?php if (!empty($testimonials)): ?>
                 <?php foreach ($testimonials as $testimonial): ?>
-                    <?php 
-                        $name = is_object($testimonial) ? $testimonial->name : $testimonial['name'];
-                        $rating = is_object($testimonial) ? $testimonial->rating : $testimonial['rating'];
-                        $message = is_object($testimonial) ? $testimonial->message : $testimonial['message'];
-                        $date = is_object($testimonial) ? $testimonial->created_at : $testimonial['created_at'];
-                        $designation = is_object($testimonial) ? ($testimonial->designation ?? 'Client') : ($testimonial['designation'] ?? 'Client');
+                    <?php
+                    $name = is_object($testimonial) ? $testimonial->name : $testimonial['name'];
+                    $rating = is_object($testimonial) ? $testimonial->rating : $testimonial['rating'];
+                    $message = is_object($testimonial) ? $testimonial->message : $testimonial['message'];
+                    $date = is_object($testimonial) ? $testimonial->created_at : $testimonial['created_at'];
+                    $designation = is_object($testimonial) ? ($testimonial->designation ?? 'Client') : ($testimonial['designation'] ?? 'Client');
                     ?>
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body p-4">
                                 <div class="mb-3 text-warning">
-                                    <?php for($i = 0; $i < 5; $i++): ?>
-                                        <?php if($i < $rating): ?>
+                                    <?php for ($i = 0; $i < 5; $i++): ?>
+                                        <?php if ($i < $rating): ?>
                                             <i class="fas fa-star"></i>
                                         <?php else: ?>
                                             <i class="far fa-star"></i>

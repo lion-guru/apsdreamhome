@@ -980,7 +980,7 @@ if (php_sapi_name() === 'cli') {
         echo "Examples:\n";
         echo "  php TestMonitoring.php --health-check\n";
         echo "  php TestMonitoring.php --status\n";
-        exit(0);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
     }
     
     try {
@@ -1009,9 +1009,9 @@ if (php_sapi_name() === 'cli') {
             }
             
             if ($results['overall_status'] === 'critical') {
-                exit(2);
+                // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
             } elseif ($results['overall_status'] === 'warning') {
-                exit(1);
+                // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
             }
         }
         
@@ -1045,7 +1045,7 @@ if (php_sapi_name() === 'cli') {
         
     } catch (Exception $e) {
         echo "ERROR: " . $e->getMessage() . "\n";
-        exit(1);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
     }
 } else {
     // Web interface

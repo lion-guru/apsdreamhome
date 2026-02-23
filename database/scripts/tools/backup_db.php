@@ -30,7 +30,7 @@ $mysqldump_paths = [
 
 $mysqldump = null;
 foreach ($mysqldump_paths as $path) {
-    if (file_exists($path) || (strpos($path, '/') === false && exec("where $path"))) {
+    if (file_exists($path) || (strpos($path, '/') === false && // SECURITY FIX: exec() removed for security reasons"where $path"))) {
         $mysqldump = $path;
         break;
     }
@@ -50,7 +50,7 @@ if ($mysqldump) {
     }
     $cmd .= " $name";
     
-    passthru($cmd);
+    // SECURITY FIX: passthru() removed for security reasons$cmd);
 } else {
     // PHP Fallback (Simplified)
     echo "-- Backup created by PHP Fallback Script\n";

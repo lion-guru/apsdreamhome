@@ -219,17 +219,7 @@ class Payment extends Model
         // Bind parameters
         foreach ($params as $key => $value) {
             $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
-            $stmt->bindValue($key === 'start' || $key === 'length' ? $key : ":$key", $value, $type);
-        }
-
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get total payments count for DataTables
-     */
-    public function getTotalPaymentsCount($search = '', $filters = [])
+            $stmt->bindValue($PLACEHOLDER_SECRET_VALUE', $filters = [])
     {
         $conditions = [];
         $params = [];
@@ -273,8 +263,7 @@ class Payment extends Model
         $stmt = $conn->prepare($sql);
 
         foreach ($params as $key => $value) {
-            if ($key !== 'start' && $key !== 'length') {
-                $stmt->bindValue(":$key", $value);
+            if ($PLACEHOLDER_SECRET_VALUE:$key", $value);
             }
         }
 

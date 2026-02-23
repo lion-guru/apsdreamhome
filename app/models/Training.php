@@ -111,8 +111,7 @@ class Training extends Model
         }
 
         $this->query(
-            "UPDATE module_progress SET " . implode(', ', array_map(function($k) { return "$k = ?"; }, array_keys($updateData))) . " WHERE id = ?",
-            array_merge(array_values($updateData), [$progress['id']])
+            "UPDATE module_progress SET " . implode(', ', array_map(function($k) { return "$k = ?"; }, array_PLACEHOLDER_SECRET_VALUEid']])
         );
 
         // Update overall course progress

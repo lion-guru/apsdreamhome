@@ -55,5 +55,5 @@ try {
         echo "   - Make sure the database is running and accessible\n";
         echo "   - Verify the database user has proper permissions\n";
     }
-    exit(1);
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
 }

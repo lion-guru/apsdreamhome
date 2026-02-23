@@ -40,7 +40,8 @@ class ApiLeadController extends Controller
             $sortDirection = $_GET['sort_direction'] ?? 'desc';
 
             // Get current user (assuming auth middleware sets this)
-            $currentUser = $this->getCurrentUser();
+            $currentUser = $this->getCurrentUser(->with(
+        ->with(['updated_by', 'id', 'status', 'assigned_to', 'first_name', 'source', 'created_at', 'assignedTo', 'createdBy'])['id']));
 
             // Build query using custom Model pattern
             $leads = $this->buildLeadQuery($search, $status, $source, $assignedTo, $tag, $dateFrom, $dateTo, $sortField, $sortDirection, $currentUser);

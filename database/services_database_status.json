@@ -1,0 +1,219 @@
+{
+    "scan_date": "2026-02-21 23:10:00",
+    "services_status": {
+        "PaymentService": {
+            "exists": false,
+            "tables": [
+                "payments",
+                "invoices"
+            ]
+        },
+        "WhatsAppService": {
+            "exists": false,
+            "tables": [
+                "whatsapp_messages",
+                "whatsapp_templates"
+            ]
+        },
+        "LeadScoringService": {
+            "exists": false,
+            "tables": [
+                "lead_scores",
+                "email_tracking",
+                "lead_visits"
+            ]
+        },
+        "GamificationService": {
+            "exists": false,
+            "tables": [
+                "badges",
+                "user_badges",
+                "user_points"
+            ]
+        },
+        "MessagingService": {
+            "exists": false,
+            "tables": [
+                "messages",
+                "conversations",
+                "conversation_participants"
+            ]
+        },
+        "TrainingService": {
+            "exists": false,
+            "tables": [
+                "training_courses",
+                "training_modules",
+                "training_lessons",
+                "training_enrollments",
+                "training_certificates"
+            ]
+        },
+        "InvoiceService": {
+            "exists": false,
+            "tables": [
+                "invoices"
+            ]
+        },
+        "GSTTaxReportService": {
+            "exists": false,
+            "tables": [
+                "purchase_invoices"
+            ]
+        },
+        "PropertyComparisonService": {
+            "exists": false,
+            "tables": [
+                "property_comparisons"
+            ]
+        }
+    },
+    "tables_status": {
+        "PaymentService": {
+            "payments": true,
+            "invoices": true
+        },
+        "WhatsAppService": {
+            "whatsapp_messages": false,
+            "whatsapp_templates": false
+        },
+        "LeadScoringService": {
+            "lead_scores": true,
+            "email_tracking": false,
+            "lead_visits": false
+        },
+        "GamificationService": {
+            "badges": false,
+            "user_badges": true,
+            "user_points": false
+        },
+        "MessagingService": {
+            "messages": true,
+            "conversations": true,
+            "conversation_participants": true
+        },
+        "TrainingService": {
+            "training_courses": true,
+            "training_modules": true,
+            "training_lessons": false,
+            "training_enrollments": false,
+            "training_certificates": true
+        },
+        "InvoiceService": {
+            "invoices": true
+        },
+        "GSTTaxReportService": {
+            "purchase_invoices": true
+        },
+        "PropertyComparisonService": {
+            "property_comparisons": false
+        }
+    },
+    "scripts_status": {
+        "PaymentService": {
+            "create_payment_system_tables.php": false,
+            "create_invoice_system_tables.php": false,
+            "setup\/create_payment_tables.php": false
+        },
+        "WhatsAppService": {
+            "create_whatsapp_integration_tables.php": false,
+            "setup\/create_whatsapp_tables.php": false
+        },
+        "LeadScoringService": {
+            "create_lead_scoring_tables.php": false,
+            "setup\/create_lead_scoring_tables.php": false
+        },
+        "GamificationService": {
+            "create_gamification_tables.php": false,
+            "setup\/create_gamification_tables.php": false
+        },
+        "MessagingService": {
+            "create_messaging_tables.php": false,
+            "setup\/create_messaging_tables.php": false
+        },
+        "TrainingService": {
+            "create_training_module_tables.php": false,
+            "setup\/create_training_tables.php": false
+        },
+        "InvoiceService": {
+            "create_invoice_system_tables.php": false,
+            "setup\/create_invoice_tables.php": false
+        },
+        "GSTTaxReportService": {
+            "create_gst_tax_reporting_tables.php": false,
+            "setup\/create_gst_tables.php": false
+        },
+        "PropertyComparisonService": {
+            "create_property_comparison_tables.php": false,
+            "setup\/create_property_comparison_tables.php": false
+        }
+    },
+    "summary": {
+        "services": {
+            "total": 9,
+            "existing": 0,
+            "missing": 9
+        },
+        "tables": {
+            "total": 21,
+            "existing": 12,
+            "missing": 9
+        },
+        "scripts": {
+            "total": 19,
+            "existing": 0,
+            "missing": 19
+        }
+    },
+    "health_scores": {
+        "services": 0,
+        "tables": 57.1,
+        "scripts": 0,
+        "overall": 19
+    },
+    "missing_components": {
+        "services": [
+            "PaymentService",
+            "WhatsAppService",
+            "LeadScoringService",
+            "GamificationService",
+            "MessagingService",
+            "TrainingService",
+            "InvoiceService",
+            "GSTTaxReportService",
+            "PropertyComparisonService"
+        ],
+        "tables": [
+            "whatsapp_messages",
+            "whatsapp_templates",
+            "email_tracking",
+            "lead_visits",
+            "badges",
+            "user_points",
+            "training_lessons",
+            "training_enrollments",
+            "property_comparisons"
+        ],
+        "scripts": [
+            "create_payment_system_tables.php",
+            "create_invoice_system_tables.php",
+            "setup\/create_payment_tables.php",
+            "create_whatsapp_integration_tables.php",
+            "setup\/create_whatsapp_tables.php",
+            "create_lead_scoring_tables.php",
+            "setup\/create_lead_scoring_tables.php",
+            "create_gamification_tables.php",
+            "setup\/create_gamification_tables.php",
+            "create_messaging_tables.php",
+            "setup\/create_messaging_tables.php",
+            "create_training_module_tables.php",
+            "setup\/create_training_tables.php",
+            "create_invoice_system_tables.php",
+            "setup\/create_invoice_tables.php",
+            "create_gst_tax_reporting_tables.php",
+            "setup\/create_gst_tables.php",
+            "create_property_comparison_tables.php",
+            "setup\/create_property_comparison_tables.php"
+        ]
+    }
+}

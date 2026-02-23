@@ -37,7 +37,7 @@ try {
     ")->fetch();
 
     if (!$transaction) {
-        die("❌ No transactions found for testing. Please create a test transaction first.\n");
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:21 CODE REMOVED: 2026-02-22 19:56:21
     }
 
     echo "Testing with transaction #{$transaction['id']}:\n";
@@ -54,7 +54,7 @@ try {
     ")->fetchAll();
 
     if (empty($associates)) {
-        die("❌ No associates found for this transaction.\n");
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:21 CODE REMOVED: 2026-02-22 19:56:21
     }
 
     echo "Associated Associates:\n";

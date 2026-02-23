@@ -88,7 +88,8 @@ class HomeController extends BaseController
 
         return $this->render('pages/projects', [
             'title' => 'Our Colonies - APS Dream Home',
-            'projects' => $projects
+            'projects' => $projects,
+            'extra_css' => '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">'
         ]);
     }
 

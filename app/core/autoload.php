@@ -31,6 +31,6 @@ $loader->addNamespace('App', APP_ROOT . '/app');
 
 // 3. Load application helpers if not loaded by Composer
 // Composer 'files' autoloading should handle this, but for safety:
-if (file_exists(APP_ROOT . '/app/helpers.php') && !function_exists('app')) {
+if (file_exists(APP_ROOT . '/app/helpers.php') && !function_exists('get_asset_url')) {
     require_once APP_ROOT . '/app/helpers.php';
 }

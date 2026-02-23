@@ -1,525 +1,49 @@
 <?php
+
 /**
  * APS Dream Homes - Company Projects Portfolio
- * Modern UI/UX for displaying company projects and portfolio
+ * Partial View
  */
-
-// Get company projects from database
-$company_projects = [];
-try {
-    if (isset($pdo) && $pdo) {
-        $projects_query = "
-            SELECT
-                cp.*,
-                p.title as property_title,
-                p.price,
-                p.image_url,
-                p.location,
-                p.type,
-                COUNT(cp.id) as project_count
-            FROM company_projects cp
-            LEFT JOIN properties p ON cp.property_id = p.id
-            GROUP BY cp.id
-            ORDER BY cp.created_at DESC
-        ";
-        $stmt = $pdo->prepare($projects_query);
-        $stmt->execute();
-        $company_projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-} catch (Exception $e) {
-    error_log('Company projects fetch error: ' . $e->getMessage());
-}
-
-// Get project statistics
-$project_stats = [
-    'total' => count($company_projects),
-    'completed' => 0,
-    'ongoing' => 0,
-    'upcoming' => 0,
-    'total_value' => 0
-];
-
-foreach ($company_projects as $project) {
-    if ($project['status'] == 'completed') $project_stats['completed']++;
-    if ($project['status'] == 'ongoing') $project_stats['ongoing']++;
-    if ($project['status'] == 'upcoming') $project_stats['upcoming']++;
-    $project_stats['total_value'] += $project['budget'] ?? 0;
-}
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APS Dream Homes - Company Projects & Portfolio</title>
-
-    <!-- Modern CSS Framework -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            --info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-        }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-        }
-
-        /* Modern Header */
-        .page-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 4rem 0 2rem;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .page-header .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        .page-title {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .page-subtitle {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            margin: 0 auto 1rem;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #1a237e;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            color: #666;
-            font-weight: 600;
-        }
-
-        /* Project Cards */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .project-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s ease;
-            border: 2px solid transparent;
-        }
-
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            border-color: #667eea;
-        }
-
-        .project-image {
-            position: relative;
-            height: 250px;
-            overflow: hidden;
-        }
-
-        .project-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .project-card:hover .project-image img {
-            transform: scale(1.05);
-        }
-
-        .project-badges {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .project-badge {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .project-badge.completed {
-            background: linear-gradient(135deg, #28a745, #20c997);
-        }
-
-        .project-badge.ongoing {
-            background: linear-gradient(135deg, #ffc107, #fd7e14);
-        }
-
-        .project-badge.upcoming {
-            background: linear-gradient(135deg, #17a2b8, #20c997);
-        }
-
-        .project-content {
-            padding: 25px;
-        }
-
-        .project-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #1a237e;
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-
-        .project-location {
-            color: #667eea;
-            font-size: 0.9rem;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-        }
-
-        .project-location i {
-            margin-right: 5px;
-        }
-
-        .project-description {
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-
-        .project-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .project-detail {
-            text-align: center;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .project-detail-label {
-            font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .project-detail-value {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #1a237e;
-        }
-
-        /* Filter Tabs */
-        .filter-tabs {
-            background: white;
-            border-radius: 15px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .filter-tab {
-            background: none;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 5px;
-        }
-
-        .filter-tab.active,
-        .filter-tab:hover {
-            background: var(--primary-gradient);
-            color: white;
-        }
-
-        /* Company Info Section */
-        .company-info {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            margin-bottom: 3rem;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        }
-
-        .company-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            margin-bottom: 2rem;
-        }
-
-        .company-title {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #1a237e;
-            margin-bottom: 1rem;
-        }
-
-        .company-description {
-            font-size: 1.1rem;
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        /* Achievement Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--primary-gradient);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 2rem;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: -2rem;
-            top: 0;
-            width: 40px;
-            height: 40px;
-            background: white;
-            border: 3px solid #667eea;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .timeline-year {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-description {
-            color: #666;
-            line-height: 1.5;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .company-info {
-                padding: 2rem;
-            }
-
-            .timeline {
-                padding-left: 1rem;
-            }
-
-            .timeline-marker {
-                left: -1.5rem;
-                width: 30px;
-                height: 30px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .page-header {
-                padding: 2rem 0 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .filter-tabs {
-                padding: 0.5rem;
-            }
-
-            .filter-tab {
-                padding: 8px 15px;
-                margin: 2px;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-up {
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        /* Loading States */
-        .loading-shimmer {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-    </style>
-</head>
-<body>
-
-<?php include '../app/views/layouts/header.php'; ?>
-
-<!-- Page Header -->
-<section class="page-header">
-    <div class="container">
-        <div class="row justify-content-center text-center">
+<!-- Hero Section -->
+<section class="page-header py-5 text-white text-center" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?= get_asset_url('assets/images/hero-3.jpg') ?>'); background-size: cover; background-position: center;">
+    <div class="container py-4">
+        <div class="row justify-content-center">
             <div class="col-lg-8">
-                <h1 class="page-title animate-fade-up">
+                <h1 class="page-title display-4 fw-bold animate-fade-up">
                     <i class="fas fa-building me-3"></i>
                     Company Projects & Portfolio
                 </h1>
-                <p class="page-subtitle animate-fade-up">
+                <p class="page-subtitle lead animate-fade-up">
                     Discover APS Dream Homes' comprehensive portfolio of premium real estate developments
                 </p>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Company Projects</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
+    </div>
+</div>
 
 <!-- Company Information -->
 <section class="py-5">
@@ -632,7 +156,10 @@ foreach ($company_projects as $project) {
                 <?php foreach ($company_projects as $project): ?>
                     <div class="project-card animate-fade-up" data-status="<?php echo $project['status']; ?>" data-type="<?php echo $project['project_type']; ?>">
                         <div class="project-image">
-                            <img src="<?php echo $project['image_url'] ?? 'https://via.placeholder.com/400x250/667eea/white?text=' . urlencode($project['title']); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>">
+                            <?php
+                            $projectImage = !empty($project['image_url']) ? get_asset_url($project['image_url']) : 'https://via.placeholder.com/400x250/667eea/white?text=' . urlencode($project['title']);
+                            ?>
+                            <img src="<?php echo $projectImage; ?>" alt="<?php echo htmlspecialchars($project['title']); ?>">
                             <div class="project-badges">
                                 <span class="project-badge <?php echo $project['status']; ?>">
                                     <?php echo ucfirst($project['status']); ?>
@@ -774,19 +301,337 @@ foreach ($company_projects as $project) {
     </div>
 </section>
 
-<?php include '../app/views/layouts/footer.php'; ?>
+<!-- Page Specific CSS -->
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        --info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    }
 
-<!-- JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    /* Page Header */
+    .page-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 4rem 0 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
 
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: -3rem;
+        position: relative;
+        z-index: 10;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #636e72;
+        font-weight: 500;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+        margin-bottom: 3rem;
+    }
+
+    .filter-tab {
+        background: none;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        margin: 0.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        color: #636e72;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .filter-tab:hover,
+    .filter-tab.active {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Project Cards */
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .project-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        transition: all 0.4s ease;
+    }
+
+    .project-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-image {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+    }
+
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .project-card:hover .project-image img {
+        transform: scale(1.1);
+    }
+
+    .project-badges {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .project-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .project-badge.completed {
+        background: #28a745;
+    }
+
+    .project-badge.ongoing {
+        background: #fd7e14;
+    }
+
+    .project-badge.upcoming {
+        background: #17a2b8;
+    }
+
+    .project-badge.featured {
+        background: #ffc107;
+        color: #000;
+    }
+
+    .project-content {
+        padding: 2rem;
+    }
+
+    .project-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #2d3436;
+    }
+
+    .project-location {
+        color: #636e72;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .project-description {
+        color: #636e72;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .project-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+    }
+
+    .project-detail-label {
+        font-size: 0.8rem;
+        color: #b2bec3;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.2rem;
+    }
+
+    .project-detail-value {
+        font-weight: 600;
+        color: #2d3436;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 20px;
+        width: 2px;
+        background: #e9ecef;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 60px;
+        margin-bottom: 3rem;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover .timeline-marker {
+        border-color: #667eea;
+        transform: scale(1.1);
+    }
+
+    .timeline-year {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-description {
+        color: #636e72;
+        line-height: 1.6;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Company Info */
+    .company-logo {
+        width: 100px;
+        height: 100px;
+        background: var(--primary-gradient);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem;
+    }
+
+    .company-title {
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Animations */
+    .animate-fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .animate-fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+
+<!-- Page Specific JS -->
 <script>
     // Initialize AOS
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true
-    });
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    }
 
     // Project Filter Functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -850,7 +695,8 @@ foreach ($company_projects as $project) {
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-fade-up');
+                entry.target.classList.add('visible'); // Changed to visible class to avoid conflict with AOS
+                entry.target.classList.remove('animate-fade-up'); // Remove initial class
             }
         });
     }, observerOptions);
@@ -860,6 +706,3 @@ foreach ($company_projects as $project) {
         observer.observe(el);
     });
 </script>
-
-</body>
-</html>

@@ -257,7 +257,7 @@ class Auth
      */
     public function validateApiKey($apiKey)
     {
-        $db = $this->getDb();
+        $db = $this->getDb(->with(['query', 'execute']));
         if (!$db) return false;
 
         $hashedApiKey = hash('sha256', $apiKey);

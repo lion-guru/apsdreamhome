@@ -143,7 +143,7 @@ $scripts = '
 <script>
     // Test JavaScript functionality
     document.addEventListener("DOMContentLoaded", function() {
-        console.log("✅ Enhanced template system loaded successfully!");
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
 
         // Test button interactions
         document.querySelectorAll(".btn").forEach(btn => {

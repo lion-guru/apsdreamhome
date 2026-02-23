@@ -5,7 +5,7 @@ return [
     'host' => getenv('DB_HOST') ?: 'localhost',
     'database' => getenv('DB_DATABASE') ?: 'apsdreamhome_test',
     'username' => getenv('DB_USERNAME') ?: 'root',
-    'password' => getenv('DB_PASSWORD') ?: '',
+    'password' => getenv('DB_PASSWORD') ?: 'YOUR_DB_PASSWORD',
     'charset' => 'utf8mb4',
     'collation' => 'utf8mb4_unicode_ci',
     'prefix' => '',

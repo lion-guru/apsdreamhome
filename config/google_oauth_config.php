@@ -21,11 +21,8 @@ if (file_exists(__DIR__ . '/.env')) {
     $envVars = parse_ini_file(__DIR__ . '/.env');
     foreach ($envVars as $key => $value) {
         putenv("$key=$value");
-        $_ENV[$key] = $value;
     }
 }
-
-// Get credentials from environment variables
 if (!defined('GOOGLE_CLIENT_ID')) {
     define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
 }

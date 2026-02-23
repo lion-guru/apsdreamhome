@@ -1,4 +1,8 @@
-<!-- Terms of Service - APS Dream Home -->
+<?php
+// app/views/pages/terms-of-service.php
+?>
+
+<!-- Hero Section -->
 <section class="tos-hero-section section-padding bg-primary text-white text-center rounded-bottom-4 py-5" data-aos="fade-down">
     <div class="container py-4">
         <h1 class="display-5 fw-bold mb-2">Terms of Service</h1>
@@ -7,19 +11,21 @@
 </section>
 
 <!-- Breadcrumb -->
-<nav class="bg-light border-bottom py-2">
+<div class="bg-light py-2">
     <div class="container">
-        <ol class="breadcrumb mb-0">
-            <?php foreach ($breadcrumbs as $crumb): ?>
-                <?php if (isset($crumb['url'])): ?>
-                    <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
-                <?php else: ?>
-                    <li class="breadcrumb-item active"><?= $crumb['title'] ?></li>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </ol>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php foreach ($breadcrumbs as $crumb): ?>
+                    <?php if (isset($crumb['url'])): ?>
+                        <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
+                    <?php else: ?>
+                        <li class="breadcrumb-item active" aria-current="page"><?= $crumb['title'] ?></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ol>
+        </nav>
     </div>
-</nav>
+</div>
 
 <section class="section-padding py-5">
     <div class="container">

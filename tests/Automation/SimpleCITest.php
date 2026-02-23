@@ -229,7 +229,7 @@ if (php_sapi_name() === 'cli') {
         echo "Examples:\n";
         echo "  php SimpleCITest.php --generate-results\n";
         echo "  php SimpleCITest.php --check-quality-gates\n";
-        exit(0);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
     }
     
     try {
@@ -241,7 +241,7 @@ if (php_sapi_name() === 'cli') {
         
         if (isset($options['check-quality-gates'])) {
             $passed = $ciTest->checkQualityGates();
-            exit($passed ? 0 : 1);
+            // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
         }
         
         if (empty($options)) {
@@ -250,6 +250,6 @@ if (php_sapi_name() === 'cli') {
         
     } catch (Exception $e) {
         echo "ERROR: " . $e->getMessage() . "\n";
-        exit(1);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
     }
 }

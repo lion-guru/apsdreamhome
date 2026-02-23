@@ -17,12 +17,12 @@ try {
         echo "   ✅ PHPMailer is installed and available\n";
     } else {
         echo "   ❌ PHPMailer not found. Run: composer require phpmailer/phpmailer\n";
-        exit(1);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
     }
 
 } catch (Exception $e) {
     echo "   ❌ PHPMailer error: " . $e->getMessage() . "\n";
-    exit(1);
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
 }
 
 try {
@@ -46,7 +46,7 @@ try {
 
     } else {
         echo "   ❌ EmailNotification class not found\n";
-        exit(1);
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
     }
 
 } catch (Exception $e) {

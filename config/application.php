@@ -13,7 +13,7 @@ $config['app'] = [
     'url' => getenv('APP_URL') ?: 'http://localhost/apsdreamhome',
     'timezone' => getenv('APP_TIMEZONE') ?: 'Asia/Kolkata',
     'locale' => getenv('APP_LOCALE') ?: 'en',
-    'key' => getenv('APP_KEY') ?: 'base64:your-secret-key-here',
+    'key' => getenv('APP_KEY') ?: 'your-secret-key-here',
     'cipher' => 'AES-256-CBC',
 ];
 
@@ -51,13 +51,13 @@ $config['queue'] = [
     ],
 ];
 
-// Email configuration
+// Mail configuration
 $config['mail'] = [
     'driver' => getenv('MAIL_DRIVER') ?: 'smtp',
     'host' => getenv('MAIL_HOST') ?: 'smtp.gmail.com',
     'port' => getenv('MAIL_PORT') ?: 587,
     'username' => getenv('MAIL_USERNAME') ?: 'apsdreamhomes44@gmail.com',
-    'password' => getenv('MAIL_PASSWORD') ?: 'Aps@1601',
+    'password' => getenv('MAIL_PASSWORD') ?: null,
     'encryption' => getenv('MAIL_ENCRYPTION') ?: 'tls',
     'from' => [
         'address' => getenv('MAIL_FROM_ADDRESS') ?: 'apsdreamhomes44@gmail.com',

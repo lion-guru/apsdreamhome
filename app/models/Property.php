@@ -101,13 +101,12 @@ class Property extends Model
             // Keyword search (title, description, address)
             if (!empty($filters['keyword'])) {
                 $where[] = "(title LIKE ? OR description LIKE ? OR address LIKE ?)";
-                $keyword = "%{$filters['keyword']}%";
-                $params[] = $keyword;
-                $params[] = $keyword;
-                $params[] = $keyword;
+                $params[] = "%{$filters['keyword']}%";
+                $params[] = "%{$filters['keyword']}%";
+                $params[] = "%{$filters['keyword']}%";
             }
 
-            // Location search
+            // Location filter
             if (!empty($filters['location'])) {
                 $where[] = "address LIKE ?";
                 $params[] = "%{$filters['location']}%";
@@ -141,7 +140,29 @@ class Property extends Model
                 $params[] = $filters['bathrooms'];
             }
 
-            $sql = "SELECT * FROM properties WHERE " . implode(" AND ", $where) . " LIMIT ? OFFSET ?";
+            // Sort order
+            $orderBy = "created_at DESC"; // Default
+            if (!empty($filters['sort'])) {
+                switch ($filters['sort']) {
+                    case 'newest':
+                        $orderBy = "created_at DESC";
+                        break;
+                    case 'oldest':
+                        $orderBy = "created_at ASC";
+                        break;
+                    case 'price_low':
+                        $orderBy = "price ASC";
+                        break;
+                    case 'price_high':
+                        $orderBy = "price DESC";
+                        break;
+                    case 'area':
+                        $orderBy = "area_sqft DESC";
+                        break;
+                }
+            }
+
+            $sql = "SELECT * FROM properties WHERE " . implode(" AND ", $where) . " ORDER BY $orderBy LIMIT ? OFFSET ?";
             $params[] = $limit;
             $params[] = $offset;
 

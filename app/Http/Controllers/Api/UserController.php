@@ -29,7 +29,8 @@ class UserController extends BaseApiController
             ];
 
             // Implement listing in model
-            $userModel = $this->model('User');
+            $userModel = $this->model(->with(
+        ->with(['id'])['list', 'countUsers'])'User');
             $users = $userModel->list($filters);
             $total = $userModel->countUsers($filters);
 

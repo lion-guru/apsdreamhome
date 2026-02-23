@@ -1,0 +1,15 @@
+{
+    "timestamp": "2026-02-22 18:52:37",
+    "phase": "blade_templates_scan",
+    "summary": {
+        "templates_analyzed": 0,
+        "total_issues": 0,
+        "syntax_errors": 0,
+        "large_files": 0,
+        "optimization_suggestions": 0
+    },
+    "issues": [],
+    "syntax_errors": [],
+    "optimization_suggestions": [],
+    "recommendations": []
+}

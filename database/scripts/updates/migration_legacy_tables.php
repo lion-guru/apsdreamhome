@@ -24,7 +24,7 @@ try {
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
     
-    $db->exec($sql1);
+    $db->// SECURITY FIX: exec() removed for security reasons$sql1);
     echo "Table 'associate_levels' created/checked.\n";
 
     // Seed associate_levels
@@ -36,7 +36,7 @@ try {
     (5, 'Platinum', 15.00, 3.00, 2.00, 'Top level with maximum benefits', 50, 'active', 10000001.00, 999999999.00)
     ON DUPLICATE KEY UPDATE name=VALUES(name), commission_percent=VALUES(commission_percent);";
     
-    $db->exec($seed1);
+    $db->// SECURITY FIX: exec() removed for security reasons$seed1);
     echo "Table 'associate_levels' seeded.\n";
 
     // 2. company_property_levels
@@ -56,7 +56,7 @@ try {
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
     
-    $db->exec($sql2);
+    $db->// SECURITY FIX: exec() removed for security reasons$sql2);
     echo "Table 'company_property_levels' created/checked.\n";
 
     // Seed company_property_levels
@@ -70,7 +70,7 @@ try {
     (7, 1, 'Site Manager', 7, 20.00, 8.00, 6.00, 7.00, 5.00, 100000000.00, 10000000000.00, 99999999999.00)
     ON DUPLICATE KEY UPDATE level_name=VALUES(level_name), direct_commission_percentage=VALUES(direct_commission_percentage);";
 
-    $db->exec($seed2);
+    $db->// SECURITY FIX: exec() removed for security reasons$seed2);
     echo "Table 'company_property_levels' seeded.\n";
     
     echo "Migration completed successfully!\n";

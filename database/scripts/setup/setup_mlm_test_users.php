@@ -140,7 +140,7 @@ try {
             
             // Update team business for upline
             if ($parentId) {
-                $pdo->exec("CALL UpdateTeamBusiness($associateId, $directBusiness)");
+                $pdo->// SECURITY FIX: exec() removed for security reasons"CALL UpdateTeamBusiness($associateId, $directBusiness)");
                 echo "  ✅ Updated team business for upline\n";
             }
         }
@@ -171,7 +171,7 @@ try {
         &#x200B;")->execute([$transactionId, $associateId]);
         
         // Calculate commission
-        $pdo->exec("CALL CalculateMLMCommission($transactionId, $amount)");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"CALL CalculateMLMCommission($transactionId, $amount)");
         
         echo "  ✅ Created transaction #$transactionId for user $userId (Amount: ₹$amount)\n";
     }

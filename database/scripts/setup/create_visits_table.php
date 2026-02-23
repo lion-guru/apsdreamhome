@@ -27,7 +27,7 @@ try {
         FOREIGN KEY (associate_id) REFERENCES associates(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "Table 'visits' created successfully.\n";
 } catch (PDOException $e) {
     echo "Error creating table: " . $e->getMessage() . "\n";

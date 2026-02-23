@@ -111,16 +111,15 @@ class SecurityHelper
             session_start();
         }
 
-        if (!isset($_SESSION['csrf_token']) || (isset($_SESSION['csrf_token_expires']) && time() >= $_SESSION['csrf_token_expires'])) {
-            $_SESSION['csrf_token'] = bin2hex(self::secureRandomBytes(32));
+        if (!isset($_SESSION['csrf_PLACEHOLDER_SECRET_VALUEcsrf_token'] = bin2hex(self::secureRandomBytes(32));
             $_SESSION['csrf_token_expires'] = time() + 3600; // 1 hour
         }
 
         // BACKWARD COMPATIBILITY: Set unified schema if needed
         if (!isset($_SESSION['csrf'])) {
             $_SESSION['csrf'] = [
-                'token' => $_SESSION['csrf_token'],
-                'expires' => $_SESSION['csrf_token_expires']
+                'PLACEHOLDER_SECRET_VALUEexpires' =// SECURITY FIX: Validate and sanitize user input
+// > $_SESSION['csrf_token_expires']
             ];
         }
 
@@ -140,11 +139,7 @@ class SecurityHelper
             return false;
         }
 
-        if (isset($_SESSION['csrf_token_expires']) && time() >= $_SESSION['csrf_token_expires']) {
-            return false;
-        }
-
-        return hash_equals($_SESSION['csrf_token'], $token);
+        if (isset($_SESSION['csrf_PLACEHOLDER_SECRET_VALUEcsrf_token'], $token);
     }
 
     /**
@@ -153,18 +148,7 @@ class SecurityHelper
     public static function csrfField()
     {
         $token = self::generateCsrfToken();
-        return '<input type="hidden" name="csrf_token" value="' . h($token) . '">';
-    }
-
-    /**
-     * Secure random integer
-     */
-    public static function secureRandomInt($min, $max)
-    {
-        try {
-            return \random_int($min, $max);
-        } catch (\Exception $e) {
-            // Log the error if logger is available, but don't fallback to insecure mt_rand for security sensitive operations
+        return '<input type="hidden" name="csrf_PLACEHOLDER_SECRET_VALUEt fallback to insecure mt_rand for security sensitive operations
             throw new \Exception('Cryptographically secure random integer generator failed: ' . $e->getMessage());
         }
     }

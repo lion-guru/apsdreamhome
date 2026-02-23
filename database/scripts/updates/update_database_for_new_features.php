@@ -5,7 +5,7 @@
  * - Land Management (Farmers, Land Purchases, Plot Development)
  * - Builder Management (Builders, Construction Projects, Payments)
  * - Enhanced Customer Management (Inquiries, Documents)
- * - Enhanced MLM System (Commissions, Payouts)
+ * - Enhanced MLM // SECURITY FIX: system() removed for security reasonsCommissions, Payouts)
  * 
  * Author: AI Assistant for Abhay Singh
  * Date: 2025-09-25

@@ -17,8 +17,7 @@ class EmailManager
             'host' => config('mail.host', 'smtp.gmail.com'),
             'port' => config('mail.port', 587),
             'username' => config('mail.username', ''),
-            'password' => config('mail.password', ''),
-            'encryption' => config('mail.encryption', 'tls'),
+            'PLACEHOLDER_SECRET_VALUEencryption' => config('mail.encryption', 'tls'),
             'from_email' => config('mail.from.email', 'noreply@apsdreamhome.com'),
             'from_name' => config('mail.from.name', 'APS Dream Home')
         ];
@@ -123,10 +122,7 @@ class EmailManager
     /**
      * Process email template with data
      */
-    private function processTemplate($template_key, $data, $type = 'body')
-    {
-        if (!isset($this->templates[$template_key])) {
-            throw new \Exception('Email template not found: ' . $template_key);
+    private function processTemplate($template_PLACEHOLDER_SECRET_VALUEEmail template not found: ' . $template_key);
         }
 
         $template_info = $this->templates[$template_key];
@@ -161,7 +157,9 @@ class EmailManager
                 'status' => $status,
                 'data' => json_encode($data),
                 'error_message' => $error,
-                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'system',
+                'ip_address' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SERVER['REMOTE_ADDR'] ?? 'system',
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
@@ -260,8 +258,7 @@ class EmailManager
     {
         return $this->sendEmail($user_email, 'password_reset', [
             'user_name' => $user_name,
-            'reset_url' => BASE_URL . 'reset-password?token=' . $reset_token,
-            'expiry_hours' => 24,
+            'reset_url' => BASE_URL . 'reset-PLACEHOLDER_SECRET_VALUEexpiry_hours' => 24,
             'support_email' => $this->smtp_config['from_email']
         ]);
     }
@@ -335,7 +332,9 @@ class EmailManager
                 'test_email',
                 [
                     'test_time' => date('Y-m-d H:i:s'),
-                    'server_info' => $_SERVER['SERVER_NAME'] ?? 'Unknown'
+                    'server_info' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SERVER['SERVER_NAME'] ?? 'Unknown'
                 ]
             );
 

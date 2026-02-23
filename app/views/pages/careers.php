@@ -1,68 +1,9 @@
 <?php
 // app/views/pages/careers.php
 // Data passed from PageController::careers()
-// Available variables: $careers, $page_title
 ?>
-
-<style>
-    .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 80px 0;
-    }
-
-    .job-card {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s ease;
-        margin-bottom: 30px;
-        border-left: 5px solid #667eea;
-        height: 100%;
-    }
-
-    .job-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .benefit-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-radius: 15px;
-        padding: 30px;
-        text-align: center;
-        margin-bottom: 30px;
-        height: 100%;
-    }
-
-    .benefit-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        margin: 0 auto 20px;
-        font-size: 1.5rem;
-    }
-
-    .cta-section {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        color: white;
-        padding: 60px 0;
-        text-align: center;
-    }
-
-    .culture-section {
-        padding: 80px 0;
-        background: #f8f9fa;
-    }
-</style>
-
 <!-- Hero Section -->
-<section class="hero-section">
+<section class="hero-section text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-3.jpg') ?>'); background-size: cover; background-position: center;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -79,9 +20,31 @@
     </div>
 </section>
 
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Careers</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
+    </div>
+</div>
+
 
 <!-- Why Join Us -->
-<section class="culture-section">
+<section class="section-padding bg-light">
     <div class="container">
         <div class="text-center mb-5">
             <h2>Why Join APS Dream Homes?</h2>
@@ -90,7 +53,7 @@
 
         <div class="row g-4">
             <div class="col-lg-4">
-                <div class="benefit-card">
+                <div class="value-card">
                     <div class="benefit-icon">
                         <i class="fas fa-rocket"></i>
                     </div>
@@ -100,7 +63,7 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="benefit-card">
+                <div class="value-card">
                     <div class="benefit-icon">
                         <i class="fas fa-users"></i>
                     </div>
@@ -110,7 +73,7 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="benefit-card">
+                <div class="value-card">
                     <div class="benefit-icon">
                         <i class="fas fa-balance-scale"></i>
                     </div>
@@ -120,7 +83,7 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="benefit-card">
+                <div class="value-card">
                     <div class="benefit-icon">
                         <i class="fas fa-award"></i>
                     </div>
@@ -130,7 +93,7 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="benefit-card">
+                <div class="value-card">
                     <div class="benefit-icon">
                         <i class="fas fa-heart"></i>
                     </div>
@@ -140,7 +103,7 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="benefit-card">
+                <div class="value-card">
                     <div class="benefit-icon">
                         <i class="fas fa-home"></i>
                     </div>
@@ -175,6 +138,14 @@
                                 </div>
                                 <span class="badge bg-success"><?php echo htmlspecialchars($career->type ?? 'Full Time'); ?></span>
                             </div>
+
+                            <?php if (isset($career->salary_min) && isset($career->salary_max)): ?>
+                                <div class="mb-2">
+                                    <span class="text-primary fw-bold">₹<?php echo number_format($career->salary_min); ?> - ₹<?php echo number_format($career->salary_max); ?></span>
+                                    <small class="text-muted"> / month</small>
+                                </div>
+                            <?php endif; ?>
+
                             <p class="text-muted mb-3"><?php echo htmlspecialchars(substr($career->description ?? '', 0, 150)) . '...'; ?></p>
 
                             <!-- Tags/Badges if available -->
@@ -259,7 +230,7 @@
 </div>
 
 <!-- CTA Section -->
-<section class="cta-section">
+<section class="section-padding bg-primary text-white">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -267,7 +238,7 @@
                 <p class="lead mb-4">
                     We're always looking for talented individuals. Send us your resume and we'll keep you in mind for future opportunities.
                 </p>
-                <a href="/contact" class="btn btn-light btn-lg">
+                <a href="<?= BASE_URL ?>contact" class="btn btn-light btn-lg">
                     <i class="fas fa-envelope me-2"></i>Get In Touch
                 </a>
             </div>
@@ -275,9 +246,6 @@
     </div>
 </section>
 
-<?php include '../app/views/includes/footer.php'; ?>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function setJobTitle(title) {
         document.getElementById('jobTitle').textContent = title;
@@ -303,6 +271,3 @@
         form.reset();
     }
 </script>
-</body>
-
-</html>

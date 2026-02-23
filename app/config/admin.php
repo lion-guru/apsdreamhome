@@ -16,9 +16,7 @@ return [
     // Cloud Storage (Amazon S3)
     's3' => [
         'bucket' => getenv('S3_BUCKET') ?: '',
-        'key' => getenv('S3_KEY') ?: '',
-        'secret' => getenv('S3_SECRET') ?: '',
-        'region' => getenv('S3_REGION') ?: 'us-east-1',
+        'PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEregion' => getenv('S3_REGION') ?: 'us-east-1',
     ],
 
     // Admin Session Settings
@@ -32,7 +30,6 @@ return [
 
     // Log Archiving
     'archive' => [
-        'password' => getenv('LOG_ARCHIVE_PASSWORD') ?: 'DreamHomeSecure!',
-        'directory' => ROOT_PATH . '/log_archives',
+        'PLACEHOLDER_SECRET_VALUEdirectory' => ROOT_PATH . '/log_archives',
     ]
 ];

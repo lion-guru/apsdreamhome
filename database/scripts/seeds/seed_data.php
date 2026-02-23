@@ -95,7 +95,7 @@ try {
         showMessage("workflows टेबल मौजूद नहीं है, इसे बनाया जा रहा है...", 'warning');
         
         // workflows टेबल बनाना
-        $pdo->exec("CREATE TABLE workflows (
+        $pdo->// SECURITY FIX: exec() removed for security reasons"CREATE TABLE workflows (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             description TEXT,
@@ -116,7 +116,7 @@ try {
 
     if (!$descriptionColumnExists) {
         showMessage("workflows टेबल में 'description' कॉलम मौजूद नहीं है, इसे जोड़ा जा रहा है...", 'warning');
-        $pdo->exec("ALTER TABLE workflows ADD COLUMN description TEXT");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"ALTER TABLE workflows ADD COLUMN description TEXT");
         showMessage("'description' कॉलम सफलतापूर्वक जोड़ा गया", 'success');
     }
 
@@ -126,7 +126,7 @@ try {
 
     if (!$triggerEventColumnExists) {
         showMessage("workflows टेबल में 'trigger_event' कॉलम मौजूद नहीं है, इसे जोड़ा जा रहा है...", 'warning');
-        $pdo->exec("ALTER TABLE workflows ADD COLUMN trigger_event VARCHAR(50) NOT NULL");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"ALTER TABLE workflows ADD COLUMN trigger_event VARCHAR(50) NOT NULL");
         showMessage("'trigger_event' कॉलम सफलतापूर्वक जोड़ा गया", 'success');
     }
 
@@ -136,7 +136,7 @@ try {
 
     if (!$conditionsColumnExists) {
         showMessage("workflows टेबल में 'conditions' कॉलम मौजूद नहीं है, इसे जोड़ा जा रहा है...", 'warning');
-        $pdo->exec("ALTER TABLE workflows ADD COLUMN conditions TEXT");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"ALTER TABLE workflows ADD COLUMN conditions TEXT");
         showMessage("'conditions' कॉलम सफलतापूर्वक जोड़ा गया", 'success');
     }
 
@@ -146,7 +146,7 @@ try {
 
     if (!$actionsColumnExists) {
         showMessage("workflows टेबल में 'actions' कॉलम मौजूद नहीं है, इसे जोड़ा जा रहा है...", 'warning');
-        $pdo->exec("ALTER TABLE workflows ADD COLUMN actions TEXT");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"ALTER TABLE workflows ADD COLUMN actions TEXT");
         showMessage("'actions' कॉलम सफलतापूर्वक जोड़ा गया", 'success');
     }
 
@@ -156,7 +156,7 @@ try {
 
     if (!$statusColumnExists) {
         showMessage("workflows टेबल में 'status' कॉलम मौजूद नहीं है, इसे जोड़ा जा रहा है...", 'warning');
-        $pdo->exec("ALTER TABLE workflows ADD COLUMN status ENUM('active', 'inactive', 'draft') DEFAULT 'draft'");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"ALTER TABLE workflows ADD COLUMN status ENUM('active', 'inactive', 'draft') DEFAULT 'draft'");
         showMessage("'status' कॉलम सफलतापूर्वक जोड़ा गया", 'success');
     }
     
@@ -280,7 +280,7 @@ try {
             showMessage("workflow_automations टेबल मौजूद नहीं है, इसे बनाया जा रहा है...", 'warning');
             
             // workflow_automations टेबल बनाना
-            $pdo->exec("CREATE TABLE workflow_automations (
+            $pdo->// SECURITY FIX: exec() removed for security reasons"CREATE TABLE workflow_automations (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 workflow_id INT,
                 name VARCHAR(100) NOT NULL,

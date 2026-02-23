@@ -24,10 +24,7 @@ class GeminiService {
 
         try {
             $ch = curl_init();
-            $url = $this->apiUrl . '?key=' . $this->apiKey;
-
-            $data = [
-                'contents' => [
+            $url = $this->apiUrl . '?PLACEHOLDER_SECRET_VALUEcontents' => [
                     ['parts' => [['text' => $prompt]]]
                 ]
             ];

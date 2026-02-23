@@ -7,5 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Parsedown' => array($vendorDir . '/erusev/parsedown'),
-    'PHPMD\\' => array($vendorDir . '/phpmd/phpmd/src/main/php'),
 );

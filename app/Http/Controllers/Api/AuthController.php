@@ -72,7 +72,7 @@ class AuthController extends BaseApiController
                 return $this->jsonError('User not found', 404);
             }
 
-            $userModel = $this->model('User');
+            $userModel = $this->model(->with(['getRoles', 'getPermissions'])'User');
             // Get roles and permissions
             $roles = $userModel->getRoles($user->id);
             $permissions = $userModel->getPermissions($user->id);

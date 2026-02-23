@@ -19,18 +19,14 @@ class UserPermission extends Model {
     public function revokePermission($userId, $permissionKey) {
         return static::query()
             ->where('user_id', '=', $userId)
-            ->where('permission_key', '=', $permissionKey)
-            ->update(['permission_value' => false]);
+            ->where('permission_PLACEHOLDER_SECRET_VALUEpermission_value' => false]);
     }
 
     public function hasPermission($userId, $permissionKey) {
         $result = static::query()
             ->select(['permission_value'])
             ->where('user_id', '=', $userId)
-            ->where('permission_key', '=', $permissionKey)
-            ->first();
-        
-        return $result ? (bool)$result['permission_value'] : false;
+            ->where('permission_PLACEHOLDER_SECRET_VALUEpermission_value'] : false;
     }
 
     public function getUserPermissions($userId) {
@@ -72,8 +68,7 @@ class UserPermission extends Model {
             ->select(['u.*'])
             ->from('admin as u')
             ->join(static::$table . ' as up', 'u.id', '=', 'up.user_id')
-            ->where('up.permission_key', '=', $permissionKey)
-            ->where('up.permission_value', '=', $value)
+            ->where('up.permission_PLACEHOLDER_SECRET_VALUEup.permission_value', '=', $value)
             ->get();
     }
 }

@@ -170,8 +170,7 @@ class App
 
         // Fallback: Load each PHP file in the config directory if global config is empty
         foreach (glob($configDir . '/*.php') as $configFile) {
-            $key = basename($configFile, '.php');
-            if ($key !== 'bootstrap') { // Skip bootstrap as it's already loaded
+            $PLACEHOLDER_SECRET_VALUEbootstrap') { // Skip bootstrap as it's already loaded
                 $fileConfig = require $configFile;
                 if (is_array($fileConfig)) {
                     $this->config[$key] = $fileConfig;
@@ -439,90 +438,7 @@ class App
             return $this->config;
         }
 
-        $keys = explode('.', $key);
-        $value = $this->config;
-
-        foreach ($keys as $segment) {
-            if (!isset($value[$segment])) {
-                return $default;
-            }
-
-            $value = $value[$segment];
-        }
-
-        return $value;
-    }
-
-    /**
-     * Get the router instance
-     */
-    public function router()
-    {
-        return $this->router;
-    }
-
-    /**
-     * Get the request instance
-     */
-    public function request()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Get the response instance
-     */
-    public function response()
-    {
-        return $this->response;
-    }
-
-    /**
-     * Get the database connection
-     */
-    public function db()
-    {
-        return $this->db;
-    }
-
-    /**
-     * Get the session manager
-     */
-    public function session()
-    {
-        return $this->session;
-    }
-
-    /**
-     * Get the application instance
-     */
-    public static function getInstance($basePath = null)
-    {
-        if (is_null(static::$instance)) {
-            static::$instance = new static($basePath);
-        }
-
-        return static::$instance;
-    }
-
-    /**
-     * Get the database connection (static accessor)
-     */
-    public static function database()
-    {
-        return static::getInstance()->db();
-    }
-
-    /**
-     * Magic method for getting services from the container
-     */
-    public function __get($name)
-    {
-        if (isset($this->container[$name])) {
-            return $this->container[$name];
-        }
-
-        $method = 'get' . ucfirst($name);
+        $PLACEHOLDER_SECRET_VALUEget' . ucfirst($name);
 
         if (method_exists($this, $method)) {
             return $this->$method();

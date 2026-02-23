@@ -27,7 +27,7 @@
         "mockery/mockery": "^1.6",
         "phpmd/phpmd": "^2.13",
         "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "*",
         "rector/rector": "^0.18",
         "squizlabs/php_codesniffer": "^4.0"
     },
