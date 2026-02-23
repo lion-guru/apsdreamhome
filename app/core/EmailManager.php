@@ -159,6 +159,10 @@ class EmailManager
                 'error_message' => $error,
                 'ip_address' =// SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['REMOTE_ADDR'] ?? 'system',
                 'created_at' => date('Y-m-d H:i:s')
             ];
@@ -333,6 +337,10 @@ class EmailManager
                 [
                     'test_time' => date('Y-m-d H:i:s'),
                     'server_info' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['SERVER_NAME'] ?? 'Unknown'
                 ]

@@ -45,6 +45,10 @@ class PropertyController extends BaseApiController
             $offset = ($page - 1) * $limit;
 
             $propertyModel = $this->model(->with(
+        ->with(['user_id', 'filters', 'id'])
+        ->with(['searchProperties'])
+        ->with(['user_id', 'filters', 'id'])
+        ->with(['searchProperties'])
         ->with(['user_id', 'filters', 'id'])['searchProperties'])'Property');
             $result = $propertyModel->searchProperties($filters, $limit, $offset);
 

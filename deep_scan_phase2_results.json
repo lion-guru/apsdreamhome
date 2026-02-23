@@ -1,25 +1,24 @@
 {
-    "timestamp": "2026-02-22 18:39:50",
+    "timestamp": "2026-02-23 18:04:52",
     "phase": "php_files_scan",
     "summary": {
-        "total_files_scanned": 1655,
-        "php_files_analyzed": 1221,
-        "security_risks": 434,
-        "general_issues": 282
+        "total_files_scanned": 1781,
+        "php_files_analyzed": 1228,
+        "security_risks": 430,
+        "general_issues": 266
     },
     "issues": [
         "Many long lines (25) in: app\/Core\/EmailNotification.php",
         "Very large file (1608 lines): app\/Core\/Http\/Request.php",
         "Very large file (2409 lines): app\/Core\/Http\/Response.php",
         "Many long lines (11) in: app\/Core\/Support\/Str.php",
-        "Debug code found: app\/Helpers\/logger.php",
-        "Very large file (1985 lines): app\/Http\/Controllers\/Admin\/AdminController.php",
+        "Very large file (1986 lines): app\/Http\/Controllers\/Admin\/AdminController.php",
         "Many long lines (16) in: app\/Http\/Controllers\/Admin\/CommissionController.php",
         "Many long lines (11) in: app\/Http\/Controllers\/Admin\/PropertyController.php",
         "Debug code found: app\/Http\/Controllers\/AgentController.php",
         "Debug code found: app\/Http\/Controllers\/Analytics\/AdminReportsController.php",
         "Debug code found: app\/Http\/Controllers\/Api\/BaseApiController.php",
-        "Very large file (1505 lines): app\/Http\/Controllers\/Api\/LeadController.php",
+        "Very large file (1510 lines): app\/Http\/Controllers\/Api\/LeadController.php",
         "Debug code found: app\/Http\/Controllers\/Api\/MobileApiController.php",
         "Debug code found: app\/Http\/Controllers\/AssociateController.php",
         "Very large file (1326 lines): app\/Http\/Controllers\/Employee\/EmployeeController.php",
@@ -33,11 +32,9 @@
         "Debug code found: app\/Http\/Controllers\/Tech\/SustainableTechController.php",
         "Very large file (1462 lines): app\/Http\/Controllers\/Tech\/SustainableTechController.php",
         "Debug code found: app\/Http\/Controllers\/Utility\/DatabaseSeederController.php",
-        "Debug code found: app\/Middleware\/SecurityMiddleware.php",
-        "Very large file (1272 lines): app\/Models\/Associate.php",
-        "Debug code found: app\/Models\/CoreFunctions.php",
-        "Very large file (5583 lines): app\/Models\/CoreFunctions.php",
-        "Very large file (1581 lines): app\/Models\/Customer.php",
+        "Very large file (1266 lines): app\/Models\/Associate.php",
+        "Very large file (5567 lines): app\/Models\/CoreFunctions.php",
+        "Very large file (1580 lines): app\/Models\/Customer.php",
         "Very large file (1036 lines): app\/Models\/Messaging.php",
         "Very large file (1013 lines): app\/Services\/AI\/AIPropertyEngine.php",
         "Debug code found: app\/Services\/AI\/Legacy\/worker.php",
@@ -130,8 +127,6 @@
         "No PHP opening tag: app\/views\/employees\/attendance\/index.blade.php",
         "No PHP opening tag: app\/views\/employees\/dashboard.blade.php",
         "No PHP opening tag: app\/views\/employees\/leaves\/index.blade.php",
-        "No PHP opening tag: app\/views\/employees\/profile.blade.php",
-        "No PHP opening tag: app\/views\/employees\/tasks\/index.blade.php",
         "No PHP opening tag: app\/views\/errors\/401.php",
         "No PHP opening tag: app\/views\/errors\/404.php",
         "No PHP opening tag: app\/views\/errors\/maintenance.php",
@@ -179,7 +174,7 @@
         "Debug code found: app\/views\/pages\/kyc-upload.php",
         "Debug code found: app\/views\/pages\/launch_system.php",
         "Debug code found: app\/views\/pages\/log_security_event.php",
-        "Many long lines (23) in: app\/views\/pages\/properties.php",
+        "Many long lines (20) in: app\/views\/pages\/properties.php",
         "Debug code found: app\/views\/pages\/property_management.php",
         "Debug code found: app\/views\/pages\/property_purchase.php",
         "Debug code found: app\/views\/pages\/saved-searches.php",
@@ -193,6 +188,7 @@
         "No PHP opening tag: app\/views\/partials\/header.blade.php",
         "Many long lines (14) in: app\/views\/properties\/index.php",
         "Many long lines (12) in: app\/views\/properties\/show.php",
+        "Many long lines (23) in: app\/views\/property\/index.php",
         "No PHP opening tag: app\/views\/team\/dashboard.blade.php",
         "Debug code found: database\/archive\/legacy_scripts\/compare_full_schema.php",
         "Debug code found: database\/archive\/legacy_scripts\/db_connect_test.php",
@@ -211,19 +207,9 @@
         "Debug code found: database\/archive\/legacy_scripts\/simple_schema_compare.php",
         "Debug code found: database\/archive\/legacy_scripts\/update_schema_safely.php",
         "No PHP opening tag: database\/index.php",
-        "Debug code found: database\/scripts\/complete_deep_scan.php",
-        "Debug code found: database\/scripts\/create_missing_tables.php",
-        "Debug code found: database\/scripts\/create_missing_tables_safe.php",
-        "Debug code found: database\/scripts\/create_services_database_tables.php",
         "Many long lines (12) in: database\/scripts\/create_services_database_tables.php",
-        "Debug code found: database\/scripts\/deep_scan_database.php",
-        "Debug code found: database\/scripts\/final_database_fix.php",
-        "Debug code found: database\/scripts\/fix_missing_tables.php",
-        "Debug code found: database\/scripts\/fix_views.php",
-        "Debug code found: database\/scripts\/improve_database.php",
         "Debug code found: database\/scripts\/maintenance\/create_farmers_tables.php",
         "Debug code found: database\/scripts\/maintenance\/run_migrations.php",
-        "Debug code found: database\/scripts\/repair_database.php",
         "Debug code found: database\/scripts\/seeds\/complete_database_seed.php",
         "Debug code found: database\/scripts\/seeds\/execute_sample_data.php",
         "Debug code found: database\/scripts\/seeds\/mlm_seed.php",
@@ -266,7 +252,6 @@
         "Debug code found: database\/scripts\/setup\/setup_mlm_commissions.php",
         "Debug code found: database\/scripts\/setup\/setup_mlm_test_users.php",
         "Debug code found: database\/scripts\/setup\/setup_testimonials.php",
-        "Debug code found: database\/scripts\/standardize_database.php",
         "Debug code found: database\/scripts\/tools\/api_documentation.php",
         "Debug code found: database\/scripts\/tools\/backup_db.php",
         "Debug code found: database\/scripts\/tools\/dashboard_verification_report.php",
@@ -287,7 +272,6 @@
         "Many long lines (11) in: database\/scripts\/updates\/update_database_for_new_features.php",
         "Debug code found: database\/scripts\/updates\/update_mlm_tables.php",
         "Debug code found: database\/scripts\/updates\/update_testimonials.php",
-        "Debug code found: database\/scripts\/verify_database.php",
         "Debug code found: public\/api\/ifsc.php",
         "Debug code found: public\/download.php"
     ],
@@ -331,12 +315,6 @@
         },
         {
             "file": "app\/Core\/Cache.php",
-            "issues": [
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "app\/Core\/Config.php",
             "issues": [
                 "Potential hardcoded password"
             ]
@@ -550,6 +528,12 @@
             ]
         },
         {
+            "file": "app\/Http\/Controllers\/Public\/PageController.php",
+            "issues": [
+                "Potential file inclusion vulnerability"
+            ]
+        },
+        {
             "file": "app\/Http\/Controllers\/RegistrationController.php",
             "issues": [
                 "Potential hardcoded password"
@@ -719,6 +703,13 @@
             "file": "app\/Services\/AdminService.php",
             "issues": [
                 "Dangerous function 'exec' found"
+            ]
+        },
+        {
+            "file": "app\/Services\/Caching\/CacheManager.php",
+            "issues": [
+                "Dangerous function 'system' found",
+                "Potential hardcoded password"
             ]
         },
         {
@@ -991,12 +982,6 @@
         },
         {
             "file": "app\/Services\/UserService.php",
-            "issues": [
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "app\/config\/admin.php",
             "issues": [
                 "Potential hardcoded password"
             ]
@@ -1700,18 +1685,6 @@
             ]
         },
         {
-            "file": "app\/views\/pages\/career.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "app\/views\/pages\/careers.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
             "file": "app\/views\/pages\/clean_dashboard.php",
             "issues": [
                 "Potential file inclusion vulnerability"
@@ -1722,12 +1695,6 @@
             "issues": [
                 "Potential file inclusion vulnerability",
                 "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "app\/views\/pages\/colonies.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
             ]
         },
         {
@@ -1785,13 +1752,6 @@
             ]
         },
         {
-            "file": "app\/views\/pages\/downloads.php",
-            "issues": [
-                "Potential SQL injection vulnerability",
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
             "file": "app\/views\/pages\/edit-profile.php",
             "issues": [
                 "Potential hardcoded password"
@@ -1822,12 +1782,6 @@
             ]
         },
         {
-            "file": "app\/views\/pages\/faq.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
             "file": "app\/views\/pages\/faqs.php",
             "issues": [
                 "Potential file inclusion vulnerability"
@@ -1841,6 +1795,12 @@
         },
         {
             "file": "app\/views\/pages\/financial_services.php",
+            "issues": [
+                "Potential file inclusion vulnerability"
+            ]
+        },
+        {
+            "file": "app\/views\/pages\/gallery.php",
             "issues": [
                 "Potential file inclusion vulnerability"
             ]
@@ -1920,12 +1880,6 @@
         },
         {
             "file": "app\/views\/pages\/privacy_policy.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "app\/views\/pages\/properties.php",
             "issues": [
                 "Potential file inclusion vulnerability"
             ]
@@ -2090,6 +2044,12 @@
             ]
         },
         {
+            "file": "app\/views\/property\/index.php",
+            "issues": [
+                "Potential file inclusion vulnerability"
+            ]
+        },
+        {
             "file": "app\/views\/property_details.php",
             "issues": [
                 "Potential file inclusion vulnerability"
@@ -2141,7 +2101,7 @@
             ]
         },
         {
-            "file": "config\/database.php",
+            "file": "config\/deployment.php",
             "issues": [
                 "Potential hardcoded password"
             ]
@@ -2150,12 +2110,6 @@
             "file": "config\/logging.php",
             "issues": [
                 "Potential file inclusion vulnerability",
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "config\/mail.php",
-            "issues": [
                 "Potential hardcoded password"
             ]
         },
@@ -2293,6 +2247,12 @@
             "file": "database\/migrations\/2024_01_15_000003_create_payouts_table.php",
             "issues": [
                 "Potential file inclusion vulnerability"
+            ]
+        },
+        {
+            "file": "database\/migrations\/create_system_monitoring_tables.php",
+            "issues": [
+                "Dangerous function 'exec' found"
             ]
         },
         {

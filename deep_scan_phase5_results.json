@@ -1,11 +1,11 @@
 {
-    "timestamp": "2026-02-22 19:13:25",
+    "timestamp": "2026-02-23 18:12:55",
     "phase": "database_scan",
     "summary": {
         "status": "needs_attention",
         "total_issues": 3,
-        "migration_files": 24,
-        "model_files": 131
+        "migration_files": 26,
+        "model_files": 132
     },
     "issues": [
         "MySQL connection not configured in database.php",
@@ -40,7 +40,7 @@
             "whatsapp_templates"
         ],
         "performance_metrics": {
-            "indexes": 70,
+            "indexes": 78,
             "unique_constraints": 14,
             "foreign_keys": 32,
             "performance_issues": []

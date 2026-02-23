@@ -8,10 +8,7 @@
 if (file_exists(__DIR__ . '/.env')) {
     $envVars = parse_ini_file(__DIR__ . '/.env');
     foreach ($envVars as $key => $value) {
-        putenv("$key=$value");
-    }
-}
-if (!defined('GOOGLE_CLIENT_ID')) {
+        putenv("$PLACEHOLDER_SECRET_VALUEGOOGLE_CLIENT_ID')) {
     define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
 }
 if (!defined('GOOGLE_CLIENT_SECRET')) {

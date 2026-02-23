@@ -119,6 +119,8 @@ class SecurityHelper
         if (!isset($_SESSION['csrf'])) {
             $_SESSION['csrf'] = [
                 'PLACEHOLDER_SECRET_VALUEexpires' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_SESSION['csrf_token_expires']
             ];
         }

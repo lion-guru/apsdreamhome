@@ -38,8 +38,7 @@ return [
         'port' => getenv('DB_PORT') ?: 3306,
         'database' => getenv('DB_DATABASE') ?: 'apsdreamhome',
         'username' => getenv('DB_USERNAME') ?: 'apsdreamhome_user',
-        'password' => getenv('DB_PASSWORD') ?: '',
-        'charset' => 'utf8mb4',
+        'PLACEHOLDER_SECRET_VALUEcharset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
     ],
 
@@ -47,8 +46,7 @@ return [
     'redis' => [
         'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
         'port' => getenv('REDIS_PORT') ?: 6379,
-        'password' => getenv('REDIS_PASSWORD'),
-        'database' => getenv('REDIS_DB') ?: 0,
+        'PLACEHOLDER_SECRET_VALUEdatabase' => getenv('REDIS_DB') ?: 0,
     ],
 
     // Email configuration
@@ -57,8 +55,7 @@ return [
         'host' => getenv('MAIL_HOST') ?: 'smtp.gmail.com',
         'port' => getenv('MAIL_PORT') ?: 587,
         'username' => getenv('MAIL_USERNAME'),
-        'password' => getenv('MAIL_PASSWORD'),
-        'encryption' => getenv('MAIL_ENCRYPTION') ?: 'tls',
+        'PLACEHOLDER_SECRET_VALUEencryption' => getenv('MAIL_ENCRYPTION') ?: 'tls',
         'from_address' => getenv('MAIL_FROM_ADDRESS') ?: 'noreply@apsdreamhome.com',
         'from_name' => getenv('MAIL_FROM_NAME') ?: 'APS Dream Home',
     ],
@@ -77,8 +74,7 @@ return [
 
     // Security settings
     'security' => [
-        'app_key' => getenv('APP_KEY'),
-        'cipher' => 'AES-256-CBC',
+        'app_PLACEHOLDER_SECRET_VALUEcipher' => 'AES-256-CBC',
         'key_length' => 32,
     ],
 
@@ -128,13 +124,7 @@ return [
         ],
         'recaptcha' => [
             'enabled' => true,
-            'site_key' => getenv('RECAPTCHA_SITE_KEY'),
-            'secret_key' => getenv('RECAPTCHA_SECRET_KEY'),
-        ],
-    ],
-
-    // Maintenance and support
-    'maintenance' => [
+            'site_PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEmaintenance' => [
         'contact_email' => 'support@apsdreamhome.com',
         'emergency_contact' => '+91-XXXXXXXXXX',
         'documentation_url' => 'https://docs.apsdreamhome.com',

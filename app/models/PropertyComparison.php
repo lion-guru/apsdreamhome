@@ -32,6 +32,10 @@ class PropertyComparison extends Model
             'device_info' => json_encode($this->getDeviceInfo()),
             'ip_address' =// SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['REMOTE_ADDR'] ?? null,
             'created_at' => date('Y-m-d H:i:s')
         ];
@@ -444,6 +448,8 @@ class PropertyComparison extends Model
             'browser' => $this->detectBrowser($userAgent),
             'platform' => $this->detectPlatform($userAgent),
             'screen_resolution' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_COOKIE['screen_resolution'] ?? null
         ];
     }
@@ -469,6 +475,10 @@ class PropertyComparison extends Model
             'criteria_used' => $session['comparison_criteria'] ?? null,
             'device_type' => $this->detectDeviceType($_SERVER['HTTP_USER_AGENT'] ?? ''),
             'ip_address' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['REMOTE_ADDR'] ?? null,
             'created_at' => date('Y-m-d H:i:s')

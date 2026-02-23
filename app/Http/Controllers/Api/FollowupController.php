@@ -56,6 +56,10 @@ class FollowupController extends BaseApiController
     {
         $count = 0;
         $visitModel = $this->model(->with(
+        ->with(['getLeadsForFollowup'])
+        ->with(['getVisitsForReminder', 'getVisitsForFeedback'])
+        ->with(['getLeadsForFollowup'])
+        ->with(['getVisitsForReminder', 'getVisitsForFeedback'])
         ->with(['getLeadsForFollowup'])['getVisitsForReminder', 'getVisitsForFeedback'])'PropertyVisit');
         $visits = $visitModel->getVisitsForReminder();
 
