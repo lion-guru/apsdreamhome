@@ -200,6 +200,16 @@ class LeadController extends Controller
         ->with(['getClientOriginalName', 'getClientOriginalExtension', 'getSize', 'getMimeType', 'storeAs', 'uploaded_by', 'file_path', 'is_private', 'file_name'])
         ->with(['load', 'user_id'])
         ->with(['activities', 'notes', 'tags', 'customFields', 'files', 'load', 'id', 'deals'])
+        ->with(['orderBy', 'paginate', 'with', 'count', 'whereHas', 'select'])
+        ->with(['load', 'getOriginal', 'fill', 'updated_by', 'wasChanged', 'created_by'])
+        ->with(['getClientOriginalName', 'getClientOriginalExtension', 'getSize', 'getMimeType', 'storeAs', 'uploaded_by', 'file_path', 'is_private', 'file_name'])
+        ->with(['load', 'user_id'])
+        ->with(['activities', 'notes', 'tags', 'customFields', 'files', 'load', 'id', 'deals'])
+        ->with(['orderBy', 'paginate', 'with', 'count', 'whereHas', 'select'])
+        ->with(['load', 'getOriginal', 'fill', 'updated_by', 'wasChanged', 'created_by'])
+        ->with(['getClientOriginalName', 'getClientOriginalExtension', 'getSize', 'getMimeType', 'storeAs', 'uploaded_by', 'file_path', 'is_private', 'file_name'])
+        ->with(['load', 'user_id'])
+        ->with(['activities', 'notes', 'tags', 'customFields', 'files', 'load', 'id', 'deals'])
         ->with(['orderBy', 'paginate', 'with', 'count', 'whereHas', 'select'])['status', 'changedBy'])
                       ->orderBy('created_at', 'desc');
             },

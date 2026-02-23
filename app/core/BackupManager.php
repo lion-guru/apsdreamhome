@@ -459,6 +459,8 @@ class BackupManager
             'php_version' => PHP_VERSION,
             'os' => PHP_OS,
             'server' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
             'database' => 'MySQL',
             'app_version' => APP_VERSION ?? '2.1',

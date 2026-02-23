@@ -25,7 +25,9 @@ class CustomerController extends AdminController
         $offset = ($page - 1) * $limit;
 
         try {
-            $customerModel = $this->model(->with(['searchCustomers', 'getAllCustomers', 'getCustomerByEmail', 'registerCustomer', 'getCustomerById', 'updateCustomer', 'getWithUserInfo', 'deleteCustomer'])'Customer');
+            $customerModel = $this->model(->with(
+        ->with(['searchCustomers', 'getAllCustomers', 'getCustomerByEmail', 'registerCustomer', 'getCustomerById', 'updateCustomer', 'getWithUserInfo', 'deleteCustomer'])
+        ->with(['searchCustomers', 'getAllCustomers', 'getCustomerByEmail', 'registerCustomer', 'getCustomerById', 'updateCustomer', 'getWithUserInfo', 'deleteCustomer'])['searchCustomers', 'getAllCustomers', 'getCustomerByEmail', 'registerCustomer', 'getCustomerById', 'updateCustomer', 'getWithUserInfo', 'deleteCustomer'])'Customer');
             $result = $customerModel->searchCustomers($search, $limit, $offset);
 
             return $this->jsonResponse([

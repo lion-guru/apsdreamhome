@@ -26,6 +26,12 @@ class MonitorController extends BaseController
     {
         $monitor = SystemMonitor::get->with(
         ->with(['listBackups', 'createDatabaseBackup', 'createFullBackup', 'getBackupStats'])
+        ->with(['getMetrics'])
+        ->with(['getSystemStatus', 'runHealthChecks'])
+        ->with(['listBackups', 'createDatabaseBackup', 'createFullBackup', 'getBackupStats'])
+        ->with(['getMetrics'])
+        ->with(['getSystemStatus', 'runHealthChecks'])
+        ->with(['listBackups', 'createDatabaseBackup', 'createFullBackup', 'getBackupStats'])
         ->with(['getMetrics'])['getSystemStatus', 'runHealthChecks'])Instance();
         $status = $monitor->getSystemStatus();
 

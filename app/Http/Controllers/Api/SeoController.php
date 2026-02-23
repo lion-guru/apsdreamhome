@@ -39,6 +39,10 @@ class SeoController extends BaseApiController
             ];
 
             $propertyModel = $this->model(->with(
+        ->with(['getByPage'])
+        ->with(['title'])
+        ->with(['getByPage'])
+        ->with(['title'])
         ->with(['getByPage'])['title'])'Property');
 
             // If it's a property page, fetch property details to override

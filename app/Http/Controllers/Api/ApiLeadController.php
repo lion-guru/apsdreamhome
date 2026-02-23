@@ -41,6 +41,10 @@ class ApiLeadController extends Controller
 
             // Get current user (assuming auth middleware sets this)
             $currentUser = $this->getCurrentUser(->with(
+        ->with(['updated_by', 'id', 'status', 'assigned_to', 'first_name', 'source', 'created_at', 'assignedTo', 'createdBy'])
+        ->with(['id'])
+        ->with(['updated_by', 'id', 'status', 'assigned_to', 'first_name', 'source', 'created_at', 'assignedTo', 'createdBy'])
+        ->with(['id'])
         ->with(['updated_by', 'id', 'status', 'assigned_to', 'first_name', 'source', 'created_at', 'assignedTo', 'createdBy'])['id']));
 
             // Build query using custom Model pattern

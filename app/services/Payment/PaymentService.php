@@ -60,6 +60,12 @@ class PaymentService
     {
         $gateway = $this->getGateway(->with(
         ->with(['query'])
+        ->with(['verifyPayment', 'verifyWebhook'])
+        ->with(['isConfigured', 'initiatePayment', 'refund'])
+        ->with(['query'])
+        ->with(['verifyPayment', 'verifyWebhook'])
+        ->with(['isConfigured', 'initiatePayment', 'refund'])
+        ->with(['query'])
         ->with(['verifyPayment', 'verifyWebhook'])['isConfigured', 'initiatePayment', 'refund'])$gateway);
         
         if (!$gateway || !$gateway->isConfigured()) {

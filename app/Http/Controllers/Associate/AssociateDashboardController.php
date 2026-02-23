@@ -44,6 +44,12 @@ class AssociateDashboardController
             return redirect()->route('associate.profile.setup')->with(
         ->with(['count', 'avg', 'take'])
         ->with(['id', 'status'])
+        ->with(['user_id'])
+        ->with(['count', 'avg', 'take'])
+        ->with(['id', 'status'])
+        ->with(['user_id'])
+        ->with(['count', 'avg', 'take'])
+        ->with(['id', 'status'])
         ->with(['user_id'])'error', 'Please complete your profile setup first.');
         }
 

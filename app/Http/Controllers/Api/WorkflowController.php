@@ -30,6 +30,10 @@ class WorkflowController extends BaseApiController
             }
 
             $workflowModel = $this->model(->with(
+        ->with(['set'])
+        ->with(['jsonError', 'getAllWorkflows'])
+        ->with(['set'])
+        ->with(['jsonError', 'getAllWorkflows'])
         ->with(['set'])['jsonError', 'getAllWorkflows'])'AIWorkflow');
             $workflowsRaw = $workflowModel->getAllWorkflows();
             $workflows = [];

@@ -1,12 +1,12 @@
 {
-    "timestamp": "2026-02-22 18:58:01",
+    "timestamp": "2026-02-23 18:10:53",
     "phase": "js_css_scan",
     "summary": {
-        "js_files_analyzed": 80,
+        "js_files_analyzed": 82,
         "css_files_analyzed": 100,
-        "total_issues": 489,
-        "syntax_errors": 489,
-        "optimization_suggestions": 505
+        "total_issues": 486,
+        "syntax_errors": 486,
+        "optimization_suggestions": 497
     },
     "issues": [],
     "syntax_errors": [
@@ -491,11 +491,8 @@
         "public\/css\/mobile-responsive.css: Missing semicolon at line 428",
         "public\/css\/mobile-responsive.css: Missing semicolon at line 429",
         "public\/css\/mobile-responsive.css: Missing semicolon at line 516",
-        "public\/css\/pages.css: Missing semicolon at line 101",
-        "public\/css\/pages.css: Missing semicolon at line 150",
-        "public\/css\/pages.css: Missing semicolon at line 383",
-        "public\/css\/pages.css: Missing semicolon at line 384",
-        "public\/css\/pages.css: Missing semicolon at line 393",
+        "public\/css\/pages.css: Missing semicolon at line 204",
+        "public\/css\/pages.css: Missing semicolon at line 243",
         "public\/css\/style.css: Missing semicolon at line 120",
         "public\/css\/style.css: Missing semicolon at line 264",
         "public\/css\/style.css: Unbalanced curly braces (missing 1)"
@@ -986,14 +983,6 @@
         "!important usage at line 519 in: public\/css\/mobile-responsive.css",
         "!important usage at line 520 in: public\/css\/mobile-responsive.css",
         "Many CSS classes in: public\/css\/mobile-responsive.css - Consider purging unused CSS",
-        "Large CSS file (1166 lines): public\/css\/pages.css - Consider splitting or using CSS modules",
-        "!important usage at line 395 in: public\/css\/pages.css",
-        "!important usage at line 396 in: public\/css\/pages.css",
-        "!important usage at line 397 in: public\/css\/pages.css",
-        "!important usage at line 404 in: public\/css\/pages.css",
-        "!important usage at line 1015 in: public\/css\/pages.css",
-        "!important usage at line 1019 in: public\/css\/pages.css",
-        "Many CSS classes in: public\/css\/pages.css - Consider purging unused CSS",
         "!important usage at line 172 in: public\/css\/style.css",
         "!important usage at line 307 in: public\/css\/style.css",
         "!important usage at line 311 in: public\/css\/style.css",

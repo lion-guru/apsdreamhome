@@ -31,6 +31,12 @@ class AgentDashboardController
             return redirect()->route('agent.profile.setup')->with(
         ->with(['amount'])
         ->with(['title'])
+        ->with(['name'])
+        ->with(['amount'])
+        ->with(['title'])
+        ->with(['name'])
+        ->with(['amount'])
+        ->with(['title'])
         ->with(['name'])'error', 'Please complete your agent profile setup first.');
         }
 

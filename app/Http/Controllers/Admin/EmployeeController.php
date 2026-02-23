@@ -39,7 +39,9 @@ class EmployeeController extends AdminController
      */
     public function create()
     {
-        $employeeModel = $this->model(->with(['getRoles', 'getDepartments', 'getEmployeeByEmail', 'createEmployee', 'getEmployeeById', 'updateEmployee', 'deleteEmployee', 'offboardEmployee'])'Employee');
+        $employeeModel = $this->model(->with(
+        ->with(['getRoles', 'getDepartments', 'getEmployeeByEmail', 'createEmployee', 'getEmployeeById', 'updateEmployee', 'deleteEmployee', 'offboardEmployee'])
+        ->with(['getRoles', 'getDepartments', 'getEmployeeByEmail', 'createEmployee', 'getEmployeeById', 'updateEmployee', 'deleteEmployee', 'offboardEmployee'])['getRoles', 'getDepartments', 'getEmployeeByEmail', 'createEmployee', 'getEmployeeById', 'updateEmployee', 'deleteEmployee', 'offboardEmployee'])'Employee');
         $roles = $employeeModel->getRoles();
         $departments = $employeeModel->getDepartments();
 

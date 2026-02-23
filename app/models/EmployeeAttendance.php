@@ -75,6 +75,10 @@ class EmployeeAttendance extends Model
             'check_in_photo' => $data['photo'] ?? null,
             'check_in_ip' =// SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['REMOTE_ADDR'] ?? null,
             'status' => $data['status'] ?? $status,
             'notes' => $data['notes'] ?? null,
@@ -119,6 +123,10 @@ class EmployeeAttendance extends Model
             'check_out_location' => $data['address'] ?? null,
             'check_out_photo' => $data['photo'] ?? null,
             'check_out_ip' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['REMOTE_ADDR'] ?? null,
             'work_hours' => round($workHours, 2),

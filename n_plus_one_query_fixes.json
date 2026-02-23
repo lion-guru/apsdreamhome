@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-22 20:06:20",
+    "timestamp": "2026-02-23 18:22:26",
     "phase": "n_plus_one_query_fix",
     "potential_n_plus_one_issues": [
         {
@@ -27967,6 +27967,76 @@
                 },
                 {
                     "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $propertyModel->searchProperties accessed without eager loading",
+                    "relationship": "searchProperties",
+                    "variable": "propertyModel",
+                    "line_context": "$propertyModel->searchProperties"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $property->id accessed without eager loading",
+                    "relationship": "id",
+                    "variable": "property",
+                    "line_context": "$property->id"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $db->query accessed without eager loading",
+                    "relationship": "query",
+                    "variable": "db",
+                    "line_context": "$db->query"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->render accessed without eager loading",
                     "relationship": "render",
                     "variable": "this",
@@ -28604,6 +28674,27 @@
             "file": "app\/Http\/Controllers\/Public\/PageController.php",
             "issues": [
                 {
+                    "type": "potential_n_plus_one",
+                    "description": "Potential N+1 query: accessing $faq->category in loop without eager loading",
+                    "relationship": "category",
+                    "collection_variable": "faqs",
+                    "line_context": "foreach ($faqs as $faq) { $faq->category }"
+                },
+                {
+                    "type": "potential_n_plus_one",
+                    "description": "Potential N+1 query: accessing $cat->category in loop without eager loading",
+                    "relationship": "category",
+                    "collection_variable": "categories_raw",
+                    "line_context": "foreach ($categories_raw as $cat) { $cat->category }"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
                     "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->data accessed without eager loading",
                     "relationship": "data",
@@ -28927,6 +29018,104 @@
                 },
                 {
                     "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->render accessed without eager loading",
                     "relationship": "render",
                     "variable": "this",
@@ -29011,10 +29200,10 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
+                    "description": "Potential lazy loading: $e->getMessage accessed without eager loading",
+                    "relationship": "getMessage",
+                    "variable": "e",
+                    "line_context": "$e->getMessage"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -29029,237 +29218,6 @@
                     "relationship": "data",
                     "variable": "this",
                     "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->db accessed without eager loading",
-                    "relationship": "db",
-                    "variable": "this",
-                    "line_context": "$this->db"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->db accessed without eager loading",
-                    "relationship": "db",
-                    "variable": "this",
-                    "line_context": "$this->db"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $conn->prepare accessed without eager loading",
-                    "relationship": "prepare",
-                    "variable": "conn",
-                    "line_context": "$conn->prepare"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->execute accessed without eager loading",
-                    "relationship": "execute",
-                    "variable": "stmt",
-                    "line_context": "$stmt->execute"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->get_result accessed without eager loading",
-                    "relationship": "get_result",
-                    "variable": "stmt",
-                    "line_context": "$stmt->get_result"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $result->fetch_assoc accessed without eager loading",
-                    "relationship": "fetch_assoc",
-                    "variable": "result",
-                    "line_context": "$result->fetch_assoc"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->close accessed without eager loading",
-                    "relationship": "close",
-                    "variable": "stmt",
-                    "line_context": "$stmt->close"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $conn->prepare accessed without eager loading",
-                    "relationship": "prepare",
-                    "variable": "conn",
-                    "line_context": "$conn->prepare"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->bind_param accessed without eager loading",
-                    "relationship": "bind_param",
-                    "variable": "stmt",
-                    "line_context": "$stmt->bind_param"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->execute accessed without eager loading",
-                    "relationship": "execute",
-                    "variable": "stmt",
-                    "line_context": "$stmt->execute"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->get_result accessed without eager loading",
-                    "relationship": "get_result",
-                    "variable": "stmt",
-                    "line_context": "$stmt->get_result"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->close accessed without eager loading",
-                    "relationship": "close",
-                    "variable": "stmt",
-                    "line_context": "$stmt->close"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $conn->prepare accessed without eager loading",
-                    "relationship": "prepare",
-                    "variable": "conn",
-                    "line_context": "$conn->prepare"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->bind_param accessed without eager loading",
-                    "relationship": "bind_param",
-                    "variable": "stmt",
-                    "line_context": "$stmt->bind_param"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->bind_param accessed without eager loading",
-                    "relationship": "bind_param",
-                    "variable": "stmt",
-                    "line_context": "$stmt->bind_param"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->execute accessed without eager loading",
-                    "relationship": "execute",
-                    "variable": "stmt",
-                    "line_context": "$stmt->execute"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->get_result accessed without eager loading",
-                    "relationship": "get_result",
-                    "variable": "stmt",
-                    "line_context": "$stmt->get_result"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $result->fetch_assoc accessed without eager loading",
-                    "relationship": "fetch_assoc",
-                    "variable": "result",
-                    "line_context": "$result->fetch_assoc"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $stmt->close accessed without eager loading",
-                    "relationship": "close",
-                    "variable": "stmt",
-                    "line_context": "$stmt->close"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -29267,6 +29225,83 @@
                     "relationship": "render",
                     "variable": "this",
                     "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $query->orderBy accessed without eager loading",
+                    "relationship": "orderBy",
+                    "variable": "query",
+                    "line_context": "$query->orderBy"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $faq->category accessed without eager loading",
+                    "relationship": "category",
+                    "variable": "faq",
+                    "line_context": "$faq->category"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -29305,10 +29340,360 @@
                 },
                 {
                     "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $e->getMessage accessed without eager loading",
+                    "relationship": "getMessage",
+                    "variable": "e",
+                    "line_context": "$e->getMessage"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->render accessed without eager loading",
                     "relationship": "render",
                     "variable": "this",
                     "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $cat->category accessed without eager loading",
+                    "relationship": "category",
+                    "variable": "cat",
+                    "line_context": "$cat->category"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $e->getMessage accessed without eager loading",
+                    "relationship": "getMessage",
+                    "variable": "e",
+                    "line_context": "$e->getMessage"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -29422,13 +29807,6 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->render accessed without eager loading",
-                    "relationship": "render",
-                    "variable": "this",
-                    "line_context": "$this->render"
-                },
-                {
-                    "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->data accessed without eager loading",
                     "relationship": "data",
                     "variable": "this",
@@ -29478,6 +29856,27 @@
                 },
                 {
                     "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->render accessed without eager loading",
                     "relationship": "render",
                     "variable": "this",
@@ -29485,10 +29884,52 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $db->fetch accessed without eager loading",
-                    "relationship": "fetch",
-                    "variable": "db",
-                    "line_context": "$db->fetch"
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->render accessed without eager loading",
+                    "relationship": "render",
+                    "variable": "this",
+                    "line_context": "$this->render"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -29499,10 +29940,17 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $db->fetchAll accessed without eager loading",
-                    "relationship": "fetchAll",
-                    "variable": "db",
-                    "line_context": "$db->fetchAll"
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->data accessed without eager loading",
+                    "relationship": "data",
+                    "variable": "this",
+                    "line_context": "$this->data"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -43310,6 +43758,711 @@
                     "relationship": "db",
                     "variable": "this",
                     "line_context": "$this->db"
+                }
+            ]
+        },
+        {
+            "file": "app\/Services\/Caching\/CacheManager.php",
+            "issues": [
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->config accessed without eager loading",
+                    "relationship": "config",
+                    "variable": "this",
+                    "line_context": "$this->config"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->initializeLayers accessed without eager loading",
+                    "relationship": "initializeLayers",
+                    "variable": "this",
+                    "line_context": "$this->initializeLayers"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->initializeRedis accessed without eager loading",
+                    "relationship": "initializeRedis",
+                    "variable": "this",
+                    "line_context": "$this->initializeRedis"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->unserializeValue accessed without eager loading",
+                    "relationship": "unserializeValue",
+                    "variable": "this",
+                    "line_context": "$this->unserializeValue"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->unserializeValue accessed without eager loading",
+                    "relationship": "unserializeValue",
+                    "variable": "this",
+                    "line_context": "$this->unserializeValue"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->unserializeValue accessed without eager loading",
+                    "relationship": "unserializeValue",
+                    "variable": "this",
+                    "line_context": "$this->unserializeValue"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->config accessed without eager loading",
+                    "relationship": "config",
+                    "variable": "this",
+                    "line_context": "$this->config"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->serializeValue accessed without eager loading",
+                    "relationship": "serializeValue",
+                    "variable": "this",
+                    "line_context": "$this->serializeValue"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->config accessed without eager loading",
+                    "relationship": "config",
+                    "variable": "this",
+                    "line_context": "$this->config"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->writeThrough accessed without eager loading",
+                    "relationship": "writeThrough",
+                    "variable": "this",
+                    "line_context": "$this->writeThrough"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->writeBehind accessed without eager loading",
+                    "relationship": "writeBehind",
+                    "variable": "this",
+                    "line_context": "$this->writeBehind"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->cacheAside accessed without eager loading",
+                    "relationship": "cacheAside",
+                    "variable": "this",
+                    "line_context": "$this->cacheAside"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->warmUserData accessed without eager loading",
+                    "relationship": "warmUserData",
+                    "variable": "this",
+                    "line_context": "$this->warmUserData"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->warmPropertyData accessed without eager loading",
+                    "relationship": "warmPropertyData",
+                    "variable": "this",
+                    "line_context": "$this->warmPropertyData"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->warmSystemConfig accessed without eager loading",
+                    "relationship": "warmSystemConfig",
+                    "variable": "this",
+                    "line_context": "$this->warmSystemConfig"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->warmLookupTables accessed without eager loading",
+                    "relationship": "warmLookupTables",
+                    "variable": "this",
+                    "line_context": "$this->warmLookupTables"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetch accessed without eager loading",
+                    "relationship": "fetch",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetch"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->execute accessed without eager loading",
+                    "relationship": "execute",
+                    "variable": "stmt",
+                    "line_context": "$stmt->execute"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->set accessed without eager loading",
+                    "relationship": "set",
+                    "variable": "this",
+                    "line_context": "$this->set"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->warmDashboardData accessed without eager loading",
+                    "relationship": "warmDashboardData",
+                    "variable": "this",
+                    "line_context": "$this->warmDashboardData"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->warmPropertyListingData accessed without eager loading",
+                    "relationship": "warmPropertyListingData",
+                    "variable": "this",
+                    "line_context": "$this->warmPropertyListingData"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->warmUserProfileData accessed without eager loading",
+                    "relationship": "warmUserProfileData",
+                    "variable": "this",
+                    "line_context": "$this->warmUserProfileData"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->layers accessed without eager loading",
+                    "relationship": "layers",
+                    "variable": "this",
+                    "line_context": "$this->layers"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->redis accessed without eager loading",
+                    "relationship": "redis",
+                    "variable": "this",
+                    "line_context": "$this->redis"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->redis accessed without eager loading",
+                    "relationship": "redis",
+                    "variable": "this",
+                    "line_context": "$this->redis"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $e->getMessage accessed without eager loading",
+                    "relationship": "getMessage",
+                    "variable": "e",
+                    "line_context": "$e->getMessage"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->layers accessed without eager loading",
+                    "relationship": "layers",
+                    "variable": "this",
+                    "line_context": "$this->layers"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->layers accessed without eager loading",
+                    "relationship": "layers",
+                    "variable": "this",
+                    "line_context": "$this->layers"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->config accessed without eager loading",
+                    "relationship": "config",
+                    "variable": "this",
+                    "line_context": "$this->config"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->redis accessed without eager loading",
+                    "relationship": "redis",
+                    "variable": "this",
+                    "line_context": "$this->redis"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->config accessed without eager loading",
+                    "relationship": "config",
+                    "variable": "this",
+                    "line_context": "$this->config"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->redis accessed without eager loading",
+                    "relationship": "redis",
+                    "variable": "this",
+                    "line_context": "$this->redis"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->layers accessed without eager loading",
+                    "relationship": "layers",
+                    "variable": "this",
+                    "line_context": "$this->layers"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->hasLayer accessed without eager loading",
+                    "relationship": "hasLayer",
+                    "variable": "this",
+                    "line_context": "$this->hasLayer"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->layers accessed without eager loading",
+                    "relationship": "layers",
+                    "variable": "this",
+                    "line_context": "$this->layers"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $logger->info accessed without eager loading",
+                    "relationship": "info",
+                    "variable": "logger",
+                    "line_context": "$logger->info"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->cacheDir accessed without eager loading",
+                    "relationship": "cacheDir",
+                    "variable": "this",
+                    "line_context": "$this->cacheDir"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->cacheDir accessed without eager loading",
+                    "relationship": "cacheDir",
+                    "variable": "this",
+                    "line_context": "$this->cacheDir"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->getFilePath accessed without eager loading",
+                    "relationship": "getFilePath",
+                    "variable": "this",
+                    "line_context": "$this->getFilePath"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->getFilePath accessed without eager loading",
+                    "relationship": "getFilePath",
+                    "variable": "this",
+                    "line_context": "$this->getFilePath"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->getFilePath accessed without eager loading",
+                    "relationship": "getFilePath",
+                    "variable": "this",
+                    "line_context": "$this->getFilePath"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->cacheDir accessed without eager loading",
+                    "relationship": "cacheDir",
+                    "variable": "this",
+                    "line_context": "$this->cacheDir"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->cacheDir accessed without eager loading",
+                    "relationship": "cacheDir",
+                    "variable": "this",
+                    "line_context": "$this->cacheDir"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->cacheDir accessed without eager loading",
+                    "relationship": "cacheDir",
+                    "variable": "this",
+                    "line_context": "$this->cacheDir"
                 }
             ]
         },
@@ -61556,6 +62709,415 @@
             ]
         },
         {
+            "file": "app\/Services\/Monitoring\/LoggingService.php",
+            "issues": [
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logFile accessed without eager loading",
+                    "relationship": "logFile",
+                    "variable": "this",
+                    "line_context": "$this->logFile"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logLevel accessed without eager loading",
+                    "relationship": "logLevel",
+                    "variable": "this",
+                    "line_context": "$this->logLevel"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logFile accessed without eager loading",
+                    "relationship": "logFile",
+                    "variable": "this",
+                    "line_context": "$this->logFile"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->log accessed without eager loading",
+                    "relationship": "log",
+                    "variable": "this",
+                    "line_context": "$this->log"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->info accessed without eager loading",
+                    "relationship": "info",
+                    "variable": "this",
+                    "line_context": "$this->info"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->info accessed without eager loading",
+                    "relationship": "info",
+                    "variable": "this",
+                    "line_context": "$this->info"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->debug accessed without eager loading",
+                    "relationship": "debug",
+                    "variable": "this",
+                    "line_context": "$this->debug"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->info accessed without eager loading",
+                    "relationship": "info",
+                    "variable": "this",
+                    "line_context": "$this->info"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->shouldLog accessed without eager loading",
+                    "relationship": "shouldLog",
+                    "variable": "this",
+                    "line_context": "$this->shouldLog"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->getRequestId accessed without eager loading",
+                    "relationship": "getRequestId",
+                    "variable": "this",
+                    "line_context": "$this->getRequestId"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logToFile accessed without eager loading",
+                    "relationship": "logToFile",
+                    "variable": "this",
+                    "line_context": "$this->logToFile"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logLevel accessed without eager loading",
+                    "relationship": "logLevel",
+                    "variable": "this",
+                    "line_context": "$this->logLevel"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logFile accessed without eager loading",
+                    "relationship": "logFile",
+                    "variable": "this",
+                    "line_context": "$this->logFile"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->execute accessed without eager loading",
+                    "relationship": "execute",
+                    "variable": "stmt",
+                    "line_context": "$stmt->execute"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logToFile accessed without eager loading",
+                    "relationship": "logToFile",
+                    "variable": "this",
+                    "line_context": "$this->logToFile"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logFile accessed without eager loading",
+                    "relationship": "logFile",
+                    "variable": "this",
+                    "line_context": "$this->logFile"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->info accessed without eager loading",
+                    "relationship": "info",
+                    "variable": "this",
+                    "line_context": "$this->info"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logFile accessed without eager loading",
+                    "relationship": "logFile",
+                    "variable": "this",
+                    "line_context": "$this->logFile"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->logFile accessed without eager loading",
+                    "relationship": "logFile",
+                    "variable": "this",
+                    "line_context": "$this->logFile"
+                }
+            ]
+        },
+        {
+            "file": "app\/Services\/Monitoring\/MonitoringService.php",
+            "issues": [
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->loggingService accessed without eager loading",
+                    "relationship": "loggingService",
+                    "variable": "this",
+                    "line_context": "$this->loggingService"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->getMemoryUsage accessed without eager loading",
+                    "relationship": "getMemoryUsage",
+                    "variable": "this",
+                    "line_context": "$this->getMemoryUsage"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->metrics accessed without eager loading",
+                    "relationship": "metrics",
+                    "variable": "this",
+                    "line_context": "$this->metrics"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->loggingService accessed without eager loading",
+                    "relationship": "loggingService",
+                    "variable": "this",
+                    "line_context": "$this->loggingService"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetch accessed without eager loading",
+                    "relationship": "fetch",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetch"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->execute accessed without eager loading",
+                    "relationship": "execute",
+                    "variable": "stmt",
+                    "line_context": "$stmt->execute"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->loggingService accessed without eager loading",
+                    "relationship": "loggingService",
+                    "variable": "this",
+                    "line_context": "$this->loggingService"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->loggingService accessed without eager loading",
+                    "relationship": "loggingService",
+                    "variable": "this",
+                    "line_context": "$this->loggingService"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->loggingService accessed without eager loading",
+                    "relationship": "loggingService",
+                    "variable": "this",
+                    "line_context": "$this->loggingService"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->collectSystemMetrics accessed without eager loading",
+                    "relationship": "collectSystemMetrics",
+                    "variable": "this",
+                    "line_context": "$this->collectSystemMetrics"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->calculateOverallHealth accessed without eager loading",
+                    "relationship": "calculateOverallHealth",
+                    "variable": "this",
+                    "line_context": "$this->calculateOverallHealth"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->loggingService accessed without eager loading",
+                    "relationship": "loggingService",
+                    "variable": "this",
+                    "line_context": "$this->loggingService"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->parseMemoryLimit accessed without eager loading",
+                    "relationship": "parseMemoryLimit",
+                    "variable": "this",
+                    "line_context": "$this->parseMemoryLimit"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->parseMemoryLimit accessed without eager loading",
+                    "relationship": "parseMemoryLimit",
+                    "variable": "this",
+                    "line_context": "$this->parseMemoryLimit"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->parseMemoryLimit accessed without eager loading",
+                    "relationship": "parseMemoryLimit",
+                    "variable": "this",
+                    "line_context": "$this->parseMemoryLimit"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->db accessed without eager loading",
+                    "relationship": "db",
+                    "variable": "this",
+                    "line_context": "$this->db"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->execute accessed without eager loading",
+                    "relationship": "execute",
+                    "variable": "stmt",
+                    "line_context": "$stmt->execute"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $stmt->fetchAll accessed without eager loading",
+                    "relationship": "fetchAll",
+                    "variable": "stmt",
+                    "line_context": "$stmt->fetchAll"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $this->loggingService accessed without eager loading",
+                    "relationship": "loggingService",
+                    "variable": "this",
+                    "line_context": "$this->loggingService"
+                }
+            ]
+        },
+        {
             "file": "app\/Services\/Payment\/PaymentService.php",
             "issues": [
                 {
@@ -62361,7 +63923,7 @@
     "fixes_applied": [
         {
             "file": "app\/Http\/Controllers\/Admin\/AdminController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "title",
                 "content",
@@ -62379,7 +63941,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/BookingController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "count"
             ],
@@ -62405,7 +63967,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/CareerController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "title",
                 "type",
@@ -62418,7 +63980,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/CustomerController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": {
                 "0": "searchCustomers",
                 "1": "getAllCustomers",
@@ -62433,7 +63995,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/EmployeeController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": {
                 "0": "getRoles",
                 "1": "getDepartments",
@@ -62448,7 +64010,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/MediaController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "upload"
             ],
@@ -62456,7 +64018,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/NewsController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "title",
                 "date",
@@ -62468,7 +64030,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/PaymentController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "searchCustomers"
             ],
@@ -62476,7 +64038,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/PropertyController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "fill",
                 "title"
@@ -62509,7 +64071,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/AnalyticsController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "getSummary",
                 "getPreviousSummary",
@@ -62520,7 +64082,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/ApiEnquiryController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "createEnquiry"
             ],
@@ -62528,7 +64090,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/ApiLeadController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "id"
             ],
@@ -62552,7 +64114,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/AuthController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "getRoles",
                 "getPermissions"
@@ -62561,7 +64123,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/FollowupController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "getVisitsForReminder",
                 "getVisitsForFeedback"
@@ -62644,7 +64206,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/MonitorApiController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "getSystemStatus",
                 "runHealthChecks"
@@ -62672,7 +64234,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/NotificationController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "getForUser"
             ],
@@ -62689,7 +64251,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/PropertyController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "searchProperties"
             ],
@@ -62707,7 +64269,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/ReviewController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "getPropertyReviews",
                 "getPropertyReviewSummary",
@@ -62721,7 +64283,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/SeoController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "title"
             ],
@@ -62737,7 +64299,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/SharingController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "getPropertyById"
             ],
@@ -62753,7 +64315,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/UserController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "list",
                 "countUsers"
@@ -62770,7 +64332,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/VisitController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "findOrCreate"
             ],
@@ -62786,7 +64348,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/WorkflowController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "jsonError",
                 "getAllWorkflows"
@@ -62829,8 +64391,32 @@
             "variable": "enrollments"
         },
         {
+            "file": "app\/Http\/Controllers\/Property\/PropertyController.php",
+            "type": "updated_eager_loading",
+            "relationships": [
+                "query"
+            ],
+            "variable": "db"
+        },
+        {
+            "file": "app\/Http\/Controllers\/Public\/PageController.php",
+            "type": "updated_eager_loading",
+            "relationships": [
+                "category"
+            ],
+            "variable": "categories_raw"
+        },
+        {
+            "file": "app\/Http\/Controllers\/Public\/PageController.php",
+            "type": "updated_eager_loading",
+            "relationships": [
+                "orderBy"
+            ],
+            "variable": "query"
+        },
+        {
             "file": "app\/Http\/Controllers\/SaaS\/ProfessionalDashboardController.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "count",
                 "all"
@@ -62863,7 +64449,7 @@
         },
         {
             "file": "app\/Services\/Communication\/WhatsAppService.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "query"
             ],
@@ -62871,7 +64457,7 @@
         },
         {
             "file": "app\/Services\/Legacy\/Auth.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "query",
                 "execute"
@@ -62880,7 +64466,7 @@
         },
         {
             "file": "app\/Services\/Legacy\/ConfigManager.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "validateConfigurations"
             ],
@@ -62888,7 +64474,7 @@
         },
         {
             "file": "app\/Services\/Legacy\/DependencyContainer.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": {
                 "0": "register",
                 "4": "resolve"
@@ -62897,7 +64483,7 @@
         },
         {
             "file": "app\/Services\/Payment\/PaymentService.php",
-            "type": "added_eager_loading",
+            "type": "updated_eager_loading",
             "relationships": [
                 "isConfigured",
                 "initiatePayment",
@@ -62925,8 +64511,8 @@
     ],
     "recommendations": [],
     "summary": {
-        "files_with_issues": 221,
-        "auto_fixes_applied": 32,
-        "manual_review_needed": 189
+        "files_with_issues": 224,
+        "auto_fixes_applied": 34,
+        "manual_review_needed": 190
     }
 }

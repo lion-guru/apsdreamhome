@@ -76,7 +76,7 @@ class CreateSystemMonitoringTables
         $this->db->exec("
             CREATE TABLE IF NOT EXISTS user_activity_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT,
+                user_id BIGINT UNSIGNED NULL,
                 action VARCHAR(255) NOT NULL,
                 ip_address VARCHAR(45),
                 user_agent TEXT,
@@ -87,7 +87,7 @@ class CreateSystemMonitoringTables
                 INDEX idx_action (action),
                 INDEX idx_timestamp (timestamp),
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
         ");
 
         // Create error_logs table for detailed error tracking

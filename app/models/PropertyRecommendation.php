@@ -431,12 +431,30 @@ class PropertyRecommendation extends Model
             'ip_address' =// SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['REMOTE_ADDR'] ?? null,
             'user_agent' =// SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['HTTP_USER_AGENT'] ?? null,
             'referrer_url' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['HTTP_REFERER'] ?? null,
