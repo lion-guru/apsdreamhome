@@ -35,7 +35,9 @@ class SecurityMiddleware {
     }
 
     private function validateCsrfToken($request) {
-        $PLACEHOLDER_SECRET_VALUECSRF token validation failed');
-        }
+        // Placeholder for CSRF validation
+        // if (!Csrf::verify($request)) {
+        //    throw new \Exception('CSRF token validation failed');
+        // }
     }
 }

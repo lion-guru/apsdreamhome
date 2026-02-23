@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application Configuration
  * General application settings and constants
@@ -13,7 +14,7 @@ $config['app'] = [
     'url' => getenv('APP_URL') ?: 'http://localhost/apsdreamhome',
     'timezone' => getenv('APP_TIMEZONE') ?: 'Asia/Kolkata',
     'locale' => getenv('APP_LOCALE') ?: 'en',
-    'PLACEHOLDER_SECRET_VALUE,
+    'key' => getenv('APP_KEY'),
     'cipher' => 'AES-256-CBC',
 ];
 
@@ -37,17 +38,24 @@ $config['cache'] = [
     'redis' => [
         'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
         'port' => getenv('REDIS_PORT') ?: 6379,
-        'PLACEHOLDER_SECRET_VALUEqueue'] = [
+        'password' => getenv('REDIS_PASSWORD') ?: null,
+    ]
+];
+
+$config['queue'] = [
     'default' => getenv('QUEUE_CONNECTION') ?: 'sync',
     'redis' => [
         'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
         'port' => getenv('REDIS_PORT') ?: 6379,
-        'PLACEHOLDER_SECRET_VALUEmail'] = [
+    ]
+];
+
+$config['mail'] = [
     'driver' => getenv('MAIL_DRIVER') ?: 'smtp',
     'host' => getenv('MAIL_HOST') ?: 'smtp.gmail.com',
     'port' => getenv('MAIL_PORT') ?: 587,
     'username' => getenv('MAIL_USERNAME') ?: 'apsdreamhomes44@gmail.com',
-    'PLACEHOLDER_SECRET_VALUEencryption' => getenv('MAIL_ENCRYPTION') ?: 'tls',
+    'encryption' => getenv('MAIL_ENCRYPTION') ?: 'tls',
     'from' => [
         'address' => getenv('MAIL_FROM_ADDRESS') ?: 'apsdreamhomes44@gmail.com',
         'name' => getenv('MAIL_FROM_NAME') ?: 'APS Dream Home',
@@ -118,5 +126,3 @@ $config['performance'] = [
 ];
 
 return $config;
-
-?>

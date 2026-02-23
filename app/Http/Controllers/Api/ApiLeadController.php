@@ -40,12 +40,7 @@ class ApiLeadController extends Controller
             $sortDirection = $_GET['sort_direction'] ?? 'desc';
 
             // Get current user (assuming auth middleware sets this)
-            $currentUser = $this->getCurrentUser(->with(
-        ->with(['updated_by', 'id', 'status', 'assigned_to', 'first_name', 'source', 'created_at', 'assignedTo', 'createdBy'])
-        ->with(['id'])
-        ->with(['updated_by', 'id', 'status', 'assigned_to', 'first_name', 'source', 'created_at', 'assignedTo', 'createdBy'])
-        ->with(['id'])
-        ->with(['updated_by', 'id', 'status', 'assigned_to', 'first_name', 'source', 'created_at', 'assignedTo', 'createdBy'])['id']));
+            $currentUser = $this->getCurrentUser();
 
             // Build query using custom Model pattern
             $leads = $this->buildLeadQuery($search, $status, $source, $assignedTo, $tag, $dateFrom, $dateTo, $sortField, $sortDirection, $currentUser);
@@ -799,7 +794,7 @@ class ApiLeadController extends Controller
     /**
      * Send JSON response
      */
-    private function jsonResponse($data, $statusCode = 200)
+    protected function jsonResponse($data, $statusCode = 200)
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');
@@ -810,7 +805,7 @@ class ApiLeadController extends Controller
     /**
      * Send JSON error response
      */
-    private function jsonError($message, $statusCode = 400)
+    protected function jsonError($message, $statusCode = 400)
     {
         $this->jsonResponse([
             'success' => false,

@@ -73,13 +73,7 @@ class EmployeeAttendance extends Model
             'check_in_longitude' => $data['longitude'] ?? null,
             'check_in_location' => $data['address'] ?? null,
             'check_in_photo' => $data['photo'] ?? null,
-            'check_in_ip' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
+            'check_in_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
             'status' => $data['status'] ?? $status,
             'notes' => $data['notes'] ?? null,
             'created_at' => $now->format('Y-m-d H:i:s')
@@ -122,13 +116,7 @@ class EmployeeAttendance extends Model
             'check_out_longitude' => $data['longitude'] ?? null,
             'check_out_location' => $data['address'] ?? null,
             'check_out_photo' => $data['photo'] ?? null,
-            'check_out_ip' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
+            'check_out_ip' => $_SERVER['REMOTE_ADDR'] ?? null,
             'work_hours' => round($workHours, 2),
             'overtime_hours' => round($overtimeHours, 2),
             'updated_at' => $now->format('Y-m-d H:i:s')
@@ -215,8 +203,8 @@ class EmployeeAttendance extends Model
             $summary['total_overtime'] += $record['overtime_hours'] ?? 0;
         }
 
-        $summary['avg_work_hours'] = $summary['total_days'] > 0 
-            ? round($summary['total_work_hours'] / $summary['total_days'], 2) 
+        $summary['avg_work_hours'] = $summary['total_days'] > 0
+            ? round($summary['total_work_hours'] / $summary['total_days'], 2)
             : 0;
 
         return $summary;
@@ -228,7 +216,7 @@ class EmployeeAttendance extends Model
     public function getTeamAttendance(int $departmentId = null): array
     {
         $db = Database::getInstance();
-        
+
         $sql = "SELECT e.id, e.name, e.department_id, e.employee_code,
                        a.check_in_time, a.check_out_time, a.status, a.work_hours
                 FROM employees e
@@ -249,7 +237,7 @@ class EmployeeAttendance extends Model
     public function markAbsentForMissing(): int
     {
         $db = Database::getInstance();
-        
+
         // Get all active employees who haven't checked in today
         $sql = "INSERT INTO employee_attendance (employee_id, check_in_time, status, created_at)
                 SELECT e.id, NOW(), 'absent', NOW()

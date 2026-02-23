@@ -219,7 +219,17 @@ class Payment extends Model
         // Bind parameters
         foreach ($params as $key => $value) {
             $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
-            $stmt->bindValue($PLACEHOLDER_SECRET_VALUE', $filters = [])
+            $stmt->bindValue(":$key", $value, $type);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get total count for pagination
+     */
+    public function getPaymentsCount($search, $filters = [])
     {
         $conditions = [];
         $params = [];
@@ -263,8 +273,7 @@ class Payment extends Model
         $stmt = $conn->prepare($sql);
 
         foreach ($params as $key => $value) {
-            if ($PLACEHOLDER_SECRET_VALUE:$key", $value);
-            }
+            $stmt->bindValue(":$key", $value);
         }
 
         $stmt->execute();

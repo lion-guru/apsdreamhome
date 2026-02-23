@@ -88,7 +88,12 @@ class LandPurchase extends Model
         $params = ['id' => $id];
 
         foreach ($data as $key => $value) {
-            if ($PLACEHOLDER_SECRET_VALUE{$PLACEHOLDER_SECRET_VALUEUPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
+            if ($key !== 'id') {
+                $setParts[] = "$key = :$key";
+                $params[$key] = $value;
+            }
+        }
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);

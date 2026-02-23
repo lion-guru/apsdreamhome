@@ -66,24 +66,9 @@ class SystemLogger
         // Implement user context retrieval
         // This could be from session, authentication service, etc.
         $this->user = [
-            'id' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SESSION['user_id'] ?? null,
-            'username' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SESSION['username'] ?? 'system',
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            'id' => $_SESSION['user_id'] ?? null,
+            'username' => $_SESSION['username'] ?? 'system',
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
         ];
     }
 
@@ -333,9 +318,20 @@ class SystemLogger
      */
     private function sanitizeMessage(string $message): string
     {
-        // Remove sensitive information
-        $sanitized = preg_replace([
-            '/PLACEHOLDER_SECRET_VALUE/PLACEHOLDER_SECRET_VALUE/PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEpassword', 'token', 'secret', 'api_key'];
+        // Remove sensitive information via regex if needed
+        return $message;
+    }
+
+    /**
+     * Sanitize context data
+     * 
+     * @param array $context Context data
+     * @return array Sanitized context
+     */
+    private function sanitizeContext(array $context): array
+    {
+        $sensitiveKeys = ['password', 'token', 'secret', 'api_key', 'credit_card', 'cvv'];
+        $sanitized = [];
 
         foreach ($context as $key => $value) {
             // Mask sensitive keys

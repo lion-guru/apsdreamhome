@@ -131,9 +131,7 @@ class PropertyController extends AdminController
      */
     public function show($id)
     {
-        $property = Property::find->with(
-        ->with(['fill', 'title'])
-        ->with(['fill', 'title'])['fill', 'title'])($id);
+        $property = Property::find($id);
 
         if (!$property) {
             $this->setFlash('error', $this->mlSupport ? $this->mlSupport->translate('Property not found!') : 'Property not found!');

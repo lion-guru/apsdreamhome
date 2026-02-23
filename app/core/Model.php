@@ -481,12 +481,15 @@ abstract class Model
     }
 
     /**
-     * Static where clause for query building
+     * Handle dynamic static method calls into the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
      */
-    public static function where($column, $operator = null, $value = null, $boolean = 'AND')
+    public static function __callStatic($method, $parameters)
     {
-        $instance = new static();
-        return $instance->where($column, $operator, $value, $boolean);
+        return (new static)->$method(...$parameters);
     }
 
     /**
@@ -498,7 +501,16 @@ abstract class Model
             if (is_numeric($key) && is_array($value)) {
                 $this->addWhere(...array_values($value));
             } else {
-                $this->addWhere($PLACEHOLDER_SECRET_VALUEASC')
+                $this->addWhere($key, '=', $value, $boolean);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Add an order by clause to the query
+     */
+    public function orderBy($column, $direction = 'ASC')
     {
         $this->orders[] = [
             'column' => $column,
@@ -636,11 +648,11 @@ abstract class Model
     /**
      * Handle dynamic static method calls
      */
-    public static function __callStatic($method, $parameters)
-    {
-        $instance = new static();
-        return $instance->$method(...$parameters);
-    }
+    // public static function __callStatic($method, $parameters)
+    // {
+    //     $instance = new static();
+    //     return $instance->$method(...$parameters);
+    // }
 
     /**
      * Get an attribute from the model

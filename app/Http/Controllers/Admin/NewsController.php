@@ -16,9 +16,7 @@ class NewsController extends AdminController
 
     public function index()
     {
-        $news = News::all->with(
-        ->with(['title', 'date', 'summary', 'content', 'image'])
-        ->with(['title', 'date', 'summary', 'content', 'image'])['title', 'date', 'summary', 'content', 'image'])();
+        $news = News::all();
         $this->render('admin/news/index', [
             'news' => $news,
             'title' => $this->mlSupport->translate('Manage News')

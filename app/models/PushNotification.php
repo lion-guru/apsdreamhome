@@ -109,7 +109,8 @@ class PushNotification extends Model
             'user_id' => $data['user_id'],
             'user_type' => $data['user_type'],
             'channel' => $data['channel'],
-            'template_PLACEHOLDER_SECRET_VALUEtitle' => $data['title'],
+            'template_key' => $data['template_key'] ?? null,
+            'title' => $data['title'],
             'message' => $data['message'],
             'data' => $data['data'] ? json_encode($data['data']) : null,
             'priority' => $data['priority'],
@@ -242,7 +243,6 @@ class PushNotification extends Model
 
                 // Update subscription last_used
                 $this->updateSubscriptionLastUsed($subscription['id']);
-
             } catch (\Exception $e) {
                 continue;
             }
@@ -317,38 +317,10 @@ class PushNotification extends Model
             'user_id' => $subscriptionData['user_id'],
             'user_type' => $subscriptionData['user_type'] ?? 'customer',
             'endpoint' => $subscriptionData['endpoint'],
-            'public_PLACEHOLDER_SECRET_VALUEauth_PLACEHOLDER_SECRET_VALUEuser_agent' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_USER_AGENT'] ?? null,
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
+            'public_key' => $subscriptionData['keys']['p256dh'] ?? null,
+            'auth_token' => $subscriptionData['keys']['auth'] ?? null,
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
             'device_type' => $this->detectDeviceType(),
             'browser' => $this->detectBrowser(),
             'is_active' => 1,
@@ -440,7 +412,17 @@ class PushNotification extends Model
     private function getNotificationTemplate(string $templateKey): ?array
     {
         return $this->query(
-            "SELECT * FROM notification_templates WHERE template_PLACEHOLDER_SECRET_VALUEgeneral'])) {
+            "SELECT * FROM notification_templates WHERE template_key = ?",
+            [$templateKey]
+        )->fetch();
+    }
+
+    /**
+     * Check if channel is enabled
+     */
+    private function isChannelEnabled(array $preferences, string $channel): bool
+    {
+        if (isset($preferences['general'])) {
             $generalPrefs = $preferences['general'];
             switch ($channel) {
                 case self::CHANNEL_EMAIL:
@@ -500,55 +482,10 @@ class PushNotification extends Model
             'reference_id' => json_decode($notification['data'], true)['reference_id'] ?? null,
             'sent_at' => date('Y-m-d H:i:s'),
             'device_info' => json_encode([
-                'user_agent' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_USER_AGENT'] ?? null,
-                'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null
             ]),
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null
         ];
 
         $db->query(
@@ -650,7 +587,8 @@ class PushNotification extends Model
             'campaign_name' => $campaignData['campaign_name'],
             'campaign_type' => $campaignData['campaign_type'] ?? 'marketing',
             'target_audience' => json_encode($campaignData['target_audience']),
-            'template_PLACEHOLDER_SECRET_VALUEscheduled_at' => $campaignData['scheduled_at'] ?? null,
+            'template_key' => $campaignData['template_key'] ?? null,
+            'scheduled_at' => $campaignData['scheduled_at'] ?? null,
             'status' => $campaignData['scheduled_at'] ? 'scheduled' : 'draft',
             'total_recipients' => $audienceCount,
             'channels' => json_encode($campaignData['channels']),

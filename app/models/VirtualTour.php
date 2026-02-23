@@ -270,20 +270,8 @@ class VirtualTour extends UnifiedModel
             'duration_seconds' => $eventData['duration_seconds'] ?? null,
             'device_type' => $this->detectDeviceType(),
             'browser_info' => json_encode($this->getBrowserInfo()),
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
-            'referrer_url' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_REFERER'] ?? null,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'referrer_url' => $_SERVER['HTTP_REFERER'] ?? null,
             'created_at' => date('Y-m-d H:i:s')
         ];
 

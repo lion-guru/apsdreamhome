@@ -37,7 +37,7 @@ class App
     /**
      * The router instance
      */
-    protected $router;
+    public $router;
 
     /**
      * The request instance
@@ -170,11 +170,13 @@ class App
 
         // Fallback: Load each PHP file in the config directory if global config is empty
         foreach (glob($configDir . '/*.php') as $configFile) {
-            $PLACEHOLDER_SECRET_VALUEbootstrap') { // Skip bootstrap as it's already loaded
-                $fileConfig = require $configFile;
-                if (is_array($fileConfig)) {
-                    $this->config[$key] = $fileConfig;
-                }
+            $key = basename($configFile, '.php');
+            if ($key === 'bootstrap') { // Skip bootstrap as it's already loaded
+                continue;
+            }
+            $fileConfig = require $configFile;
+            if (is_array($fileConfig)) {
+                $this->config[$key] = $fileConfig;
             }
         }
     }
@@ -438,7 +440,7 @@ class App
             return $this->config;
         }
 
-        $PLACEHOLDER_SECRET_VALUEget' . ucfirst($name);
+        $method = 'get' . ucfirst($name);
 
         if (method_exists($this, $method)) {
             return $this->$method();

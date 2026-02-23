@@ -67,7 +67,7 @@ class PropertyRecommendation extends Model
         }
 
         // Sort by combined score and return top recommendations
-        usort($combinedScores, function($a, $b) {
+        usort($combinedScores, function ($a, $b) {
             return $b['score'] <=> $a['score'];
         });
 
@@ -241,7 +241,7 @@ class PropertyRecommendation extends Model
             $rec['score'] = $factors > 0 ? $score / $factors : 0.5;
         }
 
-        usort($recommendations, function($a, $b) {
+        usort($recommendations, function ($a, $b) {
             return $b['score'] <=> $a['score'];
         });
 
@@ -335,9 +335,13 @@ class PropertyRecommendation extends Model
              ORDER BY (price_similarity + bedroom_similarity + location_similarity) DESC
              LIMIT ?",
             [
-                $sourceProperty['price'], $sourceProperty['price'],
-                $sourceProperty['bedrooms'], $sourceProperty['city'],
-                $propertyId, $sourceProperty['property_type_id'], $limit
+                $sourceProperty['price'],
+                $sourceProperty['price'],
+                $sourceProperty['bedrooms'],
+                $sourceProperty['city'],
+                $propertyId,
+                $sourceProperty['property_type_id'],
+                $limit
             ]
         )->fetchAll();
 
@@ -350,7 +354,7 @@ class PropertyRecommendation extends Model
             );
         }
 
-        usort($similar, function($a, $b) {
+        usort($similar, function ($a, $b) {
             return $b['similarity_score'] <=> $a['similarity_score'];
         });
 
@@ -402,9 +406,16 @@ class PropertyRecommendation extends Model
              VALUES (?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE rating = ?, review_text = ?, rating_criteria = ?, updated_at = ?",
             [
-                $ratingData['user_id'], $ratingData['property_id'], $ratingData['rating'],
-                $ratingData['review_text'], $ratingData['rating_criteria'], $ratingData['created_at'],
-                $rating, $review, json_encode($criteria), date('Y-m-d H:i:s')
+                $ratingData['user_id'],
+                $ratingData['property_id'],
+                $ratingData['rating'],
+                $ratingData['review_text'],
+                $ratingData['rating_criteria'],
+                $ratingData['created_at'],
+                $rating,
+                $review,
+                json_encode($criteria),
+                date('Y-m-d H:i:s')
             ]
         );
 
@@ -428,36 +439,9 @@ class PropertyRecommendation extends Model
             'action_type' => $action,
             'duration_seconds' => $metadata['duration'] ?? null,
             'device_type' => $this->detectDeviceType(),
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
-            'user_agent' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_USER_AGENT'] ?? null,
-            'referrer_url' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_REFERER'] ?? null,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            'referrer_url' => $_SERVER['HTTP_REFERER'] ?? null,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -488,7 +472,25 @@ class PropertyRecommendation extends Model
         $db = Database::getInstance();
 
         $settings = $db->query(
-            "SELECT setting_PLACEHOLDER_SECRET_VALUEsetting_PLACEHOLDER_SECRET_VALUEproperty_id');
+            "SELECT setting_key, setting_value FROM settings WHERE setting_group = 'recommendation_weights'"
+        )->fetchAll();
+
+        $weights = [];
+        foreach ($settings as $setting) {
+            $weights[$setting['setting_key']] = (float)$setting['setting_value'];
+        }
+
+        return $weights;
+    }
+
+    /**
+     * Get viewed properties
+     */
+    private function getViewedProperties(int $userId, array $propertyIds): array
+    {
+        if (empty($propertyIds)) return [];
+
+        $db = Database::getInstance();
         $placeholders = str_repeat('?,', count($propertyIds) - 1) . '?';
 
         $viewed = $db->query(
@@ -500,7 +502,7 @@ class PropertyRecommendation extends Model
 
         $viewedIds = array_column($viewed, 'property_id');
 
-        return array_filter($recommendations, function($rec) use ($viewedIds) {
+        return array_filter($recommendations, function ($rec) use ($viewedIds) {
             return !in_array($rec['property_id'], $viewedIds);
         });
     }
@@ -536,7 +538,7 @@ class PropertyRecommendation extends Model
                 $property['score'] = $scores[$property['property_id']] ?? 0.5;
             }
 
-            usort($properties, function($a, $b) {
+            usort($properties, function ($a, $b) {
                 return $b['score'] <=> $a['score'];
             });
 
@@ -567,7 +569,8 @@ class PropertyRecommendation extends Model
              (user_id, recommendation_type, property_ids, scores, cache_expires_at, created_at)
              VALUES (?, ?, ?, ?, ?, ?)",
             [
-                $userId, $type,
+                $userId,
+                $type,
                 json_encode($propertyIds),
                 json_encode($scores),
                 $expiresAt,
@@ -670,7 +673,7 @@ class PropertyRecommendation extends Model
             $rec['score'] = ($locationScores[$rec['city']] ?? 1) / 10; // Normalize score
         }
 
-        usort($recommendations, function($a, $b) {
+        usort($recommendations, function ($a, $b) {
             return $b['score'] <=> $a['score'];
         });
 

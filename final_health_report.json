@@ -1,31 +1,13 @@
 {
-    "timestamp": "2026-02-23 19:10:27",
+    "timestamp": "2026-02-23 21:13:51",
     "metrics": {
-        "files_scanned": 1048,
-        "issues_found": 112,
+        "files_scanned": 1047,
+        "issues_found": 32,
         "security_issues": 3,
-        "performance_issues": 28,
-        "syntax_errors": 81
+        "performance_issues": 29,
+        "syntax_errors": 0
     },
     "issues": [
-        {
-            "file": "app\/Core\/App.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \") { \/\/ Skip bootstrap as it\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/App.php on line 173\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/App.php"
-        },
-        {
-            "file": "app\/Core\/Auth.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: Unclosed '{' on line 162 does not match ')' in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Auth.php on line 166\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Auth.php"
-        },
-        {
-            "file": "app\/Core\/BackupManager.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/BackupManager.php on line 461\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/BackupManager.php"
-        },
         {
             "file": "app\/Core\/BackupManager.php",
             "type": "N+1 Query",
@@ -37,12 +19,6 @@
             "type": "N+1 Query",
             "severity": "MEDIUM",
             "message": "Potential N+1 query: accessing $backup->createDatabaseBackup inside loop without eager loading"
-        },
-        {
-            "file": "app\/Core\/Controller.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected variable \"$this\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Controller.php on line 264\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Controller.php"
         },
         {
             "file": "app\/Core\/Database\/Relations\/BelongsTo.php",
@@ -105,42 +81,6 @@
             "message": "Potential N+1 query: accessing $model->getAttribute inside loop without eager loading"
         },
         {
-            "file": "app\/Core\/EmailManager.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"template\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/EmailManager.php on line 125\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/EmailManager.php"
-        },
-        {
-            "file": "app\/Core\/Middleware.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Middleware.php on line 129\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Middleware.php"
-        },
-        {
-            "file": "app\/Core\/Model.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \")\r\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Model.php on line 504\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Model.php"
-        },
-        {
-            "file": "app\/Core\/PaymentGateway.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=>\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/PaymentGateway.php on line 16\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/PaymentGateway.php"
-        },
-        {
-            "file": "app\/Core\/PerformanceMonitor.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \" => \", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/PerformanceMonitor.php on line 52\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/PerformanceMonitor.php"
-        },
-        {
-            "file": "app\/Core\/RazorpayGateway.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: Unclosed '{' on line 15 does not match ')' in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/RazorpayGateway.php on line 16\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/RazorpayGateway.php"
-        },
-        {
             "file": "app\/Core\/Routing\/RouteCollection.php",
             "type": "N+1 Query",
             "severity": "MEDIUM",
@@ -153,106 +93,16 @@
             "message": "Potential N+1 query: accessing $route->uri inside loop without eager loading"
         },
         {
-            "file": "app\/Core\/SEOOptimizer.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"name\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/SEOOptimizer.php on line 47\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/SEOOptimizer.php"
-        },
-        {
-            "file": "app\/Core\/SecurityAudit.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=>\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/SecurityAudit.php on line 109\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/SecurityAudit.php"
-        },
-        {
             "file": "app\/Core\/Support\/Collection.php",
             "type": "N+1 Query",
             "severity": "MEDIUM",
             "message": "Potential N+1 query: accessing $values->all inside loop without eager loading"
         },
         {
-            "file": "app\/Core\/SystemMonitor.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/SystemMonitor.php on line 409\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/SystemMonitor.php"
-        },
-        {
-            "file": "app\/Helpers\/SecurityHelper.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \";\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Helpers\/SecurityHelper.php on line 114\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Helpers\/SecurityHelper.php"
-        },
-        {
-            "file": "app\/Helpers\/security.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: Unclosed '{' on line 14 does not match ')' in C:\\xampp\\htdocs\\apsdreamhome\/app\/Helpers\/security.php on line 15\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Helpers\/security.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/AdminController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/AdminController.php on line 589\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/AdminController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/BookingController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/BookingController.php on line 39\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/BookingController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/CareerController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/CareerController.php on line 77\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/CareerController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/CustomerController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/CustomerController.php on line 28\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/CustomerController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/EmployeeController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/EmployeeController.php on line 42\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/EmployeeController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/MediaController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/MediaController.php on line 20\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/MediaController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/NewsController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/NewsController.php on line 20\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/NewsController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/PaymentController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/PaymentController.php on line 256\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/PaymentController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Admin\/PropertyController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/PropertyController.php on line 135\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Admin\/PropertyController.php"
-        },
-        {
             "file": "app\/Http\/Controllers\/AdminController.php",
             "type": "Security Risk",
             "severity": "HIGH",
             "message": "Potential hardcoded secret detected"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Agent\/AgentDashboardController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Agent\/AgentDashboardController.php on line 32\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Agent\/AgentDashboardController.php"
         },
         {
             "file": "app\/Http\/Controllers\/Agent\/AgentDashboardController.php",
@@ -267,102 +117,6 @@
             "message": "Potential N+1 query: accessing $commission->amount inside loop without eager loading"
         },
         {
-            "file": "app\/Http\/Controllers\/Api\/AnalyticsController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/AnalyticsController.php on line 37\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/AnalyticsController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/ApiEnquiryController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/ApiEnquiryController.php on line 69\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/ApiEnquiryController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/ApiLeadController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/ApiLeadController.php on line 43\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/ApiLeadController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/AuthController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/AuthController.php on line 75\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/AuthController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/FollowupController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/FollowupController.php on line 58\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/FollowupController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/LeadController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/LeadController.php on line 199\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/LeadController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/MonitorApiController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/MonitorApiController.php on line 28\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/MonitorApiController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/NotificationController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/NotificationController.php on line 26\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/NotificationController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/PropertyController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/PropertyController.php on line 47\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/PropertyController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/ReviewController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/ReviewController.php on line 34\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/ReviewController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/SeoController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/SeoController.php on line 41\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/SeoController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/SharingController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/SharingController.php on line 32\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/SharingController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/UserController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/UserController.php on line 32\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/UserController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/VisitController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/VisitController.php on line 89\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/VisitController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Api\/WorkflowController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/WorkflowController.php on line 32\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Api\/WorkflowController.php"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Associate\/AssociateDashboardController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Associate\/AssociateDashboardController.php on line 45\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Associate\/AssociateDashboardController.php"
-        },
-        {
             "file": "app\/Http\/Controllers\/Associate\/AssociateDashboardController.php",
             "type": "N+1 Query",
             "severity": "MEDIUM",
@@ -373,12 +127,6 @@
             "type": "N+1 Query",
             "severity": "MEDIUM",
             "message": "Potential N+1 query: accessing $commission->amount inside loop without eager loading"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Employee\/EmployeeController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Fatal error: Cannot redeclare App\\Http\\Controllers\\Employee\\EmployeeController::attendance() in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Employee\/EmployeeController.php on line 610\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/Employee\/EmployeeController.php"
         },
         {
             "file": "app\/Http\/Controllers\/Public\/PageController.php",
@@ -399,12 +147,6 @@
             "message": "Potential hardcoded secret detected"
         },
         {
-            "file": "app\/Http\/Controllers\/SaaS\/ProfessionalDashboardController.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/SaaS\/ProfessionalDashboardController.php on line 61\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/SaaS\/ProfessionalDashboardController.php"
-        },
-        {
             "file": "app\/Http\/Controllers\/TeamManagementController.php",
             "type": "N+1 Query",
             "severity": "MEDIUM",
@@ -417,46 +159,10 @@
             "message": "Potential N+1 query: accessing $commission->associate_id inside loop without eager loading"
         },
         {
-            "file": "app\/Middleware\/SecurityMiddleware.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"token\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Middleware\/SecurityMiddleware.php on line 38\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Middleware\/SecurityMiddleware.php"
-        },
-        {
-            "file": "app\/Models\/AIChatbot.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \";\r\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/AIChatbot.php on line 52\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/AIChatbot.php"
-        },
-        {
-            "file": "app\/Models\/Associate.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"SET\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Associate.php on line 242\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Associate.php"
-        },
-        {
-            "file": "app\/Models\/CRMLead.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \",\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/CRMLead.php on line 537\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/CRMLead.php"
-        },
-        {
             "file": "app\/Models\/ConsolidatedProperty.php",
             "type": "N+1 Query",
             "severity": "MEDIUM",
             "message": "Potential N+1 query: accessing $p->status inside loop without eager loading"
-        },
-        {
-            "file": "app\/Models\/ConsolidatedUser.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: Unclosed '[' does not match ')' in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/ConsolidatedUser.php on line 197\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/ConsolidatedUser.php"
-        },
-        {
-            "file": "app\/Models\/CoreFunctions.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/CoreFunctions.php on line 1232\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/CoreFunctions.php"
         },
         {
             "file": "app\/Models\/CoreFunctions.php",
@@ -465,148 +171,16 @@
             "message": "Potential N+1 query: accessing $file->isFile inside loop without eager loading"
         },
         {
-            "file": "app\/Models\/Database.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \" => $host,\r\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Database.php on line 26\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Database.php"
-        },
-        {
             "file": "app\/Models\/EmailVerification.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: Unclosed '{' on line 30 does not match ')' in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/EmailVerification.php on line 32\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/EmailVerification.php"
-        },
-        {
-            "file": "app\/Models\/Employee.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"active\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Employee.php on line 140\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Employee.php"
-        },
-        {
-            "file": "app\/Models\/EmployeeAttendance.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/EmployeeAttendance.php on line 76\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/EmployeeAttendance.php"
-        },
-        {
-            "file": "app\/Models\/Farmer.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected double-quote mark in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Farmer.php on line 104\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Farmer.php"
-        },
-        {
-            "file": "app\/Models\/FarmerLandHolding.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"SET\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/FarmerLandHolding.php on line 81\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/FarmerLandHolding.php"
-        },
-        {
-            "file": "app\/Models\/LandPurchase.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"SET\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/LandPurchase.php on line 91\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/LandPurchase.php"
-        },
-        {
-            "file": "app\/Models\/Payment.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \", $filters = [])\r\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Payment.php on line 234\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Payment.php"
-        },
-        {
-            "file": "app\/Models\/Project.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \"] = $id;\r\", expecting \"->\" or \"?->\" or \"{\" or \"[\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Project.php on line 222\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Project.php"
-        },
-        {
-            "file": "app\/Models\/PropertyComparison.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/PropertyComparison.php on line 33\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/PropertyComparison.php"
-        },
-        {
-            "file": "app\/Models\/PropertyRecommendation.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/PropertyRecommendation.php on line 431\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/PropertyRecommendation.php"
-        },
-        {
-            "file": "app\/Models\/PushNotification.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/PushNotification.php on line 320\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/PushNotification.php"
-        },
-        {
-            "file": "app\/Models\/SystemAnalytics.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected string content \"\", expecting \"-\" or identifier or variable or number in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/SystemAnalytics.php on line 367\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/SystemAnalytics.php"
-        },
-        {
-            "file": "app\/Models\/Training.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected single-quoted string \"]])\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Training.php on line 121\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/Training.php"
-        },
-        {
-            "file": "app\/Models\/UserPermission.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=>\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/UserPermission.php on line 22\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/UserPermission.php"
-        },
-        {
-            "file": "app\/Models\/VirtualTour.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/VirtualTour.php on line 273\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Models\/VirtualTour.php"
+            "type": "N+1 Query",
+            "severity": "MEDIUM",
+            "message": "Potential N+1 query: accessing $verification->expires_at inside loop without eager loading"
         },
         {
             "file": "app\/Services\/AdminService.php",
             "type": "N+1 Query",
             "severity": "MEDIUM",
             "message": "Potential N+1 query: accessing $file->seek inside loop without eager loading"
-        },
-        {
-            "file": "app\/Services\/Communication\/WhatsAppService.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Communication\/WhatsAppService.php on line 357\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Communication\/WhatsAppService.php"
-        },
-        {
-            "file": "app\/Services\/ConfigurationManager.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected string content \", $key);\r\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/ConfigurationManager.php on line 79\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/ConfigurationManager.php"
-        },
-        {
-            "file": "app\/Services\/EmailService.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"Email\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/EmailService.php on line 47\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/EmailService.php"
-        },
-        {
-            "file": "app\/Services\/GeminiService.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=>\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/GeminiService.php on line 27\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/GeminiService.php"
-        },
-        {
-            "file": "app\/Services\/Legacy\/Auth.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Legacy\/Auth.php on line 260\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Legacy\/Auth.php"
-        },
-        {
-            "file": "app\/Services\/Legacy\/ConfigManager.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Legacy\/ConfigManager.php on line 399\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Legacy\/ConfigManager.php"
-        },
-        {
-            "file": "app\/Services\/Legacy\/DependencyContainer.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Legacy\/DependencyContainer.php on line 80\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Legacy\/DependencyContainer.php"
         },
         {
             "file": "app\/Services\/Legacy\/PerformanceMonitor.php",
@@ -625,60 +199,6 @@
             "type": "N+1 Query",
             "severity": "MEDIUM",
             "message": "Potential N+1 query: accessing $param->getName inside loop without eager loading"
-        },
-        {
-            "file": "app\/Services\/MlmSettings.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: Unclosed '(' does not match ']' in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/MlmSettings.php on line 22\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/MlmSettings.php"
-        },
-        {
-            "file": "app\/Services\/Payment\/PaymentService.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"->\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Payment\/PaymentService.php on line 61\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/Payment\/PaymentService.php"
-        },
-        {
-            "file": "app\/Services\/SystemLogger.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \"=\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/SystemLogger.php on line 69\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/SystemLogger.php"
-        },
-        {
-            "file": "app\/Services\/UserService.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"SELECT\", expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/UserService.php on line 174\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/Services\/UserService.php"
-        },
-        {
-            "file": "app\/config\/env.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected double-quote mark, expecting \")\" in C:\\xampp\\htdocs\\apsdreamhome\/app\/config\/env.php on line 15\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/app\/config\/env.php"
-        },
-        {
-            "file": "config\/application.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected identifier \"cipher\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/config\/application.php on line 17\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/config\/application.php"
-        },
-        {
-            "file": "config\/deployment.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected token \";\", expecting \"]\" in C:\\xampp\\htdocs\\apsdreamhome\/config\/deployment.php on line 133\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/config\/deployment.php"
-        },
-        {
-            "file": "config\/google_oauth_config.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected string content \"\", expecting \"-\" or identifier or variable or number in C:\\xampp\\htdocs\\apsdreamhome\/config\/google_oauth_config.php on line 32\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/config\/google_oauth_config.php"
-        },
-        {
-            "file": "config\/google_oauth_config_associate.php",
-            "type": "Syntax Error",
-            "severity": "CRITICAL",
-            "message": "Parse error: syntax error, unexpected string content \"\", expecting \"-\" or identifier or variable or number in C:\\xampp\\htdocs\\apsdreamhome\/config\/google_oauth_config_associate.php on line 19\nErrors parsing C:\\xampp\\htdocs\\apsdreamhome\/config\/google_oauth_config_associate.php"
         }
     ]
 }

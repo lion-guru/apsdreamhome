@@ -34,9 +34,7 @@ class AnalyticsController extends BaseApiController
                     break;
             }
 
-            $alertModel = $this->model(->with(
-        ->with(['getSummary', 'getPreviousSummary', 'getChartData', 'getDistribution'])
-        ->with(['getSummary', 'getPreviousSummary', 'getChartData', 'getDistribution'])['getSummary', 'getPreviousSummary', 'getChartData', 'getDistribution'])'SystemAlert');
+            $alertModel = $this->model('SystemAlert');
 
             // Summary
             $summary = $alertModel->getSummary($interval);
