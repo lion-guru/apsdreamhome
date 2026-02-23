@@ -12,11 +12,12 @@
     
     <!-- CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/mobile-responsive.css') }}" rel="stylesheet">
     @stack('styles')
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
-    @include('partials.header')
+    @include('components.mobile-header')
 
     <!-- Main Content -->
     <main class="min-h-screen">

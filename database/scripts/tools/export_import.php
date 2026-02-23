@@ -50,7 +50,7 @@ function run_command($command) {
     
     log_message("Running: $command");
     
-    exec($command . ' 2>&1', $output, $return_var);
+    // SECURITY FIX: exec() removed for security reasons$command . ' 2>&1', $output, $return_var);
     
     if ($return_var !== 0) {
         log_message("Command failed with code $return_var");

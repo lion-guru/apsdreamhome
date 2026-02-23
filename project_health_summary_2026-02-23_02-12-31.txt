@@ -1,0 +1,15 @@
+
+APS DREAM HOME - PROJECT HEALTH SUMMARY
+======================================
+
+Overall Score: 42.2/100
+Security Score: 0/100
+Performance Score: 0/100
+Maintainability Score: 63.3/100
+
+Total Files Scanned: 45926
+Critical Issues: 3
+Total Issues: 670
+Total Warnings: 4799
+
+Assessment Date: 2026-02-22 22:38:23

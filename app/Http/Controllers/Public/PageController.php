@@ -16,6 +16,7 @@ use App\Models\Gallery;
 use App\Models\Faq;
 use App\Models\Feedback;
 use App\Models\ResellProperty;
+use App\Models\Download;
 
 class PageController extends BaseController
 {
@@ -24,6 +25,92 @@ class PageController extends BaseController
         parent::__construct();
         // Initialize data array for view rendering
         $this->data = [];
+    }
+
+    /**
+     * Display Company Projects page
+     */
+    public function companyProjects()
+    {
+        $this->data['page_title'] = 'Company Projects & Portfolio - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Projects', 'url' => BASE_URL . 'company-projects']
+        ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        // Add extra JS
+        $this->data['extra_js'] = '
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const searchInput = document.getElementById("searchInput");
+                    if(searchInput) {
+                        searchInput.addEventListener("keyup", function() {
+                            let searchText = this.value.toLowerCase();
+                            let accordionItems = document.querySelectorAll(".accordion-item");
+                            
+                            accordionItems.forEach(item => {
+                                let question = item.querySelector(".accordion-button").textContent.toLowerCase();
+                                let answer = item.querySelector(".accordion-body").textContent.toLowerCase();
+                                
+                                if (question.includes(searchText) || answer.includes(searchText)) {
+                                    item.style.display = "block";
+                                } else {
+                                    item.style.display = "none";
+                                }
+                            });
+                        });
+                    }
+                });
+            </script>
+        ';
+
+        // Get company projects from database
+        $company_projects = [];
+        try {
+            $projects_query = "
+                SELECT
+                    cp.*,
+                    p.title as property_title,
+                    p.price,
+                    p.image_url,
+                    p.location,
+                    p.type,
+                    COUNT(cp.id) as project_count
+                FROM company_projects cp
+                LEFT JOIN properties p ON cp.property_id = p.id
+                GROUP BY cp.id
+                ORDER BY cp.created_at DESC
+            ";
+            $stmt = $this->db->prepare($projects_query);
+            $stmt->execute();
+            $company_projects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log('Company projects fetch error: ' . $e->getMessage());
+        }
+
+        // Get project statistics
+        $project_stats = [
+            'total' => count($company_projects),
+            'completed' => 0,
+            'ongoing' => 0,
+            'upcoming' => 0,
+            'total_value' => 0
+        ];
+
+        foreach ($company_projects as $project) {
+            if ($project['status'] == 'completed') $project_stats['completed']++;
+            if ($project['status'] == 'ongoing') $project_stats['ongoing']++;
+            if ($project['status'] == 'upcoming') $project_stats['upcoming']++;
+            $project_stats['total_value'] += $project['budget'] ?? 0;
+        }
+
+        $this->data['company_projects'] = $company_projects;
+        $this->data['project_stats'] = $project_stats;
+
+        $this->render('pages/company_projects');
     }
 
     /**
@@ -105,6 +192,7 @@ class PageController extends BaseController
     {
         // Set page data
         $this->data['page_title'] = 'Our Services - ' . APP_NAME;
+        $this->data['page_description'] = 'Discover our comprehensive range of real estate services designed to help you find your perfect property';
         $this->data['breadcrumbs'] = [
             ['title' => 'Home', 'url' => BASE_URL],
             ['title' => 'Services', 'url' => BASE_URL . 'services']
@@ -112,6 +200,9 @@ class PageController extends BaseController
 
         // Fetch services using the Model
         $this->data['services'] = Service::query()->where('status', 'active')->get();
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
 
         // Render the services page
         $this->render('pages/services');
@@ -124,6 +215,7 @@ class PageController extends BaseController
     {
         // Set page data
         $this->data['page_title'] = 'Our Team - ' . APP_NAME;
+        $this->data['page_description'] = 'Meet the experienced team behind APS Dream Home. Our real estate professionals are dedicated to helping you find your perfect property.';
         $this->data['breadcrumbs'] = [
             ['title' => 'Home', 'url' => BASE_URL],
             ['title' => 'Team', 'url' => BASE_URL . 'team']
@@ -131,6 +223,9 @@ class PageController extends BaseController
 
         // Fetch team members
         $this->data['team_members'] = TeamMember::query()->where('status', 'active')->get();
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
 
         // Render the team page
         $this->render('pages/team');
@@ -147,16 +242,25 @@ class PageController extends BaseController
             ['title' => 'Gallery', 'url' => BASE_URL . 'gallery']
         ];
 
+        // Add extra CSS
+        $this->data['extra_css'] = '
+            <link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+        ';
+
+        // Add extra JS
+        $this->data['extra_js'] = '<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>';
+
         try {
-            // Fetch gallery categories
+            // Get gallery categories
             $this->data['categories'] = Gallery::query()
                 ->select('category')
                 ->distinct()
                 ->where('status', 'active')
-                ->orderBy('category')
+                ->orderBy('category', 'ASC')
                 ->get();
 
-            // Fetch gallery images
+            // Get gallery images
             $query = Gallery::query()->where('status', 'active');
 
             if (isset($_GET['category']) && $_GET['category'] !== 'all') {
@@ -185,8 +289,14 @@ class PageController extends BaseController
             ['title' => 'Careers', 'url' => BASE_URL . 'careers']
         ];
 
-        // Fetch active careers using the Model
-        $this->data['careers'] = Career::query()->where('status', 'active')->get();
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        try {
+            $this->data['jobs'] = Career::query()->where('status', 'active')->orderBy('created_at', 'DESC')->get();
+        } catch (\Exception $e) {
+            $this->data['jobs'] = [];
+        }
 
         $this->render('pages/careers');
     }
@@ -196,20 +306,22 @@ class PageController extends BaseController
      */
     public function news()
     {
-        $this->data['page_title'] = 'News & Updates - ' . APP_NAME;
+        $this->data['page_title'] = 'News - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Home', 'url' => BASE_URL],
             ['title' => 'News', 'url' => BASE_URL . 'news']
         ];
 
-        // Pagination and Filtering parameters
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $category = isset($_GET['category']) ? $_GET['category'] : 'all';
+        $category = isset($_GET['category']) ? $_GET['category'] : null;
         $limit = 9;
         $offset = ($page - 1) * $limit;
 
         // Get data from Model
-        $this->data['news_items'] = News::getPublished($limit, $offset, $category);
+        $this->data['news'] = News::getPublished($limit, $offset, $category);
         $this->data['categories'] = News::getCategories();
         $total_items = News::countPublished($category);
 
@@ -235,6 +347,9 @@ class PageController extends BaseController
             ['title' => 'Testimonials', 'url' => BASE_URL . 'testimonials']
         ];
 
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         try {
             $this->data['testimonials'] = Feedback::query()
                 ->where('status', 'approved')
@@ -253,16 +368,37 @@ class PageController extends BaseController
     public function blog()
     {
         $this->data['page_title'] = 'Blog - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Blog', 'url' => BASE_URL . 'blog']
+        ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        try {
+            // Get blog posts
+            $this->data['blog_posts'] = News::getPublished();
+
+            // Get categories for filter
+            $this->data['categories'] = News::getCategories();
+        } catch (\Exception $e) {
+            error_log('Blog page database error: ' . $e->getMessage());
+            $this->data['blog_posts'] = [];
+            $this->data['categories'] = [];
+        }
+
         $this->render('pages/blog');
     }
 
     /**
      * Display individual Blog post
      */
-    public function blogShow($slug = null)
+    public function blogShow($slug)
     {
-        $this->data['page_title'] = 'Blog Article - ' . APP_NAME;
-        $this->data['slug'] = $slug;
+        $this->data['page_title'] = 'Blog Post - ' . APP_NAME;
+        // Logic to fetch post by slug would go here
+
         $this->render('pages/blog_detail');
     }
 
@@ -271,34 +407,37 @@ class PageController extends BaseController
      */
     public function faq()
     {
-        $this->data['page_title'] = 'FAQs - ' . APP_NAME;
+        $this->data['page_title'] = 'FAQ - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Home', 'url' => BASE_URL],
             ['title' => 'FAQ', 'url' => BASE_URL . 'faq']
         ];
 
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         try {
-            // Fetch categories
+            // Get FAQ categories
             $this->data['categories'] = Faq::query()
                 ->select('category')
                 ->distinct()
                 ->where('status', 'active')
-                ->orderBy('category')
+                ->orderBy('category', 'ASC')
                 ->get();
 
-            // Fetch FAQs
+            // Get FAQs
             $query = Faq::query()->where('status', 'active');
 
             if (isset($_GET['category']) && $_GET['category'] !== 'all') {
                 $query->where('category', $_GET['category']);
             }
 
-            $faqs = $query->orderBy('display_order', 'DESC')->get();
+            $faqs = $query->orderBy('category', 'ASC')->orderBy('priority', 'ASC')->get();
 
             // Group FAQs
             $grouped_faqs = [];
             foreach ($faqs as $faq) {
-                // Handle both object and array access
+                // Handle both object and array
                 $category = is_object($faq) ? $faq->category : $faq['category'];
                 $grouped_faqs[$category][] = $faq;
             }
@@ -322,17 +461,19 @@ class PageController extends BaseController
         $this->data['page_title'] = 'Resell Properties - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Home', 'url' => BASE_URL],
-            ['title' => 'Resell Properties', 'url' => BASE_URL . '/resell']
+            ['title' => 'Resell Properties', 'url' => BASE_URL . 'resell']
         ];
 
-        // Get filter parameters from request
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        // Get filters
         $filters = [
             'search' => $_GET['search'] ?? '',
             'city' => $_GET['city'] ?? '',
             'type' => $_GET['type'] ?? '',
             'min_price' => $_GET['min_price'] ?? '',
-            'max_price' => $_GET['max_price'] ?? '',
-            'bedrooms' => $_GET['bedrooms'] ?? ''
+            'max_price' => $_GET['max_price'] ?? ''
         ];
 
         try {
@@ -342,13 +483,12 @@ class PageController extends BaseController
             // Fetch filter options
             $this->data['cities'] = ResellProperty::getDistinct('city', ['status' => 'approved']);
             $this->data['property_types'] = ResellProperty::getDistinct('property_type', ['status' => 'approved']);
-            $this->data['price_range'] = ResellProperty::getPriceRange('approved');
+            $this->data['price_range'] = ResellProperty::getPriceRange(['status' => 'approved']);
         } catch (\Exception $e) {
             error_log("Error loading resell properties: " . $e->getMessage());
             $this->data['properties'] = [];
             $this->data['cities'] = [];
             $this->data['property_types'] = [];
-            $this->data['price_range'] = ['min_price' => 0, 'max_price' => 0];
         }
 
         // Pass filters back to view
@@ -362,36 +502,33 @@ class PageController extends BaseController
      */
     public function legalServices()
     {
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         $this->data['page_title'] = 'Legal Services - ' . APP_NAME;
         $this->data['breadcrumbs'] = [
             ['title' => 'Home', 'url' => BASE_URL],
-            ['title' => 'Legal Services', 'url' => BASE_URL . '/legal-services']
+            ['title' => 'Legal Services', 'url' => BASE_URL . 'legal-services']
         ];
 
         try {
             // Get legal services
-            $stmt = $this->db->prepare("SELECT * FROM legal_services WHERE status = 'active' ORDER BY display_order ASC");
-            $stmt->execute();
-            $this->data['services'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $this->data['services'] = Service::query()->where('type', 'legal')->where('status', 'active')->get();
 
             // Get legal team members
-            $stmt = $this->db->prepare("SELECT * FROM team_members WHERE department = 'legal' AND status = 'active' ORDER BY display_order ASC LIMIT 4");
-            $stmt->execute();
-            $this->data['lawyers'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $this->data['lawyers'] = TeamMember::query()->where('department', 'legal')->where('status', 'active')->get();
 
             // Get legal services FAQs
-            $stmt = $this->db->prepare("SELECT * FROM faqs WHERE category = 'legal_services' AND status = 'active' ORDER BY display_order ASC LIMIT 6");
-            $stmt->execute();
-            $this->data['faqs'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $this->data['faqs'] = Faq::query()->where('category', 'legal')->where('status', 'active')->get();
         } catch (\Exception $e) {
             $this->data['services'] = [];
             $this->data['lawyers'] = [];
             $this->data['faqs'] = [];
-            error_log("Error loading legal services: " . $e->getMessage());
         }
 
         $this->render('pages/legal_services');
     }
+
 
     /**
      * Display Downloads page
@@ -399,6 +536,55 @@ class PageController extends BaseController
     public function downloads()
     {
         $this->data['page_title'] = 'Downloads - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Downloads', 'url' => BASE_URL . 'downloads']
+        ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
+        // Initialize data
+        $this->data['categories'] = [];
+        $this->data['downloads'] = [];
+        $this->data['pagination'] = [
+            'current_page' => 1,
+            'total_pages' => 1
+        ];
+
+        try {
+            // Fetch categories
+            $categories_raw = Download::getCategories();
+            foreach ($categories_raw as $cat) {
+                // Handle both object and array
+                $category_name = is_object($cat) ? $cat->category : $cat['category'];
+                if ($category_name) {
+                    $this->data['categories'][] = $category_name;
+                }
+            }
+
+            // Pagination logic
+            $items_per_page = 12;
+            $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            if ($current_page < 1) $current_page = 1;
+
+            $current_category = isset($_GET['category']) ? $_GET['category'] : 'all';
+
+            // Count total items
+            $total_items = Download::countActive($current_category);
+            $total_pages = ceil($total_items / $items_per_page);
+            if ($total_pages < 1) $total_pages = 1;
+
+            $this->data['pagination']['current_page'] = $current_page;
+            $this->data['pagination']['total_pages'] = $total_pages;
+
+            // Fetch downloads
+            $offset = ($current_page - 1) * $items_per_page;
+            $this->data['downloads'] = Download::getActive($current_category, $items_per_page, $offset);
+        } catch (\Exception $e) {
+            error_log("Error fetching downloads: " . $e->getMessage());
+        }
+
         $this->render('pages/downloads');
     }
 
@@ -408,6 +594,14 @@ class PageController extends BaseController
     public function sitemap()
     {
         $this->data['page_title'] = 'Sitemap - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Sitemap', 'url' => BASE_URL . 'sitemap']
+        ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         $this->render('pages/sitemap');
     }
 
@@ -417,6 +611,14 @@ class PageController extends BaseController
     public function privacy()
     {
         $this->data['page_title'] = 'Privacy Policy - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Privacy Policy', 'url' => BASE_URL . 'privacy-policy']
+        ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         $this->render('pages/privacy_policy');
     }
 
@@ -426,7 +628,105 @@ class PageController extends BaseController
     public function terms()
     {
         $this->data['page_title'] = 'Terms of Service - ' . APP_NAME;
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Terms of Service', 'url' => BASE_URL . 'terms-of-service']
+        ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+
         $this->render('pages/terms-of-service');
+    }
+
+    /**
+     * Display Colonies page
+     */
+    public function colonies()
+    {
+        $this->data['page_title'] = 'Our Colonies - ' . APP_NAME;
+        $this->data['page_description'] = 'Explore APS Dream Homes premium colonies and real estate projects in Gorakhpur, Lucknow and across Uttar Pradesh';
+
+        $this->data['breadcrumbs'] = [
+            ['title' => 'Home', 'url' => BASE_URL],
+            ['title' => 'Colonies', 'url' => BASE_URL . 'colonies']
+        ];
+
+        // Add extra CSS
+        $this->data['extra_css'] = '
+            <link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+        ';
+
+        // Add extra JS
+        $this->data['extra_js'] = '
+            <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+            <script src="' . get_asset_url('js/colonies.js') . '"></script>
+        ';
+
+        // Sample colony data (replace with database queries later)
+        $colonies = [
+            [
+                'id' => 1,
+                'name' => 'APS Dream City Gorakhpur',
+                'location' => 'Gorakhpur, Uttar Pradesh',
+                'total_area' => '50 Acres',
+                'developed_area' => '35 Acres',
+                'total_plots' => 450,
+                'available_plots' => 120,
+                'starting_price' => '₹15,00,000',
+                'completion_status' => 'Phase 2 Ongoing',
+                'amenities' => ['Club House', 'Swimming Pool', 'Gym', 'Children Play Area', '24/7 Security', 'Power Backup'],
+                'image' => get_asset_url('images/hero-1.jpg'), // Updated path
+                'description' => 'Premium residential colony with modern amenities and excellent connectivity.',
+                'highlights' => ['Prime Location', 'Modern Infrastructure', 'Investment Opportunity']
+            ],
+            [
+                'id' => 2,
+                'name' => 'APS Royal Residency',
+                'location' => 'Lucknow, Uttar Pradesh',
+                'total_area' => '25 Acres',
+                'developed_area' => '20 Acres',
+                'total_plots' => 200,
+                'available_plots' => 45,
+                'starting_price' => '₹25,00,000',
+                'completion_status' => 'Phase 1 Complete',
+                'amenities' => ['Community Hall', 'Jogging Track', 'Landscaped Gardens', 'Security', 'Water Supply'],
+                'image' => get_asset_url('images/hero-2.jpg'), // Updated path
+                'description' => 'Luxury residential project in the heart of Lucknow with world-class facilities.',
+                'highlights' => ['Premium Location', 'High Appreciation', 'Modern Design']
+            ],
+            [
+                'id' => 3,
+                'name' => 'APS Green Valley',
+                'location' => 'Kunraghat, Gorakhpur',
+                'total_area' => '30 Acres',
+                'developed_area' => '15 Acres',
+                'total_plots' => 300,
+                'available_plots' => 80,
+                'starting_price' => '₹12,00,000',
+                'completion_status' => 'Development Started',
+                'amenities' => ['Green Spaces', 'Community Center', 'Playground', 'Security', 'Basic Infrastructure'],
+                'image' => get_asset_url('images/hero-3.jpg'), // Updated path
+                'description' => 'Eco-friendly residential colony with abundant green spaces and natural surroundings.',
+                'highlights' => ['Eco-Friendly', 'Affordable Luxury', 'Natural Environment']
+            ]
+        ];
+
+        // Colony statistics for display
+        $colony_stats = [
+            'total_colonies' => count($colonies),
+            'total_area' => '105 Acres',
+            'total_plots' => array_sum(array_column($colonies, 'total_plots')),
+            'plots_sold' => array_sum(array_column($colonies, 'total_plots')) - array_sum(array_column($colonies, 'available_plots')),
+            'cities_covered' => 3
+        ];
+
+        $this->data['colonies'] = $colonies;
+        $this->data['colony_stats'] = $colony_stats;
+
+        $this->render('pages/colonies');
     }
 
     /**
@@ -435,17 +735,27 @@ class PageController extends BaseController
     private function getFeaturedProperties()
     {
         try {
-            $stmt = $this->db->prepare("
-                SELECT 
-                    p.*, 
-                    (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as primary_image
-                FROM properties p 
-                WHERE p.featured = 1 AND p.status = 'available'
-                ORDER BY p.created_at DESC 
-                LIMIT 6
-            ");
-            $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            // Check if db connection exists
+            if (!isset($this->db)) {
+                global $conn;
+                if (isset($conn)) {
+                    $stmt = $conn->prepare("
+                        SELECT 
+                            p.*, 
+                            (SELECT image_path FROM property_images WHERE property_id = p.id LIMIT 1) as primary_image
+                        FROM properties p 
+                        WHERE p.featured = 1 AND p.status = 'available'
+                        ORDER BY p.created_at DESC 
+                        LIMIT 6
+                    ");
+                    $stmt->execute();
+                    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                }
+                return [];
+            }
+
+            // If using PDO or other DB abstraction in future
+            return [];
         } catch (\Exception $e) {
             return [];
         }
@@ -457,9 +767,21 @@ class PageController extends BaseController
     private function getLocations()
     {
         try {
-            $stmt = $this->db->prepare("SELECT DISTINCT city FROM properties WHERE status = 'available' ORDER BY city ASC");
-            $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if (!isset($this->db)) {
+                global $conn;
+                if (isset($conn)) {
+                    $stmt = $conn->prepare("SELECT DISTINCT location FROM properties WHERE status = 'available' ORDER BY location");
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $locations = [];
+                    while ($row = $result->fetch_assoc()) {
+                        $locations[] = $row['location'];
+                    }
+                    return $locations;
+                }
+                return [];
+            }
+            return [];
         } catch (\Exception $e) {
             return [];
         }
@@ -468,13 +790,13 @@ class PageController extends BaseController
     /**
      * Get company statistics
      */
-    private function getCompanyStats()
+    private function getStats()
     {
         return [
-            'total_properties' => 1200,
+            'total_properties' => 150,
             'happy_clients' => 850,
-            'years_experience' => 15,
-            'awards_won' => 25
+            'years_experience' => 12,
+            'awards_won' => 15
         ];
     }
 }

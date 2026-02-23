@@ -12,7 +12,7 @@ echo "<h1>WhatsApp Integration Test</h1>";
 echo "<div style='background: #f0f8ff; padding: 20px; margin: 20px 0; border-radius: 5px;'>";
 echo "<h3>WhatsApp Configuration Status:</h3>";
 echo "<pre>";
-print_r($config['whatsapp'] ?? 'WhatsApp config not found');
+// DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
 echo "</pre>";
 echo "</div>";
 
@@ -33,7 +33,7 @@ if ($config['whatsapp']['enabled'] ?? false) {
         if (function_exists('getWhatsAppStats')) {
             $stats = getWhatsAppStats();
             echo "<pre>";
-            print_r($stats);
+            // DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
             echo "</pre>";
         } else {
             echo "<p style='color: orange;'>⚠️ getWhatsAppStats() function not available. WhatsApp integration is configured but stats tracking needs to be implemented.</p>";

@@ -1,0 +1,16 @@
+{
+    "timestamp": "2026-02-22 19:20:19",
+    "phase": "dependencies_scan",
+    "summary": {
+        "composer_dependencies": 9,
+        "npm_dependencies": 5,
+        "total_issues": 1,
+        "security_vulnerabilities": 0
+    },
+    "issues": [
+        "Very old major version for erusev\/parsedown: ^1.7"
+    ],
+    "security_vulnerabilities": [],
+    "outdated_packages": [],
+    "recommendations": []
+}

@@ -5,7 +5,7 @@ global $con;
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
-    exit();
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
 }
 
 // Include database connection
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_
     }
     
     header('Location: ' . $_SERVER['PHP_SELF']);
-    exit();
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
 }
 
 // Get all testimonials

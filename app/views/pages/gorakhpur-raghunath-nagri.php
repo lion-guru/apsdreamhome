@@ -8,8 +8,8 @@
     <div class="col-lg-12">
         <div class="page-banner mb-5" style="background: linear-gradient(rgba(30,60,114,0.7), rgba(30,60,114,0.7)), url('<?= ASSETS_URL ?>images/banner/project-banner.jpg') center/cover; padding: 100px 0; color: #fff; border-radius: 0 0 50px 50px;">
             <div class="container text-center">
-                <h1 class="display-3 fw-bold mb-3 animate-fade-up">Raghunath Nagri</h1>
-                <p class="lead animate-fade-up">Premium Township at Motiram to Jhangha Road, Gorakhpur</p>
+                <h1 class="display-3 fw-bold mb-3 animate-fade-up"><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'Raghunath Nagri' ?></h1>
+                <p class="lead animate-fade-up"><?= isset($project['description']) ? htmlspecialchars($project['description']) : 'Premium Township at Motiram to Jhangha Road, Gorakhpur' ?></p>
             </div>
         </div>
 
@@ -19,8 +19,8 @@
                 <div class="col-lg-7">
                     <h2 class="display-6 fw-bold text-primary mb-4">Integrated Township</h2>
                     <p class="lead text-muted mb-4">
-                        <b>RAGHUNATH NAGRI</b> is a master-planned integrated township located at a prime location 
-                        in Gorakhpur. Spread across more than 15 acres, it is designed to provide a 
+                        <b><?= isset($project['name']) ? htmlspecialchars($project['name']) : 'RAGHUNATH NAGRI' ?></b> is a master-planned integrated township located at a prime location 
+                        in <?= isset($project['location']) ? htmlspecialchars($project['location']) : 'Gorakhpur' ?>. Spread across more than 15 acres, it is designed to provide a 
                         luxurious and convenient lifestyle.
                     </p>
                     <p class="text-muted">

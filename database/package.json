@@ -1,0 +1,54 @@
+{
+    "name": "apsdreamhome",
+    "version": "2.0.0",
+    "description": "APS Dream Home - Real Estate Management System",
+    "main": "public/index.php",
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production",
+        "test": "jest",
+        "lint": "eslint resources/js --ext .js,.vue",
+        "lint-fix": "eslint resources/js --ext .js,.vue --fix"
+    },
+    "dependencies": {
+        "axios": "^1.6.0",
+        "bootstrap": "^5.3.0",
+        "jquery": "^3.7.0",
+        "lodash": "^4.17.0",
+        "vue": "^3.3.0"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.0",
+        "eslint": "^8.0.0",
+        "eslint-plugin-vue": "^9.0.0",
+        "jest": "^29.0.0",
+        "laravel-mix": "^6.0.0",
+        "postcss": "^8.4.0",
+        "resolve-url-loader": "^5.0.0",
+        "sass": "^1.60.0",
+        "sass-loader": "^13.0.0",
+        "vue-loader": "^17.0.0"
+    },
+    "engines": {
+        "node": ">=16.0.0",
+        "npm": ">=8.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/apsdreamhome/apsdreamhome.git"
+    },
+    "keywords": [
+        "real-estate",
+        "property-management",
+        "crm",
+        "mlm",
+        "lead-management"
+    ],
+    "author": "APS Dream Home Team",
+    "license": "MIT"
+}

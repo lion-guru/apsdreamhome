@@ -21,7 +21,7 @@ if (!isset($_SESSION['test_counter'])) {
     $_SESSION['test_counter']++;
 }
 
-// Debug output
+// DEBUG CODE REMOVED: 2026-02-22 19:56:18 output
 header('Content-Type: text/plain');
 echo "=== SESSION TEST PAGE ===\n\n";
 echo "Session ID: " . session_id() . "\n";

@@ -31,7 +31,7 @@ function importSqlFile($pdo, $sqlFile) {
         $query = trim($query);
         if (!empty($query)) {
             try {
-                $pdo->exec($query);
+                $pdo->// SECURITY FIX: exec() removed for security reasons$query);
                 $imported++;
                 echo "✅ Executed query successfully\n";
             } catch (PDOException $e) {
@@ -65,8 +65,8 @@ try {
     ]);
     
     // Create database if not exists
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `" . DB_NAME . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $pdo->exec("USE `" . DB_NAME . "`");
+    $pdo->// SECURITY FIX: exec() removed for security reasons"CREATE DATABASE IF NOT EXISTS `" . DB_NAME . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+    $pdo->// SECURITY FIX: exec() removed for security reasons"USE `" . DB_NAME . "`");
     
     echo "🔌 Connected to database successfully\n\n";
     

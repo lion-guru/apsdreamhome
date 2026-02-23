@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 
 $conn = new mysqli('localhost', 'root', '', 'apsdreamhome');
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
 }
 echo "Connected successfully\n";
 

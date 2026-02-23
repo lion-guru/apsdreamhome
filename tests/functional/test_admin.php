@@ -69,7 +69,7 @@ try {
 // Show session info
 echo "<h3>Session Info:</h3>";
 echo "<pre>";
-print_r($_SESSION);
+// DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
 echo "</pre>";
 
 // Show PHP info

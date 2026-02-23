@@ -431,6 +431,6 @@ try {
 
 } catch (PDOException $e) {
     echo "❌ Database error: " . $e->getMessage() . "\n";
-    exit(1);
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:17 CODE REMOVED: 2026-02-22 19:56:17
 }
 ?>

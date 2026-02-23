@@ -45,27 +45,19 @@ class AIChatbot extends Model {
      */
     private function recognizeIntent($message) {
         // Property search keywords
-        $property_keywords = ['property', 'house', 'home', 'apartment', 'villa', 'plot', 'land', 'show me', 'find', 'search'];
-        if ($this->containsKeywords($message, $property_keywords)) {
-            return 'property_search';
+        $property_PLACEHOLDER_SECRET_VALUEproperty_search';
         }
 
         // Price related keywords
-        $price_keywords = ['price', 'cost', 'budget', 'expensive', 'cheap', 'affordable', 'how much', 'rate'];
-        if ($this->containsKeywords($message, $price_keywords)) {
-            return 'price_inquiry';
+        $price_PLACEHOLDER_SECRET_VALUEprice_inquiry';
         }
 
         // Location related keywords
-        $location_keywords = ['location', 'area', 'city', 'near', 'close to', 'where', 'address', 'locality'];
-        if ($this->containsKeywords($message, $location_keywords)) {
-            return 'location_info';
+        $location_PLACEHOLDER_SECRET_VALUElocation_info';
         }
 
         // Contact related keywords
-        $contact_keywords = ['contact', 'call', 'phone', 'email', 'speak', 'talk', 'agent', 'help'];
-        if ($this->containsKeywords($message, $contact_keywords)) {
-            return 'contact_request';
+        $contact_PLACEHOLDER_SECRET_VALUEcontact_request';
         }
 
         return 'general_inquiry';

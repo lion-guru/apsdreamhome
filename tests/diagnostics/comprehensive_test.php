@@ -421,7 +421,7 @@ echo "</div>";
     <script>
         // Add some interactive features
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Test suite loaded successfully');
+            // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
 
             // Animate test results
             const testResults = document.querySelectorAll('.test-result');

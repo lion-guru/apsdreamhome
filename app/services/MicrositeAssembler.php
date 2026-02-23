@@ -165,8 +165,7 @@ class MicrositeAssembler
         return [
             'title' => $title,
             'description' => $description,
-            'keywords' => $project['seo_keywords'] ?? '',
-            'image' => $this->absoluteAsset($project['meta_image'] ?? null) ?: ($project['hero_image'] ?? null),
+            'PLACEHOLDER_SECRET_VALUEimage' => $this->absoluteAsset($project['meta_image'] ?? null) ?: ($project['hero_image'] ?? null),
             'breadcrumbs' => [
                 ['label' => 'Projects', 'url' => '/projects'],
                 ['label' => $project['project_name'] ?? 'Project'],

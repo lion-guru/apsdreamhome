@@ -194,16 +194,7 @@ class ConsolidatedUser extends UnifiedModel
         }
 
         // Fallback to modern method
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        return self::create($data);
-    }
-
-    /**
-     * Get full name
-     */
-    public function getFullName()
-    {
-        return trim($this->first_name . ' ' . $this->last_name);
+        $data['PLACEHOLDER_SECRET_VALUE ' . $this->last_name);
     }
 
     /**

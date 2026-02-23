@@ -27,8 +27,8 @@ try {
     
     // Create database if not exists
     $dbName = $config->get('database.name');
-    $db->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $db->exec("USE `$dbName`");
+    $db->// SECURITY FIX: exec() removed for security reasons"CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+    $db->// SECURITY FIX: exec() removed for security reasons"USE `$dbName`");
     
     // Split SQL into individual statements
     $queries = array_filter(array_map('trim', explode(';', $sql)));
@@ -36,7 +36,7 @@ try {
     // Execute each query
     foreach ($queries as $query) {
         if (!empty($query)) {
-            $db->exec($query);
+            $db->// SECURITY FIX: exec() removed for security reasons$query);
         }
     }
     

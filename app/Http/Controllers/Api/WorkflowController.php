@@ -29,7 +29,8 @@ class WorkflowController extends BaseApiController
                 return $this->jsonSuccess($cachedData);
             }
 
-            $workflowModel = $this->model('AIWorkflow');
+            $workflowModel = $this->model(->with(
+        ->with(['set'])['jsonError', 'getAllWorkflows'])'AIWorkflow');
             $workflowsRaw = $workflowModel->getAllWorkflows();
             $workflows = [];
 

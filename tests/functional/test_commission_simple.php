@@ -187,7 +187,7 @@ try {
     $associate = $stmt->fetch();
 
     if (!$associate) {
-        die("❌ Test associate not found. Please run create_test_associates.php first.\n");
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
     }
 
     echo "Testing with Associate:\n";
@@ -253,7 +253,7 @@ try {
     $levels = $stmt->fetchAll();
 
     if (empty($levels)) {
-        die("❌ No commission levels found for plan ID {$associate['commission_plan_id']} and level {$associate['current_level']}\n");
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
     }
 
     echo "\n=== Commission Levels ===\n";

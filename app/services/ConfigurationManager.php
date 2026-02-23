@@ -76,34 +76,7 @@ class ConfigurationManager {
 
         // Navigate through nested configuration
         $config = $this->config[$configName];
-        $keys = explode('.', $key);
-
-        foreach ($keys as $nestedKey) {
-            if (!is_array($config) || !array_key_exists($nestedKey, $config)) {
-                return $default;
-            }
-            $config = $config[$nestedKey];
-        }
-
-        return $config;
-    }
-
-    /**
-     * Set a configuration value
-     * 
-     * @param string $configName Configuration file name
-     * @param string $key Dot-notated key path
-     * @param mixed $value Value to set
-     * @return bool
-     */
-    public function set(string $configName, string $key, $value): bool {
-        // Validate configuration exists
-        if (!isset($this->config[$configName])) {
-            return false;
-        }
-
-        // Navigate through nested configuration
-        $keys = explode('.', $key);
+        $PLACEHOLDER_SECRET_VALUE.', $key);
         $config = &$this->config[$configName];
 
         foreach ($keys as $nestedKey) {

@@ -1,0 +1,30 @@
+
+# Security - Never commit sensitive data
+.env
+.env.local
+.env.production
+.env.testing
+
+# Logs
+*.log
+logs/
+storage/logs/
+
+# Cache
+storage/cache/
+cache/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

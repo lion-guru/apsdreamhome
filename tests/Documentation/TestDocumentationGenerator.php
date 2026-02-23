@@ -787,11 +787,11 @@ class TestDocumentationGenerator
         $content .= "})\n";
         $content .= ".then(response => response.json())\n";
         $content .= ".then(data => {\n";
-        $content .= "  console.log('Dashboard Stats:', data);\n";
+        $content .= "  // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18\n";
         $content .= "  // Update UI with data\n";
         $content .= "})\n";
         $content .= ".catch(error => {\n";
-        $content .= "  console.error('Error:', error);\n";
+        $content .= "  // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18\n";
         $content .= "});\n";
         $content .= "```\n\n";
         
@@ -943,7 +943,7 @@ class TestDocumentationGenerator
         $content .= "3. Ensure file paths are correct for your environment\n";
         $content .= "4. Test configuration with simple script first\n\n";
         
-        $content .= "### Debugging Techniques\n\n";
+        $content .= "##// DEBUG CODE REMOVED: 2026-02-22 19:56:18ging Techniques\n\n";
         
         $content .= "#### Enable Debug Mode\n\n";
         $content .= "```php\n";

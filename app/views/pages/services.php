@@ -1,17 +1,5 @@
-<?php
-/**
- * Services Page Template
- * Beautiful services page showcasing real estate services
- */
-
-// Set page title and description for layout
-$page_title = 'Our Services - APS Dream Home';
-$page_description = 'Discover our comprehensive range of real estate services designed to help you find your perfect property';
-
-?>
-
 <!-- Hero Section -->
-<section class="services-hero py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="services-hero py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('<?= get_asset_url('assets/images/hero-1.jpg') ?>'); background-size: cover; background-position: center;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -55,6 +43,28 @@ $page_description = 'Discover our comprehensive range of real estate services de
     </div>
 </section>
 
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Services</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
+    </div>
+</div>
+
 <!-- Services Section -->
 <section class="services-section py-5">
     <div class="container">
@@ -73,29 +83,29 @@ $page_description = 'Discover our comprehensive range of real estate services de
         <div class="row g-4">
             <?php if (!empty($services)): ?>
                 <?php foreach ($services as $service): ?>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon mb-4">
-                            <i class="<?php echo htmlspecialchars($service->icon ?? 'fas fa-check'); ?> fa-3x text-<?php echo htmlspecialchars($service->color ?? 'primary'); ?>"></i>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-card">
+                            <div class="service-icon mb-4">
+                                <i class="<?php echo htmlspecialchars($service->icon ?? 'fas fa-check'); ?> fa-3x text-<?php echo htmlspecialchars($service->color ?? 'primary'); ?>"></i>
+                            </div>
+                            <h4 class="service-title mb-3"><?php echo htmlspecialchars($service->title); ?></h4>
+                            <p class="service-description mb-4">
+                                <?php echo htmlspecialchars($service->description ?? ''); ?>
+                            </p>
+                            <?php if (isset($service->features) && !empty($service->features)): ?>
+                                <div class="service-features">
+                                    <ul class="list-unstyled">
+                                        <?php foreach (explode(',', $service->features) as $feature): ?>
+                                            <li><i class="fas fa-check text-success me-2"></i><?php echo htmlspecialchars(trim($feature)); ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php endif; ?>
+                            <a href="<?php echo BASE_URL; ?>contact" class="btn btn-<?php echo htmlspecialchars($service->color ?? 'primary'); ?> mt-3">
+                                <i class="fas fa-phone me-2"></i>Contact Us
+                            </a>
                         </div>
-                        <h4 class="service-title mb-3"><?php echo htmlspecialchars($service->title); ?></h4>
-                        <p class="service-description mb-4">
-                            <?php echo htmlspecialchars($service->description ?? ''); ?>
-                        </p>
-                        <?php if (isset($service->features) && !empty($service->features)): ?>
-                        <div class="service-features">
-                            <ul class="list-unstyled">
-                                <?php foreach (explode(',', $service->features) as $feature): ?>
-                                <li><i class="fas fa-check text-success me-2"></i><?php echo htmlspecialchars(trim($feature)); ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                        <?php endif; ?>
-                        <a href="<?php echo BASE_URL; ?>contact" class="btn btn-<?php echo htmlspecialchars($service->color ?? 'primary'); ?> mt-3">
-                            <i class="fas fa-phone me-2"></i>Contact Us
-                        </a>
                     </div>
-                </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <!-- Fallback or static services if no dynamic data -->
@@ -292,7 +302,7 @@ $page_description = 'Discover our comprehensive range of real estate services de
 </section>
 
 <!-- Call to Action Section -->
-<section class="cta-section py-5" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+<section class="cta-section py-5 cta-section-success">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -315,132 +325,3 @@ $page_description = 'Discover our comprehensive range of real estate services de
         </div>
     </div>
 </section>
-
-<style>
-.service-card {
-    background: white;
-    border-radius: 15px;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 100%;
-}
-
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.service-icon {
-    margin-bottom: 1.5rem;
-}
-
-.service-title {
-    color: #2c3e50;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.service-description {
-    color: #6c757d;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.service-features ul li {
-    padding: 0.25rem 0;
-    color: #495057;
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.process-step {
-    padding: 1.5rem;
-}
-
-.step-number {
-    display: inline-block;
-}
-
-.step-title {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-}
-
-.step-description {
-    color: #6c757d;
-    font-size: 0.95rem;
-}
-
-.process-timeline {
-    position: relative;
-}
-
-.process-timeline::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #e9ecef;
-    z-index: 1;
-}
-
-.process-step {
-    position: relative;
-    z-index: 2;
-}
-
-.feature-card {
-    padding: 2rem 1rem;
-    height: 100%;
-}
-
-.feature-icon {
-    margin-bottom: 1rem;
-}
-
-.feature-card h5 {
-    color: #2c3e50;
-    margin-bottom: 1rem;
-}
-
-.cta-buttons .btn {
-    padding: 0.75rem 2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-@media (max-width: 768px) {
-    .stat-number {
-        font-size: 2rem;
-    }
-
-    .service-card {
-        padding: 1.5rem;
-    }
-
-    .process-timeline::before {
-        display: none;
-    }
-}
-</style>

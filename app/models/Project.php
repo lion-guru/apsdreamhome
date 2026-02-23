@@ -8,56 +8,38 @@ class Project extends Model
 {
     protected static $table = 'projects';
     protected array $fillable = [
-        'project_name',
+        'name',
+        'slug',
         'project_code',
-        'project_type',
+        'description',
         'location',
+        'pincode',
+        'youtube_url',
+        'brochure_path',
+        'brochure_drive_id',
+        'image',
         'city',
         'state',
-        'pincode',
-        'description',
-        'short_description',
-        'total_area',
-        'total_plots',
-        'available_plots',
-        'price_per_sqft',
-        'base_price',
-        'project_status',
-        'possession_date',
-        'rera_number',
-        'is_featured',
-        'is_active',
-        'latitude',
-        'longitude',
-        'address',
-        'highlights',
-        'amenities',
-        'layout_map',
-        'brochure',
-        'gallery_images',
-        'virtual_tour',
-        'booking_amount',
-        'emi_available',
+        'country_id',
+        'status',
+        'project_type',
+        'total_units',
+        'available_units',
+        'starting_price',
+        'completion_date',
+        'launch_date',
         'developer_name',
-        'developer_contact',
-        'developer_email',
-        'project_head',
-        'project_manager',
-        'sales_manager',
-        'contact_number',
+        'contact_person',
+        'contact_phone',
         'contact_email',
-        'website',
-        'social_facebook',
-        'social_instagram',
-        'social_twitter',
-        'social_youtube',
-        'seo_title',
-        'seo_description',
-        'seo_keywords',
-        'meta_image',
+        'address',
+        'amenities',
+        'images',
         'created_by',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'is_active',
+        'is_featured'
     ];
 
     /**
@@ -235,10 +217,7 @@ class Project extends Model
             $setParts = [];
             $params = [];
             foreach ($data as $key => $value) {
-                $setParts[] = "{$key} = :{$key}";
-                $params[$key] = $value;
-            }
-            $params['id'] = $id;
+                $setParts[] = "{$PLACEHOLDER_SECRET_VALUEid'] = $id;
 
             $sql = "UPDATE projects SET " . implode(', ', $setParts) . " WHERE project_id = :id";
             $stmt = $db->prepare($sql);

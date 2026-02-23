@@ -12,7 +12,7 @@ echo "=== Testing magic get behavior ===\n";
 
 $instance = new TestModel();
 echo "Direct property access: ";
-var_dump($instance->wheres);
+// DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
 
 echo "Using getAttribute: ";
 var_dump($instance->getAttribute('wheres'));

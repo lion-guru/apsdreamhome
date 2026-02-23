@@ -1,6 +1,5 @@
-
 <!-- Hero Section -->
-<section class="gallery-hero bg-primary text-white py-5">
+<section class="gallery-hero text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('<?= get_asset_url('assets/images/hero-3.jpg') ?>'); background-size: cover; background-position: center;">
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
@@ -12,6 +11,28 @@
         </div>
     </div>
 </section>
+
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Gallery</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
+    </div>
+</div>
 
 <!-- Gallery Content -->
 <section class="py-5">
@@ -25,8 +46,8 @@
                     </a>
                     <?php foreach ($categories as $cat): ?>
                         <?php $catName = is_object($cat) ? $cat->category : $cat['category']; ?>
-                        <a href="<?= BASE_URL ?>gallery?category=<?= urlencode($catName) ?>" 
-                           class="btn <?= $current_category === $catName ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                        <a href="<?= BASE_URL ?>gallery?category=<?= urlencode($catName) ?>"
+                            class="btn <?= $current_category === $catName ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                             <?= htmlspecialchars(ucwords($catName)) ?>
                         </a>
                     <?php endforeach; ?>
@@ -38,15 +59,15 @@
         <div class="row g-4" id="galleryGrid">
             <?php if (!empty($images)): ?>
                 <?php foreach ($images as $image): ?>
-                    <?php 
-                        $imgPath = is_object($image) ? $image->image_path : $image['image_path'];
-                        $imgCaption = is_object($image) ? $image->caption : $image['caption'];
-                        $imgCategory = is_object($image) ? $image->category : $image['category'];
+                    <?php
+                    $imgPath = is_object($image) ? $image->image_path : $image['image_path'];
+                    $imgCaption = is_object($image) ? $image->caption : $image['caption'];
+                    $imgCategory = is_object($image) ? $image->category : $image['category'];
                     ?>
                     <div class="col-md-6 col-lg-4 gallery-item-wrapper" data-category="<?= htmlspecialchars($imgCategory) ?>">
                         <div class="gallery-item position-relative overflow-hidden rounded shadow-sm">
                             <a href="<?= get_asset_url($imgPath) ?>" data-lightbox="gallery" data-title="<?= htmlspecialchars($imgCaption) ?>">
-                                <img src="<?= get_asset_url($imgPath) ?>" alt="<?= htmlspecialchars($imgCaption) ?>" class="img-fluid w-100" style="height: 250px; object-fit: cover;">
+                                <img src="<?= get_asset_url($imgPath) ?>" alt="<?= htmlspecialchars($imgCaption) ?>" class="img-fluid gallery-img">
                                 <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 opacity-0 hover-opacity-100 transition-opacity">
                                     <div class="text-white text-center p-3">
                                         <i class="fas fa-search-plus fa-2x mb-2"></i>
@@ -71,14 +92,4 @@
     </div>
 </section>
 
-<!-- Lightbox CSS/JS override or addition if not in layout -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-<style>
-    .gallery-item:hover .gallery-overlay {
-        opacity: 1 !important;
-    }
-    .transition-opacity {
-        transition: opacity 0.3s ease;
-    }
-</style>
+<!-- Lightbox assets are now included via PageController -->

@@ -1,0 +1,63 @@
+{
+    "timestamp": "2026-02-22 19:23:01",
+    "phase": "routing_scan",
+    "summary": {
+        "route_files": 3,
+        "middleware_files": 7,
+        "controller_files": 10,
+        "total_issues": 16,
+        "security_concerns": 18,
+        "performance_issues": 10
+    },
+    "issues": [
+        "Invalid middleware class name in: Auth.php",
+        "Invalid middleware class name in: Cors.php",
+        "Invalid middleware class name in: RateLimit.php",
+        "Invalid middleware class name in: SecurityHeaders.php",
+        "Invalid middleware class name in: ThrottleLogin.php",
+        "No validation in store\/update method: AgentController.php",
+        "No validation in store\/update method: AssociateController.php",
+        "No error handling in controller: Controller.php",
+        "No error handling in controller: CustomerController.php",
+        "No error handling in controller: EmployeeController.php",
+        "No error handling in controller: TeamManagementController.php",
+        "Invalid controller class name: Controller.php",
+        "API controller using echo\/print instead of JSON response: ApiLeadController.php",
+        "API controller using echo\/print instead of JSON response: CommunicationController.php",
+        "API controller using echo\/print instead of JSON response: MobileApiController.php",
+        "API controller using echo\/print instead of JSON response: MonitorApiController.php"
+    ],
+    "security_concerns": [
+        "Potential XSS vulnerability in controller: AssociateController.php",
+        "No authentication check in API controller: AiController.php",
+        "No authentication check in API controller: AnalyticsController.php",
+        "No authentication check in API controller: ApiEnquiryController.php",
+        "No authentication check in API controller: ApiLeadController.php",
+        "No authentication check in API controller: BaseApiController.php",
+        "No authentication check in API controller: CommunicationController.php",
+        "No authentication check in API controller: FollowupController.php",
+        "No authentication check in API controller: LeadController.php",
+        "No authentication check in API controller: MobileApiController.php",
+        "No authentication check in API controller: MonitorApiController.php",
+        "No authentication check in API controller: NewsletterController.php",
+        "No authentication check in API controller: SeoController.php",
+        "No authentication check in API controller: SharingController.php",
+        "No authentication check in API controller: SystemController.php",
+        "No authentication check in API controller: TestApiController.php",
+        "No authentication check in API controller: UserController.php",
+        "No authentication check in API controller: VisitController.php"
+    ],
+    "performance_issues": [
+        "Large controller (400 lines): AdminController.php",
+        "Potential N+1 query in loop: AdminController.php",
+        "Large controller (534 lines): AssociateController.php",
+        "Large controller (560 lines): BaseController.php",
+        "Large controller (459 lines): CustomerController.php",
+        "Large controller (582 lines): EmployeeController.php",
+        "Potential N+1 query in loop: EmployeeController.php",
+        "Large controller (404 lines): RegistrationController.php",
+        "Large controller (591 lines): TeamManagementController.php",
+        "Potential N+1 query in loop: TeamManagementController.php"
+    ],
+    "recommendations": []
+}

@@ -10,7 +10,7 @@ $page_title = $title ?? 'About Us - APS Dream Home';
 $page_description = 'Learn about APS Dream Home - your trusted real estate partner since 2009. Discover our story, values, and commitment to excellence.';
 ?>
 
-<?php include __DIR__ . '/../layouts/modern_header.php'; ?>
+
 
 <!-- Enhanced Hero Section -->
 <section class="hero-about">
@@ -41,7 +41,7 @@ $page_description = 'Learn about APS Dream Home - your trusted real estate partn
 
             <div class="col-lg-6 animate-slide-right">
                 <div class="hero-image position-relative">
-                    <img src="<?php echo ASSET_URL ?? '/assets/'; ?>images/about-hero.jpg"
+                    <img src="<?php echo get_asset_url('assets/images/hero-1.jpg'); ?>"
                         alt="APS Dream Home Team"
                         class="img-fluid rounded shadow"
                         onerror="this.src='https://via.placeholder.com/600x400/667eea/ffffff?text=APS+Dream+Home+Team'">

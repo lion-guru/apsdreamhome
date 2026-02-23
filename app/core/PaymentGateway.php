@@ -13,19 +13,8 @@ class PaymentGateway {
 
     public function __construct() {
         $this->settings = $this->_getPaymentSettingsFromEnv();
-        $this->razorpay_key_id = $this->settings['razorpay_key_id'] ?? '';
-        $this->razorpay_key_secret = $this->settings['razorpay_key_secret'] ?? '';
-    }
-
-    /**
-     * Get payment settings from environment
-     */
-    private function _getPaymentSettingsFromEnv() {
-        return [
-            'razorpay_key_id' => env('RAZORPAY_KEY_ID', ''),
-            'razorpay_key_secret' => env('RAZORPAY_KEY_SECRET', ''),
-            'currency' => env('PAYMENT_CURRENCY', 'INR'),
-            'payment_methods' => ['card', 'netbanking', 'upi', 'wallet'],
+        $this->razorpay_PLACEHOLDER_SECRET_VALUE => env('RAZORPAY_KEY_ID', ''),
+            'razorpay_PLACEHOLDER_SECRET_VALUEpayment_methods' => ['card', 'netbanking', 'upi', 'wallet'],
             'sandbox_mode' => env('PAYMENT_SANDBOX', true)
         ];
     }

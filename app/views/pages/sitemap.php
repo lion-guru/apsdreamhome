@@ -1,17 +1,39 @@
 <?php
-/**
- * Sitemap View - Premium Design
- */
+// app/views/pages/sitemap.php
 ?>
 
-<section class="section-padding bg-light">
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h1 class="fw-bold text-premium mb-2">Explore Our Site</h1>
-            <p class="lead text-secondary">A comprehensive guide to everything at APS Dream Home</p>
-            <div class="premium-underline mx-auto"></div>
-        </div>
+<!-- Hero Section -->
+<section class="bg-dark text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Sitemap</h1>
+        <p class="lead">Navigate through our website with ease.</p>
+    </div>
+</section>
 
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Sitemap</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="section-padding bg-light">
+    <div class="container">
         <div class="row g-4">
             <!-- Main Navigation -->
             <div class="col-md-4">
@@ -61,7 +83,7 @@
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>login" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Login</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>register" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Register</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>dashboard" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> User Dashboard</a></li>
-                            <li class="list-group-item border-0"><a href="<?= BASE_URL ?>career" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Careers</a></li>
+                            <li class="list-group-item border-0"><a href="<?= BASE_URL ?>careers" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> Careers</a></li>
                             <li class="list-group-item border-0"><a href="<?= BASE_URL ?>mlm-opportunity" class="text-decoration-none text-dark d-block py-1 hover-premium"><i class="fas fa-chevron-right small me-2 text-premium"></i> MLM Opportunity</a></li>
                         </ul>
                     </div>
@@ -108,25 +130,3 @@
         </div>
     </div>
 </section>
-
-<style>
-.hover-premium:hover {
-    padding-left: 10px !important;
-    color: var(--premium-gold) !important;
-    transition: all 0.3s ease;
-}
-.premium-underline {
-    width: 80px;
-    height: 4px;
-    background: var(--premium-gradient);
-    border-radius: 2px;
-}
-.text-premium {
-    background: var(--premium-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.bg-premium {
-    background: var(--premium-gradient);
-}
-</style>

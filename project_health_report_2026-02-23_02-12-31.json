@@ -1,0 +1,59 @@
+{
+    "timestamp": "2026-02-22 22:38:23",
+    "scan_type": "comprehensive_final_assessment",
+    "overall_score": 42.2,
+    "categories": {
+        "structure": {
+            "score": 90,
+            "issues": 1,
+            "warnings": 0
+        },
+        "security": {
+            "score": 0,
+            "issues": 669,
+            "warnings": 256
+        },
+        "code_quality": {
+            "score": 0,
+            "issues": 0,
+            "warnings": 2626
+        },
+        "performance": {
+            "score": 0,
+            "issues": 0,
+            "warnings": 1914
+        },
+        "configuration": {
+            "score": 100,
+            "issues": 0,
+            "warnings": 0
+        },
+        "database": {
+            "score": 100,
+            "issues": 0,
+            "warnings": 0
+        },
+        "testing": {
+            "score": 80,
+            "issues": 0,
+            "warnings": 2
+        },
+        "monitoring": {
+            "score": 90,
+            "issues": 0,
+            "warnings": 1
+        },
+        "deployment": {
+            "score": 100,
+            "issues": 0,
+            "warnings": 0
+        }
+    },
+    "total_files_scanned": 45926,
+    "total_issues_found": 670,
+    "total_warnings": 4799,
+    "critical_issues": 3,
+    "performance_score": 0,
+    "security_score": 0,
+    "maintainability_score": 63.3
+}

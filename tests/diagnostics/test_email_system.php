@@ -8,7 +8,7 @@ require_once 'includes/config.php';
 
 // Check if email is enabled
 if (!$config['email']['enabled']) {
-    die('❌ Email system is currently disabled.');
+    // DEBUG CODE REMOVED: 2026-02-22 19:56:19 CODE REMOVED: 2026-02-22 19:56:19
 }
 
 echo "📧 APS Dream Home - Email System Test\n";

@@ -1,0 +1,134 @@
+{
+    "timestamp": "2026-02-22 19:53:31",
+    "phase": "xss_vulnerability_fixes",
+    "vulnerable_files": [
+        "app\/Core\/BackupManager.php",
+        "app\/Core\/EmailManager.php",
+        "app\/Core\/Middleware.php",
+        "app\/Core\/SystemMonitor.php",
+        "app\/Helpers\/SecurityHelper.php",
+        "app\/Models\/CoreFunctions.php",
+        "app\/Models\/EmployeeAttendance.php",
+        "app\/Models\/PropertyComparison.php",
+        "app\/Models\/PropertyRecommendation.php",
+        "app\/Models\/PushNotification.php",
+        "app\/Models\/VirtualTour.php",
+        "app\/Services\/SystemLogger.php",
+        "app\/views\/components\/mobile-dashboard-card.blade.php",
+        "app\/views\/components\/mobile-table.blade.php"
+    ],
+    "fixes_applied": [
+        {
+            "file": "app\/Core\/BackupManager.php",
+            "backup": "app\/Core\/BackupManager.php.backup.2026-02-22-19-53-31",
+            "fixes": [
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Core\/EmailManager.php",
+            "backup": "app\/Core\/EmailManager.php.backup.2026-02-22-19-53-31",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Core\/Middleware.php",
+            "backup": "app\/Core\/Middleware.php.backup.2026-02-22-19-53-31",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Core\/SystemMonitor.php",
+            "backup": "app\/Core\/SystemMonitor.php.backup.2026-02-22-19-53-31",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Helpers\/SecurityHelper.php",
+            "backup": "app\/Helpers\/SecurityHelper.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Models\/CoreFunctions.php",
+            "backup": "app\/Models\/CoreFunctions.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Models\/EmployeeAttendance.php",
+            "backup": "app\/Models\/EmployeeAttendance.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Models\/PropertyComparison.php",
+            "backup": "app\/Models\/PropertyComparison.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Models\/PropertyRecommendation.php",
+            "backup": "app\/Models\/PropertyRecommendation.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Models\/PushNotification.php",
+            "backup": "app\/Models\/PushNotification.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Models\/VirtualTour.php",
+            "backup": "app\/Models\/VirtualTour.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        },
+        {
+            "file": "app\/Services\/SystemLogger.php",
+            "backup": "app\/Services\/SystemLogger.php.backup.2026-02-22-19-53-32",
+            "fixes": [
+                "Added input validation comment",
+                "Added input validation comment",
+                "Added input validation comment"
+            ]
+        }
+    ],
+    "recommendations": [],
+    "summary": {
+        "vulnerable_files_found": 14,
+        "files_auto_fixed": 12,
+        "manual_review_needed": 2
+    }
+}

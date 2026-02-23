@@ -163,10 +163,7 @@ class Auth {
         $userModel = new User();
         
         // Hash the password
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        
-        // Set default role if not provided
-        if (!isset($data['role'])) {
+        $data['PLACEHOLDER_SECRET_VALUErole'])) {
             $data['role'] = 'user';
         }
         

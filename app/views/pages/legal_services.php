@@ -1,21 +1,34 @@
-<?php require_once 'app/views/layouts/header.php'; ?>
-
-<!-- Page Header -->
-<div class="page-header" style="background-image: url('<?= BASE_URL ?>/assets/img/legal-bg.jpg');">
+<!-- Hero Section -->
+<section class="legal-hero text-center" style="background-image: url('<?= get_asset_url('assets/images/hero-1.jpg') ?>');">
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h1>Legal Services</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Legal Services</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
+        <h1 class="display-4 fw-bold">Legal Services</h1>
+        <p class="lead mb-0">Expert legal guidance for all your property transactions</p>
+    </div>
+</section>
+
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <?php if (isset($breadcrumbs)): ?>
+                    <?php foreach ($breadcrumbs as $crumb): ?>
+                        <?php if (empty($crumb['url']) || $crumb === end($breadcrumbs)): ?>
+                            <li class="breadcrumb-item active" aria-current="page"><?= htmlspecialchars($crumb['title']) ?></li>
+                        <?php else: ?>
+                            <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= htmlspecialchars($crumb['title']) ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Legal Services</li>
+                <?php endif; ?>
+            </ol>
+        </nav>
     </div>
 </div>
+
+<!-- Legal Services Content -->
 
 <!-- Intro Section -->
 <section class="section py-5">
@@ -30,7 +43,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="<?= BASE_URL ?>/assets/img/legal-services.jpg" alt="Legal Services" class="img-fluid rounded shadow-lg">
+                <img src="<?= get_asset_url('assets/images/work.jpg') ?>" alt="Legal Services" class="img-fluid rounded shadow-lg">
             </div>
         </div>
     </div>
@@ -70,65 +83,73 @@
 
 <!-- Team Section -->
 <?php if (!empty($lawyers)): ?>
-<section class="section py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Meet Our Legal Experts</h2>
-            <p class="text-muted">Experienced lawyers and legal advisors at your service</p>
-        </div>
+    <section class="section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Meet Our Legal Experts</h2>
+                <p class="text-muted">Experienced lawyers and legal advisors at your service</p>
+            </div>
 
-        <div class="row justify-content-center">
-            <?php foreach ($lawyers as $lawyer): ?>
-                <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="card h-100 border-0 shadow-sm team-card">
-                        <img src="<?= BASE_URL ?>/uploads/team/<?= htmlspecialchars($lawyer['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ?>">
-                        <div class="card-body text-center">
-                            <h5 class="card-title mb-1"><?= htmlspecialchars($lawyer['name']) ?></h5>
-                            <p class="text-primary mb-2"><?= htmlspecialchars($lawyer['designation']) ?></p>
-                            <p class="card-text small text-muted"><?= htmlspecialchars($lawyer['specialization']) ?></p>
+            <div class="row justify-content-center">
+                <?php foreach ($lawyers as $lawyer): ?>
+                    <?php
+                    $lawyerImage = !empty($lawyer['image']) ? 'uploads/team/' . $lawyer['image'] : '';
+                    $lawyerImageUrl = !empty($lawyerImage) ? get_asset_url($lawyerImage) : 'https://via.placeholder.com/300x300/667eea/ffffff?text=' . substr($lawyer['name'], 0, 2);
+                    ?>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card h-100 border-0 shadow-sm team-card">
+                            <img src="<?= htmlspecialchars($lawyerImageUrl) ?>" class="card-img-top" alt="<?= htmlspecialchars($lawyer['name']) ?>"
+                                onerror="this.src='https://via.placeholder.com/300x300/667eea/ffffff?text=<?= substr($lawyer['name'], 0, 2) ?>'">
+                            <div class="card-body text-center">
+                                <h5 class="card-title mb-1"><?= htmlspecialchars($lawyer['name']) ?></h5>
+                                <p class="text-primary mb-2"><?= htmlspecialchars($lawyer['designation']) ?></p>
+                                <p class="card-text small text-muted"><?= htmlspecialchars($lawyer['specialization']) ?></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 <?php endif; ?>
 
 <!-- FAQ Section -->
 <?php if (!empty($faqs)): ?>
-<section class="section bg-light py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <p class="text-muted">Common queries about property laws and documentation</p>
-        </div>
+    <section class="section bg-light py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="text-muted">Common queries about property laws and documentation</p>
+            </div>
 
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="accordion" id="legalFaq">
-                    <?php foreach ($faqs as $index => $faq): ?>
-                        <div class="card border-0 mb-2 shadow-sm">
-                            <div class="card-header bg-white border-0" id="heading<?= $index ?>">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link btn-block text-left text-dark font-weight-bold collapsed" type="button" data-toggle="collapse" data-target="#collapse<?= $index ?>" aria-expanded="false" aria-controls="collapse<?= $index ?>">
-                                        <?= htmlspecialchars($faq['question']) ?>
-                                    </button>
-                                </h5>
-                            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion" id="legalFaq">
+                        <?php foreach ($faqs as $index => $faq): ?>
+                            <div class="card border-0 mb-2 shadow-sm">
+                                <div class="card-header bg-white border-0" id="heading<?= $index ?>">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link btn-block text-start text-dark fw-bold collapsed w-100 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $index ?>" aria-expanded="false" aria-controls="collapse<?= $index ?>">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span><?= htmlspecialchars($faq['question']) ?></span>
+                                                <i class="fas fa-chevron-down small"></i>
+                                            </div>
+                                        </button>
+                                    </h5>
+                                </div>
 
-                            <div id="collapse<?= $index ?>" class="collapse" aria-labelledby="heading<?= $index ?>" data-parent="#legalFaq">
-                                <div class="card-body text-muted">
-                                    <?= nl2br(htmlspecialchars($faq['answer'])) ?>
+                                <div id="collapse<?= $index ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $index ?>" data-bs-parent="#legalFaq">
+                                    <div class="card-body text-muted">
+                                        <?= nl2br(htmlspecialchars($faq['answer'])) ?>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 <?php endif; ?>
 
 <!-- CTA Section -->
@@ -140,4 +161,4 @@
     </div>
 </section>
 
-<?php require_once 'app/views/layouts/footer.php'; ?>
+<!-- End Legal Services Content -->

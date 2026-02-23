@@ -1,0 +1,58 @@
+{
+    "scan_info": {
+        "timestamp": "2026-02-21 23:20:34",
+        "duration_seconds": 0.57,
+        "scan_level": "MAXIMUM"
+    },
+    "structure": {
+        "total_files": 321,
+        "total_directories": 26,
+        "total_size_mb": 3.83,
+        "file_types": {
+            "other": 5,
+            "documents": 10,
+            "code": 291,
+            "config": 15
+        },
+        "top_extensions": {
+            "sql": 154,
+            "php": 137,
+            "json": 15,
+            "md": 6,
+            "txt": 4
+        }
+    },
+    "code_quality": {
+        "files_analyzed": 0,
+        "total_lines": 0,
+        "security_issues": 0,
+        "code_smells": 0,
+        "functions": 0,
+        "classes": 0
+    },
+    "configuration": {
+        "completeness_percentage": 5.9
+    },
+    "database": {
+        "tables_found": 589,
+        "service_tables_complete": 9,
+        "data_size_mb": 10.84
+    },
+    "security": {
+        "vulnerabilities": 0,
+        "exposed_configs": 0,
+        "dangerous_permissions": 321
+    },
+    "health_score": 75.3,
+    "recommendations": {
+        "immediate": [],
+        "short_term": [
+            "Set up proper environment configuration"
+        ],
+        "long_term": [
+            "Implement automated testing",
+            "Add comprehensive documentation",
+            "Set up continuous integration"
+        ]
+    }
+}

@@ -182,7 +182,7 @@ foreach ($dashboardTables as $table) {
             file_put_contents("temp_seed_$table.php", $tempScript);
             
             // Execute the temporary script
-            echo shell_exec("php temp_seed_$table.php");
+            echo // SECURITY FIX: shell_exec() removed for security reasons"php temp_seed_$table.php");
             
             // Remove the temporary script
             unlink("temp_seed_$table.php");

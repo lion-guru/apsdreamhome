@@ -10,7 +10,7 @@ use App\Core\Support\Collection;
 use PDO;
 use RuntimeException;
 
-abstract class Model
+abstract class Model implements \ArrayAccess, \JsonSerializable
 {
     use HasRelationships;
     /**
@@ -736,6 +736,16 @@ abstract class Model
     public function __toString()
     {
         return $this->toJson();
+    }
+
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 
     /**

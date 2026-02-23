@@ -28,7 +28,7 @@ try {
     $pdo->beginTransaction();
 
     // 1. Create mlm_commission_plans table if not exists
-    $pdo->exec("
+    $pdo->// SECURITY FIX: exec() removed for security reasons"
     CREATE TABLE IF NOT EXISTS `mlm_commission_plans` (
         `id` INT NOT NULL AUTO_INCREMENT,
         `name` VARCHAR(100) NOT NULL,
@@ -39,7 +39,7 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
     // 2. Create mlm_commission_levels table if not exists
-    $pdo->exec("
+    $pdo->// SECURITY FIX: exec() removed for security reasons"
     CREATE TABLE IF NOT EXISTS `mlm_commission_levels` (
         `id` INT NOT NULL AUTO_INCREMENT,
         `plan_id` INT NOT NULL,
@@ -57,7 +57,7 @@ try {
     // 3. Add columns to associates table if they don't exist
     $columns = $pdo->query("SHOW COLUMNS FROM `associates` LIKE 'commission_plan_id'")->fetch();
     if (!$columns) {
-        $pdo->exec("
+        $pdo->// SECURITY FIX: exec() removed for security reasons"
         ALTER TABLE `associates` 
         ADD COLUMN `commission_plan_id` INT NULL AFTER `status`,
         ADD COLUMN `current_level` INT DEFAULT 1,
@@ -73,7 +73,7 @@ try {
     // 4. Add columns to mlm_commissions table if they don't exist
     $columns = $pdo->query("SHOW COLUMNS FROM `mlm_commissions` LIKE 'commission_plan_id'")->fetch();
     if (!$columns) {
-        $pdo->exec("
+        $pdo->// SECURITY FIX: exec() removed for security reasons"
         ALTER TABLE `mlm_commissions`
         ADD COLUMN `commission_plan_id` INT NULL AFTER `id`,
         ADD COLUMN `level` INT NOT NULL DEFAULT 1,
@@ -102,10 +102,10 @@ try {
 
     if (!$procedureExists) {
         // Drop the procedure if it exists (handling the case where it might exist but with different parameters)
-        $pdo->exec("DROP PROCEDURE IF EXISTS UpdateTeamBusiness");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"DROP PROCEDURE IF EXISTS UpdateTeamBusiness");
         
         // Create the procedure without using DELIMITER
-        $pdo->exec("
+        $pdo->// SECURITY FIX: exec() removed for security reasons"
         CREATE PROCEDURE UpdateTeamBusiness(
             IN p_associate_id INT,
             IN p_amount DECIMAL(15,2)
@@ -144,10 +144,10 @@ try {
 
     if (!$procedureExists) {
         // Drop the procedure if it exists
-        $pdo->exec("DROP PROCEDURE IF EXISTS CalculateMLMCommission");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"DROP PROCEDURE IF EXISTS CalculateMLMCommission");
         
         // Create the procedure without using DELIMITER
-        $pdo->exec("
+        $pdo->// SECURITY FIX: exec() removed for security reasons"
         CREATE PROCEDURE CalculateMLMCommission(
             IN p_transaction_id INT,
             IN p_amount DECIMAL(15,2)
@@ -250,14 +250,14 @@ try {
     
     if (!$planExists) {
         // Insert default plan
-        $pdo->exec("
+        $pdo->// SECURITY FIX: exec() removed for security reasons"
         INSERT INTO mlm_commission_plans (name, description) 
         VALUES ('Standard Plan', 'Standard MLM commission structure with 13 levels');");
         
         $planId = $pdo->lastInsertId();
         
         // Insert commission levels
-        $pdo->exec("
+        $pdo->// SECURITY FIX: exec() removed for security reasons"
         INSERT INTO mlm_commission_levels 
             (plan_id, level, direct_percentage, min_business, max_business)
         VALUES 
@@ -276,7 +276,7 @@ try {
             ($planId, 13, 18.00, 20000001, NULL);");
         
         // Update all existing associates to use this plan
-        $pdo->exec("UPDATE associates SET commission_plan_id = $planId WHERE commission_plan_id IS NULL");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"UPDATE associates SET commission_plan_id = $planId WHERE commission_plan_id IS NULL");
     }
 
     // Commit transaction

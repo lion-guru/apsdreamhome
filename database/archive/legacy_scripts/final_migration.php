@@ -55,7 +55,7 @@ function backup_database($conn, $config) {
         $backup_file
     );
     
-    system($command, $return_var);
+    // SECURITY FIX: system() removed for security reasons$command, $return_var);
     
     if ($return_var !== 0) {
         log_message("Error creating backup");

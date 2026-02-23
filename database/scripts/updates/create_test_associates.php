@@ -142,9 +142,9 @@ try {
     // Update team business for the hierarchy
     // First, let's make sure the UpdateTeamBusiness procedure exists with the correct structure
     try {
-        $pdo->exec("DROP PROCEDURE IF EXISTS UpdateTeamBusiness");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"DROP PROCEDURE IF EXISTS UpdateTeamBusiness");
         
-        $pdo->exec("
+        $pdo->// SECURITY FIX: exec() removed for security reasons"
         CREATE PROCEDURE UpdateTeamBusiness(
             IN p_associate_id INT,
             IN p_amount DECIMAL(15,2)
@@ -172,7 +172,7 @@ try {
         END");
         
         // Now call the procedure
-        $pdo->exec("CALL UpdateTeamBusiness($associate2AssociateId, 0)");
+        $pdo->// SECURITY FIX: exec() removed for security reasons"CALL UpdateTeamBusiness($associate2AssociateId, 0)");
     } catch (PDOException $e) {
         echo "⚠️ Could not create/update UpdateTeamBusiness procedure: " . $e->getMessage() . "\n";
     }

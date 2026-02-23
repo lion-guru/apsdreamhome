@@ -33,7 +33,7 @@ try {
         INDEX idx_status (status),
         INDEX idx_state_district (state_id, district_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "'farmers' table created or already exists.\n";
 
     // 2. Create farmer_land_holdings table
@@ -56,7 +56,7 @@ try {
         FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE CASCADE,
         INDEX idx_farmer (farmer_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "'farmer_land_holdings' table created or already exists.\n";
 
     // 3. Create land_purchases table
@@ -81,7 +81,7 @@ try {
         INDEX idx_land_holding (land_holding_id),
         INDEX idx_land_manager (land_manager_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "'land_purchases' table created or already exists.\n";
 
     // 4. Check for states and districts
@@ -92,7 +92,7 @@ try {
         code VARCHAR(10),
         status ENUM('active', 'inactive') DEFAULT 'active'
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
 
     echo "Checking 'districts' table...\n";
     $sql = "CREATE TABLE IF NOT EXISTS districts (
@@ -103,7 +103,7 @@ try {
         status ENUM('active', 'inactive') DEFAULT 'active',
         FOREIGN KEY (state_id) REFERENCES states(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "States and districts tables checked.\n";
 
     echo "\nAll required tables for Farmer module checked/created successfully.\n";

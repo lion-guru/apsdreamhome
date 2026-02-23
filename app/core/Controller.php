@@ -109,9 +109,9 @@ class Controller
         $this->view = new View();
         $this->session = $app->session();
 
-        // Debug auth
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:15 auth
         if (!isset($app->auth)) {
-            // echo "DEBUG: App auth is not set in Controller\n";
+            // // DEBUG CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
         }
 
         $this->auth = $app->auth ?? null;
@@ -260,7 +260,7 @@ class Controller
     public function requireLogin()
     {
         if (!$this->auth->check()) {
-            $this->session->getFlashBag()->add('error', 'Please login to access this page');
+            $this->session->getFlashBag()->a// DEBUG CODE REMOVED: dd() function - 2026-02-22 19:56:15
             $this->redirect('/login')->send();
             exit;
         }

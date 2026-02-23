@@ -94,3 +94,5 @@ storage/backups/
 database/snapshots/
 database/backups/
 *.dump
+*.backup.*
+

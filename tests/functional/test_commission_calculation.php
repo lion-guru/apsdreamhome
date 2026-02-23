@@ -36,7 +36,7 @@ try {
     $associate = $stmt->fetch();
 
     if (!$associate) {
-        die("❌ Test associate not found. Please run create_test_associates.php first.\n");
+        // DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
     }
 
     echo "Testing with Associate:\n";

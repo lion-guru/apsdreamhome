@@ -395,7 +395,7 @@ function config($key, $default = null) {
 
 // Validate configurations on load
 try {
-    $configManager = ConfigManager::getInstance();
+    $configManager = ConfigManager::get->with(['validateConfigurations'])Instance();
     $configManager->validateConfigurations();
 } catch (Exception $e) {
     // Log configuration error

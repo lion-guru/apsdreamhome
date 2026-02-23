@@ -57,8 +57,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'users',
             'name' => 'Total Users',
-            'key' => 'total_users',
-            'value' => $totalUsers,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $totalUsers,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -71,8 +70,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'users',
             'name' => 'New Users',
-            'key' => 'new_users',
-            'value' => $newUsers,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $newUsers,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -86,8 +84,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'users',
             'name' => 'Active Users (30 days)',
-            'key' => 'active_users_30d',
-            'value' => $activeUsers,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $activeUsers,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -110,8 +107,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'properties',
             'name' => 'Total Properties',
-            'key' => 'total_properties',
-            'value' => $totalProperties,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $totalProperties,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -121,8 +117,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'properties',
             'name' => 'Active Properties',
-            'key' => 'active_properties',
-            'value' => $activeProperties,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $activeProperties,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -135,8 +130,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'properties',
             'name' => 'New Properties',
-            'key' => 'new_properties',
-            'value' => $newProperties,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $newProperties,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -148,8 +142,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'properties',
             'name' => 'Average Property Price',
-            'key' => 'avg_property_price',
-            'value' => $avgPrice,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $avgPrice,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -174,8 +167,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'finance',
             'name' => 'Total Revenue',
-            'key' => 'total_revenue',
-            'value' => $totalRevenue,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $totalRevenue,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -189,8 +181,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'finance',
             'name' => 'Monthly Revenue',
-            'key' => 'monthly_revenue',
-            'value' => $monthlyRevenue,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $monthlyRevenue,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -203,8 +194,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'finance',
             'name' => 'Outstanding Invoices',
-            'key' => 'outstanding_invoices',
-            'value' => $outstandingInvoices,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $outstandingInvoices,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -227,8 +217,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'crm',
             'name' => 'Total Leads',
-            'key' => 'total_leads',
-            'value' => $totalLeads,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $totalLeads,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -241,8 +230,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'crm',
             'name' => 'New Leads',
-            'key' => 'new_leads',
-            'value' => $newLeads,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $newLeads,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -257,8 +245,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'crm',
             'name' => 'Lead Conversion Rate',
-            'key' => 'lead_conversion_rate',
-            'percentage' => $conversionRate,
+            'PLACEHOLDER_SECRET_VALUEpercentage' => $conversionRate,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -284,8 +271,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'communication',
             'name' => 'Emails Sent',
-            'key' => 'emails_sent',
-            'count' => $emailsSent,
+            'PLACEHOLDER_SECRET_VALUEcount' => $emailsSent,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -301,8 +287,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'communication',
             'name' => 'Email Open Rate',
-            'key' => 'email_open_rate',
-            'percentage' => $openRate,
+            'PLACEHOLDER_SECRET_VALUEpercentage' => $openRate,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -316,8 +301,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'communication',
             'name' => 'WhatsApp Messages Sent',
-            'key' => 'whatsapp_messages_sent',
-            'count' => $whatsappSent,
+            'PLACEHOLDER_SECRET_VALUEcount' => $whatsappSent,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -340,8 +324,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'performance',
             'name' => 'Average Response Time',
-            'key' => 'avg_response_time',
-            'value' => $avgResponseTime,
+            'PLACEHOLDER_SECRET_VALUEvalue' => $avgResponseTime,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -351,8 +334,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'performance',
             'name' => 'System Uptime',
-            'key' => 'system_uptime',
-            'percentage' => $systemUptime,
+            'PLACEHOLDER_SECRET_VALUEpercentage' => $systemUptime,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -366,8 +348,7 @@ class SystemAnalytics extends Model
         $metrics[] = [
             'category' => 'performance',
             'name' => 'Active Sessions',
-            'key' => 'active_sessions',
-            'count' => $activeSessions,
+            'PLACEHOLDER_SECRET_VALUEcount' => $activeSessions,
             'period_type' => $period,
             'period_date' => $date
         ];
@@ -383,15 +364,13 @@ class SystemAnalytics extends Model
         // Check if metric already exists for this period
         $existing = $this->query(
             "SELECT id FROM system_analytics_metrics
-             WHERE metric_key = ? AND period_type = ? AND period_date = ?",
-            [$metricData['key'], $metricData['period_type'], $metricData['period_date']]
+             WHERE metric_PLACEHOLDER_SECRET_VALUEkey'], $metricData['period_type'], $metricData['period_date']]
         )->fetch();
 
         $data = [
             'metric_category' => $metricData['category'],
             'metric_name' => $metricData['name'],
-            'metric_key' => $metricData['key'],
-            'period_type' => $metricData['period_type'],
+            'metric_PLACEHOLDER_SECRET_VALUEperiod_type' => $metricData['period_type'],
             'period_date' => $metricData['period_date'],
             'calculated_at' => date('Y-m-d H:i:s')
         ];
@@ -620,20 +599,7 @@ class SystemAnalytics extends Model
 
                 // Add basic insights
                 if ($section === 'user_metrics' && isset($data['active_users'])) {
-                    $summary['key_insights'][] = "Active users: " . $data['active_users'];
-                }
-            }
-        }
-
-        return $summary;
-    }
-
-    /**
-     * Check and trigger alerts
-     */
-    public function checkAlerts(): array
-    {
-        $alerts = $this->query("SELECT * FROM analytics_alerts WHERE is_active = 1")->fetchAll();
+                    $summary['PLACEHOLDER_SECRET_VALUESELECT * FROM analytics_alerts WHERE is_active = 1")->fetchAll();
         $triggeredAlerts = [];
 
         foreach ($alerts as $alert) {
@@ -658,8 +624,7 @@ class SystemAnalytics extends Model
     {
         $metric = $this->query(
             "SELECT * FROM system_analytics_metrics
-             WHERE metric_key = ? ORDER BY calculated_at DESC LIMIT 1",
-            [$alert['metric_key']]
+             WHERE metric_PLACEHOLDER_SECRET_VALUEmetric_key']]
         )->fetch();
 
         if (!$metric) {

@@ -32,7 +32,7 @@ try {
         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
     
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "✓ legal_services table created successfully\n";
     
     // 2. Create team_members table
@@ -54,7 +54,7 @@ try {
         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
     
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "✓ team_members table created successfully\n";
     
     // 3. Create faqs table (if not already created by manage_faqs.php)
@@ -72,7 +72,7 @@ try {
         KEY `idx_status` (`status`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
     
-    $pdo->exec($sql);
+    $pdo->// SECURITY FIX: exec() removed for security reasons$sql);
     echo "✓ faqs table created successfully\n";
     
     // 4. Insert sample data for testing

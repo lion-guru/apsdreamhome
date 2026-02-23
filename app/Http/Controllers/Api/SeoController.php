@@ -38,7 +38,8 @@ class SeoController extends BaseApiController
                 'robots' => $metadata['robots'] ?? 'index, follow'
             ];
 
-            $propertyModel = $this->model('Property');
+            $propertyModel = $this->model(->with(
+        ->with(['getByPage'])['title'])'Property');
 
             // If it's a property page, fetch property details to override
             if (\preg_match('/property-detail\.php\?id=(\d+)/', $url, $matches) || \preg_match('/\/properties\/(\d+)/', $url, $matches)) {

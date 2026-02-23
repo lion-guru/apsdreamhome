@@ -115,7 +115,7 @@ class DatabaseSchemaVersionControl {
             )
         ";
 
-        $this->dbConnection->exec($createTableQuery);
+        $this->dbConnection->// SECURITY FIX: exec() removed for security reasons$createTableQuery);
     }
 
     /**
@@ -195,7 +195,7 @@ class Migration_" . str_replace(' ', '_', ucwords($migrationName)) . " {
         try {
             // Perform database schema changes
             // Example: 
-            // \$this->db->exec('ALTER TABLE users ADD COLUMN new_column VARCHAR(255)');
+            // \$this->db->// SECURITY FIX: exec() removed for security reasons'ALTER TABLE users ADD COLUMN new_column VARCHAR(255)');
         } catch (PDOException \$e) {
             throw new Exception('Migration up failed: ' . \$e->getMessage());
         }
@@ -208,7 +208,7 @@ class Migration_" . str_replace(' ', '_', ucwords($migrationName)) . " {
         try {
             // Rollback database schema changes
             // Example:
-            // \$this->db->exec('ALTER TABLE users DROP COLUMN new_column');
+            // \$this->db->// SECURITY FIX: exec() removed for security reasons'ALTER TABLE users DROP COLUMN new_column');
         } catch (PDOException \$e) {
             throw new Exception('Migration down failed: ' . \$e->getMessage());
         }
@@ -340,7 +340,7 @@ class Migration_" . str_replace(' ', '_', ucwords($migrationName)) . " {
 
         foreach ($statements as $statement) {
             if (!empty($statement)) {
-                $this->dbConnection->exec($statement);
+                $this->dbConnection->// SECURITY FIX: exec() removed for security reasons$statement);
             }
         }
     }
@@ -433,7 +433,7 @@ class Migration_" . str_replace(' ', '_', ucwords($migrationName)) . " {
             $backupPath
         );
 
-        exec($command, $output, $returnVar);
+        // SECURITY FIX: exec() removed for security reasons$command, $output, $returnVar);
 
         if ($returnVar !== 0) {
             throw new Exception("Database backup failed");
@@ -546,7 +546,7 @@ if (php_sapi_name() === 'cli') {
         // Database connection (replace with your actual connection details)
         $dsn = 'mysql:host=localhost;dbname=your_database';
         $username = 'your_username';
-        $password = 'your_password';
+        $password = env('DB_PASSWORD', '');
         
         $dbConnection = new PDO($dsn, $username, $password);
         $dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -576,7 +576,7 @@ if (php_sapi_name() === 'cli') {
         // Database connection (replace with your actual connection details)
         $dsn = 'mysql:host=localhost;dbname=your_database';
         $username = 'your_username';
-        $password = 'your_password';
+        $password = env('DB_PASSWORD', '');
         
         $dbConnection = new PDO($dsn, $username, $password);
         $dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

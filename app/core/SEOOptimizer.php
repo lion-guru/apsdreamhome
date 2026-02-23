@@ -18,8 +18,7 @@ class SEOOptimizer
             'site_url' => config('app.url', 'https://apsdreamhome.com'),
             'default_title' => config('seo.default_title', 'Premium Properties in Gorakhpur, Lucknow & UP | APS Dream Home'),
             'default_description' => config('seo.default_description', 'Find your dream property with APS Dream Home. Browse premium apartments, villas, plots & commercial spaces in Gorakhpur, Lucknow and Uttar Pradesh.'),
-            'default_keywords' => config('seo.default_keywords', 'properties Gorakhpur, apartments Lucknow, real estate UP, buy house, property for sale, real estate agents'),
-            'og_image' => config('seo.og_image', '/assets/images/og-default.jpg'),
+            'default_PLACEHOLDER_SECRET_VALUEog_image' => config('seo.og_image', '/assets/images/og-default.jpg'),
             'twitter_handle' => config('seo.twitter_handle', '@apsdreamhome'),
             'enable_structured_data' => config('seo.structured_data', true)
         ];
@@ -45,11 +44,7 @@ class SEOOptimizer
         $meta[] = '<meta name="description" content="' . htmlspecialchars($description) . '">';
 
         // Keywords
-        $keywords = $page_data['keywords'] ?? $this->config['default_keywords'];
-        $meta[] = '<meta name="keywords" content="' . htmlspecialchars($keywords) . '">';
-
-        // Canonical URL
-        $canonical_url = $page_data['canonical_url'] ?? $this->getCurrentUrl();
+        $PLACEHOLDER_SECRET_VALUE<meta name="PLACEHOLDER_SECRET_VALUEcanonical_url'] ?? $this->getCurrentUrl();
         $meta[] = '<link rel="canonical" href="' . htmlspecialchars($canonical_url) . '">';
 
         // Open Graph tags
