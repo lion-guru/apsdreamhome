@@ -107,7 +107,6 @@ class EmailManager
                 'success' => true,
                 'message_id' => $mail->getLastMessageID()
             ];
-
         } catch (\Exception $e) {
             // Log failed email
             $this->logEmail($to, $template, 'failed', $data, $e->getMessage());
@@ -122,7 +121,10 @@ class EmailManager
     /**
      * Process email template with data
      */
-    private function processTemplate($template_PLACEHOLDER_SECRET_VALUEEmail template not found: ' . $template_key);
+    private function processTemplate($template_key, $data = [])
+    {
+        if (!isset($this->templates[$template_key])) {
+            throw new \Exception('Email template not found: ' . $template_key);
         }
 
         $template_info = $this->templates[$template_key];
@@ -157,13 +159,7 @@ class EmailManager
                 'status' => $status,
                 'data' => json_encode($data),
                 'error_message' => $error,
-                'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? 'system',
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'system',
                 'created_at' => date('Y-m-d H:i:s')
             ];
 
@@ -181,7 +177,6 @@ class EmailManager
                 $log_data['ip_address'],
                 $log_data['created_at']
             ]);
-
         } catch (\Exception $e) {
             error_log('Email logging failed: ' . $e->getMessage());
         }
@@ -262,7 +257,8 @@ class EmailManager
     {
         return $this->sendEmail($user_email, 'password_reset', [
             'user_name' => $user_name,
-            'reset_url' => BASE_URL . 'reset-PLACEHOLDER_SECRET_VALUEexpiry_hours' => 24,
+            'reset_url' => BASE_URL . 'reset-password/' . $reset_token,
+            'expiry_hours' => 24,
             'support_email' => $this->smtp_config['from_email']
         ]);
     }
@@ -314,7 +310,6 @@ class EmailManager
                     round(($totals['sent'] / ($totals['sent'] + $totals['failed'])) * 100, 2) : 0,
                 'daily_stats' => $stats
             ];
-
         } catch (\Exception $e) {
             return [
                 'error' => $e->getMessage(),
@@ -336,13 +331,7 @@ class EmailManager
                 'test_email',
                 [
                     'test_time' => date('Y-m-d H:i:s'),
-                    'server_info' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['SERVER_NAME'] ?? 'Unknown'
+                    'server_info' => $_SERVER['SERVER_NAME'] ?? 'Unknown'
                 ]
             );
 
@@ -352,7 +341,6 @@ class EmailManager
                     'Email configuration is working correctly' :
                     'Email configuration test failed: ' . $test_result['error']
             ];
-
         } catch (\Exception $e) {
             return [
                 'success' => false,
@@ -384,5 +372,3 @@ function send_password_reset_email($user_email, $user_name, $reset_token)
 {
     return EmailManager::getInstance()->sendPasswordResetEmail($user_email, $user_name, $reset_token);
 }
-
-?>

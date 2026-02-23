@@ -58,15 +58,7 @@ class PaymentService
      */
     public function initiatePayment(array $paymentData, string $gateway = null): array
     {
-        $gateway = $this->getGateway(->with(
-        ->with(['query'])
-        ->with(['verifyPayment', 'verifyWebhook'])
-        ->with(['isConfigured', 'initiatePayment', 'refund'])
-        ->with(['query'])
-        ->with(['verifyPayment', 'verifyWebhook'])
-        ->with(['isConfigured', 'initiatePayment', 'refund'])
-        ->with(['query'])
-        ->with(['verifyPayment', 'verifyWebhook'])['isConfigured', 'initiatePayment', 'refund'])$gateway);
+        $gateway = $this->getGateway($gateway);
         
         if (!$gateway || !$gateway->isConfigured()) {
             return ['success' => false, 'error' => 'Payment gateway not configured'];

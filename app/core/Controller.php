@@ -260,7 +260,7 @@ class Controller
     public function requireLogin()
     {
         if (!$this->auth->check()) {
-            $this->session->getFlashBag()->a// DEBUG CODE REMOVED: dd() function - 2026-02-22 19:56:15
+            $this->session->getFlashBag()->add('error', 'You must be logged in to access this page.');
             $this->redirect('/login')->send();
             exit;
         }

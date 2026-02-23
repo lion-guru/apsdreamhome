@@ -194,7 +194,15 @@ class ConsolidatedUser extends UnifiedModel
         }
 
         // Fallback to modern method
-        $data['PLACEHOLDER_SECRET_VALUE ' . $this->last_name);
+        return parent::create($data);
+    }
+
+    /**
+     * Get full name
+     */
+    public function getFullName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     /**

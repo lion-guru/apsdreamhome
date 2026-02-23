@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Core Functions
  * Essential utility functions for the APS Dream Home application
@@ -17,7 +18,8 @@ use RecursiveDirectoryIterator;
 /**
  * Sanitize input data
  */
-function sanitize($data) {
+function sanitize($data)
+{
     if (is_array($data)) {
         return array_map('sanitize', $data);
     }
@@ -27,14 +29,16 @@ function sanitize($data) {
 /**
  * Validate email address
  */
-function isValidEmail($email) {
+function isValidEmail($email)
+{
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
 /**
  * Validate phone number (Indian format)
  */
-function isValidPhone($phone) {
+function isValidPhone($phone)
+{
     $phone = preg_replace('/\D/', '', $phone);
     return strlen($phone) === 10 && preg_match('/^[6-9]\d{9}$/', $phone);
 }
@@ -42,7 +46,8 @@ function isValidPhone($phone) {
 /**
  * Generate slug from string
  */
-function createSlug($string) {
+function createSlug($string)
+{
     $slug = strtolower(trim($string));
     $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
     $slug = preg_replace('/-+/', '-', $slug);
@@ -52,7 +57,8 @@ function createSlug($string) {
 /**
  * Format currency (Indian Rupees)
  */
-function formatCurrency($amount, $currency = '₹') {
+function formatCurrency($amount, $currency = '₹')
+{
     return $currency . number_format($amount, 2);
 }
 
@@ -60,7 +66,8 @@ function formatCurrency($amount, $currency = '₹') {
  * Format date for display
  */
 if (!function_exists(__NAMESPACE__ . '\\formatDate')) {
-    function formatDate($date, $format = 'd M Y') {
+    function formatDate($date, $format = 'd M Y')
+    {
         if (empty($date) || $date === '0000-00-00' || $date === '0000-00-00 00:00:00') {
             return 'N/A';
         }
@@ -71,7 +78,8 @@ if (!function_exists(__NAMESPACE__ . '\\formatDate')) {
 /**
  * Get time ago format
  */
-function timeAgo($datetime) {
+function timeAgo($datetime)
+{
     $now = new DateTime();
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
@@ -90,7 +98,8 @@ function timeAgo($datetime) {
 /**
  * Generate random string
  */
-function generateRandomString($length = 10) {
+function generateRandomString($length = 10)
+{
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $randomString = '';
     for ($i = 0; $i < $length; $i++) {
@@ -102,21 +111,24 @@ function generateRandomString($length = 10) {
 /**
  * Generate secure token
  */
-function generateToken($length = 32) {
+function generateToken($length = 32)
+{
     return bin2hex(random_bytes($length));
 }
 
 /**
  * Validate CSRF token
  */
-function validateCSRFToken($token) {
+function validateCSRFToken($token)
+{
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
 /**
  * Generate CSRF token
  */
-function generateCSRFToken() {
+function generateCSRFToken()
+{
     if (!isset($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
@@ -126,35 +138,40 @@ function generateCSRFToken() {
 /**
  * Check if user is logged in
  */
-function isLoggedIn() {
+function isLoggedIn()
+{
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
 /**
  * Check if user is admin
  */
-function isAdmin() {
+function isAdmin()
+{
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
 
 /**
  * Get current user ID
  */
-function getCurrentUserId() {
+function getCurrentUserId()
+{
     return $_SESSION['user_id'] ?? null;
 }
 
 /**
  * Get current user name
  */
-function getCurrentUserName() {
+function getCurrentUserName()
+{
     return $_SESSION['user_name'] ?? null;
 }
 
 /**
  * Redirect with flash message
  */
-function redirectWithMessage($url, $type, $message) {
+function redirectWithMessage($url, $type, $message)
+{
     $_SESSION['flash_message'] = [
         'type' => $type,
         'message' => $message
@@ -166,7 +183,8 @@ function redirectWithMessage($url, $type, $message) {
 /**
  * Get flash message
  */
-function getFlashMessage() {
+function getFlashMessage()
+{
     if (isset($_SESSION['flash_message'])) {
         $message = $_SESSION['flash_message'];
         unset($_SESSION['flash_message']);
@@ -178,7 +196,8 @@ function getFlashMessage() {
 /**
  * Upload file with validation
  */
-function uploadFile($file, $destination, $allowed_types = [], $max_size = 5242880) {
+function uploadFile($file, $destination, $allowed_types = [], $max_size = 5242880)
+{
     $result = [
         'success' => false,
         'error' => '',
@@ -225,7 +244,8 @@ function uploadFile($file, $destination, $allowed_types = [], $max_size = 524288
 /**
  * Resize image
  */
-function resizeImage($source, $destination, $width, $height, $quality = 80) {
+function resizeImage($source, $destination, $width, $height, $quality = 80)
+{
     list($source_width, $source_height, $source_type) = getimagesize($source);
 
     switch ($source_type) {
@@ -274,7 +294,8 @@ function resizeImage($source, $destination, $width, $height, $quality = 80) {
 /**
  * Send JSON response
  */
-function sendJsonResponse($data, $status_code = 200) {
+function sendJsonResponse($data, $status_code = 200)
+{
     http_response_code($status_code);
     header('Content-Type: application/json');
     echo json_encode($data);
@@ -284,7 +305,8 @@ function sendJsonResponse($data, $status_code = 200) {
 /**
  * Log error
  */
-function logError($message, $context = []) {
+function logError($message, $context = [])
+{
     $log_file = __DIR__ . '/../logs/error.log';
     $timestamp = date('Y-m-d H:i:s');
     $context_str = !empty($context) ? ' | Context: ' . json_encode($context) : '';
@@ -303,7 +325,8 @@ function logError($message, $context = []) {
 /**
  * Log activity
  */
-function logActivity($action, $details = [], $user_id = null) {
+function logActivity($action, $details = [], $user_id = null)
+{
     $log_file = __DIR__ . '/../logs/activity.log';
     $timestamp = date('Y-m-d H:i:s');
     $user_info = $user_id ? " | User ID: {$user_id}" : '';
@@ -323,15 +346,17 @@ function logActivity($action, $details = [], $user_id = null) {
 /**
  * Check if request is AJAX
  */
-function isAjaxRequest() {
+function isAjaxRequest()
+{
     return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 }
 
 /**
  * Get client IP address
  */
-function getClientIP() {
+function getClientIP()
+{
     $ip_headers = [
         'HTTP_CF_CONNECTING_IP',
         'HTTP_X_FORWARDED_FOR',
@@ -357,7 +382,8 @@ function getClientIP() {
 /**
  * Rate limiting check
  */
-function checkRateLimit($identifier, $max_attempts = 5, $time_window = 300) {
+function checkRateLimit($identifier, $max_attempts = 5, $time_window = 300)
+{
     $rate_limit_file = __DIR__ . '/../cache/rate_limit_' . md5($identifier) . '.json';
 
     // Create cache directory if not exists
@@ -375,7 +401,7 @@ function checkRateLimit($identifier, $max_attempts = 5, $time_window = 300) {
     }
 
     // Clean old attempts
-    $rate_limit_data = array_filter($rate_limit_data, function($timestamp) use ($current_time, $time_window) {
+    $rate_limit_data = array_filter($rate_limit_data, function ($timestamp) use ($current_time, $time_window) {
         return ($current_time - $timestamp) < $time_window;
     });
 
@@ -396,7 +422,8 @@ function checkRateLimit($identifier, $max_attempts = 5, $time_window = 300) {
 /**
  * Get configuration value
  */
-function config($key, $default = null) {
+function config($key, $default = null)
+{
     global $config;
     return $config[$key] ?? $default;
 }
@@ -404,14 +431,16 @@ function config($key, $default = null) {
 /**
  * Environment variable helper
  */
-function env($key, $default = null) {
+function env($key, $default = null)
+{
     return $_ENV[$key] ?? $_SERVER[$key] ?? $default;
 }
 
 /**
  * Debug function
  */
-function debug($data, $exit = false) {
+function debug($data, $exit = false)
+{
     echo '<pre>';
     // DEBUG CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
     echo '</pre>';
@@ -424,7 +453,8 @@ function debug($data, $exit = false) {
 /**
  * Compress and optimize HTML
  */
-function compressHTML($html) {
+function compressHTML($html)
+{
     // Remove comments
     $html = preg_replace('/<!--[\s\S]*?-->/', '', $html);
 
@@ -442,7 +472,8 @@ function compressHTML($html) {
 /**
  * Get memory usage
  */
-function getMemoryUsage() {
+function getMemoryUsage()
+{
     $memory_usage = memory_get_usage(true);
 
     if ($memory_usage >= 1073741824) {
@@ -459,14 +490,16 @@ function getMemoryUsage() {
 /**
  * Check if string contains only numbers and letters
  */
-function isAlphanumeric($string) {
+function isAlphanumeric($string)
+{
     return ctype_alnum($string);
 }
 
 /**
  * Truncate text with ellipsis
  */
-function truncateText($text, $length = 100, $suffix = '...') {
+function truncateText($text, $length = 100, $suffix = '...')
+{
     if (strlen($text) <= $length) {
         return $text;
     }
@@ -477,7 +510,8 @@ function truncateText($text, $length = 100, $suffix = '...') {
 /**
  * Generate pagination links
  */
-function generatePagination($current_page, $total_pages, $base_url = '') {
+function generatePagination($current_page, $total_pages, $base_url = '')
+{
     $pagination = [];
 
     // Previous page
@@ -504,14 +538,16 @@ function generatePagination($current_page, $total_pages, $base_url = '') {
 /**
  * Validate Indian pincode
  */
-function isValidPincode($pincode) {
+function isValidPincode($pincode)
+{
     return preg_match('/^[1-9][0-9]{5}$/', $pincode);
 }
 
 /**
  * Format file size
  */
-function formatFileSize($bytes) {
+function formatFileSize($bytes)
+{
     if ($bytes >= 1073741824) {
         return round($bytes / 1073741824, 2) . ' GB';
     } elseif ($bytes >= 1048576) {
@@ -526,7 +562,8 @@ function formatFileSize($bytes) {
 /**
  * Check if array is associative
  */
-function isAssociativeArray($array) {
+function isAssociativeArray($array)
+{
     if (!is_array($array) || empty($array)) {
         return false;
     }
@@ -538,7 +575,8 @@ function isAssociativeArray($array) {
 /**
  * Deep merge arrays
  */
-function arrayMergeDeep($array1, $array2) {
+function arrayMergeDeep($array1, $array2)
+{
     $merged = $array1;
 
     foreach ($array2 as $key => $value) {
@@ -555,7 +593,8 @@ function arrayMergeDeep($array1, $array2) {
 /**
  * Generate excerpt from content
  */
-function generateExcerpt($content, $length = 150, $allowed_tags = '<p><br><strong><em>') {
+function generateExcerpt($content, $length = 150, $allowed_tags = '<p><br><strong><em>')
+{
     // Remove HTML tags except allowed ones
     $content = strip_tags($content, $allowed_tags);
 
@@ -581,35 +620,40 @@ function generateExcerpt($content, $length = 150, $allowed_tags = '<p><br><stron
 /**
  * Check if current environment is development
  */
-function isDevelopment() {
+function isDevelopment()
+{
     return env('APP_ENV', 'development') === 'development';
 }
 
 /**
  * Check if current environment is production
  */
-function isProduction() {
+function isProduction()
+{
     return env('APP_ENV', 'development') === 'production';
 }
 
 /**
  * Get application version
  */
-function getAppVersion() {
+function getAppVersion()
+{
     return defined('APP_VERSION') ? APP_VERSION : '1.0.0';
 }
 
 /**
  * Get application name
  */
-function getAppName() {
+function getAppName()
+{
     return defined('APP_NAME') ? APP_NAME : 'APS Dream Home';
 }
 
 /**
  * Convert array to object recursively
  */
-function arrayToObject($array) {
+function arrayToObject($array)
+{
     if (is_array($array)) {
         return (object) array_map('arrayToObject', $array);
     }
@@ -619,7 +663,8 @@ function arrayToObject($array) {
 /**
  * Convert object to array recursively
  */
-function objectToArray($object) {
+function objectToArray($object)
+{
     if (is_object($object)) {
         $array = (array) $object;
         return array_map('objectToArray', $array);
@@ -630,21 +675,24 @@ function objectToArray($object) {
 /**
  * Check if string starts with substring
  */
-function startsWith($string, $substring) {
+function startsWith($string, $substring)
+{
     return substr($string, 0, strlen($substring)) === $substring;
 }
 
 /**
  * Check if string ends with substring
  */
-function endsWith($string, $substring) {
+function endsWith($string, $substring)
+{
     return substr($string, -strlen($substring)) === $substring;
 }
 
 /**
  * Generate SEO friendly URL
  */
-function seoUrl($string) {
+function seoUrl($string)
+{
     $string = strtolower(trim($string));
     $string = preg_replace('/[^a-z0-9-]/', '-', $string);
     $string = preg_replace('/-+/', '-', $string);
@@ -654,7 +702,8 @@ function seoUrl($string) {
 /**
  * Get current URL
  */
-function currentUrl() {
+function currentUrl()
+{
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'];
     $uri = $_SERVER['REQUEST_URI'];
@@ -665,7 +714,8 @@ function currentUrl() {
 /**
  * Get base URL
  */
-function baseUrl() {
+function baseUrl()
+{
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'];
     $script_name = dirname($_SERVER['SCRIPT_NAME']);
@@ -676,7 +726,8 @@ function baseUrl() {
 /**
  * Check if file is image
  */
-function isImage($filename) {
+function isImage($filename)
+{
     $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
     $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     return in_array($extension, $image_extensions);
@@ -685,7 +736,8 @@ function isImage($filename) {
 /**
  * Get image dimensions
  */
-function getImageDimensions($image_path) {
+function getImageDimensions($image_path)
+{
     if (!file_exists($image_path)) {
         return false;
     }
@@ -705,7 +757,8 @@ function getImageDimensions($image_path) {
 /**
  * Create thumbnail
  */
-function createThumbnail($source, $destination, $width, $height, $quality = 80) {
+function createThumbnail($source, $destination, $width, $height, $quality = 80)
+{
     $image_info = getimagesize($source);
     if (!$image_info) {
         return false;
@@ -763,7 +816,8 @@ function createThumbnail($source, $destination, $width, $height, $quality = 80) 
 /**
  * Validate password strength
  */
-function validatePasswordStrength($password) {
+function validatePasswordStrength($password)
+{
     $errors = [];
 
     if (strlen($password) < 8) {
@@ -792,35 +846,40 @@ function validatePasswordStrength($password) {
 /**
  * Hash password
  */
-function hashPassword($password) {
+function hashPassword($password)
+{
     return password_hash($password, PASSWORD_ARGON2ID);
 }
 
 /**
  * Verify password
  */
-function verifyPassword($password, $hash) {
+function verifyPassword($password, $hash)
+{
     return password_verify($password, $hash);
 }
 
 /**
  * Generate API key
  */
-function generateApiKey() {
+function generateApiKey()
+{
     return 'apk_' . bin2hex(random_bytes(32));
 }
 
 /**
  * Validate API key format
  */
-function isValidApiKey($api_key) {
+function isValidApiKey($api_key)
+{
     return preg_match('/^apk_[a-f0-9]{64}$/', $api_key);
 }
 
 /**
  * Send HTTP response
  */
-function sendResponse($data, $status_code = 200, $content_type = 'application/json') {
+function sendResponse($data, $status_code = 200, $content_type = 'application/json')
+{
     http_response_code($status_code);
     header('Content-Type: ' . $content_type);
 
@@ -836,21 +895,24 @@ function sendResponse($data, $status_code = 200, $content_type = 'application/js
 /**
  * Get user agent
  */
-function getUserAgent() {
+function getUserAgent()
+{
     return $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
 }
 
 /**
  * Get request method
  */
-function getRequestMethod() {
+function getRequestMethod()
+{
     return $_SERVER['REQUEST_METHOD'] ?? 'GET';
 }
 
 /**
  * Get request headers
  */
-function getRequestHeaders() {
+function getRequestHeaders()
+{
     $headers = [];
     foreach ($_SERVER as $key => $value) {
         if (strpos($key, 'HTTP_') === 0) {
@@ -866,35 +928,40 @@ function getRequestHeaders() {
 /**
  * Check if HTTPS is enabled
  */
-function isHttps() {
+function isHttps()
+{
     return isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
 }
 
 /**
  * Get protocol (http/https)
  */
-function getProtocol() {
+function getProtocol()
+{
     return isHttps() ? 'https' : 'http';
 }
 
 /**
  * Validate URL
  */
-function isValidUrl($url) {
+function isValidUrl($url)
+{
     return filter_var($url, FILTER_VALIDATE_URL) !== false;
 }
 
 /**
  * Validate domain
  */
-function isValidDomain($domain) {
+function isValidDomain($domain)
+{
     return preg_match('/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/', $domain);
 }
 
 /**
  * Get domain from URL
  */
-function getDomainFromUrl($url) {
+function getDomainFromUrl($url)
+{
     $parsed = parse_url($url);
     return $parsed['host'] ?? '';
 }
@@ -902,12 +969,21 @@ function getDomainFromUrl($url) {
 /**
  * Check if mobile device
  */
-function isMobileDevice() {
+function isMobileDevice()
+{
     $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
 
     $mobile_keywords = [
-        'mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry',
-        'windows phone', 'opera mini', 'opera mobi', 'palm'
+        'mobile',
+        'android',
+        'iphone',
+        'ipad',
+        'ipod',
+        'blackberry',
+        'windows phone',
+        'opera mini',
+        'opera mobi',
+        'palm'
     ];
 
     foreach ($mobile_keywords as $keyword) {
@@ -922,7 +998,8 @@ function isMobileDevice() {
 /**
  * Get device type
  */
-function getDeviceType() {
+function getDeviceType()
+{
     if (isMobileDevice()) {
         $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
 
@@ -939,7 +1016,8 @@ function getDeviceType() {
 /**
  * Get browser name
  */
-function getBrowserName() {
+function getBrowserName()
+{
     $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
     if (strpos($user_agent, 'Chrome') !== false && strpos($user_agent, 'Edg') === false) {
@@ -962,7 +1040,8 @@ function getBrowserName() {
 /**
  * Get operating system
  */
-function getOperatingSystem() {
+function getOperatingSystem()
+{
     $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
 
     if (strpos($user_agent, 'windows') !== false) {
@@ -983,7 +1062,8 @@ function getOperatingSystem() {
 /**
  * Calculate percentage
  */
-function calculatePercentage($part, $total) {
+function calculatePercentage($part, $total)
+{
     if ($total == 0) {
         return 0;
     }
@@ -994,7 +1074,8 @@ function calculatePercentage($part, $total) {
  * Format number with commas
  */
 if (!function_exists(__NAMESPACE__ . '\\formatNumber')) {
-    function formatNumber($number) {
+    function formatNumber($number)
+    {
         return number_format($number);
     }
 }
@@ -1002,7 +1083,8 @@ if (!function_exists(__NAMESPACE__ . '\\formatNumber')) {
 /**
  * Check if date is weekend
  */
-function isWeekend($date) {
+function isWeekend($date)
+{
     $day_of_week = date('w', strtotime($date));
     return $day_of_week == 0 || $day_of_week == 6; // 0 = Sunday, 6 = Saturday
 }
@@ -1010,7 +1092,8 @@ function isWeekend($date) {
 /**
  * Get days between two dates
  */
-function getDaysBetween($start_date, $end_date) {
+function getDaysBetween($start_date, $end_date)
+{
     $start = new DateTime($start_date);
     $end = new DateTime($end_date);
     $interval = $start->diff($end);
@@ -1020,14 +1103,16 @@ function getDaysBetween($start_date, $end_date) {
 /**
  * Add days to date
  */
-function addDaysToDate($date, $days) {
+function addDaysToDate($date, $days)
+{
     return date('Y-m-d', strtotime($date . ' + ' . $days . ' days'));
 }
 
 /**
  * Get age from birth date
  */
-function getAge($birth_date) {
+function getAge($birth_date)
+{
     $today = new DateTime();
     $birth = new DateTime($birth_date);
     $age = $today->diff($birth);
@@ -1037,7 +1122,8 @@ function getAge($birth_date) {
 /**
  * Generate unique ID
  */
-function generateUniqueId($prefix = '', $length = 8) {
+function generateUniqueId($prefix = '', $length = 8)
+{
     $unique_id = $prefix . time() . rand(1000, 9999);
     if ($length > strlen($unique_id)) {
         $unique_id .= generateRandomString($length - strlen($unique_id));
@@ -1048,7 +1134,8 @@ function generateUniqueId($prefix = '', $length = 8) {
 /**
  * Clean string for filename
  */
-function cleanFilename($string) {
+function cleanFilename($string)
+{
     $string = strtolower(trim($string));
     $string = preg_replace('/[^a-z0-9.-]/', '_', $string);
     $string = preg_replace('/_+/', '_', $string);
@@ -1058,14 +1145,16 @@ function cleanFilename($string) {
 /**
  * Get file extension
  */
-function getFileExtension($filename) {
+function getFileExtension($filename)
+{
     return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 }
 
 /**
  * Get MIME type from file extension
  */
-function getMimeType($extension) {
+function getMimeType($extension)
+{
     $mime_types = [
         'jpg' => 'image/jpeg',
         'jpeg' => 'image/jpeg',
@@ -1090,14 +1179,16 @@ function getMimeType($extension) {
 /**
  * Check if directory is writable
  */
-function isWritableDirectory($directory) {
+function isWritableDirectory($directory)
+{
     return is_dir($directory) && is_writable($directory);
 }
 
 /**
  * Create directory recursively
  */
-function createDirectory($directory, $permissions = 0755) {
+function createDirectory($directory, $permissions = 0755)
+{
     if (!is_dir($directory)) {
         return mkdir($directory, $permissions, true);
     }
@@ -1107,7 +1198,8 @@ function createDirectory($directory, $permissions = 0755) {
 /**
  * Delete directory recursively
  */
-function deleteDirectory($directory) {
+function deleteDirectory($directory)
+{
     if (!is_dir($directory)) {
         return false;
     }
@@ -1129,7 +1221,8 @@ function deleteDirectory($directory) {
 /**
  * Get directory size
  */
-function getDirectorySize($directory) {
+function getDirectorySize($directory)
+{
     if (!is_dir($directory)) {
         return 0;
     }
@@ -1152,7 +1245,8 @@ function getDirectorySize($directory) {
 /**
  * Format bytes to human readable
  */
-function formatBytes($bytes) {
+function formatBytes($bytes)
+{
     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
     for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
@@ -1165,7 +1259,8 @@ function formatBytes($bytes) {
 /**
  * Check if function exists and call it safely
  */
-function safeCall($function, $parameters = []) {
+function safeCall($function, $parameters = [])
+{
     if (function_exists($function)) {
         return call_user_func_array($function, $parameters);
     }
@@ -1175,7 +1270,8 @@ function safeCall($function, $parameters = []) {
 /**
  * Get PHP version info
  */
-function getPhpVersion() {
+function getPhpVersion()
+{
     return [
         'version' => PHP_VERSION,
         'major' => PHP_MAJOR_VERSION,
@@ -1187,21 +1283,24 @@ function getPhpVersion() {
 /**
  * Check if PHP extension is loaded
  */
-function isExtensionLoaded($extension) {
+function isExtensionLoaded($extension)
+{
     return extension_loaded($extension);
 }
 
 /**
  * Get loaded PHP extensions
  */
-function getLoadedExtensions() {
+function getLoadedExtensions()
+{
     return get_loaded_extensions();
 }
 
 /**
  * Benchmark function execution time
  */
-function benchmark($function, $parameters = []) {
+function benchmark($function, $parameters = [])
+{
     $start_time = microtime(true);
     $result = call_user_func_array($function, $parameters);
     $end_time = microtime(true);
@@ -1215,7 +1314,8 @@ function benchmark($function, $parameters = []) {
 /**
  * Memory usage info
  */
-function getMemoryInfo() {
+function getMemoryInfo()
+{
     return [
         'usage' => memory_get_usage(true),
         'peak_usage' => memory_get_peak_usage(true),
@@ -1226,83 +1326,22 @@ function getMemoryInfo() {
 /**
  * Server information
  */
-function getServerInfo() {
+function getServerInfo()
+{
     return [
         'php_version' => PHP_VERSION,
-        'server_software' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+        'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
         'operating_system' => php_uname(),
-        'document_root' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['DOCUMENT_ROOT'] ?? '',
-        'server_name' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['SERVER_NAME'] ?? ''
+        'document_root' => $_SERVER['DOCUMENT_ROOT'] ?? '',
+        'server_name' => $_SERVER['SERVER_NAME'] ?? ''
     ];
 }
 
 /**
  * Application information
  */
-function getAppInfo() {
+function getAppInfo()
+{
     return [
         'name' => getAppName(),
         'version' => getAppVersion(),
@@ -1316,7 +1355,8 @@ function getAppInfo() {
 /**
  * Database connection test
  */
-function testDatabaseConnection($config = null) {
+function testDatabaseConnection($config = null)
+{
     try {
         if (!$config) {
             global $pdo;
@@ -1332,7 +1372,6 @@ function testDatabaseConnection($config = null) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return ['success' => true, 'message' => 'Database connection successful'];
-
     } catch (PDOException $e) {
         return ['success' => false, 'message' => 'Database connection failed: ' . $e->getMessage()];
     }
@@ -1341,7 +1380,8 @@ function testDatabaseConnection($config = null) {
 /**
  * Check if table exists
  */
-function tableExists($table_name) {
+function tableExists($table_name)
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -1358,7 +1398,8 @@ function tableExists($table_name) {
 /**
  * Get table columns
  */
-function getTableColumns($table_name) {
+function getTableColumns($table_name)
+{
     global $pdo;
     if (!$pdo) {
         return [];
@@ -1375,7 +1416,8 @@ function getTableColumns($table_name) {
 /**
  * Execute SQL query safely
  */
-function executeQuery($sql, $params = []) {
+function executeQuery($sql, $params = [])
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -1393,7 +1435,8 @@ function executeQuery($sql, $params = []) {
 /**
  * Get query result
  */
-function getQueryResult($sql, $params = []) {
+function getQueryResult($sql, $params = [])
+{
     global $pdo;
     if (!$pdo) {
         return [];
@@ -1412,7 +1455,8 @@ function getQueryResult($sql, $params = []) {
 /**
  * Get single query result
  */
-function getSingleResult($sql, $params = []) {
+function getSingleResult($sql, $params = [])
+{
     $results = getQueryResult($sql, $params);
     return !empty($results) ? $results[0] : null;
 }
@@ -1420,7 +1464,8 @@ function getSingleResult($sql, $params = []) {
 /**
  * Insert data and get last insert ID
  */
-function insertData($table, $data) {
+function insertData($table, $data)
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -1428,7 +1473,9 @@ function insertData($table, $data) {
 
     try {
         $columns = array_keys($data);
-        $placeholders = array_map(function($col) { return ":{$col}"; }, $columns);
+        $placeholders = array_map(function ($col) {
+            return ":{$col}";
+        }, $columns);
 
         $sql = "INSERT INTO {$table} (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
         $stmt = $pdo->prepare($sql);
@@ -1444,7 +1491,8 @@ function insertData($table, $data) {
 /**
  * Update data
  */
-function updateData($table, $data, $where, $where_params = []) {
+function updateData($table, $data, $where, $where_params = [])
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -1470,7 +1518,8 @@ function updateData($table, $data, $where, $where_params = []) {
 /**
  * Delete data
  */
-function deleteData($table, $where, $params = []) {
+function deleteData($table, $where, $params = [])
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -1489,7 +1538,8 @@ function deleteData($table, $where, $params = []) {
 /**
  * Count records
  */
-function countRecords($table, $where = '', $params = []) {
+function countRecords($table, $where = '', $params = [])
+{
     global $pdo;
     if (!$pdo) {
         return 0;
@@ -1515,14 +1565,16 @@ function countRecords($table, $where = '', $params = []) {
 /**
  * Check if record exists
  */
-function recordExists($table, $where, $params = []) {
+function recordExists($table, $where, $params = [])
+{
     return countRecords($table, $where, $params) > 0;
 }
 
 /**
  * Get distinct values from column
  */
-function getDistinctValues($table, $column, $where = '', $params = []) {
+function getDistinctValues($table, $column, $where = '', $params = [])
+{
     global $pdo;
     if (!$pdo) {
         return [];
@@ -1547,7 +1599,8 @@ function getDistinctValues($table, $column, $where = '', $params = []) {
 /**
  * Paginate results
  */
-function paginateResults($sql, $params = [], $page = 1, $per_page = 10) {
+function paginateResults($sql, $params = [], $page = 1, $per_page = 10)
+{
     global $pdo;
     if (!$pdo) {
         return ['data' => [], 'pagination' => []];
@@ -1590,7 +1643,8 @@ function paginateResults($sql, $params = [], $page = 1, $per_page = 10) {
 /**
  * Search in multiple columns
  */
-function searchInColumns($table, $columns, $search_term, $limit = 50) {
+function searchInColumns($table, $columns, $search_term, $limit = 50)
+{
     global $pdo;
     if (!$pdo) {
         return [];
@@ -1620,7 +1674,8 @@ function searchInColumns($table, $columns, $search_term, $limit = 50) {
 /**
  * Validate input data
  */
-function validateInput($data, $rules) {
+function validateInput($data, $rules)
+{
     $errors = [];
 
     foreach ($rules as $field => $rule) {
@@ -1664,7 +1719,8 @@ function validateInput($data, $rules) {
 /**
  * Sanitize and validate form data
  */
-function processFormData($data, $rules = []) {
+function processFormData($data, $rules = [])
+{
     $sanitized_data = sanitize($data);
     $errors = [];
 
@@ -1682,7 +1738,8 @@ function processFormData($data, $rules = []) {
 /**
  * Handle file upload with validation
  */
-function handleFileUpload($file_input, $destination, $options = []) {
+function handleFileUpload($file_input, $destination, $options = [])
+{
     $result = [
         'success' => false,
         'error' => '',
@@ -1744,7 +1801,8 @@ function handleFileUpload($file_input, $destination, $options = []) {
 /**
  * Generate sitemap
  */
-function generateSitemap($base_url, $pages) {
+function generateSitemap($base_url, $pages)
+{
     $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
@@ -1769,7 +1827,8 @@ function generateSitemap($base_url, $pages) {
 /**
  * Generate robots.txt
  */
-function generateRobotsTxt($base_url, $disallowed_paths = []) {
+function generateRobotsTxt($base_url, $disallowed_paths = [])
+{
     $robots = "User-agent: *\n";
     $robots .= "Allow: /\n";
 
@@ -1785,7 +1844,8 @@ function generateRobotsTxt($base_url, $disallowed_paths = []) {
 /**
  * Cache management functions
  */
-function setCache($key, $data, $ttl = 3600) {
+function setCache($key, $data, $ttl = 3600)
+{
     $cache_file = __DIR__ . '/../cache/' . md5($key) . '.cache';
 
     $cache_data = [
@@ -1797,7 +1857,8 @@ function setCache($key, $data, $ttl = 3600) {
     return file_put_contents($cache_file, serialize($cache_data));
 }
 
-function getCache($key) {
+function getCache($key)
+{
     $cache_file = __DIR__ . '/../cache/' . md5($key) . '.cache';
 
     if (!file_exists($cache_file)) {
@@ -1814,7 +1875,8 @@ function getCache($key) {
     return $cache_data['data'];
 }
 
-function clearCache($key = null) {
+function clearCache($key = null)
+{
     if ($key) {
         $cache_file = __DIR__ . '/../cache/' . md5($key) . '.cache';
         if (file_exists($cache_file)) {
@@ -1836,7 +1898,8 @@ function clearCache($key = null) {
 /**
  * API response helpers
  */
-function apiSuccess($data = null, $message = 'Success') {
+function apiSuccess($data = null, $message = 'Success')
+{
     return [
         'success' => true,
         'message' => $message,
@@ -1844,7 +1907,8 @@ function apiSuccess($data = null, $message = 'Success') {
     ];
 }
 
-function apiError($message = 'Error', $code = 400, $data = null) {
+function apiError($message = 'Error', $code = 400, $data = null)
+{
     return [
         'success' => false,
         'message' => $message,
@@ -1856,22 +1920,31 @@ function apiError($message = 'Error', $code = 400, $data = null) {
 /**
  * Mobile detection helpers
  */
-function isMobile() {
+function isMobile()
+{
     return getDeviceType() !== 'desktop';
 }
 
-function isTablet() {
+function isTablet()
+{
     return getDeviceType() === 'tablet';
 }
 
 /**
  * SEO helpers
  */
-function generateMetaTags($title, $description, $PLACEHOLDER_SECRET_VALUE<title>' . htmlspecialchars($title) . '</title>';
+function generateMetaTags($title, $description, $keywords = '', $image = '')
+{
+    $meta = [];
+    $meta[] = '<title>' . htmlspecialchars($title) . '</title>';
     $meta[] = '<meta name="description" content="' . htmlspecialchars($description) . '">';
 
     if (!empty($keywords)) {
-        $meta[] = '<meta name="PLACEHOLDER_SECRET_VALUE<meta property="og:image" content="' . htmlspecialchars($image) . '">';
+        $meta[] = '<meta name="keywords" content="' . htmlspecialchars($keywords) . '">';
+    }
+
+    if (!empty($image)) {
+        $meta[] = '<meta property="og:image" content="' . htmlspecialchars($image) . '">';
     }
 
     $meta[] = '<meta property="og:title" content="' . htmlspecialchars($title) . '">';
@@ -1884,39 +1957,46 @@ function generateMetaTags($title, $description, $PLACEHOLDER_SECRET_VALUE<title>
 /**
  * Performance helpers
  */
-function startTimer() {
+function startTimer()
+{
     return microtime(true);
 }
 
-function endTimer($start_time) {
+function endTimer($start_time)
+{
     return round((microtime(true) - $start_time) * 1000, 2) . 'ms';
 }
 
 /**
  * String manipulation helpers
  */
-function camelCase($string) {
+function camelCase($string)
+{
     return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $string))));
 }
 
-function snakeCase($string) {
+function snakeCase($string)
+{
     return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $string));
 }
 
-function kebabCase($string) {
+function kebabCase($string)
+{
     return strtolower(str_replace(' ', '-', trim($string)));
 }
 
 /**
  * Array helpers
  */
-function arrayPluck($array, $key) {
-    return array_map(function($item) use ($key) {
+function arrayPluck($array, $key)
+{
+    return array_map(function ($item) use ($key) {
         return is_object($item) ? $item->$key : $item[$key];
     }, $array);
 }
 
-function arrayGroupBy($array, $key) {
+function arrayGroupBy($array, $key)
+{
     $grouped = [];
     foreach ($array as $item) {
         $group_key = is_object($item) ? $item->$key : $item[$key];
@@ -1925,7 +2005,13 @@ function arrayGroupBy($array, $key) {
     return $grouped;
 }
 
-function arraySortBy($array, $PLACEHOLDER_SECRET_VALUEdesc') {
+function arraySortBy($array, $key, $direction = 'asc')
+{
+    usort($array, function ($a, $b) use ($key, $direction) {
+        $a_value = $a[$key] ?? null;
+        $b_value = $b[$key] ?? null;
+
+        if ($direction === 'desc') {
             return $b_value <=> $a_value;
         }
         return $a_value <=> $b_value;
@@ -1937,12 +2023,14 @@ function arraySortBy($array, $PLACEHOLDER_SECRET_VALUEdesc') {
 /**
  * Date helpers
  */
-function isValidDate($date, $format = 'Y-m-d') {
+function isValidDate($date, $format = 'Y-m-d')
+{
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) === $date;
 }
 
-function getDateRange($start_date, $end_date) {
+function getDateRange($start_date, $end_date)
+{
     $dates = [];
     $current = strtotime($start_date);
     $end = strtotime($end_date);
@@ -1958,15 +2046,18 @@ function getDateRange($start_date, $end_date) {
 /**
  * Number helpers
  */
-function isEven($number) {
+function isEven($number)
+{
     return $number % 2 === 0;
 }
 
-function isOdd($number) {
+function isOdd($number)
+{
     return $number % 2 !== 0;
 }
 
-function isPrime($number) {
+function isPrime($number)
+{
     if ($number <= 1) {
         return false;
     }
@@ -1983,7 +2074,8 @@ function isPrime($number) {
 /**
  * Color helpers
  */
-function hexToRgb($hex) {
+function hexToRgb($hex)
+{
     $hex = ltrim($hex, '#');
     return [
         'r' => hexdec(substr($hex, 0, 2)),
@@ -1992,18 +2084,21 @@ function hexToRgb($hex) {
     ];
 }
 
-function rgbToHex($r, $g, $b) {
+function rgbToHex($r, $g, $b)
+{
     return sprintf('#%02x%02x%02x', $r, $g, $b);
 }
 
 /**
  * Text analysis helpers
  */
-function wordCount($text) {
+function wordCount($text)
+{
     return str_word_count(strip_tags($text));
 }
 
-function readingTime($text, $words_per_minute = 200) {
+function readingTime($text, $words_per_minute = 200)
+{
     $word_count = wordCount($text);
     $minutes = ceil($word_count / $words_per_minute);
     return $minutes . ' min read';
@@ -2012,14 +2107,15 @@ function readingTime($text, $words_per_minute = 200) {
 /**
  * Geography helpers
  */
-function calculateDistance($lat1, $lon1, $lat2, $lon2) {
+function calculateDistance($lat1, $lon1, $lat2, $lon2)
+{
     $earth_radius = 6371; // km
 
     $dlat = deg2rad($lat2 - $lat1);
     $dlon = deg2rad($lon2 - $lon1);
 
-    $a = sin($dlat/2) * sin($dlat/2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dlon/2) * sin($dlon/2);
-    $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+    $a = sin($dlat / 2) * sin($dlat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dlon / 2) * sin($dlon / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
     return $earth_radius * $c;
 }
@@ -2027,7 +2123,8 @@ function calculateDistance($lat1, $lon1, $lat2, $lon2) {
 /**
  * Financial helpers
  */
-function calculateEMI($principal, $rate, $time) {
+function calculateEMI($principal, $rate, $time)
+{
     $rate = $rate / (12 * 100); // Monthly interest rate
     $time = $time * 12; // Time in months
 
@@ -2036,14 +2133,16 @@ function calculateEMI($principal, $rate, $time) {
     return round($emi, 2);
 }
 
-function calculateGST($amount, $gst_rate) {
+function calculateGST($amount, $gst_rate)
+{
     return ($amount * $gst_rate) / 100;
 }
 
 /**
  * System health helpers
  */
-function getSystemHealth() {
+function getSystemHealth()
+{
     $health = [
         'database' => testDatabaseConnection(),
         'memory' => getMemoryInfo(),
@@ -2058,7 +2157,8 @@ function getSystemHealth() {
 /**
  * Backup helpers
  */
-function createDatabaseBackup($filename = null) {
+function createDatabaseBackup($filename = null)
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -2096,7 +2196,7 @@ function createDatabaseBackup($filename = null) {
                 $values = [];
 
                 foreach ($rows as $row) {
-                    $escaped_values = array_map(function($value) use ($pdo) {
+                    $escaped_values = array_map(function ($value) use ($pdo) {
                         return $pdo->quote($value);
                     }, $row);
                     $values[] = "(" . implode(", ", $escaped_values) . ")";
@@ -2107,7 +2207,6 @@ function createDatabaseBackup($filename = null) {
         }
 
         return file_put_contents($backup_path, $sql) !== false;
-
     } catch (Exception $e) {
         logError('Database Backup Error', ['error' => $e->getMessage()]);
         return false;
@@ -2117,7 +2216,8 @@ function createDatabaseBackup($filename = null) {
 /**
  * Maintenance mode helpers
  */
-function enableMaintenanceMode($message = 'Site is under maintenance. Please check back later.') {
+function enableMaintenanceMode($message = 'Site is under maintenance. Please check back later.')
+{
     $maintenance_file = __DIR__ . '/../maintenance.json';
 
     $data = [
@@ -2130,7 +2230,8 @@ function enableMaintenanceMode($message = 'Site is under maintenance. Please che
     return file_put_contents($maintenance_file, json_encode($data)) !== false;
 }
 
-function disableMaintenanceMode() {
+function disableMaintenanceMode()
+{
     $maintenance_file = __DIR__ . '/../maintenance.json';
     if (file_exists($maintenance_file)) {
         return unlink($maintenance_file);
@@ -2138,7 +2239,8 @@ function disableMaintenanceMode() {
     return true;
 }
 
-function isMaintenanceMode() {
+function isMaintenanceMode()
+{
     $maintenance_file = __DIR__ . '/../maintenance.json';
     if (file_exists($maintenance_file)) {
         $data = json_decode(file_get_contents($maintenance_file), true);
@@ -2150,7 +2252,8 @@ function isMaintenanceMode() {
 /**
  * Notification helpers
  */
-function sendNotification($type, $title, $message, $recipient = null) {
+function sendNotification($type, $title, $message, $recipient = null)
+{
     $notification_file = __DIR__ . '/../notifications.json';
 
     $notification = [
@@ -2182,7 +2285,8 @@ function sendNotification($type, $title, $message, $recipient = null) {
 /**
  * Analytics helpers
  */
-function trackPageView($page, $user_id = null) {
+function trackPageView($page, $user_id = null)
+{
     $analytics_file = __DIR__ . '/../analytics.json';
 
     $view = [
@@ -2191,28 +2295,7 @@ function trackPageView($page, $user_id = null) {
         'ip' => getClientIP(),
         'user_agent' => getUserAgent(),
         'timestamp' => time(),
-        'referrer' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_REFERER'] ?? ''
+        'referrer' => $_SERVER['HTTP_REFERER'] ?? ''
     ];
 
     $analytics = [];
@@ -2234,7 +2317,8 @@ function trackPageView($page, $user_id = null) {
 /**
  * Export helpers
  */
-function exportToCSV($data, $filename) {
+function exportToCSV($data, $filename)
+{
     if (empty($data)) {
         return false;
     }
@@ -2258,7 +2342,8 @@ function exportToCSV($data, $filename) {
     exit;
 }
 
-function exportToExcel($data, $filename) {
+function exportToExcel($data, $filename)
+{
     if (empty($data)) {
         return false;
     }
@@ -2284,7 +2369,8 @@ function exportToExcel($data, $filename) {
 /**
  * Import helpers
  */
-function importFromCSV($file_path, $delimiter = ',') {
+function importFromCSV($file_path, $delimiter = ',')
+{
     if (!file_exists($file_path)) {
         return false;
     }
@@ -2306,7 +2392,8 @@ function importFromCSV($file_path, $delimiter = ',') {
 /**
  * Queue management helpers
  */
-function addToQueue($queue_name, $data) {
+function addToQueue($queue_name, $data)
+{
     $queue_file = __DIR__ . '/../queues/' . $queue_name . '.json';
 
     $queue_item = [
@@ -2327,7 +2414,8 @@ function addToQueue($queue_name, $data) {
     return file_put_contents($queue_file, json_encode($queue)) !== false;
 }
 
-function processQueue($queue_name) {
+function processQueue($queue_name)
+{
     $queue_file = __DIR__ . '/../queues/' . $queue_name . '.json';
 
     if (!file_exists($queue_file)) {
@@ -2357,7 +2445,8 @@ function processQueue($queue_name) {
 /**
  * Cron job helpers
  */
-function scheduleTask($task_name, $interval, $data = []) {
+function scheduleTask($task_name, $interval, $data = [])
+{
     $cron_file = __DIR__ . '/../cron.json';
 
     $task = [
@@ -2379,7 +2468,8 @@ function scheduleTask($task_name, $interval, $data = []) {
     return file_put_contents($cron_file, json_encode($cron)) !== false;
 }
 
-function runScheduledTasks() {
+function runScheduledTasks()
+{
     $cron_file = __DIR__ . '/../cron.json';
 
     if (!file_exists($cron_file)) {
@@ -2411,7 +2501,8 @@ function runScheduledTasks() {
 /**
  * API rate limiting
  */
-function checkApiRateLimit($api_key, $endpoint) {
+function checkApiRateLimit($api_key, $endpoint)
+{
     $rate_limit_file = __DIR__ . '/../rate_limits/' . md5($api_key . '_' . $endpoint) . '.json';
 
     $current_time = time();
@@ -2424,7 +2515,7 @@ function checkApiRateLimit($api_key, $endpoint) {
     }
 
     // Clean old requests
-    $rate_data = array_filter($rate_data, function($timestamp) use ($current_time, $window) {
+    $rate_data = array_filter($rate_data, function ($timestamp) use ($current_time, $window) {
         return ($current_time - $timestamp) < $window;
     });
 
@@ -2445,7 +2536,8 @@ function checkApiRateLimit($api_key, $endpoint) {
 /**
  * Webhook helpers
  */
-function processWebhook($webhook_type, $data) {
+function processWebhook($webhook_type, $data)
+{
     $webhook_file = __DIR__ . '/../webhooks/' . $webhook_type . '.json';
 
     $webhook_data = [
@@ -2474,7 +2566,8 @@ function processWebhook($webhook_type, $data) {
 /**
  * Search helpers
  */
-function searchInArray($array, $search_term, $case_sensitive = false) {
+function searchInArray($array, $search_term, $case_sensitive = false)
+{
     $results = [];
 
     foreach ($array as $key => $value) {
@@ -2492,26 +2585,31 @@ function searchInArray($array, $search_term, $case_sensitive = false) {
 /**
  * Filter helpers
  */
-function filterArray($array, $callback) {
+function filterArray($array, $callback)
+{
     return array_filter($array, $callback);
 }
 
-function mapArray($array, $callback) {
+function mapArray($array, $callback)
+{
     return array_map($callback, $array);
 }
 
-function reduceArray($array, $callback, $initial = null) {
+function reduceArray($array, $callback, $initial = null)
+{
     return array_reduce($array, $callback, $initial);
 }
 
 /**
  * URL helpers
  */
-function buildQueryString($params) {
+function buildQueryString($params)
+{
     return http_build_query($params);
 }
 
-function parseQueryString($query_string) {
+function parseQueryString($query_string)
+{
     parse_str($query_string, $params);
     return $params;
 }
@@ -2519,7 +2617,8 @@ function parseQueryString($query_string) {
 /**
  * Template helpers
  */
-function renderTemplate($template, $data = []) {
+function renderTemplate($template, $data = [])
+{
     extract($data);
 
     ob_start();
@@ -2530,7 +2629,8 @@ function renderTemplate($template, $data = []) {
 /**
  * Plugin system helpers
  */
-function loadPlugin($plugin_name) {
+function loadPlugin($plugin_name)
+{
     $plugin_file = __DIR__ . '/../plugins/' . $plugin_name . '.php';
 
     if (file_exists($plugin_file)) {
@@ -2544,7 +2644,8 @@ function loadPlugin($plugin_name) {
 /**
  * Theme system helpers
  */
-function loadTheme($theme_name) {
+function loadTheme($theme_name)
+{
     $theme_file = __DIR__ . '/../themes/' . $theme_name . '/functions.php';
 
     if (file_exists($theme_file)) {
@@ -2558,7 +2659,8 @@ function loadTheme($theme_name) {
 /**
  * Social media helpers
  */
-function getSocialShareLinks($url, $title = '') {
+function getSocialShareLinks($url, $title = '')
+{
     $encoded_url = urlencode($url);
     $encoded_title = urlencode($title);
 
@@ -2575,7 +2677,8 @@ function getSocialShareLinks($url, $title = '') {
 /**
  * Currency helpers
  */
-function convertCurrency($amount, $from_currency, $to_currency, $exchange_rate = null) {
+function convertCurrency($amount, $from_currency, $to_currency, $exchange_rate = null)
+{
     if (!$exchange_rate) {
         // In a real application, you'd fetch this from an API
         $exchange_rates = [
@@ -2584,7 +2687,20 @@ function convertCurrency($amount, $from_currency, $to_currency, $exchange_rate =
             'GBP_TO_INR' => 105.0
         ];
 
-        $rate_PLACEHOLDER_SECRET_VALUErectangle':
+        $key = "{$from_currency}_TO_{$to_currency}";
+        $exchange_rate = $exchange_rates[$key] ?? 1;
+    }
+
+    return $amount * $exchange_rate;
+}
+
+/**
+ * Calculate area
+ */
+function calculateArea($shape, $dimensions)
+{
+    switch ($shape) {
+        case 'rectangle':
             return $dimensions['length'] * $dimensions['width'];
         case 'circle':
             return pi() * pow($dimensions['radius'], 2);
@@ -2598,7 +2714,8 @@ function convertCurrency($amount, $from_currency, $to_currency, $exchange_rate =
 /**
  * Unit conversion helpers
  */
-function convertUnits($value, $from_unit, $to_unit) {
+function convertUnits($value, $from_unit, $to_unit)
+{
     $conversions = [
         'length' => [
             'mm_to_cm' => 0.1,
@@ -2616,22 +2733,82 @@ function convertUnits($value, $from_unit, $to_unit) {
         ]
     ];
 
-    $PLACEHOLDER_SECRET_VALUElength'][$key] ?? $conversions['weight'][$key] ?? 1);
+    $key = "{$from_unit}_to_{$to_unit}";
+    return $value * ($conversions['length'][$key] ?? $conversions['weight'][$key] ?? 1);
 }
 
 /**
  * Random data generators
  */
-function generateLoremIpsum($paragraphs = 1, $words_per_paragraph = 50) {
+function generateLoremIpsum($paragraphs = 1, $words_per_paragraph = 50)
+{
     $words = [
-        'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
-        'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
-        'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
-        'exercitation', 'ullamco', 'laboris', 'nisi', 'ut', 'aliquip', 'ex', 'ea',
-        'commodo', 'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'in',
-        'voluptate', 'velit', 'esse', 'cillum', 'eu', 'fugiat', 'nulla', 'pariatur',
-        'excepteur', 'sint', 'occaecat', 'cupidatat', 'non', 'proident', 'sunt', 'in',
-        'culpa', 'qui', 'officia', 'deserunt', 'mollit', 'anim', 'id', 'est', 'laborum'
+        'lorem',
+        'ipsum',
+        'dolor',
+        'sit',
+        'amet',
+        'consectetur',
+        'adipiscing',
+        'elit',
+        'sed',
+        'do',
+        'eiusmod',
+        'tempor',
+        'incididunt',
+        'ut',
+        'labore',
+        'et',
+        'dolore',
+        'magna',
+        'aliqua',
+        'enim',
+        'ad',
+        'minim',
+        'veniam',
+        'quis',
+        'nostrud',
+        'exercitation',
+        'ullamco',
+        'laboris',
+        'nisi',
+        'ut',
+        'aliquip',
+        'ex',
+        'ea',
+        'commodo',
+        'consequat',
+        'duis',
+        'aute',
+        'irure',
+        'in',
+        'reprehenderit',
+        'in',
+        'voluptate',
+        'velit',
+        'esse',
+        'cillum',
+        'eu',
+        'fugiat',
+        'nulla',
+        'pariatur',
+        'excepteur',
+        'sint',
+        'occaecat',
+        'cupidatat',
+        'non',
+        'proident',
+        'sunt',
+        'in',
+        'culpa',
+        'qui',
+        'officia',
+        'deserunt',
+        'mollit',
+        'anim',
+        'id',
+        'est',
+        'laborum'
     ];
 
     $lorem_ipsum = [];
@@ -2650,7 +2827,8 @@ function generateLoremIpsum($paragraphs = 1, $words_per_paragraph = 50) {
 /**
  * Data validation helpers
  */
-function validateCreditCard($number) {
+function validateCreditCard($number)
+{
     // Remove spaces and dashes
     $number = preg_replace('/\D/', '', $number);
 
@@ -2680,11 +2858,13 @@ function validateCreditCard($number) {
     return $sum % 10 === 0;
 }
 
-function validatePAN($pan) {
+function validatePAN($pan)
+{
     return preg_match('/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/', $pan);
 }
 
-function validateAadhar($aadhar) {
+function validateAadhar($aadhar)
+{
     $aadhar = preg_replace('/\D/', '', $aadhar);
     return strlen($aadhar) === 12 && preg_match('/^[2-9][0-9]{11}$/', $aadhar);
 }
@@ -2692,22 +2872,26 @@ function validateAadhar($aadhar) {
 /**
  * Business logic helpers
  */
-function calculateCommission($sale_amount, $commission_rate) {
+function calculateCommission($sale_amount, $commission_rate)
+{
     return ($sale_amount * $commission_rate) / 100;
 }
 
-function calculateTax($amount, $tax_rate) {
+function calculateTax($amount, $tax_rate)
+{
     return ($amount * $tax_rate) / 100;
 }
 
-function calculateDiscount($original_price, $discount_percentage) {
+function calculateDiscount($original_price, $discount_percentage)
+{
     return $original_price - (($original_price * $discount_percentage) / 100);
 }
 
 /**
  * Contact information helpers
  */
-function formatPhoneNumber($phone) {
+function formatPhoneNumber($phone)
+{
     $phone = preg_replace('/\D/', '', $phone);
 
     if (strlen($phone) === 10) {
@@ -2719,14 +2903,16 @@ function formatPhoneNumber($phone) {
     return $phone;
 }
 
-function formatAddress($address) {
+function formatAddress($address)
+{
     return str_replace(['|', ','], ["\n", ",\n"], $address);
 }
 
 /**
  * Image processing helpers
  */
-function optimizeImage($source, $destination, $quality = 80) {
+function optimizeImage($source, $destination, $quality = 80)
+{
     $image_info = getimagesize($source);
     if (!$image_info) {
         return false;
@@ -2771,7 +2957,8 @@ function optimizeImage($source, $destination, $quality = 80) {
 /**
  * Document processing helpers
  */
-function extractTextFromPDF($pdf_path) {
+function extractTextFromPDF($pdf_path)
+{
     if (!file_exists($pdf_path)) {
         return false;
     }
@@ -2781,7 +2968,8 @@ function extractTextFromPDF($pdf_path) {
     return 'PDF text extraction not implemented yet';
 }
 
-function convertDocument($source, $destination, $format) {
+function convertDocument($source, $destination, $format)
+{
     // This would require document conversion libraries
     // For now, return placeholder
     return false;
@@ -2790,7 +2978,8 @@ function convertDocument($source, $destination, $format) {
 /**
  * Chart and graph helpers
  */
-function generateChartData($data, $type = 'line') {
+function generateChartData($data, $type = 'line')
+{
     $chart_data = [
         'type' => $type,
         'data' => $data,
@@ -2804,7 +2993,8 @@ function generateChartData($data, $type = 'line') {
 /**
  * Report generation helpers
  */
-function generateReport($title, $data, $format = 'html') {
+function generateReport($title, $data, $format = 'html')
+{
     $report = [
         'title' => $title,
         'generated_at' => date('Y-m-d H:i:s'),
@@ -2823,7 +3013,8 @@ function generateReport($title, $data, $format = 'html') {
     }
 }
 
-function generateHTMLReport($report) {
+function generateHTMLReport($report)
+{
     $html = '<h1>' . $report['title'] . '</h1>';
     $html .= '<p><strong>Generated:</strong> ' . $report['generated_at'] . '</p>';
     $html .= '<table border="1" cellpadding="5" cellspacing="0">';
@@ -2837,7 +3028,8 @@ function generateHTMLReport($report) {
     return $html;
 }
 
-function generateCSVReport($data) {
+function generateCSVReport($data)
+{
     if (empty($data)) {
         return '';
     }
@@ -2866,7 +3058,8 @@ function generateCSVReport($data) {
 /**
  * Email helpers
  */
-function sendEmail($to, $subject, $body, $from = null) {
+function sendEmail($to, $subject, $body, $from = null)
+{
     $from = $from ?? env('MAIL_FROM_ADDRESS', 'noreply@apsdreamhome.com');
 
     $headers = [
@@ -2882,7 +3075,8 @@ function sendEmail($to, $subject, $body, $from = null) {
 /**
  * SMS helpers (placeholder)
  */
-function sendSMS($to, $message) {
+function sendSMS($to, $message)
+{
     // This would integrate with SMS gateway APIs
     // For now, return success
     logActivity('sms_sent', ['to' => $to, 'message' => $message]);
@@ -2892,17 +3086,30 @@ function sendSMS($to, $message) {
 /**
  * Push notification helpers (placeholder)
  */
-function sendPushNotification($device_token, $title, $message) {
+function sendPushNotification($device_token, $title, $message)
+{
     // This would integrate with FCM or similar services
     // For now, return success
-    logActivity('push_notification', ['device_PLACEHOLDER_SECRET_VALUEwhatsapp_message', ['to' => $to, 'message' => $message]);
+    logActivity('push_notification', ['device_token' => $device_token, 'title' => $title, 'message' => $message]);
+    return true;
+}
+
+/**
+ * WhatsApp helpers (placeholder)
+ */
+function sendWhatsApp($to, $message)
+{
+    // This would integrate with WhatsApp Business API
+    // For now, return success
+    logActivity('whatsapp_message', ['to' => $to, 'message' => $message]);
     return true;
 }
 
 /**
  * Social media integration helpers
  */
-function postToSocialMedia($platform, $message, $image = null) {
+function postToSocialMedia($platform, $message, $image = null)
+{
     switch ($platform) {
         case 'facebook':
             // Facebook API integration
@@ -2925,7 +3132,8 @@ function postToSocialMedia($platform, $message, $image = null) {
 /**
  * Weather API helpers (placeholder)
  */
-function getWeather($city, $api_key) {
+function getWeather($city, $api_key)
+{
     // This would integrate with weather APIs like OpenWeatherMap
     return [
         'temperature' => '25°C',
@@ -2938,7 +3146,8 @@ function getWeather($city, $api_key) {
 /**
  * Maps and location helpers
  */
-function getCoordinates($address) {
+function getCoordinates($address)
+{
     // This would integrate with Google Maps API or similar
     return [
         'latitude' => 28.6139,
@@ -2947,7 +3156,8 @@ function getCoordinates($address) {
     ];
 }
 
-function calculateRoute($from, $to) {
+function calculateRoute($from, $to)
+{
     // This would integrate with Google Maps Directions API
     return [
         'distance' => '10 km',
@@ -2959,7 +3169,8 @@ function calculateRoute($from, $to) {
 /**
  * Translation helpers (placeholder)
  */
-function translateText($text, $from_lang, $to_lang) {
+function translateText($text, $from_lang, $to_lang)
+{
     // This would integrate with translation APIs like Google Translate
     return $text; // Placeholder
 }
@@ -2967,7 +3178,8 @@ function translateText($text, $from_lang, $to_lang) {
 /**
  * Speech to text helpers (placeholder)
  */
-function speechToText($audio_file) {
+function speechToText($audio_file)
+{
     // This would integrate with speech recognition APIs
     return 'Speech recognition not implemented';
 }
@@ -2975,7 +3187,8 @@ function speechToText($audio_file) {
 /**
  * Text to speech helpers (placeholder)
  */
-function textToSpeech($text, $language = 'en') {
+function textToSpeech($text, $language = 'en')
+{
     // This would integrate with TTS APIs
     return 'Text to speech not implemented';
 }
@@ -2983,7 +3196,8 @@ function textToSpeech($text, $language = 'en') {
 /**
  * AI/ML helpers (placeholder)
  */
-function analyzeSentiment($text) {
+function analyzeSentiment($text)
+{
     // This would integrate with sentiment analysis APIs
     return [
         'sentiment' => 'neutral',
@@ -2993,7 +3207,8 @@ function analyzeSentiment($text) {
     ];
 }
 
-function generateAIResponse($prompt, $context = []) {
+function generateAIResponse($prompt, $context = [])
+{
     // This would integrate with AI APIs like OpenAI
     return 'AI response not implemented';
 }
@@ -3001,18 +3216,21 @@ function generateAIResponse($prompt, $context = []) {
 /**
  * Blockchain helpers (placeholder)
  */
-function generateWalletAddress() {
+function generateWalletAddress()
+{
     return 'bc1q' . bin2hex(random_bytes(20));
 }
 
-function validateWalletAddress($address) {
+function validateWalletAddress($address)
+{
     return preg_match('/^bc1[a-z0-9]{39}$/', $address);
 }
 
 /**
  * Cryptocurrency helpers
  */
-function getCryptoPrice($symbol) {
+function getCryptoPrice($symbol)
+{
     // This would integrate with crypto price APIs
     $prices = [
         'BTC' => 45000,
@@ -3023,7 +3241,8 @@ function getCryptoPrice($symbol) {
     return $prices[strtoupper($symbol)] ?? 0;
 }
 
-function convertCrypto($amount, $from_symbol, $to_symbol) {
+function convertCrypto($amount, $from_symbol, $to_symbol)
+{
     $from_price = getCryptoPrice($from_symbol);
     $to_price = getCryptoPrice($to_symbol);
 
@@ -3037,7 +3256,8 @@ function convertCrypto($amount, $from_symbol, $to_symbol) {
 /**
  * QR code helpers
  */
-function generateQRCode($data, $size = 200) {
+function generateQRCode($data, $size = 200)
+{
     // This would integrate with QR code generation libraries
     $qr_data = 'QR code for: ' . $data;
     return $qr_data;
@@ -3046,7 +3266,8 @@ function generateQRCode($data, $size = 200) {
 /**
  * Barcode helpers
  */
-function generateBarcode($data, $type = 'CODE128') {
+function generateBarcode($data, $type = 'CODE128')
+{
     // This would integrate with barcode generation libraries
     return 'Barcode for: ' . $data;
 }
@@ -3054,14 +3275,16 @@ function generateBarcode($data, $type = 'CODE128') {
 /**
  * Calendar helpers
  */
-function getCalendarEvents($start_date, $end_date) {
+function getCalendarEvents($start_date, $end_date)
+{
     // This would integrate with calendar APIs
     return [
         ['title' => 'Sample Event', 'date' => date('Y-m-d'), 'time' => '10:00']
     ];
 }
 
-function addCalendarEvent($title, $date, $time, $description = '') {
+function addCalendarEvent($title, $date, $time, $description = '')
+{
     // This would integrate with calendar APIs
     return generateUniqueId('event_');
 }
@@ -3069,7 +3292,8 @@ function addCalendarEvent($title, $date, $time, $description = '') {
 /**
  * File system helpers
  */
-function getFileInfo($filepath) {
+function getFileInfo($filepath)
+{
     if (!file_exists($filepath)) {
         return false;
     }
@@ -3083,7 +3307,8 @@ function getFileInfo($filepath) {
     ];
 }
 
-function getDirectoryTree($directory, $max_depth = 3, $current_depth = 0) {
+function getDirectoryTree($directory, $max_depth = 3, $current_depth = 0)
+{
     if ($current_depth > $max_depth || !is_dir($directory)) {
         return [];
     }
@@ -3111,45 +3336,27 @@ function getDirectoryTree($directory, $max_depth = 3, $current_depth = 0) {
 /**
  * Network helpers
  */
-function ping($host) {
+function ping($host)
+{
     $output = shell_exec("ping -c 1 " . escapeshellarg($host));
     return strpos($output, '1 packets transmitted, 1 received') !== false;
 }
 
-function getNetworkInfo() {
+function getNetworkInfo()
+{
     return [
         'ip' => getClientIP(),
         'user_agent' => getUserAgent(),
         'hostname' => gethostbyaddr(getClientIP()),
-        'server_ip' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['SERVER_ADDR'] ?? 'unknown'
+        'server_ip' => $_SERVER['SERVER_ADDR'] ?? 'unknown'
     ];
 }
 
 /**
  * System monitoring helpers
  */
-function getSystemStats() {
+function getSystemStats()
+{
     return [
         'cpu_usage' => function_exists('sys_getloadavg') ? sys_getloadavg()[0] : 'N/A',
         'memory_usage' => getMemoryInfo(),
@@ -3165,7 +3372,8 @@ function getSystemStats() {
 /**
  * Database optimization helpers
  */
-function optimizeTables() {
+function optimizeTables()
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -3189,7 +3397,8 @@ function optimizeTables() {
     }
 }
 
-function repairTables() {
+function repairTables()
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -3216,7 +3425,8 @@ function repairTables() {
 /**
  * Cache management helpers
  */
-function clearApplicationCache() {
+function clearApplicationCache()
+{
     $cache_dirs = [
         __DIR__ . '/../cache',
         __DIR__ . '/../temp'
@@ -3242,7 +3452,8 @@ function clearApplicationCache() {
 /**
  * Log rotation helpers
  */
-function rotateLogs() {
+function rotateLogs()
+{
     $log_dirs = [
         __DIR__ . '/../logs'
     ];
@@ -3279,7 +3490,8 @@ function rotateLogs() {
 /**
  * Session management helpers
  */
-function regenerateSession() {
+function regenerateSession()
+{
     session_regenerate_id(true);
     $_SESSION['regenerated'] = time();
 }
@@ -3287,7 +3499,8 @@ function regenerateSession() {
 /**
  * Cookie helpers
  */
-function setSecureCookie($name, $value, $expire = 0, $path = '/', $domain = '', $secure = true, $httponly = true) {
+function setSecureCookie($name, $value, $expire = 0, $path = '/', $domain = '', $secure = true, $httponly = true)
+{
     return setcookie($name, $value, [
         'expires' => $expire,
         'path' => $path,
@@ -3301,7 +3514,8 @@ function setSecureCookie($name, $value, $expire = 0, $path = '/', $domain = '', 
 /**
  * Header helpers
  */
-function setSecurityHeaders() {
+function setSecurityHeaders()
+{
     $headers = [
         'X-Content-Type-Options: nosniff',
         'X-Frame-Options: SAMEORIGIN',
@@ -3319,7 +3533,8 @@ function setSecurityHeaders() {
 /**
  * Request helpers
  */
-function getRequestData($method = null) {
+function getRequestData($method = null)
+{
     $method = $method ?? getRequestMethod();
 
     switch (strtoupper($method)) {
@@ -3340,7 +3555,8 @@ function getRequestData($method = null) {
 /**
  * Response helpers
  */
-function setResponseHeaders($headers) {
+function setResponseHeaders($headers)
+{
     foreach ($headers as $name => $value) {
         header($name . ': ' . $value);
     }
@@ -3349,7 +3565,8 @@ function setResponseHeaders($headers) {
 /**
  * Template engine helpers
  */
-function renderTemplateEngine($template, $data = []) {
+function renderTemplateEngine($template, $data = [])
+{
     // Simple template engine
     $content = file_get_contents($template);
 
@@ -3371,7 +3588,8 @@ function renderTemplateEngine($template, $data = []) {
 /**
  * Widget helpers
  */
-function renderWidget($widget_name, $data = []) {
+function renderWidget($widget_name, $data = [])
+{
     $widget_file = __DIR__ . '/../widgets/' . $widget_name . '.php';
 
     if (file_exists($widget_file)) {
@@ -3387,7 +3605,8 @@ function renderWidget($widget_name, $data = []) {
 /**
  * Module system helpers
  */
-function loadModule($module_name) {
+function loadModule($module_name)
+{
     $module_file = __DIR__ . '/../modules/' . $module_name . '/module.php';
 
     if (file_exists($module_file)) {
@@ -3401,7 +3620,8 @@ function loadModule($module_name) {
 /**
  * Hook system helpers
  */
-function addAction($hook, $callback, $priority = 10) {
+function addAction($hook, $callback, $priority = 10)
+{
     global $actions;
 
     if (!isset($actions[$hook])) {
@@ -3414,14 +3634,15 @@ function addAction($hook, $callback, $priority = 10) {
     ];
 
     // Sort by priority
-    uasort($actions[$hook], function($a, $b) {
+    uasort($actions[$hook], function ($a, $b) {
         return $a['priority'] <=> $b['priority'];
     });
 
     return true;
 }
 
-function doAction($hook, $args = []) {
+function doAction($hook, $args = [])
+{
     global $actions;
 
     if (!isset($actions[$hook])) {
@@ -3438,7 +3659,8 @@ function doAction($hook, $args = []) {
 /**
  * Filter system helpers
  */
-function addFilter($filter, $callback, $priority = 10) {
+function addFilter($filter, $callback, $priority = 10)
+{
     global $filters;
 
     if (!isset($filters[$filter])) {
@@ -3451,14 +3673,15 @@ function addFilter($filter, $callback, $priority = 10) {
     ];
 
     // Sort by priority
-    uasort($filters[$filter], function($a, $b) {
+    uasort($filters[$filter], function ($a, $b) {
         return $a['priority'] <=> $b['priority'];
     });
 
     return true;
 }
 
-function applyFilter($filter, $value, $args = []) {
+function applyFilter($filter, $value, $args = [])
+{
     global $filters;
 
     if (!isset($filters[$filter])) {
@@ -3475,14 +3698,16 @@ function applyFilter($filter, $value, $args = []) {
 /**
  * Event system helpers
  */
-function triggerEvent($event, $data = []) {
+function triggerEvent($event, $data = [])
+{
     logActivity('event_triggered', ['event' => $event, 'data' => $data]);
 
     // This would trigger actual event handlers
     return true;
 }
 
-function onEvent($event, $callback) {
+function onEvent($event, $callback)
+{
     global $event_handlers;
 
     if (!isset($event_handlers[$event])) {
@@ -3496,7 +3721,8 @@ function onEvent($event, $callback) {
 /**
  * Asset management helpers
  */
-function registerAsset($type, $handle, $src, $dependencies = [], $version = null) {
+function registerAsset($type, $handle, $src, $dependencies = [], $version = null)
+{
     global $registered_assets;
 
     $registered_assets[$type][$handle] = [
@@ -3508,7 +3734,8 @@ function registerAsset($type, $handle, $src, $dependencies = [], $version = null
     return true;
 }
 
-function enqueueAsset($type, $handle) {
+function enqueueAsset($type, $handle)
+{
     global $enqueued_assets, $registered_assets;
 
     if (isset($registered_assets[$type][$handle])) {
@@ -3518,7 +3745,8 @@ function enqueueAsset($type, $handle) {
     return true;
 }
 
-function renderAssets($type) {
+function renderAssets($type)
+{
     global $enqueued_assets, $registered_assets;
 
     if (!isset($enqueued_assets[$type])) {
@@ -3558,51 +3786,61 @@ function renderAssets($type) {
 /**
  * Form helpers
  */
-function generateFormToken() {
+function generateFormToken()
+{
     $token = generateToken();
     $_SESSION['form_token'] = $token;
     return $token;
 }
 
-function validateFormToken($token) {
+function validateFormToken($token)
+{
     return isset($_SESSION['form_token']) && $_SESSION['form_token'] === $token;
 }
 
 /**
  * Validation helpers
  */
-function validateRequired($value) {
+function validateRequired($value)
+{
     return !empty($value);
 }
 
-function validateMinLength($value, $min) {
+function validateMinLength($value, $min)
+{
     return strlen($value) >= $min;
 }
 
-function validateMaxLength($value, $max) {
+function validateMaxLength($value, $max)
+{
     return strlen($value) <= $max;
 }
 
-function validatePattern($value, $pattern) {
+function validatePattern($value, $pattern)
+{
     return preg_match($pattern, $value) === 1;
 }
 
-function validateRange($value, $min, $max) {
+function validateRange($value, $min, $max)
+{
     return $value >= $min && $value <= $max;
 }
 
 /**
  * String manipulation helpers
  */
-function removeAccents($string) {
+function removeAccents($string)
+{
     return iconv('UTF-8', 'ASCII//TRANSLIT', $string);
 }
 
-function removeSpecialChars($string) {
+function removeSpecialChars($string)
+{
     return preg_replace('/[^a-zA-Z0-9\s]/', '', $string);
 }
 
-function limitWords($string, $limit) {
+function limitWords($string, $limit)
+{
     $words = explode(' ', $string);
     if (count($words) <= $limit) {
         return $string;
@@ -3614,13 +3852,15 @@ function limitWords($string, $limit) {
 /**
  * Array manipulation helpers
  */
-function arrayColumn($array, $column) {
-    return array_map(function($item) use ($column) {
+function arrayColumn($array, $column)
+{
+    return array_map(function ($item) use ($column) {
         return is_object($item) ? $item->$column : $item[$column];
     }, $array);
 }
 
-function arrayUnique($array, $column) {
+function arrayUnique($array, $column)
+{
     $unique = [];
     $seen = [];
 
@@ -3639,7 +3879,8 @@ function arrayUnique($array, $column) {
 /**
  * Date manipulation helpers
  */
-function addBusinessDays($date, $days) {
+function addBusinessDays($date, $days)
+{
     $current = strtotime($date);
     $business_days = 0;
 
@@ -3651,7 +3892,8 @@ function addBusinessDays($date, $days) {
     return date('Y-m-d', $current);
 }
 
-function getBusinessDays($start_date, $end_date) {
+function getBusinessDays($start_date, $end_date)
+{
     $start = strtotime($start_date);
     $end = strtotime($end_date);
     $business_days = 0;
@@ -3670,15 +3912,18 @@ function getBusinessDays($start_date, $end_date) {
 /**
  * Financial calculation helpers
  */
-function calculateCompoundInterest($principal, $rate, $time, $compounds_per_year = 12) {
+function calculateCompoundInterest($principal, $rate, $time, $compounds_per_year = 12)
+{
     return $principal * pow((1 + $rate / (100 * $compounds_per_year)), $compounds_per_year * $time);
 }
 
-function calculateSimpleInterest($principal, $rate, $time) {
+function calculateSimpleInterest($principal, $rate, $time)
+{
     return ($principal * $rate * $time) / 100;
 }
 
-function calculateLoanPayment($principal, $rate, $months) {
+function calculateLoanPayment($principal, $rate, $months)
+{
     $monthly_rate = $rate / (12 * 100);
     return ($principal * $monthly_rate * pow(1 + $monthly_rate, $months)) / (pow(1 + $monthly_rate, $months) - 1);
 }
@@ -3686,25 +3931,28 @@ function calculateLoanPayment($principal, $rate, $months) {
 /**
  * Statistics helpers
  */
-function calculateAverage($numbers) {
+function calculateAverage($numbers)
+{
     if (empty($numbers)) {
         return 0;
     }
     return array_sum($numbers) / count($numbers);
 }
 
-function calculateMedian($numbers) {
+function calculateMedian($numbers)
+{
     sort($numbers);
     $count = count($numbers);
 
     if ($count % 2 === 0) {
-        return ($numbers[$count/2 - 1] + $numbers[$count/2]) / 2;
+        return ($numbers[$count / 2 - 1] + $numbers[$count / 2]) / 2;
     } else {
-        return $numbers[floor($count/2)];
+        return $numbers[floor($count / 2)];
     }
 }
 
-function calculateStandardDeviation($numbers) {
+function calculateStandardDeviation($numbers)
+{
     if (empty($numbers)) {
         return 0;
     }
@@ -3723,7 +3971,8 @@ function calculateStandardDeviation($numbers) {
 /**
  * Color manipulation helpers
  */
-function lightenColor($hex, $percent) {
+function lightenColor($hex, $percent)
+{
     $rgb = hexToRgb($hex);
 
     $new_r = min(255, $rgb['r'] + ($rgb['r'] * $percent / 100));
@@ -3733,14 +3982,16 @@ function lightenColor($hex, $percent) {
     return rgbToHex((int)$new_r, (int)$new_g, (int)$new_b);
 }
 
-function darkenColor($hex, $percent) {
+function darkenColor($hex, $percent)
+{
     return lightenColor($hex, -$percent);
 }
 
 /**
  * Image manipulation helpers
  */
-function addWatermark($image_path, $watermark_path, $position = 'bottom-right', $opacity = 50) {
+function addWatermark($image_path, $watermark_path, $position = 'bottom-right', $opacity = 50)
+{
     $image_info = getimagesize($image_path);
     $watermark_info = getimagesize($watermark_path);
 
@@ -3788,7 +4039,8 @@ function addWatermark($image_path, $watermark_path, $position = 'bottom-right', 
 /**
  * PDF generation helpers (placeholder)
  */
-function generatePDF($html, $filename) {
+function generatePDF($html, $filename)
+{
     // This would integrate with PDF generation libraries like TCPDF, DomPDF, etc.
     return 'PDF generation not implemented';
 }
@@ -3796,7 +4048,8 @@ function generatePDF($html, $filename) {
 /**
  * Excel generation helpers (placeholder)
  */
-function generateExcel($data, $filename) {
+function generateExcel($data, $filename)
+{
     // This would integrate with Excel generation libraries like PHPExcel, PhpSpreadsheet, etc.
     return 'Excel generation not implemented';
 }
@@ -3804,7 +4057,8 @@ function generateExcel($data, $filename) {
 /**
  * Word document generation helpers (placeholder)
  */
-function generateWordDocument($content, $filename) {
+function generateWordDocument($content, $filename)
+{
     // This would integrate with Word document generation libraries
     return 'Word document generation not implemented';
 }
@@ -3812,7 +4066,8 @@ function generateWordDocument($content, $filename) {
 /**
  * Chart generation helpers (placeholder)
  */
-function generateChart($data, $type, $filename) {
+function generateChart($data, $type, $filename)
+{
     // This would integrate with chart generation libraries like Chart.js, D3.js, etc.
     return 'Chart generation not implemented';
 }
@@ -3820,7 +4075,8 @@ function generateChart($data, $type, $filename) {
 /**
  * Email template helpers
  */
-function processEmailTemplate($template, $data) {
+function processEmailTemplate($template, $data)
+{
     foreach ($data as $key => $value) {
         $template = str_replace('{{' . $key . '}}', $value, $template);
     }
@@ -3830,7 +4086,8 @@ function processEmailTemplate($template, $data) {
 /**
  * SMS template helpers
  */
-function processSMSTemplate($template, $data) {
+function processSMSTemplate($template, $data)
+{
     foreach ($data as $key => $value) {
         $template = str_replace('{{' . $key . '}}', $value, $template);
     }
@@ -3840,7 +4097,8 @@ function processSMSTemplate($template, $data) {
 /**
  * WhatsApp template helpers
  */
-function processWhatsAppTemplate($template, $data) {
+function processWhatsAppTemplate($template, $data)
+{
     foreach ($data as $key => $value) {
         $template = str_replace('{{' . $key . '}}', $value, $template);
     }
@@ -3850,7 +4108,8 @@ function processWhatsAppTemplate($template, $data) {
 /**
  * Push notification template helpers
  */
-function processPushNotificationTemplate($template, $data) {
+function processPushNotificationTemplate($template, $data)
+{
     foreach ($data as $key => $value) {
         $template = str_replace('{{' . $key . '}}', $value, $template);
     }
@@ -3860,7 +4119,8 @@ function processPushNotificationTemplate($template, $data) {
 /**
  * Database backup helpers
  */
-function createIncrementalBackup($table = null) {
+function createIncrementalBackup($table = null)
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -3885,7 +4145,6 @@ function createIncrementalBackup($table = null) {
         createDirectory(dirname($backup_file));
 
         return file_put_contents($backup_file, json_encode($backup_data)) !== false;
-
     } catch (Exception $e) {
         logError('Incremental Backup Error', ['error' => $e->getMessage()]);
         return false;
@@ -3895,7 +4154,8 @@ function createIncrementalBackup($table = null) {
 /**
  * Database restore helpers
  */
-function restoreFromBackup($backup_file) {
+function restoreFromBackup($backup_file)
+{
     global $pdo;
     if (!$pdo || !file_exists($backup_file)) {
         return false;
@@ -3912,7 +4172,9 @@ function restoreFromBackup($backup_file) {
                 // Insert backup data
                 foreach ($data as $row) {
                     $columns = array_keys($row);
-                    $placeholders = array_map(function($col) { return ":{$col}"; }, $columns);
+                    $placeholders = array_map(function ($col) {
+                        return ":{$col}";
+                    }, $columns);
 
                     $sql = "INSERT INTO {$table} (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
                     $stmt = $pdo->prepare($sql);
@@ -3922,7 +4184,6 @@ function restoreFromBackup($backup_file) {
         }
 
         return true;
-
     } catch (Exception $e) {
         logError('Restore Error', ['backup_file' => $backup_file, 'error' => $e->getMessage()]);
         return false;
@@ -3932,7 +4193,8 @@ function restoreFromBackup($backup_file) {
 /**
  * Migration helpers
  */
-function runMigrations() {
+function runMigrations()
+{
     $migrations_dir = __DIR__ . '/../migrations';
     if (!is_dir($migrations_dir)) {
         return false;
@@ -3962,7 +4224,8 @@ function runMigrations() {
     return $executed;
 }
 
-function migrationExists($migration_name) {
+function migrationExists($migration_name)
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -3977,7 +4240,8 @@ function migrationExists($migration_name) {
     }
 }
 
-function markMigrationAsRun($migration_name) {
+function markMigrationAsRun($migration_name)
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -3994,7 +4258,8 @@ function markMigrationAsRun($migration_name) {
 /**
  * Testing helpers
  */
-function runTests() {
+function runTests()
+{
     $test_dir = __DIR__ . '/../tests';
     if (!is_dir($test_dir)) {
         return ['message' => 'No tests directory found'];
@@ -4022,11 +4287,13 @@ function runTests() {
 /**
  * Performance monitoring helpers
  */
-function startPerformanceMonitoring() {
+function startPerformanceMonitoring()
+{
     $_SESSION['performance_start'] = microtime(true);
 }
 
-function endPerformanceMonitoring() {
+function endPerformanceMonitoring()
+{
     if (isset($_SESSION['performance_start'])) {
         $end_time = microtime(true);
         $execution_time = round(($end_time - $_SESSION['performance_start']) * 1000, 2);
@@ -4034,28 +4301,7 @@ function endPerformanceMonitoring() {
         logActivity('performance', [
             'execution_time' => $execution_time . 'ms',
             'memory_usage' => getMemoryInfo(),
-            'page' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REQUEST_URI'] ?? 'unknown'
+            'page' => $_SERVER['REQUEST_URI'] ?? 'unknown'
         ]);
 
         unset($_SESSION['performance_start']);
@@ -4068,14 +4314,15 @@ function endPerformanceMonitoring() {
 /**
  * A/B testing helpers
  */
-function getABTestVariant($test_name, $variants) {
+function getABTestVariant($test_name, $variants)
+{
     $user_id = getCurrentUserId();
 
     if (!$user_id) {
         return $variants[0]; // Default variant for guests
     }
 
-    $variant_PLACEHOLDER_SECRET_VALUE/../config/features.json';
+    $features_file = __DIR__ . '/../config/features.json';
 
     if (file_exists($features_file)) {
         $features = json_decode(file_get_contents($features_file), true);
@@ -4085,7 +4332,8 @@ function getABTestVariant($test_name, $variants) {
     return false;
 }
 
-function enableFeature($feature) {
+function enableFeature($feature)
+{
     $features_file = __DIR__ . '/../config/features.json';
 
     $features = [];
@@ -4102,7 +4350,8 @@ function enableFeature($feature) {
     return file_put_contents($features_file, json_encode($features)) !== false;
 }
 
-function disableFeature($feature) {
+function disableFeature($feature)
+{
     $features_file = __DIR__ . '/../config/features.json';
 
     $features = [];
@@ -4122,11 +4371,13 @@ function disableFeature($feature) {
 /**
  * Localization helpers
  */
-function getCurrentLanguage() {
+function getCurrentLanguage()
+{
     return $_SESSION['language'] ?? 'en';
 }
 
-function setLanguage($language) {
+function setLanguage($language)
+{
     $_SESSION['language'] = $language;
     return true;
 }
@@ -4134,11 +4385,13 @@ function setLanguage($language) {
 /**
  * Timezone helpers
  */
-function getCurrentTimezone() {
+function getCurrentTimezone()
+{
     return $_SESSION['timezone'] ?? 'Asia/Kolkata';
 }
 
-function setTimezone($timezone) {
+function setTimezone($timezone)
+{
     $_SESSION['timezone'] = $timezone;
     date_default_timezone_set($timezone);
     return true;
@@ -4147,11 +4400,13 @@ function setTimezone($timezone) {
 /**
  * Currency helpers
  */
-function getCurrentCurrency() {
+function getCurrentCurrency()
+{
     return $_SESSION['currency'] ?? 'INR';
 }
 
-function setCurrency($currency) {
+function setCurrency($currency)
+{
     $_SESSION['currency'] = $currency;
     return true;
 }
@@ -4159,11 +4414,13 @@ function setCurrency($currency) {
 /**
  * Theme helpers
  */
-function getCurrentTheme() {
+function getCurrentTheme()
+{
     return $_SESSION['theme'] ?? 'default';
 }
 
-function setTheme($theme) {
+function setTheme($theme)
+{
     $_SESSION['theme'] = $theme;
     return true;
 }
@@ -4171,11 +4428,13 @@ function setTheme($theme) {
 /**
  * GDPR compliance helpers
  */
-function hasConsent($consent_type) {
+function hasConsent($consent_type)
+{
     return isset($_SESSION['consents'][$consent_type]);
 }
 
-function giveConsent($consent_type) {
+function giveConsent($consent_type)
+{
     $_SESSION['consents'][$consent_type] = true;
     $_SESSION['consent_date'] = time();
     return true;
@@ -4184,7 +4443,8 @@ function giveConsent($consent_type) {
 /**
  * Accessibility helpers
  */
-function getAccessibilitySettings() {
+function getAccessibilitySettings()
+{
     return $_SESSION['accessibility'] ?? [
         'high_contrast' => false,
         'large_text' => false,
@@ -4192,7 +4452,8 @@ function getAccessibilitySettings() {
     ];
 }
 
-function setAccessibilitySettings($settings) {
+function setAccessibilitySettings($settings)
+{
     $_SESSION['accessibility'] = array_merge($_SESSION['accessibility'] ?? [], $settings);
     return true;
 }
@@ -4200,23 +4461,22 @@ function setAccessibilitySettings($settings) {
 /**
  * Mobile app helpers
  */
-function getDeviceInfo() {
+function getDeviceInfo()
+{
     return [
         'type' => getDeviceType(),
         'os' => getOperatingSystem(),
         'browser' => getBrowserName(),
         'is_mobile' => isMobile(),
-        'screen_size' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_COOKIE['screen_size'] ?? 'unknown'
+        'screen_size' => $_COOKIE['screen_size'] ?? 'unknown'
     ];
 }
 
 /**
  * Progressive Web App helpers
  */
-function getPWAConfig() {
+function getPWAConfig()
+{
     return [
         'name' => getAppName(),
         'short_name' => 'APS Home',
@@ -4232,7 +4492,8 @@ function getPWAConfig() {
 /**
  * Service Worker helpers
  */
-function registerServiceWorker($scope = '/') {
+function registerServiceWorker($scope = '/')
+{
     return [
         'scope' => $scope,
         'script' => '/sw.js',
@@ -4243,7 +4504,8 @@ function registerServiceWorker($scope = '/') {
 /**
  * Push notification helpers
  */
-function subscribeToPushNotifications($subscription) {
+function subscribeToPushNotifications($subscription)
+{
     $subscriptions_file = __DIR__ . '/../subscriptions.json';
 
     $subscription_data = [
@@ -4265,7 +4527,8 @@ function subscribeToPushNotifications($subscription) {
 /**
  * Offline support helpers
  */
-function getOfflinePages() {
+function getOfflinePages()
+{
     return [
         '/',
         '/properties',
@@ -4275,7 +4538,8 @@ function getOfflinePages() {
     ];
 }
 
-function cacheOfflinePages() {
+function cacheOfflinePages()
+{
     $offline_pages = getOfflinePages();
 
     foreach ($offline_pages as $page) {
@@ -4292,7 +4556,8 @@ function cacheOfflinePages() {
 /**
  * Real-time features helpers
  */
-function getWebSocketConfig() {
+function getWebSocketConfig()
+{
     return [
         'host' => 'localhost',
         'port' => 8080,
@@ -4304,7 +4569,8 @@ function getWebSocketConfig() {
 /**
  * Chat system helpers
  */
-function getChatConfig() {
+function getChatConfig()
+{
     return [
         'enabled' => true,
         'provider' => 'websocket',
@@ -4317,7 +4583,8 @@ function getChatConfig() {
 /**
  * Video call helpers (placeholder)
  */
-function initiateVideoCall($room_id, $participants) {
+function initiateVideoCall($room_id, $participants)
+{
     return [
         'room_id' => $room_id,
         'participants' => $participants,
@@ -4328,7 +4595,8 @@ function initiateVideoCall($room_id, $participants) {
 /**
  * Screen sharing helpers (placeholder)
  */
-function startScreenShare($session_id) {
+function startScreenShare($session_id)
+{
     return [
         'session_id' => $session_id,
         'status' => 'started'
@@ -4338,7 +4606,8 @@ function startScreenShare($session_id) {
 /**
  * Virtual tour helpers (placeholder)
  */
-function generateVirtualTour($property_id) {
+function generateVirtualTour($property_id)
+{
     return [
         'property_id' => $property_id,
         'tour_id' => generateUniqueId('tour_'),
@@ -4350,7 +4619,8 @@ function generateVirtualTour($property_id) {
 /**
  * 3D model helpers (placeholder)
  */
-function load3DModel($model_id) {
+function load3DModel($model_id)
+{
     return [
         'model_id' => $model_id,
         'format' => 'gltf',
@@ -4362,7 +4632,8 @@ function load3DModel($model_id) {
 /**
  * AR/VR helpers (placeholder)
  */
-function generateARView($product_id) {
+function generateARView($product_id)
+{
     return [
         'product_id' => $product_id,
         'ar_model' => 'model.glb',
@@ -4373,7 +4644,8 @@ function generateARView($product_id) {
 /**
  * IoT integration helpers (placeholder)
  */
-function getIoTDevices() {
+function getIoTDevices()
+{
     return [
         ['id' => 1, 'name' => 'Smart Lock', 'type' => 'door_lock', 'status' => 'online'],
         ['id' => 2, 'name' => 'Security Camera', 'type' => 'camera', 'status' => 'online'],
@@ -4381,7 +4653,8 @@ function getIoTDevices() {
     ];
 }
 
-function controlIoTDevice($device_id, $command, $parameters = []) {
+function controlIoTDevice($device_id, $command, $parameters = [])
+{
     return [
         'device_id' => $device_id,
         'command' => $command,
@@ -4393,7 +4666,8 @@ function controlIoTDevice($device_id, $command, $parameters = []) {
 /**
  * Smart home integration helpers (placeholder)
  */
-function getSmartHomeSystems() {
+function getSmartHomeSystems()
+{
     return [
         ['id' => 1, 'name' => 'Google Home', 'type' => 'assistant', 'connected' => true],
         ['id' => 2, 'name' => 'Amazon Alexa', 'type' => 'assistant', 'connected' => false],
@@ -4404,7 +4678,8 @@ function getSmartHomeSystems() {
 /**
  * Energy monitoring helpers (placeholder)
  */
-function getEnergyUsage($property_id, $period = 'month') {
+function getEnergyUsage($property_id, $period = 'month')
+{
     return [
         'property_id' => $property_id,
         'period' => $period,
@@ -4418,7 +4693,8 @@ function getEnergyUsage($property_id, $period = 'month') {
 /**
  * Maintenance tracking helpers
  */
-function scheduleMaintenance($property_id, $type, $scheduled_date, $description = '') {
+function scheduleMaintenance($property_id, $type, $scheduled_date, $description = '')
+{
     return [
         'id' => generateUniqueId('maint_'),
         'property_id' => $property_id,
@@ -4429,7 +4705,8 @@ function scheduleMaintenance($property_id, $type, $scheduled_date, $description 
     ];
 }
 
-function getMaintenanceHistory($property_id) {
+function getMaintenanceHistory($property_id)
+{
     return [
         ['id' => 1, 'type' => 'Electrical', 'date' => '2024-01-15', 'cost' => 5000, 'status' => 'completed'],
         ['id' => 2, 'type' => 'Plumbing', 'date' => '2024-02-20', 'cost' => 3000, 'status' => 'completed'],
@@ -4440,7 +4717,8 @@ function getMaintenanceHistory($property_id) {
 /**
  * Property valuation helpers
  */
-function calculatePropertyValue($property_data) {
+function calculatePropertyValue($property_data)
+{
     $base_value = $property_data['area'] * $property_data['rate_per_sqft'];
 
     // Apply adjustments
@@ -4462,7 +4740,8 @@ function calculatePropertyValue($property_data) {
 /**
  * Market analysis helpers
  */
-function getMarketTrends($location, $property_type) {
+function getMarketTrends($location, $property_type)
+{
     return [
         'location' => $location,
         'property_type' => $property_type,
@@ -4477,7 +4756,8 @@ function getMarketTrends($location, $property_type) {
 /**
  * Investment analysis helpers
  */
-function calculateROI($investment, $returns, $period_years) {
+function calculateROI($investment, $returns, $period_years)
+{
     $total_returns = array_sum($returns);
     $average_annual_return = $total_returns / $period_years;
 
@@ -4494,7 +4774,8 @@ function calculateROI($investment, $returns, $period_years) {
 /**
  * Legal document helpers
  */
-function generateRentalAgreement($property_data, $tenant_data) {
+function generateRentalAgreement($property_data, $tenant_data)
+{
     return [
         'agreement_id' => generateUniqueId('agreement_'),
         'property' => $property_data,
@@ -4507,7 +4788,8 @@ function generateRentalAgreement($property_data, $tenant_data) {
     ];
 }
 
-function generateSaleDeed($property_data, $buyer_data) {
+function generateSaleDeed($property_data, $buyer_data)
+{
     return [
         'deed_id' => generateUniqueId('deed_'),
         'property' => $property_data,
@@ -4522,16 +4804,19 @@ function generateSaleDeed($property_data, $buyer_data) {
 /**
  * Tax calculation helpers
  */
-function calculateStampDuty($property_value) {
+function calculateStampDuty($property_value)
+{
     // Indian stamp duty calculation (varies by state)
     return $property_value * 0.07; // 7% stamp duty
 }
 
-function calculateRegistrationFee($property_value) {
+function calculateRegistrationFee($property_value)
+{
     return $property_value * 0.01; // 1% registration fee
 }
 
-function calculatePropertyTax($property_value, $location) {
+function calculatePropertyTax($property_value, $location)
+{
     // Property tax calculation (varies by location)
     return $property_value * 0.02; // 2% property tax
 }
@@ -4539,7 +4824,8 @@ function calculatePropertyTax($property_value, $location) {
 /**
  * Insurance helpers
  */
-function calculateInsurancePremium($property_value, $coverage_type) {
+function calculateInsurancePremium($property_value, $coverage_type)
+{
     $base_rate = [
         'basic' => 0.001,    // 0.1%
         'standard' => 0.002, // 0.2%
@@ -4552,7 +4838,8 @@ function calculateInsurancePremium($property_value, $coverage_type) {
 /**
  * Finance helpers
  */
-function calculateMortgagePayment($principal, $interest_rate, $loan_term_years) {
+function calculateMortgagePayment($principal, $interest_rate, $loan_term_years)
+{
     $monthly_rate = $interest_rate / (12 * 100);
     $num_payments = $loan_term_years * 12;
 
@@ -4561,13 +4848,14 @@ function calculateMortgagePayment($principal, $interest_rate, $loan_term_years) 
     }
 
     return ($principal * $monthly_rate * pow(1 + $monthly_rate, $num_payments)) /
-           (pow(1 + $monthly_rate, $num_payments) - 1);
+        (pow(1 + $monthly_rate, $num_payments) - 1);
 }
 
 /**
  * Education and training helpers
  */
-function getTrainingPrograms() {
+function getTrainingPrograms()
+{
     return [
         ['id' => 1, 'title' => 'Real Estate Agent Training', 'duration' => '3 months', 'fee' => 15000],
         ['id' => 2, 'title' => 'Property Management Course', 'duration' => '2 months', 'fee' => 10000],
@@ -4578,7 +4866,8 @@ function getTrainingPrograms() {
 /**
  * Community features helpers
  */
-function getCommunityFeatures($location) {
+function getCommunityFeatures($location)
+{
     return [
         'schools' => 5,
         'hospitals' => 3,
@@ -4592,7 +4881,8 @@ function getCommunityFeatures($location) {
 /**
  * Neighborhood analysis helpers
  */
-function analyzeNeighborhood($location) {
+function analyzeNeighborhood($location)
+{
     return [
         'location' => $location,
         'livability_score' => 8.5,
@@ -4607,7 +4897,8 @@ function analyzeNeighborhood($location) {
 /**
  * Property comparison helpers
  */
-function compareProperties($property_ids) {
+function compareProperties($property_ids)
+{
     $comparison = [];
 
     foreach ($property_ids as $id) {
@@ -4628,7 +4919,8 @@ function compareProperties($property_ids) {
 /**
  * Property search helpers
  */
-function searchProperties($criteria) {
+function searchProperties($criteria)
+{
     // Advanced search implementation
     return [
         'results' => [],
@@ -4641,7 +4933,8 @@ function searchProperties($criteria) {
 /**
  * Property recommendation helpers
  */
-function getPropertyRecommendations($user_id, $preferences) {
+function getPropertyRecommendations($user_id, $preferences)
+{
     // AI-powered recommendations (placeholder)
     return [
         ['id' => 1, 'title' => 'Recommended Property 1', 'match_score' => 95],
@@ -4653,7 +4946,8 @@ function getPropertyRecommendations($user_id, $preferences) {
 /**
  * Virtual assistant helpers
  */
-function getChatbotResponse($message, $context) {
+function getChatbotResponse($message, $context)
+{
     // Chatbot implementation (placeholder)
     return [
         'response' => 'I understand you\'re looking for properties. How can I help you today?',
@@ -4665,7 +4959,8 @@ function getChatbotResponse($message, $context) {
 /**
  * Voice command helpers (placeholder)
  */
-function processVoiceCommand($audio_data) {
+function processVoiceCommand($audio_data)
+{
     return [
         'command' => 'search properties in Delhi',
         'confidence' => 0.9,
@@ -4676,7 +4971,8 @@ function processVoiceCommand($audio_data) {
 /**
  * Image recognition helpers (placeholder)
  */
-function analyzePropertyImage($image_path) {
+function analyzePropertyImage($image_path)
+{
     return [
         'room_type' => 'living_room',
         'condition' => 'excellent',
@@ -4688,7 +4984,8 @@ function analyzePropertyImage($image_path) {
 /**
  * Document analysis helpers (placeholder)
  */
-function analyzeDocument($document_path) {
+function analyzeDocument($document_path)
+{
     return [
         'document_type' => 'property_deed',
         'extracted_data' => [
@@ -4703,7 +5000,8 @@ function analyzeDocument($document_path) {
 /**
  * Fraud detection helpers (placeholder)
  */
-function detectFraud($transaction_data) {
+function detectFraud($transaction_data)
+{
     return [
         'is_fraudulent' => false,
         'risk_score' => 15,
@@ -4715,7 +5013,8 @@ function detectFraud($transaction_data) {
 /**
  * Compliance helpers
  */
-function checkCompliance($property_data, $regulation_type) {
+function checkCompliance($property_data, $regulation_type)
+{
     switch ($regulation_type) {
         case 'rera':
             return checkRERACompliance($property_data);
@@ -4728,7 +5027,8 @@ function checkCompliance($property_data, $regulation_type) {
     }
 }
 
-function checkRERACompliance($property_data) {
+function checkRERACompliance($property_data)
+{
     return [
         'compliant' => true,
         'rera_number' => 'RERA123456',
@@ -4737,7 +5037,8 @@ function checkRERACompliance($property_data) {
     ];
 }
 
-function checkGSTCompliance($property_data) {
+function checkGSTCompliance($property_data)
+{
     return [
         'compliant' => true,
         'gst_number' => 'GSTIN123456789',
@@ -4746,7 +5047,8 @@ function checkGSTCompliance($property_data) {
     ];
 }
 
-function checkStampDutyCompliance($property_data) {
+function checkStampDutyCompliance($property_data)
+{
     return [
         'compliant' => true,
         'stamp_duty_paid' => 350000,
@@ -4758,7 +5060,8 @@ function checkStampDutyCompliance($property_data) {
 /**
  * Regulatory reporting helpers
  */
-function generateRegulatoryReport($report_type, $data) {
+function generateRegulatoryReport($report_type, $data)
+{
     switch ($report_type) {
         case 'rera_monthly':
             return generateRERAMonthlyReport($data);
@@ -4771,7 +5074,8 @@ function generateRegulatoryReport($report_type, $data) {
     }
 }
 
-function generateRERAMonthlyReport($data) {
+function generateRERAMonthlyReport($data)
+{
     return [
         'report_type' => 'RERA Monthly',
         'period' => date('Y-m'),
@@ -4781,7 +5085,8 @@ function generateRERAMonthlyReport($data) {
     ];
 }
 
-function generateGSTAnnualReport($data) {
+function generateGSTAnnualReport($data)
+{
     return [
         'report_type' => 'GST Annual',
         'financial_year' => date('Y') - 1 . '-' . date('Y'),
@@ -4791,7 +5096,8 @@ function generateGSTAnnualReport($data) {
     ];
 }
 
-function generatePropertyTaxReport($data) {
+function generatePropertyTaxReport($data)
+{
     return [
         'report_type' => 'Property Tax',
         'assessment_year' => date('Y'),
@@ -4804,7 +5110,8 @@ function generatePropertyTaxReport($data) {
 /**
  * Business process automation helpers
  */
-function automateWorkflow($workflow_name, $data) {
+function automateWorkflow($workflow_name, $data)
+{
     switch ($workflow_name) {
         case 'property_listing':
             return automatePropertyListing($data);
@@ -4819,7 +5126,8 @@ function automateWorkflow($workflow_name, $data) {
     }
 }
 
-function automatePropertyListing($data) {
+function automatePropertyListing($data)
+{
     return [
         'workflow' => 'property_listing',
         'steps' => [
@@ -4835,7 +5143,8 @@ function automatePropertyListing($data) {
     ];
 }
 
-function automateInquiryHandling($data) {
+function automateInquiryHandling($data)
+{
     return [
         'workflow' => 'inquiry_handling',
         'steps' => [
@@ -4850,7 +5159,8 @@ function automateInquiryHandling($data) {
     ];
 }
 
-function automatePaymentProcessing($data) {
+function automatePaymentProcessing($data)
+{
     return [
         'workflow' => 'payment_processing',
         'steps' => [
@@ -4865,7 +5175,8 @@ function automatePaymentProcessing($data) {
     ];
 }
 
-function automateDocumentGeneration($data) {
+function automateDocumentGeneration($data)
+{
     return [
         'workflow' => 'document_generation',
         'steps' => [
@@ -4883,7 +5194,8 @@ function automateDocumentGeneration($data) {
 /**
  * Integration helpers
  */
-function integrateWithCRM($lead_data) {
+function integrateWithCRM($lead_data)
+{
     // CRM integration (placeholder)
     return [
         'crm_id' => generateUniqueId('crm_'),
@@ -4892,7 +5204,8 @@ function integrateWithCRM($lead_data) {
     ];
 }
 
-function integrateWithERP($transaction_data) {
+function integrateWithERP($transaction_data)
+{
     // ERP integration (placeholder)
     return [
         'erp_id' => generateUniqueId('erp_'),
@@ -4901,7 +5214,8 @@ function integrateWithERP($transaction_data) {
     ];
 }
 
-function integrateWithAccounting($financial_data) {
+function integrateWithAccounting($financial_data)
+{
     // Accounting integration (placeholder)
     return [
         'accounting_id' => generateUniqueId('acc_'),
@@ -4913,7 +5227,8 @@ function integrateWithAccounting($financial_data) {
 /**
  * Multi-language support helpers
  */
-function getTranslation($key, $language = null) {
+function getTranslation($key, $language = null)
+{
     $language = $language ?? getCurrentLanguage();
     $translations_file = __DIR__ . '/../translations/' . $language . '.json';
 
@@ -4928,7 +5243,8 @@ function getTranslation($key, $language = null) {
 /**
  * Multi-currency support helpers
  */
-function formatPrice($amount, $currency = null) {
+function formatPrice($amount, $currency = null)
+{
     $currency = $currency ?? getCurrentCurrency();
 
     $currency_symbols = [
@@ -4948,7 +5264,8 @@ function formatPrice($amount, $currency = null) {
 /**
  * Timezone conversion helpers
  */
-function convertTimezone($datetime, $from_timezone, $to_timezone) {
+function convertTimezone($datetime, $from_timezone, $to_timezone)
+{
     try {
         $from = new DateTimeZone($from_timezone);
         $to = new DateTimeZone($to_timezone);
@@ -4969,7 +5286,8 @@ function convertTimezone($datetime, $from_timezone, $to_timezone) {
 /**
  * Accessibility helpers
  */
-function generateAltText($image_path) {
+function generateAltText($image_path)
+{
     // AI-powered alt text generation (placeholder)
     return 'Property image showing interior/exterior view';
 }
@@ -4977,7 +5295,8 @@ function generateAltText($image_path) {
 /**
  * Performance optimization helpers
  */
-function minifyCSS($css) {
+function minifyCSS($css)
+{
     // Remove comments
     $css = preg_replace('!/\*[^*]*\*+([^/*][^*]*\*+)*/!', '', $css);
 
@@ -4989,7 +5308,8 @@ function minifyCSS($css) {
     return trim($css);
 }
 
-function minifyJS($js) {
+function minifyJS($js)
+{
     // Remove comments
     $js = preg_replace('/\/\/.*$/', '', $js);
     $js = preg_replace('/\/\*[\s\S]*?\*\//', '', $js);
@@ -5001,7 +5321,8 @@ function minifyJS($js) {
     return trim($js);
 }
 
-function minifyHTML($html) {
+function minifyHTML($html)
+{
     // Remove comments
     $html = preg_replace('/<!--[\s\S]*?-->/', '', $html);
 
@@ -5015,7 +5336,8 @@ function minifyHTML($html) {
 /**
  * CDN helpers
  */
-function getCDNUrl($file_path) {
+function getCDNUrl($file_path)
+{
     $cdn_base = env('CDN_URL', '');
     if (empty($cdn_base)) {
         return $file_path;
@@ -5027,7 +5349,8 @@ function getCDNUrl($file_path) {
 /**
  * Lazy loading helpers
  */
-function generateLazyImage($image_path, $alt = '', $class = 'lazy') {
+function generateLazyImage($image_path, $alt = '', $class = 'lazy')
+{
     return '<img src="' . getCDNUrl('assets/images/placeholder.svg') . '"
                  data-src="' . getCDNUrl($image_path) . '"
                  alt="' . htmlspecialchars($alt) . '"
@@ -5038,7 +5361,8 @@ function generateLazyImage($image_path, $alt = '', $class = 'lazy') {
 /**
  * Progressive loading helpers
  */
-function generateProgressiveImage($image_path, $alt = '') {
+function generateProgressiveImage($image_path, $alt = '')
+{
     return '<picture>
         <source srcset="' . getCDNUrl($image_path) . '" media="(min-width: 768px)">
         <img src="' . getCDNUrl('thumb_' . $image_path) . '"
@@ -5049,34 +5373,14 @@ function generateProgressiveImage($image_path, $alt = '') {
 /**
  * Web vitals helpers
  */
-function trackWebVitals($metrics) {
+function trackWebVitals($metrics)
+{
     logActivity('web_vitals', [
         'fcp' => $metrics['fcp'] ?? 0,
         'lcp' => $metrics['lcp'] ?? 0,
         'fid' => $metrics['fid'] ?? 0,
         'cls' => $metrics['cls'] ?? 0,
-        'page' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REQUEST_URI'] ?? 'unknown'
+        'page' => $_SERVER['REQUEST_URI'] ?? 'unknown'
     ]);
 
     return true;
@@ -5085,7 +5389,8 @@ function trackWebVitals($metrics) {
 /**
  * Core Web Vitals monitoring
  */
-function getWebVitalsConfig() {
+function getWebVitalsConfig()
+{
     return [
         'enabled' => true,
         'tracking_id' => env('GA_TRACKING_ID', ''),
@@ -5097,7 +5402,8 @@ function getWebVitalsConfig() {
 /**
  * Advanced caching helpers
  */
-function setAdvancedCache($key, $data, $ttl = 3600, $tags = []) {
+function setAdvancedCache($key, $data, $ttl = 3600, $tags = [])
+{
     $cache_data = [
         'data' => $data,
         'expires' => time() + $ttl,
@@ -5111,7 +5417,8 @@ function setAdvancedCache($key, $data, $ttl = 3600, $tags = []) {
     return file_put_contents($cache_file, serialize($cache_data)) !== false;
 }
 
-function getAdvancedCache($key) {
+function getAdvancedCache($key)
+{
     $cache_file = __DIR__ . '/../cache/' . md5($key) . '.cache';
 
     if (!file_exists($cache_file)) {
@@ -5128,7 +5435,8 @@ function getAdvancedCache($key) {
     return $cache_data['data'];
 }
 
-function clearCacheByTag($tag) {
+function clearCacheByTag($tag)
+{
     $cache_dir = __DIR__ . '/../cache';
     if (!is_dir($cache_dir)) {
         return false;
@@ -5152,7 +5460,8 @@ function clearCacheByTag($tag) {
 /**
  * Advanced search helpers
  */
-function advancedSearch($table, $criteria, $options = []) {
+function advancedSearch($table, $criteria, $options = [])
+{
     global $pdo;
     if (!$pdo) {
         return [];
@@ -5210,7 +5519,8 @@ function advancedSearch($table, $criteria, $options = []) {
 /**
  * Data export helpers
  */
-function exportData($table, $format = 'csv', $conditions = []) {
+function exportData($table, $format = 'csv', $conditions = [])
+{
     global $pdo;
     if (!$pdo) {
         return false;
@@ -5246,14 +5556,14 @@ function exportData($table, $format = 'csv', $conditions = []) {
             default:
                 return $data;
         }
-
     } catch (Exception $e) {
         logError('Data Export Error', ['table' => $table, 'format' => $format, 'error' => $e->getMessage()]);
         return false;
     }
 }
 
-function generateXMLReport($data) {
+function generateXMLReport($data)
+{
     $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     $xml .= '<records>' . "\n";
 
@@ -5272,7 +5582,8 @@ function generateXMLReport($data) {
 /**
  * Data import helpers
  */
-function importData($table, $data, $mode = 'insert') {
+function importData($table, $data, $mode = 'insert')
+{
     global $pdo;
     if (!$pdo || empty($data)) {
         return false;
@@ -5309,7 +5620,6 @@ function importData($table, $data, $mode = 'insert') {
 
         $pdo->commit();
         return true;
-
     } catch (Exception $e) {
         $pdo->rollBack();
         logError('Data Import Error', ['table' => $table, 'mode' => $mode, 'error' => $e->getMessage()]);
@@ -5320,7 +5630,8 @@ function importData($table, $data, $mode = 'insert') {
 /**
  * Advanced filtering helpers
  */
-function applyAdvancedFilters($query, $filters) {
+function applyAdvancedFilters($query, $filters)
+{
     $conditions = [];
     $params = [];
 
@@ -5370,7 +5681,8 @@ function applyAdvancedFilters($query, $filters) {
 /**
  * Data validation helpers
  */
-function validateDataStructure($data, $schema) {
+function validateDataStructure($data, $schema)
+{
     $errors = [];
 
     foreach ($schema as $field => $rules) {
@@ -5455,7 +5767,8 @@ function validateDataStructure($data, $schema) {
 /**
  * API response helpers
  */
-function formatApiResponse($data, $status = 'success', $message = '', $meta = []) {
+function formatApiResponse($data, $status = 'success', $message = '', $meta = [])
+{
     $response = [
         'status' => $status,
         'timestamp' => time(),
@@ -5480,7 +5793,8 @@ function formatApiResponse($data, $status = 'success', $message = '', $meta = []
 /**
  * Error handling helpers
  */
-function handleError($error, $context = []) {
+function handleError($error, $context = [])
+{
     logError($error, $context);
 
     if (isAjaxRequest()) {
@@ -5494,7 +5808,8 @@ function handleError($error, $context = []) {
 /**
  * Exception handling helpers
  */
-function handleException($exception) {
+function handleException($exception)
+{
     $error_message = $exception->getMessage();
     $error_file = $exception->getFile();
     $error_line = $exception->getLine();
@@ -5516,7 +5831,8 @@ function handleException($exception) {
 /**
  * Maintenance mode helpers
  */
-function enterMaintenanceMode($message = 'Site is under maintenance') {
+function enterMaintenanceMode($message = 'Site is under maintenance')
+{
     $maintenance_data = [
         'enabled' => true,
         'message' => $message,
@@ -5528,7 +5844,8 @@ function enterMaintenanceMode($message = 'Site is under maintenance') {
     return true;
 }
 
-function exitMaintenanceMode() {
+function exitMaintenanceMode()
+{
     $maintenance_file = __DIR__ . '/../maintenance.json';
     if (file_exists($maintenance_file)) {
         unlink($maintenance_file);
@@ -5540,7 +5857,8 @@ function exitMaintenanceMode() {
 /**
  * System health monitoring
  */
-function checkSystemHealth() {
+function checkSystemHealth()
+{
     $health = [
         'database' => testDatabaseConnection(),
         'filesystem' => checkFilesystemHealth(),
@@ -5553,7 +5871,8 @@ function checkSystemHealth() {
     return $health;
 }
 
-function checkFilesystemHealth() {
+function checkFilesystemHealth()
+{
     $directories = [
         __DIR__ . '/../uploads',
         __DIR__ . '/../cache',
@@ -5576,7 +5895,8 @@ function checkFilesystemHealth() {
     return $health;
 }
 
-function checkMemoryHealth() {
+function checkMemoryHealth()
+{
     $memory_info = getMemoryInfo();
 
     $health = ['status' => 'healthy'];
@@ -5589,7 +5909,8 @@ function checkMemoryHealth() {
     return $health;
 }
 
-function checkCacheHealth() {
+function checkCacheHealth()
+{
     $cache_dir = __DIR__ . '/../cache';
     $health = ['status' => 'healthy'];
 
@@ -5613,7 +5934,8 @@ function checkCacheHealth() {
     return $health;
 }
 
-function checkLogHealth() {
+function checkLogHealth()
+{
     $log_dir = __DIR__ . '/../logs';
     $health = ['status' => 'healthy'];
 
@@ -5634,7 +5956,8 @@ function checkLogHealth() {
     return $health;
 }
 
-function checkBackupHealth() {
+function checkBackupHealth()
+{
     $backup_dir = __DIR__ . '/../backups';
     $health = ['status' => 'healthy'];
 
@@ -5655,12 +5978,11 @@ function checkBackupHealth() {
 /**
  * Load all helper functions
  */
-function loadHelpers() {
+function loadHelpers()
+{
     // This function ensures all helper functions are available
     return true;
 }
 
 // Auto-load helpers
 loadHelpers();
-
-?>

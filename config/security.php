@@ -9,7 +9,8 @@
 $config['security'] = [
     'csrf' => [
         'enabled' => true,
-        'PLACEHOLDER_SECRET_VALUEtimeout' => 3600, // 1 hour
+        'token_name' => '_token',
+        'timeout' => 3600, // 1 hour
         'regenerate' => true,
     ],
 

@@ -55,12 +55,7 @@ class FollowupController extends BaseApiController
     private function sendVisitReminders()
     {
         $count = 0;
-        $visitModel = $this->model(->with(
-        ->with(['getLeadsForFollowup'])
-        ->with(['getVisitsForReminder', 'getVisitsForFeedback'])
-        ->with(['getLeadsForFollowup'])
-        ->with(['getVisitsForReminder', 'getVisitsForFeedback'])
-        ->with(['getLeadsForFollowup'])['getVisitsForReminder', 'getVisitsForFeedback'])'PropertyVisit');
+        $visitModel = $this->model('PropertyVisit');
         $visits = $visitModel->getVisitsForReminder();
 
         foreach ($visits as $visit) {

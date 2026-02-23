@@ -374,33 +374,6 @@ class EmployeeController extends BaseController
     }
 
     /**
-     * Display employee's leaves
-     */
-    public function leaves()
-    {
-        $employeeId = $_SESSION['employee_id'];
-
-        // Get leaves with filters
-        $filters = [];
-        if (!empty($_GET['status'])) {
-            $filters['status'] = $_GET['status'];
-        }
-        if (!empty($_GET['leave_type'])) {
-            $filters['leave_type'] = $_GET['leave_type'];
-        }
-
-        $leaves = $this->employeeModel->getEmployeeLeaves($employeeId, $filters);
-        $leaveTypes = $this->employeeModel->getLeaveTypes();
-
-        $this->data['leaves'] = $leaves;
-        $this->data['leave_types'] = $leaveTypes;
-        $this->data['filters'] = $filters;
-        $this->data['page_title'] = 'My Leaves - APS Dream Home';
-
-        $this->render('employees/leaves');
-    }
-
-    /**
      * Apply for leave
      */
     public function applyLeave()
@@ -456,32 +429,7 @@ class EmployeeController extends BaseController
         $this->redirect('employee/leaves');
     }
 
-    /**
-     * Display employee's documents
-     */
-    public function documents()
-    {
-        $employeeId = $_SESSION['employee_id'];
 
-        // Get documents with filters
-        $filters = [];
-        if (!empty($_GET['document_type'])) {
-            $filters['document_type'] = $_GET['document_type'];
-        }
-        if (!empty($_GET['status'])) {
-            $filters['status'] = $_GET['status'];
-        }
-
-        $documents = $this->employeeModel->getEmployeeDocuments($employeeId, $filters);
-        $documentTypes = $this->employeeModel->getDocumentTypes();
-
-        $this->data['documents'] = $documents;
-        $this->data['document_types'] = $documentTypes;
-        $this->data['filters'] = $filters;
-        $this->data['page_title'] = 'My Documents - APS Dream Home';
-
-        $this->render('employees/documents');
-    }
 
     /**
      * Display employee's activities
@@ -604,33 +552,7 @@ class EmployeeController extends BaseController
         $this->redirect('employee/profile');
     }
 
-    /**
-     * Display employee attendance page
-     */
-    public function attendance()
-    {
-        $this->middleware('employee.auth');
 
-        $employeeId = $_SESSION['employee_id'];
-        $currentMonth = date('m');
-        $currentYear = date('Y');
-
-        // Get attendance history for current month
-        $startDate = date('Y-m-01');
-        $endDate = date('Y-m-t');
-        $attendanceHistory = $this->attendanceModel->getHistory($employeeId, $startDate, $endDate);
-
-        // Get monthly summary
-        $summary = $this->attendanceModel->getMonthlySummary($employeeId, $currentMonth, $currentYear);
-
-        $this->data['page_title'] = 'My Attendance - APS Dream Home';
-        $this->data['attendance_history'] = $attendanceHistory;
-        $this->data['summary'] = $summary;
-        $this->data['current_month'] = $currentMonth;
-        $this->data['current_year'] = $currentYear;
-
-        $this->render('employees/attendance');
-    }
 
     /**
      * API endpoint for check-in
@@ -818,7 +740,7 @@ class EmployeeController extends BaseController
     /**
      * API endpoint to submit leave request
      */
-    public function applyLeave()
+    public function submitLeaveRequest()
     {
         $this->middleware('employee.auth');
 

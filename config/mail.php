@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mail Configuration
  */
@@ -11,8 +12,8 @@ return [
             'host' => env('MAIL_HOST', 'smtp.gmail.com'),
             'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'PLACEHOLDER_SECRET_VALUEtimeout' => null,
+            'password' => env('MAIL_PASSWORD'),
+            'timeout' => null,
             'auth_mode' => null,
         ],
         'sendmail' => [
@@ -22,7 +23,8 @@ return [
         'mailgun' => [
             'transport' => 'mailgun',
             'domain' => env('MAILGUN_DOMAIN'),
-            'PLACEHOLDER_SECRET_VALUEendpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+            'secret' => env('MAILGUN_SECRET'),
+            'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
             'scheme' => 'https',
         ],
     ],

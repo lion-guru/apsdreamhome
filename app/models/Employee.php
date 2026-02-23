@@ -130,7 +130,12 @@ class Employee extends Model
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'] ?? null,
-                'PLACEHOLDER_SECRET_VALUE
+                'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+            ]);
+
+            $userId = $this->db->lastInsertId();
+
+            $employeeSql = "
                 INSERT INTO " . static::$table . " (
                     user_id, role_id, department_id, designation, salary,
                     join_date, reporting_manager_id, status, address, notes,
@@ -155,10 +160,14 @@ class Employee extends Model
                 'notes' => $data['notes'] ?? null,
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'phone' => $data['phone'],
-                'PLACEHOLDER_SECRET_VALUE
-                    INSERT INTO employee_activities (employee_id, activity_type, description, created_at)
-                    VALUES (:employee_id, 'joined_company', 'Employee joined the company', NOW())
+                'phone' => $data['phone']
+            ]);
+
+            // Log activity
+            try {
+                $activitySql = "
+                INSERT INTO employee_activities (employee_id, activity_type, description, created_at)
+                VALUES (:employee_id, 'joined_company', 'Employee joined the company', NOW())
                 ";
                 $activityStmt = $this->db->prepare($activitySql);
                 $activityStmt->execute(['employee_id' => $employeeId]);
@@ -243,9 +252,8 @@ class Employee extends Model
                 }
             }
 
-            // Handle password update if provided
-            if (!empty($data['password'])) {
-                $employeeUpdates[] = "PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEUPDATE " . static::$table . " SET " . implode(', ', $employeeUpdates) . ", updated_at = NOW() WHERE id = :id";
+            if (!empty($employeeUpdates)) {
+                $sql = "UPDATE " . static::$table . " SET " . implode(', ', $employeeUpdates) . ", updated_at = NOW() WHERE id = :id";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute($employeeParams);
             }
@@ -276,7 +284,12 @@ class Employee extends Model
 
                 // Update password in users table too if changed
                 if (!empty($data['password'])) {
-                    $userUpdates[] = "PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEUPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
+                    $userUpdates[] = "password = :password";
+                    $userParams['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                }
+
+                if (!empty($userUpdates)) {
+                    $userSql = "UPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
                     $userStmt = $this->db->prepare($userSql);
                     $userStmt->execute($userParams);
                 }

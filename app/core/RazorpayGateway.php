@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Razorpay Payment Gateway
  * Handles Razorpay payment processing
@@ -6,24 +7,27 @@
 
 namespace App\Core;
 
-class RazorpayGateway {
+class RazorpayGateway
+{
 
     private $key_id;
     private $key_secret;
     private $api;
 
-    public function __construct() {
-        $this->PLACEHOLDER_SECRET_VALUE);
-        }
-
-        // Initialize Razorpay API (in production, use composer package)
-        // For now, we'll simulate the API calls
+    public function __construct()
+    {
+        $this->key_id = env('RAZORPAY_KEY_ID', '');
+        $this->key_secret = env('RAZORPAY_KEY_SECRET', '');
     }
+
+    // Initialize Razorpay API (in production, use composer package)
+    // For now, we'll simulate the API calls
 
     /**
      * Create payment order
      */
-    public function createOrder($order_data) {
+    public function createOrder($order_data)
+    {
         try {
             // In production, this would make actual Razorpay API call
             // For now, return mock order data
@@ -38,7 +42,6 @@ class RazorpayGateway {
                 'status' => 'created',
                 'created_at' => time()
             ];
-
         } catch (\Exception $e) {
             error_log('Razorpay order creation error: ' . $e->getMessage());
             throw new \Exception('Failed to create Razorpay order');
@@ -48,7 +51,8 @@ class RazorpayGateway {
     /**
      * Verify payment
      */
-    public function verifyPayment($payment_id, $order_id) {
+    public function verifyPayment($payment_id, $order_id)
+    {
         try {
             // In production, this would verify payment signature with Razorpay
             // For now, return mock verification
@@ -62,7 +66,6 @@ class RazorpayGateway {
                 'method' => 'card',
                 'verified_at' => date('Y-m-d H:i:s')
             ];
-
         } catch (\Exception $e) {
             error_log('Razorpay payment verification error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
@@ -72,7 +75,8 @@ class RazorpayGateway {
     /**
      * Refund payment
      */
-    public function refundPayment($payment_id, $amount = null) {
+    public function refundPayment($payment_id, $amount = null)
+    {
         try {
             // In production, this would process refund through Razorpay API
             return [
@@ -81,7 +85,6 @@ class RazorpayGateway {
                 'amount' => $amount,
                 'status' => 'processed'
             ];
-
         } catch (\Exception $e) {
             error_log('Razorpay refund error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];

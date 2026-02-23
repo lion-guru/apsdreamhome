@@ -23,12 +23,7 @@ class NotificationController extends BaseApiController
             $limit = \min(100, (int)$this->request()->input('limit', 50));
             $offset = (int)$this->request()->input('offset', 0);
 
-            $notificationModel = $this->model(->with(
-        ->with(['findDevice', 'unregisterDevice'])
-        ->with(['getForUser'])
-        ->with(['findDevice', 'unregisterDevice'])
-        ->with(['getForUser'])
-        ->with(['findDevice', 'unregisterDevice'])['getForUser'])'Notification');
+            $notificationModel = $this->model('Notification');
             $notifications = $notificationModel->getForUser($user->uid, $limit, $offset);
 
             return $this->jsonSuccess(['notifications' => $notifications]);

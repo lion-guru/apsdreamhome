@@ -29,7 +29,9 @@ class EmailVerification extends Model {
 
     public static function isValidToken($token) {
         // Get all records matching the token
-        $verifications = self::where('PLACEHOLDER_SECRET_VALUEY-m-d H:i:s')) {
+        $verifications = self::where('token', $token)->get();
+        foreach ($verifications as $verification) {
+            if ($verification->expires_at > date('Y-m-d H:i:s')) {
                 return $verification;
             }
         }

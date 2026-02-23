@@ -364,13 +364,14 @@ class SystemAnalytics extends Model
         // Check if metric already exists for this period
         $existing = $this->query(
             "SELECT id FROM system_analytics_metrics
-             WHERE metric_PLACEHOLDER_SECRET_VALUEkey'], $metricData['period_type'], $metricData['period_date']]
+             WHERE metric_name = ? AND period_type = ? AND period_date = ?",
+            [$metricData['name'], $metricData['period_type'], $metricData['period_date']]
         )->fetch();
 
         $data = [
             'metric_category' => $metricData['category'],
             'metric_name' => $metricData['name'],
-            'metric_PLACEHOLDER_SECRET_VALUEperiod_type' => $metricData['period_type'],
+            'period_type' => $metricData['period_type'],
             'period_date' => $metricData['period_date'],
             'calculated_at' => date('Y-m-d H:i:s')
         ];
@@ -531,7 +532,6 @@ class SystemAnalytics extends Model
                 'data' => $reportData,
                 'message' => 'Report generated successfully'
             ];
-
         } catch (\Exception $e) {
             $this->failReportExecution($executionId, $e->getMessage());
             return [
@@ -599,7 +599,20 @@ class SystemAnalytics extends Model
 
                 // Add basic insights
                 if ($section === 'user_metrics' && isset($data['active_users'])) {
-                    $summary['PLACEHOLDER_SECRET_VALUESELECT * FROM analytics_alerts WHERE is_active = 1")->fetchAll();
+                    $summary['key_insights'][] = "Active users: " . $data['active_users'];
+                }
+            }
+        }
+
+        return $summary;
+    }
+
+    /**
+     * Check alerts
+     */
+    public function checkAlerts(): array
+    {
+        $alerts = $this->query("SELECT * FROM analytics_alerts WHERE is_active = 1")->fetchAll();
         $triggeredAlerts = [];
 
         foreach ($alerts as $alert) {
@@ -624,7 +637,8 @@ class SystemAnalytics extends Model
     {
         $metric = $this->query(
             "SELECT * FROM system_analytics_metrics
-             WHERE metric_PLACEHOLDER_SECRET_VALUEmetric_key']]
+             WHERE metric_name = ?",
+            [$alert['metric_key']]
         )->fetch();
 
         if (!$metric) {
@@ -646,16 +660,23 @@ class SystemAnalytics extends Model
         $threshold = $alert['condition_value'];
 
         switch ($operator) {
-            case 'gt': return $value > $threshold;
-            case 'gte': return $value >= $threshold;
-            case 'lt': return $value < $threshold;
-            case 'lte': return $value <= $threshold;
-            case 'eq': return $value == $threshold;
-            case 'neq': return $value != $threshold;
+            case 'gt':
+                return $value > $threshold;
+            case 'gte':
+                return $value >= $threshold;
+            case 'lt':
+                return $value < $threshold;
+            case 'lte':
+                return $value <= $threshold;
+            case 'eq':
+                return $value == $threshold;
+            case 'neq':
+                return $value != $threshold;
             case 'between':
                 $threshold2 = $alert['condition_value2'];
                 return $value >= $threshold && $value <= $threshold2;
-            default: return false;
+            default:
+                return false;
         }
     }
 
@@ -771,7 +792,16 @@ class SystemAnalytics extends Model
     }
 
     // Placeholder methods for report data
-    private function getUserMetricsReport(array $parameters): array { return []; }
-    private function getFinancialMetricsReport(array $parameters): array { return []; }
-    private function getPropertyMetricsReport(array $parameters): array { return []; }
+    private function getUserMetricsReport(array $parameters): array
+    {
+        return [];
+    }
+    private function getFinancialMetricsReport(array $parameters): array
+    {
+        return [];
+    }
+    private function getPropertyMetricsReport(array $parameters): array
+    {
+        return [];
+    }
 }

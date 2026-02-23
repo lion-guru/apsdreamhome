@@ -142,7 +142,9 @@ class UserService
             $db = \App\Core\Database::getInstance();
             $db->query(
                 "INSERT INTO password_resets (email, token, created_at) VALUES (:email, :token1, :expires1) 
-                 ON DUPLICATE KEY UPDATE PLACEHOLDER_SECRET_VALUEemail' => $email,
+                 ON DUPLICATE KEY UPDATE token = :token2, created_at = :expires2",
+                [
+                    'email' => $email,
                     'token1' => $token,
                     'expires1' => $expiresAt,
                     'token2' => $token,
@@ -171,7 +173,8 @@ class UserService
 
         // Find valid token
         $stmt = $db->query(
-            "SELECT * FROM PLACEHOLDER_SECRET_VALUEtoken' => $token]
+            "SELECT * FROM password_resets WHERE token = :token AND created_at > :now",
+            ['token' => $token, 'now' => date('Y-m-d H:i:s')]
         );
 
         $reset = $stmt->fetch();
@@ -193,7 +196,18 @@ class UserService
 
         if ($result) {
             // Delete used token
-            $db->query("DELETE FROM PLACEHOLDER_SECRET_VALUEimage/jpeg', 'image/png', 'image/gif'];
+            $db->query("DELETE FROM password_resets WHERE email = :email", ['email' => $user->email]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Upload profile image
+     */
+    public function uploadProfileImage($file, $userId)
+    {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         $maxSize = 2 * 1024 * 1024; // 2MB
 
         if ($file['error'] !== UPLOAD_ERR_OK) {

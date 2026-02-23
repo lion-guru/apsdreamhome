@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Services;
 
 use Exception;
 
-class ConfigurationManager {
+class ConfigurationManager
+{
     // Singleton instance
     private static $instance = null;
 
@@ -20,7 +22,8 @@ class ConfigurationManager {
     /**
      * Private constructor to prevent direct instantiation
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->loadConfigurations();
     }
 
@@ -29,7 +32,8 @@ class ConfigurationManager {
      * 
      * @return ConfigurationManager
      */
-    public static function getInstance(): self {
+    public static function getInstance(): self
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -39,7 +43,8 @@ class ConfigurationManager {
     /**
      * Load all configuration files
      */
-    private function loadConfigurations() {
+    private function loadConfigurations()
+    {
         foreach ($this->configPaths as $configName => $path) {
             try {
                 if (file_exists($path)) {
@@ -56,14 +61,15 @@ class ConfigurationManager {
     }
 
     /**
-     * Get a configuration value
+     * Get configuration value
      * 
      * @param string $configName Configuration file name
      * @param string $key Dot-notated key path
      * @param mixed $default Default value if key not found
      * @return mixed
      */
-    public function get(string $configName, string $key = null, $default = null) {
+    public function get(string $configName, string $key = null, $default = null)
+    {
         // Validate configuration exists
         if (!isset($this->config[$configName])) {
             return $default;
@@ -76,18 +82,46 @@ class ConfigurationManager {
 
         // Navigate through nested configuration
         $config = $this->config[$configName];
-        $PLACEHOLDER_SECRET_VALUE.', $key);
+        $keys = explode('.', $key);
+
+        foreach ($keys as $nestedKey) {
+            if (!is_array($config) || !array_key_exists($nestedKey, $config)) {
+                return $default;
+            }
+            $config = $config[$nestedKey];
+        }
+
+        return $config;
+    }
+
+    /**
+     * Set configuration value
+     * 
+     * @param string $configName Configuration file name
+     * @param string $key Dot-notated key path
+     * @param mixed $value Value to set
+     * @return bool
+     */
+    public function set(string $configName, string $key, $value)
+    {
+        if (!isset($this->config[$configName])) {
+            // Initialize empty config if it doesn't exist? 
+            // Or fail? Let's initialize.
+            $this->config[$configName] = [];
+        }
+
         $config = &$this->config[$configName];
+        $keys = explode('.', $key);
 
         foreach ($keys as $nestedKey) {
             if (!is_array($config)) {
                 return false;
             }
-            
+
             if (!array_key_exists($nestedKey, $config)) {
                 $config[$nestedKey] = [];
             }
-            
+
             $config = &$config[$nestedKey];
         }
 
@@ -98,7 +132,8 @@ class ConfigurationManager {
     /**
      * Reload configurations from files
      */
-    public function reload() {
+    public function reload()
+    {
         $this->loadConfigurations();
     }
 
@@ -108,7 +143,8 @@ class ConfigurationManager {
      * @param string $configName Configuration file name
      * @return bool
      */
-    public function save(string $configName): bool {
+    public function save(string $configName): bool
+    {
         if (!isset($this->configPaths[$configName])) {
             return false;
         }

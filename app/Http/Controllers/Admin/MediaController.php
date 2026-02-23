@@ -16,9 +16,7 @@ class MediaController extends AdminController
 
     public function index()
     {
-        $media = Media::all->with(
-        ->with(['upload'])
-        ->with(['upload'])['upload'])(); // Assuming all() fetches all records
+        $media = Media::all();
         $this->render('admin/media/index', [
             'media' => $media,
             'title' => $this->mlSupport->translate('Media Library')

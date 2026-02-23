@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Agent Dashboard Controller
  * Advanced real estate agent dashboard with comprehensive features
@@ -28,16 +29,7 @@ class AgentDashboardController
         $agent = Agent::where('user_id', $user->id)->first();
 
         if (!$agent) {
-            return redirect()->route('agent.profile.setup')->with(
-        ->with(['amount'])
-        ->with(['title'])
-        ->with(['name'])
-        ->with(['amount'])
-        ->with(['title'])
-        ->with(['name'])
-        ->with(['amount'])
-        ->with(['title'])
-        ->with(['name'])'error', 'Please complete your agent profile setup first.');
+            return redirect()->route('agent.profile.setup')->with('error', 'Please complete your agent profile setup first.');
         }
 
         // Agent statistics
@@ -192,7 +184,7 @@ class AgentDashboardController
         }
 
         // Sort by date and limit to 10
-        usort($activities, function($a, $b) {
+        usort($activities, function ($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
         });
 
@@ -285,31 +277,41 @@ class AgentDashboardController
     protected function getMonthlyPerformance($agentId)
     {
         $monthlyData = [];
+        $startDate = now()->subMonths(11)->startOfMonth()->format('Y-m-d H:i:s');
+
+        // Fetch sales grouped by month
+        $salesData = DB::table('properties')
+            ->where('agent_id', $agentId)
+            ->where('status', 'sold')
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(price) as total_sales')
+            ->groupBy('month')
+            ->pluck('total_sales', 'month');
+
+        // Fetch leads grouped by month
+        $leadsData = Lead::where('assigned_agent_id', $agentId)
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->pluck('count', 'month');
+
+        // Fetch commissions grouped by month
+        $commissionsData = Commission::where('agent_id', $agentId)
+            ->where('status', 'paid')
+            ->where('paid_at', '>=', $startDate)
+            ->selectRaw('DATE_FORMAT(paid_at, "%Y-%m") as month, SUM(amount) as total_commission')
+            ->groupBy('month')
+            ->pluck('total_commission', 'month');
 
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $monthYear = $date->format('Y-m');
 
-            $sales = DB::table('properties')
-                ->where('agent_id', $agentId)
-                ->where('status', 'sold')
-                ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") = ?', [$monthYear])
-                ->sum('price');
-
-            $leads = Lead::where('assigned_agent_id', $agentId)
-                ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") = ?', [$monthYear])
-                ->count();
-
-            $commissions = Commission::where('agent_id', $agentId)
-                ->where('status', 'paid')
-                ->whereRaw('DATE_FORMAT(paid_at, "%Y-%m") = ?', [$monthYear])
-                ->sum('amount');
-
             $monthlyData[] = [
                 'month' => $date->format('M Y'),
-                'sales' => $sales ?? 0,
-                'leads' => $leads,
-                'commissions' => $commissions ?? 0
+                'sales' => $salesData[$monthYear] ?? 0,
+                'leads' => $leadsData[$monthYear] ?? 0,
+                'commissions' => $commissionsData[$monthYear] ?? 0
             ];
         }
 

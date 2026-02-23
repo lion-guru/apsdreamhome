@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API Controller for Monitoring and Management
  * Provides endpoints for system monitoring, backups, and performance tracking
@@ -24,15 +25,7 @@ class MonitorController extends BaseController
      */
     public function status()
     {
-        $monitor = SystemMonitor::get->with(
-        ->with(['listBackups', 'createDatabaseBackup', 'createFullBackup', 'getBackupStats'])
-        ->with(['getMetrics'])
-        ->with(['getSystemStatus', 'runHealthChecks'])
-        ->with(['listBackups', 'createDatabaseBackup', 'createFullBackup', 'getBackupStats'])
-        ->with(['getMetrics'])
-        ->with(['getSystemStatus', 'runHealthChecks'])
-        ->with(['listBackups', 'createDatabaseBackup', 'createFullBackup', 'getBackupStats'])
-        ->with(['getMetrics'])['getSystemStatus', 'runHealthChecks'])Instance();
+        $monitor = SystemMonitor::getInstance();
         $status = $monitor->getSystemStatus();
 
         $this->jsonResponse($status);
@@ -107,7 +100,7 @@ class MonitorController extends BaseController
     /**
      * Send JSON response
      */
-    private function jsonResponse($data)
+    protected function jsonResponse($data)
     {
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -191,11 +184,10 @@ class BackupApiController extends BaseController
     /**
      * Send JSON response
      */
-    private function jsonResponse($data)
+    protected function jsonResponse($data)
     {
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
     }
 }
-?>

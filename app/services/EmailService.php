@@ -33,7 +33,8 @@ class EmailService {
             $this->mail->Subject = 'Verify Your Email Address';
             
             // Email body
-            $verificationUrl = "http://localhost/apsdreamhome" . "/verify-email?PLACEHOLDER_SECRET_VALUE/../../resources/emails/verification.html');
+            $verificationUrl = "http://localhost/apsdreamhome/verify-email?token=" . $token;
+            $message = file_get_contents(__DIR__ . '/../../resources/emails/verification.html');
             $message = str_replace(
                 ['{{name}}', '{{verification_url}}'],
                 [$name, $verificationUrl],

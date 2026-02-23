@@ -49,7 +49,8 @@ class PerformanceMonitor
         $result = $callback();
         $executionTime = microtime(true) - $start;
 
-        $this->record($PLACEHOLDER_SECRET_VALUEtype' => 'memory']));
+        $this->record($key, $executionTime, $tags);
+        return $result;
     }
 
     /**
@@ -57,10 +58,9 @@ class PerformanceMonitor
      */
     public function cache($key, $hit, $tags = [])
     {
-        $this->record($PLACEHOLDER_SECRET_VALUEdb_query', $executionTime, array_merge($tags, [
-            'type' => 'database',
-            'query_type' => $this->getQueryType($query),
-            'rows_affected' => $rows
+        $this->record($key, $hit ? 1 : 0, array_merge($tags, [
+            'type' => 'cache',
+            'result' => $hit ? 'hit' : 'miss'
         ]));
     }
 
