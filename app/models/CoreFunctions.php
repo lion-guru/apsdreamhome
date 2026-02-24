@@ -4326,7 +4326,7 @@ function getABTestVariant($test_name, $variants)
 
     if (file_exists($features_file)) {
         $features = json_decode(file_get_contents($features_file), true);
-        return isset($features[$feature]) && $features[$feature]['enabled'];
+        return isset($features[$test_name]) && $features[$test_name]['enabled'];
     }
 
     return false;

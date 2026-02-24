@@ -11,7 +11,7 @@ return [
     | any other location as required by the application or its packages.
     */
     'name' => 'APS Dream Homes',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -22,7 +22,7 @@ return [
     | services your application utilizes. Set this in your ".env" file.
     */
     'env' => env('APP_ENV', 'production'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
@@ -33,7 +33,7 @@ return [
     | application. If disabled, a simple generic error page is shown.
     */
     'debug' => (bool) env('APP_DEBUG', false),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application URL
@@ -45,7 +45,7 @@ return [
     */
     'url' => env('APP_URL', 'http://localhost'),
     'asset_url' => env('ASSET_URL', null),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -56,7 +56,7 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     */
     'timezone' => 'Asia/Kolkata',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -67,7 +67,7 @@ return [
     | to any of the locales which will be supported by the application.
     */
     'locale' => 'en',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
@@ -78,7 +78,7 @@ return [
     | the language folders that are provided through your application.
     */
     'fallback_locale' => 'en',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
@@ -88,8 +88,9 @@ return [
     | to a random, 32 character string, otherwise these encrypted strings
     | will not be safe. Please do this before deploying an application!
     */
-    'PLACEHOLDER_SECRET_VALUEcipher' => 'AES-256-CBC',
-    
+    'key' => env('APP_KEY'),
+    'cipher' => 'AES-256-CBC',
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -101,12 +102,12 @@ return [
     */
     'providers' => [
         // Core Framework Service Providers...
-        
+
         // Package Service Providers...
-        
+
         // Application Service Providers...
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Class Aliases
@@ -125,7 +126,7 @@ return [
         'Route' => App\Core\Router::class,
         'View' => App\Core\View::class,
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode
@@ -141,7 +142,7 @@ return [
         'message' => 'We are currently performing scheduled maintenance. We will be back online shortly!',
         'allowed_ips' => ['127.0.0.1'],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Logging Configuration
@@ -170,7 +171,7 @@ return [
             ],
         ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Caching Configuration
@@ -194,7 +195,7 @@ return [
         ],
         'prefix' => env('CACHE_PREFIX', 'aps_dream_home_cache'),
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Session Configuration
@@ -215,7 +216,7 @@ return [
         'lottery' => [2, 100],
         'cookie' => env(
             'SESSION_COOKIE',
-            str_slug(env('APP_NAME', 'aps_dream_home'), '_').'_session'
+            str_slug(env('APP_NAME', 'aps_dream_home'), '_') . '_session'
         ),
         'path' => '/',
         'domain' => env('SESSION_DOMAIN', null),
@@ -223,7 +224,7 @@ return [
         'http_only' => true,
         'same_site' => 'lax',
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration

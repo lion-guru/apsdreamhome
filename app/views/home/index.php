@@ -3,69 +3,108 @@ $page_title = $data['title'] ?? 'Welcome to APS Dream Home';
 $page_description = $data['description'] ?? 'Discover premium properties and find your dream home with APS Dream Home - Your trusted real estate partner in UP';
 ?>
 
-<!-- Hero Section -->
-<section class="hero-section text-white d-flex align-items-center position-relative">
-    <div class="container position-relative z-index-2">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-10">
-                <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInDown">Find Your Perfect Dream Home</h1>
-                <p class="lead mb-5 animate__animated animate__fadeInUp animate__delay-1s">Premium Properties in Gorakhpur, Lucknow & Across Uttar Pradesh</p>
-
-                <div class="search-box bg-white p-4 rounded-3 shadow-lg animate__animated animate__fadeInUp animate__delay-2s mx-auto hero-search-box">
-                    <form action="<?php echo BASE_URL; ?>properties" method="GET" class="row g-3">
-                        <div class="col-md-4">
-                            <select name="type" class="form-select form-select-lg border-0 bg-light">
-                                <option value="">Property Type</option>
-                                <option value="plot">Plot / Land</option>
-                                <option value="house">House / Villa</option>
-                                <option value="apartment">Apartment</option>
-                                <option value="commercial">Commercial</option>
-                            </select>
+<section class="py-5 bg-gradient" style="background: linear-gradient(135deg,#0f2b66 0%,#1b5fd0 50%,#0f2b66 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 text-white">
+                <h1 class="display-4 fw-bold mb-3">APS Dream Home</h1>
+                <p class="lead opacity-90 mb-4">Trusted Real Estate Partner in Gorakhpur, Lucknow & across Uttar Pradesh</p>
+                <form action="<?php echo BASE_URL; ?>properties" method="GET" class="row g-2 bg-white p-2 rounded-3 shadow-sm">
+                    <div class="col-md-4">
+                        <select name="type" class="form-select form-select-lg bg-light">
+                            <option value="">Property Type</option>
+                            <option value="apartment">Apartments</option>
+                            <option value="villa">Villas</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="plot">Plots / Land</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" name="location" class="form-control form-control-lg bg-light" placeholder="City or Area">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Search</button>
+                    </div>
+                </form>
+                <div class="d-flex gap-3 mt-3">
+                    <a href="<?php echo BASE_URL; ?>properties" class="btn btn-outline-light btn-lg">Explore Properties</a>
+                    <a href="<?php echo BASE_URL; ?>contact" class="btn btn-light btn-lg text-primary">Contact Us</a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-white mt-4 mt-lg-0">
+                <div class="p-4 bg-white bg-opacity-10 border border-white border-opacity-25 rounded-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <a class="btn btn-outline-light w-100 py-3" href="<?php echo BASE_URL; ?>properties?type=apartment">Apartments</a>
                         </div>
-                        <div class="col-md-5">
-                            <input type="text" name="location" class="form-control form-control-lg border-0 bg-light" placeholder="Search Location (e.g. Kunraghat)">
+                        <div class="col-6">
+                            <a class="btn btn-outline-light w-100 py-3" href="<?php echo BASE_URL; ?>properties?type=villa">Villas</a>
                         </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">Search</button>
+                        <div class="col-6">
+                            <a class="btn btn-outline-light w-100 py-3" href="<?php echo BASE_URL; ?>properties?type=commercial">Commercial</a>
                         </div>
-                    </form>
+                        <div class="col-6">
+                            <a class="btn btn-outline-light w-100 py-3" href="<?php echo BASE_URL; ?>properties?type=plot">Plots / Land</a>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-white bg-opacity-10 rounded-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Featured Listings</span>
+                            <a class="text-white" href="<?php echo BASE_URL; ?>properties?featured=1">View</a>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span>Resale Properties</span>
+                            <a class="text-white" href="<?php echo BASE_URL; ?>resell">View</a>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span>Ready to Move</span>
+                            <a class="text-white" href="<?php echo BASE_URL; ?>properties?ready=1">View</a>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span>₹50L - ₹1Cr Homes</span>
+                            <a class="text-white" href="<?php echo BASE_URL; ?>properties?min_price=5000000&max_price=10000000">View</a>
+                        </div>
+                    </div>
+                    <div class="mt-3 small">
+                        <div>500+ Properties</div>
+                        <div>2k+ Happy Families</div>
+                        <div><a class="text-white" href="<?php echo BASE_URL; ?>properties">Explore All</a></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Stats Section -->
-<section class="py-5 bg-light">
+<section class="py-4 bg-white">
     <div class="container">
         <div class="row text-center g-4">
-            <div class="col-md-3 col-6" data-aos="fade-up">
-                <div class="display-4 fw-bold text-primary mb-2">500+</div>
-                <p class="text-muted mb-0">Properties Sold</p>
+            <div class="col-md-3 col-6">
+                <div class="display-6 fw-bold text-primary">500+</div>
+                <div class="text-muted">Properties</div>
             </div>
-            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="display-4 fw-bold text-primary mb-2">1200+</div>
-                <p class="text-muted mb-0">Happy Customers</p>
+            <div class="col-md-3 col-6">
+                <div class="display-6 fw-bold text-primary">2k+</div>
+                <div class="text-muted">Happy Families</div>
             </div>
-            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="display-4 fw-bold text-primary mb-2">50+</div>
-                <p class="text-muted mb-0">Expert Agents</p>
+            <div class="col-md-3 col-6">
+                <div class="display-6 fw-bold text-primary">50+</div>
+                <div class="text-muted">Expert Agents</div>
             </div>
-            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="display-4 fw-bold text-primary mb-2">10+</div>
-                <p class="text-muted mb-0">Years Experience</p>
+            <div class="col-md-3 col-6">
+                <div class="display-6 fw-bold text-primary">10+</div>
+                <div class="text-muted">Years</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Featured Properties -->
 <section class="py-5">
     <div class="container">
-        <div class="text-center mb-5" data-aos="fade-up">
-            <h6 class="text-uppercase text-primary fw-bold letter-spacing-2">Exclusive Offers</h6>
+        <div class="text-center mb-5">
+            <h6 class="text-uppercase text-primary fw-bold">Exclusive Offers</h6>
             <h2 class="display-5 fw-bold">Featured Properties</h2>
-            <div class="divider mx-auto bg-primary mt-3 section-divider"></div>
+            <div class="mx-auto bg-primary mt-3" style="height:4px;width:80px;border-radius:2px;"></div>
         </div>
 
         <div class="row g-4">
@@ -74,7 +113,7 @@ $page_description = $data['description'] ?? 'Discover premium properties and fin
                     <div class="col-md-4" data-aos="fade-up">
                         <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
                             <div class="position-relative">
-                                <img src="<?php echo !empty($property->image_path) ? htmlspecialchars($property->image_path) : BASE_URL . 'public/assets/images/property-placeholder.jpg'; ?>"
+                                <img src="<?php echo !empty($property->image_path) ? htmlspecialchars($property->image_path) : BASE_URL . '/assets/images/property-placeholder.jpg'; ?>"
                                     class="card-img-top property-card-img"
                                     alt="<?php echo htmlspecialchars($property->title); ?>">
                                 <span class="badge bg-primary position-absolute top-0 start-0 m-3 px-3 py-2">Featured</span>
@@ -113,15 +152,14 @@ $page_description = $data['description'] ?? 'Discover premium properties and fin
     </div>
 </section>
 
-<!-- Why Choose Us -->
 <section class="py-5 bg-light">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
-                <img src="<?php echo BASE_URL; ?>public/assets/images/hero-2.jpg" alt="Why Choose Us" class="img-fluid rounded-3 shadow-lg">
+                <img src="<?php echo BASE_URL; ?>/assets/images/hero-2.jpg" alt="Why Choose Us" class="img-fluid rounded-3 shadow-lg">
             </div>
             <div class="col-lg-6 ps-lg-5" data-aos="fade-left">
-                <h6 class="text-uppercase text-primary fw-bold letter-spacing-2">Why Choose Us</h6>
+                <h6 class="text-uppercase text-primary fw-bold">Why Choose Us</h6>
                 <h2 class="display-5 fw-bold mb-4">We Help You Find Your Dream Home</h2>
                 <p class="lead text-muted mb-4">With over a decade of experience in the real estate market, we provide transparent and hassle-free services.</p>
 
@@ -165,7 +203,6 @@ $page_description = $data['description'] ?? 'Discover premium properties and fin
     </div>
 </section>
 
-<!-- Call to Action -->
 <section class="py-5 bg-primary text-white text-center position-relative overflow-hidden">
     <div class="container position-relative z-index-2">
         <h2 class="display-5 fw-bold mb-4">Ready to Find Your Dream Home?</h2>

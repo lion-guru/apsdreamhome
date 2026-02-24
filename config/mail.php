@@ -35,7 +35,7 @@ return [
     'markdown' => [
         'theme' => 'default',
         'paths' => [
-            resource_path('views/vendor/mail'),
+            dirname(__DIR__) . '/app/views/emails',
         ],
     ],
 ];

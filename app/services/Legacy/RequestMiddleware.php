@@ -359,7 +359,7 @@ class RequestMiddleware {
         $request = [
             'method' => self::METHOD_GET,
             'path' => '/users/123',
-            'token' => 'valid_token'
+            'token' => getenv('TEST_API_TOKEN') ?: 'test_token_placeholder'
         ];
 
         $response = $this->processRequest($request);

@@ -484,11 +484,14 @@ class PropertyRecommendation extends Model
     }
 
     /**
-     * Get viewed properties
+     * Filter out properties already viewed/contacted by the user
      */
-    private function getViewedProperties(int $userId, array $propertyIds): array
+    private function filterViewedProperties(int $userId, array $recommendations): array
     {
-        if (empty($propertyIds)) return [];
+        if (empty($recommendations)) return [];
+
+        $propertyIds = array_column($recommendations, 'property_id');
+        if (empty($propertyIds)) return $recommendations;
 
         $db = Database::getInstance();
         $placeholders = str_repeat('?,', count($propertyIds) - 1) . '?';
@@ -502,9 +505,9 @@ class PropertyRecommendation extends Model
 
         $viewedIds = array_column($viewed, 'property_id');
 
-        return array_filter($recommendations, function ($rec) use ($viewedIds) {
+        return array_values(array_filter($recommendations, function ($rec) use ($viewedIds) {
             return !in_array($rec['property_id'], $viewedIds);
-        });
+        }));
     }
 
     /**

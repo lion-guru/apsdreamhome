@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Security Headers Middleware
  */
@@ -54,11 +55,11 @@ class SecurityHeaders
     {
         $csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
-            "img-src 'self' data: https: http:",
-            "font-src 'self' https://fonts.gstatic.com",
-            "connect-src 'self' https://api.example.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob:",
+            "font-src 'self'",
+            "connect-src 'self'",
             "media-src 'self'",
             "object-src 'none'",
             "base-uri 'self'",

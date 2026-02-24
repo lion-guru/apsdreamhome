@@ -1,25 +1,25 @@
 {
     "scan_info": {
-        "timestamp": "2026-02-21 23:20:34",
-        "duration_seconds": 0.57,
+        "timestamp": "2026-02-24 06:39:33",
+        "duration_seconds": 0.97,
         "scan_level": "MAXIMUM"
     },
     "structure": {
-        "total_files": 321,
-        "total_directories": 26,
-        "total_size_mb": 3.83,
+        "total_files": 386,
+        "total_directories": 32,
+        "total_size_mb": 4.19,
         "file_types": {
-            "other": 5,
+            "other": 19,
             "documents": 10,
-            "code": 291,
-            "config": 15
+            "code": 335,
+            "config": 22
         },
         "top_extensions": {
+            "php": 181,
             "sql": 154,
-            "php": 137,
-            "json": 15,
+            "json": 22,
             "md": 6,
-            "txt": 4
+            "2026-02-22-19-56-17": 5
         }
     },
     "code_quality": {
@@ -31,19 +31,19 @@
         "classes": 0
     },
     "configuration": {
-        "completeness_percentage": 5.9
+        "completeness_percentage": 35.3
     },
     "database": {
-        "tables_found": 589,
+        "tables_found": 596,
         "service_tables_complete": 9,
-        "data_size_mb": 10.84
+        "data_size_mb": 10.94
     },
     "security": {
         "vulnerabilities": 0,
         "exposed_configs": 0,
-        "dangerous_permissions": 321
+        "dangerous_permissions": 386
     },
-    "health_score": 75.3,
+    "health_score": 81.4,
     "recommendations": {
         "immediate": [],
         "short_term": [

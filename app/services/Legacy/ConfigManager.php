@@ -9,7 +9,8 @@ use Exception;
  * Provides a robust and secure way to manage application configurations
  */
 
-class ConfigManager {
+class ConfigManager
+{
     private static $instance = null;
     private $configurations = [];
     private $sensitiveKeys = [
@@ -28,7 +29,8 @@ class ConfigManager {
      * @param mixed $default Default value
      * @return mixed Configuration value or default
      */
-    public function getRoleConfig(string $role, string $key, $default = null) {
+    public function getRoleConfig(string $role, string $key, $default = null)
+    {
         // Role-specific configuration overrides
         $roleConfigs = [
             'admin' => [
@@ -64,7 +66,8 @@ class ConfigManager {
      * @param string $key Configuration key
      * @return bool True if access is allowed, false otherwise
      */
-    public function canAccessConfig(string $role, string $key): bool {
+    public function canAccessConfig(string $role, string $key): bool
+    {
         $restrictedKeys = [
             'admin' => ['*'],  // Admins can access everything
             'manager' => ['APP_SECRET_KEY', 'SECURITY_SALT', 'DB_PASS'],
@@ -83,7 +86,8 @@ class ConfigManager {
     /**
      * Private constructor to prevent direct instantiation
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->loadConfigurations();
     }
 
@@ -92,7 +96,8 @@ class ConfigManager {
      *
      * @return ConfigManager
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -102,7 +107,8 @@ class ConfigManager {
     /**
      * Load configurations from .env file
      */
-    private function loadConfigurations() {
+    private function loadConfigurations()
+    {
         // require_once __DIR__ . '/validator.php';
 
         $rootEnv = dirname(dirname(dirname(__DIR__))) . '/.env';
@@ -145,7 +151,7 @@ class ConfigManager {
 
         // Log if no configurations were loaded
         if (empty($this->configurations)) {
-            \error_log('No valid configurations found in: ' . $envPath);
+            \error_log('No valid configurations found in: ' . $rootEnv . ', ' . $legacyEnv);
         }
 
         // Optional: Add default fallback values for critical configurations
@@ -155,7 +161,8 @@ class ConfigManager {
     /**
      * Sanitize sensitive configuration values
      */
-    private function sanitizeSensitiveValue($value) {
+    private function sanitizeSensitiveValue($value)
+    {
         // Basic sanitization for sensitive values
         return \trim(\strip_tags($value));
     }
@@ -163,7 +170,8 @@ class ConfigManager {
     /**
      * Validate configuration values
      */
-    private function validateConfigValue($key, $value) {
+    private function validateConfigValue($key, $value)
+    {
         // Basic validation rules
         if (empty($value)) {
             \error_log("Empty value for configuration key: $key");
@@ -183,7 +191,8 @@ class ConfigManager {
         }
     }
 
-    private function setDefaultConfigurations() {
+    private function setDefaultConfigurations()
+    {
         // Add default fallback values for critical configurations
         $defaults = $this->getDefaultConfigurations();
         foreach ($defaults as $key => $value) {
@@ -193,7 +202,8 @@ class ConfigManager {
         }
     }
 
-    private function parseEnvFile(string $envPath): array {
+    private function parseEnvFile(string $envPath): array
+    {
         // Validate file existence and readability
         if (!is_readable($envPath)) {
             throw new Exception('Configuration file is not readable: ' . $envPath);
@@ -231,13 +241,14 @@ class ConfigManager {
         return $config;
     }
 
-    private function getDefaultConfigurations(): array {
-                return [
-                    // Database Defaults
-                    'DB_HOST' => 'localhost',
-                    'DB_USER' => 'root',
-                    'DB_PASS' => '',
-                    'DB_NAME' => 'apsdreamhome',
+    private function getDefaultConfigurations(): array
+    {
+        return [
+            // Database Defaults
+            'DB_HOST' => 'localhost',
+            'DB_USER' => 'root',
+            'DB_PASS' => '',
+            'DB_NAME' => 'apsdreamhome',
 
             // Application Defaults
             'APP_DEBUG' => 'false',
@@ -265,7 +276,8 @@ class ConfigManager {
      * @param mixed $default Default value if key not found
      * @return mixed Configuration value or default
      */
-    public function get(string $key, $default = null) {
+    public function get(string $key, $default = null)
+    {
         // Ensure configurations are loaded
         if (empty($this->configurations)) {
             $this->loadConfigurations();
@@ -288,7 +300,8 @@ class ConfigManager {
      * @param string $key Configuration key to check
      * @return bool True if key exists, false otherwise
      */
-    public function has(string $key): bool {
+    public function has(string $key): bool
+    {
         // Ensure configurations are loaded
         if (empty($this->configurations)) {
             $this->loadConfigurations();
@@ -310,7 +323,8 @@ class ConfigManager {
      * @param mixed $value Configuration value
      * @return mixed Sanitized value
      */
-    private function sanitizeConfigValue($key, $value) {
+    private function sanitizeConfigValue($key, $value)
+    {
         $validator = new Validator();
 
         // Trim whitespace
@@ -341,7 +355,7 @@ class ConfigManager {
         }
 
         // Type conversion
-        return $validator->convert($value, match($key) {
+        return $validator->convert($value, match ($key) {
             'APP_DEBUG' => 'bool',
             'MAX_LOGIN_ATTEMPTS', 'LOG_MAX_FILES', 'DB_MAX_CONNECTIONS' => 'int',
             'LOG_MAX_SIZE' => 'float',
@@ -355,7 +369,8 @@ class ConfigManager {
      * @param string $value Sensitive value
      * @return string Masked value
      */
-    private function maskSensitiveValue($value) {
+    private function maskSensitiveValue($value)
+    {
         if (empty($value)) return $value;
         return str_repeat('*', min(strlen($value), 8));
     }
@@ -365,7 +380,8 @@ class ConfigManager {
      *
      * @throws Exception If critical configurations are missing
      */
-    public function validateConfigurations() {
+    public function validateConfigurations()
+    {
         $criticalKeys = [
             'DB_HOST',
             'DB_USER',
@@ -383,13 +399,15 @@ class ConfigManager {
     /**
      * Reload configurations
      */
-    public function reload() {
+    public function reload()
+    {
         $this->loadConfigurations();
     }
 }
 
 // Convenience function to get config
-function config($key, $default = null) {
+function config($key, $default = null)
+{
     return ConfigManager::getInstance()->get($key, $default);
 }
 

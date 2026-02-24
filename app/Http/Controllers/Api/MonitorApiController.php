@@ -100,11 +100,9 @@ class MonitorController extends BaseController
     /**
      * Send JSON response
      */
-    protected function jsonResponse($data)
+    protected function jsonResponse($data, int $statusCode = 200)
     {
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
+        return parent::jsonResponse($data, $statusCode);
     }
 }
 
@@ -184,10 +182,8 @@ class BackupApiController extends BaseController
     /**
      * Send JSON response
      */
-    protected function jsonResponse($data)
+    protected function jsonResponse($data, int $statusCode = 200)
     {
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
+        return parent::jsonResponse($data, $statusCode);
     }
 }

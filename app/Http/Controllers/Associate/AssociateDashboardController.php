@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Associate MLM Dashboard Controller
  * Modern implementation of the legacy associate dashboard with MLM features
@@ -110,7 +111,7 @@ class AssociateDashboardController
         $inactiveMembers = 0;
 
         foreach ($allDownline as $member) {
-            $user = User::find($member['user_id']);
+            $user = $member['mlm_profile']->user;
             if ($user && $user->status === 'active') {
                 $activeMembers++;
             } else {
@@ -148,7 +149,7 @@ class AssociateDashboardController
             return [];
         }
 
-        $directMembers = MLMProfile::where('sponsor_id', $associateId)->get();
+        $directMembers = MLMProfile::with('user')->where('sponsor_id', $associateId)->get();
         $allMembers = [];
 
         foreach ($directMembers as $member) {
@@ -291,7 +292,7 @@ class AssociateDashboardController
         }
 
         // Sort by date and limit to 10
-        usort($activities, function($a, $b) {
+        usort($activities, function ($a, $b) {
             return strtotime($b['date']) - strtotime($a['date']);
         });
 
@@ -355,7 +356,7 @@ class AssociateDashboardController
             'earnings_growth' => round($earningsGrowth, 1),
             'team_size' => $currentTeamCount,
             'active_referrals' => MLMProfile::where('sponsor_id', $associateId)
-                ->whereHas('user', function($query) {
+                ->whereHas('user', function ($query) {
                     $query->where('status', 'active');
                 })->count(),
             'rank_progress' => $this->calculateRankProgress($associateId)

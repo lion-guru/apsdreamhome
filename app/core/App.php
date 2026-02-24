@@ -87,6 +87,17 @@ class App
     }
 
     /**
+     * Get the singleton application instance
+     */
+    public static function getInstance($basePath = null)
+    {
+        if (!self::$instance) {
+            self::$instance = new self($basePath);
+        }
+        return self::$instance;
+    }
+
+    /**
      * Get the logger instance
      *
      * @return \App\Services\SystemLogger
@@ -244,7 +255,8 @@ class App
             header('X-Frame-Options: SAMEORIGIN');
             header('Referrer-Policy: strict-origin-when-cross-origin');
             header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
-            header("Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;");
+            // CSP handled by SecurityHeaders middleware
+            // header("Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;");
             if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
                 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
             }
@@ -322,6 +334,34 @@ class App
 
         // Initialize router
         $this->router = new Router($this);
+    }
+
+    /**
+     * Getters for core services
+     */
+    public function request()
+    {
+        return $this->request;
+    }
+
+    public function response()
+    {
+        return $this->response;
+    }
+
+    public function session()
+    {
+        return $this->session;
+    }
+
+    public function db()
+    {
+        return $this->db;
+    }
+
+    public function router()
+    {
+        return $this->router;
     }
 
     /**
@@ -439,14 +479,24 @@ class App
         if (is_null($key)) {
             return $this->config;
         }
-
-        $method = 'get' . ucfirst($name);
-
-        if (method_exists($this, $method)) {
-            return $this->$method();
+        $segments = explode('.', (string) $key);
+        $value = $this->config;
+        foreach ($segments as $segment) {
+            if (is_array($value) && array_key_exists($segment, $value)) {
+                $value = $value[$segment];
+            } else {
+                return $default;
+            }
         }
+        return $value;
+    }
 
-        throw new Exception("Property {$name} not found");
+    /**
+     * Static helpers used by legacy services
+     */
+    public static function database()
+    {
+        return static::getInstance()->db();
     }
 
     /**
