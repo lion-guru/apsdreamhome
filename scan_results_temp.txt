@@ -1,0 +1,85 @@
+🔍 Starting Final Project Health Scan...
+=======================================
+.......................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+📊 Final Health Scan Report
+==========================
+Files Scanned: 1047
+Total Issues: 23
+Report saved to final_health_report.json
+  • Syntax Errors: 0
+  • Security Risks: 1
+  • Performance Issues: 22
+
+📋 Detailed Issues:
+-------------------
+🟡 [MEDIUM] N+1 Query in app/Core/BackupManager.php
+   Potential N+1 query: accessing $file->isFile inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/BackupManager.php
+   Potential N+1 query: accessing $backup->createDatabaseBackup inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/BelongsTo.php
+   Potential N+1 query: accessing $model->setRelation inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/BelongsTo.php
+   Potential N+1 query: accessing $model->setRelation inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/BelongsToMany.php
+   Potential N+1 query: accessing $model->setRelation inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/BelongsToMany.php
+   Potential N+1 query: accessing $model->getAttribute inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/BelongsToMany.php
+   Potential N+1 query: accessing $model->setRelation inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/HasMany.php
+   Potential N+1 query: accessing $model->setRelation inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/HasMany.php
+   Potential N+1 query: accessing $model->getAttribute inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/HasOne.php
+   Potential N+1 query: accessing $model->setRelation inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Database/Relations/HasOne.php
+   Potential N+1 query: accessing $model->getAttribute inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Routing/RouteCollection.php
+   Potential N+1 query: accessing $route->matches inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Routing/Router.php
+   Potential N+1 query: accessing $route->uri inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Core/Support/Collection.php
+   Potential N+1 query: accessing $values->all inside loop without eager loading
+
+🟠 [HIGH] Security Risk in app/Http/Controllers/AdminController.php
+   Potential hardcoded secret detected
+
+🟡 [MEDIUM] N+1 Query in app/Http/Controllers/Public/PageController.php
+   Potential N+1 query: accessing $faq->category inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Http/Controllers/Public/PageController.php
+   Potential N+1 query: accessing $cat->category inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Http/Controllers/TeamManagementController.php
+   Potential N+1 query: accessing $commission->associate_id inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Models/CoreFunctions.php
+   Potential N+1 query: accessing $file->isFile inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Models/EmailVerification.php
+   Potential N+1 query: accessing $verification->expires_at inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Services/AdminService.php
+   Potential N+1 query: accessing $file->seek inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Services/Legacy/PerformanceMonitor.php
+   Potential N+1 query: accessing $cpu->LoadPercentage inside loop without eager loading
+
+🟡 [MEDIUM] N+1 Query in app/Services/Legacy/ServiceContainer.php
+   Potential N+1 query: accessing $param->getName inside loop without eager loading
+
+
+💾 Full report saved to: final_health_report.json

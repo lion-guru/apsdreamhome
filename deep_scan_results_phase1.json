@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-23 18:03:03",
+    "timestamp": "2026-02-24 06:39:47",
     "project_root": "C:\\xampp\\htdocs\\apsdreamhome",
     "summary": [],
     "issues": [
@@ -130,6 +130,7 @@
         "Empty directory found: C:\\xampp\\htdocs\\apsdreamhome\/docs\/archive\/imported_analysis",
         "Empty directory found: C:\\xampp\\htdocs\\apsdreamhome\/docs\/archive\/imported_documents\/project",
         "Empty directory found: C:\\xampp\\htdocs\\apsdreamhome\/docs\/archive\/security",
+        "Potential security risk - system command found in: C:\\xampp\\htdocs\\apsdreamhome\/final_project_health_scan.php",
         "Potential security risk - eval() found in: C:\\xampp\\htdocs\\apsdreamhome\/full_project_deep_scan.php",
         "Potential security risk - system command found in: C:\\xampp\\htdocs\\apsdreamhome\/full_project_deep_scan.php",
         "Empty directory found: C:\\xampp\\htdocs\\apsdreamhome\/logs\/application",
@@ -212,13 +213,13 @@
     ],
     "recommendations": [],
     "statistics": {
-        "total_files": 3061,
+        "total_files": 3199,
         "total_dirs": 438,
-        "php_files": 1614,
+        "php_files": 1618,
         "blade_files": 0,
         "js_files": 82,
         "css_files": 100,
-        "config_files": 80,
+        "config_files": 84,
         "large_files": [],
         "empty_files": [
             "C:\\xampp\\htdocs\\apsdreamhome\/.trae\/.ignore",

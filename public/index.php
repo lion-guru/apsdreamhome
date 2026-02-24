@@ -53,7 +53,7 @@ if (!defined('BASE_URL')) {
     // Ensure script path ends with / or is just empty
     $script = rtrim($script, '/');
 
-    define('BASE_URL', "$protocol://$host$script/");
+    define('BASE_URL', "$protocol://$host$script");
 }
 
 // Import the App class

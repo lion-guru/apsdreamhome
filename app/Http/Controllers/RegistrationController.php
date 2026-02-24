@@ -22,11 +22,13 @@ class RegistrationController extends Controller
 {
     protected $mlmReferralService;
     protected $emailService;
+    private $recaptchaSecret;
 
     public function __construct()
     {
         $this->mlmReferralService = new MLMReferralService();
         $this->emailService = new EmailService();
+        $this->recaptchaSecret = getenv('RECAPTCHA_SECRET_KEY') ?: 'recaptcha_secret_placeholder';
     }
 
     /**

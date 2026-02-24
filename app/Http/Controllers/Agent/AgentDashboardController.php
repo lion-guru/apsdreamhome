@@ -264,10 +264,27 @@ class AgentDashboardController
             ->limit(3)
             ->get();
 
+        $siteVisitsData = new \stdClass();
+        $siteVisitsData->items = new \ArrayObject($siteVisits->toArray());
+        $siteVisitsData->count = $siteVisits->count();
+
+        $followUpsArray = $followUpsDue->toArray();
+        $followUpsData = new \stdClass();
+        $followUpsData->items = new \ArrayObject(array_map(function ($item) {
+            if (is_array($item)) {
+                return $item;
+            }
+            if (is_object($item) && method_exists($item, 'toArray')) {
+                return $item->toArray();
+            }
+            return is_object($item) ? get_object_vars($item) : $item;
+        }, $followUpsArray));
+        $followUpsData->count = $followUpsDue->count();
+
         return [
-            'site_visits' => $siteVisits->toArray(),
-            'follow_ups' => $followUpsDue->toArray(),
-            'total_upcoming' => $siteVisits->count() + $followUpsDue->count()
+            'site_visits' => $siteVisitsData,
+            'follow_ups' => $followUpsData,
+            'total_upcoming' => $siteVisitsData->count + $followUpsData->count
         ];
     }
 

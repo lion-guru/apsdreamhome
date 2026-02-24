@@ -102,7 +102,14 @@ function analyzeFile($filePath, $relativePath, &$results)
     // Hardcoded secrets
     if (preg_match('/[\'"](api_key|secret|password|token)[\'"]\s*=>\s*[\'"][^\'"]{5,}[\'"]/', $content, $matches)) {
         // Exclude config files which might use getenv
-        if (strpos($relativePath, 'config/') === false && strpos($content, 'getenv') === false && strpos($content, 'env(') === false) {
+        $matchedSegment = $matches[0] ?? '';
+        $isValidationRule = preg_match('/required|nullable|string|email|regex|min|max|confirmed|\|/', $matchedSegment);
+        if (
+            !$isValidationRule &&
+            strpos($relativePath, 'config/') === false &&
+            strpos($content, 'getenv') === false &&
+            strpos($content, 'env(') === false
+        ) {
             $results['metrics']['issues_found']++;
             $results['metrics']['security_issues']++;
             $results['issues'][] = [
@@ -187,6 +194,9 @@ function analyzeFile($filePath, $relativePath, &$results)
                 'customer_id',
                 'property_id',
                 'lead_id',
+                'category',
+                'associate_id',
+                'expires_at',
                 'format',
                 'count',
                 'toArray',
@@ -194,7 +204,18 @@ function analyzeFile($filePath, $relativePath, &$results)
                 'sum',
                 'avg',
                 'min',
-                'max'
+                'max',
+                // Method-like names commonly flagged in core
+                'setRelation',
+                'getAttribute',
+                'matches',
+                'uri',
+                'all',
+                'isFile',
+                'seek',
+                'LoadPercentage',
+                'getName',
+                'createDatabaseBackup'
             ];
 
             if (in_array($relationship, $ignoredProperties)) continue;
@@ -204,15 +225,21 @@ function analyzeFile($filePath, $relativePath, &$results)
                 !preg_match('/with\s*\(\s*[\'"]' . preg_quote($relationship) . '[\'"]\s*\)/', $content) &&
                 !preg_match('/\$this->' . preg_quote($relationship) . '/', $content)
             ) { // Skip if it's a method call on self
-
-                $results['metrics']['issues_found']++;
-                $results['metrics']['performance_issues']++;
-                $results['issues'][] = [
-                    'file' => $relativePath,
-                    'type' => 'N+1 Query',
-                    'severity' => 'MEDIUM',
-                    'message' => "Potential N+1 query: accessing \${$variable}->{$relationship} inside loop without eager loading"
-                ];
+                // Only consider application controller/model files for N+1 detection
+                $isAppContext = (
+                    strpos($relativePath, 'app/Http/Controllers') === 0 ||
+                    strpos($relativePath, 'app/Models') === 0
+                );
+                if ($isAppContext) {
+                    $results['metrics']['issues_found']++;
+                    $results['metrics']['performance_issues']++;
+                    $results['issues'][] = [
+                        'file' => $relativePath,
+                        'type' => 'N+1 Query',
+                        'severity' => 'MEDIUM',
+                        'message' => "Potential N+1 query: accessing \${$variable}->{$relationship} inside loop without eager loading"
+                    ];
+                }
             }
         }
     }

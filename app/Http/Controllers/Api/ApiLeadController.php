@@ -493,7 +493,9 @@ class ApiLeadController extends Controller
             $leadsByStatus = [];
             $statuses = LeadStatus::active();
             foreach ($statuses as $status) {
-                $count = count(Lead::where('status', '=', $status->name));
+                $count = count(array_filter(Lead::all(), function ($lead) use ($status) {
+                    return $lead->status === $status->name;
+                }));
                 if ($count > 0) {
                     $leadsByStatus[$status->name] = $count;
                 }
@@ -503,7 +505,9 @@ class ApiLeadController extends Controller
             $leadsBySource = [];
             $sources = LeadSource::active();
             foreach ($sources as $source) {
-                $count = count(Lead::where('source', '=', $source->name));
+                $count = count(array_filter(Lead::all(), function ($lead) use ($source) {
+                    return $lead->source === $source->name;
+                }));
                 if ($count > 0) {
                     $leadsBySource[$source->name] = $count;
                 }

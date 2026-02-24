@@ -24,7 +24,7 @@ class HomeController extends BaseController
         $this->data['properties'] = $properties;
         $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
 
-        return $this->render('home/index', [], 'layouts/base', true);
+        return $this->render('home/index', [], 'layouts/base', false);
     }
 
     public function projects()

@@ -163,6 +163,8 @@ class Employee extends Model
                 'phone' => $data['phone']
             ]);
 
+            $employeeId = $this->db->lastInsertId();
+
             // Log activity
             try {
                 $activitySql = "
