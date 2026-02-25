@@ -1,4 +1,4 @@
 export function initPropertyFilters() {
-    // Placeholder for property filters functionality
-    console.log('Property filters initialized');
+  // Placeholder for property filters functionality
+  // Debug: console.log('Property filters initialized');
 }
