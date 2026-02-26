@@ -16,23 +16,7 @@ class RazorpayGateway
 
     public function __construct()
     {
-        $this->key_id = env('RAZORPAY_KEY_ID', '');
-        $this->key_secret = env('RAZORPAY_KEY_SECRET', '');
-    }
-
-    // Initialize Razorpay API (in production, use composer package)
-    // For now, we'll simulate the API calls
-
-    /**
-     * Create payment order
-     */
-    public function createOrder($order_data)
-    {
-        try {
-            // In production, this would make actual Razorpay API call
-            // For now, return mock order data
-
-            $order_id = 'order_' . uniqid();
+        $this->PLACEHOLDER_SECRET_VALUEorder_' . uniqid();
 
             return [
                 'id' => $order_id,

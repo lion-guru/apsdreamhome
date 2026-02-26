@@ -17,10 +17,7 @@ class PaymentGateway {
 
     private function _getPaymentSettingsFromEnv() {
         return [
-            'razorpay_key_id' => env('RAZORPAY_KEY_ID', ''),
-            'razorpay_key_secret' => env('RAZORPAY_KEY_SECRET', ''),
-            'payment_methods' => ['card', 'netbanking', 'upi', 'wallet'],
-            'sandbox_mode' => env('PAYMENT_SANDBOX', true)
+            'razorpay_PLACEHOLDER_SECRET_VALUErazorpay_PLACEHOLDER_SECRET_VALUEsandbox_mode' => env('PAYMENT_SANDBOX', true)
         ];
     }
 

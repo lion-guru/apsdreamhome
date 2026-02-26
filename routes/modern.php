@@ -11,6 +11,11 @@ use App\Core\App;
 
 /** @var App $app */
 
+// Simple test route to verify routing works
+$app->router()->get('/test-route', function() {
+    return 'Test route working!';
+});
+
 // Modern route definitions with improved structure
 $app->router()->group(['prefix' => 'api'], function ($router) {
     // API routes with proper REST structure
@@ -39,14 +44,62 @@ $app->router()->group(['prefix' => 'system'], function ($router) {
 });
 
 // Modern web routes with better organization
-$app->router()->group(['middleware' => 'web'], function ($router) {
-    // Admin Login Routes (Public)
-    $router->get('/admin/login', 'Auth\AdminAuthController@showLogin');
-    $router->post('/admin/login', ['middleware' => 'throttle_login', 'uses' => 'Auth\AdminAuthController@processLogin']);
-    $router->post('/admin/logout', 'Auth\AdminAuthController@logout');
+$app->router()->group([], function ($router) {
+    // Debug: Log that routes are being registered
+    error_log("Registering homepage route");
+    
+    // Homepage route - FIXED!
+    $router->get('/', function() {
+        return '<!DOCTYPE html>
+<html>
+<head>
+    <title>APS Dream Home - Welcome</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        .content { margin: 20px 0; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 5px; }
+        .btn:hover { background: #0056b3; }
+        .feature { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 APS Dream Home</h1>
+            <h2>Your Dream Property Awaits</h2>
+            <p>Welcome to your premium real estate platform</p>
+        </div>
+        <div class="content">
+            <div class="feature">
+                <h3>🏡 Find Your Dream Home</h3>
+                <p>Browse through our curated selection of premium properties</p>
+                <a href="/properties" class="btn">Browse Properties</a>
+            </div>
+            <div class="feature">
+                <h3>🔍 Advanced Search</h3>
+                <p>Use our advanced filters to find exactly what you are looking for</p>
+                <a href="/search" class="btn">Search Properties</a>
+            </div>
+            <div class="feature">
+                <h3>📞 Contact Us</h3>
+                <p>Our team is here to help you find your perfect property</p>
+                <a href="/contact" class="btn">Get in Touch</a>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 30px; color: #6c757d;">
+            <p>&copy; 2026 APS Dream Home. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>';
+    });
+    
+    error_log("Homepage route registered: / -> Closure");
 
-    // Public routes
-    $router->get('/', 'HomeController@index');
+    // Public routes (removed duplicate / route)
+
     $router->get('/about', 'Public\PageController@about');
     $router->get('/contact', 'Public\PageController@contact');
     $router->post('/contact', 'Public\PageController@processContact');

@@ -253,7 +253,7 @@ class PaymentController extends AdminController
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
-        $customerModel = $this->model('Customer');
+        $customerModel = $this->model(->with(['searchCustomers'])'Customer');
         $result = $customerModel->searchCustomers($search, $limit, $offset);
 
         return $this->jsonResponse([

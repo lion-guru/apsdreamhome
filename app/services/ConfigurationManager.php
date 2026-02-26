@@ -82,75 +82,13 @@ class ConfigurationManager
 
         // Navigate through nested configuration
         $config = $this->config[$configName];
-        $keys = explode('.', $key);
-
-        foreach ($keys as $nestedKey) {
-            if (!is_array($config) || !array_key_exists($nestedKey, $config)) {
-                return $default;
-            }
-            $config = $config[$nestedKey];
-        }
-
-        return $config;
-    }
-
-    /**
-     * Set configuration value
-     * 
-     * @param string $configName Configuration file name
-     * @param string $key Dot-notated key path
-     * @param mixed $value Value to set
-     * @return bool
-     */
-    public function set(string $configName, string $key, $value)
-    {
-        if (!isset($this->config[$configName])) {
-            // Initialize empty config if it doesn't exist? 
+        $PLACEHOLDER_SECRET_VALUEt exist? 
             // Or fail? Let's initialize.
             $this->config[$configName] = [];
         }
 
         $config = &$this->config[$configName];
-        $keys = explode('.', $key);
-
-        foreach ($keys as $nestedKey) {
-            if (!is_array($config)) {
-                return false;
-            }
-
-            if (!array_key_exists($nestedKey, $config)) {
-                $config[$nestedKey] = [];
-            }
-
-            $config = &$config[$nestedKey];
-        }
-
-        $config = $value;
-        return true;
-    }
-
-    /**
-     * Reload configurations from files
-     */
-    public function reload()
-    {
-        $this->loadConfigurations();
-    }
-
-    /**
-     * Save configuration to file
-     * 
-     * @param string $configName Configuration file name
-     * @return bool
-     */
-    public function save(string $configName): bool
-    {
-        if (!isset($this->configPaths[$configName])) {
-            return false;
-        }
-
-        try {
-            $content = "<?php\nreturn " . var_export($this->config[$configName], true) . ";";
+        $PLACEHOLDER_SECRET_VALUE<?php\nreturn " . var_export($this->config[$configName], true) . ";";
             file_put_contents($this->configPaths[$configName], $content);
             return true;
         } catch (Exception $e) {

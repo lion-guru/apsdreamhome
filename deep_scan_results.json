@@ -1,0 +1,33 @@
+{
+    "timestamp": "2026-02-25 20:25:35",
+    "project_root": "C:\\xampp\\htdocs\\apsdreamhome",
+    "total_issues": 22,
+    "health_score": null,
+    "scan_results": {
+        "security": [],
+        "performance": [],
+        "code_quality": [],
+        "database": [],
+        "documentation": [],
+        "configuration": [],
+        "optimization": []
+    },
+    "directories": {
+        "missing": [
+            "app\/",
+            "assets\/",
+            "config\/",
+            "database\/",
+            "docs\/",
+            "logs\/",
+            "public\/",
+            "routes\/",
+            "storage\/",
+            "uploads\/",
+            "views\/"
+        ],
+        "existing": []
+    },
+    "files_scanned": 0,
+    "optimized_files": 0
+}

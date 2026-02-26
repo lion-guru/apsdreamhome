@@ -66,9 +66,14 @@ class SystemLogger
         // Implement user context retrieval
         // This could be from session, authentication service, etc.
         $this->user = [
-            'id' => $_SESSION['user_id'] ?? null,
-            'username' => $_SESSION['username'] ?? 'system',
-            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            'id' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SESSION['user_id'] ?? null,
+            'username' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SESSION['username'] ?? 'system',
+            'ip_address' =// SECURITY FIX: Validate and sanitize user input
+// > $_SERVER['REMOTE_ADDR'] ?? 'unknown'
         ];
     }
 

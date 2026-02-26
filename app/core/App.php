@@ -130,8 +130,7 @@ class App
         // Initialize services
         $this->initializeServices();
 
-        // Load routes
-        $this->loadRoutes();
+        // Routes will be loaded by the router
     }
 
     /**
@@ -181,13 +180,13 @@ class App
 
         // Fallback: Load each PHP file in the config directory if global config is empty
         foreach (glob($configDir . '/*.php') as $configFile) {
-            $key = basename($configFile, '.php');
-            if ($key === 'bootstrap') { // Skip bootstrap as it's already loaded
+            $filename = basename($configFile, '.php');
+            if ($filename === 'bootstrap') { // Skip bootstrap as it's already loaded
                 continue;
             }
             $fileConfig = require $configFile;
             if (is_array($fileConfig)) {
-                $this->config[$key] = $fileConfig;
+                $this->config[$filename] = $fileConfig;
             }
         }
     }
@@ -386,57 +385,6 @@ class App
         if (isset($config['database']) && is_array($config['database'])) {
             $this->db = Database::getInstance($config['database']);
             return;
-        }
-    }
-
-    /**
-     * Load application routes
-     */
-    protected function loadRoutes()
-    {
-        // Make $app available to all route files
-        $app = $this;
-
-        // Load legacy routes first (so modern routes can override them)
-        $legacyRoutesFile = $this->basePath('routes/web.php');
-        if (file_exists($legacyRoutesFile)) {
-            // Make sure $app is available in the web.php scope
-            $app = $this;
-            require $legacyRoutesFile;
-        }
-
-        // Load modern routes (overrides legacy routes)
-        $modernRoutesFile = $this->basePath('routes/modern.php');
-        if (file_exists($modernRoutesFile)) {
-            $app = $this;
-            require $modernRoutesFile;
-        }
-
-        // Load API routes
-        $apiRoutesFile = $this->basePath('routes/api.php');
-        if (file_exists($apiRoutesFile)) {
-            require $apiRoutesFile;
-        }
-    }
-
-    /**
-     * Run the application
-     */
-    public function run()
-    {
-        try {
-            // Handle the request through the router
-            $response = $this->router->dispatch($this->request);
-
-            // If response is a string, wrap it in a Response object
-            if (is_string($response)) {
-                $response = new Response($response);
-            }
-
-            // Send the response
-            $response->send();
-        } catch (Exception $e) {
-            $this->handleException($e);
         }
     }
 

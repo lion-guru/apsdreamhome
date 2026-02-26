@@ -29,7 +29,8 @@ class SharingController extends BaseApiController
             $shareData = [];
 
             if ($type === 'property') {
-                $propertyModel = $this->model('Property');
+                $propertyModel = $this->model(->with(
+        ->with(['trackVisit'])['getPropertyById'])'Property');
                 $prop = $propertyModel->getPropertyById($id);
 
                 if (!$prop) {

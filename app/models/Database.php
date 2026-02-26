@@ -22,10 +22,7 @@ class Database extends CoreDatabase
             $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'localhost';
             $dbname = $_ENV['DB_DATABASE'] ?? getenv('DB_NAME') ?: 'apsdreamhome';
             $username = $_ENV['DB_USERNAME'] ?? getenv('DB_USER') ?: 'root';
-            $password = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '';
-            
-            $config = [
-                'host' => $host,
+            $PLACEHOLDER_SECRET_VALUEhost' => $host,
                 'database' => $dbname,
                 'username' => $username,
                 'password' => $password,

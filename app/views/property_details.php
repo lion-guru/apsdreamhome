@@ -447,7 +447,7 @@ function changeMainImage(imageSrc) {
     document.querySelectorAll('.gallery-thumbnail').forEach(thumb => {
         thumb.classList.remove('active');
     });
-    event.target.classList.a// DEBUG CODE REMOVED: dd() function - 2026-02-22 19:56:15
+    event.target.classList.a// DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: dd() function - 2026-02-22 19:56:15
 }
 
 // Initialize property gallery

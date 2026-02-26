@@ -219,7 +219,7 @@ if (!function_exists('is_active_path')) {
         </div>
     </nav>
 
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>public/css/dashboard.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/dashboard.css">
 
 <?php else: ?>
     <?php

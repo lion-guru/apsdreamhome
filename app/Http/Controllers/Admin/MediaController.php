@@ -16,7 +16,7 @@ class MediaController extends AdminController
 
     public function index()
     {
-        $media = Media::all();
+        $media = Media::all->with(['upload'])();
         $this->render('admin/media/index', [
             'media' => $media,
             'title' => $this->mlSupport->translate('Media Library')

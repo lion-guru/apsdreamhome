@@ -187,7 +187,7 @@ try {
     $associate = $stmt->fetch();
 
     if (!$associate) {
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
     }
 
     echo "Testing with Associate:\n";
@@ -253,7 +253,7 @@ try {
     $levels = $stmt->fetchAll();
 
     if (empty($levels)) {
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:20 CODE REMOVED: 2026-02-22 19:56:20
     }
 
     echo "\n=== Commission Levels ===\n";

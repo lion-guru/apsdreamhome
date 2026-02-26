@@ -71,7 +71,7 @@ class InvoiceService
         $invoiceId = $this->db->lastInsertId();
 
         // Generate PDF
-        $pdfPath = $this->generateInvoicePDF($invoiceId, $invoiceData, $payment->toArray());
+        $pdfPath = $this->generateInvoicePDF($invoiceId, $invoiceData, $payment);
 
         return [
             'success' => true,
@@ -132,7 +132,7 @@ class InvoiceService
     /**
      * Generate invoice PDF
      */
-    private function generateInvoicePDF(int $invoiceId, array $invoice, $payment): string
+    private function generateInvoicePDF(int $invoiceId, array $invoice, array $payment): string
     {
         // Get customer details
         $customer = $this->db->query(

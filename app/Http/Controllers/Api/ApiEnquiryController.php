@@ -66,7 +66,7 @@ class ApiEnquiryController extends BaseApiController
         ];
 
         try {
-            $enquiryModel = $this->model('ProjectEnquiry');
+            $enquiryModel = $this->model(->with(['createEnquiry'])'ProjectEnquiry');
             $enquiryId = $enquiryModel->createEnquiry($enquiryData);
 
             if (!$enquiryId) {
