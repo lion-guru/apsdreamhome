@@ -58,7 +58,10 @@ class ProfessionalDashboardController extends BaseController
      */
     private function getOverviewStats($user)
     {
-        $leadModel = $this->model('Lead');
+        $leadModel = $this->model(->with(
+        ->with(['all'])
+        ->with(['sum'])
+        ->with(['all'])['count', 'all'])'Lead');
         $propertyModel = $this->model('Property');
         
         return [

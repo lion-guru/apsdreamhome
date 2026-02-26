@@ -44,7 +44,8 @@ class PropertyController extends BaseApiController
             $limit = \min(50, \max(1, (int)$this->request()->input('limit', 10)));
             $offset = ($page - 1) * $limit;
 
-            $propertyModel = $this->model('Property');
+            $propertyModel = $this->model(->with(
+        ->with(['user_id', 'filters', 'id'])['searchProperties'])'Property');
             $result = $propertyModel->searchProperties($filters, $limit, $offset);
 
             return $this->jsonSuccess([

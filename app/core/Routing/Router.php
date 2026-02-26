@@ -445,31 +445,40 @@ class Router
      */
     public function dispatch(Request $request)
     {
+        error_log("Router::dispatch called for URI: " . $request->path());
+
         $this->request = $request;
 
         $method = $request->getMethod();
         $uri = $request->path();
 
+        error_log("Method: $method, URI: $uri");
+
         // Find the matching route
         $route = $this->findRoute($method, $uri);
 
         if (!$route) {
+            error_log("No route found, trying legacy fallback");
             // Try legacy fallback if modern route not found
             return $this->handleLegacyFallback($method, $uri);
         }
 
+        error_log("Route found: " . $route->uri());
         $this->currentRoute = $route;
 
         // Apply route middleware
         $response = $this->runRouteMiddleware($route);
 
         if ($response instanceof Response) {
+            error_log("Middleware returned response");
             return $response;
         }
 
         // Execute the route action
+        error_log("Running route action");
         $response = $this->runRoute($route);
 
+        error_log("Preparing response");
         return $this->prepareResponse($response);
     }
 
@@ -662,6 +671,10 @@ class Router
      */
     protected function runController($controller)
     {
+        if ($controller instanceof \Closure) {
+            return $controller();
+        }
+        
         list($class, $method) = explode('@', $controller);
 
         if (!str_contains($class, '\\')) {

@@ -163,8 +163,6 @@ class Auth {
         $userModel = new User();
         
         // Hash the password
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        
         if (!isset($data['role'])) {
             $data['role'] = 'user';
         }

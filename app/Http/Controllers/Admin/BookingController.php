@@ -35,7 +35,9 @@ class BookingController extends AdminController
         ];
 
         $bookings = Booking::getAdminBookings($filters);
-        $total_bookings = Booking::getAdminTotalBookings($filters);
+        $total_bookings = Booking::get->with(
+        ->with(['name', 'email'])
+        ->with(['price', 'title'])['count'])AdminTotalBookings($filters);
 
         // Handle total_bookings if it returns array/object (safety check)
         if (is_array($total_bookings)) {

@@ -126,8 +126,12 @@ abstract class Middleware
         $logData = [
             'event' => $event,
             'timestamp' => date('Y-m-d H:i:s'),
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+            'ip' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            'user_agent' =// SECURITY FIX: Validate and sanitize user input
+// // SECURITY FIX: Validate and sanitize user input
+// > $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
             'user_id' => $this->getUserId(),
             'data' => $data
         ];

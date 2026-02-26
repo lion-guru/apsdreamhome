@@ -1,27 +1,27 @@
 {
-    "timestamp": "2026-02-23 18:04:52",
+    "timestamp": "2026-02-25 07:27:07",
     "phase": "php_files_scan",
     "summary": {
-        "total_files_scanned": 1781,
-        "php_files_analyzed": 1228,
-        "security_risks": 430,
-        "general_issues": 266
+        "total_files_scanned": 1755,
+        "php_files_analyzed": 1194,
+        "security_risks": 409,
+        "general_issues": 244
     },
     "issues": [
         "Many long lines (25) in: app\/Core\/EmailNotification.php",
         "Very large file (1608 lines): app\/Core\/Http\/Request.php",
         "Very large file (2409 lines): app\/Core\/Http\/Response.php",
         "Many long lines (11) in: app\/Core\/Support\/Str.php",
-        "Very large file (1986 lines): app\/Http\/Controllers\/Admin\/AdminController.php",
+        "Very large file (1985 lines): app\/Http\/Controllers\/Admin\/AdminController.php",
         "Many long lines (16) in: app\/Http\/Controllers\/Admin\/CommissionController.php",
         "Many long lines (11) in: app\/Http\/Controllers\/Admin\/PropertyController.php",
         "Debug code found: app\/Http\/Controllers\/AgentController.php",
         "Debug code found: app\/Http\/Controllers\/Analytics\/AdminReportsController.php",
         "Debug code found: app\/Http\/Controllers\/Api\/BaseApiController.php",
-        "Very large file (1510 lines): app\/Http\/Controllers\/Api\/LeadController.php",
+        "Very large file (1505 lines): app\/Http\/Controllers\/Api\/LeadController.php",
         "Debug code found: app\/Http\/Controllers\/Api\/MobileApiController.php",
         "Debug code found: app\/Http\/Controllers\/AssociateController.php",
-        "Very large file (1326 lines): app\/Http\/Controllers\/Employee\/EmployeeController.php",
+        "Very large file (1248 lines): app\/Http\/Controllers\/Employee\/EmployeeController.php",
         "Debug code found: app\/Http\/Controllers\/Payment\/PaymentController.php",
         "Very large file (1670 lines): app\/Http\/Controllers\/Tech\/AdvancedSecurityController.php",
         "Very large file (1168 lines): app\/Http\/Controllers\/Tech\/BlockchainController.php",
@@ -32,8 +32,8 @@
         "Debug code found: app\/Http\/Controllers\/Tech\/SustainableTechController.php",
         "Very large file (1462 lines): app\/Http\/Controllers\/Tech\/SustainableTechController.php",
         "Debug code found: app\/Http\/Controllers\/Utility\/DatabaseSeederController.php",
-        "Very large file (1266 lines): app\/Models\/Associate.php",
-        "Very large file (5567 lines): app\/Models\/CoreFunctions.php",
+        "Very large file (1270 lines): app\/Models\/Associate.php",
+        "Very large file (5989 lines): app\/Models\/CoreFunctions.php",
         "Very large file (1580 lines): app\/Models\/Customer.php",
         "Very large file (1036 lines): app\/Models\/Messaging.php",
         "Very large file (1013 lines): app\/Services\/AI\/AIPropertyEngine.php",
@@ -101,10 +101,6 @@
         "Many long lines (34) in: app\/views\/admin\/settings\/index.php",
         "Debug code found: app\/views\/admin\/sql\/add_profile_picture_column.php",
         "No PHP opening tag: app\/views\/agents\/dashboard.blade.php",
-        "Debug code found: app\/views\/archive\/dashasso.php",
-        "Very large file (1633 lines): app\/views\/archive\/dashasso.php",
-        "Many long lines (21) in: app\/views\/archive\/dashasso.php",
-        "Debug code found: app\/views\/archive\/register_unified.php",
         "No PHP opening tag: app\/views\/associates\/bank-details.php",
         "Very large file (1228 lines): app\/views\/associates\/crm.php",
         "Many long lines (15) in: app\/views\/associates\/crm.php",
@@ -145,8 +141,6 @@
         "No PHP opening tag: app\/views\/pages\/ai_property_assistant.php",
         "Many long lines (12) in: app\/views\/pages\/ai_property_assistant.php",
         "Many long lines (13) in: app\/views\/pages\/aps_portfolio.php",
-        "Debug code found: app\/views\/pages\/archive\/agent_dashboard.php",
-        "Debug code found: app\/views\/pages\/archive\/associate_portal.php",
         "Many long lines (14) in: app\/views\/pages\/archive_redundant\/about_template_new.php",
         "Many long lines (19) in: app\/views\/pages\/archive_redundant\/book-property.php",
         "Very large file (1287 lines): app\/views\/pages\/archive_redundant\/contact_template.php",
@@ -190,22 +184,6 @@
         "Many long lines (12) in: app\/views\/properties\/show.php",
         "Many long lines (23) in: app\/views\/property\/index.php",
         "No PHP opening tag: app\/views\/team\/dashboard.blade.php",
-        "Debug code found: database\/archive\/legacy_scripts\/compare_full_schema.php",
-        "Debug code found: database\/archive\/legacy_scripts\/db_connect_test.php",
-        "Debug code found: database\/archive\/legacy_scripts\/db_schema_dump.php",
-        "Debug code found: database\/archive\/legacy_scripts\/execute_crm_migration.php",
-        "Debug code found: database\/archive\/legacy_scripts\/execute_google_auth_migration.php",
-        "Debug code found: database\/archive\/legacy_scripts\/execute_resell_plots_migration.php",
-        "Debug code found: database\/archive\/legacy_scripts\/export_mlm_schema.php",
-        "Debug code found: database\/archive\/legacy_scripts\/final_migration.php",
-        "Debug code found: database\/archive\/legacy_scripts\/fix_leads_data.php",
-        "Debug code found: database\/archive\/legacy_scripts\/fix_mlm_commission_tables.php",
-        "Debug code found: database\/archive\/legacy_scripts\/migration_manager.php",
-        "Debug code found: database\/archive\/legacy_scripts\/run_migration.php",
-        "Debug code found: database\/archive\/legacy_scripts\/run_migrations.php",
-        "Debug code found: database\/archive\/legacy_scripts\/schema_version_control_frontend.php",
-        "Debug code found: database\/archive\/legacy_scripts\/simple_schema_compare.php",
-        "Debug code found: database\/archive\/legacy_scripts\/update_schema_safely.php",
         "No PHP opening tag: database\/index.php",
         "Many long lines (12) in: database\/scripts\/create_services_database_tables.php",
         "Debug code found: database\/scripts\/maintenance\/create_farmers_tables.php",
@@ -1240,33 +1218,6 @@
             ]
         },
         {
-            "file": "app\/views\/archive\/agent.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "app\/views\/archive\/dashasso.php",
-            "issues": [
-                "Potential file inclusion vulnerability",
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "app\/views\/archive\/register_old.php",
-            "issues": [
-                "Potential file inclusion vulnerability",
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "app\/views\/archive\/register_unified.php",
-            "issues": [
-                "Potential file inclusion vulnerability",
-                "Potential hardcoded password"
-            ]
-        },
-        {
             "file": "app\/views\/associates\/commission_calculator.php",
             "issues": [
                 "Potential file inclusion vulnerability"
@@ -1451,12 +1402,6 @@
             ]
         },
         {
-            "file": "app\/views\/layouts\/associate_permissions.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
             "file": "app\/views\/layouts\/base.php",
             "issues": [
                 "Potential XSS vulnerability (unescaped output)",
@@ -1552,32 +1497,6 @@
             "file": "app\/views\/pages\/aps_portfolio.php",
             "issues": [
                 "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "app\/views\/pages\/archive\/agent_dashboard.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "app\/views\/pages\/archive\/agent_registration.php",
-            "issues": [
-                "Potential file inclusion vulnerability",
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "app\/views\/pages\/archive\/associate_portal.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "app\/views\/pages\/archive\/associate_self_service.php",
-            "issues": [
-                "Potential file inclusion vulnerability",
-                "Potential hardcoded password"
             ]
         },
         {
@@ -1825,6 +1744,12 @@
         },
         {
             "file": "app\/views\/pages\/gorakhpur-unaka.php",
+            "issues": [
+                "Potential file inclusion vulnerability"
+            ]
+        },
+        {
+            "file": "app\/views\/pages\/home_new.php",
             "issues": [
                 "Potential file inclusion vulnerability"
             ]
@@ -2101,6 +2026,12 @@
             ]
         },
         {
+            "file": "config\/database.php",
+            "issues": [
+                "Potential hardcoded password"
+            ]
+        },
+        {
             "file": "config\/deployment.php",
             "issues": [
                 "Potential hardcoded password"
@@ -2110,6 +2041,12 @@
             "file": "config\/logging.php",
             "issues": [
                 "Potential file inclusion vulnerability",
+                "Potential hardcoded password"
+            ]
+        },
+        {
+            "file": "config\/mail.php",
+            "issues": [
                 "Potential hardcoded password"
             ]
         },
@@ -2131,98 +2068,6 @@
             "issues": [
                 "Dangerous function 'eval' found",
                 "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/db_connect_test.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/db_schema_audit.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/db_schema_dump.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/db_schema_version_control.php",
-            "issues": [
-                "Dangerous function 'exec' found",
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/execute_migration_fixed.php",
-            "issues": [
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/final_migration.php",
-            "issues": [
-                "Dangerous function 'system' found",
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/fix_leads_data.php",
-            "issues": [
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/fix_mlm_commission_tables.php",
-            "issues": [
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/improved_migration.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/migration_manager.php",
-            "issues": [
-                "Potential hardcoded password"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/run_migration.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/run_migrations.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/schema_version_control_frontend.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/seed_bookings.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
-            ]
-        },
-        {
-            "file": "database\/archive\/legacy_scripts\/simple_install.php",
-            "issues": [
-                "Potential file inclusion vulnerability"
             ]
         },
         {

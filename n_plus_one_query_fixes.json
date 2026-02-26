@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-23 18:22:26",
+    "timestamp": "2026-02-25 07:31:23",
     "phase": "n_plus_one_query_fix",
     "potential_n_plus_one_issues": [
         {
@@ -14257,10 +14257,52 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $siteVisits->toArray accessed without eager loading",
+                    "description": "Potential lazy loading: $siteVisitsData->items accessed without eager loading",
+                    "relationship": "items",
+                    "variable": "siteVisitsData",
+                    "line_context": "$siteVisitsData->items"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $siteVisitsData->count accessed without eager loading",
+                    "relationship": "count",
+                    "variable": "siteVisitsData",
+                    "line_context": "$siteVisitsData->count"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $followUpsDue->toArray accessed without eager loading",
                     "relationship": "toArray",
-                    "variable": "siteVisits",
-                    "line_context": "$siteVisits->toArray"
+                    "variable": "followUpsDue",
+                    "line_context": "$followUpsDue->toArray"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $followUpsData->items accessed without eager loading",
+                    "relationship": "items",
+                    "variable": "followUpsData",
+                    "line_context": "$followUpsData->items"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $item->toArray accessed without eager loading",
+                    "relationship": "toArray",
+                    "variable": "item",
+                    "line_context": "$item->toArray"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $followUpsData->count accessed without eager loading",
+                    "relationship": "count",
+                    "variable": "followUpsData",
+                    "line_context": "$followUpsData->count"
+                },
+                {
+                    "type": "potential_lazy_loading",
+                    "description": "Potential lazy loading: $siteVisitsData->count accessed without eager loading",
+                    "relationship": "count",
+                    "variable": "siteVisitsData",
+                    "line_context": "$siteVisitsData->count"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -16651,10 +16693,10 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $status->name accessed without eager loading",
-                    "relationship": "name",
-                    "variable": "status",
-                    "line_context": "$status->name"
+                    "description": "Potential lazy loading: $lead->status accessed without eager loading",
+                    "relationship": "status",
+                    "variable": "lead",
+                    "line_context": "$lead->status"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -16665,10 +16707,10 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $source->name accessed without eager loading",
-                    "relationship": "name",
-                    "variable": "source",
-                    "line_context": "$source->name"
+                    "description": "Potential lazy loading: $lead->source accessed without eager loading",
+                    "relationship": "source",
+                    "variable": "lead",
+                    "line_context": "$lead->source"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -25350,55 +25392,6 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->employeeModel accessed without eager loading",
-                    "relationship": "employeeModel",
-                    "variable": "this",
-                    "line_context": "$this->employeeModel"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->employeeModel accessed without eager loading",
-                    "relationship": "employeeModel",
-                    "variable": "this",
-                    "line_context": "$this->employeeModel"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->render accessed without eager loading",
-                    "relationship": "render",
-                    "variable": "this",
-                    "line_context": "$this->render"
-                },
-                {
-                    "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->redirect accessed without eager loading",
                     "relationship": "redirect",
                     "variable": "this",
@@ -25462,55 +25455,6 @@
                 },
                 {
                     "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->employeeModel accessed without eager loading",
-                    "relationship": "employeeModel",
-                    "variable": "this",
-                    "line_context": "$this->employeeModel"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->render accessed without eager loading",
-                    "relationship": "render",
-                    "variable": "this",
-                    "line_context": "$this->render"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->employeeModel accessed without eager loading",
-                    "relationship": "employeeModel",
-                    "variable": "this",
-                    "line_context": "$this->employeeModel"
-                },
-                {
-                    "type": "potential_lazy_loading",
                     "description": "Potential lazy loading: $this->data accessed without eager loading",
                     "relationship": "data",
                     "variable": "this",
@@ -25732,69 +25676,6 @@
                     "relationship": "redirect",
                     "variable": "this",
                     "line_context": "$this->redirect"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->middleware accessed without eager loading",
-                    "relationship": "middleware",
-                    "variable": "this",
-                    "line_context": "$this->middleware"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->attendanceModel accessed without eager loading",
-                    "relationship": "attendanceModel",
-                    "variable": "this",
-                    "line_context": "$this->attendanceModel"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->attendanceModel accessed without eager loading",
-                    "relationship": "attendanceModel",
-                    "variable": "this",
-                    "line_context": "$this->attendanceModel"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->data accessed without eager loading",
-                    "relationship": "data",
-                    "variable": "this",
-                    "line_context": "$this->data"
-                },
-                {
-                    "type": "potential_lazy_loading",
-                    "description": "Potential lazy loading: $this->render accessed without eager loading",
-                    "relationship": "render",
-                    "variable": "this",
-                    "line_context": "$this->render"
                 },
                 {
                     "type": "potential_lazy_loading",
@@ -63923,7 +63804,7 @@
     "fixes_applied": [
         {
             "file": "app\/Http\/Controllers\/Admin\/AdminController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "title",
                 "content",
@@ -63941,7 +63822,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/BookingController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "count"
             ],
@@ -63967,7 +63848,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/CareerController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "title",
                 "type",
@@ -63980,7 +63861,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/CustomerController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": {
                 "0": "searchCustomers",
                 "1": "getAllCustomers",
@@ -63995,7 +63876,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/EmployeeController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": {
                 "0": "getRoles",
                 "1": "getDepartments",
@@ -64010,7 +63891,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/MediaController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "upload"
             ],
@@ -64018,7 +63899,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/NewsController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "title",
                 "date",
@@ -64030,7 +63911,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/PaymentController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "searchCustomers"
             ],
@@ -64038,7 +63919,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Admin\/PropertyController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "fill",
                 "title"
@@ -64070,8 +63951,16 @@
             "variable": "recentCommissions"
         },
         {
-            "file": "app\/Http\/Controllers\/Api\/AnalyticsController.php",
+            "file": "app\/Http\/Controllers\/Agent\/AgentDashboardController.php",
             "type": "updated_eager_loading",
+            "relationships": [
+                "toArray"
+            ],
+            "variable": "followUpsDue"
+        },
+        {
+            "file": "app\/Http\/Controllers\/Api\/AnalyticsController.php",
+            "type": "added_eager_loading",
             "relationships": [
                 "getSummary",
                 "getPreviousSummary",
@@ -64082,7 +63971,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/ApiEnquiryController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "createEnquiry"
             ],
@@ -64090,7 +63979,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/ApiLeadController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "id"
             ],
@@ -64104,17 +63993,17 @@
                 "1": "id",
                 "5": "status",
                 "8": "assigned_to",
-                "11": "first_name",
-                "13": "source",
-                "17": "created_at",
-                "20": "assignedTo",
-                "21": "createdBy"
+                "12": "source",
+                "13": "first_name",
+                "19": "created_at",
+                "22": "assignedTo",
+                "23": "createdBy"
             },
             "variable": "lead"
         },
         {
             "file": "app\/Http\/Controllers\/Api\/AuthController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "getRoles",
                 "getPermissions"
@@ -64123,7 +64012,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/FollowupController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "getVisitsForReminder",
                 "getVisitsForFeedback"
@@ -64206,7 +64095,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/MonitorApiController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "getSystemStatus",
                 "runHealthChecks"
@@ -64234,7 +64123,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/NotificationController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "getForUser"
             ],
@@ -64251,7 +64140,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/PropertyController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "searchProperties"
             ],
@@ -64269,7 +64158,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/ReviewController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "getPropertyReviews",
                 "getPropertyReviewSummary",
@@ -64283,7 +64172,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/SeoController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "title"
             ],
@@ -64299,7 +64188,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/SharingController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "getPropertyById"
             ],
@@ -64315,7 +64204,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/UserController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "list",
                 "countUsers"
@@ -64332,7 +64221,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/VisitController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "findOrCreate"
             ],
@@ -64348,7 +64237,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Api\/WorkflowController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "jsonError",
                 "getAllWorkflows"
@@ -64375,15 +64264,6 @@
             "file": "app\/Http\/Controllers\/Associate\/AssociateDashboardController.php",
             "type": "updated_eager_loading",
             "relationships": [
-                "id",
-                "status"
-            ],
-            "variable": "user"
-        },
-        {
-            "file": "app\/Http\/Controllers\/Associate\/AssociateDashboardController.php",
-            "type": "updated_eager_loading",
-            "relationships": [
                 "count",
                 "avg",
                 "take"
@@ -64392,7 +64272,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Property\/PropertyController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "query"
             ],
@@ -64400,7 +64280,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/Public\/PageController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "category"
             ],
@@ -64416,7 +64296,7 @@
         },
         {
             "file": "app\/Http\/Controllers\/SaaS\/ProfessionalDashboardController.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "count",
                 "all"
@@ -64449,7 +64329,7 @@
         },
         {
             "file": "app\/Services\/Communication\/WhatsAppService.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "query"
             ],
@@ -64457,7 +64337,7 @@
         },
         {
             "file": "app\/Services\/Legacy\/Auth.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "query",
                 "execute"
@@ -64466,7 +64346,7 @@
         },
         {
             "file": "app\/Services\/Legacy\/ConfigManager.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "validateConfigurations"
             ],
@@ -64474,7 +64354,7 @@
         },
         {
             "file": "app\/Services\/Legacy\/DependencyContainer.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": {
                 "0": "register",
                 "4": "resolve"
@@ -64483,7 +64363,7 @@
         },
         {
             "file": "app\/Services\/Payment\/PaymentService.php",
-            "type": "updated_eager_loading",
+            "type": "added_eager_loading",
             "relationships": [
                 "isConfigured",
                 "initiatePayment",

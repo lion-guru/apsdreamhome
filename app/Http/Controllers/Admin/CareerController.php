@@ -73,7 +73,7 @@ class CareerController extends AdminController
 
     public function edit($id)
     {
-        $career = Career::find($id);
+        $career = Career::find->with(['title', 'type', 'location', 'salary_range', 'status', 'description'])($id);
         if (!$career) {
             $this->setFlash('error', $this->mlSupport->translate('Job not found'));
             $this->redirect('admin/careers');

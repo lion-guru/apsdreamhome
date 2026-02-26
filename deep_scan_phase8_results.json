@@ -1,11 +1,11 @@
 {
-    "timestamp": "2026-02-23 18:33:46",
+    "timestamp": "2026-02-25 07:28:26",
     "phase": "routing_scan",
     "summary": {
         "route_files": 3,
         "middleware_files": 7,
         "controller_files": 10,
-        "total_issues": 16,
+        "total_issues": 15,
         "security_concerns": 18,
         "performance_issues": 10
     },
@@ -24,8 +24,7 @@
         "Invalid controller class name: Controller.php",
         "API controller using echo\/print instead of JSON response: ApiLeadController.php",
         "API controller using echo\/print instead of JSON response: CommunicationController.php",
-        "API controller using echo\/print instead of JSON response: MobileApiController.php",
-        "API controller using echo\/print instead of JSON response: MonitorApiController.php"
+        "API controller using echo\/print instead of JSON response: MobileApiController.php"
     ],
     "security_concerns": [
         "Potential XSS vulnerability in controller: AssociateController.php",
@@ -55,7 +54,7 @@
         "Large controller (459 lines): CustomerController.php",
         "Large controller (582 lines): EmployeeController.php",
         "Potential N+1 query in loop: EmployeeController.php",
-        "Large controller (404 lines): RegistrationController.php",
+        "Large controller (406 lines): RegistrationController.php",
         "Large controller (591 lines): TeamManagementController.php",
         "Potential N+1 query in loop: TeamManagementController.php"
     ],
