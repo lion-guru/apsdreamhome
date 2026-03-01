@@ -57,11 +57,4 @@ return [
     'seeds' => [
         'path' => APP_ROOT . '/database/seeds',
     ],
-
-    'redis' => [
-        'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
-        'password' => getenv('REDIS_PASSWORD'),
-        'port' => getenv('REDIS_PORT') ?: 6379,
-        'database' => 0,
-    ],
 ];

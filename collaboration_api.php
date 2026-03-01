@@ -7,7 +7,9 @@
 require_once 'CollaborationMonitor.php';
 
 // Initialize collaboration monitor
-$monitor = new CollaborationMonitor(null, 'user1'); // Change to appropriate user
+// Auto-detect user based on hostname or session
+$currentUser = $_SESSION['user_id'] ?? $_GET['user'] ?? gethostname();
+$monitor = new CollaborationMonitor(null, $currentUser);
 
 // Handle API requests
 $action = $_GET['action'] ?? 'get_status';

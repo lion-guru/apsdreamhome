@@ -92,7 +92,7 @@ function Test-HookFiles {
     }
 }
 
-function Create-TaskSchedulerJob {
+function New-TaskSchedulerJob {
     Write-Log "⏰ Setting up Task Scheduler for auto-sync..."
 
     $taskName = "APS Dream Home Git Auto Sync"
@@ -122,7 +122,7 @@ function Create-TaskSchedulerJob {
     Write-Log "✅ Auto-sync task created (runs every 5 minutes)" -ForegroundColor Green
 }
 
-function Create-DesktopShortcut {
+function New-DesktopShortcut {
     Write-Log "🔗 Creating desktop shortcuts..."
 
     $desktopPath = [Environment]::GetFolderPath("Desktop")
@@ -165,10 +165,10 @@ try {
     Set-HookPermissions
 
     # Create Task Scheduler job
-    Create-TaskSchedulerJob
+    New-TaskSchedulerJob
 
     # Create desktop shortcuts
-    Create-DesktopShortcut
+    New-DesktopShortcut
 
     Write-Log "" -ForegroundColor Green
     Write-Log "🎉 Git hooks and auto-sync setup complete!" -ForegroundColor Green
