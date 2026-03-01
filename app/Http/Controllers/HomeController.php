@@ -6,6 +6,11 @@ use App\Http\Controllers\BaseController;
 use App\Models\Project;
 use App\Models\Property;
 
+// Define BASE_URL if not already defined
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+
 class HomeController extends BaseController
 {
     public function index()
