@@ -15,7 +15,7 @@ class HomeController extends BaseController
 {
     public function index()
     {
-        logger()->info('HomeController::index called');
+        // logger()->info('HomeController::index called');  // Temporarily disabled
 
         try {
             // Get featured properties from database
@@ -79,7 +79,7 @@ class HomeController extends BaseController
                 ];
             }
         } catch (\Throwable $e) {
-            logger()->error('Error fetching properties: ' . $e->getMessage());
+            // logger()->error('Error fetching properties: ' . $e->getMessage());  // Temporarily disabled
             $properties = [];
         }
 

@@ -68,10 +68,18 @@ try {
     debug_log("Loading App class...");
     require_once __DIR__ . '/app/core/App.php';
 
-    debug_log("Instantiating App...");
-    $app = new App();
+    debug_log("About to instantiate App...");
+    try {
+        $app = new App();
+        debug_log("App instantiated successfully");
+    } catch (Exception $e) {
+        debug_log("App instantiation failed: " . $e->getMessage());
+        throw $e;
+    }
 
+    debug_log("About to call \$app->run()...");
     $app->run();
+    debug_log("After \$app->run() call");
 } catch (Exception $e) {
     debug_log("Exception: " . $e->getMessage());
     // Handle any exceptions that occur during bootstrap

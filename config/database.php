@@ -13,7 +13,7 @@ return [
             'host' => getenv('DB_HOST') ?: 'localhost',
             'database' => getenv('DB_NAME') ?: 'apsdreamhome',
             'username' => getenv('DB_USER') ?: 'root',
-            'password' => getenv('DB_PASSWORD') ?: '',
+            'password' => '',  // XAMPP MySQL root has no password by default
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',

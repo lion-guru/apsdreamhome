@@ -15,8 +15,9 @@ class BaseController extends CoreController
     public function __construct()
     {
         parent::__construct();
-        $this->db = \App\Core\Database::getInstance();
-        $this->loadModels();
+        // Temporarily disable database to test routing
+        // $this->db = \App\Core\Database::getInstance();
+        // $this->loadModels();
         $this->getCsrfToken();
     }
 
