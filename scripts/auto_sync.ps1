@@ -63,7 +63,7 @@ function Push-Changes {
     }
 }
 
-function Pull-Changes {
+function Invoke-PullChanges {
     Write-Log "📥 Checking for remote changes..."
 
     # Check if working directory is clean
@@ -114,7 +114,7 @@ if ($Continuous) {
         $pushSuccess = Push-Changes
         
         # Then try to pull remote changes
-        $pullSuccess = Pull-Changes
+        $pullSuccess = Invoke-PullChanges
 
         if ($pushSuccess -and $pullSuccess) {
             Write-Log "🎉 Full synchronization complete"
@@ -130,7 +130,7 @@ if ($Continuous) {
 } else {
     Write-Log "🔄 Running single sync"
     Push-Changes
-    Pull-Changes
+    Invoke-PullChanges
     Write-Log "🎉 Single sync complete"
 }
 
