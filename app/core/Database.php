@@ -19,6 +19,31 @@ class Database
     private $slowQueryThreshold = 1.0; // seconds
 
     /**
+     * Private constructor
+     * @param array $config Database configuration
+     */
+    private function __construct(array $config = [])
+    {
+        $this->config = $config;
+        $this->connect();
+    }
+
+    /**
+     * Connect to database
+     */
+    private function connect()
+    {
+        try {
+            $dsn = "mysql:host={$this->config['host']};dbname={$this->config['database']};charset=utf8mb4";
+            $this->pdo = new \PDO($dsn, $this->config['username'], $this->config['password']);
+            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            throw new \Exception("Database connection failed: " . $e->getMessage());
+        }
+    }
+
+    /**
      * Get singleton instance
      * @param array $config Database configuration
      */
@@ -59,13 +84,18 @@ class Database
      */
     public function query($sql, $params = [], $fetchMode = null, $useCache = false)
     {
-        $stmt = parent::query($sql, $params ?? []);
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params ?? []);
 
-        if ($fetchMode !== null) {
-            $stmt->setFetchMode($fetchMode);
+            if ($fetchMode !== null) {
+                $stmt->setFetchMode($fetchMode);
+            }
+
+            return $stmt;
+        } catch (\PDOException $e) {
+            throw new \Exception("Query failed: " . $e->getMessage());
         }
-
-        return $stmt;
     }
 
     /**

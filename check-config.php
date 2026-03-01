@@ -45,23 +45,23 @@ try {
 }
 
 try {
-    $pdo2 = new PDO("mysql:host=$host;dbname=apsdreamhomes", $user, $pass);
+    $pdo2 = new PDO("mysql:host=$host;dbname=apsdreamhome", $user, $pass);
     $stmt2 = $pdo2->query('SHOW TABLES');
     $tables2 = $stmt2->fetchAll(PDO::FETCH_COLUMN);
-    echo "✅ apsdreamhomes: " . count($tables2) . " tables (connected)\n";
+    echo "✅ apsdreamhome: " . count($tables2) . " tables (connected)\n";
 } catch (Exception $e) {
-    echo "❌ apsdreamhomes: " . $e->getMessage() . "\n";
+    echo "❌ apsdreamhome: " . $e->getMessage() . "\n";
 }
 
 echo "\n📊 SUMMARY:\n";
 echo "• Current configuration connects to: $dbname\n";
 echo "• Available databases:\n";
 echo "  - apsdreamhome: " . (isset($tables1) ? count($tables1) . " tables" : "not accessible") . "\n";
-echo "  - apsdreamhomes: " . (isset($tables2) ? count($tables2) . " tables" : "not accessible") . "\n";
+echo "  - apsdreamhome: " . (isset($tables2) ? count($tables2) . " tables" : "not accessible") . "\n";
 
 if (isset($tables2) && count($tables2) === 596) {
     echo "\n💡 RECOMMENDATION:\n";
-    echo "Change DB_DATABASE from 'apsdreamhome' to 'apsdreamhomes'\n";
+    echo "Change DB_DATABASE from 'apsdreamhome' to 'apsdreamhome'\n";
     echo "to access all 596 tables with complete features!\n";
 }
 ?>
