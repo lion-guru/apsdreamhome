@@ -159,7 +159,7 @@ class EmailManager
                 'status' => $status,
                 'data' => json_encode($data),
                 'error_message' => $error,
-                'ip_address' =// SECURITY FIX: Validate and sanitize user input
+                'ip_address' => 'system', // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['REMOTE_ADDR'] ?? 'system',
                 'created_at' => date('Y-m-d H:i:s')
@@ -333,7 +333,7 @@ class EmailManager
                 'test_email',
                 [
                     'test_time' => date('Y-m-d H:i:s'),
-                    'server_info' =// SECURITY FIX: Validate and sanitize user input
+                    'server_info' => 'Unknown' // SECURITY FIX: Validate and sanitize user input
 // // SECURITY FIX: Validate and sanitize user input
 // > $_SERVER['SERVER_NAME'] ?? 'Unknown'
                 ]

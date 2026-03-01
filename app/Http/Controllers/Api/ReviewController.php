@@ -31,7 +31,7 @@ class ReviewController extends BaseApiController
             $offset = ($page - 1) * $limit;
 
             if ($targetType === 'property') {
-                $reviewModel = $this->model(->with(['getPropertyReviews', 'getPropertyReviewSummary', 'getPropertyRatingDistribution', 'getAgentReviews', 'getAgentReviewSummary', 'getAgentRatingDistribution', 'hasReviewed'])'PropertyReview');
+                $reviewModel = $this->model('PropertyReview');
                 $reviews = $reviewModel->getPropertyReviews($targetId, $limit, $offset);
                 $summary = $reviewModel->getPropertyReviewSummary($targetId);
                 $distribution = $reviewModel->getPropertyRatingDistribution($targetId);

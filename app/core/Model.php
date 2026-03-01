@@ -501,7 +501,15 @@ abstract class Model
             if (is_numeric($key) && is_array($value)) {
                 $this->addWhere(...array_values($value));
             } else {
-                $this->addWhere($PLACEHOLDER_SECRET_VALUEASC')
+                $this->addWhere($key, '=', $value);
+            }
+        }
+    }
+
+    /**
+     * Add an ORDER BY clause
+     */
+    public function orderBy($column, $direction = 'ASC')
     {
         $this->orders[] = [
             'column' => $column,

@@ -12,7 +12,10 @@ function loadEnv() {
             continue;
         }
 
-        list($PLACEHOLDER_SECRET_VALUE"\''); // Remove quotes if present
+        list($key, $value) = explode('=', $line, 2);
+        
+        // Remove quotes if present
+        $value = trim($value, '"\'');
         
         putenv(sprintf('%s=%s', $key, $value));
         $_ENV[$key] = $value;
