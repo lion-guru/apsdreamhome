@@ -70,16 +70,15 @@ class ConfigurationManager
      */
     public function get(string $configName, string $key = null, $default = null)
     {
-        // Validate configuration exists
         if (!isset($this->config[$configName])) {
             return $default;
         }
 
-        // If no specific key, return entire configuration
         if ($key === null) {
             return $this->config[$configName];
         }
 
+<<<<<<< HEAD
         // Navigate through nested configuration
         $config = $this->config[$configName];
         $PLACEHOLDER_SECRET_VALUEt exist? 
@@ -100,10 +99,19 @@ class ConfigurationManager
     /**
      * Prevent cloning of the singleton
      */
-    private function __clone() {}
+=======
+        $value = $this->config[$configName];
+        foreach (explode('.', $key) as $segment) {
+            if (is_array($value) && array_key_exists($segment, $value)) {
+                $value = $value[$segment];
+            } else {
+                return $default;
+            }
+        }
+        return $value;
+    }
 
-    /**
-     * Prevent unserialize of the singleton
-     */
+>>>>>>> origin/chore/fix-500-bootstrap
+    private function __clone() {}
     public function __wakeup() {}
 }

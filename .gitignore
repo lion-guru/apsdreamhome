@@ -42,6 +42,7 @@ node_modules/
 
 # dotenv environment variables file
 .env
+.env.*
 
 # next.js build output
 .next
@@ -87,6 +88,7 @@ _backup_legacy_files/
 
 # Database dumps and snapshots
 .bak
+*.sql
 *.zip
 *.tar.gz
 storage/snapshots/
@@ -95,4 +97,5 @@ database/snapshots/
 database/backups/
 *.dump
 *.backup.*
+apsdreamhome (5).sql
 

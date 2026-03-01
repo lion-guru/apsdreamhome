@@ -23,7 +23,7 @@ date_default_timezone_set('Asia/Manila');
 //    session_start();
 // }
 
-$__env = 'development'; // Force development for debugging
+$__env = getenv('APP_ENV') ?: 'development';
 if ($__env === 'development') {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
@@ -42,7 +42,9 @@ if (!defined('BASE_PATH')) {
 if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $script = dirname($_SERVER['SCRIPT_NAME']);
+    // Remove accidental trailing dot in host like 'localhost.'
+    $host = rtrim($host, '.');
+    $script = dirname($_SERVER['SCRIPT_NAME'] ?? '');
 
     // Remove /public if it exists in the path to get the app root URL
     // e.g. /apsdreamhome/public -> /apsdreamhome
@@ -50,10 +52,10 @@ if (!defined('BASE_URL')) {
         $script = dirname($script);
     }
 
-    // Ensure script path ends with / or is just empty
+    // Normalize and ensure trailing slash
     $script = rtrim($script, '/');
-
-    define('BASE_URL', "$protocol://$host$script");
+    $basePath = $script ? ($script . '/') : '/';
+    define('BASE_URL', $protocol . '://' . $host . $basePath);
 }
 
 // Import the App class
@@ -61,76 +63,15 @@ use App\Core\App;
 
 try {
     debug_log("Loading autoloader...");
-    // Load the autoloader
     require_once BASE_PATH . '/app/core/autoload.php';
 
     debug_log("Loading App class...");
-    // Load the application
     require_once BASE_PATH . '/app/core/App.php';
 
     debug_log("Instantiating App...");
-    // Create the application instance
     $app = new App();
 
-    // Run application
-    $request = new \App\Core\Http\Request();
-    $router = $app->router();
-    
-    // Add homepage route manually
-    $router->get('/', function() {
-        return '<!DOCTYPE html>
-<html>
-<head>
-    <title>APS Dream Home - Welcome</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f8f9fa; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { text-align: center; color: #2c3e50; margin-bottom: 30px; }
-        .content { margin: 20px 0; }
-        .btn { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 5px; }
-        .btn:hover { background: #0056b3; }
-        .feature { text-align: center; margin: 20px 0; }
-        .success { background: #28a745; color: white; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="success">
-            <h2>🎉 APS Dream Home is Working!</h2>
-            <p>Your website is successfully running and optimized.</p>
-        </div>
-        <div class="header">
-            <h1>🏠 APS Dream Home</h1>
-            <h2>Your Dream Property Awaits</h2>
-            <p>Welcome to your premium real estate platform</p>
-        </div>
-        <div class="content">
-            <div class="feature">
-                <h3>🏡 Find Your Dream Home</h3>
-                <p>Browse through our curated selection of premium properties</p>
-                <a href="/properties" class="btn">Browse Properties</a>
-            </div>
-            <div class="feature">
-                <h3>🔍 Advanced Search</h3>
-                <p>Use our advanced filters to find exactly what you are looking for</p>
-                <a href="/search" class="btn">Search Properties</a>
-            </div>
-            <div class="feature">
-                <h3>📞 Contact Us</h3>
-                <p>Our team is here to help you find your perfect property</p>
-                <a href="/contact" class="btn">Get in Touch</a>
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 30px; color: #6c757d;">
-            <p>&copy; 2026 APS Dream Home. All rights reserved.</p>
-            <p><small>Optimized and secured with 974 fixes applied</small></p>
-        </div>
-    </div>
-</body>
-</html>';
-    });
-    
-    $router->dispatch($request);
+    $app->run();
 } catch (Exception $e) {
     debug_log("Exception: " . $e->getMessage());
     // Handle any exceptions that occur during bootstrap
