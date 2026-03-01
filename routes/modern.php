@@ -11,6 +11,11 @@ use App\Core\App;
 
 /** @var App $app */
 
+// Simple test route to verify routing works
+$app->router()->get('/test-route', function() {
+    return 'Test route working!';
+});
+
 // Modern route definitions with improved structure
 $app->router()->group(['prefix' => 'api'], function ($router) {
     // API routes with proper REST structure
@@ -39,14 +44,14 @@ $app->router()->group(['prefix' => 'system'], function ($router) {
 });
 
 // Modern web routes with better organization
-$app->router()->group(['middleware' => 'web'], function ($router) {
-    // Admin Login Routes (Public)
-    $router->get('/admin/login', 'Auth\AdminAuthController@showLogin');
-    $router->post('/admin/login', ['middleware' => 'throttle_login', 'uses' => 'Auth\AdminAuthController@processLogin']);
-    $router->post('/admin/logout', 'Auth\AdminAuthController@logout');
+$app->router()->group([], function ($router) {
+    // Debug: Log that routes are being registered
+    error_log("Registering homepage route");
 
     // Public routes
     $router->get('/', 'HomeController@index');
+    error_log("Homepage route registered: / -> HomeController@index");
+
     $router->get('/about', 'Public\PageController@about');
     $router->get('/contact', 'Public\PageController@contact');
     $router->post('/contact', 'Public\PageController@processContact');

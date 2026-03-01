@@ -135,6 +135,34 @@ class App
     }
 
     /**
+     * Load application routes
+     */
+    protected function loadRoutes()
+    {
+        $routesDir = $this->basePath('routes');
+        $app = $this;
+        if (file_exists($routesDir . '/modern.php')) {
+            require $routesDir . '/modern.php';
+        }
+        if (file_exists($routesDir . '/api.php')) {
+            require $routesDir . '/api.php';
+        }
+    }
+
+    /**
+     * Run the application (dispatch request and send response)
+     */
+    public function run()
+    {
+        try {
+            $response = $this->router->dispatch($this->request);
+            $response->send();
+        } catch (\Throwable $e) {
+            $this->handleException($e);
+        }
+    }
+
+    /**
      * Set the base path for the application
      */
     public function setBasePath($path)
@@ -181,13 +209,16 @@ class App
 
         // Fallback: Load each PHP file in the config directory if global config is empty
         foreach (glob($configDir . '/*.php') as $configFile) {
-            $key = basename($configFile, '.php');
-            if ($key === 'bootstrap') { // Skip bootstrap as it's already loaded
-                continue;
-            }
+            $basename = basename($configFile);
+            if ($basename === 'bootstrap.php') { continue; }
             $fileConfig = require $configFile;
             if (is_array($fileConfig)) {
-                $this->config[$key] = $fileConfig;
+                $key = pathinfo($basename, PATHINFO_FILENAME);
+                if (isset($this->config[$key]) && is_array($this->config[$key])) {
+                    $this->config[$key] = array_merge($this->config[$key], $fileConfig);
+                } else {
+                    $this->config[$key] = $fileConfig;
+                }
             }
         }
     }
@@ -219,7 +250,7 @@ class App
      */
     protected function setErrorReporting()
     {
-        $environment = $this->config('app.env', 'production');
+        $environment = $this->config('app.environment', $this->config('app.env', getenv('APP_ENV') ?: 'development'));
 
         if ($environment === 'development') {
             error_reporting(E_ALL);
@@ -390,64 +421,13 @@ class App
     }
 
     /**
-     * Load application routes
-     */
-    protected function loadRoutes()
-    {
-        // Make $app available to all route files
-        $app = $this;
-
-        // Load legacy routes first (so modern routes can override them)
-        $legacyRoutesFile = $this->basePath('routes/web.php');
-        if (file_exists($legacyRoutesFile)) {
-            // Make sure $app is available in the web.php scope
-            $app = $this;
-            require $legacyRoutesFile;
-        }
-
-        // Load modern routes (overrides legacy routes)
-        $modernRoutesFile = $this->basePath('routes/modern.php');
-        if (file_exists($modernRoutesFile)) {
-            $app = $this;
-            require $modernRoutesFile;
-        }
-
-        // Load API routes
-        $apiRoutesFile = $this->basePath('routes/api.php');
-        if (file_exists($apiRoutesFile)) {
-            require $apiRoutesFile;
-        }
-    }
-
-    /**
-     * Run the application
-     */
-    public function run()
-    {
-        try {
-            // Handle the request through the router
-            $response = $this->router->dispatch($this->request);
-
-            // If response is a string, wrap it in a Response object
-            if (is_string($response)) {
-                $response = new Response($response);
-            }
-
-            // Send the response
-            $response->send();
-        } catch (Exception $e) {
-            $this->handleException($e);
-        }
-    }
-
-    /**
      * Handle exceptions
      */
     protected function handleException($e)
     {
-        $environment = $this->config('app.env', 'production');
+        $environment = $this->config('app.environment', $this->config('app.env', getenv('APP_ENV') ?: 'development'));
 
-        if ($environment === 'development') {
+        if ($environment === 'development' || (getenv('APP_ENV') === 'development')) {
             // In development, show detailed error
             $this->renderException($e);
         } else {

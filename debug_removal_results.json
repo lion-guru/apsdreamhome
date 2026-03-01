@@ -1,222 +1,67 @@
 {
-    "timestamp": "2026-02-22 19:56:15",
+    "timestamp": "2026-02-25 07:31:16",
     "phase": "debug_code_removal",
-    "debug_statements_removed": 140,
+    "debug_statements_removed": 29,
     "files_cleaned": [
         {
             "file": "app\/Core\/Controller.php",
-            "backup": "app\/Core\/Controller.php.backup.2026-02-22-19-56-15",
-            "debug_statements_removed": 4
-        },
-        {
-            "file": "app\/Helpers\/logger.php",
-            "backup": "app\/Helpers\/logger.php.backup.2026-02-22-19-56-15",
-            "debug_statements_removed": 4
+            "backup": "app\/Core\/Controller.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 3
         },
         {
             "file": "app\/Models\/CoreFunctions.php",
-            "backup": "app\/Models\/CoreFunctions.php.backup.2026-02-22-19-56-15",
-            "debug_statements_removed": 2
+            "backup": "app\/Models\/CoreFunctions.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 1
         },
         {
             "file": "app\/views\/property_details.php",
-            "backup": "app\/views\/property_details.php.backup.2026-02-22-19-56-15",
+            "backup": "app\/views\/property_details.php.backup.2026-02-25-07-31-16",
             "debug_statements_removed": 1
-        },
-        {
-            "file": "database\/scripts\/complete_deep_scan.php",
-            "backup": "database\/scripts\/complete_deep_scan.php.backup.2026-02-22-19-56-15",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/create_missing_tables.php",
-            "backup": "database\/scripts\/create_missing_tables.php.backup.2026-02-22-19-56-15",
-            "debug_statements_removed": 4
-        },
-        {
-            "file": "database\/scripts\/create_missing_tables_safe.php",
-            "backup": "database\/scripts\/create_missing_tables_safe.php.backup.2026-02-22-19-56-15",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/create_services_database_tables.php",
-            "backup": "database\/scripts\/create_services_database_tables.php.backup.2026-02-22-19-56-16",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/deep_scan_database.php",
-            "backup": "database\/scripts\/deep_scan_database.php.backup.2026-02-22-19-56-16",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/final_database_fix.php",
-            "backup": "database\/scripts\/final_database_fix.php.backup.2026-02-22-19-56-16",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/fix_missing_tables.php",
-            "backup": "database\/scripts\/fix_missing_tables.php.backup.2026-02-22-19-56-16",
-            "debug_statements_removed": 4
-        },
-        {
-            "file": "database\/scripts\/fix_views.php",
-            "backup": "database\/scripts\/fix_views.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/improve_database.php",
-            "backup": "database\/scripts\/improve_database.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/repair_database.php",
-            "backup": "database\/scripts\/repair_database.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/standardize_database.php",
-            "backup": "database\/scripts\/standardize_database.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "database\/scripts\/verify_database.php",
-            "backup": "database\/scripts\/verify_database.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/Automation\/CIConfigValidator.php",
-            "backup": "tests\/Automation\/CIConfigValidator.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/Automation\/CIIntegrationHelper.php",
-            "backup": "tests\/Automation\/CIIntegrationHelper.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 8
-        },
-        {
-            "file": "tests\/Automation\/CronScheduler.php",
-            "backup": "tests\/Automation\/CronScheduler.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 4
-        },
-        {
-            "file": "tests\/Automation\/SimpleCITest.php",
-            "backup": "tests\/Automation\/SimpleCITest.php.backup.2026-02-22-19-56-17",
-            "debug_statements_removed": 6
         },
         {
             "file": "tests\/Automation\/TestAutomationSuite.php",
-            "backup": "tests\/Automation\/TestAutomationSuite.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 12
-        },
-        {
-            "file": "tests\/Automation\/TestMonitoring.php",
-            "backup": "tests\/Automation\/TestMonitoring.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 8
-        },
-        {
-            "file": "tests\/Documentation\/TestDocumentationGenerator.php",
-            "backup": "tests\/Documentation\/TestDocumentationGenerator.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 5
-        },
-        {
-            "file": "tests\/ai\/test_db.php",
-            "backup": "tests\/ai\/test_db.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/ai\/test_engine.php",
-            "backup": "tests\/ai\/test_engine.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/check_menu_json.php",
-            "backup": "tests\/diagnostics\/check_menu_json.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/comprehensive_test.php",
-            "backup": "tests\/diagnostics\/comprehensive_test.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/session_test.php",
-            "backup": "tests\/diagnostics\/session_test.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 1
-        },
-        {
-            "file": "tests\/diagnostics\/template_system_test.php",
-            "backup": "tests\/diagnostics\/template_system_test.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/test_backup.php",
-            "backup": "tests\/diagnostics\/test_backup.php.backup.2026-02-22-19-56-18",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/test_email_system.php",
-            "backup": "tests\/diagnostics\/test_email_system.php.backup.2026-02-22-19-56-19",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/test_enhanced_email.php",
-            "backup": "tests\/diagnostics\/test_enhanced_email.php.backup.2026-02-22-19-56-19",
+            "backup": "tests\/Automation\/TestAutomationSuite.php.backup.2026-02-25-07-31-16",
             "debug_statements_removed": 6
         },
         {
+            "file": "tests\/Documentation\/TestDocumentationGenerator.php",
+            "backup": "tests\/Documentation\/TestDocumentationGenerator.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 3
+        },
+        {
+            "file": "tests\/diagnostics\/session_test.php",
+            "backup": "tests\/diagnostics\/session_test.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 1
+        },
+        {
             "file": "tests\/diagnostics\/test_lead_endpoint.php",
-            "backup": "tests\/diagnostics\/test_lead_endpoint.php.backup.2026-02-22-19-56-19",
+            "backup": "tests\/diagnostics\/test_lead_endpoint.php.backup.2026-02-25-07-31-16",
             "debug_statements_removed": 7
         },
         {
             "file": "tests\/diagnostics\/test_magic_get.php",
-            "backup": "tests\/diagnostics\/test_magic_get.php.backup.2026-02-22-19-56-19",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/test_php_client.php",
-            "backup": "tests\/diagnostics\/test_php_client.php.backup.2026-02-22-19-56-19",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/test_routes.php",
-            "backup": "tests\/diagnostics\/test_routes.php.backup.2026-02-22-19-56-19",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/test_static_call.php",
-            "backup": "tests\/diagnostics\/test_static_call.php.backup.2026-02-22-19-56-19",
-            "debug_statements_removed": 2
-        },
-        {
-            "file": "tests\/diagnostics\/test_whatsapp_integration.php",
-            "backup": "tests\/diagnostics\/test_whatsapp_integration.php.backup.2026-02-22-19-56-19",
-            "debug_statements_removed": 4
-        },
-        {
-            "file": "tests\/diagnostics\/testimonials.php",
-            "backup": "tests\/diagnostics\/testimonials.php.backup.2026-02-22-19-56-20",
-            "debug_statements_removed": 4
+            "backup": "tests\/diagnostics\/test_magic_get.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 1
         },
         {
             "file": "tests\/functional\/test_admin.php",
-            "backup": "tests\/functional\/test_admin.php.backup.2026-02-22-19-56-20",
-            "debug_statements_removed": 2
+            "backup": "tests\/functional\/test_admin.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 1
         },
         {
             "file": "tests\/functional\/test_commission_calculation.php",
-            "backup": "tests\/functional\/test_commission_calculation.php.backup.2026-02-22-19-56-20",
-            "debug_statements_removed": 2
+            "backup": "tests\/functional\/test_commission_calculation.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 1
         },
         {
             "file": "tests\/functional\/test_commission_simple.php",
-            "backup": "tests\/functional\/test_commission_simple.php.backup.2026-02-22-19-56-20",
-            "debug_statements_removed": 4
+            "backup": "tests\/functional\/test_commission_simple.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 2
         },
         {
             "file": "tests\/functional\/test_mlm_calculation.php",
-            "backup": "tests\/functional\/test_mlm_calculation.php.backup.2026-02-22-19-56-21",
-            "debug_statements_removed": 4
+            "backup": "tests\/functional\/test_mlm_calculation.php.backup.2026-02-25-07-31-16",
+            "debug_statements_removed": 2
         }
     ],
     "recommendations": [
@@ -246,8 +91,8 @@
         "Manual review needed: Remove console statements from assets\/optimized\/homepage-bundle.min.js"
     ],
     "summary": {
-        "files_with_debug_found": 55,
-        "files_cleaned": 43,
-        "debug_statements_removed": 140
+        "files_with_debug_found": 24,
+        "files_cleaned": 12,
+        "debug_statements_removed": 29
     }
 }

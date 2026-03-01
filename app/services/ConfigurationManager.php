@@ -70,102 +70,25 @@ class ConfigurationManager
      */
     public function get(string $configName, string $key = null, $default = null)
     {
-        // Validate configuration exists
         if (!isset($this->config[$configName])) {
             return $default;
         }
 
-        // If no specific key, return entire configuration
         if ($key === null) {
             return $this->config[$configName];
         }
 
-        // Navigate through nested configuration
-        $config = $this->config[$configName];
-        $keys = explode('.', $key);
-
-        foreach ($keys as $nestedKey) {
-            if (!is_array($config) || !array_key_exists($nestedKey, $config)) {
+        $value = $this->config[$configName];
+        foreach (explode('.', $key) as $segment) {
+            if (is_array($value) && array_key_exists($segment, $value)) {
+                $value = $value[$segment];
+            } else {
                 return $default;
             }
-            $config = $config[$nestedKey];
         }
-
-        return $config;
+        return $value;
     }
 
-    /**
-     * Set configuration value
-     * 
-     * @param string $configName Configuration file name
-     * @param string $key Dot-notated key path
-     * @param mixed $value Value to set
-     * @return bool
-     */
-    public function set(string $configName, string $key, $value)
-    {
-        if (!isset($this->config[$configName])) {
-            // Initialize empty config if it doesn't exist? 
-            // Or fail? Let's initialize.
-            $this->config[$configName] = [];
-        }
-
-        $config = &$this->config[$configName];
-        $keys = explode('.', $key);
-
-        foreach ($keys as $nestedKey) {
-            if (!is_array($config)) {
-                return false;
-            }
-
-            if (!array_key_exists($nestedKey, $config)) {
-                $config[$nestedKey] = [];
-            }
-
-            $config = &$config[$nestedKey];
-        }
-
-        $config = $value;
-        return true;
-    }
-
-    /**
-     * Reload configurations from files
-     */
-    public function reload()
-    {
-        $this->loadConfigurations();
-    }
-
-    /**
-     * Save configuration to file
-     * 
-     * @param string $configName Configuration file name
-     * @return bool
-     */
-    public function save(string $configName): bool
-    {
-        if (!isset($this->configPaths[$configName])) {
-            return false;
-        }
-
-        try {
-            $content = "<?php\nreturn " . var_export($this->config[$configName], true) . ";";
-            file_put_contents($this->configPaths[$configName], $content);
-            return true;
-        } catch (Exception $e) {
-            error_log("Config Save Error ($configName): " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Prevent cloning of the singleton
-     */
     private function __clone() {}
-
-    /**
-     * Prevent unserialize of the singleton
-     */
     public function __wakeup() {}
 }

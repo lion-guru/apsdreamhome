@@ -163,11 +163,10 @@ class Auth {
         $userModel = new User();
         
         // Hash the password
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        
-        if (!isset($data['role'])) {
-            $data['role'] = 'user';
+        if (!empty($data['password'])) {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
+        if (!isset($data['role'])) { $data['role'] = 'user'; }
         
         // Create the user
         $userId = $userModel->create($data);

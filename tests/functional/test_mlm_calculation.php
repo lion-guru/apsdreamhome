@@ -37,7 +37,7 @@ try {
     ")->fetch();
 
     if (!$transaction) {
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:21 CODE REMOVED: 2026-02-22 19:56:21
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:21 CODE REMOVED: 2026-02-22 19:56:21
     }
 
     echo "Testing with transaction #{$transaction['id']}:\n";
@@ -54,7 +54,7 @@ try {
     ")->fetchAll();
 
     if (empty($associates)) {
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:21 CODE REMOVED: 2026-02-22 19:56:21
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:21 CODE REMOVED: 2026-02-22 19:56:21
     }
 
     echo "Associated Associates:\n";

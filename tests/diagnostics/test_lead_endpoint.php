@@ -57,13 +57,13 @@ $_SESSION['type'] = 'admin'; // Ensure this matches the database 'type' column
 // Set up HTML output
 $htmlOutput = '';
 
-// DEBUG CODE REMOVED: 2026-02-22 19:56:19: Show session data
+// DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:19: Show session data
 $htmlOutput .= "<h3>Session Data:</h3>";
 $htmlOutput .= "<pre>";
 $htmlOutput .= htmlspecialchars(print_r($_SESSION, true));
 $htmlOutput .= "</pre>";
 
-// DEBUG CODE REMOVED: 2026-02-22 19:56:19: Show database connection info
+// DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:19: Show database connection info
 $htmlOutput .= "<h3>Database Connection Info:</h3>";
 $htmlOutput .= "<pre>";
 $htmlOutput .= "DB_HOST: " . htmlspecialchars(DB_HOST) . "\n";
@@ -111,7 +111,7 @@ function runTests($testCases, &$htmlOutput) {
         // Set up request parameters
         $_GET = $test['params'];
         
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:19 output
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:19 output
         $htmlOutput .= "<h3>Running Test: " . htmlspecialchars($test['name']) . "</h3>";
         $htmlOutput .= "<h4>Parameters:</h4><pre>" . htmlspecialchars(print_r($test['params'], true)) . "</pre>";
         // Set up test parameters
@@ -123,13 +123,13 @@ function runTests($testCases, &$htmlOutput) {
                 // Set up the request
                 $_GET = $test['params'];
                 
-                // DEBUG CODE REMOVED: 2026-02-22 19:56:19: Show request parameters
+                // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:19: Show request parameters
                 $htmlOutput .= "<h4>Test: " . htmlspecialchars($test['name']) . "</h4>";
                 $htmlOutput .= "<p>Parameters: ";
                 $htmlOutput .= htmlspecialchars(print_r($test['params'], true));
                 $htmlOutput .= "</p>";
                 
-                // DEBUG CODE REMOVED: 2026-02-22 19:56:19: Show current working directory and file path
+                // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:19: Show current working directory and file path
                 $htmlOutput .= "<p>Current directory: " . htmlspecialchars(__DIR__) . "</p>";
                 $htmlOutput .= "<p>Including file: " . htmlspecialchars(__DIR__ . '/get_lead_details.php') . "</p>";
                 
@@ -143,7 +143,7 @@ function runTests($testCases, &$htmlOutput) {
                     // Set up the GET parameters
                     parse_str(http_build_query($test['params']), $_GET);
                     
-                    // DEBUG CODE REMOVED: 2026-02-22 19:56:19: Show GET parameters
+                    // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:19: Show GET parameters
                     $htmlOutput .= "<h5>GET Parameters:</h5><pre>" . htmlspecialchars(print_r($_GET, true)) . "</pre>";
                     
                     // Start a new output buffer for the included file
@@ -190,7 +190,7 @@ function runTests($testCases, &$htmlOutput) {
                     // Get the output
                     $output = ob_get_clean();
                     
-                    // DEBUG CODE REMOVED: 2026-02-22 19:56:19 output
+                    // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:19 output
                     $htmlOutput .= "<h4>Raw Output:</h4><pre>" . htmlspecialchars($output) . "</pre>";
                     
                     // Parse JSON response

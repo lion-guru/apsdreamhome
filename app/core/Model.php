@@ -501,16 +501,7 @@ abstract class Model
             if (is_numeric($key) && is_array($value)) {
                 $this->addWhere(...array_values($value));
             } else {
-                $this->addWhere($key, '=', $value, $boolean);
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * Add an order by clause to the query
-     */
-    public function orderBy($column, $direction = 'ASC')
+                $this->addWhere($PLACEHOLDER_SECRET_VALUEASC')
     {
         $this->orders[] = [
             'column' => $column,

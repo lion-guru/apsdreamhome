@@ -76,7 +76,7 @@ function container() {
 }
 
 // Pre-register some common services
-$container = DependencyContainer::getInstance();
+$container = DependencyContainer::get->with(['register', 'resolve'])Instance();
 
 // Database Connection
 $container->register('db_connection', function() {

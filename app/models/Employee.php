@@ -130,12 +130,7 @@ class Employee extends Model
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'] ?? null,
-                'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-            ]);
-
-            $userId = $this->db->lastInsertId();
-
-            $employeeSql = "
+                'PLACEHOLDER_SECRET_VALUE
                 INSERT INTO " . static::$table . " (
                     user_id, role_id, department_id, designation, salary,
                     join_date, reporting_manager_id, status, address, notes,
@@ -286,12 +281,7 @@ class Employee extends Model
 
                 // Update password in users table too if changed
                 if (!empty($data['password'])) {
-                    $userUpdates[] = "password = :password";
-                    $userParams['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-                }
-
-                if (!empty($userUpdates)) {
-                    $userSql = "UPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
+                    $userUpdates[] = "PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEUPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
                     $userStmt = $this->db->prepare($userSql);
                     $userStmt->execute($userParams);
                 }

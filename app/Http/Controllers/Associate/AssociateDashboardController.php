@@ -42,7 +42,9 @@ class AssociateDashboardController
         $associate = Associate::where('user_id', $associateId)->first();
 
         if (!$associate) {
-            return redirect()->route('associate.profile.setup')->with('error', 'Please complete your profile setup first.');
+            return redirect()->route('associate.profile.setup')->with(
+        ->with(['count', 'avg', 'take'])
+        ->with(['user_id'])'error', 'Please complete your profile setup first.');
         }
 
         // MLM Profile and statistics

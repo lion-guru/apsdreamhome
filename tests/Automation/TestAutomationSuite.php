@@ -799,7 +799,7 @@ if (php_sapi_name() === 'cli') {
         echo "  php TestAutomationSuite.php -m quick\n";
         echo "  php TestAutomationSuite.php --mode full\n";
         echo "  php TestAutomationSuite.php --schedule\n";
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
     }
     
     $mode = $options['m'] ?? $options['mode'] ?? 'full';
@@ -825,19 +825,19 @@ if (php_sapi_name() === 'cli') {
             
             if ($results['summary']['critical_failures'] > 0) {
                 echo "\n🚨 CRITICAL FAILURES DETECTED!\n";
-                // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
+                // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
             } elseif ($results['summary']['overall_pass_rate'] < 80) {
                 echo "\n⚠️ LOW PASS RATE!\n";
-                // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
+                // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
             } else {
                 echo "\n✅ All tests passed successfully!\n";
-                // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
+                // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
             }
         }
         
     } catch (Exception $e) {
         echo "ERROR: " . $e->getMessage() . "\n";
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
     }
 } else {
     // Web interface
@@ -915,7 +915,7 @@ if (php_sapi_name() === 'cli') {
                     displayResults(data);
                 })
                 .catch(error => {
-                    // DEBUG CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
+                    // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:18 CODE REMOVED: 2026-02-22 19:56:18
                     document.getElementById('loading').style.display = 'none';
                     alert('Error running tests: ' + error.message);
                 });

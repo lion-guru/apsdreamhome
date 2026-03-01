@@ -111,15 +111,7 @@ class Training extends Model
         }
 
         $this->query(
-            "UPDATE module_progress SET " . implode(', ', array_map(function($k) { return "$k = ?"; }, array_keys($updateData))) . " WHERE enrollment_id = ? AND module_id = ?",
-            array_merge(array_values($updateData), [$enrollmentId, $moduleId])
-        );
-
-        // Update overall course progress
-        $this->updateCourseProgress($enrollmentId);
-
-        // Check for completion and rewards
-        if ($updateData['status'] === 'completed') {
+            "UPDATE module_progress SET " . implode(', ', array_map(function($k) { return "$k = ?"; }, array_PLACEHOLDER_SECRET_VALUEstatus'] === 'completed') {
             $this->handleModuleCompletion($enrollmentId, $moduleId, $progressData);
         }
 

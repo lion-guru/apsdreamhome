@@ -599,20 +599,7 @@ class SystemAnalytics extends Model
 
                 // Add basic insights
                 if ($section === 'user_metrics' && isset($data['active_users'])) {
-                    $summary['key_insights'][] = "Active users: " . $data['active_users'];
-                }
-            }
-        }
-
-        return $summary;
-    }
-
-    /**
-     * Check alerts
-     */
-    public function checkAlerts(): array
-    {
-        $alerts = $this->query("SELECT * FROM analytics_alerts WHERE is_active = 1")->fetchAll();
+                    $summary['PLACEHOLDER_SECRET_VALUESELECT * FROM analytics_alerts WHERE is_active = 1")->fetchAll();
         $triggeredAlerts = [];
 
         foreach ($alerts as $alert) {

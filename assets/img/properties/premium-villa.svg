@@ -1,0 +1,13 @@
+<!-- Placeholder for premium villa image -->
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#f0f0f0"/>
+  <rect x="30" y="40" width="340" height="180" fill="#e0e0e0"/>
+  <rect x="60" y="70" width="80" height="60" fill="#87CEEB"/>
+  <rect x="160" y="70" width="80" height="60" fill="#87CEEB"/>
+  <rect x="260" y="70" width="80" height="60" fill="#87CEEB"/>
+  <rect x="100" y="180" width="200" height="40" fill="#8B4513"/>
+  <rect x="20" y="220" width="360" height="60" fill="#90EE90"/>
+  <circle cx="50" cy="250" r="15" fill="#228B22"/>
+  <circle cx="350" cy="250" r="15" fill="#228B22"/>
+  <text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="16" fill="#333">Premium Villa</text>
+</svg>

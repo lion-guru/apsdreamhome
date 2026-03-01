@@ -1,10 +1,10 @@
 {
-    "timestamp": "2026-02-23 18:12:55",
+    "timestamp": "2026-02-25 07:27:55",
     "phase": "database_scan",
     "summary": {
         "status": "needs_attention",
         "total_issues": 3,
-        "migration_files": 26,
+        "migration_files": 28,
         "model_files": 132
     },
     "issues": [
@@ -40,7 +40,7 @@
             "whatsapp_templates"
         ],
         "performance_metrics": {
-            "indexes": 78,
+            "indexes": 94,
             "unique_constraints": 14,
             "foreign_keys": 32,
             "performance_issues": []
