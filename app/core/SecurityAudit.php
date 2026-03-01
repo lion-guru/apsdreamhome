@@ -106,7 +106,12 @@ class SecurityAudit
             if (file_exists($configFile)) {
                 $content = file_get_contents($configFile);
 
-                if (preg_match("/'PLACEHOLDER_SECRET_VALUEtype' => 'database_password',
+                if (preg_match("/'password'\s*=>\s*'([^']+)'/", $content, $matches)) {
+                    $password = $matches[1];
+
+                    if (strlen($password) < 8) {
+                        $this->vulnerabilities[] = [
+                            'type' => 'database_password',
                             'severity' => 'high',
                             'issue' => 'Database password too short',
                             'solution' => 'Use password with at least 8 characters'
