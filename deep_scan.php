@@ -19,6 +19,14 @@ $scanResults = [
 ];
 
 $totalIssues = 0;
+$securityIssues = 0;
+$performanceIssues = 0;
+$codeQualityIssues = 0;
+$configIssues = 0;
+$missingDocs = [];
+$dbIssues = 0;
+$optIssues = 0;
+$optimizedCount = 0;
 
 echo "📊 Scanning Project Structure...\n";
 
@@ -265,7 +273,7 @@ foreach ($dbFiles as $file) {
 if ($dbIssues === 0) {
     echo "✅ Database configuration exists\n";
 } else {
-    echo "⚠️ Database configuration issues: $db_issues\n";
+    echo "⚠️ Database configuration issues: $dbIssues\n";
 }
 
 // 9. Optimization scan
@@ -295,7 +303,7 @@ foreach ($optFiles as $file) {
 if ($optIssues === 0) {
     echo "✅ Optimization directories exist\n";
 } else {
-    echo "⚠️ Missing optimization: $opt_issues\n";
+    echo "⚠️ Missing optimization: $optIssues\n";
 }
 
 // 10. Check for existing optimized files
@@ -325,16 +333,16 @@ if ($optimizedCount > 0) {
 // 11. Final summary
 echo "\n📊 Deep Scan Summary\n";
 echo "==================\n";
-echo "Total Issues Found: $total_issues\n";
+echo "Total Issues Found: $totalIssues\n";
 
 echo "Issues by Category:\n";
-echo "🔒 Security: $security_issues\n";
-echo "⚡ Performance: $performance_issues\n";
-echo "🧹 Code Quality: $code_quality_issues\n";
-echo "🗄️ Database: $db_issues\n";
-echo "⚙️ Configuration: $config_issues\n";
-echo "📚 Documentation: " . count($missing_docs) . "\n";
-echo "⚡ Optimization: " . $opt_issues . "\n";
+echo "🔒 Security: $securityIssues\n";
+echo "⚡ Performance: $performanceIssues\n";
+echo "🧹 Code Quality: $codeQualityIssues\n";
+echo "🗄️ Database: $dbIssues\n";
+echo "⚙️ Configuration: $configIssues\n";
+echo "📚 Documentation: " . count($missingDocs) . "\n";
+echo "⚡ Optimization: $optIssues\n";
 
 // Health Score
 $maxIssues = 50;
