@@ -6,11 +6,16 @@ use App\Http\Controllers\BaseController;
 use App\Models\Project;
 use App\Models\Property;
 
+// Define BASE_URL if not already defined
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost/apsdreamhome/');
+}
+
 class HomeController extends BaseController
 {
     public function index()
     {
-        logger()->info('HomeController::index called');
+        // logger()->info('HomeController::index called');  // Temporarily disabled
 
         try {
             // Get featured properties from database
@@ -74,7 +79,7 @@ class HomeController extends BaseController
                 ];
             }
         } catch (\Throwable $e) {
-            logger()->error('Error fetching properties: ' . $e->getMessage());
+            // logger()->error('Error fetching properties: ' . $e->getMessage());  // Temporarily disabled
             $properties = [];
         }
 
@@ -83,7 +88,7 @@ class HomeController extends BaseController
         $this->data['properties'] = $properties;
         $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'assets/css/homepage.css">';
 
-        return $this->render('home/index', [], 'layouts/base', false);
+        return new \App\Core\Http\Response($this->render('home/index', [], 'layouts/base', false));
     }
 
     public function projects()
@@ -157,6 +162,19 @@ class HomeController extends BaseController
         // TODO: Implement single project view
         // For now redirect to projects list
         $this->redirect('/projects');
+    }
+
+    public function properties()
+    {
+        $propertyModel = new Property();
+        $properties = $propertyModel->getAllProperties();
+
+        return $this->render('pages/properties', [
+            'title' => 'All Properties - APS Dream Home',
+            'properties' => $properties,
+            'is_featured' => false,
+            'extra_css' => '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">'
+        ]);
     }
 
     public function featuredProperties()

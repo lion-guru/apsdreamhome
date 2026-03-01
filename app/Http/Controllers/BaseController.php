@@ -15,10 +15,20 @@ class BaseController extends CoreController
     public function __construct()
     {
         parent::__construct();
-        // Temporarily comment out to isolate 500 error
-        // $this->db = \App\Core\Database::getInstance();
-        // $this->loadModels();
-        // $this->getCsrfToken();
+        // Re-enable database connection with proper config
+        $dbConfig = [
+            'host' => 'localhost',
+            'database' => 'apsdreamhome',
+            'username' => 'root',
+            'password' => '',  // XAMPP MySQL root has no password
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'port' => 3306,
+        ];
+        $this->db = \App\Core\Database::getInstance($dbConfig);
+        $this->loadModels();
+        $this->getCsrfToken();
     }
 
     /**

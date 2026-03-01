@@ -7,25 +7,36 @@ use PDOException;
 
 class Database
 {
+    private static $instance = null;
     protected $pdo;
     protected $config;
+
+    public static function getInstance(array $config = [])
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($config);
+        }
+        return self::$instance;
+    }
 
     public function __construct(array $config = [])
     {
         $this->config = array_merge([
             'driver' => 'mysql',
             'host' => 'localhost',
-            'database' => '',
+            'database' => 'apsdreamhome',
             'username' => 'root',
             'password' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'options' => [
+            'port' => 3306,
+            'socket' => null,
+            'options' => extension_loaded('pdo') ? [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
-            ]
+            ] : [],
         ], $config);
 
         $this->connect();
