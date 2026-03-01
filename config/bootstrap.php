@@ -61,6 +61,11 @@ if (file_exists(CONFIG_PATH . '/environments/' . APP_ENV . '.php')) {
     $config = array_merge($config, $envConfig);
 }
 
+// Load helper functions first
+if (file_exists(CONFIG_PATH . '/helpers.php')) {
+    require_once CONFIG_PATH . '/helpers.php';
+}
+
 // Load database configuration
 if (file_exists(CONFIG_PATH . '/database.php')) {
     $dbConfig = require CONFIG_PATH . '/database.php';
