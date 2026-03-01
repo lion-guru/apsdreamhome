@@ -19,10 +19,11 @@ class MlmSettings
             return $default;
         }
 
-        $stmt = $conn->prepare('SELECT setting_value FROM mlm_settings WHERE setting_PLACEHOLDER_SECRET_VALUEsetting_value'];
-        }
+        $stmt = $conn->prepare('SELECT setting_value FROM mlm_settings WHERE setting_key = ?');
+        $stmt->execute([$key]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        return $default;
+        return $result ? $result['setting_value'] : $default;
     }
 
     public static function getInt(string $key, int $default = 0): int

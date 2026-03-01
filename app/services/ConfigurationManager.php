@@ -78,40 +78,23 @@ class ConfigurationManager
             return $this->config[$configName];
         }
 
-<<<<<<< HEAD
         // Navigate through nested configuration
         $config = $this->config[$configName];
-        $PLACEHOLDER_SECRET_VALUEt exist? 
-            // Or fail? Let's initialize.
-            $this->config[$configName] = [];
+        $keys = explode('.', $key);
+        foreach ($keys as $segment) {
+            if (is_array($config) && array_key_exists($segment, $config)) {
+                $config = $config[$segment];
+            } else {
+                return $default;
+            }
         }
-
-        $config = &$this->config[$configName];
-        $PLACEHOLDER_SECRET_VALUE<?php\nreturn " . var_export($this->config[$configName], true) . ";";
-            file_put_contents($this->configPaths[$configName], $content);
-            return true;
-        } catch (Exception $e) {
-            error_log("Config Save Error ($configName): " . $e->getMessage());
-            return false;
-        }
+        
+        return $config;
     }
 
     /**
      * Prevent cloning of the singleton
      */
-=======
-        $value = $this->config[$configName];
-        foreach (explode('.', $key) as $segment) {
-            if (is_array($value) && array_key_exists($segment, $value)) {
-                $value = $value[$segment];
-            } else {
-                return $default;
-            }
-        }
-        return $value;
-    }
-
->>>>>>> origin/chore/fix-500-bootstrap
     private function __clone() {}
     public function __wakeup() {}
 }

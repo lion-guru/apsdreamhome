@@ -446,6 +446,15 @@ class PropertyComparison extends Model
         return $key;
     }
 
+    /**
+     * Log comparison event
+     */
+    private function logComparisonEvent(int $sessionId, ?int $propertyId, string $eventType, array $eventData = []): void
+    {
+        // Get session info for logging
+        $session = $this->query("SELECT * FROM property_comparison_sessions WHERE id = ?", [$sessionId])->fetch();
+        $properties = $this->getSessionProperties($sessionId);
+
         $logData = [
             'session_id' => $sessionId,
             'user_id' => $session['user_id'] ?? null,

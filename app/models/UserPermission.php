@@ -19,14 +19,17 @@ class UserPermission extends Model {
     public function revokePermission($userId, $permissionKey) {
         return static::query()
             ->where('user_id', '=', $userId)
-            ->where('permission_PLACEHOLDER_SECRET_VALUEpermission_value' => 0]);
+            ->where('permission_key', '=', $permissionKey)
+            ->update(['permission_value' => 0]);
     }
 
     public function hasPermission($userId, $permissionKey) {
         $result = static::query()
             ->select(['permission_value'])
             ->where('user_id', '=', $userId)
-            ->where('permission_PLACEHOLDER_SECRET_VALUEpermission_value'] : false;
+            ->where('permission_key', '=', $permissionKey)
+            ->first();
+        return $result ? $result['permission_value'] : false;
     }
 
     public function getUserPermissions($userId) {

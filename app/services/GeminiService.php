@@ -24,15 +24,16 @@ class GeminiService {
 
         try {
             $ch = curl_init();
-            $url = $this->apiUrl . '?PLACEHOLDER_SECRET_VALUEcontents' => [
-                    ['parts' => [['text' => $prompt]]]
-                ]
-            ];
-
+            $url = $this->apiUrl . '?key=' . $this->apiKey;
+            
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+                'contents' => [
+                    ['parts' => [['text' => $prompt]]]
+                ]
+            ]));
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'Content-Type: application/json'
             ]);
