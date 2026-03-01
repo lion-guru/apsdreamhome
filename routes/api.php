@@ -23,6 +23,10 @@ $app->router()->group(['prefix' => 'api', 'middleware' => 'throttle'], function 
     $router->post('/save_search.php', 'Api\PropertyController@saveSearch');
     $router->post('/delete_search.php', 'Api\PropertyController@deleteSearch');
 
+    // Bulk Property Operations
+    $router->post('/properties/bulk/delete', 'Api\PropertyController@bulkDelete');
+    $router->post('/properties/bulk/update', 'Api\PropertyController@bulkUpdate');
+
     // Leads Routes
     $router->group(['middleware' => 'auth'], function ($router) {
         $router->get('/leads', 'Api\ApiLeadController@index');
