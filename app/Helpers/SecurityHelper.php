@@ -153,8 +153,7 @@ class SecurityHelper
     public static function csrfField()
     {
         $token = self::generateCsrfToken();
-        return '<input type="hidden" name="csrf_PLACEHOLDER_SECRET_VALUECryptographically secure random integer generator failed: ' . $e->getMessage());
-        }
+        return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
     }
 
     /**
