@@ -101,6 +101,9 @@ if (file_exists(CONFIG_PATH . '/security.php')) {
 
 // Include core system files
 require_once CORE_PATH . '/Autoloader.php';
+// Register autoloader
+\App\Core\Autoloader::getInstance()->register();
+
 // SessionManager is now autoloaded
 // require_once CORE_PATH . '/SessionManager.php';
 if (file_exists(CORE_PATH . '/ErrorHandler.php')) {
