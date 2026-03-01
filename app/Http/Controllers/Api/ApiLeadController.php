@@ -481,6 +481,87 @@ class ApiLeadController extends Controller
     }
 
     /**
+     * Bulk assign leads to a user
+     */
+    public function bulkAssign()
+    {
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            if (empty($data['lead_ids']) || !is_array($data['lead_ids'])) {
+                $this->jsonError('Lead IDs array is required', 422);
+            }
+
+            if (empty($data['user_id'])) {
+                $this->jsonError('User ID is required', 422);
+            }
+
+            $leadIds = $data['lead_ids'];
+            $userId = $data['user_id'];
+            $notes = $data['notes'] ?? null;
+
+            $currentUser = $this->getCurrentUser();
+            $assignedCount = 0;
+            $errors = [];
+
+            foreach ($leadIds as $leadId) {
+                try {
+                    $lead = Lead::find($leadId);
+
+                    if (!$lead) {
+                        $errors[] = "Lead $leadId not found";
+                        continue;
+                    }
+
+                    $oldUserId = $lead->assigned_to;
+
+                    // Only update if assignment is changing
+                    if ($oldUserId != $userId) {
+                        $lead->assigned_to = $userId;
+                        $lead->save();
+                        $assignedCount++;
+
+                        // Add assignment note if provided
+                        if ($notes) {
+                            $noteData = [
+                                'lead_id' => $lead->id,
+                                'content' => 'Bulk assignment: ' . $notes,
+                                'is_private' => false,
+                                'created_by' => $currentUser->id,
+                            ];
+
+                            $note = new LeadNote($noteData);
+                            $note->save();
+                        }
+
+                        // Log activity
+                        $this->logLeadActivity($lead->id, 'assigned', 'Lead bulk assigned', [
+                            'from' => $oldUserId,
+                            'to' => $userId,
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = "Failed to assign lead $leadId: " . $e->getMessage();
+                }
+            }
+
+            $response = [
+                'success' => true,
+                'message' => "Successfully assigned $assignedCount out of " . count($leadIds) . " leads",
+                'data' => [
+                    'assigned_count' => $assignedCount,
+                    'total_requested' => count($leadIds),
+                    'errors' => $errors,
+                ],
+            ];
+
+            $this->jsonResponse($response);
+        } catch (\Exception $e) {
+            $this->jsonError('Failed to bulk assign leads: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
      * Get lead statistics
      */
     public function getStats()

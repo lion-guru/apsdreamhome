@@ -249,4 +249,197 @@ class ProjectController extends AdminController
         }
         return $this->redirect('/admin/projects');
     }
+
+    /**
+     * Bulk update projects status
+     */
+    public function bulkUpdateStatus()
+    {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        $data = $this->request->post();
+        $projectIds = $data['project_ids'] ?? [];
+        $status = $data['status'] ?? null;
+
+        if (empty($projectIds) || !is_array($projectIds)) {
+            $this->setFlash('error', $this->mlSupport->translate('Please select projects to update.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        if ($status === null) {
+            $this->setFlash('error', $this->mlSupport->translate('Please select a status.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        $updatedCount = 0;
+        foreach ($projectIds as $projectId) {
+            $projectId = intval($projectId);
+            $updateData = ['project_status' => $status];
+
+            if ($this->projectModel->updateProject($projectId, $updateData)) {
+                $updatedCount++;
+            }
+        }
+
+        if ($updatedCount > 0) {
+            // Invalidate dashboard cache
+            if (function_exists('getPerformanceManager')) {
+                getPerformanceManager()->clearCache('query_');
+            }
+            $this->logActivity('Bulk Project Status Update', "Updated $updatedCount projects to status: $status");
+            $this->setFlash('success', $this->mlSupport->translate("$updatedCount projects updated successfully."));
+        } else {
+            $this->setFlash('error', $this->mlSupport->translate('Failed to update projects.'));
+        }
+
+        return $this->redirect('/admin/projects');
+    }
+
+    /**
+     * Bulk delete projects
+     */
+    public function bulkDelete()
+    {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        $data = $this->request->post();
+        $projectIds = $data['project_ids'] ?? [];
+
+        if (empty($projectIds) || !is_array($projectIds)) {
+            $this->setFlash('error', $this->mlSupport->translate('Please select projects to delete.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        $deletedCount = 0;
+        foreach ($projectIds as $projectId) {
+            $projectId = intval($projectId);
+
+            $stmt = $this->db->prepare("DELETE FROM projects WHERE project_id = :id");
+            if ($stmt->execute(['id' => $projectId])) {
+                $deletedCount++;
+            }
+        }
+
+        if ($deletedCount > 0) {
+            // Invalidate dashboard cache
+            if (function_exists('getPerformanceManager')) {
+                getPerformanceManager()->clearCache('query_');
+            }
+            $this->logActivity('Bulk Project Deletion', "Deleted $deletedCount projects");
+            $this->setFlash('success', $this->mlSupport->translate("$deletedCount projects deleted successfully."));
+        } else {
+            $this->setFlash('error', $this->mlSupport->translate('Failed to delete projects.'));
+        }
+
+        return $this->redirect('/admin/projects');
+    }
+
+    /**
+     * Toggle featured status for multiple projects
+     */
+    public function bulkToggleFeatured()
+    {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        if (!$this->validateCsrfToken()) {
+            $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        $data = $this->request->post();
+        $projectIds = $data['project_ids'] ?? [];
+        $featured = isset($data['featured']) ? 1 : 0;
+
+        if (empty($projectIds) || !is_array($projectIds)) {
+            $this->setFlash('error', $this->mlSupport->translate('Please select projects to update.'));
+            return $this->redirect('/admin/projects');
+        }
+
+        $updatedCount = 0;
+        foreach ($projectIds as $projectId) {
+            $projectId = intval($projectId);
+            $updateData = ['is_featured' => $featured];
+
+            if ($this->projectModel->updateProject($projectId, $updateData)) {
+                $updatedCount++;
+            }
+        }
+
+        $action = $featured ? 'featured' : 'unfeatured';
+        if ($updatedCount > 0) {
+            // Invalidate dashboard cache
+            if (function_exists('getPerformanceManager')) {
+                getPerformanceManager()->clearCache('query_');
+            }
+            $this->logActivity('Bulk Project Featured Toggle', "$updatedCount projects $action");
+            $this->setFlash('success', $this->mlSupport->translate("$updatedCount projects $action successfully."));
+        } else {
+            $this->setFlash('error', $this->mlSupport->translate('Failed to update projects.'));
+        }
+
+        return $this->redirect('/admin/projects');
+    }
+
+    /**
+     * Export projects data
+     */
+    public function export()
+    {
+        $projects = $this->projectModel->getAllActiveProjects();
+
+        // Set headers for CSV download
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=projects_' . date('Y-m-d') . '.csv');
+
+        $output = fopen('php://output', 'w');
+
+        // CSV headers
+        fputcsv($output, [
+            'ID', 'Project Name', 'Project Code', 'Location', 'City', 'State',
+            'Total Area', 'Total Plots', 'Available Plots', 'Base Price',
+            'Status', 'Is Featured', 'Is Active', 'Created Date'
+        ]);
+
+        // CSV data
+        foreach ($projects as $project) {
+            fputcsv($output, [
+                $project['project_id'] ?? $project['id'] ?? '',
+                $project['project_name'] ?? '',
+                $project['project_code'] ?? '',
+                $project['location'] ?? '',
+                $project['city'] ?? '',
+                $project['state'] ?? '',
+                $project['total_area'] ?? '',
+                $project['total_plots'] ?? '',
+                $project['available_plots'] ?? '',
+                $project['base_price'] ?? '',
+                $project['project_status'] ?? '',
+                ($project['is_featured'] ?? 0) ? 'Yes' : 'No',
+                ($project['is_active'] ?? 0) ? 'Yes' : 'No',
+                $project['created_at'] ?? ''
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
 }

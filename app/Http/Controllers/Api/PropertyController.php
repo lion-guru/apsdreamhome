@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use \Exception;
+use Exception;
 
 class PropertyController extends BaseApiController
 {
@@ -302,6 +302,125 @@ class PropertyController extends BaseApiController
                 'amenities' => $amenities
             ]);
         } catch (Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Bulk delete properties
+     */
+    public function bulkDelete()
+    {
+        try {
+            if ($response = $this->validateApiKey(true)) {
+                return $response;
+            }
+
+            $ids = $this->request()->input('ids', []);
+            if (empty($ids) || !is_array($ids)) {
+                return $this->jsonError('Property IDs array is required', 400);
+            }
+
+            // Validate that all IDs are numeric
+            foreach ($ids as $id) {
+                if (!is_numeric($id)) {
+                    return $this->jsonError('Invalid property ID: ' . $id, 400);
+                }
+            }
+
+            $propertyModel = $this->model('Property');
+            $deletedCount = 0;
+
+            // Start transaction for atomic operation
+            $this->db()->beginTransaction();
+
+            foreach ($ids as $id) {
+                try {
+                    $result = $propertyModel->delete($id);
+                    if ($result) {
+                        $deletedCount++;
+                    }
+                } catch (Exception $e) {
+                    // Continue with other deletions even if one fails
+                    error_log("Failed to delete property $id: " . $e->getMessage());
+                }
+            }
+
+            $this->db()->commit();
+
+            return $this->jsonSuccess([
+                'message' => "Successfully deleted $deletedCount out of " . count($ids) . " properties",
+                'deleted_count' => $deletedCount,
+                'total_requested' => count($ids)
+            ]);
+
+        } catch (Exception $e) {
+            if ($this->db()->inTransaction()) {
+                $this->db()->rollBack();
+            }
+            return $this->jsonError($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Bulk update properties
+     */
+    public function bulkUpdate()
+    {
+        try {
+            if ($response = $this->validateApiKey(true)) {
+                return $response;
+            }
+
+            $ids = $this->request()->input('ids', []);
+            $updates = $this->request()->input('updates', []);
+
+            if (empty($ids) || !is_array($ids)) {
+                return $this->jsonError('Property IDs array is required', 400);
+            }
+
+            if (empty($updates) || !is_array($updates)) {
+                return $this->jsonError('Updates object is required', 400);
+            }
+
+            // Validate allowed update fields
+            $allowedFields = ['status', 'price', 'featured', 'is_available'];
+            $filteredUpdates = array_intersect_key($updates, array_flip($allowedFields));
+
+            if (empty($filteredUpdates)) {
+                return $this->jsonError('No valid fields to update', 400);
+            }
+
+            $propertyModel = $this->model('Property');
+            $updatedCount = 0;
+
+            // Start transaction
+            $this->db()->beginTransaction();
+
+            foreach ($ids as $id) {
+                try {
+                    $result = $propertyModel->update($id, $filteredUpdates);
+                    if ($result) {
+                        $updatedCount++;
+                    }
+                } catch (Exception $e) {
+                    error_log("Failed to update property $id: " . $e->getMessage());
+                }
+            }
+
+            $this->db()->commit();
+
+            return $this->jsonSuccess([
+                'message' => "Successfully updated $updatedCount out of " . count($ids) . " properties",
+                'updated_count' => $updatedCount,
+                'total_requested' => count($ids),
+                'updated_fields' => array_keys($filteredUpdates)
+            ]);
+
+        } catch (Exception $e) {
+            if ($this->db()->inTransaction()) {
+                $this->db()->rollBack();
+            }
             return $this->jsonError($e->getMessage(), 500);
         }
     }
