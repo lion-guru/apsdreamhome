@@ -239,8 +239,17 @@ class Associate extends Model
         $params = ['id' => $id];
 
         foreach ($data as $key => $value) {
-            $setParts[] = "{$PLACEHOLDER_SECRET_VALUEUPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
+            if ($key !== 'updated_at') {
+                $setParts[] = "{$key} = :{$key}";
+                $params[$key] = $value;
+            }
+        }
 
+        if (empty($setParts)) {
+            return false; // Nothing to update
+        }
+
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $setParts) . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
     }

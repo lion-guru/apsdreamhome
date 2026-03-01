@@ -534,9 +534,11 @@ class CRMLead extends Model
             $params = [':status' => $new_status];
             $placeholders = [];
             foreach ($lead_ids as $index => $id) {
-                $PLACEHOLDER_SECRET_VALUE,', $placeholders);
+                $placeholders[] = ":id{$index}";
+                $params[":id{$index}"] = $id;
+            }
 
-            $sql = "UPDATE {$this->table} SET lead_status = :status, updated_at = NOW() WHERE id IN ({$placeholder_str})";
+            $placeholder_str = implode(', ', $placeholders);
 
             $db = Database::getInstance();
             $stmt = $db->prepare($sql);
