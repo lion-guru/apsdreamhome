@@ -1,3 +1,15 @@
+<?php
+/**
+ * APS Dream Home - Collaboration Dashboard
+ * Real-time collaboration monitoring and task coordination
+ */
+
+// Start session for user identification
+session_start();
+
+// Detect current user
+$currentUser = $_SESSION['user_id'] ?? $_GET['user'] ?? gethostname();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,12 +104,27 @@
 
     <div class="container-fluid py-4">
         <div class="row">
-            <div class="col-12 text-center mb-4">
-                <h1 class="text-white mb-2">
-                    <i class="fas fa-users-cog me-3"></i>
-                    APS Dream Home - Collaboration Dashboard
-                </h1>
-                <p class="text-white-50 mb-0">Real-time collaborative development platform</p>
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center text-white mb-4">
+                    <div>
+                        <h1 class="h3 mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            APS Dream Home Collaboration
+                        </h1>
+                        <p class="text-white-50 mb-0">Real-time collaborative development platform</p>
+                    </div>
+                    <div class="text-end">
+                        <div class="badge bg-light text-dark mb-2">
+                            <i class="fas fa-user me-1"></i>
+                            Current User: <strong><?php echo htmlspecialchars($currentUser); ?></strong>
+                        </div>
+                        <br>
+                        <small class="text-white-50">
+                            <i class="fas fa-desktop me-1"></i>
+                            <?php echo htmlspecialchars(gethostname()); ?>
+                        </small>
+                    </div>
+                </div>
             </div>
         </div>
 
