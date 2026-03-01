@@ -217,7 +217,16 @@ class Project extends Model
             $setParts = [];
             $params = [];
             foreach ($data as $key => $value) {
-                $setParts[] = "$PLACEHOLDER_SECRET_VALUEid'] = $id;
+                if ($key !== 'project_id' && $key !== 'created_at') {
+                    $setParts[] = "{$key} = :{$key}";
+                    $params[$key] = $value;
+                }
+            }
+            $params['id'] = $id;
+
+            if (empty($setParts)) {
+                return false;
+            }
 
             $sql = "UPDATE projects SET " . implode(', ', $setParts) . " WHERE project_id = :id";
             $stmt = $db->prepare($sql);

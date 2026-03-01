@@ -101,7 +101,17 @@ class Farmer extends Model
         $params = ['id' => $id];
 
         foreach ($data as $key => $value) {
-            if ($PLACEHOLDER_SECRET_VALUE$PLACEHOLDER_SECRET_VALUEUPDATE " . static::$table . " SET " . implode(', ', $setParts) . " WHERE id = :id";
+            if ($key !== 'id' && $key !== 'created_at') {
+                $setParts[] = "{$key} = :{$key}";
+                $params[$key] = $value;
+            }
+        }
+
+        if (empty($setParts)) {
+            return false;
+        }
+
+        $sql = "UPDATE " . static::$table . " SET " . implode(', ', $setParts) . " WHERE id = :id";
 
         $stmt = $db->prepare($sql);
         return $stmt->execute($params);

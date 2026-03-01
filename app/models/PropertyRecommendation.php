@@ -439,18 +439,9 @@ class PropertyRecommendation extends Model
             'action_type' => $action,
             'duration_seconds' => $metadata['duration'] ?? null,
             'device_type' => $this->detectDeviceType(),
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
-            'user_agent' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_USER_AGENT'] ?? null,
-            'referrer_url' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_REFERER'] ?? null,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            'referrer_url' => $_SERVER['HTTP_REFERER'] ?? null,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -481,8 +472,16 @@ class PropertyRecommendation extends Model
         $db = Database::getInstance();
 
         $settings = $db->query(
-            "SELECT setting_PLACEHOLDER_SECRET_VALUEsetting_PLACEHOLDER_SECRET_VALUEproperty_id');
-        if (empty($propertyIds)) return $recommendations;
+            "SELECT setting_key, setting_value FROM system_settings WHERE setting_group = 'recommendation_algorithm'"
+        )->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        return [
+            'price_weight' => (float)($settings['price_weight'] ?? 0.3),
+            'location_weight' => (float)($settings['location_weight'] ?? 0.4),
+            'type_weight' => (float)($settings['type_weight'] ?? 0.2),
+            'budget_weight' => (float)($settings['budget_weight'] ?? 0.1),
+            'cache_duration_hours' => (int)($settings['cache_duration_hours'] ?? 24)
+        ];
 
         $db = Database::getInstance();
         $placeholders = str_repeat('?,', count($propertyIds) - 1) . '?';

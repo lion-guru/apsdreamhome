@@ -316,18 +316,10 @@ class PushNotification extends Model
             'user_id' => $subscriptionData['user_id'],
             'user_type' => $subscriptionData['user_type'] ?? 'customer',
             'endpoint' => $subscriptionData['endpoint'],
-            'public_PLACEHOLDER_SECRET_VALUEauth_PLACEHOLDER_SECRET_VALUEuser_agent' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_USER_AGENT'] ?? null,
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
+            'public_key' => $subscriptionData['public_key'] ?? null,
+            'auth_token' => $subscriptionData['auth_token'] ?? null,
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
             'device_type' => $this->detectDeviceType(),
             'browser' => $this->detectBrowser(),
             'is_active' => 1,
@@ -419,7 +411,10 @@ class PushNotification extends Model
     private function getNotificationTemplate(string $templateKey): ?array
     {
         return $this->query(
-            "SELECT * FROM notification_templates WHERE template_PLACEHOLDER_SECRET_VALUEgeneral'])) {
+            "SELECT * FROM notification_templates WHERE template_key = ? AND is_active = 1",
+            [$templateKey]
+        )->fetch();
+    }
             $generalPrefs = $preferences['general'];
             switch ($channel) {
                 case self::CHANNEL_EMAIL:
@@ -479,25 +474,10 @@ class PushNotification extends Model
             'reference_id' => json_decode($notification['data'], true)['reference_id'] ?? null,
             'sent_at' => date('Y-m-d H:i:s'),
             'device_info' => json_encode([
-                'user_agent' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_USER_AGENT'] ?? null,
-                'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null
             ]),
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null
         ];
 
         $db->query(

@@ -4275,14 +4275,7 @@ function endPerformanceMonitoring()
         logActivity('performance', [
             'execution_time' => $execution_time . 'ms',
             'memory_usage' => getMemoryInfo(),
-            'page' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REQUEST_URI'] ?? 'unknown'
+            'page' => $_SERVER['REQUEST_URI'] ?? 'unknown'
         ]);
 
         unset($_SESSION['performance_start']);
@@ -4449,8 +4442,7 @@ function getDeviceInfo()
         'os' => getOperatingSystem(),
         'browser' => getBrowserName(),
         'is_mobile' => isMobile(),
-        'screen_size' =// SECURITY FIX: Validate and sanitize user input
-// > $_COOKIE['screen_size'] ?? 'unknown'
+        'screen_size' => $_COOKIE['screen_size'] ?? 'unknown'
     ];
 }
 
@@ -4492,7 +4484,7 @@ function subscribeToPushNotifications($subscription)
 
     $subscription_data = [
         'endpoint' => $subscription['endpoint'],
-        'PLACEHOLDER_SECRET_VALUEsubscribed_at' => time()
+        'subscribed_at' => time()
     ];
 
     $subscriptions = [];
@@ -5362,14 +5354,7 @@ function trackWebVitals($metrics)
         'lcp' => $metrics['lcp'] ?? 0,
         'fid' => $metrics['fid'] ?? 0,
         'cls' => $metrics['cls'] ?? 0,
-        'page' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REQUEST_URI'] ?? 'unknown'
+        'page' => $_SERVER['REQUEST_URI'] ?? 'unknown'
     ]);
 
     return true;
