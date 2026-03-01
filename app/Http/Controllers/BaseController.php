@@ -15,10 +15,9 @@ class BaseController extends CoreController
     public function __construct()
     {
         parent::__construct();
-        // Temporarily comment out to isolate 500 error
-        // $this->db = \App\Core\Database::getInstance();
-        // $this->loadModels();
-        // $this->getCsrfToken();
+        $this->db = \App\Core\Database::getInstance();
+        $this->loadModels();
+        $this->getCsrfToken();
     }
 
     /**
