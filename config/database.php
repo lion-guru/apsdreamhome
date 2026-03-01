@@ -35,11 +35,11 @@ return [
 
     'migrations' => [
         'table' => 'migrations',
-        'path' => APP_ROOT . '/database/migrations',
+        'path' => __DIR__ . '/../database/migrations',
     ],
 
     'seeds' => [
-        'path' => APP_ROOT . '/database/seeds',
+        'path' => __DIR__ . '/../database/seeds',
     ],
 
     'redis' => [
@@ -51,10 +51,10 @@ return [
 
     'migrations' => [
         'table' => 'migrations',
-        'path' => APP_ROOT . '/database/migrations',
+        'path' => __DIR__ . '/../database/migrations',
     ],
 
     'seeds' => [
-        'path' => APP_ROOT . '/database/seeds',
+        'path' => __DIR__ . '/../database/seeds',
     ],
 ];
