@@ -48,14 +48,6 @@ return [
         'port' => getenv('REDIS_PORT') ?: 6379,
         'database' => 0,
     ],
-        ],
-
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'database' => database_path('database.sqlite'),
-            'prefix' => '',
-        ],
-    ],
 
     'migrations' => [
         'table' => 'migrations',
