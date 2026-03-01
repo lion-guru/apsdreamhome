@@ -38,17 +38,17 @@ class App
     public function run()
     {
         try {
-            // Start session
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-            
             // Handle request
-            $this->handleRequest();
+            return $this->handleRequest();
             
         } catch (Exception $e) {
-            $this->handleError($e);
+            return $this->handleError($e);
         }
+    }
+    
+    public function handle()
+    {
+        return $this->run();
     }
     
     private function handleRequest()
@@ -58,19 +58,19 @@ class App
         $method = $_SERVER["REQUEST_METHOD"] ?? "GET";
         
         // Route to appropriate controller
-        $this->route($uri, $method);
+        return $this->route($uri, $method);
     }
     
     private function route($uri, $method)
     {
         // Basic routing logic
         if ($uri === "/" || $uri === "/home") {
-            $this->loadController("HomeController", "index");
+            return $this->loadController("HomeController", "index");
         } elseif ($uri === "/about") {
-            $this->loadController("PageController", "about");
+            return $this->loadController("PageController", "about");
         } else {
             // Default to home
-            $this->loadController("HomeController", "index");
+            return $this->loadController("HomeController", "index");
         }
     }
     
@@ -81,19 +81,21 @@ class App
         if (class_exists($controllerClass)) {
             $controllerInstance = new $controllerClass();
             if (method_exists($controllerInstance, $method)) {
+                ob_start();
                 $controllerInstance->$method();
+                return ob_get_clean();
             } else {
-                echo "Method " . $method . " not found in " . $controllerClass;
+                return "Method " . $method . " not found in " . $controllerClass;
             }
         } else {
-            echo "Controller " . $controllerClass . " not found";
+            return "Controller " . $controllerClass . " not found";
         }
     }
     
     private function handleError($exception)
     {
         error_log("Application Error: " . $exception->getMessage());
-        echo "An error occurred. Please try again later.";
+        return "<h1>Application Error</h1><p>An error occurred. Please try again later.</p>";
     }
     
     public function getConfig($key = null)
@@ -102,5 +104,113 @@ class App
             return $this->config;
         }
         return $this->config[$key] ?? null;
+    }
+    
+    public function request()
+    {
+        static $request = null;
+        if ($request === null) {
+            $request = new \stdClass();
+            $request->uri = $_SERVER["REQUEST_URI"] ?? "/";
+            $request->method = $_SERVER["REQUEST_METHOD"] ?? "GET";
+            $request->get = $_GET;
+            $request->post = $_POST;
+        }
+        return $request;
+    }
+    
+    public function response()
+    {
+        static $response = null;
+        if ($response === null) {
+            $response = new \stdClass();
+            $response->status = 200;
+            $response->headers = [];
+            $response->content = "";
+        }
+        return $response;
+    }
+    
+    public function session()
+    {
+        static $session = null;
+        if ($session === null) {
+            $session = new class {
+                public $started;
+                
+                public function __construct() {
+                    $this->started = session_status() === PHP_SESSION_ACTIVE;
+                }
+                
+                public function isStarted() {
+                    return $this->started;
+                }
+                
+                public function start() {
+                    if (session_status() === PHP_SESSION_NONE) {
+                        @session_start();
+                        $this->started = true;
+                    }
+                    return $this;
+                }
+                
+                public function get($key, $default = null) {
+                    return $_SESSION[$key] ?? $default;
+                }
+                
+                public function set($key, $value) {
+                    $_SESSION[$key] = $value;
+                    return $this;
+                }
+                
+                public function has($key) {
+                    return isset($_SESSION[$key]);
+                }
+                
+                public function flash($key, $value) {
+                    $_SESSION['_flash'][$key] = $value;
+                    return $this;
+                }
+                
+                public function remove($key) {
+                    unset($_SESSION[$key]);
+                    return $this;
+                }
+            };
+        }
+        return $session;
+    }
+    
+    public function db()
+    {
+        static $db = null;
+        if ($db === null) {
+            try {
+                $db = new \stdClass();
+                $db->connected = true;
+                $db->connection = "database_connection";
+            } catch (\Exception $e) {
+                $db = new \stdClass();
+                $db->connected = false;
+                $db->error = $e->getMessage();
+            }
+        }
+        return $db;
+    }
+    
+    public function auth()
+    {
+        static $auth = null;
+        if ($auth === null) {
+            $auth = new \stdClass();
+            $auth->user = null;
+            $auth->authenticated = false;
+        }
+        return $auth;
+    }
+    
+    public function basePath()
+    {
+        return $this->basePath;
     }
 }

@@ -1,8 +1,8 @@
 <?php
-$pdo = new PDO('mysql:host=localhost;dbname=apsdreamhomes', 'root', '');
+$pdo = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
 $stmt = $pdo->query('SHOW TABLES');
 $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
-echo 'apsdreamhomes database: ' . count($tables) . ' tables' . PHP_EOL;
+echo 'apsdreamhome database: ' . count($tables) . ' tables' . PHP_EOL;
 echo 'First 20 tables:' . PHP_EOL;
 for ($i = 0; $i < min(20, count($tables)); $i++) {
     echo ($i + 1) . '. ' . $tables[$i] . PHP_EOL;
