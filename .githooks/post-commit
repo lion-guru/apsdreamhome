@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# APS Dream Home - Git Post-commit Hook
+# Automatically pushes commits to remote
+
+echo "📤 Pushing changes to remote..."
+
+# Push to origin main
+git push origin HEAD > /dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+    echo "✅ Changes pushed successfully"
+else
+    echo "❌ Push failed - check connection"
+fi
+
+# Log the commit
+commit_hash=$(git rev-parse HEAD)
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Commit $commit_hash pushed" >> .git/commit_log.txt
