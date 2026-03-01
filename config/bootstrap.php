@@ -68,12 +68,17 @@ if (file_exists(CONFIG_PATH . '/helpers.php')) {
 
 // Load database configuration
 if (file_exists(CONFIG_PATH . '/database.php')) {
-    $dbConfig = require CONFIG_PATH . '/database.php';
-    if (!is_array($dbConfig)) {
-        error_log("Database config returned non-array: " . gettype($dbConfig));
-        $dbConfig = [];
+    try {
+        $dbConfig = require CONFIG_PATH . '/database.php';
+        if (!is_array($dbConfig)) {
+            error_log("Database config returned non-array: " . gettype($dbConfig));
+            $dbConfig = [];
+        }
+        $config = array_merge($config, $dbConfig);
+    } catch (Exception $e) {
+        error_log("Database config failed to load: " . $e->getMessage());
+        // Continue without database config
     }
-    $config = array_merge($config, $dbConfig);
 }
 
 // Load application configuration

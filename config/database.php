@@ -13,7 +13,7 @@ return [
             'host' => getenv('DB_HOST') ?: 'localhost',
             'database' => getenv('DB_NAME') ?: 'apsdreamhome',
             'username' => getenv('DB_USER') ?: 'root',
-            'password' => getenv('DB_PASSWORD') ?: '',
+            'password' => '',  // XAMPP MySQL root has no password by default
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
@@ -28,18 +28,18 @@ return [
 
         'sqlite' => [
             'driver' => 'sqlite',
-            'database' => database_path('database.sqlite'),
+            'database' => __DIR__ . '/../database/database.sqlite',
             'prefix' => '',
         ],
     ],
 
     'migrations' => [
         'table' => 'migrations',
-        'path' => APP_ROOT . '/database/migrations',
+        'path' => __DIR__ . '/../database/migrations',
     ],
 
     'seeds' => [
-        'path' => APP_ROOT . '/database/seeds',
+        'path' => __DIR__ . '/../database/seeds',
     ],
 
     'redis' => [
@@ -51,10 +51,10 @@ return [
 
     'migrations' => [
         'table' => 'migrations',
-        'path' => APP_ROOT . '/database/migrations',
+        'path' => __DIR__ . '/../database/migrations',
     ],
 
     'seeds' => [
-        'path' => APP_ROOT . '/database/seeds',
+        'path' => __DIR__ . '/../database/seeds',
     ],
 ];
