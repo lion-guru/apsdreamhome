@@ -12,7 +12,11 @@ if (!function_exists('csrf_token')) {
 
 if (!function_exists('csrf_field')) {
     function csrf_field() {
-        return '<input type="hidden" name="_PLACEHOLDER_SECRET_VALUEvalidate_csrf_token')) {
+        return '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
+    }
+}
+
+if (!function_exists('validate_csrf_token')) {
     function validate_csrf_token($token) {
         if (empty($_SESSION['csrf_token']) || empty($token)) {
             return false;

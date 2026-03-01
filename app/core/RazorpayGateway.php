@@ -16,7 +16,16 @@ class RazorpayGateway
 
     public function __construct()
     {
-        $this->PLACEHOLDER_SECRET_VALUEorder_' . uniqid();
+        $this->api = new \Razorpay\Api\Api(getenv('RAZORPAY_KEY_ID'), getenv('RAZORPAY_KEY_SECRET'));
+    }
+
+    /**
+     * Create a new order
+     */
+    public function createOrder($order_data)
+    {
+        try {
+            $order_id = 'order_' . uniqid();
 
             return [
                 'id' => $order_id,

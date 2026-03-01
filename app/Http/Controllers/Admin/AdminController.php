@@ -585,8 +585,7 @@ class AdminController extends BaseController
         }
 
         try {
-            $about = About::find->with(
-        ->with(['query'])['title', 'content', 'image'])($id);
+            $about = About::with(['query'])->find($id);
             if (!$about) {
                 $this->redirect('admin/about?error=' . urlencode('Content not found'));
                 return;

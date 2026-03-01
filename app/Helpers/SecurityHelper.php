@@ -119,8 +119,8 @@ class SecurityHelper
         // BACKWARD COMPATIBILITY: Set unified schema if needed
         if (!isset($_SESSION['csrf'])) {
             $_SESSION['csrf'] = [
-                'PLACEHOLDER_SECRET_VALUEexpires' =// SECURITY FIX: Validate and sanitize user input
-// > $_SESSION['csrf_token_expires']
+                'token' => $_SESSION['csrf_token'],
+                'expires' => $_SESSION['csrf_token_expires']
             ];
         }
 

@@ -25,9 +25,7 @@ class MonitorController extends BaseController
      */
     public function status()
     {
-        $monitor = SystemMonitor::get->with(
-        ->with(['listBackups', 'createDatabaseBackup', 'createFullBackup', 'getBackupStats'])
-        ->with(['getMetrics'])['getSystemStatus', 'runHealthChecks'])Instance();
+        $monitor = SystemMonitor::getInstance();
         $status = $monitor->getSystemStatus();
 
         $this->jsonResponse($status);

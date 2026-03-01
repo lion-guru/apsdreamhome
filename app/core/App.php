@@ -208,15 +208,6 @@ class App
 
         // Fallback: Load each PHP file in the config directory if global config is empty
         foreach (glob($configDir . '/*.php') as $configFile) {
-<<<<<<< HEAD
-            $filename = basename($configFile, '.php');
-            if ($filename === 'bootstrap') { // Skip bootstrap as it's already loaded
-                continue;
-            }
-            $fileConfig = require $configFile;
-            if (is_array($fileConfig)) {
-                $this->config[$filename] = $fileConfig;
-=======
             $basename = basename($configFile);
             if ($basename === 'bootstrap.php') { continue; }
             $fileConfig = require $configFile;
@@ -227,7 +218,6 @@ class App
                 } else {
                     $this->config[$key] = $fileConfig;
                 }
->>>>>>> origin/chore/fix-500-bootstrap
             }
         }
     }
