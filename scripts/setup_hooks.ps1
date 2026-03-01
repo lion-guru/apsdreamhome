@@ -1,5 +1,5 @@
 # APS Dream Home - Git Hooks and Auto-Sync Setup
-# Clean version - no reserved operators
+# Final clean version
 
 param(
     [switch]$Force = $false
