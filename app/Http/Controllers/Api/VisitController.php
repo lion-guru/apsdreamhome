@@ -86,8 +86,7 @@ class VisitController extends BaseApiController
             $this->db->beginTransaction();
 
             // Use PublicCustomer model
-            $customerModel = $this->model(->with(
-        ->with(['isSlotAvailable'])['findOrCreate'])'PublicCustomer');
+            $customerModel = $this->model('PublicCustomer');
             $customer_id = $customerModel->findOrCreate([
                 'name' => $input['visitor_name'],
                 'email' => $input['visitor_email'],

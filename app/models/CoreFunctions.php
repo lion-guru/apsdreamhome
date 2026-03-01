@@ -1330,31 +1330,10 @@ function getServerInfo()
 {
     return [
         'php_version' => PHP_VERSION,
-        'server_software' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+        'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
         'operating_system' => php_uname(),
-        'document_root' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['DOCUMENT_ROOT'] ?? '',
-        'server_name' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['SERVER_NAME'] ?? ''
+        'document_root' => $_SERVER['DOCUMENT_ROOT'] ?? '',
+        'server_name' => $_SERVER['SERVER_NAME'] ?? ''
     ];
 }
 
@@ -1954,11 +1933,18 @@ function isTablet()
 /**
  * SEO helpers
  */
-function generateMetaTags($title, $description, $PLACEHOLDER_SECRET_VALUE<title>' . htmlspecialchars($title) . '</title>';
+function generateMetaTags($title, $description, $keywords = '', $image = '')
+{
+    $meta = [];
+    $meta[] = '<title>' . htmlspecialchars($title) . '</title>';
     $meta[] = '<meta name="description" content="' . htmlspecialchars($description) . '">';
 
     if (!empty($keywords)) {
-        $meta[] = '<meta name="PLACEHOLDER_SECRET_VALUE<meta property="og:image" content="' . htmlspecialchars($image) . '">';
+        $meta[] = '<meta name="keywords" content="' . htmlspecialchars($keywords) . '">';
+    }
+
+    if (!empty($image)) {
+        $meta[] = '<meta property="og:image" content="' . htmlspecialchars($image) . '">';
     }
 
     $meta[] = '<meta property="og:title" content="' . htmlspecialchars($title) . '">';
@@ -2019,7 +2005,13 @@ function arrayGroupBy($array, $key)
     return $grouped;
 }
 
-function arraySortBy($array, $PLACEHOLDER_SECRET_VALUEdesc') {
+function arraySortBy($array, $key, $direction = 'asc')
+{
+    usort($array, function ($a, $b) use ($key, $direction) {
+        $a_value = is_object($a) ? $a->$key : $a[$key];
+        $b_value = is_object($b) ? $b->$key : $b[$key];
+
+        if ($direction === 'desc') {
             return $b_value <=> $a_value;
         }
         return $a_value <=> $b_value;
@@ -2303,14 +2295,7 @@ function trackPageView($page, $user_id = null)
         'ip' => getClientIP(),
         'user_agent' => getUserAgent(),
         'timestamp' => time(),
-        'referrer' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['HTTP_REFERER'] ?? ''
+        'referrer' => $_SERVER['HTTP_REFERER'] ?? ''
     ];
 
     $analytics = [];
@@ -2702,15 +2687,11 @@ function convertCurrency($amount, $from_currency, $to_currency, $exchange_rate =
             'GBP_TO_INR' => 105.0
         ];
 
-        $PLACEHOLDER_SECRET_VALUErectangle':
-            return $dimensions['length'] * $dimensions['width'];
-        case 'circle':
-            return pi() * pow($dimensions['radius'], 2);
-        case 'triangle':
-            return ($dimensions['base'] * $dimensions['height']) / 2;
-        default:
-            return 0;
+        $key = strtoupper($from_currency . '_TO_' . $to_currency);
+        $exchange_rate = $exchange_rates[$key] ?? 1;
     }
+
+    return $amount * $exchange_rate;
 }
 
 /**
@@ -2735,7 +2716,10 @@ function convertUnits($value, $from_unit, $to_unit)
         ]
     ];
 
-    $PLACEHOLDER_SECRET_VALUElength'][$key] ?? $conversions['weight'][$key] ?? 1);
+    $key = strtolower($from_unit . '_to_' . $to_unit);
+    $conversion_rate = $conversions['length'][$key] ?? $conversions['weight'][$key] ?? 1;
+
+    return $value * $conversion_rate;
 }
 
 /**
@@ -3091,7 +3075,7 @@ function sendPushNotification($device_token, $title, $message)
 {
     // This would integrate with FCM or similar services
     // For now, return success
-    logActivity('push_notification', ['device_PLACEHOLDER_SECRET_VALUEwhatsapp_message', ['to' => $to, 'message' => $message]);
+    logActivity('push_notification', ['device_token' => $device_token, 'title' => $title, 'message' => $message]);
     return true;
 }
 
@@ -3338,14 +3322,7 @@ function getNetworkInfo()
         'ip' => getClientIP(),
         'user_agent' => getUserAgent(),
         'hostname' => gethostbyaddr(getClientIP()),
-        'server_ip' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['SERVER_ADDR'] ?? 'unknown'
+        'server_ip' => $_SERVER['SERVER_ADDR'] ?? 'unknown'
     ];
 }
 

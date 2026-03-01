@@ -554,8 +554,7 @@ class PageController extends BaseController
 
         try {
             // Fetch categories
-            $categories_raw = Download::get->with(
-        ->with(['orderBy'])['category'])Categories();
+            $categories_raw = Download::getCategories();
             foreach ($categories_raw as $cat) {
                 // Handle both object and array
                 $category_name = is_object($cat) ? $cat->category : $cat['category'];

@@ -69,7 +69,7 @@ class PropertyController extends BaseController
 
         // Get locations (Cities)
         try {
-            $db = Database::get->with(['query'])Instance();
+            $db = Database::getInstance();
             $stmt = $db->query("SELECT city, COUNT(*) as count FROM properties GROUP BY city ORDER BY city");
             $cities = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
