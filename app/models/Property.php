@@ -37,7 +37,7 @@ class Property extends Model
             $stmt = $db->query(
                 "SELECT * FROM properties
                  WHERE featured = 1
-                 -- AND status = 'available'  -- Show all featured properties regardless of status
+                 AND status != 'sold'  -- Show all featured properties except sold ones
                  ORDER BY created_at DESC
                  LIMIT " . (int)$limit
             );
@@ -49,6 +49,23 @@ class Property extends Model
             return [];
         } catch (\Exception $e) {
             error_log("Error in getFeaturedProperties: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public static function getAllProperties($limit = null, $offset = 0)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $sql = "SELECT * FROM properties WHERE status != 'sold' ORDER BY created_at DESC";
+            
+            if ($limit) {
+                $sql .= " LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
+            }
+            
+            return $db->fetchAll($sql);
+        } catch (\Exception $e) {
+            error_log("Error in getAllProperties: " . $e->getMessage());
             return [];
         }
     }
