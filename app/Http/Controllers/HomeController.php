@@ -164,6 +164,19 @@ class HomeController extends BaseController
         $this->redirect('/projects');
     }
 
+    public function properties()
+    {
+        $propertyModel = new Property();
+        $properties = $propertyModel->getAllProperties();
+
+        return $this->render('pages/properties', [
+            'title' => 'All Properties - APS Dream Home',
+            'properties' => $properties,
+            'is_featured' => false,
+            'extra_css' => '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">'
+        ]);
+    }
+
     public function featuredProperties()
     {
         $propertyModel = new Property();
