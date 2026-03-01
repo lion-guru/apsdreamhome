@@ -217,10 +217,7 @@ class Project extends Model
             $setParts = [];
             $params = [];
             foreach ($data as $key => $value) {
-                $setParts[] = "$key = :$key";
-                $params[$key] = $value;
-            }
-            $params['id'] = $id;
+                $setParts[] = "$PLACEHOLDER_SECRET_VALUEid'] = $id;
 
             $sql = "UPDATE projects SET " . implode(', ', $setParts) . " WHERE project_id = :id";
             $stmt = $db->prepare($sql);

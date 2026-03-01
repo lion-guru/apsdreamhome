@@ -29,7 +29,11 @@ class AgentDashboardController
         $agent = Agent::where('user_id', $user->id)->first();
 
         if (!$agent) {
-            return redirect()->route('agent.profile.setup')->with('error', 'Please complete your agent profile setup first.');
+            return redirect()->route('agent.profile.setup')->with(
+        ->with(['toArray'])
+        ->with(['amount'])
+        ->with(['title'])
+        ->with(['name'])'error', 'Please complete your agent profile setup first.');
         }
 
         // Agent statistics

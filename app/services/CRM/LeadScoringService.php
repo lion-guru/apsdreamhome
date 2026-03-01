@@ -42,10 +42,10 @@ class LeadScoringService
         }
 
         $scores = [
-            'demographic' => $this->calculateDemographicScore($lead->toArray()),
+            'demographic' => $this->calculateDemographicScore($lead),
             'engagement' => $this->calculateEngagementScore($leadId),
             'behavior' => $this->calculateBehaviorScore($leadId),
-            'source' => $this->calculateSourceScore($lead->toArray())
+            'source' => $this->calculateSourceScore($lead)
         ];
 
         $totalScore = 0;

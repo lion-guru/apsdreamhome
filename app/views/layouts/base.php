@@ -26,16 +26,15 @@
     <meta property="twitter:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogo.png">
 
     <!-- Modern CSS Framework -->
-    <link href="<?php echo BASE_URL; ?>/public/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/public/assets/plugins/font-awesome/css/all.min.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/public/assets/vendor/css/aos.min.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/plugins/font-awesome/css/all.min.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/vendor/css/aos.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/css/animations.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/css/loading.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/css/header.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/animations.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/loading.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/css/style.css">
 
     <style>
         :root {
@@ -97,14 +96,14 @@
     </div><!-- .content-wrapper -->
 
     <!-- Core Scripts -->
-    <script src="<?php echo BASE_URL; ?>/public/assets/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo BASE_URL; ?>/public/assets/vendor/js/aos.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/vendor/js/aos.min.js"></script>
 
     <!-- App Scripts -->
-    <script src="<?php echo BASE_URL; ?>/js/utils.js"></script>
-    <script src="<?php echo BASE_URL; ?>/js/lead-capture.js"></script>
-    <script src="<?php echo BASE_URL; ?>/js/layout.js"></script>
-    <script src="<?php echo BASE_URL; ?>/js/premium-header.js" defer></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/utils.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/lead-capture.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/layout.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/premium-header.js" defer></script>
 
     <?php if (isset($extra_js)) echo $extra_js; ?>
 </body>

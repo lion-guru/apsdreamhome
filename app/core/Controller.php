@@ -109,9 +109,9 @@ class Controller
         $this->view = new View();
         $this->session = $app->session();
 
-        // DEBUG CODE REMOVED: 2026-02-22 19:56:15 auth
+        // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:15 auth
         if (!isset($app->auth)) {
-            // // DEBUG CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
+            // // DEBUG CODE REMOVED: 2026-02-25 07:31:16 CODE REMOVED: 2026-02-22 19:56:15 CODE REMOVED: 2026-02-22 19:56:15
         }
 
         $this->auth = $app->auth ?? null;
@@ -259,9 +259,11 @@ class Controller
      */
     public function requireLogin()
     {
-        if (!$this->auth->check()) {
-            $this->session->getFlashBag()->add('error', 'You must be logged in to access this page.');
-            $this->redirect('/login')->send();
+        if (!$this->auth || !$this->auth->check()) {
+            if ($this->session && method_exists($this->session, 'getFlashBag')) {
+                $this->session->getFlashBag()->add('error', 'Please login to continue');
+            }
+            Response::redirect('/login')->send();
             exit;
         }
     }

@@ -13,16 +13,75 @@ class HomeController extends BaseController
         logger()->info('HomeController::index called');
 
         try {
+            // Get featured properties from database
             $propertyModel = new Property();
             $properties = $propertyModel->getFeaturedProperties();
+            
+            // If no properties in database, use sample data
+            if (empty($properties)) {
+                $properties = [
+                    [
+                        'id' => 1,
+                        'title' => 'Luxury 3BHK Apartment in Gorakhpur',
+                        'description' => 'Beautiful 3BHK apartment with modern amenities',
+                        'price' => 4500000,
+                        'property_type' => 'apartment',
+                        'bedrooms' => 3,
+                        'bathrooms' => 2,
+                        'area' => 1200,
+                        'area_unit' => 'sqft',
+                        'city' => 'Gorakhpur',
+                        'state' => 'Uttar Pradesh',
+                        'address' => 'Civil Lines, Gorakhpur',
+                        'status' => 'available',
+                        'featured' => true,
+                        'image_path' => '/assets/img/properties/luxury-apartment.jpg'
+                    ],
+                    [
+                        'id' => 2,
+                        'title' => 'Premium Villa with Garden',
+                        'description' => 'Spacious villa with private garden and parking',
+                        'price' => 8500000,
+                        'property_type' => 'villa',
+                        'bedrooms' => 4,
+                        'bathrooms' => 3,
+                        'area' => 2500,
+                        'area_unit' => 'sqft',
+                        'city' => 'Lucknow',
+                        'state' => 'Uttar Pradesh',
+                        'address' => 'Gomti Nagar, Lucknow',
+                        'status' => 'available',
+                        'featured' => true,
+                        'image_path' => '/assets/img/properties/premium-villa.jpg'
+                    ],
+                    [
+                        'id' => 3,
+                        'title' => 'Commercial Space in Business District',
+                        'description' => 'Prime commercial space perfect for office or retail',
+                        'price' => 12000000,
+                        'property_type' => 'commercial',
+                        'bedrooms' => null,
+                        'bathrooms' => 2,
+                        'area' => 2000,
+                        'area_unit' => 'sqft',
+                        'city' => 'Kanpur',
+                        'state' => 'Uttar Pradesh',
+                        'address' => 'Mall Road, Kanpur',
+                        'status' => 'available',
+                        'featured' => false,
+                        'image_path' => '/assets/img/properties/commercial-space.jpg'
+                    ]
+                ];
+            }
         } catch (\Throwable $e) {
+            logger()->error('Error fetching properties: ' . $e->getMessage());
             $properties = [];
         }
 
-        $this->data['title'] = 'Welcome to APS Dream Home';
-        $this->data['description'] = 'Find your dream property with us.';
+        $this->data['title'] = 'Welcome to APS Dream Home - Find Your Dream Property';
+        $this->data['description'] = 'Premium real estate platform for buying, selling, and renting properties in Uttar Pradesh';
         $this->data['properties'] = $properties;
-        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'public/css/pages.css">';
+        $this->data['extra_css'] = '<link rel="stylesheet" href="' . BASE_URL . 'assets/css/homepage.css">';
 
         return $this->render('home/index', [], 'layouts/base', false);
     }

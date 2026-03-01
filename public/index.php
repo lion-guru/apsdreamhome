@@ -23,7 +23,7 @@ date_default_timezone_set('Asia/Manila');
 //    session_start();
 // }
 
-$__env = getenv('APP_ENV') ?: 'production';
+$__env = getenv('APP_ENV') ?: 'development';
 if ($__env === 'development') {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
@@ -42,7 +42,9 @@ if (!defined('BASE_PATH')) {
 if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $script = dirname($_SERVER['SCRIPT_NAME']);
+    // Remove accidental trailing dot in host like 'localhost.'
+    $host = rtrim($host, '.');
+    $script = dirname($_SERVER['SCRIPT_NAME'] ?? '');
 
     // Remove /public if it exists in the path to get the app root URL
     // e.g. /apsdreamhome/public -> /apsdreamhome
@@ -50,10 +52,10 @@ if (!defined('BASE_URL')) {
         $script = dirname($script);
     }
 
-    // Ensure script path ends with / or is just empty
+    // Normalize and ensure trailing slash
     $script = rtrim($script, '/');
-
-    define('BASE_URL', "$protocol://$host$script");
+    $basePath = $script ? ($script . '/') : '/';
+    define('BASE_URL', $protocol . '://' . $host . $basePath);
 }
 
 // Import the App class
@@ -61,18 +63,14 @@ use App\Core\App;
 
 try {
     debug_log("Loading autoloader...");
-    // Load the autoloader
     require_once BASE_PATH . '/app/core/autoload.php';
 
     debug_log("Loading App class...");
-    // Load the application
     require_once BASE_PATH . '/app/core/App.php';
 
     debug_log("Instantiating App...");
-    // Create the application instance
     $app = new App();
 
-    // Run the application
     $app->run();
 } catch (Exception $e) {
     debug_log("Exception: " . $e->getMessage());
@@ -81,7 +79,7 @@ try {
     http_response_code(500);
     echo "<h1>Application Error</h1>";
     echo "<p>An error occurred while loading the application.</p>";
-    if (getenv('APP_ENV') === 'development') {
+    if ($__env === 'development') {
         echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
         echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
         echo "<p><strong>Line:</strong> " . htmlspecialchars($e->getLine()) . "</p>";

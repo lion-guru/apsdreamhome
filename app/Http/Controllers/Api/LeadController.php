@@ -195,7 +195,12 @@ class LeadController extends Controller
                 $query->orderBy('created_at', 'desc');
             },
             'statusHistory' => function ($query) {
-                $query->with(['status', 'changedBy'])
+                $query->with(
+        ->with(['load', 'getOriginal', 'fill', 'updated_by', 'wasChanged', 'created_by'])
+        ->with(['getClientOriginalName', 'getClientOriginalExtension', 'getSize', 'getMimeType', 'storeAs', 'uploaded_by', 'file_path', 'is_private', 'file_name'])
+        ->with(['load', 'user_id'])
+        ->with(['activities', 'notes', 'tags', 'customFields', 'files', 'load', 'id', 'deals'])
+        ->with(['orderBy', 'paginate', 'with', 'count', 'whereHas', 'select'])['status', 'changedBy'])
                       ->orderBy('created_at', 'desc');
             },
             'assignmentHistory' => function ($query) {

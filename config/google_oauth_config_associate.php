@@ -12,7 +12,7 @@ if (file_exists(__DIR__ . '/.env')) {
     }
 }
 
-// Define constants if not already defined
+// Define Google OAuth constants for associates
 if (!defined('GOOGLE_CLIENT_ID')) {
     define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID'));
 }
@@ -21,7 +21,7 @@ if (!defined('GOOGLE_CLIENT_SECRET')) {
 }
 
 // Set appropriate redirect URL based on environment
-$http_host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 $protocol = ($http_host === 'localhost' || strpos($http_host, '127.0.0.1') !== false) ? 'http' : 'https';
 $host = $http_host;
 $path = '/march2025apssite/google_callback_associate.php';

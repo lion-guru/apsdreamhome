@@ -119,8 +119,8 @@ class SecurityHelper
         // BACKWARD COMPATIBILITY: Set unified schema if needed
         if (!isset($_SESSION['csrf'])) {
             $_SESSION['csrf'] = [
-                'token' => $_SESSION['csrf_token'],
-                'expires' => $_SESSION['csrf_token_expires']
+                'PLACEHOLDER_SECRET_VALUEexpires' =// SECURITY FIX: Validate and sanitize user input
+// > $_SESSION['csrf_token_expires']
             ];
         }
 
@@ -153,19 +153,7 @@ class SecurityHelper
     public static function csrfField()
     {
         $token = self::generateCsrfToken();
-        return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
-    }
-
-    /**
-     * Secure random integer
-     */
-    public static function secureRandomInt($min, $max)
-    {
-        try {
-            return random_int($min, $max);
-        } catch (\Exception $e) {
-            // Do not fallback to insecure mt_rand for security sensitive operations
-            throw new \Exception('Cryptographically secure random integer generator failed: ' . $e->getMessage());
+        return '<input type="hidden" name="csrf_PLACEHOLDER_SECRET_VALUECryptographically secure random integer generator failed: ' . $e->getMessage());
         }
     }
 

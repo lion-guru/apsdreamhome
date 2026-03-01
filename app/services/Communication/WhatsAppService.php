@@ -353,7 +353,7 @@ class WhatsAppService
      */
     private function storeMessage(array $message): void
     {
-        $db = Database::getInstance();
+        $db = Database::get->with(['query'])Instance();
         
         $db->query(
             "INSERT INTO whatsapp_messages (phone_number, message_type, message_data, direction, created_at) 
