@@ -1,161 +1,89 @@
-7<?php
-/**
- * APS Dream Home - Fixed MVC Router
- * Using the existing HomeController and MVC structure properly
- */
+<?php
 
-// Define essential constants and functions first
-define('BASE_URL', '/apsdreamhome/');
-define('APP_ROOT', __DIR__);
-
-// Define essential functions that MVC controllers need
-if (!function_exists('logger')) {
-    function logger() {
-        return new class {
-            public function info($message) {
-                error_log("[INFO] $message");
-            }
-            public function error($message) {
-                error_log("[ERROR] $message");
-            }
-        };
-    }
+// Debug logging
+$logFile = __DIR__ . '/logs/debug_output.log';
+function debug_log($message)
+{
+    global $logFile;
+    file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] " . $message . "\n", FILE_APPEND);
 }
 
-// Define view() function that controllers use
-if (!function_exists('view')) {
-    function view($template, $data = [], $layout = 'layouts/base') {
-        // Extract data to make variables available in templates
-        extract($data, EXTR_SKIP);
-        
-        // For now, just include the view directly
-        $viewFile = __DIR__ . '/app/views/' . $template . '.php';
-        if (file_exists($viewFile)) {
-            include $viewFile;
-        } else {
-            // Fallback to our simple views
-            $simpleViewFile = __DIR__ . '/views/' . basename($template) . '.php';
-            if (file_exists($simpleViewFile)) {
-                include $simpleViewFile;
-            } else {
-                echo "<h1>View not found: $template</h1>";
-            }
-        }
-    }
+debug_log("Request started: " . ($_SERVER['REQUEST_URI'] ?? 'CLI'));
+
+// Set HTTP_HOST to avoid warnings in config files
+if (!isset($_SERVER['HTTP_HOST'])) {
+    $_SERVER['HTTP_HOST'] = 'localhost';
 }
 
-// Simple autoloader function instead of complex Autoloader class
-spl_autoload_register(function ($class) {
-    // Convert namespace to file path
-    $file = str_replace('\\', '/', $class) . '.php';
-    
-    // Check in app directory
-    $appFile = __DIR__ . '/app/' . $file;
-    if (file_exists($appFile)) {
-        require_once $appFile;
-        return;
-    }
-    
-    // Check in root directory
-    $rootFile = __DIR__ . '/' . $file;
-    if (file_exists($rootFile)) {
-        require_once $rootFile;
-        return;
-    }
-});
+// Set the default timezone
+date_default_timezone_set('Asia/Manila');
 
-// Get the requested path
-$request_uri = $_SERVER['REQUEST_URI'] ?? '/';
-$path = parse_url($request_uri, PHP_URL_PATH);
-$path = str_replace('/apsdreamhome', '', $path);
+// Session is started by the App class with proper configuration
+// if (session_status() === PHP_SESSION_NONE) {
+//    session_start();
+// }
 
-// Route to proper MVC controllers
-switch ($path) {
-    case '/':
-    case '':
-        try {
-            $controller = new \App\Http\Controllers\HomeController();
-            $controller->index();
-            echo "<!-- ✅ MVC HomeController working! -->";
-        } catch (Exception $e) {
-            echo "<!-- ❌ MVC Error: " . htmlspecialchars($e->getMessage()) . " -->";
-            // Fallback to simple view
-            include 'views/home.php';
-        }
-        break;
-        
-    case '/properties':
-    case '/properties/':
-        try {
-            $controller = new \App\Http\Controllers\HomeController();
-            $controller->properties();
-        } catch (Exception $e) {
-            include 'views/properties.php';
-        }
-        break;
-        
-    case '/about':
-        try {
-            $controller = new \App\Http\Controllers\HomeController();
-            $controller->about();
-        } catch (Exception $e) {
-            include 'views/about.php';
-        }
-        break;
-        
-    case '/contact':
-        try {
-            $controller = new \App\Http\Controllers\HomeController();
-            $controller->contact();
-        } catch (Exception $e) {
-            include 'views/contact.php';
-        }
-        break;
-        
-    case '/projects':
-        try {
-            $controller = new \App\Http\Controllers\HomeController();
-            $controller->projects();
-        } catch (Exception $e) {
-            include 'views/projects.php';
-        }
-        break;
-        
-    case '/admin':
-    case '/admin/':
-        try {
-            $controller = new \App\Http\Controllers\Admin\AdminController();
-            $controller->dashboard();
-        } catch (Exception $e) {
-            include 'views/admin.php';
-        }
-        break;
-        
-    case '/admin/login':
-        include 'views/admin_login.php';
-        break;
-        
-    case '/admin/dashboard':
-        include 'views/admin_dashboard.php';
-        break;
-        
-    case '/admin/logout':
-        include 'views/admin_logout.php';
-        break;
-        
-    default:
-        // Check for property details
-        if (preg_match('/^\/properties\/(\d+)$/', $path, $matches)) {
-            try {
-                $controller = new \App\Http\Controllers\Property\PropertyController();
-                $controller->show($matches[1]);
-            } catch (Exception $e) {
-                include 'views/property_details.php';
-            }
-        } else {
-            http_response_code(404);
-            include 'views/404.php';
-        }
-        break;
+$__env = getenv('APP_ENV') ?: 'development';
+if ($__env === 'development') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+} else {
+    error_reporting(0);
+    ini_set('display_errors', '0');
+}
+ini_set('error_log', dirname(__DIR__) . '/logs/php_error.log');
+
+// Define the base path
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', dirname(__DIR__));
+}
+
+// Define BASE_URL if not already defined
+if (!defined('BASE_URL')) {
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    // Remove accidental trailing dot in host like 'localhost.'
+    $host = rtrim($host, '.');
+    $script = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+
+    // Remove /public if it exists in path to get app root URL
+    // e.g. /apsdreamhome/public -> /apsdreamhome
+    if (basename($script) === 'public') {
+        $script = dirname($script);
+    }
+
+    // Normalize and ensure trailing slash
+    $script = rtrim($script, '/');
+    $basePath = $script ? ($script . '/') : '/';
+    define('BASE_URL', $protocol . '://' . $host . $basePath);
+}
+
+// Import the App class
+use App\Core\App;
+
+try {
+    debug_log("Loading autoloader...");
+    require_once __DIR__ . '/app/core/autoload.php';
+
+    debug_log("Loading App class...");
+    require_once __DIR__ . '/app/core/App.php';
+
+    debug_log("Instantiating App...");
+    $app = new App();
+
+    $app->run();
+} catch (Exception $e) {
+    debug_log("Exception: " . $e->getMessage());
+    // Handle any exceptions that occur during bootstrap
+    error_log("Application Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+    http_response_code(500);
+    echo "<h1>Application Error</h1>";
+    echo "<p>An error occurred while loading the application.</p>";
+    if ($__env === 'development') {
+        echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+        echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
+        echo "<p><strong>Line:</strong> " . htmlspecialchars($e->getLine()) . "</p>";
+        echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+    }
 }
 ?>
