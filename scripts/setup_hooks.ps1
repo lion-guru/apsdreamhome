@@ -102,14 +102,14 @@ function New-TaskSchedulerJob {
     $existingTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
 
     if ($existingTask -and !$Force) {
-        Write-Log "ℹ️ Task '$taskName' already exists. Use -Force to recreate." -ForegroundColor Yellow
+        Write-Log "INFO: Task '$taskName' already exists. Use -Force to recreate." -ForegroundColor Yellow
         return
     }
 
     # Remove existing task if force is used
     if ($existingTask -and $Force) {
         Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
-        Write-Log "🗑️ Removed existing task" -ForegroundColor Yellow
+        Write-Log "REMOVED: Existing task removed" -ForegroundColor Yellow
     }
 
     # Create new task
