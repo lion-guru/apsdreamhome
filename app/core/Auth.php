@@ -163,9 +163,15 @@ class Auth {
         $userModel = new User();
         
         // Hash the password
+<<<<<<< HEAD
         if (!isset($data['role'])) {
             $data['role'] = 'user';
+=======
+        if (!empty($data['password'])) {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+>>>>>>> origin/chore/fix-500-bootstrap
         }
+        if (!isset($data['role'])) { $data['role'] = 'user'; }
         
         // Create the user
         $userId = $userModel->create($data);

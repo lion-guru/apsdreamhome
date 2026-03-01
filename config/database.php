@@ -8,7 +8,8 @@ return [
     'database' => [
         'host' => getenv('DB_HOST') ?: 'localhost',
         'username' => getenv('DB_USER') ?: 'root',
-        'PLACEHOLDER_SECRET_VALUEdatabase' => getenv('DB_NAME') ?: 'apsdreamhome',
+        'database' => getenv('DB_NAME') ?: 'apsdreamhome',
+        'password' => getenv('DB_PASS') ?: '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'prefix' => '',
