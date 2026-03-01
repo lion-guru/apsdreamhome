@@ -3,17 +3,19 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Services\EmailService;
+use App\Core\Database;
 
+/**
+ * User Service
+ * Handles user-related operations
+ */
 class UserService
 {
     private $userModel;
-    private $emailService;
 
     public function __construct()
     {
         $this->userModel = new User();
-        $this->emailService = new EmailService();
     }
 
     /**
@@ -22,144 +24,114 @@ class UserService
      * @param array $userData
      * @return array
      */
-    public function registerUser(array $userData)
+    public function registerUser(array $userData): array
     {
-        // Validate required fields
-        $requiredFields = ['username', 'email', 'password', 'mobile'];
-        foreach ($requiredFields as $field) {
-            if (empty($userData[$field])) {
-                throw new \InvalidArgumentException("Missing required field: $field");
+        try {
+            // Check if email already exists
+            $existingUser = $this->userModel->findByEmail($userData['email']);
+            if ($existingUser) {
+                return [
+                    'success' => false,
+                    'message' => 'Email already registered'
+                ];
             }
-        }
 
-        // Check if email already exists
-        if ($this->userModel->findByEmail($userData['email'])) {
-            throw new \RuntimeException('Email already registered');
-        }
-
-        // Create new user
-        $user = new User();
-        $user->username = $userData['username'];
-        $user->email = $userData['email'];
-        $user->mobile = $userData['mobile'];
-        $user->setPassword($userData['password']);
-        $user->role = $userData['role'] ?? 'user';
-        $user->status = 'pending'; // Will be activated after email verification
-
-        if ($user->save()) {
-            // Send verification email
-            $token = bin2hex(random_bytes(32));
-            $this->emailService->sendVerificationEmail($user->email, $user->username, $token);
+            // Create new user
+            $userId = $this->userModel->create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'phone' => $userData['phone'] ?? null,
+                'password' => password_hash($userData['password'], PASSWORD_DEFAULT),
+                'role' => 'user',
+                'status' => 'active'
+            ]);
 
             return [
                 'success' => true,
-                'user_id' => $user->id,
-                'message' => 'Registration successful. Please check your email to verify your account.'
+                'message' => 'User registered successfully',
+                'user_id' => $userId
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Registration failed: ' . $e->getMessage()
             ];
         }
-
-        throw new \RuntimeException('Failed to register user');
     }
 
     /**
      * Update user profile
      * 
      * @param int $userId
-     * @param array $userData
-     * @return bool
+     * @param array $profileData
+     * @return array
      */
-    public function updateProfile(int $userId, array $userData)
+    public function updateProfile(int $userId, array $profileData): array
     {
-        $user = $this->userModel->find($userId);
-
-        if (!$user) {
-            throw new \RuntimeException('User not found');
-        }
-
-        // Update allowed fields
-        $updatableFields = ['username', 'mobile', 'address', 'city', 'state', 'country', 'pincode'];
-
-        foreach ($updatableFields as $field) {
-            if (isset($userData[$field])) {
-                $user->$field = $userData[$field];
+        try {
+            $allowedFields = ['name', 'phone', 'address', 'bio'];
+            $updateData = [];
+            
+            foreach ($allowedFields as $field) {
+                if (isset($profileData[$field])) {
+                    $updateData[$field] = $profileData[$field];
+                }
             }
-        }
 
-        // Handle profile picture upload
-        if (!empty($_FILES['profile_picture']['name'])) {
-            $uploadResult = $this->uploadProfilePicture($_FILES['profile_picture']);
-            if ($uploadResult['success']) {
-                $user->profile_picture = $uploadResult['file_path'];
-            }
+            $result = $this->userModel->update($userId, $updateData);
+            
+            return [
+                'success' => $result,
+                'message' => $result ? 'Profile updated successfully' : 'Profile update failed'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Profile update failed: ' . $e->getMessage()
+            ];
         }
-
-        return $user->save();
     }
 
     /**
-     * Change user password
-     * 
-     * @param int $userId
-     * @param string $currentPassword
-     * @param string $newPassword
-     * @return bool
-     */
-    public function changePassword(int $userId, string $currentPassword, string $newPassword)
-    {
-        $user = $this->userModel->find($userId);
-
-        if (!$user) {
-            throw new \RuntimeException('User not found');
-        }
-
-        // Verify current password
-        if (!$user->verifyPassword($currentPassword)) {
-            throw new \RuntimeException('Current password is incorrect');
-        }
-
-        // Update password
-        $user->setPassword($newPassword);
-
-        return $user->save();
-    }
-
-    /**
-     * Reset password request
+     * Request password reset
      * 
      * @param string $email
-     * @return bool
+     * @return array
      */
-    public function requestPasswordReset(string $email)
+    public function requestPasswordReset(string $email): array
     {
-        $user = $this->userModel->findByEmail($email);
+        try {
+            $user = $this->userModel->findByEmail($email);
+            if (!$user) {
+                return [
+                    'success' => false,
+                    'message' => 'Email not found'
+                ];
+            }
 
-        if ($user) {
             // Generate reset token
             $token = bin2hex(random_bytes(32));
-            $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour'));
+            $expiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
-            // Save token to database (you'll need a password_resets table)
-            $db = \App\Core\Database::getInstance();
-            $db->query(
-                "INSERT INTO password_resets (email, token, created_at) VALUES (:email, :token1, :expires1) 
-                 ON DUPLICATE KEY UPDATE PLACEHOLDER_SECRET_VALUEemail' => $email,
-                    'token1' => $token,
-                    'expires1' => $expiresAt,
-                    'token2' => $token,
-                    'expires2' => $expiresAt
-                ]
-            );
+            $db = Database::getInstance();
+            $stmt = $db->prepare("INSERT INTO password_reset_tokens (email, token, expires_at) VALUES (?, ?, ?)");
+            $stmt->execute([$email, $token, $expiry]);
 
-            // Send reset email
-            return $this->emailService->sendPasswordResetEmail($email, $user->username, $token);
+            return [
+                'success' => true,
+                'message' => 'Password reset link sent to your email',
+                'token' => $token
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Password reset request failed: ' . $e->getMessage()
+            ];
         }
-
-        // For security, don't reveal if the email exists or not
-        return true;
     }
 
     /**
-     * Reset password with token
+     * Reset user password
      * 
      * @param string $token
      * @param string $newPassword
@@ -167,12 +139,14 @@ class UserService
      */
     public function resetPassword(string $token, string $newPassword)
     {
-        $db = \App\Core\Database::getInstance();
+        $db = Database::getInstance();
 
         // Find valid token
-        $stmt = $db->query(
-            "SELECT * FROM PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEInvalid or expired token');
-        }
+        $stmt = $db->prepare(
+            "SELECT * FROM password_reset_tokens WHERE token = ? AND expires_at > NOW()"
+        );
+        $stmt->execute([$token]);
+        $reset = $stmt->fetch();
 
         // Find user by email
         $user = $this->userModel->findByEmail($reset['email']);
@@ -187,7 +161,21 @@ class UserService
 
         if ($result) {
             // Delete used token
-            $db->query("DELETE FROM PLACEHOLDER_SECRET_VALUEimage/jpeg', 'image/png', 'image/gif'];
+            $stmt = $db->prepare("DELETE FROM password_reset_tokens WHERE token = ?");
+            $stmt->execute([$token]);
+            
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Upload user profile picture
+     */
+    public function uploadProfilePicture(int $userId, array $file): array
+    {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         $maxSize = 2 * 1024 * 1024; // 2MB
 
         if ($file['error'] !== UPLOAD_ERR_OK) {

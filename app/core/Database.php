@@ -2,16 +2,15 @@
 
 namespace App\Core;
 
-use App\Core\Database\Database as BaseDatabase;
-
 /**
- * Enhanced Database Class Wrapper
- * Extends the core Database class to provide backward compatibility
- * and singleton access for legacy components.
+ * Enhanced Database Class
+ * Provides database connection and query methods
  */
-class Database extends BaseDatabase
+class Database
 {
     private static $instance = null;
+    private $pdo;
+    private $config;
 
     // Performance optimization features (kept for backward compatibility if accessed directly)
     private $queryCache = [];

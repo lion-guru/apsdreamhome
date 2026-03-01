@@ -415,21 +415,32 @@ class PushNotification extends Model
             [$templateKey]
         )->fetch();
     }
-            $generalPrefs = $preferences['general'];
-            switch ($channel) {
-                case self::CHANNEL_EMAIL:
-                    return $generalPrefs['email_enabled'] ?? true;
-                case self::CHANNEL_PUSH:
-                    return $generalPrefs['push_enabled'] ?? true;
-                case self::CHANNEL_SMS:
-                    return $generalPrefs['sms_enabled'] ?? false;
-                case self::CHANNEL_WHATSAPP:
-                    return $generalPrefs['whatsapp_enabled'] ?? false;
-            }
+
+    private function getUserNotificationPreferences(int $userId, string $channel): bool
+    {
+        $preferences = $this->query(
+            "SELECT notification_preferences FROM users WHERE id = ?",
+            [$userId]
+        )->fetch();
+
+        if (!$preferences) {
+            return true;
         }
 
-        // Default to enabled for push, disabled for others
-        return $channel === self::CHANNEL_PUSH;
+        $generalPrefs = json_decode($preferences['notification_preferences'], true)['general'];
+        
+        switch ($channel) {
+            case self::CHANNEL_EMAIL:
+                return $generalPrefs['email_enabled'] ?? true;
+            case self::CHANNEL_PUSH:
+                return $generalPrefs['push_enabled'] ?? true;
+            case self::CHANNEL_SMS:
+                return $generalPrefs['sms_enabled'] ?? false;
+            case self::CHANNEL_WHATSAPP:
+                return $generalPrefs['whatsapp_enabled'] ?? false;
+            default:
+                return true;
+        }
     }
 
     /**

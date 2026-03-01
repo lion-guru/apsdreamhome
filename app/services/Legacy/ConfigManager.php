@@ -413,7 +413,7 @@ function config($key, $default = null)
 
 // Validate configurations on load
 try {
-    $configManager = ConfigManager::get->with(['validateConfigurations'])Instance();
+    $configManager = ConfigManager::getInstance();
     $configManager->validateConfigurations();
 } catch (Exception $e) {
     // Log configuration error

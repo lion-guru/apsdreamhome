@@ -130,7 +130,13 @@ class Employee extends Model
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'] ?? null,
-                'PLACEHOLDER_SECRET_VALUE
+                'password' => password_hash($data['password'], PASSWORD_DEFAULT)
+            ]);
+
+            $userId = $this->db->lastInsertId();
+
+            // Insert employee record
+            $employeeSql = "
                 INSERT INTO " . static::$table . " (
                     user_id, role_id, department_id, designation, salary,
                     join_date, reporting_manager_id, status, address, notes,

@@ -1,4 +1,4 @@
-7<?php
+<?php
 /**
  * APS Dream Home - Fixed MVC Router
  * Using the existing HomeController and MVC structure properly
