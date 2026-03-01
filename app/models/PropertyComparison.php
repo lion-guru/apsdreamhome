@@ -30,9 +30,7 @@ class PropertyComparison extends Model
             'is_active' => 1,
             'expires_at' => date('Y-m-d H:i:s', strtotime('+24 hours')),
             'device_info' => json_encode($this->getDeviceInfo()),
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
@@ -138,7 +136,16 @@ class PropertyComparison extends Model
     public function getComparisonSession(string $sessionKey): ?array
     {
         $session = $this->query(
-            "SELECT * FROM property_comparison_sessions WHERE session_PLACEHOLDER_SECRET_VALUEexpires_at'] && strtotime($session['expires_at']) < time()) {
+            "SELECT * FROM property_comparison_sessions WHERE session_key = ? AND is_active = 1",
+            [$sessionKey]
+        )->fetch();
+
+        if (!$session) {
+            return null;
+        }
+
+        // Check if session expired
+        if (strtotime($session['expires_at']) < time()) {
             $this->update($session['id'], ['is_active' => 0]);
             return null;
         }
@@ -206,14 +213,9 @@ class PropertyComparison extends Model
     private function getCriteriaInfo(string $criteriaKey): ?array
     {
         return $this->query(
-            "SELECT * FROM comparison_criteria WHERE criteria_PLACEHOLDER_SECRET_VALUESELECT pcd.criteria_value, cc.data_type
-             FROM property_comparison_data pcd
-             LEFT JOIN comparison_criteria cc ON pcd.criteria_id = cc.id
-             WHERE pcd.property_id = ? AND cc.criteria_PLACEHOLDER_SECRET_VALUEcriteria_value'], $storedData['data_type']);
-        }
-
-        // Fallback to property data
-        return $this->getPropertyFieldValue($propertyId, $criteriaKey);
+            "SELECT * FROM comparison_criteria WHERE criteria_key = ? AND is_active = 1",
+            [$criteriaKey]
+        )->fetch();
     }
 
     /**
@@ -438,9 +440,11 @@ class PropertyComparison extends Model
     {
         do {
             $key = bin2hex(random_bytes(16));
-            $exists = $this->query("SELECT id FROM property_comparison_sessions WHERE session_PLACEHOLDER_SECRET_VALUESELECT property_id FROM comparison_session_properties WHERE session_id = ?",
-            [$sessionId]
-        )->fetchAll();
+            $exists = $this->query("SELECT id FROM property_comparison_sessions WHERE session_key = ?", [$key])->fetch();
+        } while ($exists);
+
+        return $key;
+    }
 
         $logData = [
             'session_id' => $sessionId,
@@ -450,10 +454,7 @@ class PropertyComparison extends Model
             'event_data' => json_encode($eventData),
             'properties_compared' => json_encode(array_column($properties, 'property_id')),
             'criteria_used' => $session['comparison_criteria'] ?? null,
-            'device_type' => $this->detectDeviceType($_SERVER['HTTP_USER_AGENT'] ?? ''),
-            'ip_address' =// SECURITY FIX: Validate and sanitize user input
-// // SECURITY FIX: Validate and sanitize user input
-// > $_SERVER['REMOTE_ADDR'] ?? null,
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
             'created_at' => date('Y-m-d H:i:s')
         ];
 

@@ -281,7 +281,12 @@ class Employee extends Model
 
                 // Update password in users table too if changed
                 if (!empty($data['password'])) {
-                    $userUpdates[] = "PLACEHOLDER_SECRET_VALUEPLACEHOLDER_SECRET_VALUEUPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
+                    $userUpdates[] = "password = :password";
+                    $userParams['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                }
+
+                if (!empty($userUpdates)) {
+                    $userSql = "UPDATE users SET " . implode(', ', $userUpdates) . ", updated_at = NOW() WHERE id = :id";
                     $userStmt = $this->db->prepare($userSql);
                     $userStmt->execute($userParams);
                 }

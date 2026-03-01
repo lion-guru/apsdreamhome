@@ -17,11 +17,22 @@ error_found=0
 for file in $changed_files; do
     if [ -f "$file" ]; then
         echo "Checking $file..."
-        php -l "$file" > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo "❌ Syntax error in $file"
-            php -l "$file"
-            error_found=1
+        # Capture both stdout and stderr
+        output=$(php -l "$file" 2>&1)
+        exit_code=$?
+
+        # Check if there are actual syntax errors (exclude DLL warnings)
+        if [ $exit_code -ne 0 ]; then
+            # Filter out DLL compatibility warnings
+            syntax_errors=$(echo "$output" | grep -v "VCRUNTIME140.dll" | grep -v "is not compatible with this PHP build")
+
+            if [ -n "$syntax_errors" ]; then
+                echo "❌ Syntax error in $file"
+                echo "$output"
+                error_found=1
+            else
+                echo "✅ $file OK (DLL warning ignored)"
+            fi
         else
             echo "✅ $file OK"
         fi
