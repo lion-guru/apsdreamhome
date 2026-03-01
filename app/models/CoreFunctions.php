@@ -46,7 +46,7 @@ class CoreFunctions
     {
         foreach ($data as $key => $value) {
             if (in_array($key, ['id', 'function_name', 'description', 'parameters', 'created_at', 'updated_at'])) {
-                $this-> = $value;
+                $this->$key = $value;
             }
         }
     }

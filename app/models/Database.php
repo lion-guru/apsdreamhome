@@ -51,7 +51,7 @@ class Database
     {
         foreach ($data as $key => $value) {
             if (in_array($key, ['id', 'name', 'host', 'username', 'password', 'created_at', 'updated_at'])) {
-                $this-> = $value;
+                $this->$key = $value;
             }
         }
     }

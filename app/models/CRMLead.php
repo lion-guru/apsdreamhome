@@ -56,7 +56,7 @@ class CRMLead
     {
         foreach ($data as $key => $value) {
             if (in_array($key, ['id', 'name', 'email', 'phone', 'status', 'source', 'created_at', 'updated_at'])) {
-                $this-> = $value;
+                $this->$key = $value;
             }
         }
     }

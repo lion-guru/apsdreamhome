@@ -46,7 +46,7 @@ class AIChatbot
     {
         foreach ($data as $key => $value) {
             if (in_array($key, ['id', 'name', 'description', 'status', 'created_at', 'updated_at'])) {
-                $this-> = $value;
+                $this->$key = $value;
             }
         }
     }
