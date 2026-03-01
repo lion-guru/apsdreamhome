@@ -65,13 +65,11 @@ if (file_exists(CONFIG_PATH . '/environments/' . APP_ENV . '.php')) {
 if (file_exists(CONFIG_PATH . '/database.php')) {
     try {
         $dbConfig = require CONFIG_PATH . '/database.php';
-        error_log("Database config loaded: " . print_r($dbConfig, true));
         if (!is_array($dbConfig)) {
             error_log("Database config returned non-array: " . gettype($dbConfig));
             $dbConfig = [];
         }
         $config = array_merge($config, $dbConfig);
-        error_log("Config after database merge: " . print_r($config['database'] ?? 'NOT SET', true));
     } catch (Exception $e) {
         error_log("Database config failed to load: " . $e->getMessage());
         // Continue without database config
