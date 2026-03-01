@@ -259,17 +259,11 @@ class Controller
      */
     public function requireLogin()
     {
-<<<<<<< HEAD
-        if (!$this->auth->check()) {
-            // Redirect to login if not authenticated
-            $this->redirect('/login');
-=======
         if (!$this->auth || !$this->auth->check()) {
             if ($this->session && method_exists($this->session, 'getFlashBag')) {
                 $this->session->getFlashBag()->add('error', 'Please login to continue');
             }
             Response::redirect('/login')->send();
->>>>>>> origin/chore/fix-500-bootstrap
             exit;
         }
     }
