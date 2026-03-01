@@ -510,6 +510,8 @@ class Router
      */
     protected function handleLegacyFallback($method, $uri)
     {
+        error_log("handleLegacyFallback called for method: $method, uri: $uri");
+        
         // Check if legacy routes file exists and try to find a match
         $legacyRoutesFile = $this->app->basePath('routes/web.php');
 
@@ -520,6 +522,7 @@ class Router
 
             // Try to find a legacy route match in public routes (for error testing)
             if (isset($webRoutes['public'][$method][$uri])) {
+                error_log("Found legacy route: " . $webRoutes['public'][$method][$uri]);
                 return $this->handleLegacyRoute($webRoutes['public'][$method][$uri], $uri);
             }
 
@@ -527,6 +530,7 @@ class Router
             if (isset($webRoutes['public'][$method])) {
                 foreach ($webRoutes['public'][$method] as $routeUri => $handler) {
                     if ($this->matchesLegacyRoute($routeUri, $uri)) {
+                        error_log("Found matching legacy route: " . $routeUri);
                         return $this->handleLegacyRoute($handler, $uri);
                     }
                 }
@@ -573,7 +577,14 @@ class Router
             }
 
             // Execute the method
+            error_log("Executing controller method: " . get_class($controller) . "::$method()");
             $response = $controller->$method();
+            error_log("Controller returned: " . gettype($response));
+            if ($response instanceof Response) {
+                error_log("Response is instance of Response class");
+            } else {
+                error_log("Response is NOT instance of Response class");
+            }
 
             return $this->prepareResponse($response);
         }
