@@ -56,7 +56,7 @@ class PropertyController extends BaseApiController
                     'total_pages' => \ceil($result['total'] / $limit)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -77,7 +77,7 @@ class PropertyController extends BaseApiController
             }
 
             return $this->jsonSuccess($property);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -103,7 +103,7 @@ class PropertyController extends BaseApiController
             $properties = $this->model('Property')->getByIds($ids);
 
             return $this->jsonSuccess(['properties' => $properties]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -134,7 +134,7 @@ class PropertyController extends BaseApiController
             ]);
 
             return $this->jsonSuccess(['id' => $this->db->getLastInsertId()], 'Search saved successfully', 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -153,7 +153,7 @@ class PropertyController extends BaseApiController
             }
 
             return $this->jsonSuccess(['saved_searches' => $searches]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -192,7 +192,7 @@ class PropertyController extends BaseApiController
             ];
 
             return $this->jsonSuccess($data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -222,7 +222,7 @@ class PropertyController extends BaseApiController
             $this->model('SavedSearch')->deleteForUser($id, $user->id);
 
             return $this->jsonSuccess(null, 'Saved search deleted');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -276,7 +276,7 @@ class PropertyController extends BaseApiController
                 ],
                 'total_found' => \count($formatted_properties)
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -301,7 +301,7 @@ class PropertyController extends BaseApiController
                 'type' => $type,
                 'amenities' => $amenities
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -314,7 +314,7 @@ class PropertyController extends BaseApiController
             }
             $types = $this->model('PropertyType')->getAllOrdered();
             return $this->jsonSuccess(['property_types' => $types]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -330,7 +330,7 @@ class PropertyController extends BaseApiController
             }
             $locations = $this->model('Property')->getUniqueLocations();
             return $this->jsonSuccess(['locations' => $locations]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
