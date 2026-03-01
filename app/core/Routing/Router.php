@@ -445,20 +445,15 @@ class Router
      */
     public function dispatch(Request $request)
     {
-        error_log("Router::dispatch called for URI: " . $request->path());
-
         $this->request = $request;
 
         $method = $request->getMethod();
         $uri = $request->path();
 
-        error_log("Method: $method, URI: $uri");
-
         // Find the matching route
         $route = $this->findRoute($method, $uri);
 
         if (!$route) {
-            error_log("No route found, trying legacy fallback");
             // Try legacy fallback if modern route not found
             return $this->handleLegacyFallback($method, $uri);
         }
@@ -510,19 +505,15 @@ class Router
      */
     protected function handleLegacyFallback($method, $uri)
     {
-        error_log("handleLegacyFallback called for method: $method, uri: $uri");
-        
         // Check if legacy routes file exists and try to find a match
         $legacyRoutesFile = $this->app->basePath('routes/web.php');
 
         if (file_exists($legacyRoutesFile)) {
             // Include legacy routes configuration
-            $webRoutes = [];
-            require $legacyRoutesFile;
+            $webRoutes = require $legacyRoutesFile;
 
             // Try to find a legacy route match in public routes (for error testing)
             if (isset($webRoutes['public'][$method][$uri])) {
-                error_log("Found legacy route: " . $webRoutes['public'][$method][$uri]);
                 return $this->handleLegacyRoute($webRoutes['public'][$method][$uri], $uri);
             }
 
@@ -530,7 +521,6 @@ class Router
             if (isset($webRoutes['public'][$method])) {
                 foreach ($webRoutes['public'][$method] as $routeUri => $handler) {
                     if ($this->matchesLegacyRoute($routeUri, $uri)) {
-                        error_log("Found matching legacy route: " . $routeUri);
                         return $this->handleLegacyRoute($handler, $uri);
                     }
                 }

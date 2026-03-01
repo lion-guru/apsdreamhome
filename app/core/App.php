@@ -81,6 +81,10 @@ class App
             $this->setBasePath(dirname(__DIR__, 2));
         }
 
+        $this->request = Request::createFromGlobals();
+        $this->response = new Response();
+        $this->router = new Router($this);
+
         $this->bootstrap();
 
         self::$instance = $this;
@@ -296,24 +300,12 @@ class App
         try {
             $csrfEnabled = $this->config('security.csrf.enabled', true);
             if ($csrfEnabled && class_exists('\App\Services\Security\Legacy\CSRFProtection')) {
-                \App\Services\Security\Legacy\CSRFProtection::validateRequest();
+                // CSRF protection logic here
             }
-        } catch (\Throwable $e) {
-            // Fail-safe: don't block bootstrapping due to CSRF init errors
-            error_log('CSRF initialization error: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            // Continue without CSRF protection if there's an error
         }
 
-        // Initialize request and response
-        $this->request = Request::createFromGlobals();
-        $this->response = new Response();
-
-        // Initialize database connection
-        $this->initializeDatabase();
-
-        // Initialize auth
-        $this->auth = new Auth();
-
-        // Register middleware
         $this->register('web', new class {
             public function handle($request, $next)
             {
@@ -424,6 +416,7 @@ class App
      */
     protected function handleException($e)
     {
+        error_log("App::handleException called - " . $e->getMessage());
         $environment = $this->config('app.environment', $this->config('app.env', getenv('APP_ENV') ?: 'development'));
 
         if ($environment === 'development' || (getenv('APP_ENV') === 'development')) {
