@@ -15,9 +15,19 @@ class BaseController extends CoreController
     public function __construct()
     {
         parent::__construct();
-        // Temporarily disable database to test routing
-        // $this->db = \App\Core\Database::getInstance();
-        // $this->loadModels();
+        // Re-enable database connection with proper config
+        $dbConfig = [
+            'host' => 'localhost',
+            'database' => 'apsdreamhome',
+            'username' => 'root',
+            'password' => '',  // XAMPP MySQL root has no password
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'port' => 3306,
+        ];
+        $this->db = \App\Core\Database::getInstance($dbConfig);
+        $this->loadModels();
         $this->getCsrfToken();
     }
 
