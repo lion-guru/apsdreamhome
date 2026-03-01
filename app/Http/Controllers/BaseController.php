@@ -47,19 +47,19 @@ class BaseController extends CoreController
      */
     protected function getCsrfToken(): string
     {
-        if (!$this->session->isStarted()) {
-            $this->session->start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
 
-        if (!$this->session->has('csrf_token')) {
-            $this->session->set('csrf_token', bin2hex(random_bytes(32)));
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
-        return $this->session->get('csrf_token');
+        return $_SESSION['csrf_token'];
     }
 
     protected function verifyCsrfToken(?string $token): bool
     {
-        $storedToken = $this->session->get('csrf_token');
+        $storedToken = $_SESSION['csrf_token'] ?? null;
         return !empty($storedToken) && is_string($token) && hash_equals($storedToken, $token);
     }
 
@@ -68,7 +68,7 @@ class BaseController extends CoreController
      */
     protected function setFlash(string $type, string $message): void
     {
-        $this->session->set($type, $message);
+        $_SESSION[$type] = $message;
     }
 
     /**
@@ -76,9 +76,9 @@ class BaseController extends CoreController
      */
     protected function getFlash(string $type): ?string
     {
-        if ($this->session->has($type)) {
-            $message = $this->session->get($type);
-            $this->session->remove($type);
+        if (isset($_SESSION[$type])) {
+            $message = $_SESSION[$type];
+            unset($_SESSION[$type]);
             return $message;
         }
         return null;
