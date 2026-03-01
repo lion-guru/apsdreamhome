@@ -11,11 +11,22 @@ class App
     private static $instance = null;
     private $basePath;
     private $config = [];
+    private $request;
+    private $response;
+    private $session;
+    private $db;
+    private $router;
     
     public function __construct($basePath = null)
     {
         $this->basePath = $basePath ?: dirname(__DIR__, 2);
         $this->loadConfig();
+        
+        // Initialize session
+        $this->session = new \stdClass();
+        $this->session->isStarted = function() {
+            return session_status() !== PHP_SESSION_NONE;
+        };
     }
     
     public static function getInstance($basePath = null)
@@ -187,6 +198,36 @@ class App
         } else {
             return "Controller " . $controllerClass . " not found";
         }
+    }
+    
+    public function request()
+    {
+        return $this->request;
+    }
+    
+    public function response()
+    {
+        return $this->response;
+    }
+    
+    public function session()
+    {
+        return $this->session;
+    }
+    
+    public function db()
+    {
+        return $this->db;
+    }
+    
+    public function router()
+    {
+        return $this->router;
+    }
+    
+    public function basePath($path = '')
+    {
+        return $this->basePath . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '\\/') : '');
     }
     
     private function handleError($exception)
