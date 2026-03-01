@@ -395,8 +395,7 @@ class LeadController extends Controller
         try {
             $this->leadService->assignLead(
                 $lead, 
-                $request->assigned_to, 
-                $request->notes
+                $request->assigned_to
             );
 
             return response()->json([
@@ -1352,18 +1351,6 @@ class LeadController extends Controller
      * Get all lead statuses for dropdown.
      *
      * @return \Illuminate\Http\JsonResponse
-     */
-    public function getStatuses()
-    {
-        $statuses = LeadStatus::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get(['id', 'name', 'color', 'is_default']);
-            
-        return response()->json([
-            'success' => true,
-            'data' => $statuses,
-        ]);
-    }
 
     /**
      * Get all lead sources for dropdown.
@@ -1374,7 +1361,7 @@ class LeadController extends Controller
     {
         $sources = LeadSource::where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'color', 'icon']);
+            ->get();
             
         return response()->json([
             'success' => true,
@@ -1390,7 +1377,7 @@ class LeadController extends Controller
     public function getAllTags()
     {
         $tags = LeadTag::orderBy('name')
-            ->get(['id', 'name', 'color']);
+            ->get();
             
         return response()->json([
             'success' => true,
@@ -1406,7 +1393,7 @@ class LeadController extends Controller
     public function getUsers()
     {
         $users = User::orderBy('name')
-            ->get(['id', 'name', 'email', 'avatar']);
+            ->get();
             
         return response()->json([
             'success' => true,
