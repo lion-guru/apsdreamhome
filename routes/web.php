@@ -1,14 +1,26 @@
 <?php
 
-/**
- * Web Routes Configuration
- * 
- * This file returns an empty array as all routes are now defined in:
- * - routes/modern.php (Web routes with middleware)
- * - routes/api.php (API routes)
- * 
- * The Router checks for this file in handleLegacyFallback() when no modern route is found.
- * Returning empty ensures the modern routing system takes precedence.
- */
-
-$webRoutes = [];
+return [
+    'public' => [
+        'GET' => [
+            '/' => 'HomeController@index',
+            '/home' => 'HomeController@index',
+            '/properties' => 'HomeController@properties',
+            '/properties/' => 'HomeController@properties',
+            '/about' => 'HomeController@about',
+            '/contact' => 'HomeController@contact',
+            '/projects' => 'HomeController@projects',
+            '/sitemap' => 'HomeController@sitemap',
+            '/privacy' => 'HomeController@privacy',
+            '/terms' => 'HomeController@terms',
+            '/news' => 'HomeController@blog',
+            '/blog' => 'HomeController@blog',
+            '/property' => 'HomeController@propertyDetail',
+            '/property/' => 'HomeController@propertyDetail',
+            '/featured-properties' => 'HomeController@featuredProperties',
+        ],
+        'POST' => [
+            '/contact' => 'HomeController@contact',
+        ],
+    ],
+];
