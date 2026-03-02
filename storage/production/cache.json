@@ -1,0 +1,26 @@
+{
+    "default": "redis",
+    "stores": {
+        "redis": {
+            "driver": "redis",
+            "connection": "default",
+            "prefix": "apsdreamhome_prod_"
+        },
+        "file": {
+            "driver": "file",
+            "path": "C:\/xampp\/htdocs\/apsdreamhome\/storage\/production\/cache"
+        }
+    },
+    "redis": {
+        "client": "phpredis",
+        "options": {
+            "cluster": "redis",
+            "prefix": "apsdreamhome_prod_"
+        },
+        "default": {
+            "url": "tcp:\/\/127.0.0.1:6379",
+            "password": null,
+            "database": 0
+        }
+    }
+}

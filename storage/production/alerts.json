@@ -1,0 +1,17 @@
+{
+    "enabled": true,
+    "channels": [
+        "email",
+        "log"
+    ],
+    "email_recipients": [
+        "admin@apsdreamhomes.com"
+    ],
+    "thresholds": {
+        "response_time": 2000,
+        "error_rate": 5,
+        "memory_usage": 80,
+        "cpu_usage": 80,
+        "disk_usage": 90
+    }
+}

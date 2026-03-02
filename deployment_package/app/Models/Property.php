@@ -1,0 +1,325 @@
+<?php
+
+namespace App\Models;
+
+class Property extends Model
+{
+    protected static $table = 'properties';
+    protected array $fillable = [
+        'title',
+        'description',
+        'price',
+        'location',
+        'type',
+        'property_type_id',
+        'property_type',
+        'bedrooms',
+        'bathrooms',
+        'area',
+        'area_unit',
+        'is_featured',
+        'featured',
+        'status',
+        'image_path',
+        'city',
+        'state',
+        'pincode',
+        'latitude',
+        'longitude',
+        'created_at',
+        'updated_at'
+    ];
+
+    public static function getFeaturedProperties($limit = 6)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $stmt = $db->query(
+                "SELECT * FROM properties
+                 WHERE featured = 1
+                 AND status != 'sold'  -- Show all featured properties except sold ones
+                 ORDER BY created_at DESC
+                 LIMIT " . (int)$limit
+            );
+
+            if ($stmt) {
+                $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                return array_map(fn($result) => new static($result), $results);
+            }
+            return [];
+        } catch (\Exception $e) {
+            error_log("Error in getFeaturedProperties: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public static function getAllProperties($limit = null, $offset = 0)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $sql = "SELECT * FROM properties WHERE status != 'sold' ORDER BY created_at DESC";
+            
+            if ($limit) {
+                $sql .= " LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
+            }
+            
+            return $db->fetchAll($sql);
+        } catch (\Exception $e) {
+            error_log("Error in getAllProperties: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getPropertyById($id)
+    {
+        try {
+            return static::find($id);
+        } catch (\Exception $e) {
+            error_log("Error in getPropertyById: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get images for this property
+     * @return array
+     */
+    public function getImages()
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            // Use the global database connection if available, otherwise use the model's connection
+            $pdo = $db->getConnection();
+
+            $stmt = $pdo->prepare("SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC");
+            $stmt->execute([$this->id]);
+
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log("Error in getImages: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Search properties with filters
+     * @param array $filters
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function searchProperties(array $filters = [], int $limit = 10, int $offset = 0): array
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $params = [];
+            $where = ["1=1"];
+
+            // Keyword search (title, description, address)
+            if (!empty($filters['keyword'])) {
+                $where[] = "(title LIKE ? OR description LIKE ? OR address LIKE ?)";
+                $params[] = "%{$filters['keyword']}%";
+                $params[] = "%{$filters['keyword']}%";
+                $params[] = "%{$filters['keyword']}%";
+            }
+
+            // Location filter
+            if (!empty($filters['location'])) {
+                $where[] = "address LIKE ?";
+                $params[] = "%{$filters['location']}%";
+            }
+
+            // Type filter
+            if (!empty($filters['type'])) {
+                $where[] = "type = ?";
+                $params[] = $filters['type'];
+            }
+
+            // Price range
+            if (!empty($filters['min_price'])) {
+                $where[] = "price >= ?";
+                $params[] = $filters['min_price'];
+            }
+            if (!empty($filters['max_price'])) {
+                $where[] = "price <= ?";
+                $params[] = $filters['max_price'];
+            }
+
+            // Bedrooms
+            if (!empty($filters['bedrooms'])) {
+                $where[] = "bedrooms >= ?";
+                $params[] = $filters['bedrooms'];
+            }
+
+            // Bathrooms
+            if (!empty($filters['bathrooms'])) {
+                $where[] = "bathrooms >= ?";
+                $params[] = $filters['bathrooms'];
+            }
+
+            // Sort order
+            $orderBy = "created_at DESC"; // Default
+            if (!empty($filters['sort'])) {
+                switch ($filters['sort']) {
+                    case 'newest':
+                        $orderBy = "created_at DESC";
+                        break;
+                    case 'oldest':
+                        $orderBy = "created_at ASC";
+                        break;
+                    case 'price_low':
+                        $orderBy = "price ASC";
+                        break;
+                    case 'price_high':
+                        $orderBy = "price DESC";
+                        break;
+                    case 'area':
+                        $orderBy = "area_sqft DESC";
+                        break;
+                }
+            }
+
+            $sql = "SELECT * FROM properties WHERE " . implode(" AND ", $where) . " ORDER BY $orderBy LIMIT ? OFFSET ?";
+            $params[] = $limit;
+            $params[] = $offset;
+
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
+            $results = $stmt->fetchAll();
+            return array_map(fn($result) => new static($result), $results);
+        } catch (\Exception $e) {
+            error_log("Error in searchProperties: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get properties for admin with filters and pagination
+     */
+    public static function getAdminProperties($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where_conditions = [];
+            $params = [];
+
+            // Search filter
+            if (!empty($filters['search'])) {
+                $where_conditions[] = "(p.title LIKE :search OR p.description LIKE :search OR p.city LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+
+            // Status filter
+            if (!empty($filters['status'])) {
+                $where_conditions[] = "p.status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            // Featured filter
+            if (isset($filters['featured']) && $filters['featured'] !== '') {
+                $where_conditions[] = "p.featured = :featured";
+                $params['featured'] = (int)$filters['featured'];
+            }
+
+            // Type filter
+            if (!empty($filters['type'])) {
+                $where_conditions[] = "pt.type = :type";
+                $params['type'] = $filters['type'];
+            }
+
+            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
+
+            // Build ORDER BY clause
+            $allowed_sorts = ['id', 'title', 'price', 'created_at', 'status'];
+            $sort = in_array($filters['sort'] ?? '', $allowed_sorts) ? $filters['sort'] : 'created_at';
+            $order = strtoupper($filters['order'] ?? '') === 'ASC' ? 'ASC' : 'DESC';
+            $order_clause = "ORDER BY p.{$sort} {$order}";
+
+            $sql = "
+                SELECT
+                    p.id,
+                    p.title,
+                    p.price,
+                    p.status,
+                    p.featured,
+                    p.location,
+                    p.area,
+                    p.created_at,
+                    pt.type as property_type
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                {$where_clause}
+                {$order_clause}
+                LIMIT :limit OFFSET :offset";
+
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->bindValue(':limit', (int)$filters['per_page'], \PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            error_log('Admin properties query error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total properties count for pagination
+     */
+    public static function getAdminTotalProperties($filters)
+    {
+        try {
+            $db = \App\Core\Database::getInstance();
+            $pdo = $db->getConnection();
+            $where_conditions = [];
+            $params = [];
+
+            // Search filter
+            if (!empty($filters['search'])) {
+                $where_conditions[] = "(p.title LIKE :search OR p.description LIKE :search OR p.city LIKE :search)";
+                $params['search'] = '%' . $filters['search'] . '%';
+            }
+
+            // Status filter
+            if (!empty($filters['status'])) {
+                $where_conditions[] = "p.status = :status";
+                $params['status'] = $filters['status'];
+            }
+
+            // Featured filter
+            if (isset($filters['featured']) && $filters['featured'] !== '') {
+                $where_conditions[] = "p.featured = :featured";
+                $params['featured'] = (int)$filters['featured'];
+            }
+
+            // Type filter
+            if (!empty($filters['type'])) {
+                $where_conditions[] = "pt.type = :type";
+                $params['type'] = $filters['type'];
+            }
+
+            $where_clause = empty($where_conditions) ? '' : 'WHERE ' . implode(' AND ', $where_conditions);
+
+            $sql = "SELECT COUNT(*) as total 
+                    FROM properties p 
+                    LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                    {$where_clause}";
+
+            $stmt = $pdo->prepare($sql);
+            foreach ($params as $key => $val) {
+                $stmt->bindValue(':' . $key, $val);
+            }
+            $stmt->execute();
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            return (int)($result['total'] ?? 0);
+        } catch (\Exception $e) {
+            error_log('Admin total properties query error: ' . $e->getMessage());
+            return 0;
+        }
+    }
+}

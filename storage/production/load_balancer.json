@@ -1,0 +1,23 @@
+{
+    "enabled": true,
+    "algorithm": "round_robin",
+    "servers": {
+        "server1": {
+            "host": "127.0.0.1",
+            "port": 80,
+            "weight": 1
+        },
+        "server2": {
+            "host": "127.0.0.1",
+            "port": 8080,
+            "weight": 1
+        }
+    },
+    "health_check": {
+        "enabled": true,
+        "interval": 30,
+        "timeout": 5,
+        "path": "\/health"
+    },
+    "session_affinity": true
+}

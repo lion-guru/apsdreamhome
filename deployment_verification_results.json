@@ -1,0 +1,35 @@
+{
+    "timestamp": "2026-03-02 19:48:56",
+    "php_version": "8.2.12",
+    "tests": {
+        "php_version": "PASS",
+        "ext_mysqli": "PASS",
+        "ext_gd": "FAIL",
+        "ext_curl": "PASS",
+        "ext_json": "PASS",
+        "ext_mbstring": "PASS",
+        "ext_openssl": "PASS",
+        "database_connection": "PASS",
+        "database_tables": "PASS",
+        "sample_data": "PASS",
+        "file_app_Core_Controllerphp": "PASS",
+        "file_app_Http_Controllers_BaseControllerphp": "PASS",
+        "file_app_Http_Controllers_Controllerphp": "PASS",
+        "file_public_indexphp": "PASS",
+        "file_config_databasephp": "PASS",
+        "file_composerjson": "PASS",
+        "file_htaccess": "PASS",
+        "dir_app": "PASS",
+        "dir_public": "PASS",
+        "dir_config": "PASS",
+        "dir_storage": "PASS",
+        "web_server": "PASS",
+        "memory_limit": "PASS"
+    },
+    "summary": {
+        "passed": 24,
+        "failed": 1,
+        "warnings": 0,
+        "success_rate": 96
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "block_bad_bots": true,
+    "rate_limiting": true,
+    "ip_whitelist": [
+        "127.0.0.1",
+        "::1"
+    ],
+    "blocked_ips": [],
+    "allowed_methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+    ],
+    "max_request_size": "10M",
+    "block_suspicious_requests": true
+}

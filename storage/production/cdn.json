@@ -1,0 +1,13 @@
+{
+    "enabled": true,
+    "domain": "cdn.apsdreamhomes.com",
+    "assets": {
+        "css": true,
+        "js": true,
+        "images": true,
+        "fonts": true
+    },
+    "cache_ttl": 31536000,
+    "compression": true,
+    "minification": true
+}

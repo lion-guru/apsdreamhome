@@ -10,52 +10,12 @@ function debug_log($message)
 
 debug_log("Request started: " . ($_SERVER['REQUEST_URI'] ?? 'CLI'));
 
+// Load centralized path configuration
+require_once __DIR__ . '/../config/paths.php';
+
 // Set HTTP_HOST to avoid warnings in config files
 if (!isset($_SERVER['HTTP_HOST'])) {
     $_SERVER['HTTP_HOST'] = 'localhost';
-}
-
-// Set the default timezone
-date_default_timezone_set('Asia/Manila');
-
-// Session is started by the App class with proper configuration
-// if (session_status() === PHP_SESSION_NONE) {
-//    session_start();
-// }
-
-$__env = getenv('APP_ENV') ?: 'development';
-if ($__env === 'development') {
-    error_reporting(E_ALL);
-    ini_set('display_errors', '1');
-} else {
-    error_reporting(0);
-    ini_set('display_errors', '0');
-}
-ini_set('error_log', dirname(__DIR__) . '/logs/php_error.log');
-
-// Define the base path
-if (!defined('BASE_PATH')) {
-    define('BASE_PATH', dirname(__DIR__));
-}
-
-// Define BASE_URL if not already defined
-if (!defined('BASE_URL')) {
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    // Remove accidental trailing dot in host like 'localhost.'
-    $host = rtrim($host, '.');
-    $script = dirname($_SERVER['SCRIPT_NAME'] ?? '');
-
-    // Remove /public if it exists in the path to get the app root URL
-    // e.g. /apsdreamhome/public -> /apsdreamhome
-    if (basename($script) === 'public') {
-        $script = dirname($script);
-    }
-
-    // Normalize and ensure trailing slash
-    $script = rtrim($script, '/');
-    $basePath = $script ? ($script . '/') : '/';
-    define('BASE_URL', $protocol . '://' . $host . $basePath);
 }
 
 // Import the App class

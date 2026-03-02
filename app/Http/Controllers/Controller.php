@@ -6,7 +6,7 @@ use App\Services\AuthService;
 
 abstract class Controller extends BaseController
 {
-    public AuthService $auth;
+    public $auth;
     protected $db;
 
     public function __construct()

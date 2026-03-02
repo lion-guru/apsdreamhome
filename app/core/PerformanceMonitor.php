@@ -1,7 +1,6 @@
 <?php
 /**
- * Performance Monitor & Analytics
- * Tracks application performance, cache usage, and system health
+ * APS Dream Home - Performance Monitor
  */
 
 namespace App\Core;
@@ -9,14 +8,13 @@ namespace App\Core;
 class PerformanceMonitor
 {
     private static $instance = null;
-    private $metrics = [];
     private $startTime;
-    private $memoryStart;
+    private $metrics;
 
-    private function __construct()
+    public function __construct()
     {
         $this->startTime = microtime(true);
-        $this->memoryStart = memory_get_usage(true);
+        $this->metrics = [];
     }
 
     public static function getInstance()
@@ -27,173 +25,53 @@ class PerformanceMonitor
         return self::$instance;
     }
 
-    /**
-     * Record a metric
-     */
-    public function record($key, $value, $tags = [])
+    public function startTimer($name)
     {
-        $this->metrics[] = [
-            'key' => $key,
-            'value' => $value,
-            'timestamp' => microtime(true),
-            'tags' => $tags
+        $this->metrics[$name] = [
+            'start' => microtime(true),
+            'memory_start' => memory_get_usage(true)
         ];
     }
 
-    /**
-     * Record execution time for a function/block
-     */
-    public function time($key, callable $callback, $tags = [])
+    public function endTimer($name)
     {
-        $start = microtime(true);
-        $result = $callback();
-        $executionTime = microtime(true) - $start;
-
-        $this->record($key, $executionTime, $tags);
-        return $result;
+        if (isset($this->metrics[$name])) {
+            $this->metrics[$name]['end'] = microtime(true);
+            $this->metrics[$name]['duration'] = ($this->metrics[$name]['end'] - $this->metrics[$name]['start']) * 1000;
+            $this->metrics[$name]['memory_end'] = memory_get_usage(true);
+            $this->metrics[$name]['memory_used'] = $this->metrics[$name]['memory_end'] - $this->metrics[$name]['memory_start'];
+        }
     }
 
-    /**
-     * Record cache hit/miss
-     */
-    public function cache($key, $hit, $tags = [])
-    {
-        $this->record($key, $hit ? 1 : 0, array_merge($tags, [
-            'type' => 'cache',
-            'result' => $hit ? 'hit' : 'miss'
-        ]));
-    }
-
-    /**
-     * Get current performance metrics
-     */
     public function getMetrics()
     {
+        $totalTime = (microtime(true) - $this->startTime) * 1000;
+        $peakMemory = memory_get_peak_usage(true);
+        $currentMemory = memory_get_usage(true);
+
         return [
-            'execution_time' => microtime(true) - $this->startTime,
-            'memory_usage' => memory_get_usage(true) - $this->memoryStart,
-            'memory_peak' => memory_get_peak_usage(true),
-            'metrics_count' => count($this->metrics),
-            'detailed_metrics' => $this->metrics
+            'total_time' => round($totalTime, 2),
+            'peak_memory' => $this->formatBytes($peakMemory),
+            'current_memory' => $this->formatBytes($currentMemory),
+            'metrics' => $this->metrics
         ];
     }
 
-    /**
-     * Get cache performance statistics
-     */
-    public function getCacheStats()
+    private function formatBytes($bytes)
     {
-        $cacheMetrics = array_filter($this->metrics, function($metric) {
-            return isset($metric['tags']['type']) && $metric['tags']['type'] === 'cache';
-        });
-
-        $hits = array_filter($cacheMetrics, function($metric) {
-            return isset($metric['tags']['result']) && $metric['tags']['result'] === 'hit';
-        });
-
-        $misses = array_filter($cacheMetrics, function($metric) {
-            return isset($metric['tags']['result']) && $metric['tags']['result'] === 'miss';
-        });
-
-        $total = count($cacheMetrics);
-        $hitCount = count($hits);
-        $missCount = count($misses);
-
-        return [
-            'total_requests' => $total,
-            'hits' => $hitCount,
-            'misses' => $missCount,
-            'hit_ratio' => $total > 0 ? ($hitCount / $total) * 100 : 0
-        ];
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+        return round($bytes, 2) . ' ' . $units[$pow];
     }
 
-    /**
-     * Get database performance statistics
-     */
-    public function getDatabaseStats()
+    public function logMetrics()
     {
-        $dbMetrics = array_filter($this->metrics, function($metric) {
-            return isset($metric['tags']['type']) && $metric['tags']['type'] === 'database';
-        });
-
-        if (empty($dbMetrics)) {
-            return ['total_queries' => 0, 'avg_execution_time' => 0, 'slow_queries' => 0];
-        }
-
-        $executionTimes = array_column($dbMetrics, 'value');
-        $slowQueries = array_filter($executionTimes, function($time) {
-            return $time > 1.0; // Queries taking more than 1 second
-        });
-
-        return [
-            'total_queries' => count($dbMetrics),
-            'avg_execution_time' => array_sum($executionTimes) / count($executionTimes),
-            'slow_queries' => count($slowQueries),
-            'max_execution_time' => max($executionTimes)
-        ];
-    }
-
-    /**
-     * Export metrics to JSON for monitoring
-     */
-    public function exportMetrics()
-    {
-        return [
-            'timestamp' => date('Y-m-d H:i:s'),
-            'performance' => $this->getMetrics(),
-            'cache' => $this->getCacheStats(),
-            'database' => $this->getDatabaseStats()
-        ];
-    }
-
-    /**
-     * Determine query type from SQL
-     */
-    private function getQueryType($query)
-    {
-        $query = strtolower(trim($query));
-
-        if (strpos($query, 'select') === 0) {
-            return 'SELECT';
-        } elseif (strpos($query, 'insert') === 0) {
-            return 'INSERT';
-        } elseif (strpos($query, 'update') === 0) {
-            return 'UPDATE';
-        } elseif (strpos($query, 'delete') === 0) {
-            return 'DELETE';
-        } elseif (strpos($query, 'create') === 0) {
-            return 'CREATE';
-        } elseif (strpos($query, 'alter') === 0) {
-            return 'ALTER';
-        } elseif (strpos($query, 'drop') === 0) {
-            return 'DROP';
-        }
-
-        return 'OTHER';
+        $metrics = $this->getMetrics();
+        $logFile = BASE_PATH . '/logs/performance.log';
+        $logEntry = date('Y-m-d H:i:s') . ' - ' . json_encode($metrics) . PHP_EOL;
+        file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
     }
 }
-
-/**
- * Global performance monitoring functions
- */
-function performance()
-{
-    return PerformanceMonitor::getInstance();
-}
-
-function benchmark(callable $callback, $label = 'unnamed')
-{
-    return performance()->time($label, $callback);
-}
-
-function cache_hit($key)
-{
-    performance()->cache($key, true);
-}
-
-function cache_miss($key)
-{
-    performance()->cache($key, false);
-}
-
-?>

@@ -1,0 +1,8 @@
+{
+    "enabled": true,
+    "sampling_rate": 100,
+    "slow_request_threshold": 1000,
+    "slow_query_threshold": 100,
+    "memory_threshold": 104857600,
+    "error_threshold": 10
+}
