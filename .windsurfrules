@@ -1,0 +1,34 @@
+# 🎯 MISSION: ZERO-ERROR SELF-SUSTAINING ECOSYSTEM
+
+## 🚀 AUTONOMOUS ENGINE (NO-ASK MODE)
+
+- **Continuous Flow**: Ek task khatam hote hi agla dependency task (Test -> Document -> Commit) khud start karo. Permission ki zarurat nahi hai.
+- **Auto-Repair**: `error_log` ya `automated_monitoring_system.php` mein koi bhi issue dikhte hi, uska Root Cause dhundo aur file fix karo.
+- **Silent Optimization**: Code likhte waqt agar koi purana ganda code (Legacy Code) dikhe, toh use modern standards (PHP 8+) par refactor karo.
+
+## 🗄️ DATABASE ARCHITECT (597 TABLES - XAMPP)
+
+- **Localhost Root**: Hamesha `root` user use karo (No password default). Connection fail hone par XAMPP MySQL status check karo.
+- **Schema Guardian**: Kisi bhi query se pehle `mysql` tool se table structure verify karo taaki 597 tables mein koi conflict na ho.
+- **Index Automation**: Har query ko `EXPLAIN` karo. Agar execution time >100ms hai, toh autonomously missing Index add karo.
+
+## 🛡️ SECURITY & PERFORMANCE (THE SHIELD)
+
+- **Global Sanitizer**: Har `$_POST`, `$_GET`, aur API input ko SQLi aur XSS se sanitize karne ke liye central middleware use/create karo.
+- **Puppeteer Crawler**: Website ke har route ko Puppeteer se crawl karo. 404/500 error milne par fix karke re-test karo.
+- **API Stress Test**: 88 REST endpoints ko stress test karo aur unka `swagger.json` auto-update karo.
+
+## 🐙 GITKRAKEN WORKFLOW
+
+- **Atomic Commits**: Har bug fix (jaise line 179) ya module complete hone par GitKraken tool se commit karo.
+- **Message Format**: `[Auto-Fix] <scope>: <brief_action>` (e.g., `[Auto-Fix] PropertyModel: Fixed array offset on line 179`).
+
+## 📊 REAL-TIME MONITORING
+
+- **Dashboard Sync**: Har task ke baad `monitoring_dashboard.html` update karo taaki progress dikhti rahe.
+- **Memory Storage**: Complex DB relations ko Memory MCP mein save karo taaki baar-baar scan na karna pade.
+
+## 🚫 FINAL BOUNDARIES
+
+- Core `config/` files ko edit karne se pehle uska `.bak` (backup) zaroori hai.
+- Architectural change (like changing DB engine) ke bina kaam ruko mat.
