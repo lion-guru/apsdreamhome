@@ -11,17 +11,19 @@
 ## 🔧 STEP 1: ENVIRONMENT SETUP
 
 ### **📦 REQUIRED SOFTWARE:**
+
 1. **XAMPP** (or similar stack with PHP + MySQL + Apache)
 2. **PHP 8+** (for modern features)
 3. **MySQL/MariaDB** (database server)
 4. **Apache/Nginx** (web server)
 
 ### **🔍 VERIFICATION COMMANDS:**
+
 ```bash
 # Check PHP version
 php --version
 
-# Check MySQL version  
+# Check MySQL version
 mysql --version
 
 # Check Apache status
@@ -33,6 +35,7 @@ mysql --version
 ## 🗄️ STEP 2: DATABASE SETUP
 
 ### **📁 IMPORT DATABASE:**
+
 ```bash
 # Create database
 mysql -u root -e "CREATE DATABASE apsdreamhome;"
@@ -45,6 +48,7 @@ mysql -u root -e "USE apsdreamhome; SHOW TABLES;"
 ```
 
 ### **🔍 DATABASE VERIFICATION:**
+
 ```bash
 # Check table count
 mysql -u root -e "USE apsdreamhome; SELECT COUNT(*) as table_count FROM information_schema.tables WHERE table_schema = 'apsdreamhome';"
@@ -58,6 +62,7 @@ mysql -u root -e "USE apsdreamhome; SELECT COUNT(*) as record_count FROM propert
 ## 📁 STEP 3: APPLICATION DEPLOYMENT
 
 ### **📦 DEPLOY FILES:**
+
 ```bash
 # Extract deployment package to web root
 # Copy all files to: C:\xampp\htdocs\apsdreamhome\
@@ -69,6 +74,7 @@ chmod -R 755 config/
 ```
 
 ### **🔍 FILE STRUCTURE VERIFICATION:**
+
 ```
 apsdreamhome/
 ├── app/
@@ -90,17 +96,19 @@ apsdreamhome/
 ## ⚙️ STEP 4: CONFIGURATION SETUP
 
 ### **🔧 DATABASE CONFIGURATION:**
+
 ```php
 // Edit config/database.php
 return [
     'host' => 'localhost',
-    'name' => 'apsdreamhome', 
+    'name' => 'apsdreamhome',
     'user' => 'root',
     'password' => ''  // Leave empty for XAMPP default
 ];
 ```
 
 ### **🌐 WEB SERVER CONFIGURATION:**
+
 ```apache
 # .htaccess file (if needed)
 RewriteEngine On
@@ -114,6 +122,7 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 ## 🧪 STEP 5: TESTING VERIFICATION
 
 ### **🔍 BASIC FUNCTIONALITY TESTS:**
+
 ```bash
 # Test 1: Check if application loads
 # Open browser: http://localhost/apsdreamhome/
@@ -130,6 +139,7 @@ echo "Database connected successfully!";
 ```
 
 ### **📊 COMPREHENSIVE TESTING CHECKLIST:**
+
 - [ ] Home page loads correctly
 - [ ] Database connectivity works
 - [ ] Property listings display
@@ -144,6 +154,7 @@ echo "Database connected successfully!";
 ## 🚀 STEP 6: PRODUCTION SETUP
 
 ### **🔒 SECURITY CONFIGURATION:**
+
 ```php
 // Enable production configuration
 // In config/app.php or bootstrap file
@@ -153,6 +164,7 @@ ini_set('display_errors', 0);
 ```
 
 ### **📊 PERFORMANCE OPTIMIZATION:**
+
 ```bash
 # Enable caching (if available)
 # Optimize database queries
@@ -165,6 +177,7 @@ ini_set('display_errors', 0);
 ## 📞 SUPPORT & TROUBLESHOOTING
 
 ### **🔍 COMMON ISSUES:**
+
 1. **Database Connection Failed**
    - Check MySQL service is running
    - Verify database name and credentials
@@ -181,6 +194,7 @@ ini_set('display_errors', 0);
    - Check syntax errors in PHP files
 
 ### **📞 CONTACT ADMIN:**
+
 - Report issues with detailed error messages
 - Share screenshots of errors
 - Provide system specifications
@@ -191,6 +205,7 @@ ini_set('display_errors', 0);
 ## 📋 FINAL VERIFICATION
 
 ### **✅ SUCCESS CRITERIA:**
+
 - [ ] Application loads without errors
 - [ ] Database connectivity confirmed
 - [ ] All main features working
@@ -198,6 +213,7 @@ ini_set('display_errors', 0);
 - [ ] Security measures in place
 
 ### **📊 REPORT TO ADMIN:**
+
 ```
 ✅ Setup Complete: [Date]
 ✅ Database Imported: [Table Count]
@@ -211,12 +227,14 @@ ini_set('display_errors', 0);
 ## 🎯 NEXT STEPS
 
 ### **🔄 ONGOING MAINTENANCE:**
+
 1. **Regular Updates**: Keep PHP/MySQL updated
 2. **Backups**: Regular database backups
 3. **Monitoring**: Check application performance
 4. **Security**: Apply security patches
 
 ### **📞 COMMUNICATION:**
+
 - Regular progress reports to admin
 - Report any issues immediately
 - Share user feedback
@@ -229,6 +247,7 @@ ini_set('display_errors', 0);
 ### **🚀 CO-WORKER SYSTEM READY FOR DEPLOYMENT**
 
 **✅ CLEAR INSTRUCTIONS PROVIDED:**
+
 - Environment setup requirements
 - Database import procedures
 - Application deployment steps
@@ -236,6 +255,7 @@ ini_set('display_errors', 0);
 - Testing verification checklist
 
 **✅ SUPPORT PROTOCOL ESTABLISHED:**
+
 - Troubleshooting guide included
 - Common issues documented
 - Communication channels defined
