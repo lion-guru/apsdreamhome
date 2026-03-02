@@ -1,88 +1,145 @@
 <?php
 
-use App\Core\App;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\VersionController;
+use App\Http\Controllers\Api\V1\PropertyController as PropertyControllerV1;
+use App\Http\Controllers\Api\V1\UserController as UserControllerV1;
+use App\Http\Controllers\Api\V2\PropertyController as PropertyControllerV2;
+use App\Http\Controllers\Api\V2\UserController as UserControllerV2;
+use App\Http\Controllers\Api\V2\MLController;
+use App\Http\Controllers\Api\V2\AnalyticsController;
+use App\Http\Controllers\Api\V2\RealtimeController;
 
-/** @var App $app */
-
-// API Route Definitions
-
-$app->router()->group(['prefix' => 'api', 'middleware' => 'throttle'], function ($router) {
-
-    // Health check
-    $router->get('/health', function () {
-        header('Content-Type: application/json');
-        echo json_encode(['status' => 'ok', 'message' => 'API is running']);
-        exit;
+// API versioning middleware
+Route::middleware(['api.versioning'])->group(function () {
+    
+    // Version information endpoints
+    Route::get('/version', [VersionController::class, 'index']);
+    Route::get('/version/documentation', [VersionController::class, 'documentation']);
+    
+    // v1.0 routes (deprecated)
+    Route::prefix('v1.0')->group(function () {
+        Route::apiResource('properties', PropertyControllerV1::class);
+        Route::apiResource('users', UserControllerV1::class);
+        
+        // Additional v1.0 specific routes
+        Route::get('properties/search', [PropertyControllerV1::class, 'search']);
+        Route::get('users/{id}/favorites', [UserControllerV1::class, 'favorites']);
     });
-
-    // Search Routes (Legacy compatibility for search.js)
-    $router->get('/properties', 'Api\PropertyController@index'); // Modern endpoint for search.js
-    $router->post('/search.php', 'Api\PropertyController@search');
-    $router->get('/get_saved_searches.php', 'Api\PropertyController@getSavedSearches');
-    $router->get('/get_saved_search.php', 'Api\PropertyController@getSavedSearch');
-    $router->post('/save_search.php', 'Api\PropertyController@saveSearch');
-    $router->post('/delete_search.php', 'Api\PropertyController@deleteSearch');
-
-    // Bulk Property Operations
-    $router->post('/properties/bulk/delete', 'Api\PropertyController@bulkDelete');
-    $router->post('/properties/bulk/update', 'Api\PropertyController@bulkUpdate');
-
-    // Leads Routes
-    $router->group(['middleware' => 'auth'], function ($router) {
-        $router->get('/leads', 'Api\ApiLeadController@index');
-        $router->post('/leads', 'Api\ApiLeadController@store');
-        $router->get('/leads/{id}', 'Api\ApiLeadController@show');
-        $router->put('/leads/{id}', 'Api\ApiLeadController@update');
-        $router->delete('/leads/{id}', 'Api\ApiLeadController@destroy');
-
-        $router->get('/leads/{lead}/notes', 'Api\ApiLeadController@getNotes');
-        $router->post('/leads/{lead}/notes', 'Api\ApiLeadController@addNote');
-        $router->put('/leads/{lead}/notes/{note}', 'Api\ApiLeadController@updateNote');
-        $router->delete('/leads/{lead}/notes/{note}', 'Api\ApiLeadController@deleteNote');
-
-        $router->get('/leads/{lead}/files', 'Api\ApiLeadController@getFiles');
-        $router->post('/leads/{lead}/files', 'Api\ApiLeadController@uploadFile');
-        $router->delete('/leads/{lead}/files/{file}', 'Api\ApiLeadController@deleteFile');
-
-        $router->get('/leads/{lead}/activities', 'Api\ApiLeadController@getActivities');
-
-        $router->get('/leads/{lead}/tags', 'Api\ApiLeadController@getTags');
-        $router->post('/leads/{lead}/tags', 'Api\ApiLeadController@addTag');
-        $router->delete('/leads/{lead}/tags/{tag}', 'Api\ApiLeadController@removeTag');
-
-        $router->get('/leads/{lead}/custom-fields', 'Api\ApiLeadController@getCustomFields');
-        $router->post('/leads/{lead}/custom-fields', 'Api\ApiLeadController@updateCustomFields');
-
-        $router->get('/leads/{lead}/deals', 'Api\ApiLeadController@getDeals');
-        $router->post('/leads/{lead}/deals', 'Api\ApiLeadController@createDeal');
-        $router->put('/leads/{lead}/deals/{deal}', 'Api\ApiLeadController@updateDeal');
-        $router->delete('/leads/{lead}/deals/{deal}', 'Api\ApiLeadController@deleteDeal');
-
-        $router->put('/leads/{lead}/status', 'Api\ApiLeadController@updateStatus');
-        $router->put('/leads/{lead}/assign', 'Api\ApiLeadController@assign');
-
-        // Bulk operations
-        $router->post('/leads/bulk/delete', 'Api\ApiLeadController@bulkDelete');
-        $router->post('/leads/bulk/status', 'Api\ApiLeadController@bulkUpdateStatus');
-        $router->post('/leads/bulk/assign', 'Api\ApiLeadController@bulkAssign');
-        $router->post('/leads/import', 'Api\ApiLeadController@import');
-
-        // Stats
-        $router->get('/leads/stats/overview', 'Api\ApiLeadController@getStats');
-        $router->get('/leads/stats/status', 'Api\ApiLeadController@getStatusStats');
-        $router->get('/leads/stats/source', 'Api\ApiLeadController@getSourceStats');
-        $router->get('/leads/stats/assigned-to', 'Api\ApiLeadController@getAssignedToStats');
-        $router->get('/leads/stats/created-by', 'Api\ApiLeadController@getCreatedByStats');
-        $router->get('/leads/stats/timeline', 'Api\ApiLeadController@getTimelineStats');
-
-        // Lookups
-        $router->get('/lookup/statuses', 'Api\ApiLeadController@getStatuses');
-        $router->get('/lookup/sources', 'Api\ApiLeadController@getSources');
-        $router->get('/lookup/tags', 'Api\ApiLeadController@getAllTags');
-        $router->get('/lookup/users', 'Api\ApiLeadController@getUsers');
-        $router->get('/lookup/custom-fields', 'Api\ApiLeadController@getCustomFieldDefinitions');
-        $router->get('/lookup/deal-stages', 'Api\ApiLeadController@getDealStages');
-
-        $router->get('/leads/{file}/download', 'Api\ApiLeadController@downloadFile');
+    
+    // v1.1 routes (stable)
+    Route::prefix('v1.1')->group(function () {
+        Route::apiResource('properties', PropertyControllerV1::class);
+        Route::apiResource('users', UserControllerV1::class);
+        
+        // Enhanced v1.1 specific routes
+        Route::get('properties/search', [PropertyControllerV1::class, 'enhancedSearch']);
+        Route::get('users/{id}/favorites', [UserControllerV1::class, 'favorites']);
+        Route::get('users/{id}/analytics', [UserControllerV1::class, 'analytics']);
+        
+        // Webhook routes
+        Route::prefix('webhooks')->group(function () {
+            Route::get('/', [WebhookController::class, 'index']);
+            Route::post('/', [WebhookController::class, 'store']);
+            Route::delete('/{id}', [WebhookController::class, 'destroy']);
+        });
     });
+    
+    // v2.0 routes (latest)
+    Route::prefix('v2.0')->group(function () {
+        // Properties with ML features
+        Route::apiResource('properties', PropertyControllerV2::class);
+        Route::get('properties/search', [PropertyControllerV2::class, 'aiSearch']);
+        Route::get('properties/{id}/recommendations', [PropertyControllerV2::class, 'recommendations']);
+        Route::get('properties/{id}/analytics', [PropertyControllerV2::class, 'analytics']);
+        
+        // Users with advanced features
+        Route::apiResource('users', UserControllerV2::class);
+        Route::get('users/{id}/analytics', [UserControllerV2::class, 'analytics']);
+        Route::get('users/{id}/behavior', [UserControllerV2::class, 'behavior']);
+        Route::get('users/{id}/predictions', [UserControllerV2::class, 'predictions']);
+        
+        // Machine Learning endpoints
+        Route::prefix('ml')->group(function () {
+            Route::get('recommendations/{user_id}', [MLController::class, 'recommendations']);
+            Route::get('predict-price/{property_id}', [MLController::class, 'predictPrice']);
+            Route::get('analyze-user/{user_id}', [MLController::class, 'analyzeUser']);
+            Route::get('detect-fraud/{user_id}', [MLController::class, 'detectFraud']);
+            Route::get('market-trends', [MLController::class, 'marketTrends']);
+            Route::get('price-prediction', [MLController::class, 'pricePrediction']);
+        });
+        
+        // Real-time endpoints
+        Route::prefix('realtime')->group(function () {
+            Route::get('updates', [RealtimeController::class, 'updates']);
+            Route::post('subscribe', [RealtimeController::class, 'subscribe']);
+            Route::delete('unsubscribe', [RealtimeController::class, 'unsubscribe']);
+            Route::get('notifications', [RealtimeController::class, 'notifications']);
+        });
+        
+        // Analytics endpoints
+        Route::prefix('analytics')->group(function () {
+            Route::get('dashboard', [AnalyticsController::class, 'dashboard']);
+            Route::get('reports', [AnalyticsController::class, 'reports']);
+            Route::get('metrics', [AnalyticsController::class, 'metrics']);
+            Route::get('overview', [AnalyticsController::class, 'overview']);
+            Route::get('performance', [AnalyticsController::class, 'performance']);
+        });
+        
+        // Enhanced search endpoints
+        Route::prefix('search')->group(function () {
+            Route::get('properties', [SearchController::class, 'properties']);
+            Route::get('users', [SearchController::class, 'users']);
+            Route::get('suggestions', [SearchController::class, 'suggestions']);
+            Route::get('trending', [SearchController::class, 'trending']);
+        });
+        
+        // Notification endpoints
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'index']);
+            Route::post('/', [NotificationController::class, 'store']);
+            Route::put('/{id}/read', [NotificationController::class, 'markAsRead']);
+            Route::delete('/{id}', [NotificationController::class, 'destroy']);
+        });
+        
+        // File upload endpoints
+        Route::prefix('files')->group(function () {
+            Route::post('upload', [FileController::class, 'upload']);
+            Route::get('{id}', [FileController::class, 'show']);
+            Route::delete('{id}', [FileController::class, 'destroy']);
+        });
+    });
+    
+    // Default to latest version
+    Route::fallback(function () {
+        return Route::prefix('v2.0')->group(function () {
+            // Include all v2.0 routes as fallback
+            Route::apiResource('properties', PropertyControllerV2::class);
+            Route::apiResource('users', UserControllerV2::class);
+            // ... other v2.0 routes
+        });
+    });
+});
+
+// Health check endpoint (no versioning)
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'timestamp' => now()->toISOString(),
+        'version' => config('app.version'),
+        'environment' => config('app.env')
+    ]);
+});
+
+// API documentation endpoint
+Route::get('/docs', function () {
+    return response()->json([
+        'title' => 'APS Dream Home API',
+        'description' => 'Real estate property management API',
+        'version' => '2.0',
+        'base_url' => config('app.url') . '/api',
+        'documentation' => config('app.url') . '/api/v2.0/documentation',
+        'support' => 'support@apsdreamhome.com'
+    ]);
 });

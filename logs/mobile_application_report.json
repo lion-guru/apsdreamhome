@@ -1,0 +1,23 @@
+{
+    "timestamp": "2026-03-02 21:39:35",
+    "total_features": 8,
+    "successful_features": 5,
+    "success_rate": 62.5,
+    "results": {
+        "mobile_app_core": {
+            "mobile_framework": false,
+            "mobile_store": false,
+            "mobile_navigation": false
+        },
+        "mobile_screens": {
+            "auth_screens": true,
+            "main_screens": true,
+            "property_screens": true
+        },
+        "mobile_components": {
+            "ui_components": true,
+            "utility_components": true
+        }
+    },
+    "features_status": "NEEDS_ATTENTION"
+}
