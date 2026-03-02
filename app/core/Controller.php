@@ -8,6 +8,7 @@ use App\Core\View\View;
 use App\Core\Auth;
 use App\Core\Database\Database;
 use App\Core\Session\SessionManager;
+use App\Core\Routing\Router;
 
 /**
  * Base Controller
@@ -43,7 +44,7 @@ class Controller
      *
      * @var Auth
      */
-    protected $auth;
+    public $auth;
 
     /**
      * The database connection
