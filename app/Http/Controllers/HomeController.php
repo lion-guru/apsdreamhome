@@ -21,6 +21,45 @@ class HomeController extends Controller
         $this->render('home/index', $this->data, 'layouts/base');
     }
     
+    public function properties()
+    {
+        // Load all properties data
+        $this->data = [
+            'title' => 'Properties - APS Dream Home',
+            'description' => 'Browse our extensive collection of premium properties in Gorakhpur, Lucknow, and across Uttar Pradesh',
+            'properties' => $this->loadAllProperties()
+        ];
+
+        // Render the view with data
+        $this->render('properties/index', $this->data, 'layouts/base');
+    }
+    
+    public function projects()
+    {
+        // Load projects data
+        $this->data = [
+            'title' => 'Projects - APS Dream Home',
+            'description' => 'Explore our ongoing and completed residential and commercial projects across Uttar Pradesh',
+            'projects' => $this->loadProjects()
+        ];
+
+        // Render the view with data
+        $this->render('projects/index', $this->data, 'layouts/base');
+    }
+    
+    public function contact()
+    {
+        // Load contact data
+        $this->data = [
+            'title' => 'Contact Us - APS Dream Home',
+            'description' => 'Get in touch with APS Dream Home for all your real estate needs. Visit our offices or call us today.',
+            'offices' => $this->loadOfficeLocations()
+        ];
+
+        // Render the view with data
+        $this->render('contact/index', $this->data, 'layouts/base');
+    }
+    
     private function loadFeaturedProperties()
     {
         // Sample featured properties data

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 
-class AdminController extends BaseController
+class AdminControllerSimple extends BaseController
 {
     public function __construct()
     {
@@ -71,7 +71,11 @@ class AdminController extends BaseController
                     'email' => 'amit@example.com',
                     'phone' => '9876543212',
                     'property_interest' => 'Luxury Apartment',
-                    'created_at' => '2026-03-01'
+                    'budget' => '₹50L - ₹1Cr',
+                    'status' => 'New',
+                    'source' => 'Website',
+                    'created_at' => '2026-03-01',
+                    'assigned_to' => 'Agent 1'
                 ],
                 (object)[
                     'id' => 2,
@@ -79,7 +83,23 @@ class AdminController extends BaseController
                     'email' => 'neha@example.com',
                     'phone' => '9876543213',
                     'property_interest' => 'Modern Villa',
-                    'created_at' => '2026-03-02'
+                    'budget' => '₹1Cr - ₹2Cr',
+                    'status' => 'Contacted',
+                    'source' => 'Referral',
+                    'created_at' => '2026-03-02',
+                    'assigned_to' => 'Agent 2'
+                ],
+                (object)[
+                    'id' => 3,
+                    'name' => 'Rohit Verma',
+                    'email' => 'rohit@example.com',
+                    'phone' => '9876543214',
+                    'property_interest' => 'Commercial Space',
+                    'budget' => '₹80L - ₹1.5Cr',
+                    'status' => 'Qualified',
+                    'source' => 'Social Media',
+                    'created_at' => '2026-03-03',
+                    'assigned_to' => 'Agent 1'
                 ]
             ]
         ];
