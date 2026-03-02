@@ -260,6 +260,8 @@ class App
             return $this->loadController("HomeController", "index");
         } elseif ($uri === "/about") {
             return $this->loadController("Public\\PageController", "about");
+        } elseif ($uri === "/resell") {
+            return $this->loadController("Public\\PageController", "resell");
         }
         
         // Authentication routes
