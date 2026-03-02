@@ -58,6 +58,20 @@ class Controller
      * @var SessionManager
      */
     protected $session;
+    
+    /**
+     * The data array for views
+     *
+     * @var array
+     */
+    protected $data = [];
+    
+    /**
+     * The layout template
+     *
+     * @var string
+     */
+    protected $layout = 'base';
 
     /**
      * The middleware stack
