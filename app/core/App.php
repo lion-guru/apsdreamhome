@@ -15,7 +15,7 @@ class App
     private $response;
     private $session;
     private $db;
-    private $router;
+    public $router;
     
     public function __construct($basePath = null)
     {
