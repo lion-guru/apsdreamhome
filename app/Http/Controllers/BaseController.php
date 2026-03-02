@@ -7,7 +7,6 @@ use Exception;
 
 class BaseController extends CoreController
 {
-    protected $data = [];
     protected $models = [];
     protected $layout = 'layouts/base';
     protected $db;
@@ -239,7 +238,6 @@ class BaseController extends CoreController
     public function render($view, $data = [], $layout = null, $echo = true)
     {
         $data = array_merge($this->data, $data);
-        $this->data = $data;
         $layout = $layout ?? $this->layout;
 
         if ($this->session && method_exists($this->session, 'getFlashBag')) {
