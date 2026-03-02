@@ -1,0 +1,11 @@
+# APS Dream Home - Tests Directory
+# This directory contains test files for the application
+# Recreated after massive file deletion
+
+# Test Structure:
+# - unit/ - Unit tests
+# - functional/ - Functional tests  
+# - diagnostics/ - Diagnostic tests
+# - integration/ - Integration tests
+
+# Status: Directory recreated - Ready for test file restoration
