@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * Autoloader for the application
+ * 
+ * This file provides an autoloader that follows PSR-4 autoloading standards.
+ * It prioritizes the Composer autoloader and falls back to the custom Autoloader class if needed.
+ */
+
+// Define APP_ROOT if not already defined
+if (!defined('APP_ROOT')) {
+    define('APP_ROOT', dirname(__DIR__, 2));
+}
+
+// 1. Try to load Composer's autoloader first (Best Practice)
+if (file_exists(APP_ROOT . '/vendor/autoload.php')) {
+    require_once APP_ROOT . '/vendor/autoload.php';
+}
+
+// 2. Initialize Custom Autoloader for legacy support or fallback
+// Even if Composer is loaded, we might need this for classes not mapped in composer.json
+// or for legacy non-namespaced classes.
+require_once __DIR__ . '/Autoloader.php';
+
+use App\Core\Autoloader;
+
+// Register the custom autoloader
+$loader = Autoloader::getInstance();
+$loader->register();
+$loader->addNamespace('App', APP_ROOT . '/app');
+
+// 3. Load application helpers if not loaded by Composer
+// Composer 'files' autoloading should handle this, but for safety:
+if (file_exists(APP_ROOT . '/app/helpers.php') && !function_exists('get_asset_url')) {
+    require_once APP_ROOT . '/app/helpers.php';
+}

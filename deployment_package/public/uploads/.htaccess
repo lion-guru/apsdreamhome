@@ -1,0 +1,12 @@
+
+# Prevent direct access to uploaded files
+<FilesMatch '\.(php|phtml|pht|php3|php4|php5|phpt)$'>
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Allow image access
+<FilesMatch '\.(jpg|jpeg|png|gif|webp)$'>
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
