@@ -554,4 +554,258 @@ class PageController extends BaseController
         return $this->render('blog/index', $data, 'layouts/base');
     }
 
+    /**
+     * Careers method
+     * @return void
+     */
+    public function careers()
+    {
+        $data = [
+            'page_title' => 'Careers - APS Dream Home',
+            'page_description' => 'Join our growing team and build a rewarding career in real estate. Explore current job openings and internship opportunities.',
+            'company_culture' => [
+                'title' => 'Why Work With APS Dream Home?',
+                'description' => 'At APS Dream Home, we believe in nurturing talent and providing growth opportunities. Join a team that values innovation, integrity, and excellence.',
+                'values' => [
+                    [
+                        'icon' => 'fa-users',
+                        'title' => 'Team Collaboration',
+                        'description' => 'Work in a supportive environment where teamwork and collaboration drive success.'
+                    ],
+                    [
+                        'icon' => 'fa-chart-line',
+                        'title' => 'Growth Opportunities',
+                        'description' => 'Continuous learning and career advancement with structured development programs.'
+                    ],
+                    [
+                        'icon' => 'fa-trophy',
+                        'title' => 'Recognition & Rewards',
+                        'description' => 'Your hard work and dedication are recognized through competitive compensation and awards.'
+                    ],
+                    [
+                        'icon' => 'fa-balance-scale',
+                        'title' => 'Work-Life Balance',
+                        'description' => 'We prioritize employee well-being with flexible work arrangements and comprehensive benefits.'
+                    ]
+                ]
+            ],
+            'current_openings' => [
+                [
+                    'id' => 1,
+                    'title' => 'Senior Real Estate Executive',
+                    'department' => 'Sales',
+                    'location' => 'Gorakhpur',
+                    'type' => 'Full-time',
+                    'experience' => '3-5 years',
+                    'salary' => '₹4,50,000 - ₹6,00,000 per annum',
+                    'posted_date' => '2026-02-20',
+                    'deadline' => '2026-03-15',
+                    'description' => 'We are looking for an experienced Real Estate Executive to join our dynamic sales team.',
+                    'responsibilities' => [
+                        'Generate leads and convert them into sales',
+                        'Provide property consultations to clients',
+                        'Maintain relationships with existing clients',
+                        'Achieve monthly sales targets',
+                        'Coordinate with legal and finance teams'
+                    ],
+                    'requirements' => [
+                        'Bachelor\'s degree in Business or related field',
+                        '3+ years of experience in real estate sales',
+                        'Excellent communication and negotiation skills',
+                        'Knowledge of local property market',
+                        'Valid driving license'
+                    ],
+                    'vacancies' => 2,
+                    'urgent' => true
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Marketing Manager',
+                    'department' => 'Marketing',
+                    'location' => 'Lucknow',
+                    'type' => 'Full-time',
+                    'experience' => '4-7 years',
+                    'salary' => '₹6,00,000 - ₹8,00,000 per annum',
+                    'posted_date' => '2026-02-18',
+                    'deadline' => '2026-03-10',
+                    'description' => 'Lead our marketing initiatives and drive brand growth across multiple channels.',
+                    'responsibilities' => [
+                        'Develop and execute marketing strategies',
+                        'Manage digital marketing campaigns',
+                        'Coordinate with sales team for lead generation',
+                        'Analyze market trends and competitor activities',
+                        'Manage marketing budget and ROI'
+                    ],
+                    'requirements' => [
+                        'MBA in Marketing or related field',
+                        '4+ years of marketing experience',
+                        'Strong analytical and strategic thinking skills',
+                        'Experience with digital marketing tools',
+                        'Creative mindset with leadership qualities'
+                    ],
+                    'vacancies' => 1,
+                    'urgent' => false
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Site Engineer',
+                    'department' => 'Construction',
+                    'location' => 'Gorakhpur',
+                    'type' => 'Full-time',
+                    'experience' => '2-4 years',
+                    'salary' => '₹3,50,000 - ₹4,50,000 per annum',
+                    'posted_date' => '2026-02-15',
+                    'deadline' => '2026-03-20',
+                    'description' => 'Oversee construction projects and ensure quality standards are maintained.',
+                    'responsibilities' => [
+                        'Monitor construction progress and quality',
+                        'Coordinate with contractors and vendors',
+                        'Ensure compliance with safety regulations',
+                        'Prepare daily progress reports',
+                        'Resolve technical issues on site'
+                    ],
+                    'requirements' => [
+                        'B.E. in Civil Engineering',
+                        '2+ years of site supervision experience',
+                        'Knowledge of construction techniques',
+                        'Strong problem-solving skills',
+                        'Willingness to travel to multiple sites'
+                    ],
+                    'vacancies' => 3,
+                    'urgent' => false
+                ],
+                [
+                    'id' => 4,
+                    'title' => 'Customer Relationship Executive',
+                    'department' => 'Customer Service',
+                    'location' => 'Gorakhpur',
+                    'type' => 'Full-time',
+                    'experience' => '1-3 years',
+                    'salary' => '₹2,40,000 - ₹3,00,000 per annum',
+                    'posted_date' => '2026-02-12',
+                    'deadline' => '2026-03-05',
+                    'description' => 'Provide excellent customer service and maintain client relationships.',
+                    'responsibilities' => [
+                        'Handle customer inquiries and complaints',
+                        'Provide after-sales support',
+                        'Maintain customer database',
+                        'Coordinate with sales and operations teams',
+                        'Ensure customer satisfaction'
+                    ],
+                    'requirements' => [
+                        'Graduate in any discipline',
+                        '1+ year of customer service experience',
+                        'Excellent communication skills',
+                        'Proficiency in MS Office',
+                        'Patient and empathetic attitude'
+                    ],
+                    'vacancies' => 2,
+                    'urgent' => true
+                ]
+            ],
+            'internship_programs' => [
+                [
+                    'title' => 'Sales Intern',
+                    'duration' => '3 months',
+                    'stipend' => '₹8,000 per month',
+                    'description' => 'Learn real estate sales processes and gain hands-on experience.'
+                ],
+                [
+                    'title' => 'Marketing Intern',
+                    'duration' => '3 months',
+                    'stipend' => '₹7,000 per month',
+                    'description' => 'Assist in marketing campaigns and social media management.'
+                ],
+                [
+                    'title' => 'HR Intern',
+                    'duration' => '2 months',
+                    'stipend' => '₹6,000 per month',
+                    'description' => 'Support HR operations and recruitment processes.'
+                ]
+            ],
+            'benefits' => [
+                [
+                    'icon' => 'fa-heartbeat',
+                    'title' => 'Health Insurance',
+                    'description' => 'Comprehensive medical coverage for you and your family'
+                ],
+                [
+                    'icon' => 'fa-piggy-bank',
+                    'title' => 'Provident Fund',
+                    'description' => 'Secure your future with our PF and gratuity benefits'
+                ],
+                [
+                    'icon' => 'fa-graduation-cap',
+                    'title' => 'Training & Development',
+                    'description' => 'Continuous learning opportunities and skill development programs'
+                ],
+                [
+                    'icon' => 'fa-calendar-alt',
+                    'title' => 'Paid Leave',
+                    'description' => 'Generous annual leave and holiday policy'
+                ],
+                [
+                    'icon' => 'fa-car',
+                    'title' => 'Transport Allowance',
+                    'description' => 'Monthly transport allowance for commuting convenience'
+                ],
+                [
+                    'icon' => 'fa-mobile-alt',
+                    'title' => 'Communication Allowance',
+                    'description' => 'Monthly mobile and internet reimbursement'
+                ]
+            ],
+            'recruitment_process' => [
+                [
+                    'step' => 1,
+                    'title' => 'Application',
+                    'description' => 'Submit your application through our career portal or email'
+                ],
+                [
+                    'step' => 2,
+                    'title' => 'Screening',
+                    'description' => 'Our HR team reviews your application and shortlists candidates'
+                ],
+                [
+                    'step' => 3,
+                    'title' => 'Interview',
+                    'description' => 'Multiple rounds of interviews with relevant stakeholders'
+                ],
+                [
+                    'step' => 4,
+                    'title' => 'Offer',
+                    'description' => 'Successful candidates receive offer letters and join our team'
+                ]
+            ],
+            'testimonials' => [
+                [
+                    'name' => 'Rahul Verma',
+                    'position' => 'Senior Sales Executive',
+                    'quote' => 'APS Dream Home has provided me with excellent growth opportunities and a supportive work environment.',
+                    'duration' => '3 years'
+                ],
+                [
+                    'name' => 'Priya Singh',
+                    'position' => 'Marketing Manager',
+                    'quote' => 'The company culture here encourages innovation and creativity. I love working with this team!',
+                    'duration' => '2 years'
+                ],
+                [
+                    'name' => 'Amit Kumar',
+                    'position' => 'Site Engineer',
+                    'quote' => 'Great learning opportunities and excellent management support. Proud to be part of APS Dream Home.',
+                    'duration' => '1.5 years'
+                ]
+            ],
+            'career_stats' => [
+                'total_employees' => 150,
+                'new_hires_this_year' => 45,
+                'employee_satisfaction' => 92,
+                'internal_promotions' => 28
+            ]
+        ];
+
+        return $this->render('careers/index', $data, 'layouts/base');
+    }
+
 }
