@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testHealth()">Test Health Endpoint</button>
+    <button onclick="testProperties()">Test Properties</button>
+    <div id="result"></div>
+    
+    <script>
+    function testHealth() {
+        $.get('/apsdreamhome/api/health', function(data) {
+            $('#result').html('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+        }).fail(function(xhr) {
+            $('#result').html('Error: ' + xhr.status + ' - ' + xhr.statusText);
+        });
+    }
+    
+    function testProperties() {
+        $.get('/apsdreamhome/api/properties', function(data) {
+            $('#result').html('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+        }).fail(function(xhr) {
+            $('#result').html('Error: ' + xhr.status + ' - ' + xhr.statusText);
+        });
+    }
+    </script>
+</body>
+</html>

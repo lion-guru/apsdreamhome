@@ -57,8 +57,45 @@ class App
         $uri = $_SERVER["REQUEST_URI"] ?? "/";
         $method = $_SERVER["REQUEST_METHOD"] ?? "GET";
         
+        // Check if this is an API request
+        if (strpos($uri, '/api') === 0) {
+            return $this->handleApiRequest($uri, $method);
+        }
+        
         // Route to appropriate controller
         return $this->route($uri, $method);
+    }
+    
+    private function handleApiRequest($uri, $method)
+    {
+        // Load API routes
+        require_once $this->basePath . '/routes/api.php';
+        
+        // Simple API routing - parse URI to get endpoint
+        $path = parse_url($uri, PHP_URL_PATH);
+        $endpoint = $path['path'] ?? '';
+        
+        // Remove /api prefix
+        $endpoint = str_replace('/api', '', $endpoint);
+        
+        // Basic API routing
+        switch ($endpoint) {
+            case '/health':
+                header('Content-Type: application/json');
+                echo json_encode(['status' => 'ok', 'message' => 'API is running']);
+                exit;
+                
+            case '/properties':
+                return $this->loadController("Api\\PropertyController", "index");
+                
+            case '/leads':
+                return $this->loadController("Api\\LeadController", "index");
+                
+            default:
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Endpoint not found']);
+                exit;
+        }
     }
     
     private function route($uri, $method)
