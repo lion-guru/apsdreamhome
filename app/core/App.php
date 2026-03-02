@@ -100,12 +100,21 @@ class App
     
     private function route($uri, $method)
     {
+        // Parse URI to get clean path
+        $uri = parse_url($uri, PHP_URL_PATH);
+        $uri = rtrim($uri, '/');
+        
         // Basic routing logic
-        if ($uri === "/" || $uri === "/home") {
+        if ($uri === "" || $uri === "/") {
+            return $this->loadController("HomeController", "index");
+        } elseif ($uri === "/home") {
             return $this->loadController("HomeController", "index");
         } elseif ($uri === "/about") {
             return $this->loadController("PageController", "about");
-        } elseif ($uri === "/login") {
+        }
+        
+        // Authentication routes
+        elseif ($uri === "/login") {
             return $this->loadController("Public\\AuthController", "login");
         } elseif ($uri === "/login/process") {
             return $this->loadController("Public\\AuthController", "processLogin");
@@ -115,11 +124,48 @@ class App
             return $this->loadController("Public\\AuthController", "processRegister");
         } elseif ($uri === "/logout") {
             return $this->loadController("Public\\AuthController", "logout");
-        } elseif ($uri === "/dashboard") {
+        }
+        
+        // User routes
+        elseif ($uri === "/dashboard") {
             return $this->loadController("User\\DashboardController", "index");
-        } elseif ($uri === "/admin") {
+        }
+        
+        // Admin routes
+        elseif ($uri === "/admin") {
             return $this->loadController("Admin\\AdminController", "index");
-        } else {
+        } elseif ($uri === "/admin/dashboard") {
+            return $this->loadController("Admin\\AdminDashboardController", "index");
+        } elseif ($uri === "/admin/projects") {
+            return $this->loadController("Admin\\ProjectController", "index");
+        } elseif ($uri === "/admin/properties") {
+            return $this->loadController("Admin\\PropertyController", "index");
+        } elseif ($uri === "/admin/users") {
+            return $this->loadController("Admin\\UserController", "index");
+        } elseif ($uri === "/admin/leads") {
+            return $this->loadController("Admin\\LeadController", "index");
+        } elseif ($uri === "/admin/customers") {
+            return $this->loadController("Admin\\CustomerController", "index");
+        }
+        
+        // Property routes
+        elseif ($uri === "/properties") {
+            return $this->loadController("HomeController", "properties");
+        } elseif ($uri === "/projects") {
+            return $this->loadController("HomeController", "projects");
+        } elseif ($uri === "/contact") {
+            return $this->loadController("HomeController", "contact");
+        }
+        
+        // Agent routes
+        elseif ($uri === "/agent") {
+            return $this->loadController("AgentController", "index");
+        } elseif ($uri === "/agent/dashboard") {
+            return $this->loadController("Agent\\AgentDashboardController", "index");
+        }
+        
+        // API routes handled separately in handleApiRequest
+        else {
             // Default to home
             return $this->loadController("HomeController", "index");
         }

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Routing System Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 1000px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .route-button { padding: 8px 16px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; display: inline-block; }
+        .route-button:hover { background: #0056b3; }
+        .route-button.success { background: #28a745; }
+        .route-button.warning { background: #ffc107; color: #212529; }
+        .route-button.danger { background: #dc3545; }
+        .result { margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 4px; border-left: 4px solid #007bff; }
+        .route-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🛣️ APS Dream Home - Complete Routing Test</h1>
+        
+        <div class="test-section">
+            <h2>🏠 Public Routes</h2>
+            <div class="route-grid">
+                <button class="route-button" onclick="testRoute('/')">Home (/)</button>
+                <button class="route-button" onclick="testRoute('/home')">Home (/home)</button>
+                <button class="route-button" onclick="testRoute('/about')">About (/about)</button>
+                <button class="route-button" onclick="testRoute('/login')">Login (/login)</button>
+                <button class="route-button" onclick="testRoute('/register')">Register (/register)</button>
+                <button class="route-button" onclick="testRoute('/logout')">Logout (/logout)</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>👤 User Routes</h2>
+            <div class="route-grid">
+                <button class="route-button" onclick="testRoute('/dashboard')">User Dashboard (/dashboard)</button>
+                <button class="route-button" onclick="testRoute('/properties')">Properties (/properties)</button>
+                <button class="route-button" onclick="testRoute('/projects')">Projects (/projects)</button>
+                <button class="route-button" onclick="testRoute('/contact')">Contact (/contact)</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔐 Admin Routes</h2>
+            <div class="route-grid">
+                <button class="route-button" onclick="testRoute('/admin')">Admin Panel (/admin)</button>
+                <button class="route-button" onclick="testRoute('/admin/dashboard')">Admin Dashboard (/admin/dashboard)</button>
+                <button class="route-button" onclick="testRoute('/admin/projects')">Admin Projects (/admin/projects)</button>
+                <button class="route-button" onclick="testRoute('/admin/properties')">Admin Properties (/admin/properties)</button>
+                <button class="route-button" onclick="testRoute('/admin/users')">Admin Users (/admin/users)</button>
+                <button class="route-button" onclick="testRoute('/admin/leads')">Admin Leads (/admin/leads)</button>
+                <button class="route-button" onclick="testRoute('/admin/customers')">Admin Customers (/admin/customers)</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🤝 Agent Routes</h2>
+            <div class="route-grid">
+                <button class="route-button" onclick="testRoute('/agent')">Agent Panel (/agent)</button>
+                <button class="route-button" onclick="testRoute('/agent/dashboard')">Agent Dashboard (/agent/dashboard)</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔌 API Routes</h2>
+            <div class="route-grid">
+                <button class="route-button" onclick="testRoute('/api/health')">API Health (/api/health)</button>
+                <button class="route-button" onclick="testRoute('/api/properties')">API Properties (/api/properties)</button>
+                <button class="route-button" onclick="testRoute('/api/leads')">API Leads (/api/leads)</button>
+                <button class="route-button" onclick="testRoute('/api/auth/login')">API Auth (/api/auth/login)</button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 Test Results</h2>
+            <div id="result" class="result">
+                <h3>🧪 Route Test Results:</h3>
+                <p>Click any route button above to test...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function testRoute(route) {
+            const startTime = Date.now();
+            
+            fetch('/apsdreamhome' + route)
+                .then(response => {
+                    const endTime = Date.now();
+                    const responseTime = endTime - startTime;
+                    
+                    if (response.ok) {
+                        document.getElementById('result').innerHTML = 
+                            '<h4>✅ Route Working: ' + route + '</h4>' +
+                            '<p><strong>Status:</strong> ' + response.status + ' ' + response.statusText + '</p>' +
+                            '<p><strong>Response Time:</strong> ' + responseTime + 'ms</p>' +
+                            '<p><strong>Content Type:</strong> ' + response.headers.get('Content-Type') + '</p>' +
+                            '<button class="route-button success" onclick="openRoute(\'' + route + '\')">Open in New Tab</button>';
+                    } else {
+                        document.getElementById('result').innerHTML = 
+                            '<h4>❌ Route Failed: ' + route + '</h4>' +
+                            '<p><strong>Error:</strong> ' + response.status + ' ' + response.statusText + '</p>' +
+                            '<p><strong>Response Time:</strong> ' + responseTime + 'ms</p>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 
+                        '<h4>🔥 Network Error: ' + route + '</h4>' +
+                        '<p><strong>Error:</strong> ' + error.message + '</p>';
+                });
+        }
+        
+        function openRoute(route) {
+            window.open('/apsdreamhome' + route, '_blank');
+        }
+        
+        // Test all routes sequentially
+        function testAllRoutes() {
+            const routes = [
+                '/', '/home', '/about', '/login', '/register', '/logout',
+                '/dashboard', '/properties', '/projects', '/contact',
+                '/admin', '/admin/dashboard', '/admin/projects', '/admin/properties', 
+                '/admin/users', '/admin/leads', '/admin/customers',
+                '/agent', '/agent/dashboard',
+                '/api/health', '/api/properties', '/api/leads', '/api/auth/login'
+            ];
+            
+            let results = [];
+            let completed = 0;
+            
+            routes.forEach(route => {
+                fetch('/apsdreamhome' + route)
+                    .then(response => {
+                        completed++;
+                        results.push({
+                            route: route,
+                            status: response.ok ? '✅' : '❌',
+                            code: response.status
+                        });
+                        
+                        if (completed === routes.length) {
+                            displayAllResults(results);
+                        }
+                    })
+                    .catch(() => {
+                        completed++;
+                        results.push({
+                            route: route,
+                            status: '🔥',
+                            code: 'Network Error'
+                        });
+                        
+                        if (completed === routes.length) {
+                            displayAllResults(results);
+                        }
+                    });
+            });
+        }
+        
+        function displayAllResults(results) {
+            const working = results.filter(r => r.status === '✅').length;
+            const total = results.length;
+            const percentage = Math.round((working / total) * 100);
+            
+            document.getElementById('result').innerHTML = 
+                '<h4>📊 Complete Route Test Results:</h4>' +
+                '<p><strong>Total Routes:</strong> ' + total + '</p>' +
+                '<p><strong>Working:</strong> ' + working + ' (' + percentage + '%)</p>' +
+                '<div style="max-height: 300px; overflow-y: auto;">' +
+                results.map(r => 
+                    '<div style="padding: 5px; border-bottom: 1px solid #eee;">' +
+                    '<code>' + r.route + '</code> ' + r.status + ' ' + r.code + '</div>'
+                ).join('') +
+                '</div>';
+        }
+    </script>
+</body>
+</html>
