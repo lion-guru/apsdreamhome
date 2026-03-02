@@ -1,0 +1,12 @@
+# APS Dream Home - Database Directory
+# This directory contains database-related files and tools
+# Created to restore database functionality after Git sync issues
+
+# Database Tools:
+# - setup-database.php
+# - import-database.php  
+# - backup-database.php
+# - check-database.php
+# - fix-database-errors.php
+
+# Status: Directory restored - All database tools available
