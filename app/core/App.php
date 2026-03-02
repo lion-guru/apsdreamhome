@@ -176,6 +176,9 @@ class App
         }
         
         // API routes handled separately in handleApiRequest
+        elseif (strpos($uri, '/api/') === 0) {
+            return $this->handleApiRequest();
+        }
         else {
             // Default to home
             return $this->loadController("HomeController", "index");
