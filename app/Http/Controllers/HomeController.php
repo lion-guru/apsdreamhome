@@ -60,4 +60,116 @@ class HomeController extends Controller
             ]
         ];
     }
+    
+    private function loadAllProperties()
+    {
+        return [
+            (object)[
+                'id' => 1,
+                'title' => 'Luxury Apartment in Gomti Nagar',
+                'location' => 'Gomti Nagar, Lucknow',
+                'price' => 7500000,
+                'type' => 'apartment',
+                'bedrooms' => 3,
+                'bathrooms' => 2,
+                'area' => 1500,
+                'featured' => true,
+                'image_path' => BASE_URL . '/assets/images/property-1.jpg'
+            ],
+            (object)[
+                'id' => 2,
+                'title' => 'Modern Villa in Hazratganj',
+                'location' => 'Hazratganj, Lucknow',
+                'price' => 12000000,
+                'type' => 'villa',
+                'bedrooms' => 4,
+                'bathrooms' => 3,
+                'area' => 2000,
+                'featured' => true,
+                'image_path' => BASE_URL . '/assets/images/property-2.jpg'
+            ],
+            (object)[
+                'id' => 3,
+                'title' => 'Commercial Space in Vibhuti Khand',
+                'location' => 'Vibhuti Khand, Gomti Nagar',
+                'price' => 8500000,
+                'type' => 'commercial',
+                'bedrooms' => 0,
+                'bathrooms' => 2,
+                'area' => 1200,
+                'featured' => false,
+                'image_path' => BASE_URL . '/assets/images/property-3.jpg'
+            ],
+            (object)[
+                'id' => 4,
+                'title' => '2BHK Apartment in Alambagh',
+                'location' => 'Alambagh, Lucknow',
+                'price' => 4500000,
+                'type' => 'apartment',
+                'bedrooms' => 2,
+                'bathrooms' => 1,
+                'area' => 950,
+                'featured' => false,
+                'image_path' => BASE_URL . '/assets/images/property-4.jpg'
+            ],
+            (object)[
+                'id' => 5,
+                'title' => '3BHK in Gomti Nagar Extension',
+                'location' => 'Gomti Nagar Extension, Lucknow',
+                'price' => 6500000,
+                'type' => 'apartment',
+                'bedrooms' => 3,
+                'bathrooms' => 2,
+                'area' => 1350,
+                'featured' => false,
+                'image_path' => BASE_URL . '/assets/images/property-5.jpg'
+            ]
+        ];
+    }
+    
+    private function loadProjects()
+    {
+        return [
+            (object)[
+                'id' => 1,
+                'name' => 'APS Gardenia',
+                'location' => 'Gomti Nagar, Lucknow',
+                'type' => 'Residential',
+                'status' => 'Ongoing',
+                'completion' => '65%',
+                'description' => 'Luxury residential apartments with modern amenities',
+                'image_path' => BASE_URL . '/assets/images/project-1.jpg'
+            ],
+            (object)[
+                'id' => 2,
+                'name' => 'APS Plaza',
+                'location' => 'Hazratganj, Lucknow',
+                'type' => 'Commercial',
+                'status' => 'Completed',
+                'completion' => '100%',
+                'description' => 'Premium commercial spaces in the heart of Lucknow',
+                'image_path' => BASE_URL . '/assets/images/project-2.jpg'
+            ]
+        ];
+    }
+    
+    private function loadOfficeLocations()
+    {
+        return [
+            (object)[
+                'name' => 'Head Office',
+                'address' => '123, Civil Lines, Gorakhpur, Uttar Pradesh - 273001',
+                'phone' => '+91-551-2345678',
+                'email' => 'info@apsdreamhome.com',
+                'timing' => '9:00 AM - 7:00 PM'
+            ],
+            (object)[
+                'name' => 'Lucknow Branch',
+                'address' => '456, Gomti Nagar, Lucknow, Uttar Pradesh - 226010',
+                'phone' => '+91-522-3456789',
+                'email' => 'lucknow@apsdreamhome.com',
+                'timing' => '10:00 AM - 6:00 PM'
+            ]
+        ];
+    }
 }
