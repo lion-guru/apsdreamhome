@@ -2,6 +2,11 @@
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route API requests to api_test.php for testing
+RewriteRule ^api/(.*)$ api_test.php [QSA,L]
+
+# Route all other requests to index.php
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Security headers
