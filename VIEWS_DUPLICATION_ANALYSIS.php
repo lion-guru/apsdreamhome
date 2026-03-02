@@ -486,7 +486,7 @@ class ViewsDuplicationAnalyzer {
         if (preg_match_all('/include\s*[\'"]([^\'"]+)[\'"]/', $content, $matches)) {
             $includes = $matches[1];
         }
-        if (preg_match_all '/require\s*[\'"]([^\'"]+)[\'"]/', $content, $matches)) {
+        if (preg_match_all('/require\s*[\'"]([^\'"]+)[\'"]/', $content, $matches)) {
             $includes = array_merge($includes, $matches[1]);
         }
         return $includes;
