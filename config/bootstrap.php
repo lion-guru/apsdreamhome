@@ -58,7 +58,7 @@ if (file_exists(CONFIG_PATH . '/environments/' . APP_ENV . '.php')) {
         error_log("Environment config returned non-array: " . gettype($envConfig));
         $envConfig = [];
     }
-    $config = array_merge($config, $envConfig);
+    $config = array_merge($config, (array)$envConfig);
 }
 
 // Load helper functions first
