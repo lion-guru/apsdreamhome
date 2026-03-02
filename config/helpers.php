@@ -94,11 +94,4 @@ if (!function_exists('storage_path')) {
     }
 }
 
-echo "✅ Helper functions defined successfully!\n";
-echo "• database_path() - Database path helper\n";
-echo "• base_path() - Base path helper\n";
-echo "• config_path() - Config path helper\n";
-echo "• app_path() - App path helper\n";
-echo "• public_path() - Public path helper\n";
-echo "• storage_path() - Storage path helper\n";
 ?>
