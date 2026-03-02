@@ -260,19 +260,21 @@ class App
         
         // Admin routes
         elseif ($uri === "/admin") {
-            return $this->loadController("Admin\\AdminController", "index");
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
         } elseif ($uri === "/admin/dashboard") {
-            return $this->loadController("Admin\\AdminDashboardController", "index");
-        } elseif ($uri === "/admin/projects") {
-            return $this->loadController("Admin\\ProjectController", "index");
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
         } elseif ($uri === "/admin/properties") {
-            return $this->loadController("Admin\\PropertyController", "index");
+            return $this->loadController("Admin\\AdminControllerSimple", "properties");
+        } elseif ($uri === "/admin/projects") {
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
         } elseif ($uri === "/admin/users") {
-            return $this->loadController("Admin\\UserController", "index");
+            return $this->loadController("Admin\\AdminControllerSimple", "users");
         } elseif ($uri === "/admin/leads") {
-            return $this->loadController("Admin\\LeadController", "index");
+            return $this->loadController("Admin\\AdminControllerSimple", "leads");
         } elseif ($uri === "/admin/customers") {
-            return $this->loadController("Admin\\CustomerController", "index");
+            return $this->loadController("Admin\\AdminControllerSimple", "index");
+        } elseif ($uri === "/admin/settings") {
+            return $this->loadController("Admin\\AdminControllerSimple", "settings");
         }
         
         // Property routes
