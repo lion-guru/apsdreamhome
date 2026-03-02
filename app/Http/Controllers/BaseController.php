@@ -7,8 +7,8 @@ use Exception;
 
 class BaseController extends CoreController
 {
-    protected $data = [];
     protected $models = [];
+    protected $data = [];
     protected $layout = 'layouts/base';
     protected $db;
 
@@ -238,9 +238,8 @@ class BaseController extends CoreController
      */
     public function render($view, $data = [], $layout = null, $echo = true)
     {
-        $data = array_merge($this->data, $data);
-        $this->data = $data;
-        $layout = $layout ?? $this->layout;
+        $this->data = array_merge($this->data ?? [], $data);
+        $layout = $layout ?? $this->layout ?? 'layouts/base';
 
         if ($this->session && method_exists($this->session, 'getFlashBag')) {
             // Add flash messages to all views
