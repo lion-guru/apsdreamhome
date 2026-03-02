@@ -49,8 +49,30 @@ class App
     public function run()
     {
         try {
-            // Handle request
-            return $this->handleRequest();
+            $uri = $_SERVER['REQUEST_URI'] ?? '/';
+            $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+            
+            // Remove query string from URI
+            $uri = strtok($uri, '?');
+            
+            // Remove base path if present
+            $basePath = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
+            if ($basePath !== '/') {
+                $uri = str_replace($basePath, '', $uri);
+            }
+            
+            // Ensure URI starts with /
+            if (empty($uri)) {
+                $uri = '/';
+            }
+            
+            // Debug logging
+            error_log("ROUTING DEBUG: URI = '$uri', Method = '$method'");
+            error_log("ROUTING DEBUG: BasePath = '$basePath'");
+            error_log("ROUTING DEBUG: Original URI = '" . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "'");
+            
+            // Route the request
+            return $this->route($uri, $method);
             
         } catch (Exception $e) {
             return $this->handleError($e);
@@ -307,16 +329,23 @@ class App
     {
         $controllerClass = "App\\Http\\Controllers\\" . $controller;
         
+        // Debug logging
+        error_log("CONTROLLER DEBUG: Attempting to load $controllerClass::$method");
+        
         if (class_exists($controllerClass)) {
+            error_log("CONTROLLER DEBUG: Class $controllerClass exists");
             $controllerInstance = new $controllerClass();
             if (method_exists($controllerInstance, $method)) {
+                error_log("CONTROLLER DEBUG: Method $method exists in $controllerClass");
                 ob_start();
                 $controllerInstance->$method();
                 return ob_get_clean();
             } else {
+                error_log("CONTROLLER ERROR: Method $method not found in $controllerClass");
                 return "Method " . $method . " not found in " . $controllerClass;
             }
         } else {
+            error_log("CONTROLLER ERROR: Class $controllerClass not found");
             return "Controller " . $controllerClass . " not found";
         }
     }
