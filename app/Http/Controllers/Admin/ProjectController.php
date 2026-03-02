@@ -48,7 +48,7 @@ class ProjectController extends AdminController
      */
     public function store()
     {
-        if ($this->request->method() !== 'POST') {
+        if ($this->request->getMethod() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->redirect('/admin/projects/create');
         }
@@ -58,7 +58,7 @@ class ProjectController extends AdminController
             return $this->redirect('/admin/projects/create');
         }
 
-        $data = $this->request->post();
+        $data = $this->request->all();
 
         // Basic validation
         if (empty($data['project_name']) || empty($data['project_code'])) {
@@ -146,7 +146,7 @@ class ProjectController extends AdminController
     {
         $id = \intval($id);
 
-        if ($this->request->method() !== 'POST') {
+        if ($this->request->getMethod() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->redirect("/admin/projects/edit/$id");
         }
@@ -156,7 +156,7 @@ class ProjectController extends AdminController
             return $this->redirect("/admin/projects/edit/$id");
         }
 
-        $data = $this->request->post();
+        $data = $this->request->all();
 
         if (empty($data['project_name'])) {
             $this->setFlash('error', $this->mlSupport->translate('Project name is required.'));
@@ -224,7 +224,7 @@ class ProjectController extends AdminController
     {
         $id = \intval($id);
 
-        if ($this->request->method() !== 'POST') {
+        if ($this->request->getMethod() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->redirect('/admin/projects');
         }
@@ -255,7 +255,7 @@ class ProjectController extends AdminController
      */
     public function bulkUpdateStatus()
     {
-        if ($this->request->method() !== 'POST') {
+        if ($this->request->getMethod() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->redirect('/admin/projects');
         }
@@ -265,7 +265,7 @@ class ProjectController extends AdminController
             return $this->redirect('/admin/projects');
         }
 
-        $data = $this->request->post();
+        $data = $this->request->all();
         $projectIds = $data['project_ids'] ?? [];
         $status = $data['status'] ?? null;
 
@@ -308,7 +308,7 @@ class ProjectController extends AdminController
      */
     public function bulkDelete()
     {
-        if ($this->request->method() !== 'POST') {
+        if ($this->request->getMethod() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->redirect('/admin/projects');
         }
@@ -318,7 +318,7 @@ class ProjectController extends AdminController
             return $this->redirect('/admin/projects');
         }
 
-        $data = $this->request->post();
+        $data = $this->request->all();
         $projectIds = $data['project_ids'] ?? [];
 
         if (empty($projectIds) || !is_array($projectIds)) {
@@ -355,7 +355,7 @@ class ProjectController extends AdminController
      */
     public function bulkToggleFeatured()
     {
-        if ($this->request->method() !== 'POST') {
+        if ($this->request->getMethod() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->redirect('/admin/projects');
         }
@@ -365,7 +365,7 @@ class ProjectController extends AdminController
             return $this->redirect('/admin/projects');
         }
 
-        $data = $this->request->post();
+        $data = $this->request->all();
         $projectIds = $data['project_ids'] ?? [];
         $featured = isset($data['featured']) ? 1 : 0;
 
