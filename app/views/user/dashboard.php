@@ -3,6 +3,9 @@ if (!defined('BASE_URL')) {
     define('BASE_URL', 'http://localhost/apsdreamhome/');
 }
 
+// Include Helpers class
+require_once __DIR__ . '/../../core/Helpers.php';
+
 // Ensure $data is defined to prevent errors
 if (!isset($data)) {
     $data = [
@@ -21,7 +24,7 @@ if (!isset($data)) {
 <div class="container-fluid py-4 bg-light min-vh-100">
     <div class="row align-items-center mb-4">
         <div class="col-lg-8">
-            <h1 class="h3 fw-semibold mb-1">Welcome back, <?php echo htmlspecialchars($data['user']['name']); ?> 👋</h1>
+            <h1 class="h3 fw-semibold mb-1">Welcome back, <?php echo htmlspecialchars($data['user']['name']); ?> </h1>
             <p class="text-secondary mb-0">Track your property journey, manage favorites and stay updated on new launches.</p>
         </div>
         <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">

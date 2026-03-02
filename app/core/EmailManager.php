@@ -121,7 +121,7 @@ class EmailManager
     /**
      * Process email template with data
      */
-    private function processTemplate($template_key, $data = [])
+    private function processTemplate($template, $data = [], $options = [])
     {
         if (!isset($this->templates[$template_key])) {
             throw new \Exception('Email template not found: ' . $template_key);
