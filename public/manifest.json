@@ -1,52 +1,171 @@
 {
-    "name": "APS Dream Home",
-    "short_name": "APS Dream",
-    "description": "Advanced Property Management System",
-    "start_url": "\/",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#0d6efd",
-    "orientation": "portrait-primary",
-    "icons": [
+  "name": "APS Dream Home - Real Estate Platform",
+  "short_name": "APS Dream Home",
+  "description": "Find your dream home with APS Dream Home - Advanced real estate platform with AI-powered recommendations",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["real estate", "property", "housing", "rental", "buy"],
+  "shortcuts": [
+    {
+      "name": "Search Properties",
+      "short_name": "Search",
+      "description": "Search for properties",
+      "url": "/properties/search",
+      "icons": [
         {
-            "src": "\/public\/assets\/images\/icon-72x72.png",
-            "sizes": "72x72",
-            "type": "image\/png"
-        },
-        {
-            "src": "\/public\/assets\/images\/icon-96x96.png",
-            "sizes": "96x96",
-            "type": "image\/png"
-        },
-        {
-            "src": "\/public\/assets\/images\/icon-128x128.png",
-            "sizes": "128x128",
-            "type": "image\/png"
-        },
-        {
-            "src": "\/public\/assets\/images\/icon-144x144.png",
-            "sizes": "144x144",
-            "type": "image\/png"
-        },
-        {
-            "src": "\/public\/assets\/images\/icon-152x152.png",
-            "sizes": "152x152",
-            "type": "image\/png"
-        },
-        {
-            "src": "\/public\/assets\/images\/icon-192x192.png",
-            "sizes": "192x192",
-            "type": "image\/png"
-        },
-        {
-            "src": "\/public\/assets\/images\/icon-384x384.png",
-            "sizes": "384x384",
-            "type": "image\/png"
-        },
-        {
-            "src": "\/public\/assets\/images\/icon-512x512.png",
-            "sizes": "512x512",
-            "type": "image\/png"
+          "src": "/assets/images/icons/search-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
         }
-    ]
+      ]
+    },
+    {
+      "name": "My Favorites",
+      "short_name": "Favorites",
+      "description": "View your favorite properties",
+      "url": "/favorites",
+      "icons": [
+        {
+          "src": "/assets/images/icons/favorite-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Property Alerts",
+      "short_name": "Alerts",
+      "description": "Manage property alerts",
+      "url": "/alerts",
+      "icons": [
+        {
+          "src": "/assets/images/icons/alert-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "/assets/images/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/images/icons/maskable-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/images/icons/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/images/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Property Search Interface"
+    },
+    {
+      "src": "/assets/images/screenshots/mobile-1.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Property View"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "focus-existing"]
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+apsdreamhome",
+      "url": "/property/%s"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "images",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  },
+  "share_target": {
+    "action": "/share-property",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }

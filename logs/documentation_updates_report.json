@@ -1,0 +1,18 @@
+{
+    "timestamp": "2026-03-02 22:18:51",
+    "total_features": 3,
+    "successful_features": 0,
+    "success_rate": 0,
+    "results": {
+        "api_documentation": {
+            "swagger_docs": false
+        },
+        "user_documentation": {
+            "user_guide": false
+        },
+        "developer_documentation": {
+            "developer_guide": false
+        }
+    },
+    "features_status": "NEEDS_ATTENTION"
+}
