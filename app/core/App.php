@@ -293,7 +293,7 @@ class App
         
         // API routes handled separately in handleApiRequest
         elseif (strpos($uri, '/api/') === 0) {
-            return $this->handleApiRequest();
+            return $this->handleApiRequest($uri, $method);
         }
         else {
             // Default to home
