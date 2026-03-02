@@ -200,36 +200,6 @@ class App
         }
     }
     
-    public function request()
-    {
-        return $this->request;
-    }
-    
-    public function response()
-    {
-        return $this->response;
-    }
-    
-    public function session()
-    {
-        return $this->session;
-    }
-    
-    public function db()
-    {
-        return $this->db;
-    }
-    
-    public function router()
-    {
-        return $this->router;
-    }
-    
-    public function basePath($path = '')
-    {
-        return $this->basePath . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '\\/') : '');
-    }
-    
     private function handleError($exception)
     {
         error_log("Application Error: " . $exception->getMessage());
@@ -347,8 +317,13 @@ class App
         return $auth;
     }
     
-    public function basePath()
+    public function router()
     {
-        return $this->basePath;
+        return $this->router;
+    }
+    
+    public function basePath($path = '')
+    {
+        return $this->basePath . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '\\/') : '');
     }
 }
