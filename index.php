@@ -52,7 +52,9 @@ require_once __DIR__ . '/config/bootstrap.php';
 $app = \App\Core\App::getInstance(__DIR__);
 
 // Handle the request
+debug_log("About to call app->run()");
 $response = $app->run();
+debug_log("Response from app->run(): " . substr($response, 0, 200) . "...");
 
 // Send the response
 echo $response;

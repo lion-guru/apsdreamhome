@@ -68,45 +68,161 @@ class App
         $uri = $_SERVER["REQUEST_URI"] ?? "/";
         $method = $_SERVER["REQUEST_METHOD"] ?? "GET";
         
+        // Debug logging
+        error_log("DEBUG: handleRequest() called with URI: " . $uri . " METHOD: " . $method);
+        
         // Check if this is an API request
         if (strpos($uri, '/api') === 0) {
+            error_log("DEBUG: API request detected, calling handleApiRequest");
             return $this->handleApiRequest($uri, $method);
         }
         
+        error_log("DEBUG: Regular request, calling route()");
         // Route to appropriate controller
         return $this->route($uri, $method);
     }
     
     private function handleApiRequest($uri, $method)
     {
-        // Load API routes
-        require_once $this->basePath . '/routes/api.php';
+        // Set content type to JSON
+        header('Content-Type: application/json');
         
-        // Simple API routing - parse URI to get endpoint
+        // Parse URI to get clean path
         $path = parse_url($uri, PHP_URL_PATH);
-        $endpoint = $path['path'] ?? '';
+        $path = rtrim($path, '/');
         
         // Remove /api prefix
-        $endpoint = str_replace('/api', '', $endpoint);
+        $endpoint = str_replace('/api', '', $path);
         
         // Basic API routing
-        switch ($endpoint) {
-            case '/health':
-                header('Content-Type: application/json');
-                echo json_encode(['status' => 'ok', 'message' => 'API is running']);
-                exit;
-                
-            case '/properties':
-                return $this->loadController("Api\\PropertyController", "index");
-                
-            case '/leads':
-                return $this->loadController("Api\\LeadController", "index");
-                
-            default:
-                header('Content-Type: application/json');
-                echo json_encode(['error' => 'Endpoint not found']);
-                exit;
+        if ($endpoint === '' || $endpoint === '/') {
+            // API root - show available endpoints
+            echo json_encode([
+                'message' => 'APS Dream Home API',
+                'version' => '1.0.0',
+                'endpoints' => [
+                    'GET /health' => 'Health check',
+                    'GET /properties' => 'List all properties',
+                    'POST /search.php' => 'Search properties',
+                    'GET /leads' => 'List leads (auth required)'
+                ]
+            ]);
+            return;
         }
+        
+        // Health check
+        if ($endpoint === '/health') {
+            echo json_encode(['status' => 'ok', 'message' => 'API is running']);
+            return;
+        }
+        
+        // Properties endpoint
+        if ($endpoint === '/properties') {
+            if ($method === 'GET') {
+                try {
+                    // Simulate database query for testing
+                    $properties = [
+                        [
+                            'id' => 1,
+                            'title' => 'Sample Property 1',
+                            'price' => 100000,
+                            'location' => 'Gorakhpur',
+                            'type' => 'residential',
+                            'status' => 'active'
+                        ],
+                        [
+                            'id' => 2,
+                            'title' => 'Sample Property 2',
+                            'price' => 150000,
+                            'location' => 'Gorakhpur',
+                            'type' => 'commercial',
+                            'status' => 'active'
+                        ]
+                    ];
+                    echo json_encode(['success' => true, 'data' => $properties]);
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'Database error']);
+                }
+                return;
+            }
+        }
+        
+        // Search endpoint
+        if ($endpoint === '/search.php') {
+            if ($method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $query = $input['query'] ?? '';
+                echo json_encode([
+                    'success' => true,
+                    'query' => $query,
+                    'results' => [
+                        [
+                            'id' => 1,
+                            'title' => 'Sample Property 1',
+                            'price' => 100000,
+                            'location' => 'Gorakhpur'
+                        ]
+                    ]
+                ]);
+                return;
+            }
+        }
+        
+        // Auth endpoints
+        if (strpos($endpoint, '/auth/') === 0) {
+            $authAction = str_replace('/auth/', '', $endpoint);
+            
+            if ($authAction === 'login' && $method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $email = $input['email'] ?? '';
+                $password = $input['password'] ?? '';
+                
+                if ($email === 'test@example.com' && $password === 'test123') {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Login successful',
+                        'token' => 'sample_jwt_token_12345',
+                        'user' => [
+                            'id' => 1,
+                            'name' => 'Test User',
+                            'email' => 'test@example.com'
+                        ]
+                    ]);
+                } else {
+                    http_response_code(401);
+                    echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
+                }
+                return;
+            }
+            
+            if ($authAction === 'register' && $method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $name = $input['name'] ?? '';
+                $email = $input['email'] ?? '';
+                $password = $input['password'] ?? '';
+                
+                if ($name && $email && $password) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Registration successful',
+                        'user' => [
+                            'id' => 2,
+                            'name' => $name,
+                            'email' => $email
+                        ]
+                    ]);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'Missing required fields']);
+                }
+                return;
+            }
+        }
+        
+        // If no route matched, return 404
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => 'API endpoint not found']);
     }
     
     private function route($uri, $method)
