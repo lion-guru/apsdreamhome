@@ -105,6 +105,20 @@ class App
             return $this->loadController("HomeController", "index");
         } elseif ($uri === "/about") {
             return $this->loadController("PageController", "about");
+        } elseif ($uri === "/login") {
+            return $this->loadController("Public\\AuthController", "login");
+        } elseif ($uri === "/login/process") {
+            return $this->loadController("Public\\AuthController", "processLogin");
+        } elseif ($uri === "/register") {
+            return $this->loadController("Public\\AuthController", "register");
+        } elseif ($uri === "/register/process") {
+            return $this->loadController("Public\\AuthController", "processRegister");
+        } elseif ($uri === "/logout") {
+            return $this->loadController("Public\\AuthController", "logout");
+        } elseif ($uri === "/dashboard") {
+            return $this->loadController("User\\DashboardController", "index");
+        } elseif ($uri === "/admin") {
+            return $this->loadController("Admin\\AdminController", "index");
         } else {
             // Default to home
             return $this->loadController("HomeController", "index");
