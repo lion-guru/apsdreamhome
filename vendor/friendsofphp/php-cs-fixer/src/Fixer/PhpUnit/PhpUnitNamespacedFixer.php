@@ -185,7 +185,7 @@ final class PhpUnitNamespacedFixer extends AbstractFixer implements Configurable
             }
 
             $originalClass = isset($tokens[$currIndex]) && method_exists($tokens[$currIndex], 'getContent') ? $tokens[$currIndex]->getContent() : '';
-            $allowedReplacementScenarios = (new ClassyAnalyzer())->isClassyInvocation($tokens, $currIndex)
+            $allowedReplacementScenarios = $this->isClassyInvocation($tokens, $currIndex)
                 || $this->isImport($tokens, $currIndex);
 
             if (!$allowedReplacementScenarios || !Preg::match($this->originalClassRegEx, $originalClass)) {
@@ -248,6 +248,17 @@ final class PhpUnitNamespacedFixer extends AbstractFixer implements Configurable
         }
 
         return Tokens::fromArray($tokensArray);
+    }
+
+    private function isClassyInvocation(Tokens $tokens, int $index): bool
+    {
+        $prevIndex = $tokens->getPrevMeaningfulToken($index);
+
+        if (isset($tokens[$prevIndex]) && method_exists($tokens[$prevIndex], 'isGivenKind') && $tokens[$prevIndex]->isGivenKind(T_NS_SEPARATOR)) {
+            $prevIndex = $tokens->getPrevMeaningfulToken($prevIndex);
+        }
+
+        return isset($tokens[$prevIndex]) && method_exists($tokens[$prevIndex], 'isGivenKind') && $tokens[$prevIndex]->isGivenKind(T_USE);
     }
 
     private function isImport(Tokens $tokens, int $currIndex): bool

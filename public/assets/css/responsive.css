@@ -1,0 +1,53 @@
+
+/* Responsive Design Framework */
+:root {
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-xxl: 1400px;
+}
+
+/* Mobile-first responsive design */
+.container {
+    width: 100%;
+    max-width: var(--breakpoint-xl);
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Grid system */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+}
+
+.col {
+    flex: 1;
+    padding: 0 15px;
+}
+
+/* Responsive utilities */
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-grid { display: grid !important; }
+
+/* Mobile responsive */
+@media (max-width: 576px) {
+    .container { padding: 0 10px; }
+    .row { margin: 0 -5px; }
+    .col { padding: 0 5px; }
+}
+
+/* Tablet responsive */
+@media (min-width: 768px) and (max-width: 992px) {
+    .container { padding: 0 20px; }
+}
+
+/* Desktop responsive */
+@media (min-width: 992px) {
+    .container { padding: 0 30px; }
+}
