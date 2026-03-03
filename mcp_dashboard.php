@@ -1,9 +1,19 @@
+<?php
+/**
+ * APS Dream Home - MCP Dashboard
+ * Real-time MCP server monitoring and management
+ */
+
+// Include path manager for consistent URLs
+require_once __DIR__ . '/config/path_manager.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APS Dream Home - MCP Dashboard</title>
+    <?php PathManager::outputJsConfig(); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -313,7 +323,7 @@
         // Load server status
         async function loadServerStatus() {
             try {
-                const response = await fetch('/apsdreamhome/config/mcp_server_manager.php', {
+                const response = await fetch(window.APS_CONFIG.urls.server_manager, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -386,7 +396,7 @@
         // Load recent logs
         async function loadRecentLogs() {
             try {
-                const response = await fetch('/apsdreamhome/config/mcp_database_integration.php?action=get_logs&limit=10');
+                const response = await fetch(window.APS_CONFIG.urls.database_integration + '?action=get_logs&limit=10');
                 const result = await response.json();
                 
                 if (result.success) {
@@ -423,7 +433,7 @@
         // Control functions
         async function startAllServers() {
             try {
-                const response = await fetch('/apsdreamhome/config/mcp_server_manager.php', {
+                const response = await fetch(window.APS_CONFIG.urls.server_manager, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -452,7 +462,7 @@
             }
 
             try {
-                const response = await fetch('/apsdreamhome/config/mcp_server_manager.php', {
+                const response = await fetch(window.APS_CONFIG.urls.server_manager, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -486,7 +496,7 @@
         }
 
         function openConfiguration() {
-            window.open('/apsdreamhome/mcp_configuration_gui.php', '_blank');
+            window.open(window.APS_CONFIG.urls.configuration, '_blank');
         }
 
         function showNotification(message, type) {

@@ -1,9 +1,19 @@
+<?php
+/**
+ * APS Dream Home - MCP Configuration GUI
+ * Modern UI/UX for easy management of MCP servers and database connections
+ */
+
+// Include path manager for consistent URLs
+require_once __DIR__ . '/config/path_manager.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APS Dream Home - MCP Configuration Manager</title>
+    <?php PathManager::outputJsConfig(); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -586,6 +596,36 @@
                             </button>
                         </div>
                     </div>
+                <!-- Server Control Panel -->
+                    <div class="text-center mt-5">
+                        <div class="d-flex justify-content-center gap-3">
+                            <button class="btn btn-success btn-lg pulse-animation" onclick="startAllMCPServers()">
+                                <i class="fas fa-play me-2"></i>Start All MCP Servers
+                            </button>
+                            <button class="btn btn-warning btn-lg" onclick="stopAllMCPServers()">
+                                <i class="fas fa-stop me-2"></i>Stop All MCP Servers
+                            </button>
+                            <button class="btn btn-info btn-lg" onclick="restartAllMCPServers()">
+                                <i class="fas fa-redo me-2"></i>Restart All MCP Servers
+                            </button>
+                            <button class="btn btn-secondary btn-lg" onclick="checkMCPServerStatus()">
+                                <i class="fas fa-heartbeat me-2"></i>Check Status
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Server Status Display -->
+                    <div class="backup-card mt-4" id="server-status-card" style="display: none;">
+                        <div class="backup-header">
+                            <i class="fas fa-server me-2"></i>
+                            MCP Server Status
+                        </div>
+                        <div class="p-4">
+                            <div id="server-status-display">
+                                <!-- Status will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -606,7 +646,7 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
         </div>
         <div class="toast-body">
-            Configuration saved successfully!
+            Operation completed successfully!
         </div>
     </div>
 
@@ -618,7 +658,7 @@
         // Load existing configuration
         async function loadConfiguration() {
             try {
-                const response = await fetch('/config/mcp_servers.json');
+                const response = await fetch(window.APS_CONFIG.paths.mcp_config);
                 mcpConfig = await response.json();
                 updateUIFromConfig();
             } catch (error) {
@@ -742,7 +782,7 @@
 
         // Save configuration to file
         async function saveConfiguration() {
-            const response = await fetch('/config/save_mcp_config.php', {
+            const response = await fetch(window.APS_CONFIG.apiBase + 'save_mcp_config.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -825,10 +865,197 @@
             bsToast.show();
         }
 
+        // Show success toast
+        function showSuccessToast(message) {
+            const toast = document.querySelector('.success-toast');
+            toast.querySelector('.toast-body').textContent = message;
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+
+        // MCP Server Control Functions
+        async function startAllMCPServers() {
+            showLoading();
+            updateLog('Starting all MCP servers...');
+            
+            try {
+                const response = await fetch(window.APS_CONFIG.urls.server_manager, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'start_all'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayServerStatus(result.result);
+                    showSuccessToast('All MCP servers started successfully!');
+                } else {
+                    hideLoading();
+                    alert('Failed to start MCP servers: ' + result.error);
+                }
+
+            } catch (error) {
+                hideLoading();
+                alert('Error starting MCP servers: ' + error.message);
+            }
+        }
+
+        async function stopAllMCPServers() {
+            if (!confirm('Are you sure you want to stop all MCP servers?')) {
+                return;
+            }
+
+            showLoading();
+            updateLog('Stopping all MCP servers...');
+            
+            try {
+                const response = await fetch(window.APS_CONFIG.urls.server_manager, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'stop_all'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessToast('All MCP servers stopped successfully!');
+                } else {
+                    hideLoading();
+                    alert('Failed to stop MCP servers: ' + result.error);
+                }
+
+            } catch (error) {
+                hideLoading();
+                alert('Error stopping MCP servers: ' + error.message);
+            }
+        }
+
+        async function restartAllMCPServers() {
+            showLoading();
+            updateLog('Restarting all MCP servers...');
+            
+            try {
+                const response = await fetch(window.APS_CONFIG.urls.server_manager, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'restart_all'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessToast('All MCP servers restarted successfully!');
+                } else {
+                    hideLoading();
+                    alert('Failed to restart MCP servers: ' + result.error);
+                }
+
+            } catch (error) {
+                hideLoading();
+                alert('Error restarting MCP servers: ' + error.message);
+            }
+        }
+
+        async function checkMCPServerStatus() {
+            showLoading();
+            updateLog('Checking MCP server status...');
+            
+            try {
+                const response = await fetch(window.APS_CONFIG.urls.server_manager, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'get_status'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayServerStatus(result.result);
+                    showSuccessToast('Server status updated!');
+                } else {
+                    hideLoading();
+                    alert('Failed to get server status: ' + result.error);
+                }
+
+            } catch (error) {
+                hideLoading();
+                alert('Error checking server status: ' + error.message);
+            }
+        }
+
+        function displayServerStatus(status) {
+            const statusCard = document.getElementById('server-status-card');
+            const statusDisplay = document.getElementById('server-status-display');
+            
+            if (status.error) {
+                statusDisplay.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        ${status.error}
+                    </div>
+                `;
+            } else {
+                let html = '<div class="row g-3">';
+                
+                Object.keys(status).forEach(serverKey => {
+                    const server = status[serverKey];
+                    const statusClass = server.running ? 'status-success' : 'status-inactive';
+                    const statusText = server.running ? 'Running' : 'Stopped';
+                    
+                    html += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="file-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>${serverKey}</strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            ${server.configured ? 'Configured' : 'Not Configured'} • 
+                                            ${statusText}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <span class="status-indicator ${statusClass}"></span>
+                                        <span class="badge bg-${server.running ? 'success' : 'danger'}">
+                                            ${statusText}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                    `;
+                });
+                
+                html += '</div>';
+                statusDisplay.innerHTML = html;
+            }
+            
+            statusCard.style.display = 'block';
+        }
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadConfiguration();
             selectDatabase('mysql');
+            
+            // Auto-check server status every 30 seconds
+            setInterval(checkMCPServerStatus, 30000);
         });
     </script>
 </body>
