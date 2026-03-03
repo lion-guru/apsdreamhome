@@ -1,0 +1,87 @@
+<?php
+/**
+ * APS Dream Home - Simple Admin Files Organizer
+ * Move admin files to proper MVC structure
+ */
+
+echo "🏠 Moving Admin Files to MVC Structure...\n";
+echo "==========================================\n\n";
+
+// Define admin file patterns and their targets
+$adminFiles = [
+    'admin' => 'app/Controllers/Admin',
+    'dashboard' => 'app/Controllers/Admin', 
+    'management' => 'app/Controllers/Admin',
+    'user' => 'app/Controllers/User',
+    'employee' => 'app/Controllers/User',
+    'customer' => 'app/Controllers/User',
+    'property' => 'app/Controllers/Admin',
+    'testimonials' => 'app/Controllers/Admin',
+    'careers' => 'app/Controllers/Admin',
+    'faq' => 'app/Controllers/Admin',
+    'contact' => 'app/Controllers/Admin',
+    'newsletter' => 'app/Controllers/Admin',
+    'payment' => 'app/Controllers/Admin',
+    'backup' => 'app/Controllers/Admin',
+    'restore' => 'app/Controllers/Admin',
+    'security' => 'app/Controllers/Admin',
+    'monitor' => 'app/Controllers/Admin',
+    'system' => 'app/Controllers/Admin'
+];
+
+// Get all PHP files in root
+$rootFiles = glob(__DIR__ . '/*.php');
+$movedCount = 0;
+
+foreach ($rootFiles as $file) {
+    $filename = basename($file, '.php');
+    $lowerFilename = strtolower($filename);
+    
+    // Skip already organized files
+    if (in_array($filename, ['index', 'organize_admin_files'])) {
+        continue;
+    }
+    
+    // Determine target directory based on filename
+    $targetDir = null;
+    foreach ($adminFiles as $pattern => $target) {
+        if (strpos($lowerFilename, $pattern) !== false) {
+            $targetDir = $target;
+            break;
+        }
+    }
+    
+    // Move file if target found
+    if ($targetDir) {
+        $targetPath = __DIR__ . '/' . $targetDir . '/' . $filename;
+        
+        if (!file_exists($targetPath)) {
+            // Create target directory if needed
+            if (!is_dir(dirname($targetPath))) {
+                mkdir(dirname($targetPath), 0755, true);
+            }
+            
+            rename($file, $targetPath);
+            echo "✅ Moved: $filename -> $targetDir/\n";
+            $movedCount++;
+        }
+    }
+}
+
+echo "\n📊 Summary:\n";
+echo "Moved $movedCount admin files\n\n";
+
+echo "🎯 Target Structure:\n";
+echo "├── app/Controllers/Admin/ (admin controllers)\n";
+echo "├── app/Controllers/User/ (user controllers)\n";
+echo "├── app/Models/ (data models)\n";
+echo "├── app/Views/admin/ (admin views)\n";
+echo "├── app/Views/user/ (user views)\n";
+
+echo "\n🎉 Admin files properly organized!\n";
+echo "📝 Next steps:\n";
+echo "1. Update routes to use new controllers\n";
+echo "2. Create corresponding views\n";
+echo "3. Test admin functionality\n";
+echo "4. Update navigation menus\n";
+?>
