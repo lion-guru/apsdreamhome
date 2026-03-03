@@ -303,6 +303,27 @@ class App
             return $this->loadController("Public\\AuthController", "logout");
         }
         
+        // Associate routes
+        elseif ($uri === "/associate/login") {
+            return $this->loadController("Associate\\AuthController", "login");
+        } elseif ($uri === "/associate/register") {
+            return $this->loadController("Associate\\AuthController", "register");
+        } elseif ($uri === "/associate/dashboard") {
+            return $this->loadController("Associate\\DashboardController", "index");
+        }
+        
+        // Employee routes
+        elseif ($uri === "/employee/login") {
+            return $this->loadController("Employee\\AuthController", "login");
+        } elseif ($uri === "/employee/dashboard") {
+            return $this->loadController("Employee\\DashboardController", "index");
+        }
+        
+        // Customer routes
+        elseif ($uri === "/customer/dashboard") {
+            return $this->loadController("Customer\\DashboardController", "index");
+        }
+        
         // User routes
         elseif ($uri === "/dashboard") {
             return $this->loadController("User\\DashboardController", "index");
