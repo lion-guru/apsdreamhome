@@ -1,0 +1,54 @@
+{
+    "timestamp": "2026-03-03 12:21:21",
+    "sync_percentage": 100,
+    "total_checks": 25,
+    "passed_checks": 25,
+    "sync_status": {
+        "database": {
+            "api_keys": true,
+            "properties": true,
+            "users": true,
+            "leads": true,
+            "projects": true,
+            "mcp_keys": 4
+        },
+        "files": {
+            "config\/UnifiedKeyManager.php": true,
+            "admin\/unified_key_management.php": true,
+            "admin\/unified_keys_api.php": true,
+            "app\/Http\/Controllers\/HomeController.php": true,
+            "app\/views\/home\/index.php": true,
+            "config\/mcp_servers.json": true,
+            ".env": true
+        },
+        "mcp_servers": {
+            "Unknown": true
+        },
+        "env": {
+            "GOOGLE_MAPS_API_KEY": true,
+            "RECAPTCHA_SITE_KEY": true,
+            "OPENROUTER_API_KEY": true,
+            "WHATSAPP_ACCESS_TOKEN": true
+        },
+        "ide_config": true,
+        "web": {
+            "index.php": true,
+            ".htaccess": true,
+            "public\/": true,
+            "assets\/": true
+        },
+        "api": {
+            "admin\/unified_keys_api.php": true,
+            "admin\/api_keys_api.php": true
+        }
+    },
+    "issues_found": [],
+    "fixes_applied": [],
+    "next_steps": [
+        "Monitor sync status regularly",
+        "Implement automated sync checks",
+        "Set up real-time synchronization",
+        "Create backup systems",
+        "Monitor performance metrics"
+    ]
+}
