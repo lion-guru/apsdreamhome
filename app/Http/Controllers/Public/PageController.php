@@ -1304,4 +1304,243 @@ class PageController extends BaseController
         return $this->render('faq/index', $data, 'layouts/base');
     }
 
+    public function privacy()
+    {
+        $data = [
+            'page_title' => 'Privacy Policy - APS Dream Home',
+            'page_description' => 'Our privacy policy explains how we collect, use, and protect your personal information when you use our real estate services.',
+            'last_updated' => date('F d, Y', strtotime('-1 month')),
+            'sections' => [
+                [
+                    'title' => 'Information We Collect',
+                    'content' => 'We collect information you provide directly to us, such as when you create an account, use our services, or contact us for property inquiries.',
+                    'items' => [
+                        'Name, email address, phone number',
+                        'Property preferences and requirements',
+                        'Communication records',
+                        'Website usage and browsing data'
+                    ]
+                ],
+                [
+                    'title' => 'How We Use Your Information',
+                    'content' => 'We use the information we collect to provide, maintain, and improve our real estate services.',
+                    'items' => [
+                        'Process property inquiries and bookings',
+                        'Send property recommendations and updates',
+                        'Provide customer support',
+                        'Improve our website and services'
+                    ]
+                ],
+                [
+                    'title' => 'Information Sharing',
+                    'content' => 'We do not sell, trade, or otherwise transfer your personal information to third parties without your consent.',
+                    'items' => [
+                        'Property owners and developers (with consent)',
+                        'Legal authorities (when required by law)',
+                        'Service providers (for operational purposes)',
+                        'Business partners (with consent)'
+                    ]
+                ],
+                [
+                    'title' => 'Data Security',
+                    'content' => 'We implement appropriate security measures to protect your personal information against unauthorized access.',
+                    'items' => [
+                        'SSL encryption for data transmission',
+                        'Secure data storage systems',
+                        'Regular security audits',
+                        'Employee training on data protection'
+                    ]
+                ],
+                [
+                    'title' => 'Your Rights',
+                    'content' => 'You have the right to access, update, or delete your personal information.',
+                    'items' => [
+                        'Request a copy of your data',
+                        'Update or correct your information',
+                        'Delete your account and data',
+                        'Opt-out of marketing communications'
+                    ]
+                ]
+            ]
+        ];
+
+        return $this->render('privacy/index', $data, 'layouts/base');
+    }
+
+    public function terms()
+    {
+        $data = [
+            'page_title' => 'Terms of Service - APS Dream Home',
+            'page_description' => 'Our terms of service outline the rules and regulations for using our real estate platform and services.',
+            'last_updated' => date('F d, Y', strtotime('-2 weeks')),
+            'sections' => [
+                [
+                    'title' => 'Acceptance of Terms',
+                    'content' => 'By accessing and using APS Dream Home services, you accept and agree to be bound by these terms and conditions.'
+                ],
+                [
+                    'title' => 'Services Description',
+                    'content' => 'We provide real estate consulting, property listings, and related services to help you find suitable properties.',
+                    'items' => [
+                        'Property listings and details',
+                        'Site visit arrangements',
+                        'Documentation assistance',
+                        'Property consultation services'
+                    ]
+                ],
+                [
+                    'title' => 'User Responsibilities',
+                    'content' => 'Users are responsible for maintaining the accuracy of their information and using our services ethically.',
+                    'items' => [
+                        'Provide accurate information',
+                        'Respect property and privacy rights',
+                        'Make timely payments for services',
+                        'Follow property visit guidelines'
+                    ]
+                ],
+                [
+                    'title' => 'Property Information',
+                    'content' => 'While we strive for accuracy, property information is subject to change without notice.',
+                    'items' => [
+                        'Prices and availability may change',
+                        'Property features may vary',
+                        'Legal verification recommended',
+                        'Site visits encouraged before purchase'
+                    ]
+                ],
+                [
+                    'title' => 'Payment Terms',
+                    'content' => 'Payment terms vary by service type and are clearly communicated before service commencement.',
+                    'items' => [
+                        'Consultation fees',
+                        'Property booking amounts',
+                        'Commission structures',
+                        'Refund policies'
+                    ]
+                ],
+                [
+                    'title' => 'Limitation of Liability',
+                    'content' => 'Our liability is limited to the extent permitted by law for any damages arising from our services.'
+                ]
+            ]
+        ];
+
+        return $this->render('terms/index', $data, 'layouts/base');
+    }
+
+    public function sitemap()
+    {
+        $data = [
+            'page_title' => 'Sitemap - APS Dream Home',
+            'page_description' => 'Complete sitemap of APS Dream Home website including all pages and sections.',
+            'main_pages' => [
+                [
+                    'title' => 'Home',
+                    'url' => '/',
+                    'description' => 'Main landing page with property search and featured listings'
+                ],
+                [
+                    'title' => 'Properties',
+                    'url' => '/properties',
+                    'description' => 'Browse all available properties with filters and search options'
+                ],
+                [
+                    'title' => 'Projects',
+                    'url' => '/projects',
+                    'description' => 'View our ongoing and completed real estate projects'
+                ],
+                [
+                    'title' => 'About Us',
+                    'url' => '/about',
+                    'description' => 'Learn about our company, mission, and team'
+                ],
+                [
+                    'title' => 'Contact',
+                    'url' => '/contact',
+                    'description' => 'Get in touch with our team for inquiries and support'
+                ]
+            ],
+            'property_pages' => [
+                [
+                    'title' => 'Resale Properties',
+                    'url' => '/resell',
+                    'description' => 'Browse verified resale properties with transparent pricing'
+                ],
+                [
+                    'title' => 'Gallery',
+                    'url' => '/gallery',
+                    'description' => 'View images of our completed projects and properties'
+                ],
+                [
+                    'title' => 'Blog',
+                    'url' => '/blog',
+                    'description' => 'Read real estate insights and market updates'
+                ],
+                [
+                    'title' => 'Careers',
+                    'url' => '/careers',
+                    'description' => 'Explore job opportunities and join our team'
+                ],
+                [
+                    'title' => 'Our Team',
+                    'url' => '/team',
+                    'description' => 'Meet our experienced real estate professionals'
+                ],
+                [
+                    'title' => 'Testimonials',
+                    'url' => '/testimonials',
+                    'description' => 'Read reviews from our satisfied customers'
+                ],
+                [
+                    'title' => 'FAQ',
+                    'url' => '/faq',
+                    'description' => 'Find answers to frequently asked questions'
+                ]
+            ],
+            'legal_pages' => [
+                [
+                    'title' => 'Privacy Policy',
+                    'url' => '/privacy',
+                    'description' => 'How we collect and protect your personal information'
+                ],
+                [
+                    'title' => 'Terms of Service',
+                    'url' => '/terms',
+                    'description' => 'Terms and conditions for using our services'
+                ],
+                [
+                    'title' => 'Sitemap',
+                    'url' => '/sitemap',
+                    'description' => 'Complete overview of all website pages'
+                ]
+            ],
+            'user_pages' => [
+                [
+                    'title' => 'Login',
+                    'url' => '/login',
+                    'description' => 'Sign in to your account'
+                ],
+                [
+                    'title' => 'Register',
+                    'url' => '/register',
+                    'description' => 'Create a new account'
+                ],
+                [
+                    'title' => 'User Dashboard',
+                    'url' => '/dashboard',
+                    'description' => 'Manage your account and saved properties'
+                ]
+            ],
+            'admin_pages' => [
+                [
+                    'title' => 'Admin Panel',
+                    'url' => '/admin',
+                    'description' => 'Administrative dashboard for site management'
+                ]
+            ]
+        ];
+
+        return $this->render('sitemap/index', $data, 'layouts/base');
+    }
+
 }
