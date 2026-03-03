@@ -322,6 +322,8 @@ class App
         // Property routes
         elseif ($uri === "/properties") {
             return $this->loadController("HomeController", "properties");
+        } elseif (preg_match('/^\/properties\/(\d+)$/', $uri, $matches)) {
+            return $this->loadController("HomeController", "propertyDetail", [$matches[1]]);
         } elseif ($uri === "/projects") {
             return $this->loadController("HomeController", "projects");
         } elseif ($uri === "/contact") {
@@ -345,7 +347,7 @@ class App
         }
     }
     
-    private function loadController($controller, $method)
+    private function loadController($controller, $method, $params = [])
     {
         $controllerClass = "App\\Http\\Controllers\\" . $controller;
         
@@ -358,7 +360,7 @@ class App
             if (method_exists($controllerInstance, $method)) {
                 error_log("CONTROLLER DEBUG: Method $method exists in $controllerClass");
                 ob_start();
-                $controllerInstance->$method();
+                call_user_func_array([$controllerInstance, $method], $params);
                 return ob_get_clean();
             } else {
                 error_log("CONTROLLER ERROR: Method $method not found in $controllerClass");
