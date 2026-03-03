@@ -83,7 +83,7 @@
                         <span class="badge bg-primary position-absolute top-0 end-0 m-2">Featured</span>
                     </div>
                     @endif
-                    <img src="{{ asset($property['image'] ?? 'images/property-placeholder.jpg') }}" 
+                    <img src="{{ asset($property['image_path'] ?? 'images/property-placeholder.jpg') }}" 
                          class="card-img-top" alt="{{ $property['title'] }}" style="height: 200px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">{{ $property['title'] }}</h5>

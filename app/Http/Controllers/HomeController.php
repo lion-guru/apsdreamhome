@@ -102,10 +102,12 @@ class HomeController extends Controller
                 'title' => 'Luxury Apartment in Gomti Nagar',
                 'location' => 'Gomti Nagar, Lucknow',
                 'address' => 'Gomti Nagar, Lucknow',
-                'price' => 7500000,
+                'price' => '₹75 Lakhs',
                 'bedrooms' => 3,
                 'bathrooms' => 2,
                 'area' => 1500,
+                'type' => 'apartment',
+                'featured' => true,
                 'image_path' => BASE_URL . '/assets/images/property-1.jpg'
             ],
             (object)[
@@ -113,10 +115,12 @@ class HomeController extends Controller
                 'title' => 'Modern Villa in Hazratganj',
                 'location' => 'Hazratganj, Lucknow',
                 'address' => 'Hazratganj, Lucknow',
-                'price' => 12000000,
+                'price' => '₹1.2 Crore',
                 'bedrooms' => 4,
                 'bathrooms' => 3,
                 'area' => 2000,
+                'type' => 'villa',
+                'featured' => true,
                 'image_path' => BASE_URL . '/assets/images/property-2.jpg'
             ],
             (object)[
@@ -124,10 +128,12 @@ class HomeController extends Controller
                 'title' => 'Commercial Space in Vibhuti Khand',
                 'location' => 'Vibhuti Khand, Gomti Nagar',
                 'address' => 'Vibhuti Khand, Gomti Nagar',
-                'price' => 8500000,
+                'price' => '₹85 Lakhs',
                 'bedrooms' => 0,
                 'bathrooms' => 2,
                 'area' => 1200,
+                'type' => 'commercial',
+                'featured' => false,
                 'image_path' => BASE_URL . '/assets/images/property-3.jpg'
             ]
         ];
