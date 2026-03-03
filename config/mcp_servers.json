@@ -1,0 +1,103 @@
+{
+    "mcpServers": {
+        "postgresql": {
+            "command": "node",
+            "args": ["mcp-postgresql-server.js"],
+            "env": {
+                "POSTGRES_CONNECTION_STRING": "postgresql://localhost:5432/apsdreamhome",
+                "POSTGRES_USER": "root",
+                "POSTGRES_PASSWORD": "",
+                "POSTGRES_DATABASE": "apsdreamhome"
+            }
+        },
+        "sqlite": {
+            "command": "node",
+            "args": ["mcp-sqlite-server.js"],
+            "env": {
+                "SQLITE_DATABASE_PATH": "c:\\xampp\\htdocs\\apsdreamhome\\database\\apsdreamhome.db"
+            }
+        },
+        "supabase": {
+            "command": "node",
+            "args": ["mcp-supabase-server.js"],
+            "env": {
+                "SUPABASE_URL": "https://your-project.supabase.co",
+                "SUPABASE_ANON_KEY": "your-anon-key",
+                "SUPABASE_SERVICE_KEY": "your-service-key"
+            }
+        },
+        "firecrawl": {
+            "command": "node",
+            "args": ["mcp-firecrawl-server.js"],
+            "env": {
+                "FIRECRAWL_API_KEY": "fc-your-api-key",
+                "FIRECRAWL_BASE_URL": "https://api.firecrawl.dev"
+            }
+        },
+        "brave-search": {
+            "command": "node",
+            "args": ["mcp-brave-search-server.js"],
+            "env": {
+                "BRAVE_SEARCH_API_KEY": "BSA-your-api-key"
+            }
+        },
+        "brightdata": {
+            "command": "node",
+            "args": ["mcp-brightdata-server.js"],
+            "env": {
+                "BRIGHTDATA_CUSTOMER_ID": "your-customer-id",
+                "BRIGHTDATA_API_KEY": "your-api-key",
+                "BRIGHTDATA_ZONE": "your-zone"
+            }
+        },
+        "google-maps": {
+            "command": "node",
+            "args": ["mcp-google-maps-server.js"],
+            "env": {
+                "GOOGLE_MAPS_API_KEY": "AIzaSy-your-google-maps-api-key"
+            }
+        },
+        "stripe": {
+            "command": "node",
+            "args": ["mcp-stripe-server.js"],
+            "env": {
+                "STRIPE_SECRET_KEY": "sk_test_your-stripe-secret-key",
+                "STRIPE_PUBLISHABLE_KEY": "pk_test_your-stripe-publishable-key"
+            }
+        },
+        "slack": {
+            "command": "node",
+            "args": ["mcp-slack-server.js"],
+            "env": {
+                "SLACK_BOT_TOKEN": "xoxb-your-slack-bot-token",
+                "SLACK_SIGNING_SECRET": "your-slack-signing-secret"
+            }
+        },
+        "ai-image-tagging": {
+            "command": "node",
+            "args": ["mcp-ai-image-tagging-server.js"],
+            "env": {
+                "AI_IMAGE_TAGGING_API_KEY": "your-ai-image-tagging-api-key",
+                "AI_IMAGE_TAGGING_BASE_URL": "https://api.ai-image-tagging.com"
+            }
+        },
+        "whatsapp": {
+            "command": "node",
+            "args": ["mcp-whatsapp-server.js"],
+            "env": {
+                "WHATSAPP_PHONE_NUMBER_ID": "your-whatsapp-phone-number-id",
+                "WHATSAPP_ACCESS_TOKEN": "EAADyour-whatsapp-access-token",
+                "WHATSAPP_WEBHOOK_VERIFY_TOKEN": "your-webhook-verify-token"
+            }
+        },
+        "browser-stealth": {
+            "command": "node",
+            "args": ["mcp-browser-stealth-server.js"],
+            "env": {
+                "BROWSER_STEALTH_MODE": "enabled",
+                "BROWSER_HEADLESS": "true",
+                "BROWSER_USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+        }
+    }
+}
