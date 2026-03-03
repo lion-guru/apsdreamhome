@@ -1,0 +1,23 @@
+{
+    "database": {
+        "persistent_connections": true,
+        "query_cache": true,
+        "max_connections": 100
+    },
+    "cache": {
+        "enabled": true,
+        "driver": "file",
+        "ttl": 3600,
+        "path": "C:\\xampp\\htdocs\\apsdreamhome\/cache"
+    },
+    "session": {
+        "handler": "files",
+        "lifetime": 7200,
+        "path": "C:\\xampp\\htdocs\\apsdreamhome\/cache\/sessions"
+    },
+    "performance": {
+        "gzip_compression": true,
+        "minify_output": true,
+        "browser_cache": 3600
+    }
+}

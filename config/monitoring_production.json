@@ -1,0 +1,32 @@
+{
+    "error_reporting": {
+        "level": "E_ALL & ~E_DEPRECATED & ~E_STRICT",
+        "display_errors": false,
+        "log_errors": true,
+        "error_log": "\/var\/log\/apsdreamhome\/php_errors.log"
+    },
+    "logging": {
+        "daily": true,
+        "level": "error",
+        "max_files": 30,
+        "path": "\/var\/log\/apsdreamhome\/"
+    },
+    "monitoring": {
+        "uptime_check": "https:\/\/www.apsdreamhome.com\/health",
+        "performance_monitoring": true,
+        "error_alerts": true,
+        "slack_webhook": "https:\/\/hooks.slack.com\/services\/YOUR\/SLACK\/WEBHOOK"
+    },
+    "backup": {
+        "database": {
+            "enabled": true,
+            "schedule": "0 2 * * *",
+            "retention": 30
+        },
+        "files": {
+            "enabled": true,
+            "schedule": "0 3 * * *",
+            "retention": 7
+        }
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "force_https": true,
+    "disable_php_errors": true,
+    "secure_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+    },
+    "csrf_protection": true,
+    "rate_limiting": {
+        "api": 100,
+        "login": 5,
+        "general": 1000
+    },
+    "password_policy": {
+        "min_length": 8,
+        "require_uppercase": true,
+        "require_lowercase": true,
+        "require_numbers": true,
+        "require_symbols": true
+    },
+    "session_security": {
+        "lifetime": 7200,
+        "secure": true,
+        "httponly": true,
+        "samesite": "Strict"
+    }
+}

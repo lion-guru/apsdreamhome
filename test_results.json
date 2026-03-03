@@ -1,0 +1,40 @@
+{
+    "database_connection": {
+        "status": "pass",
+        "message": "Database connection successful"
+    },
+    "api_endpoints": {
+        "status": "pass",
+        "message": "API endpoints: 2\/2 working",
+        "details": {
+            "admin\/unified_keys_api.php?action=stats": true,
+            "admin\/monitoring_api.php?action=system_stats": true
+        }
+    },
+    "file_permissions": {
+        "status": "pass",
+        "message": "File permissions: 3\/3 correct",
+        "details": {
+            "cache": true,
+            "logs": true,
+            "uploads": true
+        }
+    },
+    "memory_usage": {
+        "status": "pass",
+        "message": "Memory usage: 0.39%",
+        "details": {
+            "used": "2 MB",
+            "limit": "512M"
+        }
+    },
+    "disk_space": {
+        "status": "pass",
+        "message": "Disk usage: 76.67%",
+        "details": {
+            "free": "27.2 GB",
+            "used": "89.37 GB",
+            "total": "116.56 GB"
+        }
+    }
+}
