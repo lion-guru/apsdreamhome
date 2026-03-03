@@ -1,0 +1,27 @@
+{
+    "timestamp": "2026-03-02 23:02:00",
+    "total_fixes": 8,
+    "successful_fixes": 8,
+    "success_rate": 100,
+    "results": {
+        "base_url_fixes": {
+            "fix_base_url_config": true
+        },
+        "layout_fixes": {
+            "fix_header_navigation": true,
+            "fix_base_layout_links": true
+        },
+        "routing_fixes": {
+            "enhanced_app_routing": true,
+            "add_static_page_loader": true
+        },
+        "controller_fixes": {
+            "create_error_controller": true,
+            "create_auth_controllers": true
+        },
+        "view_fixes": {
+            "create_error_views": true
+        }
+    },
+    "fixes_status": "SUCCESS"
+}

@@ -422,7 +422,7 @@ class ThemeSwitcher {
     updateToggleIcon() {
         const toggle = document.getElementById('theme-toggle');
         if (toggle) {
-            const iconClass = this.currentTheme === 'light' ? 'fa-moon' : 'fa-sun';
+            let iconClass = this.currentTheme === 'light' ? 'fa-moon' : 'fa-sun';
             toggle.innerHTML = '<i class=\"fas ' + iconClass + '\"></i>';
         }
     }

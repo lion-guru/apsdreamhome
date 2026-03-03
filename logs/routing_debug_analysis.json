@@ -1,0 +1,119 @@
+{
+    "timestamp": "2026-03-02 22:56:57",
+    "total_checks": 23,
+    "passed_checks": 23,
+    "success_rate": 100,
+    "results": {
+        "htaccess_analysis": {
+            "htaccess_exists": true,
+            "htaccess_content": {
+                "rewrite_engine": true,
+                "rewrite_conditions": true,
+                "rewrite_rule": true,
+                "file_handling": true,
+                "index_routing": true
+            },
+            "apache_modules": {
+                "mod_rewrite": false,
+                "mod_dir": true,
+                "mod_mime": true
+            }
+        },
+        "entry_point_analysis": {
+            "index_php_exists": true,
+            "index_php_content": {
+                "debug_logging": true,
+                "path_config": true,
+                "app_class": false,
+                "error_handling": true,
+                "exception_handling": true
+            },
+            "bootstrap_process": {
+                "autoload_loading": true,
+                "app_loading": true,
+                "app_instantiation": true,
+                "app_execution": true
+            }
+        },
+        "app_analysis": {
+            "app_class_exists": true,
+            "app_class_structure": {
+                "namespace": true,
+                "class_definition": true,
+                "run_method": true,
+                "handle_request": true,
+                "routing_logic": true
+            },
+            "routing_methods": {
+                "handle_request": true,
+                "handle_api_request": true,
+                "route_method": true,
+                "load_controller": true
+            }
+        },
+        "controller_analysis": {
+            "home_controller_exists": true,
+            "home_controller_structure": {
+                "namespace": true,
+                "class_definition": true,
+                "extends_controller": true,
+                "index_method": true,
+                "render_call": true
+            },
+            "view_files_exist": {
+                "home_index": true,
+                "base_layout": true
+            }
+        },
+        "view_analysis": {
+            "home_view_exists": true,
+            "base_layout_exists": true,
+            "view_structure": {
+                "php_opening": true,
+                "page_title": true,
+                "html_structure": true,
+                "bootstrap_classes": true,
+                "base_url_usage": true
+            },
+            "layout_structure": {
+                "html_doctype": true,
+                "head_section": true,
+                "body_section": true,
+                "css_links": true,
+                "meta_tags": true
+            }
+        },
+        "config_analysis": {
+            "paths_config_exists": true,
+            "base_url_defined": true,
+            "database_config_exists": true,
+            "autoload_exists": true
+        },
+        "debug_analysis": {
+            "debug_log_exists": true,
+            "recent_entries": {
+                "total_lines": 4395,
+                "recent_entries": [
+                    "[2026-03-02 20:09:02] Request started: \/apsdreamhome\/\/assets\/css\/loading.css",
+                    "[2026-03-02 20:09:02] Request started: \/apsdreamhome\/\/assets\/css\/header.css",
+                    "[2026-03-02 20:11:28] Request started: \/apsdreamhome\/api\/index.php?request_uri=\/apsdreamhome\/api\/health",
+                    "[2026-03-02 20:27:55] Request started: \/apsdreamhome\/",
+                    "[2026-03-02 20:27:55] Request started: \/apsdreamhome\/properties",
+                    "[2026-03-02 20:27:55] Request started: \/apsdreamhome\/about",
+                    "[2026-03-02 20:27:55] Request started: \/apsdreamhome\/contact",
+                    "[2026-03-02 23:02:00] Request started: \/apsdreamhome\/",
+                    "[2026-03-02 23:02:04] Request started: \/apsdreamhome\/",
+                    ""
+                ],
+                "has_errors": true
+            },
+            "request_patterns": {
+                "home_requests": 492,
+                "asset_requests": 107,
+                "api_requests": 12,
+                "error_count": 34
+            }
+        }
+    },
+    "analysis_status": "SUCCESS"
+}

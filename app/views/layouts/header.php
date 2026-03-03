@@ -80,84 +80,84 @@ if (!function_exists('is_active_path')) {
             <ul>
                 <?php if ($user_type === 'employee'): ?>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/dashboard') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"employee/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/dashboard') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-tachometer-alt"></i>Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/profile" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/profile') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"employee/profile" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/profile') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-user"></i>Profile
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/tasks" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/tasks') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"employee/tasks" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/tasks') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-tasks"></i>Tasks
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>employee/attendance" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/attendance') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"employee/attendance" class="<?php echo (strpos($_SERVER['REQUEST_URI'] ?? '/', '/employee/attendance') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-clock"></i>Attendance
                         </a>
                     </li>
                     <li class="mt-4">
-                        <a href="<?php echo BASE_URL; ?>employee/logout" class="text-danger">
+                        <a href="<?= BASE_URL; ?>"employee/logout" class="text-danger">
                             <i class="fas fa-sign-out-alt"></i>Logout
                         </a>
                     </li>
                 <?php elseif ($user_type === 'customer'): ?>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>customer/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/dashboard') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"customer/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/dashboard') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-tachometer-alt"></i>Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>customer/properties" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/properties') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"customer/properties" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/properties') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-search"></i>Property Search
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>customer/favorites" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/favorites') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"customer/favorites" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/favorites') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-heart"></i>Favorites
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>customer/bookings" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/bookings') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"customer/bookings" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/customer/bookings') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-calendar-check"></i>Bookings
                         </a>
                     </li>
                     <li class="mt-4">
-                        <a href="<?php echo BASE_URL; ?>customer/logout" class="text-danger">
+                        <a href="<?= BASE_URL; ?>"customer/logout" class="text-danger">
                             <i class="fas fa-sign-out-alt"></i>Logout
                         </a>
                     </li>
                 <?php elseif ($user_type === 'associate'): ?>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>associate/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/dashboard') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"associate/dashboard" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/dashboard') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-tachometer-alt"></i>Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>associate/crm" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/crm') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"associate/crm" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/crm') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-users"></i>CRM
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>associate/team" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/team') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"associate/team" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/team') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-user-friends"></i>Team
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>associate/business" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/business') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"associate/business" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/business') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-chart-bar"></i>Business
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo BASE_URL; ?>associate/earnings" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/earnings') !== false) ? 'active' : '' ?>">
+                        <a href="<?= BASE_URL; ?>"associate/earnings" class="<?php echo (strpos($_SERVER['REQUEST_URI'], '/associate/earnings') !== false) ? 'active' : '' ?>">
                             <i class="fas fa-money-bill-wave"></i>Earnings
                         </a>
                     </li>
                     <li class="mt-4">
-                        <a href="<?php echo BASE_URL; ?>associate/logout" class="text-danger">
+                        <a href="<?= BASE_URL; ?>"associate/logout" class="text-danger">
                             <i class="fas fa-sign-out-alt"></i>Logout
                         </a>
                     </li>
@@ -210,7 +210,7 @@ if (!function_exists('is_active_path')) {
                             <i class="fas fa-cog me-2"></i>Settings
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#logout">
+                        <a class="dropdown-item" href="<?= BASE_URL; ?>logout">
                             <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </a>
                     </div>
@@ -219,7 +219,7 @@ if (!function_exists('is_active_path')) {
         </div>
     </nav>
 
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/dashboard.css">
+    <link rel="stylesheet" href="<?= BASE_URL; ?>"/assets/css/dashboard.css">
 
 <?php else: ?>
     <?php

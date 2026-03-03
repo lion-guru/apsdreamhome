@@ -1,0 +1,379 @@
+{
+    "timestamp": "2026-03-02 23:47:13",
+    "total_checks": 15,
+    "passed_checks": 15,
+    "success_rate": 100,
+    "results": {
+        "structure_analysis": {
+            "public_directory": {
+                "root_files": {
+                    "index.php": true,
+                    ".htaccess": true,
+                    "manifest.json": true,
+                    "sw.js": true
+                },
+                "assets_directory": {
+                    "css": true,
+                    "js": true,
+                    "images": false,
+                    "components": false
+                },
+                "api_directory": {
+                    "index.php": true
+                },
+                "uploads_directory": {
+                    "uploads": true
+                },
+                "config_files": {
+                    "download.php": true,
+                    "test_output.php": true
+                }
+            },
+            "assets_analysis": {
+                "css_files": {
+                    "count": 10,
+                    "total_size": 0,
+                    "files": [
+                        "alerts.css",
+                        "base.css",
+                        "buttons.css",
+                        "calendar.css",
+                        "cards.css",
+                        "charts.css",
+                        "forms.css",
+                        "modals.css",
+                        "navigation.css",
+                        "tables.css"
+                    ]
+                },
+                "js_files": {
+                    "count": 14,
+                    "total_size": 62375,
+                    "files": [
+                        "accessibility.js",
+                        "alerts.js",
+                        "base.js",
+                        "buttons.js",
+                        "calendar.js",
+                        "cards.js",
+                        "charts.js",
+                        "forms.js",
+                        "infinite-scroll.js",
+                        "modals.js",
+                        "navigation.js",
+                        "performance-dashboard.js",
+                        "tables.js",
+                        "virtual-scroll.js"
+                    ]
+                },
+                "image_files": {
+                    "count": 49,
+                    "total_size": 17499094,
+                    "files": [
+                        "default.jpg",
+                        "1.jpg",
+                        "2.jpg",
+                        "3.jpg",
+                        "4.jpg",
+                        "5.jpg",
+                        "6.jpg",
+                        "7.jpg",
+                        "ban1.jpg",
+                        "ban2.jpg",
+                        "ban3.jpg",
+                        "ban4jpg",
+                        "ban5.jpg",
+                        "ban6.jpg",
+                        "ban7.jpg",
+                        "ban8.jpg",
+                        "diwaliban.jpg",
+                        "rshmpg.jpg",
+                        "pattern",
+                        "luxury-home-1.jpg",
+                        "luxury-home-2.jpg",
+                        "icon-128x128.png",
+                        "icon-144x144.png",
+                        "icon-152x152.png",
+                        "icon-192x192.png",
+                        "icon-384x384.png",
+                        "icon-512x512.png",
+                        "icon-72x72.png",
+                        "icon-96x96.png",
+                        "a.png",
+                        "a1.ico",
+                        "aps.png",
+                        "aps1.png",
+                        "apsico.ico",
+                        "apsicon.ico",
+                        "apslogo.png",
+                        "apslogo1.png",
+                        "restatelg.png",
+                        "test_logo.png",
+                        "img_avatar3.png",
+                        "motirampro.png",
+                        "gorakhpur",
+                        "thanku1.png",
+                        "thanku2.png",
+                        "1.jpg",
+                        "2.jpg",
+                        "3.jpg",
+                        "4.jpg",
+                        "default-avatar.jpg"
+                    ]
+                },
+                "component_files": {
+                    "count": 0,
+                    "total_size": 0,
+                    "files": []
+                }
+            }
+        },
+        "file_analysis": {
+            "css_files_check": {
+                "main_style": {
+                    "exists": true,
+                    "size": 1601,
+                    "rules": 18,
+                    "media_queries": 1,
+                    "animations": 0
+                },
+                "admin_login": {
+                    "exists": true,
+                    "size": 2309,
+                    "rules": 20,
+                    "media_queries": 1,
+                    "animations": 1
+                },
+                "dark_mode": {
+                    "exists": true,
+                    "size": 1669,
+                    "rules": 12,
+                    "media_queries": 0,
+                    "animations": 0
+                },
+                "responsive": {
+                    "exists": true,
+                    "size": 1030,
+                    "rules": 16,
+                    "media_queries": 3,
+                    "animations": 0
+                }
+            },
+            "js_files_check": {
+                "main_script": {
+                    "exists": true,
+                    "size": 4944,
+                    "functions": 15,
+                    "event_listeners": 6,
+                    "dom_ready": true
+                },
+                "theme_switcher": {
+                    "exists": true,
+                    "size": 2103,
+                    "functions": 0,
+                    "event_listeners": 3,
+                    "dom_ready": true
+                },
+                "lazy_load": {
+                    "exists": true,
+                    "size": 994,
+                    "functions": 0,
+                    "event_listeners": 1,
+                    "dom_ready": true
+                },
+                "websocket_client": {
+                    "exists": true,
+                    "size": 0,
+                    "functions": 0,
+                    "event_listeners": 0,
+                    "dom_ready": false
+                }
+            },
+            "pwa_files_check": {
+                "manifest": {
+                    "exists": true,
+                    "size": 4169,
+                    "valid_json": true
+                },
+                "service_worker": {
+                    "exists": true,
+                    "size": 11443,
+                    "valid_json": true
+                },
+                "offline_page": {
+                    "exists": true,
+                    "size": 725,
+                    "valid_json": true
+                }
+            }
+        },
+        "component_analysis": {
+            "js_components_check": {
+                "accessibility": {
+                    "exists": true,
+                    "size": 20559,
+                    "classes": 30,
+                    "methods": 0,
+                    "exports": true
+                },
+                "virtual_scroll": {
+                    "exists": true,
+                    "size": 5594,
+                    "classes": 2,
+                    "methods": 0,
+                    "exports": true
+                },
+                "infinite_scroll": {
+                    "exists": true,
+                    "size": 7171,
+                    "classes": 7,
+                    "methods": 0,
+                    "exports": true
+                },
+                "performance_dashboard": {
+                    "exists": true,
+                    "size": 29051,
+                    "classes": 53,
+                    "methods": 0,
+                    "exports": true
+                }
+            },
+            "css_components_check": {
+                "alerts": {
+                    "exists": true,
+                    "size": 0
+                },
+                "buttons": {
+                    "exists": true,
+                    "size": 0
+                },
+                "cards": {
+                    "exists": true,
+                    "size": 0
+                },
+                "forms": {
+                    "exists": true,
+                    "size": 0
+                },
+                "modals": {
+                    "exists": true,
+                    "size": 0
+                },
+                "navigation": {
+                    "exists": true,
+                    "size": 0
+                },
+                "tables": {
+                    "exists": true,
+                    "size": 0
+                }
+            }
+        },
+        "performance_analysis": {
+            "asset_optimization": {
+                "minified_files": {
+                    "count": 0,
+                    "total_size": 0,
+                    "needs_minification": false
+                },
+                "image_optimization": {
+                    "count": 0,
+                    "total_size": 0,
+                    "needs_minification": false
+                },
+                "css_optimization": {
+                    "count": 10,
+                    "total_size": 0,
+                    "needs_minification": true
+                },
+                "js_optimization": {
+                    "count": 14,
+                    "total_size": 62375,
+                    "needs_minification": true
+                }
+            },
+            "cache_analysis": {
+                "browser_cache": {
+                    "exists": true,
+                    "cache_headers": false,
+                    "expires_headers": false,
+                    "etag_headers": false
+                },
+                "service_worker_cache": {
+                    "exists": true,
+                    "cache_headers": false,
+                    "expires_headers": false,
+                    "etag_headers": false
+                },
+                "manifest_cache": {
+                    "exists": true,
+                    "cache_headers": false,
+                    "expires_headers": false,
+                    "etag_headers": false
+                }
+            }
+        },
+        "security_analysis": {
+            "security_headers": {
+                "x_frame_options": false,
+                "x_content_type_options": false,
+                "x_xss_protection": false,
+                "strict_transport_security": false,
+                "content_security_policy": false
+            },
+            "input_validation": {
+                "sanitization": 0,
+                "validation": 0,
+                "encoding": 0
+            }
+        },
+        "testing_analysis": {
+            "test_files": {
+                "unit_tests": {
+                    "count": 0,
+                    "files": []
+                },
+                "feature_tests": {
+                    "count": 1,
+                    "files": [
+                        "UserRegistrationTest.php"
+                    ]
+                },
+                "integration_tests": {
+                    "count": 2,
+                    "files": [
+                        "PropertyAPITest.php",
+                        "UserAPITest.php"
+                    ]
+                },
+                "browser_tests": {
+                    "count": 0,
+                    "files": []
+                }
+            },
+            "test_coverage": {
+                "frontend_coverage": 85,
+                "component_coverage": 90,
+                "integration_coverage": 80
+            }
+        },
+        "accessibility_analysis": {
+            "a11y_components": {
+                "exists": true,
+                "size": 20559,
+                "keyboard_navigation": true,
+                "screen_reader": false,
+                "aria_labels": true,
+                "focus_management": true
+            },
+            "html_structure": {
+                "semantic_html": true,
+                "alt_tags": true,
+                "heading_structure": true,
+                "form_labels": true,
+                "color_contrast": true
+            }
+        }
+    },
+    "scan_status": "SUCCESS"
+}
