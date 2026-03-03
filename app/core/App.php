@@ -268,6 +268,10 @@ class App
             return $this->loadController("Public\\PageController", "blog");
         } elseif ($uri === "/careers") {
             return $this->loadController("Public\\PageController", "careers");
+        } elseif ($uri === "/team") {
+            return $this->loadController("Public\\PageController", "team");
+        } elseif ($uri === "/testimonials") {
+            return $this->loadController("Public\\PageController", "testimonials");
         }
         
         // Authentication routes
