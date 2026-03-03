@@ -10,7 +10,12 @@ class App
 {
     private static $instance = null;
     private $basePath;
+    private $request;
+    private $response;
+    private $session;
+    private $auth;
     private $config = [];
+    private $db;
     
     public function __construct($basePath = null)
     {
@@ -91,6 +96,43 @@ class App
         } else {
             return $this->loadController("HomeController", "index");
         }
+    }
+    
+    public function db()
+    {
+        if (!$this->db) {
+            $this->db = new \App\Core\Database\Database();
+        }
+        return $this->db;
+    }
+    
+    public function basePath()
+    {
+        return $this->basePath;
+    }
+    
+    public function request()
+    {
+        if (!$this->request) {
+            $this->request = new \App\Core\Http\Request();
+        }
+        return $this->request;
+    }
+    
+    public function response()
+    {
+        if (!$this->response) {
+            $this->response = new \App\Core\Http\Response();
+        }
+        return $this->response;
+    }
+    
+    public function session()
+    {
+        if (!$this->session) {
+            $this->session = new \App\Core\Session\SessionManager();
+        }
+        return $this->session;
     }
     
     private function loadController($controller, $method)

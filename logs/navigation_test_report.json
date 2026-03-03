@@ -1,0 +1,142 @@
+{
+    "timestamp": "2026-03-03 08:20:45",
+    "base_url": "http:\/\/localhost\/apsdreamhome",
+    "tests_performed": {
+        "homepage": {
+            "url": "http:\/\/localhost\/apsdreamhome",
+            "status": "ERROR",
+            "error": "Application Error - An error occurred. Please try again later.",
+            "navigation_links_found": 0,
+            "forms_found": 0,
+            "images_found": 0
+        },
+        "routes": {
+            "\/properties": {
+                "route": "\/properties",
+                "description": "Properties Page",
+                "status": "NOT_TESTED",
+                "url": "http:\/\/localhost\/apsdreamhome\/properties"
+            },
+            "\/about": {
+                "route": "\/about",
+                "description": "About Page",
+                "status": "NOT_TESTED",
+                "url": "http:\/\/localhost\/apsdreamhome\/about"
+            },
+            "\/contact": {
+                "route": "\/contact",
+                "description": "Contact Page",
+                "status": "NOT_TESTED",
+                "url": "http:\/\/localhost\/apsdreamhome\/contact"
+            },
+            "\/login": {
+                "route": "\/login",
+                "description": "Login Page",
+                "status": "NOT_TESTED",
+                "url": "http:\/\/localhost\/apsdreamhome\/login"
+            },
+            "\/register": {
+                "route": "\/register",
+                "description": "Registration Page",
+                "status": "NOT_TESTED",
+                "url": "http:\/\/localhost\/apsdreamhome\/register"
+            },
+            "\/admin": {
+                "route": "\/admin",
+                "description": "Admin Dashboard",
+                "status": "NOT_TESTED",
+                "url": "http:\/\/localhost\/apsdreamhome\/admin"
+            }
+        },
+        "components": {
+            "header_navigation": {
+                "status": "UNKNOWN",
+                "elements_found": 0,
+                "links_working": 0
+            },
+            "footer_navigation": {
+                "status": "UNKNOWN",
+                "elements_found": 0,
+                "links_working": 0
+            },
+            "sidebar_navigation": {
+                "status": "UNKNOWN",
+                "elements_found": 0,
+                "links_working": 0
+            },
+            "breadcrumb_navigation": {
+                "status": "UNKNOWN",
+                "elements_found": 0,
+                "links_working": 0
+            }
+        },
+        "path_configuration": {
+            "base_url_configured": true,
+            "base_url_value": "http:\/\/localhost\/apsdreamhome",
+            "paths_php_exists": true,
+            "url_helpers_exist": true,
+            "htaccess_configured": true,
+            "root_htaccess_exists": true
+        },
+        "core_files": {
+            "App.php": {
+                "exists": true,
+                "readable": true,
+                "status": "OK",
+                "path": "C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/App.php"
+            },
+            "Controller.php": {
+                "exists": true,
+                "readable": true,
+                "status": "OK",
+                "path": "C:\\xampp\\htdocs\\apsdreamhome\/app\/Core\/Controller.php"
+            },
+            "autoload.php": {
+                "exists": true,
+                "readable": true,
+                "status": "OK",
+                "path": "C:\\xampp\\htdocs\\apsdreamhome\/app\/core\/autoload.php"
+            },
+            "index.php": {
+                "exists": true,
+                "readable": true,
+                "status": "OK",
+                "path": "C:\\xampp\\htdocs\\apsdreamhome\/public\/index.php"
+            },
+            "HomeController.php": {
+                "exists": true,
+                "readable": true,
+                "status": "OK",
+                "path": "C:\\xampp\\htdocs\\apsdreamhome\/app\/Http\/Controllers\/HomeController.php"
+            }
+        }
+    },
+    "issues_found": [
+        "Homepage shows application error instead of content"
+    ],
+    "navigation_links": [],
+    "status": "NEEDS_ATTENTION",
+    "error_analysis": {
+        "homepage_error_type": "Application Error",
+        "likely_causes": [
+            "Missing or broken controller classes",
+            "Database connection issues",
+            "Missing view files",
+            "Class autoloading problems",
+            "Configuration issues"
+        ],
+        "debugging_steps": [
+            "Check error logs in logs\/ directory",
+            "Verify database connection",
+            "Check controller files exist",
+            "Verify view files exist",
+            "Test individual components"
+        ]
+    },
+    "summary": {
+        "total_tests": 5,
+        "issues_found": 1,
+        "critical_issues": 1,
+        "recommendation": "Fix application errors before testing navigation"
+    }
+}

@@ -4,6 +4,9 @@
  * Front Controller for the Application
  */
 
+// Load centralized path configuration first
+require_once __DIR__ . '/../config/paths.php';
+
 // Fix timezone warnings immediately
 date_default_timezone_set('Asia/Kolkata');
 ini_set('date.timezone', 'Asia/Kolkata');
