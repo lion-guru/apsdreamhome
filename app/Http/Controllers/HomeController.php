@@ -10,14 +10,18 @@ class HomeController extends Controller
 
     public function index()
     {
-        // Load sample properties data
+        // Load all required data for home page
         $this->data = [
-            'title' => 'Welcome to APS Dream Home',
-            'description' => 'Discover premium properties and find your dream home with APS Dream Home - Your trusted real estate partner in UP',
-            'properties' => $this->loadFeaturedProperties()
+            'page_title' => 'Welcome to APS Dream Home',
+            'page_description' => 'Discover premium properties and find your dream home with APS Dream Home - Your trusted real estate partner in UP',
+            'hero_stats' => $this->loadHeroStats(),
+            'property_types' => $this->loadPropertyTypes(),
+            'featured_properties' => $this->loadFeaturedProperties(),
+            'why_choose_us' => $this->loadWhyChooseUs(),
+            'testimonials' => $this->loadTestimonials()
         ];
 
-        // Render the view with data
+        // Render view with data
         $this->render('home/index', $this->data, 'layouts/base');
     }
     
@@ -228,22 +232,88 @@ class HomeController extends Controller
         return $pageController->services();
     }
     
-    private function loadOfficeLocations()
+    private function loadHeroStats()
+    {
+        return [
+            'properties_sold' => '500+',
+            'happy_clients' => '1000+',
+            'years_experience' => '8+',
+            'projects_completed' => '50+'
+        ];
+    }
+    
+    private function loadPropertyTypes()
     {
         return [
             (object)[
-                'name' => 'Head Office',
-                'address' => '123, Civil Lines, Gorakhpur, Uttar Pradesh - 273001',
-                'phone' => '+91-551-2345678',
-                'email' => 'info@apsdreamhome.com',
-                'timing' => '9:00 AM - 7:00 PM'
+                'name' => 'Apartments',
+                'count' => 25,
+                'icon' => 'fa-building'
             ],
             (object)[
-                'name' => 'Lucknow Branch',
-                'address' => '456, Gomti Nagar, Lucknow, Uttar Pradesh - 226010',
-                'phone' => '+91-522-3456789',
-                'email' => 'lucknow@apsdreamhome.com',
-                'timing' => '10:00 AM - 6:00 PM'
+                'name' => 'Villas',
+                'count' => 15,
+                'icon' => 'fa-home'
+            ],
+            (object)[
+                'name' => 'Commercial',
+                'count' => 10,
+                'icon' => 'fa-store'
+            ],
+            (object)[
+                'name' => 'Land',
+                'count' => 8,
+                'icon' => 'fa-mountain'
+            ]
+        ];
+    }
+    
+    private function loadWhyChooseUs()
+    {
+        return [
+            (object)[
+                'title' => '8+ Years Experience',
+                'description' => 'Trusted real estate developer with proven track record in Uttar Pradesh',
+                'icon' => 'fa-award'
+            ],
+            (object)[
+                'title' => 'Quality Construction',
+                'description' => 'Premium materials and modern construction techniques for lasting value',
+                'icon' => 'fa-hard-hat'
+            ],
+            (object)[
+                'title' => 'Customer Satisfaction',
+                'description' => '1000+ happy families who found their dream home with us',
+                'icon' => 'fa-smile'
+            ],
+            (object)[
+                'title' => 'Transparent Pricing',
+                'description' => 'No hidden charges, clear documentation, and fair pricing',
+                'icon' => 'fa-handshake'
+            ]
+        ];
+    }
+    
+    private function loadTestimonials()
+    {
+        return [
+            (object)[
+                'name' => 'Ramesh Kumar',
+                'property' => '3BHK Apartment, Gomti Nagar',
+                'content' => 'Excellent service and transparent dealing. Got my dream home within budget. Highly recommended!',
+                'rating' => 5
+            ],
+            (object)[
+                'name' => 'Priya Singh',
+                'property' => '2BHK Villa, Hazratganj',
+                'content' => 'Professional team and quality construction. The entire process was smooth and hassle-free.',
+                'rating' => 5
+            ],
+            (object)[
+                'name' => 'Amit Verma',
+                'property' => 'Commercial Space, Vibhuti Khand',
+                'content' => 'Great investment opportunity. APS Dream Home delivered exactly what they promised.',
+                'rating' => 4
             ]
         ];
     }
