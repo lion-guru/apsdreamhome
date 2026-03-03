@@ -101,7 +101,7 @@ class App
     public function db()
     {
         if (!$this->db) {
-            $this->db = new \App\Core\Database\Database();
+            $this->db = \App\Core\Database\Database::getInstance();
         }
         return $this->db;
     }

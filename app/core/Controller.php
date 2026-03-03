@@ -9,6 +9,7 @@ use App\Core\Auth;
 use App\Core\Database\Database;
 use App\Core\Session\SessionManager;
 use App\Core\Routing\Router;
+use App\Core\Validator;
 
 /**
  * Base Controller
@@ -73,6 +74,13 @@ class Controller
      * @var \App\Services\SystemLogger
      */
     protected $logger;
+
+    /**
+     * The router instance
+     *
+     * @var Router
+     */
+    protected $router;
 
     /**
      * The application instance
