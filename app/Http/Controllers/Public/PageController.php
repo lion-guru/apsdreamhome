@@ -1483,6 +1483,110 @@ class PageController extends BaseController
     }
 
     /**
+     * Company Projects method
+     * @return void
+     */
+    public function companyProjects()
+    {
+        $data = [
+            'page_title' => 'Company Projects - APS Dream Home',
+            'page_description' => 'Explore our completed and ongoing projects across Gorakhpur, Lucknow, and Uttar Pradesh.',
+            'project_categories' => [
+                'residential' => [
+                    'title' => 'Residential Projects',
+                    'description' => 'Luxury apartments, villas, and residential complexes',
+                    'count' => '45+ Projects',
+                    'icon' => 'fa-home'
+                ],
+                'commercial' => [
+                    'title' => 'Commercial Projects',
+                    'description' => 'Office spaces, retail complexes, and commercial buildings',
+                    'count' => '28+ Projects',
+                    'icon' => 'fa-building'
+                ],
+                'plots' => [
+                    'title' => 'Plots & Land',
+                    'description' => 'Residential and commercial plots with clear titles',
+                    'count' => '32+ Projects',
+                    'icon' => 'fa-map'
+                ]
+            ],
+            'featured_projects' => [
+                [
+                    'id' => 1,
+                    'name' => 'APS Heights',
+                    'type' => 'Residential',
+                    'location' => 'Gorakhpur - Kunraghat',
+                    'status' => 'Completed',
+                    'description' => 'Premium residential apartments with modern amenities',
+                    'units' => '120 Units',
+                    'price_range' => '₹45L - ₹85L',
+                    'image' => 'projects/aps-heights.jpg',
+                    'completion_date' => '2025-12-15',
+                    'highlights' => ['24/7 Security', 'Power Backup', 'Children Play Area', 'Gym']
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'Dream City Plaza',
+                    'type' => 'Commercial',
+                    'location' => 'Gorakhpur - City Center',
+                    'status' => 'Ongoing',
+                    'description' => 'Modern commercial complex with retail spaces and offices',
+                    'units' => '85 Units',
+                    'price_range' => '₹25L - ₹2Cr',
+                    'image' => 'projects/dream-city-plaza.jpg',
+                    'expected_completion' => '2026-09-30',
+                    'highlights' => ['Prime Location', 'Modern Architecture', 'Parking Facility', 'Food Court']
+                ],
+                [
+                    'id' => 3,
+                    'name' => 'Green Valley Enclave',
+                    'type' => 'Plots',
+                    'location' => 'Gorakhpur - NH-28',
+                    'status' => 'Available',
+                    'description' => 'Premium residential plots with all infrastructure',
+                    'units' => '200 Plots',
+                    'size_range' => '1000 - 5000 sqft',
+                    'price_range' => '₹2500 - ₹4500 per sqft',
+                    'image' => 'projects/green-valley-enclave.jpg',
+                    'highlights' => ['Clear Titles', 'Gated Community', 'Wide Roads', 'Underground Utilities']
+                ]
+            ],
+            'project_stats' => [
+                'total_projects' => '105+',
+                'completed_projects' => '78',
+                'ongoing_projects' => '15',
+                'happy_families' => '2000+',
+                'total_area' => '500+ Acres'
+            ],
+            'achievement_highlights' => [
+                [
+                    'icon' => 'fa-trophy',
+                    'title' => 'Best Real Estate Developer 2025',
+                    'description' => 'Awarded by Uttar Pradesh Real Estate Council'
+                ],
+                [
+                    'icon' => 'fa-certificate',
+                    'title' => 'RERA Certified Projects',
+                    'description' => 'All projects are RERA registered and compliant'
+                ],
+                [
+                    'icon' => 'fa-leaf',
+                    'title' => 'Green Building Initiative',
+                    'description' => 'Sustainable and eco-friendly construction practices'
+                ],
+                [
+                    'icon' => 'fa-shield-alt',
+                    'title' => '100% Legal Clearance',
+                    'description' => 'All projects have complete legal documentation'
+                ]
+            ]
+        ];
+
+        return $this->render('company-projects/index', $data, 'layouts/base');
+    }
+
+    /**
      * Testimonials method
      * @return void
      */
