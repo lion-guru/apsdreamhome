@@ -242,6 +242,89 @@ class App
             }
         }
         
+        // Leads endpoint
+        if ($endpoint === '/leads') {
+            if ($method === 'GET') {
+                try {
+                    $leads = [
+                        [
+                            'id' => 1,
+                            'name' => 'Ravi Kumar',
+                            'email' => 'ravi@example.com',
+                            'phone' => '+919876543210',
+                            'property_interest' => 'Luxury Apartment',
+                            'status' => 'new',
+                            'created_at' => '2026-03-01 10:00:00'
+                        ],
+                        [
+                            'id' => 2,
+                            'name' => 'Priya Sharma',
+                            'email' => 'priya@example.com',
+                            'phone' => '+919876543211',
+                            'property_interest' => 'Modern Villa',
+                            'status' => 'contacted',
+                            'created_at' => '2026-03-01 11:30:00'
+                        ]
+                    ];
+                    echo json_encode(['success' => true, 'data' => $leads]);
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'Database error']);
+                }
+                return;
+            }
+        }
+        
+        // Auth endpoint
+        if ($endpoint === '/auth') {
+            if ($method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $email = $input['email'] ?? '';
+                $password = $input['password'] ?? '';
+                
+                // Simulate authentication
+                if ($email && $password) {
+                    echo json_encode([
+                        'success' => true,
+                        'token' => 'sample_token_' . time(),
+                        'user' => [
+                            'id' => 1,
+                            'name' => 'Test User',
+                            'email' => $email,
+                            'role' => 'user'
+                        ]
+                    ]);
+                } else {
+                    http_response_code(401);
+                    echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
+                }
+                return;
+            }
+        }
+        
+        // Analytics endpoint
+        if ($endpoint === '/analytics') {
+            if ($method === 'GET') {
+                try {
+                    $analytics = [
+                        'total_properties' => 24,
+                        'total_leads' => 156,
+                        'total_visits' => 1250,
+                        'conversion_rate' => 12.5,
+                        'popular_properties' => [
+                            ['id' => 1, 'views' => 145],
+                            ['id' => 2, 'views' => 98]
+                        ]
+                    ];
+                    echo json_encode(['success' => true, 'data' => $analytics]);
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'Analytics error']);
+                }
+                return;
+            }
+        }
+        
         // If no route matched, return 404
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => 'API endpoint not found']);
@@ -309,7 +392,7 @@ class App
         } elseif ($uri === "/associate/register") {
             return $this->loadController("Associate\\AuthController", "register");
         } elseif ($uri === "/associate/dashboard") {
-            return $this->loadController("Associate\\DashboardController", "index");
+            return $this->loadController("Associate\\AssociateDashboardController", "index");
         }
         
         // Employee routes
