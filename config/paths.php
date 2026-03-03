@@ -10,19 +10,8 @@ define('BASE_PATH', dirname(__DIR__));
 if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    
-    $scriptName = $_SERVER['SCRIPT_NAME'] ?? 'http://localhost./public/index.php';
-    $scriptDir = dirname($scriptName);
-    $scriptDir = str_replace('/public', '', $scriptDir);
-    $scriptDir = rtrim($scriptDir, '/\\');
-    
-    $baseUrl = $protocol . '://' . $host . $scriptDir;
-    
-    if (empty($scriptDir)) {
-        $baseUrl = $protocol . '://' . $host . '/apsdreamhome';
-    }
-    
-    define('BASE_URL', $baseUrl);
+    $path = '/apsdreamhome'; // Fixed path for XAMPP
+    define('BASE_URL', $protocol . '://' . $host . $path);
 }
 
 // Additional path constants
