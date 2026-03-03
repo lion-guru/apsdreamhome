@@ -202,7 +202,7 @@
 
 <script>
 function confirmDelete(propertyId) {
-    document.getElementById('deleteForm').action = '/admin/properties/' + productId + '/delete';
+    document.getElementById('deleteForm').action = '/admin/properties/' + propertyId + '/delete';
     var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
     deleteModal.show();
 }

@@ -145,7 +145,7 @@
                                     View Details
                                 </button>
                             </div>
-                            <button class="btn btn-primary btn-sm" onclick="applyForJob({{ $job['id'] }});">
+                            <button class="btn btn-primary btn-sm" onclick="applyForJob('{{ $job['id'] }}');">
                                 Apply Now
                             </button>
                         </div>
