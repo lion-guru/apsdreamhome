@@ -148,7 +148,7 @@
                                             <a href="{{ url('/admin/properties/' . $property->id . '/edit') }}" class="btn btn-outline-secondary" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <button class="btn btn-outline-danger" title="Delete" onclick="confirmDelete({{ $property->id }})">
+                                            <button class="btn btn-outline-danger" title="Delete" onclick="confirmDelete({{ $property->id }});">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>

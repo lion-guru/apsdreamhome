@@ -61,19 +61,19 @@ class PathManager {
     }
     
     /**
-     * Get MCP system URLs
+     * Get MCP system URLs (updated for MVC structure)
      */
     public static function getMcpUrls() {
         return [
-            'dashboard' => self::buildUrl('mcp_dashboard.php'),
-            'configuration' => self::buildUrl('mcp_configuration_gui.php'),
-            'import' => self::buildUrl('import_mcp_config.php'),
-            'import_handler' => self::buildUrl('import_mcp_config_handler.php'),
-            'startup' => self::buildUrl('start_mcp_servers.php'),
-            'server_manager' => self::buildApiUrl('mcp_server_manager.php'),
-            'database_integration' => self::buildApiUrl('mcp_database_integration.php'),
-            'backup' => self::buildUrl('config/restore_backup.php'),
-            'backup_backend' => self::buildApiUrl('restore_backup_backend.php')
+            'dashboard' => self::buildUrl('mcp_dashboard'),
+            'configuration' => self::buildUrl('mcp_configuration_gui'),
+            'import' => self::buildUrl('import_mcp_config'),
+            'import_handler' => self::buildUrl('import_mcp_config_handler'),
+            'startup' => self::buildUrl('start_mcp_servers'),
+            'server_manager' => self::buildApiUrl('mcp_server_manager'),
+            'database_integration' => self::buildApiUrl('mcp_database_integration'),
+            'backup' => self::buildUrl('config/restore_backup'),
+            'backup_backend' => self::buildApiUrl('restore_backup_backend')
         ];
     }
     
