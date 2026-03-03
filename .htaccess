@@ -1,19 +1,101 @@
+# APS Dream Home - Production Ready .htaccess
+# Enterprise Production Configuration
 
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Enable URL Rewriting
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /apsdreamhome/
+    
+    # Redirect to HTTPS in production
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # Handle requests to non-existent files/directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [L,QSA]
+</IfModule>
 
-# Route API requests to api_test.php for testing
-RewriteRule ^api/(.*)$ api_test.php [QSA,L]
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https:"
+</IfModule>
 
-# Route all other requests to index.php
-RewriteRule ^(.*)$ index.php [QSA,L]
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
 
-# Security headers
-Header always set X-Content-Type-Options nosniff
-Header always set X-Frame-Options DENY
-Header always set X-XSS-Protection "1; mode=block"
+# Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/ico "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType text/html "access plus 1 hour"
+</IfModule>
 
-# PHP settings
-php_value display_errors On
-php_value error_reporting E_ALL
+# Security - Protect sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "^(config|\.env|\.htaccess|\.git)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(log|md|txt|bak|tmp)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# PHP Settings
+<IfModule mod_php.c>
+    php_value memory_limit 256M
+    php_value max_execution_time 300
+    php_value upload_max_filesize 25M
+    php_value post_max_size 50M
+    php_value display_errors Off
+    php_value log_errors On
+    php_value error_log "logs/php_error.log"
+</IfModule>
+
+# Error Pages
+ErrorDocument 404 /apsdreamhome/error/404
+ErrorDocument 500 /apsdreamhome/error/500
+ErrorDocument 403 /apsdreamhome/error/403
+
+# Prevent directory listing
+Options -Indexes
+
+# Default character set
+AddDefaultCharset UTF-8
+
+# Force UTF-8 encoding
+<IfModule mod_mime.c>
+    AddCharset UTF-8 .html
+    AddCharset UTF-8 .css
+    AddCharset UTF-8 .js
+    AddCharset UTF-8 .php
+</IfModule>
