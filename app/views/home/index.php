@@ -124,14 +124,12 @@
         
         <div class="row">
             @foreach($why_choose_us ?? [] as $reason)
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card border-0 shadow-sm h-100 text-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100 text-center p-4">
                     <div class="card-body">
-                        <div class="text-primary mb-3">
-                            <i class="fas {{ $reason['icon'] }} fa-3x"></i>
-                        </div>
+                        <i class="fas {{ $reason['icon'] }} fa-3x text-primary mb-3"></i>
                         <h5 class="card-title">{{ $reason['title'] }}</h5>
-                        <p class="card-text">{{ $reason['description'] }}</p>
+                        <p class="text-muted">{{ $reason['description'] }}</p>
                     </div>
                 </div>
             </div>
