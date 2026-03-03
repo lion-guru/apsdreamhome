@@ -1,0 +1,10 @@
+{
+    "default_theme": "light",
+    "allow_system_theme": true,
+    "theme_transition_duration": "0.3s",
+    "remember_user_preference": true,
+    "supported_themes": [
+        "light",
+        "dark"
+    ]
+}

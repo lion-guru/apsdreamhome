@@ -1,0 +1,3071 @@
+APS Dream Home Deployment Package 
+Created: Mon 03/02/2026 22:14:26.15 
+PHP Version: 
+PHP 8.5.3 (cli) (built: Feb 10 2026 18:44:09) (ZTS Visual C++ 2022 x64)
+Copyright (c) The PHP Group
+Built by The PHP Group
+Zend Engine v4.5.3, Copyright (c) Zend Technologies
+    with Zend OPcache v8.5.3, Copyright (c), by Zend Technologies
+ 
+Database: apsdreamhome_database.sql 
+Size: 
+ Volume in drive C is Windows
+ Volume Serial Number is CCC5-BF3C
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package
+
+03/02/2026  10:14 PM    <DIR>          .
+03/02/2026  10:14 PM    <DIR>          ..
+03/02/2026  03:59 AM               362 .htaccess
+03/02/2026  10:13 PM    <DIR>          app
+03/02/2026  10:14 PM         2,557,454 apsdreamhome_database.sql
+03/02/2026  10:01 PM               684 composer.json
+03/02/2026  10:13 PM    <DIR>          config
+03/02/2026  10:04 PM             7,220 DEPLOYMENT_FIX_GUIDE.md
+03/02/2026  10:08 PM            10,574 NEXT_STEPS_ROADMAP.md
+03/02/2026  10:14 PM               379 PACKAGE_INFO.txt
+03/02/2026  10:13 PM    <DIR>          public
+03/02/2026  09:52 PM            12,571 verify_deployment.php
+               7 File(s)      2,589,244 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:12 PM    <DIR>          cache
+03/02/2026  10:12 PM    <DIR>          config
+03/02/2026  10:12 PM    <DIR>          Core
+03/02/2026  10:12 PM    <DIR>          Helpers
+02/22/2026  03:13 AM             4,406 helpers.php
+03/02/2026  10:12 PM    <DIR>          Http
+03/02/2026  10:12 PM    <DIR>          Middleware
+03/02/2026  10:12 PM    <DIR>          Models
+03/02/2026  10:13 PM    <DIR>          Services
+03/02/2026  10:13 PM    <DIR>          views
+               1 File(s)          4,406 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\cache
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/13/2026  12:04 PM                41 rate_limit_837ec5754f503cfaaee0929fd48974e7.json
+02/13/2026  12:04 PM                40 rate_limit_ad921d60486366258809553a3db49a4a.json
+               2 File(s)             81 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\config
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/23/2026  12:14 AM               947 admin.php
+02/23/2026  12:14 AM             1,039 admin.php.backup.2026-02-22-19-44-26
+02/22/2026  03:12 AM             1,322 application.php
+02/17/2026  11:58 AM               166 database.php
+03/01/2026  08:27 PM               664 env.php
+02/23/2026  12:14 AM               679 env.php.backup.2026-02-22-19-44-27
+02/25/2026  12:00 PM               702 env.php.backup.2026-02-25-07-30-52
+02/23/2026  12:14 AM               186 gemini_config.php
+02/23/2026  12:14 AM               205 gemini_config.php.backup.2026-02-22-19-44-27
+02/23/2026  12:14 AM             1,080 security.php
+02/23/2026  12:14 AM             1,170 security.php.backup.2026-02-22-19-44-27
+              11 File(s)          8,160 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/02/2026  10:12 PM    <DIR>          Agent
+03/02/2026  10:12 PM    <DIR>          AI
+02/13/2026  12:35 PM            15,571 ApiDocumentation.php
+03/02/2026  01:38 PM             9,972 App.php
+02/23/2026  12:14 AM            15,591 App.php.backup.2026-02-22-19-44-05
+02/25/2026  12:00 PM            13,568 App.php.backup.2026-02-25-07-30-50
+03/02/2026  02:51 AM            14,440 App.php.backup.2026-03-01-22-21-43
+03/02/2026  02:56 AM            13,522 App.php.backup.2026-03-01-22-26-58
+03/02/2026  10:12 PM    <DIR>          Auth
+03/01/2026  08:29 PM             4,336 Auth.php
+02/23/2026  12:14 AM             4,356 Auth.php.backup.2026-02-22-19-44-05
+02/25/2026  12:00 PM             4,311 Auth.php.backup.2026-02-25-07-30-50
+02/23/2026  01:36 AM             1,226 autoload.php
+02/20/2026  04:04 PM             5,557 Autoloader.php
+03/01/2026  08:29 PM            17,372 BackupManager.php
+02/23/2026  12:23 AM            17,305 BackupManager.php.backup.2026-02-22-19-53-31
+02/23/2026  10:48 PM            17,358 BackupManager.php.backup.2026-02-23-18-18-49
+02/23/2026  10:52 PM            17,411 BackupManager.php.backup.2026-02-23-18-22-03
+02/25/2026  12:01 PM            17,305 BackupManager.php.backup.2026-02-25-07-31-09
+02/23/2026  12:14 AM            11,020 Cache.php
+02/23/2026  12:14 AM            11,065 Cache.php.backup.2026-02-22-19-44-06
+02/23/2026  12:14 AM             3,369 Config.php
+02/23/2026  12:14 AM             3,423 Config.php.backup.2026-02-22-19-44-06
+03/02/2026  10:12 PM    <DIR>          Contracts
+03/02/2026  09:17 PM             9,737 Controller.php
+02/23/2026  12:26 AM             9,469 Controller.php.backup.2026-02-22-19-56-15
+02/25/2026  12:01 PM             9,539 Controller.php.backup.2026-02-25-07-31-16
+03/02/2026  10:12 PM    <DIR>          Database
+03/02/2026  03:06 AM             4,233 Database.php
+03/02/2026  02:11 AM             4,519 DatabaseFixed.php
+02/13/2026  12:35 PM            11,598 DatabaseOptimizer.php
+03/02/2026  03:21 AM            12,829 EmailManager.php
+02/23/2026  12:14 AM            12,641 EmailManager.php.backup.2026-02-22-19-44-07
+02/23/2026  12:23 AM            12,484 EmailManager.php.backup.2026-02-22-19-53-31
+02/23/2026  10:48 PM            12,696 EmailManager.php.backup.2026-02-23-18-18-49
+02/23/2026  10:52 PM            12,908 EmailManager.php.backup.2026-02-23-18-22-03
+02/25/2026  12:01 PM            12,578 EmailManager.php.backup.2026-02-25-07-31-09
+02/13/2026  12:35 PM            31,207 EmailNotification.php
+02/19/2026  01:12 PM             7,029 ErrorHandler.php
+03/02/2026  10:12 PM    <DIR>          Exceptions
+03/02/2026  03:20 AM             4,505 Helpers.php
+03/02/2026  10:12 PM    <DIR>          Http
+03/02/2026  10:12 PM    <DIR>          Legacy
+03/02/2026  10:12 PM    <DIR>          Middleware
+03/01/2026  08:30 PM             3,559 Middleware.php
+02/23/2026  12:23 AM             3,517 Middleware.php.backup.2026-02-22-19-53-31
+02/23/2026  10:48 PM             3,729 Middleware.php.backup.2026-02-23-18-18-50
+02/23/2026  10:52 PM             3,941 Middleware.php.backup.2026-02-23-18-22-03
+02/25/2026  12:01 PM             3,513 Middleware.php.backup.2026-02-25-07-31-09
+03/01/2026  08:30 PM            17,747 Model.php
+02/23/2026  12:14 AM            18,023 Model.php.backup.2026-02-22-19-44-07
+02/25/2026  12:00 PM            17,793 Model.php.backup.2026-02-25-07-30-50
+03/01/2026  07:36 PM            11,619 PaymentGateway.php
+02/23/2026  12:14 AM            12,043 PaymentGateway.php.backup.2026-02-22-19-44-08
+02/25/2026  12:00 PM            11,760 PaymentGateway.php.backup.2026-02-25-07-30-50
+02/24/2026  01:25 AM             5,417 PerformanceMonitor.php
+02/23/2026  12:14 AM             6,013 PerformanceMonitor.php.backup.2026-02-22-19-44-08
+03/01/2026  08:31 PM             2,468 RazorpayGateway.php
+02/23/2026  12:14 AM             2,864 RazorpayGateway.php.backup.2026-02-22-19-44-09
+02/25/2026  12:00 PM             2,721 RazorpayGateway.php.backup.2026-02-25-07-30-50
+03/02/2026  10:12 PM    <DIR>          Routing
+03/01/2026  07:35 PM            16,734 SecurityAudit.php
+02/23/2026  12:14 AM            16,739 SecurityAudit.php.backup.2026-02-22-19-44-10
+02/25/2026  12:00 PM            16,734 SecurityAudit.php.backup.2026-02-25-07-30-50
+02/24/2026  01:26 AM            18,901 SEOOptimizer.php
+02/23/2026  12:14 AM            19,287 SEOOptimizer.php.backup.2026-02-22-19-44-09
+03/02/2026  10:12 PM    <DIR>          Session
+03/02/2026  10:12 PM    <DIR>          Support
+02/13/2026  12:35 PM            13,431 SystemIntegration.php
+03/01/2026  08:33 PM            12,713 SystemMonitor.php
+02/23/2026  12:23 AM            12,670 SystemMonitor.php.backup.2026-02-22-19-53-31
+02/23/2026  10:48 PM            12,882 SystemMonitor.php.backup.2026-02-23-18-18-50
+02/23/2026  10:52 PM            13,094 SystemMonitor.php.backup.2026-02-23-18-22-03
+02/25/2026  12:01 PM            12,669 SystemMonitor.php.backup.2026-02-25-07-31-09
+02/13/2026  12:04 PM            16,272 TestFramework.php
+02/17/2026  04:53 PM             1,863 UnifiedModel.php
+03/02/2026  10:12 PM    <DIR>          View
+              64 File(s)        696,766 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Agent
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/13/2026  12:35 PM             3,338 Agent.php
+               1 File(s)          3,338 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\AI
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/15/2026  01:18 AM             1,891 OpenRouterClient.php
+               1 File(s)          1,891 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Auth
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/18/2026  02:44 PM            10,822 UnifiedAuthService.php
+               1 File(s)         10,822 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Contracts
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+11/28/2025  02:35 AM               157 Arrayable.php
+               1 File(s)            157 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Database
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/17/2026  06:43 AM             6,658 Builder.php
+03/02/2026  02:34 AM             4,056 Database.php
+02/23/2026  09:18 PM            21,462 Model.php
+02/17/2026  06:37 AM             9,934 QueryBuilder.php
+03/02/2026  10:12 PM    <DIR>          Relations
+               4 File(s)         42,110 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Database\Relations
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/13/2026  12:35 PM             4,684 BelongsTo.php
+02/13/2026  12:35 PM             8,062 BelongsToMany.php
+02/13/2026  12:35 PM             2,367 HasMany.php
+02/13/2026  12:35 PM             3,035 HasOne.php
+02/13/2026  12:35 PM             8,151 HasRelationships.php
+02/17/2026  06:43 AM             2,304 Pivot.php
+02/13/2026  12:35 PM             2,157 Relation.php
+               7 File(s)         30,760 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Exceptions
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+11/28/2025  02:35 AM               933 MethodNotAllowedException.php
+11/28/2025  02:35 AM               472 RouteNotFoundException.php
+               2 File(s)          1,405 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Http
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/01/2026  05:34 PM            41,931 Request.php
+02/20/2026  05:58 PM            77,739 Response.php
+11/28/2025  02:35 AM             9,713 UploadedFile.php
+               3 File(s)        129,383 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Legacy
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/10/2026  01:21 AM             5,122 functions.php
+05/12/2025  06:26 PM               748 setup_activity_log.php
+05/12/2025  06:25 PM             4,614 setup_tables.php
+               3 File(s)         10,484 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Middleware
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/13/2026  12:35 PM             4,345 AuthMiddleware.php
+02/13/2026  12:35 PM             5,390 CsrfMiddleware.php
+02/13/2026  12:35 PM            17,319 ErrorMiddleware.php
+02/13/2026  12:35 PM             4,758 RoleMiddleware.php
+               4 File(s)         31,812 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Routing
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/17/2026  05:20 AM            12,105 Route.php
+11/28/2025  02:35 AM             7,215 RouteCollection.php
+03/02/2026  02:34 AM            22,996 Router.php
+               3 File(s)         42,316 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Session
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/18/2026  12:40 PM             3,939 FlashBag.php
+02/19/2026  06:26 PM             5,951 SessionManager.php
+               2 File(s)          9,890 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\Support
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+11/28/2025  02:35 AM             9,456 Collection.php
+11/28/2025  02:35 AM             5,283 ParameterBag.php
+02/13/2026  12:35 PM            21,151 Str.php
+               3 File(s)         35,890 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Core\View
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/20/2026  12:43 PM             8,594 View.php
+               1 File(s)          8,594 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Helpers
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/16/2026  11:35 PM             2,375 AuthHelper.php
+02/18/2026  03:25 AM               348 env.php
+02/13/2026  12:35 PM             2,783 Helpers.php
+02/23/2026  12:26 AM             7,572 logger.php
+02/23/2026  12:26 AM             7,476 logger.php.backup.2026-02-22-19-56-15
+03/01/2026  08:34 PM               975 security.php
+02/23/2026  12:14 AM               973 security.php.backup.2026-02-22-19-44-10
+02/25/2026  12:00 PM               973 security.php.backup.2026-02-25-07-30-50
+03/01/2026  10:14 PM             6,363 SecurityHelper.php
+02/23/2026  12:14 AM             7,035 SecurityHelper.php.backup.2026-02-22-19-44-10
+02/23/2026  12:23 AM             6,513 SecurityHelper.php.backup.2026-02-22-19-53-32
+02/23/2026  10:48 PM             6,566 SecurityHelper.php.backup.2026-02-23-18-18-50
+02/23/2026  10:52 PM             6,619 SecurityHelper.php.backup.2026-02-23-18-22-03
+02/25/2026  12:00 PM             6,577 SecurityHelper.php.backup.2026-02-25-07-30-50
+02/25/2026  12:01 PM             6,199 SecurityHelper.php.backup.2026-02-25-07-31-09
+              15 File(s)         69,347 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/02/2026  10:12 PM    <DIR>          Controllers
+03/02/2026  10:12 PM    <DIR>          Middleware
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/02/2026  10:12 PM    <DIR>          Admin
+02/22/2026  02:44 PM            12,653 AdminController.php
+03/02/2026  10:12 PM    <DIR>          Agent
+02/21/2026  01:50 PM             3,393 AgentController.php
+03/02/2026  10:12 PM    <DIR>          AI
+03/02/2026  10:12 PM    <DIR>          Analytics
+03/02/2026  10:12 PM    <DIR>          Api
+03/02/2026  10:12 PM    <DIR>          Associate
+02/21/2026  06:01 PM            20,358 AssociateController.php
+03/02/2026  10:12 PM    <DIR>          Auth
+03/02/2026  09:04 PM            16,787 BaseController.php
+03/02/2026  09:09 PM               488 Controller.php
+03/02/2026  10:12 PM    <DIR>          Customer
+02/22/2026  02:45 PM            15,040 CustomerController.php
+03/02/2026  10:12 PM    <DIR>          Employee
+02/22/2026  06:03 PM            19,148 EmployeeController.php
+03/02/2026  01:22 PM               393 HomeController.php
+03/02/2026  10:12 PM    <DIR>          Payment
+03/02/2026  10:12 PM    <DIR>          Property
+03/02/2026  10:12 PM    <DIR>          Public
+02/24/2026  01:57 AM            13,589 RegistrationController.php
+03/02/2026  10:12 PM    <DIR>          SaaS
+03/02/2026  10:12 PM    <DIR>          System
+02/22/2026  04:16 AM            18,389 TeamManagementController.php
+03/02/2026  10:12 PM    <DIR>          Tech
+03/02/2026  10:12 PM    <DIR>          User
+03/02/2026  10:12 PM    <DIR>          Utility
+              10 File(s)        120,238 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Admin
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/21/2026  01:50 AM             8,419 AccountingController.php
+03/01/2026  08:34 PM            66,435 AdminController.php
+02/23/2026  12:36 AM            66,418 AdminController.php.backup.2026-02-22-20-06-21
+02/23/2026  10:48 PM            66,481 AdminController.php.backup.2026-02-23-18-18-38
+02/23/2026  10:52 PM            66,553 AdminController.php.backup.2026-02-23-18-22-27
+02/25/2026  12:01 PM            66,416 AdminController.php.backup.2026-02-25-07-31-23
+02/19/2026  11:50 PM             2,563 AdminDashboardController.php
+02/18/2026  03:18 PM            10,197 AiController.php
+02/18/2026  04:24 PM             4,184 AnalyticsController.php
+02/18/2026  03:42 PM            18,197 AssociateController.php
+03/01/2026  08:34 PM             8,117 BookingController.php
+02/23/2026  12:36 AM             7,917 BookingController.php.backup.2026-02-22-20-06-21
+02/23/2026  10:48 PM             8,003 BookingController.php.backup.2026-02-23-18-18-46
+02/23/2026  10:52 PM             8,098 BookingController.php.backup.2026-02-23-18-22-27
+02/25/2026  12:01 PM             7,917 BookingController.php.backup.2026-02-25-07-31-23
+03/01/2026  07:36 PM             5,971 CareerController.php
+02/23/2026  12:36 AM             5,729 CareerController.php.backup.2026-02-22-20-06-21
+02/23/2026  10:48 PM             5,807 CareerController.php.backup.2026-02-23-18-18-47
+02/23/2026  10:52 PM             5,894 CareerController.php.backup.2026-02-23-18-22-27
+02/25/2026  12:01 PM             5,729 CareerController.php.backup.2026-02-25-07-31-23
+02/21/2026  01:50 AM             9,430 CommissionController.php
+03/01/2026  08:35 PM            10,706 CustomerController.php
+02/23/2026  12:36 AM            10,706 CustomerController.php.backup.2026-02-22-20-06-21
+02/23/2026  10:48 PM            10,868 CustomerController.php.backup.2026-02-23-18-18-49
+02/23/2026  10:52 PM            11,039 CustomerController.php.backup.2026-02-23-18-22-28
+02/25/2026  12:01 PM            10,704 CustomerController.php.backup.2026-02-25-07-31-23
+02/18/2026  04:15 PM            17,269 EMIController.php
+03/01/2026  07:36 PM             8,611 EmployeeController.php
+02/23/2026  12:36 AM            22,258 EmployeeController.php.backup.2026-02-22-20-06-22
+02/23/2026  10:48 PM            22,411 EmployeeController.php.backup.2026-02-23-18-18-52
+02/23/2026  10:52 PM            22,573 EmployeeController.php.backup.2026-02-23-18-22-30
+02/25/2026  12:01 PM            22,258 EmployeeController.php.backup.2026-02-25-07-31-23
+02/18/2026  04:33 PM             9,928 EngagementController.php
+02/21/2026  01:50 AM            15,914 LandController.php
+02/18/2026  03:27 PM            16,224 LeadController.php
+03/01/2026  07:36 PM             3,053 MediaController.php
+02/23/2026  12:36 AM             2,981 MediaController.php.backup.2026-02-22-20-06-22
+02/23/2026  10:48 PM             2,999 MediaController.php.backup.2026-02-23-18-18-55
+02/23/2026  10:52 PM             3,026 MediaController.php.backup.2026-02-23-18-22-30
+02/25/2026  12:01 PM             2,943 MediaController.php.backup.2026-02-25-07-31-23
+02/18/2026  03:45 PM             2,525 NetworkController.php
+03/01/2026  07:36 PM             6,262 NewsController.php
+02/23/2026  12:36 AM             6,022 NewsController.php.backup.2026-02-22-20-06-22
+02/23/2026  10:48 PM             6,078 NewsController.php.backup.2026-02-23-18-18-58
+02/23/2026  10:52 PM             6,143 NewsController.php.backup.2026-02-23-18-22-30
+02/25/2026  12:01 PM             6,022 NewsController.php.backup.2026-02-25-07-31-23
+03/01/2026  07:35 PM            10,949 PaymentController.php
+02/23/2026  12:36 AM            10,632 PaymentController.php.backup.2026-02-22-20-06-22
+02/23/2026  10:48 PM            10,659 PaymentController.php.backup.2026-02-23-18-18-58
+02/23/2026  10:52 PM            10,695 PaymentController.php.backup.2026-02-23-18-22-30
+02/25/2026  12:01 PM            10,632 PaymentController.php.backup.2026-02-25-07-31-23
+02/18/2026  04:32 PM             6,435 PayoutController.php
+02/18/2026  03:33 PM             7,661 PlotController.php
+03/02/2026  12:39 PM            16,105 ProjectController.php
+03/01/2026  07:36 PM            10,511 PropertyController.php
+02/23/2026  12:36 AM            10,219 PropertyController.php.backup.2026-02-22-20-06-23
+02/23/2026  10:49 PM            10,244 PropertyController.php.backup.2026-02-23-18-19-01
+02/23/2026  10:52 PM            10,278 PropertyController.php.backup.2026-02-23-18-22-31
+02/25/2026  12:01 PM            10,219 PropertyController.php.backup.2026-02-25-07-31-23
+02/21/2026  01:50 AM             5,539 SalesController.php
+02/18/2026  03:25 PM             6,845 SupportTicketController.php
+02/18/2026  03:38 PM             9,457 TaskController.php
+02/18/2026  03:22 PM             8,505 UserController.php
+02/18/2026  03:25 PM             3,196 VisitController.php
+              64 File(s)        882,779 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Agent
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/01/2026  07:35 PM            14,907 AgentDashboardController.php
+02/23/2026  12:36 AM            13,188 AgentDashboardController.php.backup.2026-02-22-20-06-23
+02/23/2026  10:49 PM            13,266 AgentDashboardController.php.backup.2026-02-23-18-19-06
+02/23/2026  10:52 PM            13,344 AgentDashboardController.php.backup.2026-02-23-18-22-34
+02/25/2026  12:01 PM            14,462 AgentDashboardController.php.backup.2026-02-25-07-31-23
+               5 File(s)         69,167 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\AI
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/09/2026  10:26 PM             2,258 AIWebController.php
+               1 File(s)          2,258 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Analytics
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/21/2026  02:01 AM            22,032 AdminReportsController.php
+02/21/2026  01:51 AM            21,975 AdvancedAnalyticsController.php
+02/18/2026  04:12 PM             4,766 ReportController.php
+               3 File(s)         48,773 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Api
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/16/2026  10:57 AM             3,786 AiController.php
+03/01/2026  08:35 PM             2,762 AnalyticsController.php
+02/23/2026  12:36 AM             2,762 AnalyticsController.php.backup.2026-02-22-20-06-23
+02/23/2026  10:49 PM             2,841 AnalyticsController.php.backup.2026-02-23-18-19-10
+02/23/2026  10:52 PM             2,929 AnalyticsController.php.backup.2026-02-23-18-22-38
+02/25/2026  12:01 PM             2,762 AnalyticsController.php.backup.2026-02-25-07-31-24
+03/01/2026  08:35 PM             3,152 ApiEnquiryController.php
+02/23/2026  12:36 AM             3,152 ApiEnquiryController.php.backup.2026-02-22-20-06-24
+02/23/2026  10:49 PM             3,177 ApiEnquiryController.php.backup.2026-02-23-18-19-11
+02/23/2026  10:52 PM             3,211 ApiEnquiryController.php.backup.2026-02-23-18-22-38
+02/25/2026  12:01 PM             3,152 ApiEnquiryController.php.backup.2026-02-25-07-31-24
+03/02/2026  05:23 AM            29,582 ApiLeadController.php
+02/23/2026  12:36 AM            26,474 ApiLeadController.php.backup.2026-02-22-20-06-25
+02/23/2026  10:49 PM            26,615 ApiLeadController.php.backup.2026-02-23-18-19-11
+02/23/2026  10:52 PM            26,765 ApiLeadController.php.backup.2026-02-23-18-22-39
+02/25/2026  12:01 PM            26,674 ApiLeadController.php.backup.2026-02-25-07-31-24
+03/01/2026  08:36 PM             3,773 AuthController.php
+02/23/2026  12:36 AM             3,771 AuthController.php.backup.2026-02-22-20-06-27
+02/23/2026  10:49 PM             3,809 AuthController.php.backup.2026-02-23-18-19-11
+02/23/2026  10:52 PM             3,856 AuthController.php.backup.2026-02-23-18-22-39
+02/25/2026  12:01 PM             3,769 AuthController.php.backup.2026-02-25-07-31-24
+01/16/2026  01:16 PM             5,234 BankingController.php
+02/21/2026  01:52 AM             3,607 BaseApiController.php
+02/12/2026  09:03 AM             3,348 BookingController.php
+02/22/2026  01:20 AM             8,965 CommunicationController.php
+03/01/2026  08:36 PM             4,873 FollowupController.php
+02/23/2026  12:36 AM             4,873 FollowupController.php.backup.2026-02-22-20-06-27
+02/23/2026  10:49 PM             4,969 FollowupController.php.backup.2026-02-23-18-19-12
+02/23/2026  10:52 PM             5,074 FollowupController.php.backup.2026-02-23-18-22-41
+02/25/2026  12:01 PM             4,873 FollowupController.php.backup.2026-02-25-07-31-24
+03/02/2026  02:34 AM            46,392 LeadController.php
+02/23/2026  12:36 AM            46,854 LeadController.php.backup.2026-02-22-20-06-28
+02/23/2026  10:49 PM            47,319 LeadController.php.backup.2026-02-23-18-19-12
+02/23/2026  10:52 PM            47,784 LeadController.php.backup.2026-02-23-18-22-41
+02/25/2026  12:01 PM            46,853 LeadController.php.backup.2026-02-25-07-31-24
+01/16/2026  01:43 PM             2,525 MlmController.php
+02/21/2026  01:57 AM            22,999 MobileApiController.php
+03/01/2026  08:37 PM             4,838 MonitorApiController.php
+02/23/2026  12:36 AM             4,874 MonitorApiController.php.backup.2026-02-22-20-06-29
+02/23/2026  10:49 PM             5,045 MonitorApiController.php.backup.2026-02-23-18-19-13
+02/23/2026  10:52 PM             5,225 MonitorApiController.php.backup.2026-02-23-18-22-42
+02/25/2026  12:01 PM             4,838 MonitorApiController.php.backup.2026-02-25-07-31-24
+01/16/2026  01:19 PM             1,254 NewsletterController.php
+03/01/2026  08:37 PM             3,181 NotificationController.php
+02/23/2026  12:36 AM             3,181 NotificationController.php.backup.2026-02-22-20-06-31
+02/23/2026  10:49 PM             3,254 NotificationController.php.backup.2026-02-23-18-19-13
+02/23/2026  10:52 PM             3,336 NotificationController.php.backup.2026-02-23-18-22-42
+02/25/2026  12:01 PM             3,181 NotificationController.php.backup.2026-02-25-07-31-24
+03/02/2026  05:18 AM            15,283 PropertyController.php
+02/23/2026  12:36 AM            11,286 PropertyController.php.backup.2026-02-22-20-06-31
+02/23/2026  10:49 PM            11,359 PropertyController.php.backup.2026-02-23-18-19-14
+02/23/2026  10:52 PM            11,441 PropertyController.php.backup.2026-02-23-18-22-42
+02/25/2026  12:01 PM            11,286 PropertyController.php.backup.2026-02-25-07-31-24
+01/16/2026  01:19 PM             2,837 ReferralController.php
+03/01/2026  08:38 PM             5,071 ReviewController.php
+02/23/2026  12:36 AM             5,071 ReviewController.php.backup.2026-02-22-20-06-31
+02/23/2026  10:49 PM             5,251 ReviewController.php.backup.2026-02-23-18-19-14
+02/23/2026  10:52 PM             5,440 ReviewController.php.backup.2026-02-23-18-22-42
+02/25/2026  12:01 PM             5,071 ReviewController.php.backup.2026-02-25-07-31-24
+03/01/2026  08:38 PM             4,604 SeoController.php
+02/23/2026  12:36 AM             4,604 SeoController.php.backup.2026-02-22-20-06-31
+02/23/2026  10:49 PM             4,651 SeoController.php.backup.2026-02-23-18-19-15
+02/23/2026  10:52 PM             4,707 SeoController.php.backup.2026-02-23-18-22-43
+02/25/2026  12:01 PM             4,604 SeoController.php.backup.2026-02-25-07-31-24
+03/01/2026  08:39 PM             3,579 SharingController.php
+02/23/2026  12:36 AM             3,579 SharingController.php.backup.2026-02-22-20-06-32
+02/23/2026  10:49 PM             3,637 SharingController.php.backup.2026-02-23-18-19-15
+02/23/2026  10:52 PM             3,704 SharingController.php.backup.2026-02-23-18-22-43
+02/25/2026  12:01 PM             3,579 SharingController.php.backup.2026-02-25-07-31-24
+01/16/2026  02:49 PM             7,344 SystemController.php
+02/17/2026  05:00 AM             4,865 TestApiController.php
+03/02/2026  02:52 AM             1,129 UserController.php
+02/23/2026  12:36 AM             3,994 UserController.php.backup.2026-02-22-20-06-32
+02/23/2026  10:49 PM             4,047 UserController.php.backup.2026-02-23-18-19-15
+02/23/2026  10:52 PM             4,109 UserController.php.backup.2026-02-23-18-22-43
+02/25/2026  12:01 PM             3,994 UserController.php.backup.2026-02-25-07-31-24
+03/02/2026  02:32 AM             3,994 UserController.php.backup.2026-03-01-22-02-50
+03/02/2026  02:52 AM             1,132 VisitController.php
+02/23/2026  12:36 AM             6,914 VisitController.php.backup.2026-02-22-20-06-33
+02/23/2026  10:49 PM             6,974 VisitController.php.backup.2026-02-23-18-19-16
+02/23/2026  10:52 PM             7,043 VisitController.php.backup.2026-02-23-18-22-43
+02/25/2026  12:01 PM             6,914 VisitController.php.backup.2026-02-25-07-31-24
+03/02/2026  02:32 AM             6,914 VisitController.php.backup.2026-03-01-22-02-51
+03/02/2026  02:52 AM             1,141 WorkflowController.php
+02/23/2026  12:36 AM             4,441 WorkflowController.php.backup.2026-02-22-20-06-34
+02/23/2026  10:49 PM             4,505 WorkflowController.php.backup.2026-02-23-18-19-16
+02/23/2026  10:52 PM             4,578 WorkflowController.php.backup.2026-02-23-18-22-44
+02/25/2026  12:01 PM             4,441 WorkflowController.php.backup.2026-02-25-07-31-24
+03/02/2026  02:32 AM             4,441 WorkflowController.php.backup.2026-03-01-22-02-51
+              89 File(s)        761,081 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Associate
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/02/2026  02:52 AM               843 AssociateDashboardController.php
+02/23/2026  12:36 AM            14,650 AssociateDashboardController.php.backup.2026-02-22-20-06-34
+02/23/2026  10:49 PM            14,752 AssociateDashboardController.php.backup.2026-02-23-18-19-16
+02/23/2026  10:52 PM            14,854 AssociateDashboardController.php.backup.2026-02-23-18-22-44
+02/25/2026  12:01 PM            14,665 AssociateDashboardController.php.backup.2026-02-25-07-31-24
+03/02/2026  02:32 AM            15,123 AssociateDashboardController.php.backup.2026-03-01-22-02-51
+02/14/2026  05:16 PM             9,321 AssociateMLMController.php
+02/15/2026  03:45 AM            21,758 AssociatePlotSellingController.php
+01/11/2026  03:13 AM             7,951 ExportController.php
+               9 File(s)        113,917 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Auth
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/17/2026  01:00 PM             7,166 AdminAuthController.php
+               1 File(s)          7,166 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Customer
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/22/2026  12:17 AM            28,242 CustomerController.php
+               1 File(s)         28,242 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Employee
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/24/2026  01:19 AM            40,056 EmployeeController.php
+               1 File(s)         40,056 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Payment
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/15/2026  03:38 AM            21,164 AdvancedPaymentController.php
+02/15/2026  02:50 AM             7,001 PaymentController.php
+02/15/2026  03:36 AM            14,161 PaymentGatewayController.php
+               3 File(s)         42,326 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Property
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/02/2026  02:52 AM             1,508 PropertyController.php
+02/23/2026  10:49 PM             5,076 PropertyController.php.backup.2026-02-23-18-19-17
+02/23/2026  10:52 PM             5,093 PropertyController.php.backup.2026-02-23-18-22-46
+02/25/2026  12:01 PM             5,076 PropertyController.php.backup.2026-02-25-07-31-25
+03/02/2026  02:32 AM             5,207 PropertyController.php.backup.2026-03-01-22-02-51
+               5 File(s)         21,960 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Public
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/21/2026  01:48 AM            13,385 AuthController.php
+02/21/2026  01:49 AM             4,537 LeadController.php
+03/02/2026  02:52 AM             1,160 PageController.php
+02/23/2026  10:49 PM            28,752 PageController.php.backup.2026-02-23-18-19-19
+02/23/2026  10:52 PM            28,800 PageController.php.backup.2026-02-23-18-22-47
+02/25/2026  12:01 PM            28,752 PageController.php.backup.2026-02-25-07-31-25
+03/02/2026  02:32 AM            28,752 PageController.php.backup.2026-03-01-22-02-51
+02/23/2026  12:40 PM             6,583 ProjectController.php
+02/15/2026  02:35 AM             2,917 SupportController.php
+               9 File(s)        143,638 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\SaaS
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/02/2026  02:52 AM             1,044 ProfessionalDashboardController.php
+02/23/2026  12:36 AM             4,223 ProfessionalDashboardController.php.backup.2026-02-22-20-06-40
+02/23/2026  10:49 PM             4,319 ProfessionalDashboardController.php.backup.2026-02-23-18-19-22
+02/23/2026  10:52 PM             4,424 ProfessionalDashboardController.php.backup.2026-02-23-18-22-48
+02/25/2026  12:01 PM             4,223 ProfessionalDashboardController.php.backup.2026-02-25-07-31-25
+03/02/2026  02:32 AM             4,223 ProfessionalDashboardController.php.backup.2026-03-01-22-02-52
+01/22/2026  11:31 PM             3,522 ProfessionalToolsController.php
+               7 File(s)         25,978 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\System
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/18/2026  02:47 AM             1,100 CronController.php
+               1 File(s)          1,100 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Tech
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/15/2026  03:16 AM            65,288 AdvancedSecurityController.php
+02/15/2026  03:26 AM            39,943 BlockchainController.php
+02/13/2026  12:35 PM            39,387 EdgeComputingController.php
+02/15/2026  03:24 AM            41,813 IoTController.php
+02/15/2026  03:42 AM            40,756 MetaverseController.php
+02/15/2026  03:33 AM            26,799 PWAController.php
+02/15/2026  03:16 AM            45,243 QuantumComputingController.php
+02/15/2026  03:20 AM            25,109 SocialMediaController.php
+02/13/2026  12:35 PM            57,863 SustainableTechController.php
+02/15/2026  03:11 AM            18,137 VirtualTourController.php
+              10 File(s)        400,338 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\User
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/15/2026  02:35 AM            11,291 DashboardController.php
+02/17/2026  04:27 PM            10,137 FarmerController.php
+01/22/2026  11:05 PM             1,518 NotificationController.php
+01/22/2026  11:05 PM             1,827 SupportController.php
+02/15/2026  02:34 AM             8,047 UserController.php
+               5 File(s)         32,820 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Controllers\Utility
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/21/2026  02:00 AM            32,235 AdvancedAIController.php
+02/21/2026  01:57 AM             4,256 AIChatbotController.php
+02/18/2026  01:19 AM             4,783 DatabaseSeederController.php
+02/14/2026  08:03 PM             1,268 ErrorTestController.php
+02/21/2026  01:52 AM            23,498 LanguageController.php
+02/18/2026  01:19 AM            11,679 SystemDiagnosticController.php
+02/13/2026  12:35 PM               442 TestController.php
+               7 File(s)         78,161 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Http\Middleware
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/22/2026  03:12 AM             1,962 Auth.php
+02/22/2026  03:12 AM             1,326 Cors.php
+02/22/2026  03:12 AM             2,671 RateLimit.php
+02/20/2026  08:34 PM             1,348 RateLimitMiddleware.php
+02/25/2026  12:24 AM             2,216 SecurityHeaders.php
+02/22/2026  03:13 AM             3,145 ThrottleLogin.php
+02/20/2026  08:35 PM               231 ThrottleLoginMiddleware.php
+               7 File(s)         12,899 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Middleware
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+11/28/2025  02:35 AM             3,310 AuthMiddleware.php
+02/24/2026  12:52 AM             1,460 SecurityMiddleware.php
+02/23/2026  12:14 AM             1,501 SecurityMiddleware.php.backup.2026-02-22-19-44-10
+               3 File(s)          6,271 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Models
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/20/2026  01:01 AM               259 About.php
+02/20/2026  12:57 AM             8,404 Admin.php
+01/16/2026  12:17 AM               298 AgentDetail.php
+01/12/2026  12:35 PM             1,842 AgentReview.php
+03/02/2026  02:53 AM             1,593 AIChatbot.php
+02/23/2026  12:14 AM            20,330 AIChatbot.php.backup.2026-02-22-19-44-10
+02/25/2026  12:00 PM            20,293 AIChatbot.php.backup.2026-02-25-07-30-50
+03/02/2026  02:32 AM            20,366 AIChatbot.php.backup.2026-03-01-22-02-52
+01/12/2026  12:36 PM               590 AIWorkflow.php
+01/12/2026  01:58 PM               540 AreaAmenity.php
+03/02/2026  02:53 AM             1,809 Associate.php
+02/23/2026  12:14 AM            48,432 Associate.php.backup.2026-02-22-19-44-11
+02/25/2026  12:00 PM            48,375 Associate.php.backup.2026-02-25-07-30-51
+03/02/2026  02:32 AM            48,532 Associate.php.backup.2026-03-01-22-02-52
+03/02/2026  02:53 AM             1,805 Associate.php.backup.2026-03-01-22-23-24
+01/16/2026  12:17 AM               299 AssociateDetail.php
+02/20/2026  01:05 AM            24,547 AssociateMLM.php
+01/19/2026  11:16 PM             4,080 AuditLog.php
+01/16/2026  12:25 AM               361 BankAccount.php
+02/20/2026  12:58 AM             3,813 Booking.php
+02/22/2026  02:29 AM            17,248 Budget.php
+01/16/2026  12:17 AM               301 BuilderDetail.php
+02/22/2026  02:14 AM            21,744 Campaign.php
+01/16/2026  12:25 AM               335 Career.php
+01/16/2026  12:25 AM               376 CareerApplication.php
+01/16/2026  01:46 AM             2,848 Component.php
+02/17/2026  06:43 AM            14,500 ConsolidatedProperty.php
+02/24/2026  12:31 AM             7,815 ConsolidatedUser.php
+02/23/2026  12:14 AM             7,900 ConsolidatedUser.php.backup.2026-02-22-19-44-12
+03/02/2026  02:53 AM             1,669 CoreFunctions.php
+02/23/2026  12:14 AM           145,521 CoreFunctions.php.backup.2026-02-22-19-44-12
+02/23/2026  12:23 AM           143,912 CoreFunctions.php.backup.2026-02-22-19-53-32
+02/23/2026  12:26 AM           146,562 CoreFunctions.php.backup.2026-02-22-19-56-15
+02/23/2026  10:48 PM           146,623 CoreFunctions.php.backup.2026-02-23-18-18-51
+02/23/2026  10:52 PM           149,273 CoreFunctions.php.backup.2026-02-23-18-22-04
+02/25/2026  12:00 PM           145,864 CoreFunctions.php.backup.2026-02-25-07-30-51
+02/25/2026  12:01 PM           145,011 CoreFunctions.php.backup.2026-02-25-07-31-09
+02/25/2026  12:01 PM           147,661 CoreFunctions.php.backup.2026-02-25-07-31-16
+03/02/2026  02:32 AM           145,284 CoreFunctions.php.backup.2026-03-01-22-02-52
+03/02/2026  02:53 AM             1,665 CoreFunctions.php.backup.2026-03-01-22-23-24
+03/02/2026  02:53 AM             1,948 CRMLead.php
+02/23/2026  12:14 AM            28,137 CRMLead.php.backup.2026-02-22-19-44-11
+02/25/2026  12:00 PM            28,138 CRMLead.php.backup.2026-02-25-07-30-51
+03/02/2026  02:32 AM            27,993 CRMLead.php.backup.2026-03-01-22-02-52
+03/02/2026  02:53 AM             1,944 CRMLead.php.backup.2026-03-01-22-23-24
+02/23/2026  12:14 AM            62,055 Customer.php
+02/23/2026  12:14 AM            62,114 Customer.php.backup.2026-02-22-19-44-12
+01/16/2026  12:18 AM               329 CustomerProfile.php
+03/02/2026  02:53 AM             1,773 Database.php
+02/23/2026  12:14 AM             1,925 Database.php.backup.2026-02-22-19-44-13
+02/25/2026  12:00 PM             1,941 Database.php.backup.2026-02-25-07-30-51
+03/02/2026  02:32 AM             1,927 Database.php.backup.2026-03-01-22-02-53
+03/02/2026  02:53 AM             1,769 Database.php.backup.2026-03-01-22-23-24
+01/12/2026  10:51 AM               237 District.php
+02/22/2026  01:45 AM            16,492 Document.php
+02/23/2026  01:03 PM             1,785 Download.php
+02/24/2026  12:31 AM             1,086 EmailVerification.php
+02/23/2026  12:14 AM             1,132 EmailVerification.php.backup.2026-02-22-19-44-14
+02/18/2026  03:30 AM            29,495 EMI.php
+03/01/2026  10:44 PM            18,044 Employee.php
+02/23/2026  12:14 AM            18,030 Employee.php.backup.2026-02-22-19-44-15
+02/25/2026  12:00 PM            17,525 Employee.php.backup.2026-02-25-07-30-51
+03/01/2026  10:14 PM             8,444 EmployeeAttendance.php
+02/23/2026  12:23 AM             8,191 EmployeeAttendance.php.backup.2026-02-22-19-53-32
+02/23/2026  10:48 PM             8,403 EmployeeAttendance.php.backup.2026-02-23-18-18-51
+02/23/2026  10:52 PM             8,615 EmployeeAttendance.php.backup.2026-02-23-18-22-04
+02/25/2026  12:01 PM             8,444 EmployeeAttendance.php.backup.2026-02-25-07-31-09
+02/25/2026  11:27 AM            12,098 EmployeeLeave.php
+02/19/2026  01:00 AM             1,718 Expense.php
+01/16/2026  12:25 AM               312 Faq.php
+03/01/2026  10:14 PM             6,410 Farmer.php
+02/23/2026  12:14 AM             6,312 Farmer.php.backup.2026-02-22-19-44-15
+02/25/2026  12:00 PM             6,306 Farmer.php.backup.2026-02-25-07-30-51
+03/01/2026  10:14 PM             5,928 FarmerLandHolding.php
+02/23/2026  12:14 AM             5,830 FarmerLandHolding.php.backup.2026-02-22-19-44-15
+02/25/2026  12:00 PM             5,824 FarmerLandHolding.php.backup.2026-02-25-07-30-51
+02/17/2026  02:07 AM               323 Feedback.php
+02/18/2026  11:58 PM             1,041 FieldVisit.php
+02/22/2026  01:55 AM            18,676 FinancialReports.php
+02/17/2026  02:05 AM               304 Gallery.php
+02/22/2026  02:17 AM            21,361 Gamification.php
+02/17/2026  06:21 PM            20,872 HybridMLMCalculator.php
+02/17/2026  06:15 PM             1,362 HybridMLMDashboard.php
+01/16/2026  12:25 AM               411 Inquiry.php
+01/16/2026  12:17 AM               305 InvestorDetail.php
+02/22/2026  02:30 AM            20,187 Invoice.php
+03/01/2026  10:14 PM             8,715 LandPurchase.php
+02/23/2026  12:14 AM             8,617 LandPurchase.php.backup.2026-02-22-19-44-16
+02/25/2026  12:00 PM             8,611 LandPurchase.php.backup.2026-02-25-07-30-51
+02/08/2026  11:20 AM            11,902 LayoutTemplate.php
+02/20/2026  12:57 AM             2,248 Lead.php
+02/20/2026  01:02 AM               902 LeadActivity.php
+02/20/2026  01:02 AM             2,381 LeadAssignmentHistory.php
+02/20/2026  01:00 AM             4,558 LeadCustomField.php
+02/20/2026  01:02 AM             4,166 LeadCustomFieldValue.php
+02/20/2026  12:58 AM             8,825 LeadDeal.php
+02/20/2026  01:02 AM             1,318 LeadFile.php
+02/20/2026  01:02 AM               806 LeadNote.php
+02/22/2026  02:13 AM            19,358 LeadScoring.php
+02/20/2026  01:00 AM             1,914 LeadSource.php
+02/20/2026  12:59 AM             2,881 LeadStatus.php
+02/20/2026  01:02 AM             2,935 LeadStatusHistory.php
+02/20/2026  01:00 AM             2,157 LeadTag.php
+02/22/2026  01:36 AM            11,115 Leave.php
+01/16/2026  12:20 AM               357 LegalDocument.php
+01/26/2026  01:53 PM             3,014 Media.php
+02/22/2026  02:08 AM            36,877 Messaging.php
+02/17/2026  06:32 PM            11,582 MLMAdvancedAnalytics.php
+01/16/2026  12:18 AM               277 MlmLevel.php
+01/16/2026  12:17 AM               284 MlmNetworkTree.php
+02/17/2026  06:37 PM             3,542 MLMPlanComparison.php
+02/17/2026  06:15 PM             1,948 MLMPlanTemplates.php
+01/16/2026  12:18 AM               575 MlmProfile.php
+01/16/2026  12:18 AM               284 MlmReferral.php
+02/17/2026  05:39 PM             2,432 MLMTrainingSystem.php
+01/12/2026  12:34 PM               843 MobileDevice.php
+02/17/2026  04:45 PM               528 Model.php
+02/13/2026  12:35 PM             4,543 ModelIntegration.php
+01/12/2026  01:26 AM               597 MortgageInquiry.php
+02/19/2026  11:31 AM             1,885 News.php
+01/10/2026  01:44 PM               269 NewsletterSubscriber.php
+01/12/2026  12:34 PM               700 Notification.php
+02/22/2026  02:02 AM            21,308 OCR.php
+02/23/2026  12:14 AM             2,719 Page.php
+02/23/2026  12:14 AM             2,783 Page.php.backup.2026-02-22-19-44-17
+01/16/2026  12:18 AM               298 PasswordResetToken.php
+02/24/2026  12:24 AM            13,552 Payment.php
+02/23/2026  12:14 AM            13,695 Payment.php.backup.2026-02-22-19-44-17
+01/16/2026  12:58 AM               828 Payout.php
+02/22/2026  01:40 AM            15,044 Payroll.php
+02/22/2026  01:42 AM            15,810 Performance.php
+02/22/2026  02:20 AM            22,158 PerformanceDashboard.php
+02/22/2026  02:16 AM            19,920 Pipeline.php
+01/12/2026  10:53 AM             1,460 Plot.php
+02/22/2026  02:31 AM            23,868 Portfolio.php
+02/22/2026  02:00 AM            21,283 PredictiveAnalytics.php
+03/01/2026  10:14 PM            12,399 Project.php
+02/23/2026  12:14 AM            12,706 Project.php.backup.2026-02-22-19-44-18
+02/25/2026  12:00 PM            12,212 Project.php.backup.2026-02-25-07-30-51
+01/16/2026  09:10 AM               958 ProjectEnquiry.php
+03/02/2026  02:34 AM            11,189 Property.php
+02/23/2026  12:14 AM             9,785 Property.php.backup.2026-02-22-19-44-19
+03/01/2026  10:37 PM            19,775 PropertyComparison.php
+02/23/2026  12:14 AM            20,714 PropertyComparison.php.backup.2026-02-22-19-44-19
+02/23/2026  12:23 AM            19,726 PropertyComparison.php.backup.2026-02-22-19-53-32
+02/23/2026  10:48 PM            19,991 PropertyComparison.php.backup.2026-02-23-18-18-51
+02/23/2026  10:52 PM            20,256 PropertyComparison.php.backup.2026-02-23-18-22-04
+02/25/2026  12:00 PM            20,067 PropertyComparison.php.backup.2026-02-25-07-30-51
+02/25/2026  12:01 PM            19,164 PropertyComparison.php.backup.2026-02-25-07-31-09
+02/20/2026  01:01 AM            23,186 PropertyFavorite.php
+02/20/2026  01:01 AM            12,415 PropertyInquiry.php
+01/12/2026  01:27 AM               546 PropertyListing.php
+03/01/2026  10:14 PM            24,761 PropertyRecommendation.php
+02/23/2026  12:14 AM            23,886 PropertyRecommendation.php.backup.2026-02-22-19-44-20
+02/23/2026  12:23 AM            23,361 PropertyRecommendation.php.backup.2026-02-22-19-53-32
+02/23/2026  10:48 PM            23,838 PropertyRecommendation.php.backup.2026-02-23-18-18-52
+02/23/2026  10:52 PM            24,315 PropertyRecommendation.php.backup.2026-02-23-18-22-05
+02/25/2026  12:00 PM            24,190 PropertyRecommendation.php.backup.2026-02-25-07-30-51
+02/25/2026  12:01 PM            23,671 PropertyRecommendation.php.backup.2026-02-25-07-31-09
+01/12/2026  12:35 PM             2,026 PropertyReview.php
+02/17/2026  03:10 PM               730 PropertyType.php
+01/12/2026  01:27 AM               538 PropertyViewing.php
+01/16/2026  09:10 AM             2,507 PropertyVisit.php
+01/12/2026  12:35 PM               810 PublicCustomer.php
+03/01/2026  10:37 PM            23,268 PushNotification.php
+02/23/2026  12:14 AM            22,631 PushNotification.php.backup.2026-02-22-19-44-20
+02/23/2026  12:23 AM            22,233 PushNotification.php.backup.2026-02-22-19-53-32
+02/23/2026  10:48 PM            23,558 PushNotification.php.backup.2026-02-23-18-18-52
+02/23/2026  10:52 PM            24,883 PushNotification.php.backup.2026-02-23-18-22-05
+02/25/2026  12:00 PM            22,590 PushNotification.php.backup.2026-02-25-07-30-51
+02/25/2026  12:01 PM            22,232 PushNotification.php.backup.2026-02-25-07-31-09
+01/23/2026  12:50 AM               500 Referral.php
+01/16/2026  12:17 AM             2,801 ResellProperty.php
+01/16/2026  12:18 AM               215 ResellPropertyImage.php
+01/16/2026  12:19 AM               487 ResellUser.php
+02/20/2026  01:25 AM             8,901 Sale.php
+01/12/2026  01:58 PM               678 SavedSearch.php
+02/17/2026  06:27 AM               667 SeoMetadata.php
+02/17/2026  01:32 AM               355 Service.php
+02/22/2026  01:48 AM            17,629 Shift.php
+02/17/2026  04:53 PM             1,773 SiteSetting.php
+01/12/2026  10:51 AM               211 State.php
+02/17/2026  04:53 PM             1,282 SupportTicket.php
+01/16/2026  09:14 AM             2,874 SystemAlert.php
+03/01/2026  10:19 PM            13,637 SystemAnalytics.php
+02/23/2026  12:14 AM            26,377 SystemAnalytics.php.backup.2026-02-22-19-44-21
+02/25/2026  12:00 PM            26,142 SystemAnalytics.php.backup.2026-02-25-07-30-51
+02/22/2026  01:53 AM            15,964 Tax.php
+02/17/2026  01:41 AM               434 TeamMember.php
+02/17/2026  04:54 PM               714 TicketReply.php
+01/16/2026  09:14 AM               716 TrafficStat.php
+03/01/2026  10:23 PM            20,618 Training.php
+02/23/2026  12:14 AM            20,176 Training.php.backup.2026-02-22-19-44-21
+02/25/2026  12:00 PM            20,214 Training.php.backup.2026-02-25-07-30-51
+02/17/2026  05:12 PM             7,175 User.php
+03/01/2026  10:23 PM             2,649 UserPermission.php
+02/23/2026  12:14 AM             2,694 UserPermission.php.backup.2026-02-22-19-44-22
+02/25/2026  12:00 PM             2,680 UserPermission.php.backup.2026-02-25-07-30-51
+03/01/2026  10:23 PM            14,898 VirtualTour.php
+02/23/2026  12:23 AM            14,444 VirtualTour.php.backup.2026-02-22-19-53-32
+02/23/2026  10:48 PM            14,656 VirtualTour.php.backup.2026-02-23-18-18-53
+02/23/2026  10:52 PM            14,868 VirtualTour.php.backup.2026-02-23-18-22-05
+02/25/2026  12:01 PM            14,444 VirtualTour.php.backup.2026-02-25-07-31-09
+01/16/2026  12:19 AM               359 VirtualTourAsset.php
+02/17/2026  04:53 PM             2,586 Visit.php
+             205 File(s)      3,346,783 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            27,141 AdminService.php
+03/02/2026  10:12 PM    <DIR>          AI
+02/17/2026  12:24 PM             6,137 AIService.php
+02/19/2026  11:55 PM            15,826 AlertService.php
+02/13/2026  12:35 PM               547 AuthService.php
+01/15/2026  10:59 PM             1,572 BankingService.php
+03/02/2026  10:12 PM    <DIR>          Caching
+02/19/2026  11:51 PM            20,145 ChatService.php
+02/17/2026  04:27 PM            12,804 CleanLeadService.php
+02/16/2026  02:57 PM             3,722 CommissionAgreementService.php
+02/16/2026  07:49 PM             6,183 CommissionCalculator.php
+02/17/2026  04:27 PM            12,113 CommissionService.php
+03/02/2026  10:12 PM    <DIR>          Communication
+03/01/2026  10:24 PM             2,676 ConfigurationManager.php
+02/23/2026  12:14 AM             4,559 ConfigurationManager.php.backup.2026-02-22-19-44-23
+02/25/2026  12:00 PM             4,595 ConfigurationManager.php.backup.2026-02-25-07-30-51
+03/02/2026  10:12 PM    <DIR>          CRM
+03/01/2026  10:44 PM             2,850 EmailService.php
+02/23/2026  12:14 AM             2,852 EmailService.php.backup.2026-02-22-19-44-23
+02/25/2026  12:00 PM             2,850 EmailService.php.backup.2026-02-25-07-30-51
+02/18/2026  03:11 AM            16,144 EMIAutomationService.php
+02/18/2026  04:33 PM            21,973 EngagementService.php
+02/20/2026  07:58 PM             4,792 FileUploadService.php
+03/02/2026  10:12 PM    <DIR>          Finance
+03/02/2026  10:12 PM    <DIR>          Gamification
+03/01/2026  10:25 PM             2,511 GeminiService.php
+02/23/2026  12:14 AM             2,529 GeminiService.php.backup.2026-02-22-19-44-24
+02/25/2026  12:00 PM             2,527 GeminiService.php.backup.2026-02-25-07-30-51
+02/13/2026  12:35 PM             2,367 GoogleAuthService.php
+03/02/2026  10:12 PM    <DIR>          HR
+01/15/2026  10:55 PM             2,680 KYCService.php
+02/13/2026  12:35 PM             9,614 LeadService.php
+03/02/2026  10:13 PM    <DIR>          Legacy
+02/23/2026  12:14 AM             9,002 MicrositeAssembler.php
+02/23/2026  12:14 AM             9,037 MicrositeAssembler.php.backup.2026-02-22-19-44-24
+02/22/2026  04:48 AM            10,803 MLMReferralService.php
+03/01/2026  10:25 PM             1,817 MlmSettings.php
+02/23/2026  12:14 AM             1,864 MlmSettings.php.backup.2026-02-22-19-44-25
+02/25/2026  12:00 PM             1,863 MlmSettings.php.backup.2026-02-25-07-30-52
+03/02/2026  10:13 PM    <DIR>          Monitoring
+02/17/2026  04:27 PM             4,990 NotificationService.php
+03/02/2026  10:13 PM    <DIR>          Payment
+02/13/2026  12:35 PM             2,705 PaymentService.php
+02/17/2026  05:35 PM            18,655 PayoutService.php
+03/02/2026  10:13 PM    <DIR>          Property
+02/13/2026  12:35 PM             4,711 PropertyService.php
+02/16/2026  02:51 PM             3,199 RankService.php
+02/10/2026  02:47 AM             5,285 RecommendationService.php
+02/16/2026  03:03 PM            16,867 ReferralService.php
+02/13/2026  12:35 PM             8,503 ReportService.php
+03/02/2026  10:13 PM    <DIR>          Security
+01/12/2026  10:29 PM             1,992 SecurityAudit.php
+02/13/2026  12:35 PM             2,322 SecurityService.php
+02/13/2026  12:35 PM               327 SessionManager.php
+03/02/2026  10:13 PM    <DIR>          storage
+02/16/2026  07:50 PM             5,203 SupportTicketService.php
+03/01/2026  10:26 PM            10,817 SystemLogger.php
+02/23/2026  12:14 AM            11,113 SystemLogger.php.backup.2026-02-22-19-44-25
+02/23/2026  12:23 AM            10,676 SystemLogger.php.backup.2026-02-22-19-53-32
+02/23/2026  10:48 PM            10,941 SystemLogger.php.backup.2026-02-23-18-18-53
+02/23/2026  10:52 PM            11,206 SystemLogger.php.backup.2026-02-23-18-22-05
+02/25/2026  12:01 PM            10,817 SystemLogger.php.backup.2026-02-25-07-31-09
+02/16/2026  07:50 PM             9,649 TaskService.php
+03/02/2026  10:13 PM    <DIR>          Training
+01/23/2026  12:51 AM             2,163 TwoFactorAuth.php
+01/23/2026  12:52 AM             1,675 UniversalServiceWrapper.php
+03/01/2026  11:24 PM             6,083 UserService.php
+02/23/2026  12:14 AM             7,500 UserService.php.backup.2026-02-22-19-44-26
+02/25/2026  12:00 PM             7,467 UserService.php.backup.2026-02-25-07-30-52
+              55 File(s)        400,961 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\AI
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/23/2026  12:39 AM             7,226 AdvancedAIBot.php
+03/02/2026  10:12 PM    <DIR>          Agents
+01/21/2026  04:51 AM             3,460 AIAdvancedAgent.php
+01/20/2026  12:38 AM             1,634 AICallingAgent.php
+01/20/2026  12:38 AM             5,468 AIDashboardController.php
+02/10/2026  02:49 AM            14,300 AIEcosystemManager.php
+02/10/2026  02:55 AM             5,836 AIHealthMonitor.php
+01/20/2026  12:38 AM             6,248 AILearningSystem.php
+02/10/2026  02:54 AM            15,369 AIManager.php
+01/20/2026  12:38 AM            30,539 AIMarketAnalyzer.php
+01/20/2026  12:38 AM             1,460 AIMarketingAgent.php
+02/19/2026  11:50 PM            34,753 AIPropertyEngine.php
+01/20/2026  12:38 AM             1,323 AIRecommendationEngine.php
+01/20/2026  12:38 AM             1,907 AITelecallingAgent.php
+01/20/2026  12:38 AM             5,083 AIToolsManager.php
+01/20/2026  12:38 AM             3,036 InvestmentManager.php
+01/21/2026  08:31 AM             3,557 JobManager.php
+03/02/2026  10:12 PM    <DIR>          Legacy
+03/02/2026  10:12 PM    <DIR>          modules
+03/02/2026  10:12 PM    <DIR>          nodes
+02/25/2026  11:27 AM            15,026 PropertyRecommendationEngine.php
+01/20/2026  12:38 AM             4,046 UnifiedCommManager.php
+01/22/2026  08:52 AM            10,198 WorkflowEngine.php
+              19 File(s)        170,469 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\AI\Agents
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/21/2026  01:39 AM               608 AgentInterface.php
+01/21/2026  08:30 AM             2,383 AgentManager.php
+01/21/2026  04:51 AM             2,727 BaseAgent.php
+03/02/2026  10:12 PM    <DIR>          specialized
+01/21/2026  04:27 AM             5,896 WhatsAppAgent.php
+               4 File(s)         11,614 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\AI\Agents\specialized
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/26/2026  02:03 PM             1,685 ContentCreationAgent.php
+01/21/2026  03:55 AM             1,764 DataAnalysisAgent.php
+01/23/2026  08:17 AM             5,629 EMICollectionAgent.php
+01/21/2026  09:41 AM             4,193 LeadGenerationAgent.php
+01/21/2026  09:42 AM             1,406 RecommendationAgent.php
+01/21/2026  03:55 AM               908 ResearchAgent.php
+               6 File(s)         15,585 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\AI\Legacy
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/20/2026  12:48 AM               261 AdvancedAIBot.php
+01/20/2026  12:48 AM               265 AIAdvancedAgent.php
+01/20/2026  12:48 AM               263 AICallingAgent.php
+01/20/2026  12:48 AM               277 AIDashboardController.php
+01/20/2026  12:48 AM               271 AIEcosystemManager.php
+01/20/2026  12:48 AM               265 AIHealthMonitor.php
+01/20/2026  12:48 AM               267 AILearningSystem.php
+01/20/2026  12:48 AM               253 AIManager.php
+01/20/2026  12:48 AM               267 AIMarketAnalyzer.php
+01/20/2026  12:48 AM               267 AIMarketingAgent.php
+01/20/2026  12:48 AM               267 AIPropertyEngine.php
+01/20/2026  12:48 AM               279 AIRecommendationEngine.php
+01/20/2026  12:48 AM               271 AITelecallingAgent.php
+01/20/2026  12:48 AM               263 AIToolsManager.php
+01/20/2026  12:48 AM               269 InvestmentManager.php
+01/20/2026  12:48 AM               255 JobManager.php
+01/20/2026  12:48 AM               271 UnifiedCommManager.php
+01/20/2026  12:48 AM             1,533 worker.php
+01/20/2026  12:48 AM               263 WorkflowEngine.php
+              19 File(s)          6,327 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\AI\modules
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/21/2026  04:57 AM               405 CodeAssistant.php
+01/21/2026  04:57 AM             1,639 DataAnalyst.php
+01/21/2026  04:57 AM             2,092 DecisionEngine.php
+01/21/2026  04:57 AM               593 KnowledgeGraph.php
+01/21/2026  04:57 AM             3,860 NLPProcessor.php
+01/21/2026  04:57 AM               878 RecommendationEngine.php
+               6 File(s)          9,467 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\AI\nodes
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/20/2026  12:48 AM               178 AINode.php
+01/20/2026  12:48 AM               182 BaseNode.php
+01/20/2026  12:48 AM               190 CalendarNode.php
+01/20/2026  12:48 AM               178 DBNode.php
+01/20/2026  12:48 AM               184 EmailNode.php
+01/20/2026  12:48 AM               182 HTTPNode.php
+01/20/2026  12:48 AM               184 LogicNode.php
+01/20/2026  12:48 AM               198 NotificationNode.php
+01/20/2026  12:48 AM               188 PaymentNode.php
+01/20/2026  12:48 AM               180 SMSNode.php
+01/20/2026  12:48 AM               196 SocialMediaNode.php
+01/20/2026  12:48 AM               196 TelecallingNode.php
+              12 File(s)          2,236 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Caching
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/23/2026  12:17 PM            17,314 CacheManager.php
+               1 File(s)         17,314 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Communication
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/25/2026  11:27 AM            10,565 MessagingService.php
+02/25/2026  11:27 AM            10,472 PushNotificationService.php
+03/01/2026  10:23 PM            13,848 WhatsAppService.php
+02/23/2026  12:36 AM            13,391 WhatsAppService.php.backup.2026-02-22-20-06-52
+02/23/2026  10:49 PM            13,408 WhatsAppService.php.backup.2026-02-23-18-19-54
+02/23/2026  10:53 PM            13,434 WhatsAppService.php.backup.2026-02-23-18-23-11
+02/25/2026  12:01 PM            13,848 WhatsAppService.php.backup.2026-02-25-07-31-26
+               7 File(s)         88,966 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\CRM
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+03/01/2026  07:36 PM            11,039 LeadScoringService.php
+               1 File(s)         11,039 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Finance
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/25/2026  11:27 AM            12,905 GSTTaxReportService.php
+03/01/2026  07:36 PM            12,023 InvoiceService.php
+               2 File(s)         24,928 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Gamification
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/25/2026  11:27 AM            12,422 GamificationService.php
+               1 File(s)         12,422 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\HR
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+02/25/2026  11:27 AM            14,548 PayrollService.php
+               1 File(s)         14,548 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/20/2026  01:22 AM             5,549 AccessControlMiddleware.php
+02/19/2026  01:04 AM            12,943 AdminDashboard.php
+01/22/2026  09:14 AM             4,606 AdminLogger.php
+02/17/2026  12:14 PM            10,938 AdvancedAnalytics.php
+01/22/2026  08:50 AM            10,078 AdvancedCache.php
+02/15/2026  10:39 AM            12,382 AIIntegration.php
+01/26/2026  01:47 PM            24,711 AILearningSystem.php
+01/20/2026  12:50 AM            22,776 AIPersonalitySystem.php
+01/20/2026  12:50 AM             1,151 AIPropertyRecommendations.php
+03/02/2026  10:12 PM    <DIR>          Analytics
+01/23/2026  12:42 AM             9,009 ApiKeyManager.php
+01/20/2026  12:44 AM             1,783 APILogger.php
+01/20/2026  12:50 AM             3,694 AssetOptimizer.php
+01/20/2026  12:44 AM            10,685 AsyncTaskManager.php
+03/02/2026  10:12 PM    <DIR>          Auth
+03/01/2026  10:25 PM            13,776 Auth.php
+02/23/2026  12:36 AM            13,322 Auth.php.backup.2026-02-22-20-06-53
+02/23/2026  10:50 PM            13,350 Auth.php.backup.2026-02-23-18-20-07
+02/23/2026  10:53 PM            13,387 Auth.php.backup.2026-02-23-18-23-13
+02/25/2026  12:01 PM            13,322 Auth.php.backup.2026-02-25-07-31-26
+01/21/2026  11:10 PM             1,894 AuthCheck.php
+02/20/2026  02:41 AM            10,254 AuthManager.php
+02/20/2026  01:40 AM             7,986 AuthMiddleware.php
+03/02/2026  10:12 PM    <DIR>          Automation
+03/02/2026  10:12 PM    <DIR>          Backup
+01/20/2026  12:50 AM             8,344 Cache.php
+01/20/2026  12:50 AM             5,839 CacheManager.php
+01/26/2026  01:53 PM             4,260 CareerManager.php
+03/02/2026  10:13 PM    <DIR>          Classes
+03/01/2026  10:25 PM            12,716 ConfigManager.php
+02/23/2026  12:36 AM            12,257 ConfigManager.php.backup.2026-02-22-20-06-55
+02/23/2026  10:50 PM            12,291 ConfigManager.php.backup.2026-02-23-18-20-12
+02/23/2026  10:53 PM            12,334 ConfigManager.php.backup.2026-02-23-18-23-18
+02/25/2026  12:01 PM            12,294 ConfigManager.php.backup.2026-02-25-07-31-26
+01/20/2026  12:50 AM             1,030 ContainerInterface.php
+03/02/2026  10:13 PM    <DIR>          Core
+02/20/2026  01:59 AM            30,815 CRMAnalyticsManager.php
+02/20/2026  12:41 PM            50,742 CRMManager.php
+01/23/2026  12:42 AM               756 CSRF.php
+02/08/2026  10:46 AM               880 CSRFProtection.php
+02/17/2026  12:14 PM            10,159 CustomFeatures.php
+01/20/2026  12:44 AM             2,099 Database.php
+02/20/2026  01:33 AM             3,180 DbUtils.php
+03/01/2026  10:25 PM             4,272 DependencyContainer.php
+02/23/2026  12:36 AM             4,133 DependencyContainer.php.backup.2026-02-22-20-06-56
+02/23/2026  10:50 PM             4,164 DependencyContainer.php.backup.2026-02-23-18-20-13
+02/23/2026  10:53 PM             4,204 DependencyContainer.php.backup.2026-02-23-18-23-23
+02/25/2026  12:01 PM             4,133 DependencyContainer.php.backup.2026-02-25-07-31-26
+01/20/2026  12:50 AM             5,239 DownloadCDNAssets.php
+01/23/2026  12:46 AM             4,296 EmailProcessor.php
+01/20/2026  12:50 AM            15,930 EmailService.php
+02/09/2026  10:19 PM             6,701 EmailTemplateManager.php
+02/12/2026  10:45 AM            17,314 EnhancedUniversalTemplate.php
+01/20/2026  12:50 AM             1,279 EnvLoader.php
+01/20/2026  12:44 AM             3,677 ErrorHandler.php
+01/27/2026  12:39 PM            12,236 EventBus.php
+01/26/2026  01:47 PM             7,471 EventDispatcher.php
+01/20/2026  12:50 AM             2,068 EventMiddleware.php
+01/20/2026  12:50 AM             7,712 EventMonitor.php
+02/20/2026  01:57 AM            24,864 FarmerManager.php
+01/23/2026  08:17 AM            10,407 FeatureFlagManager.php
+01/26/2026  01:47 PM             4,429 FileValidation.php
+02/06/2026  02:34 AM             3,447 functions.php
+02/20/2026  01:33 AM            15,352 HybridCommissionManager.php
+01/20/2026  12:50 AM            16,946 HybridCommissionSystem.php
+02/08/2026  11:21 AM             7,071 ImageOptimizer.php
+02/10/2026  01:02 AM               629 init.php
+01/20/2026  12:50 AM             4,186 InputValidation.php
+01/21/2026  08:31 AM             9,837 LocalizationManager.php
+03/02/2026  10:13 PM    <DIR>          LogAggregator
+01/20/2026  12:50 AM             8,895 Logger.php
+02/20/2026  01:32 AM            14,952 Managers.php
+02/17/2026  12:14 PM            11,027 MarketingAutomation.php
+02/07/2026  11:41 PM            11,087 MediaIntegration.php
+01/20/2026  12:50 AM            11,343 MediaLibraryManager.php
+01/27/2026  12:41 PM            14,839 MLIntegration.php
+02/20/2026  02:01 AM            27,836 MLMCommissionManager.php
+02/20/2026  01:20 AM             4,840 MobileAppFramework.php
+01/20/2026  12:44 AM             6,028 MultiLanguageSupport.php
+03/02/2026  10:13 PM    <DIR>          Notification
+01/21/2026  01:56 AM             1,642 NotificationManager.php
+01/20/2026  12:50 AM             3,376 OllamaClient.php
+01/20/2026  12:50 AM             5,325 OpenRouterClient.php
+01/26/2026  02:02 PM             5,296 PasswordManager.php
+02/20/2026  01:18 AM             6,927 PasswordReset.php
+02/15/2026  10:42 AM             3,604 PasswordUtils.php
+02/19/2026  11:06 PM             4,395 PaymentGateway.php
+01/23/2026  12:46 AM             5,571 PaymentProcessor.php
+01/22/2026  08:50 AM             8,735 PerformanceCache.php
+01/20/2026  12:50 AM             3,428 PerformanceConfig.php
+01/20/2026  12:50 AM            19,542 PerformanceManager.php
+01/23/2026  12:44 AM            12,407 PerformanceMonitor.php
+02/20/2026  01:44 AM             7,619 PerformanceProfiler.php
+01/22/2026  08:54 AM             5,249 PermissionManager.php
+01/20/2026  12:50 AM             6,324 PHPOptimizer.php
+02/20/2026  01:35 AM            30,802 PlottingManager.php
+02/06/2026  02:55 AM            25,288 ProjectDetails.php
+01/23/2026  12:45 AM             3,470 PropertyAI.php
+02/20/2026  01:35 AM            18,426 PropertyManager.php
+02/17/2026  12:14 PM             1,788 QueryCache.php
+01/20/2026  12:50 AM             4,763 RateLimiter.php
+02/15/2026  11:16 AM             8,415 RBACManager.php
+02/24/2026  01:53 AM            10,922 RequestMiddleware.php
+02/20/2026  01:33 AM            20,678 SalaryManager.php
+02/20/2026  01:44 AM             7,500 SecurityConfiguration.php
+02/10/2026  10:30 AM             9,996 SecurityHardening.php
+01/22/2026  09:14 AM             5,614 SecurityLogger.php
+02/09/2026  10:23 PM            12,685 SecurityManager.php
+01/23/2026  12:38 AM             7,422 SecurityMiddleware.php
+02/15/2026  09:46 AM            10,704 SecurityMonitor.php
+01/21/2026  08:31 AM             8,972 SecurityPolicy.php
+01/21/2026  10:51 PM            12,269 SecurityPolicyManager.php
+01/21/2026  01:20 AM             3,376 SecurityUtility.php
+01/21/2026  08:30 AM             7,804 ServiceContainer.php
+01/27/2026  01:08 PM            14,549 SessionHelpers.php
+02/06/2026  02:34 AM             2,672 SitemapXml.php
+01/20/2026  12:50 AM            10,409 SmsService.php
+02/09/2026  10:23 PM             8,955 SmsTemplateManager.php
+02/20/2026  01:58 AM             8,073 TwoFactorManager.php
+02/06/2026  02:25 AM             8,620 Validator.php
+01/20/2026  12:50 AM            28,722 WhatsAppIntegration.php
+02/20/2026  01:35 AM            26,733 WhatsAppManager.php
+             114 File(s)      1,129,503 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\Analytics
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/26/2026  01:46 PM             9,826 ApiAnalytics.php
+02/19/2026  11:06 PM             3,183 GoogleAnalytics.php
+01/21/2026  01:44 AM            13,820 RateLimitAnalytics.php
+               3 File(s)         26,829 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\Auth
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/21/2026  02:07 AM             4,689 LegacyAuthBridge.php
+               1 File(s)          4,689 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\Automation
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/21/2026  01:45 AM             3,329 WorkflowEngine.php
+               1 File(s)          3,329 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\Backup
+
+03/02/2026  10:12 PM    <DIR>          .
+03/02/2026  10:12 PM    <DIR>          ..
+01/21/2026  01:46 AM            10,366 BackupIntegrityChecker.php
+01/23/2026  12:41 AM            14,599 BackupManager.php
+               2 File(s)         24,965 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\Classes
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+01/20/2026  12:50 AM               382 Admin.php
+01/20/2026  12:50 AM             1,757 AIAssistant.php
+01/20/2026  12:50 AM               881 AlertEscalation.php
+01/20/2026  12:50 AM               890 AlertManager.php
+01/20/2026  12:50 AM               406 Associate.php
+01/20/2026  12:50 AM               900 Authentication.php
+01/20/2026  12:50 AM               869 AutomatedNotifier.php
+01/20/2026  12:50 AM               807 Cache.php
+01/20/2026  12:50 AM             3,217 ChatSupportSystem.php
+01/20/2026  12:50 AM               449 EnhancedValidator.php
+01/21/2026  01:57 AM               866 ErrorPages.php
+01/21/2026  01:57 AM             1,810 NotificationTemplate.php
+01/20/2026  12:50 AM             1,095 PropertyRecommendationEngine.php
+01/20/2026  12:50 AM               446 SessionManager.php
+01/20/2026  12:50 AM             1,557 SmsNotifier.php
+01/20/2026  12:50 AM               376 User.php
+01/20/2026  12:50 AM               886 Validator.php
+              17 File(s)         17,594 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\Core
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/08/2026  10:47 AM            14,015 Functions.php
+               1 File(s)         14,015 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\LogAggregator
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+01/21/2026  01:49 AM            12,992 LogAggregator.php
+               1 File(s)         12,992 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Legacy\Notification
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+01/21/2026  01:29 AM             3,864 EmailManager.php
+01/21/2026  01:29 AM             4,230 SmsManager.php
+01/21/2026  01:30 AM             3,909 WebhookManager.php
+               3 File(s)         12,003 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Monitoring
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/23/2026  02:45 AM             8,612 LoggingService.php
+02/23/2026  02:46 AM            10,996 MonitoringService.php
+               2 File(s)         19,608 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Payment
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/25/2026  11:27 AM               930 PaymentGatewayInterface.php
+03/01/2026  10:26 PM             8,317 PaymentService.php
+02/23/2026  12:37 AM             8,051 PaymentService.php.backup.2026-02-22-20-07-10
+02/23/2026  10:50 PM             8,181 PaymentService.php.backup.2026-02-23-18-20-33
+02/23/2026  10:53 PM             8,320 PaymentService.php.backup.2026-02-23-18-23-48
+02/25/2026  12:01 PM             8,317 PaymentService.php.backup.2026-02-25-07-31-27
+02/25/2026  11:27 AM             8,061 RazorpayGateway.php
+02/25/2026  11:27 AM             6,360 StripeGateway.php
+               8 File(s)         56,537 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Property
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/25/2026  11:27 AM            13,653 PropertyComparisonService.php
+               1 File(s)         13,653 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Security
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          Legacy
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Security\Legacy
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/08/2026  11:21 AM            17,172 api_middleware.php
+01/20/2026  12:46 AM            12,310 auto_response.php
+01/20/2026  12:46 AM             1,173 config.php
+02/06/2026  02:32 AM             4,178 CSRFProtection.php
+01/23/2026  12:45 AM             1,602 headers.php
+01/20/2026  12:46 AM             1,645 middleware.php
+01/23/2026  12:39 AM            13,102 SecureUpload.php
+02/06/2026  02:32 AM            16,040 SecurityManager.php
+02/06/2026  02:27 AM            10,517 security_functions.php
+02/20/2026  02:02 AM            17,992 security_test_suite.php
+02/08/2026  11:21 AM             1,578 Validator.php
+02/06/2026  02:32 AM             2,725 XSSProtection.php
+              12 File(s)        100,034 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\storage
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/01/2026  02:33 PM    <DIR>          rate_limits
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\storage\rate_limits
+
+03/01/2026  02:33 PM    <DIR>          .
+03/01/2026  02:33 PM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\Services\Training
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/25/2026  11:27 AM            17,020 TrainingService.php
+               1 File(s)         17,020 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          admin
+03/02/2026  10:13 PM    <DIR>          agent
+03/02/2026  10:13 PM    <DIR>          agents
+03/02/2026  10:13 PM    <DIR>          associates
+03/02/2026  10:13 PM    <DIR>          auth
+03/02/2026  10:13 PM    <DIR>          chatbot
+03/02/2026  10:13 PM    <DIR>          components
+03/02/2026  10:13 PM    <DIR>          crm
+03/02/2026  10:13 PM    <DIR>          customers
+03/02/2026  10:13 PM    <DIR>          emails
+03/02/2026  10:13 PM    <DIR>          employees
+03/02/2026  10:13 PM    <DIR>          errors
+03/02/2026  10:13 PM    <DIR>          farmers
+03/02/2026  10:13 PM    <DIR>          home
+03/02/2026  10:13 PM    <DIR>          interior-design
+03/02/2026  10:13 PM    <DIR>          layouts
+03/02/2026  10:13 PM    <DIR>          leads
+03/02/2026  10:13 PM    <DIR>          pages
+03/02/2026  10:13 PM    <DIR>          partials
+03/02/2026  10:13 PM    <DIR>          payment
+03/02/2026  10:13 PM    <DIR>          payments
+03/02/2026  10:13 PM    <DIR>          projects
+03/02/2026  10:13 PM    <DIR>          properties
+03/02/2026  10:13 PM    <DIR>          property
+03/01/2026  07:36 PM            24,916 property_details.php
+02/23/2026  12:26 AM            24,837 property_details.php.backup.2026-02-22-19-56-15
+02/25/2026  12:01 PM            24,882 property_details.php.backup.2026-02-25-07-31-16
+03/02/2026  10:13 PM    <DIR>          saas
+03/02/2026  10:13 PM    <DIR>          static
+03/02/2026  10:13 PM    <DIR>          team
+03/02/2026  10:13 PM    <DIR>          test
+03/02/2026  10:13 PM    <DIR>          user
+03/02/2026  10:13 PM    <DIR>          users
+               3 File(s)         74,635 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+05/14/2025  09:51 AM               338 .htaccess
+03/02/2026  10:13 PM    <DIR>          about
+03/02/2026  10:13 PM    <DIR>          accounting
+03/02/2026  10:13 PM    <DIR>          ai
+03/02/2026  10:13 PM    <DIR>          ajax
+03/02/2026  10:13 PM    <DIR>          api
+03/02/2026  10:13 PM    <DIR>          assets
+03/02/2026  10:13 PM    <DIR>          associates
+03/02/2026  10:13 PM    <DIR>          bookings
+03/02/2026  10:13 PM    <DIR>          careers
+03/02/2026  10:13 PM    <DIR>          commissions
+03/02/2026  10:13 PM    <DIR>          css
+03/02/2026  10:13 PM    <DIR>          customers
+03/02/2026  10:13 PM    <DIR>          dashboards
+02/22/2026  03:00 AM            28,694 dashboard_modern.php
+03/02/2026  10:13 PM    <DIR>          emi
+03/02/2026  10:13 PM    <DIR>          employees
+03/02/2026  10:13 PM    <DIR>          land
+03/02/2026  10:13 PM    <DIR>          leads
+02/16/2026  11:29 PM             3,676 login.php
+03/02/2026  10:13 PM    <DIR>          media
+03/02/2026  10:13 PM    <DIR>          news
+03/02/2026  10:13 PM    <DIR>          payments
+03/02/2026  10:13 PM    <DIR>          plots
+03/02/2026  10:13 PM    <DIR>          projects
+03/02/2026  10:13 PM    <DIR>          properties
+03/02/2026  10:13 PM    <DIR>          sales
+03/02/2026  10:13 PM    <DIR>          settings
+03/02/2026  10:13 PM    <DIR>          sql
+03/02/2026  10:13 PM    <DIR>          tasks
+03/02/2026  10:13 PM    <DIR>          templates
+03/02/2026  10:13 PM    <DIR>          tickets
+03/02/2026  10:13 PM    <DIR>          users
+03/02/2026  10:13 PM    <DIR>          vendor
+03/02/2026  10:13 PM    <DIR>          visits
+               3 File(s)         32,708 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\about
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  05:22 PM             3,333 create.php
+02/15/2026  05:22 PM             4,104 edit.php
+02/15/2026  05:22 PM             4,165 index.php
+               3 File(s)         11,602 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\accounting
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  12:00 AM             4,300 add_expenses.php
+02/18/2026  12:00 AM             6,411 add_income.php
+02/17/2026  11:59 PM             5,920 index.php
+02/18/2026  12:01 AM             4,010 transactions.php
+               4 File(s)         20,641 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\ai
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  11:56 PM             2,800 agent.php
+02/17/2026  11:57 PM            20,474 hub.php
+02/17/2026  11:56 PM             5,493 lead_scoring.php
+               3 File(s)         28,767 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\ajax
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/19/2026  12:39 AM             9,531 advanced_search.php
+02/20/2026  01:16 AM            20,613 consolidated_dashboard_api.php
+02/15/2026  04:00 AM             6,735 export_dashboard_data.php
+02/15/2026  04:41 AM             3,528 generate-followup.php
+02/15/2026  04:00 AM             3,709 get-chart-data.php
+02/15/2026  04:00 AM             1,590 get-component.php
+02/15/2026  04:41 AM             2,988 get-lead-timeline.php
+02/15/2026  04:00 AM             1,616 get_analytics_data.php
+02/15/2026  04:00 AM             4,504 get_comprehensive_analytics.php
+02/15/2026  04:00 AM             4,503 get_recent_activity.php
+02/15/2026  04:00 AM             2,706 get_system_status.php
+02/19/2026  10:55 PM             4,159 global_search.php
+02/15/2026  04:00 AM             2,006 save-content.php
+              13 File(s)         68,188 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\api
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  08:56 AM             4,686 ai_tools_api.php
+03/02/2026  10:13 PM    <DIR>          projects
+02/15/2026  04:00 AM             1,248 sentiment_api.php
+02/15/2026  04:00 AM             2,442 test_notification.php
+               3 File(s)          8,376 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\api\projects
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  04:00 AM             4,022 index.php
+               1 File(s)          4,022 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          css
+03/02/2026  10:13 PM    <DIR>          fonts
+03/02/2026  10:13 PM    <DIR>          img
+03/02/2026  10:13 PM    <DIR>          js
+03/02/2026  10:13 PM    <DIR>          plugins
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\css
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             7,785 bootstrap-datetimepicker.min.css
+03/18/2025  10:04 PM           155,758 bootstrap.min.css
+04/23/2025  12:28 AM                70 datatables.min.css
+01/07/2026  02:40 AM             8,069 daterangepicker.css
+03/18/2025  10:04 PM             9,576 feathericon.min.css
+03/18/2025  10:04 PM            31,023 font-awesome.min.css
+03/18/2025  10:04 PM            15,196 select2.min.css
+11/28/2025  02:35 AM             6,009 style-guide.css
+03/18/2025  10:04 PM            89,298 style.css
+04/11/2025  02:39 AM             1,582 template-builder.css
+              10 File(s)        324,366 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\fonts
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+04/11/2025  01:48 AM            41,519 feathericon.eot
+03/18/2025  10:04 PM            89,711 feathericon.svg
+04/11/2025  01:48 AM            41,313 feathericon.ttf
+04/11/2025  01:49 AM            31,446 feathericon.woff
+03/18/2025  10:04 PM            35,770 feathericond41d.eot
+03/18/2025  10:04 PM           165,742 fontawesome-webfont3e6e.eot
+03/18/2025  10:04 PM           444,379 fontawesome-webfont3e6e.svg
+03/18/2025  10:04 PM           165,548 fontawesome-webfont3e6e.ttf
+03/18/2025  10:04 PM            98,024 fontawesome-webfont3e6e.woff
+03/18/2025  10:04 PM           165,742 fontawesome-webfontd41d.eot
+04/11/2025  01:46 AM           166,896 MaterialIcons-Regular.eot
+04/11/2025  01:47 AM           150,893 MaterialIcons-Regular.ttf
+04/11/2025  01:48 AM           104,951 MaterialIcons-Regular.woff
+              13 File(s)      1,701,934 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\img
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM            17,806 aps.png
+02/15/2026  04:00 AM             1,906 default-avatar.php
+03/18/2025  10:04 PM             5,931 favicon.png
+08/30/2024  09:44 AM            31,311 logo-small.png
+03/18/2025  10:04 PM            74,234 PLOT.JPG
+03/02/2026  10:13 PM    <DIR>          profiles
+03/18/2025  10:04 PM             8,625 restatelg_whiteaps.png
+03/18/2025  10:04 PM            14,272 rsadmin.png
+03/18/2025  10:04 PM            19,536 rsadmin1.png
+03/18/2025  10:04 PM            14,518 rsadmin1aps.png
+               9 File(s)        188,139 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\img\profiles
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             9,486 avatar-01.png
+               1 File(s)          9,486 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\js
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          accounting
+11/28/2025  02:36 AM             7,648 bootstrap.min.js
+01/07/2026  02:40 AM           194,890 chart.min.js
+01/07/2026  02:40 AM            32,914 daterangepicker.min.js
+11/28/2025  02:36 AM            89,503 jquery.min.js
+01/07/2026  02:40 AM            51,465 moment.min.js
+11/28/2025  02:36 AM            21,501 popper.min.js
+11/28/2025  02:36 AM             9,212 script.js
+               7 File(s)        407,133 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\js\accounting
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+01/05/2026  09:44 AM             6,099 payments.js
+               1 File(s)          6,099 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          datatables
+03/02/2026  10:13 PM    <DIR>          light-gallery
+03/02/2026  10:13 PM    <DIR>          morris
+03/02/2026  10:13 PM    <DIR>          slimscroll
+03/02/2026  10:13 PM    <DIR>          tinymce
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\datatables
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             4,236 buttons.bootstrap4.min.css
+03/18/2025  10:04 PM             5,222 dataTables.bootstrap4.min.css
+03/18/2025  10:04 PM             3,993 responsive.bootstrap4.min.css
+03/18/2025  10:04 PM             4,154 select.bootstrap4.min.css
+               4 File(s)         17,605 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\light-gallery
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          css
+03/02/2026  10:13 PM    <DIR>          fonts
+03/02/2026  10:13 PM    <DIR>          img
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\light-gallery\css
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM            20,478 lightgallery.min.css
+               1 File(s)         20,478 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\light-gallery\fonts
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             4,024 lgd41d.eot
+03/18/2025  10:04 PM             4,024 lgd641.eot
+03/18/2025  10:04 PM             8,855 lgd641.svg
+03/18/2025  10:04 PM             3,880 lgd641.ttf
+03/18/2025  10:04 PM             3,956 lgd641.woff
+               5 File(s)         24,739 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\light-gallery\img
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             4,178 loading.gif
+03/18/2025  10:04 PM             4,526 video-play.png
+03/18/2025  10:04 PM             5,428 vimeo-play.png
+03/18/2025  10:04 PM             5,177 youtube-play.png
+               4 File(s)         19,309 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\morris
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM               433 morris.css
+               1 File(s)            433 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\slimscroll
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM             4,739 jquery.slimscroll.min.js
+               1 File(s)          4,739 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM            26,441 license.txt
+03/02/2026  10:13 PM    <DIR>          plugins
+03/02/2026  10:13 PM    <DIR>          skins
+               1 File(s)         26,441 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          codesample
+03/02/2026  10:13 PM    <DIR>          emoticons
+03/02/2026  10:13 PM    <DIR>          help
+03/02/2026  10:13 PM    <DIR>          visualblocks
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\codesample
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          css
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\codesample\css
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             2,334 prism.css
+               1 File(s)          2,334 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\emoticons
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          img
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\emoticons\img
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM               354 smiley-cool.gif
+03/18/2025  10:04 PM               329 smiley-cry.gif
+03/18/2025  10:04 PM               331 smiley-embarassed.gif
+03/18/2025  10:04 PM               342 smiley-foot-in-mouth.gif
+03/18/2025  10:04 PM               340 smiley-frown.gif
+03/18/2025  10:04 PM               336 smiley-innocent.gif
+03/18/2025  10:04 PM               338 smiley-kiss.gif
+03/18/2025  10:04 PM               343 smiley-laughing.gif
+03/18/2025  10:04 PM               321 smiley-money-mouth.gif
+03/18/2025  10:04 PM               323 smiley-sealed.gif
+03/18/2025  10:04 PM               344 smiley-smile.gif
+03/18/2025  10:04 PM               338 smiley-surprised.gif
+03/18/2025  10:04 PM               328 smiley-tongue-out.gif
+03/18/2025  10:04 PM               337 smiley-undecided.gif
+03/18/2025  10:04 PM               350 smiley-wink.gif
+03/18/2025  10:04 PM               336 smiley-yell.gif
+              16 File(s)          5,390 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\help
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          img
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\help\img
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM            13,208 logo.png
+               1 File(s)         13,208 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\visualblocks
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          css
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\plugins\visualblocks\css
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             5,473 visualblocks.css
+               1 File(s)          5,473 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\skins
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          lightgray
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\skins\lightgray
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             3,526 content.inline.min.css
+03/18/2025  10:04 PM             3,932 content.min.css
+03/18/2025  10:04 PM               234 content.mobile.min.css
+03/02/2026  10:13 PM    <DIR>          fonts
+03/02/2026  10:13 PM    <DIR>          img
+03/18/2025  10:04 PM            44,049 skin.min.css
+03/18/2025  10:04 PM            35,366 skin.min.css.map
+03/18/2025  10:04 PM            27,895 skin.mobile.min.css
+03/18/2025  10:04 PM             7,407 skin.mobile.min.css.map
+               7 File(s)        122,409 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\skins\lightgray\fonts
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM             4,624 tinymce-mobile.woff
+03/18/2025  10:04 PM             9,492 tinymce-small.eot
+03/18/2025  10:04 PM            24,727 tinymce-small.svg
+03/18/2025  10:04 PM             9,304 tinymce-small.ttf
+03/18/2025  10:04 PM             9,380 tinymce-small.woff
+03/18/2025  10:04 PM            18,912 tinymce.eot
+03/18/2025  10:04 PM            46,373 tinymce.svg
+03/18/2025  10:04 PM            18,748 tinymce.ttf
+03/18/2025  10:04 PM            18,824 tinymce.woff
+               9 File(s)        160,384 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\assets\plugins\tinymce\skins\lightgray\img
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM                53 anchor.gif
+03/18/2025  10:04 PM             2,608 loader.gif
+03/18/2025  10:04 PM               152 object.gif
+03/18/2025  10:04 PM                43 trans.gif
+               4 File(s)          2,856 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\associates
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  10:50 PM             5,954 commissions.php
+02/17/2026  10:54 PM             6,556 create.php
+02/17/2026  10:54 PM             7,618 edit.php
+02/17/2026  10:56 PM             6,123 index.php
+02/17/2026  10:49 PM             9,881 show.php
+02/17/2026  10:51 PM            14,636 tree.php
+               6 File(s)         50,768 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\bookings
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  11:52 PM             6,997 create.php
+02/17/2026  11:52 PM             8,069 edit.php
+02/17/2026  11:58 PM            13,494 index.php
+               3 File(s)         28,560 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\careers
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  12:22 AM             1,407 applications.php
+02/17/2026  12:22 AM             3,645 create.php
+02/17/2026  12:22 AM             4,293 edit.php
+02/17/2026  12:22 AM             4,165 index.php
+               4 File(s)         13,510 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\commissions
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  11:00 PM             6,989 index.php
+02/17/2026  11:00 PM             5,675 payout.php
+               2 File(s)         12,664 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\css
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:35 AM             9,181 admin-enhancements.css
+04/20/2025  02:37 AM             6,690 dark-mode.css
+03/18/2025  10:04 PM             2,299 demo.css
+04/11/2025  09:28 AM             1,543 login.css
+11/28/2025  02:35 AM            11,408 modern-ui.css
+11/28/2025  02:35 AM            11,842 universal-dashboard.css
+               6 File(s)         42,963 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\customers
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  10:40 PM            11,459 create.php
+02/17/2026  10:40 PM             9,812 edit.php
+02/17/2026  10:39 PM            11,902 index.php
+02/17/2026  10:41 PM             6,289 show.php
+               4 File(s)         39,462 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\dashboards
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  11:42 AM               145 accounting.php
+02/15/2026  11:42 AM               154 admin.php
+02/15/2026  11:41 AM             3,871 agent.php
+02/15/2026  11:41 AM               148 associate.php
+02/15/2026  11:41 AM             4,418 builder.php
+02/15/2026  04:00 AM             3,689 ceo.php
+02/15/2026  11:40 AM             3,698 cfo.php
+02/15/2026  11:42 AM               163 cm.php
+02/15/2026  11:40 AM             5,013 coo.php
+02/15/2026  04:00 AM             3,966 cto.php
+02/16/2026  11:49 PM               581 default.php
+02/15/2026  11:41 AM               143 director.php
+02/15/2026  11:42 AM               142 finance.php
+02/15/2026  11:40 AM             4,077 hr.php
+02/15/2026  11:41 AM               137 it.php
+02/15/2026  11:40 AM             4,487 legal.php
+02/15/2026  11:40 AM             4,299 marketing.php
+02/15/2026  11:41 AM             5,496 operations.php
+02/15/2026  04:00 AM             3,819 sales.php
+02/15/2026  04:00 AM             3,284 superadmin.php
+              20 File(s)         51,730 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\emi
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  02:21 AM             8,026 create.php
+02/18/2026  02:41 AM            12,504 foreclosure_report.php
+02/18/2026  02:29 AM             7,586 index.php
+02/18/2026  02:35 AM            19,769 show.php
+               4 File(s)         47,885 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\employees
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  11:46 PM             8,941 create.php
+02/17/2026  11:48 PM             9,741 edit.php
+02/17/2026  11:45 PM             6,575 index.php
+               3 File(s)         25,257 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\land
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  11:38 PM            10,524 create.php
+02/18/2026  12:59 AM            12,895 edit.php
+03/02/2026  10:13 PM    <DIR>          gata
+02/18/2026  12:32 AM            11,042 index.php
+03/02/2026  10:13 PM    <DIR>          transactions
+               3 File(s)         34,461 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\land\gata
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  09:07 PM             2,817 create.php
+02/15/2026  09:07 PM             4,151 edit.php
+02/15/2026  09:06 PM             3,753 index.php
+               3 File(s)         10,721 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\land\transactions
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  12:59 AM             5,321 create.php
+02/18/2026  12:59 AM             5,579 index.php
+               2 File(s)         10,900 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\leads
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  06:00 PM            14,342 create.php
+02/18/2026  06:01 PM            18,305 edit.php
+02/17/2026  12:09 AM             4,483 index.php
+02/18/2026  06:48 PM            27,654 reports.php
+02/18/2026  06:18 PM            12,413 show.php
+               5 File(s)         77,197 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\media
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  12:23 AM             1,561 create.php
+02/17/2026  12:23 AM             4,011 index.php
+               2 File(s)          5,572 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\news
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  02:02 AM             2,848 create.php
+02/18/2026  02:03 AM             3,339 edit.php
+02/18/2026  02:02 AM             4,474 index.php
+               3 File(s)         10,661 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\payments
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  10:49 PM             6,744 create.php
+02/16/2026  07:32 PM             9,214 edit.php
+02/15/2026  11:43 PM            19,377 index.php
+02/16/2026  07:32 PM             4,461 receipt.php
+               4 File(s)         39,796 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\plots
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  11:03 PM             8,809 create.php
+02/17/2026  11:41 PM            10,118 edit.php
+02/17/2026  11:02 PM             7,135 index.php
+               3 File(s)         26,062 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\projects
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  10:29 PM             8,328 create.php
+02/17/2026  10:30 PM             9,411 edit.php
+02/17/2026  10:28 PM             7,253 index.php
+               3 File(s)         24,992 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\properties
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  04:02 AM             9,389 create.php
+02/18/2026  04:02 AM            10,854 edit.php
+02/18/2026  04:08 AM             4,661 index.php
+02/17/2026  10:36 PM             7,131 show.php
+               4 File(s)         32,035 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\sales
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  04:00 AM             6,089 create.php
+               1 File(s)          6,089 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\settings
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  04:00 AM            39,692 index.php
+               1 File(s)         39,692 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\sql
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  04:00 AM             1,171 add_profile_picture_column.php
+               1 File(s)          1,171 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\tasks
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/16/2026  11:01 AM             4,429 create.php
+02/16/2026  11:01 AM             5,516 edit.php
+02/16/2026  11:01 AM             8,646 index.php
+               3 File(s)         18,591 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\templates
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  04:00 AM               530 login_form.php
+               1 File(s)            530 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\tickets
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  09:38 PM             2,680 create.php
+02/17/2026  09:38 PM             4,534 index.php
+02/17/2026  09:38 PM             7,630 show.php
+               3 File(s)         14,844 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\users
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/17/2026  10:34 PM             5,998 create.php
+02/17/2026  10:35 PM             6,715 edit.php
+02/17/2026  10:32 PM             7,072 index.php
+               3 File(s)         19,785 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\vendor
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          fpdf
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\vendor\fpdf
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  04:00 AM               156 fpdf.php
+               1 File(s)            156 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\admin\visits
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/15/2026  04:00 AM             5,047 create.php
+02/15/2026  04:00 AM             8,063 index.php
+               2 File(s)         13,110 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\agent
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/21/2026  01:55 PM             5,329 dashboard.php
+               1 File(s)          5,329 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\agents
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/22/2026  04:54 AM            29,030 dashboard.blade.php
+               1 File(s)         29,030 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\associates
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  11:23 PM               726 bank-details.php
+02/18/2026  05:56 PM            21,355 business.php
+02/13/2026  12:35 PM            22,276 commission_calculator.php
+02/19/2026  12:18 PM            68,633 crm.php
+02/22/2026  04:54 AM            21,563 dashboard.blade.php
+02/21/2026  06:01 PM            20,583 dashboard.php
+02/13/2026  12:35 PM            20,281 downline.php
+02/18/2026  05:55 PM            23,521 earnings.php
+02/21/2026  06:01 PM             9,368 expenses.php
+02/13/2026  12:35 PM            13,388 genealogy.php
+02/18/2026  05:56 PM            24,127 kyc.php
+02/18/2026  05:15 PM             8,640 leads.php
+02/21/2026  06:01 PM             6,304 login.php
+02/13/2026  12:35 PM            15,193 mlm_dashboard.php
+02/18/2026  05:57 PM            24,166 payouts.php
+02/13/2026  12:35 PM            29,766 plot_booking.php
+02/13/2026  12:35 PM            33,864 plot_inventory.php
+02/18/2026  05:55 PM            15,360 profile.php
+02/21/2026  06:01 PM            12,005 register.php
+02/18/2026  05:55 PM            18,784 team.php
+              20 File(s)        409,903 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\auth
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/19/2026  06:22 PM             3,106 forgot_password.php
+02/13/2026  12:04 PM             7,260 login.php
+02/22/2026  04:11 AM            34,161 register.blade.php
+02/19/2026  06:22 PM             9,692 register.php
+02/13/2026  12:35 PM             3,365 reset_password.php
+               5 File(s)         57,584 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\chatbot
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            17,185 index.php
+               1 File(s)         17,185 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\components
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/22/2026  06:10 PM             2,616 mobile-dashboard-card.blade.php
+02/22/2026  06:10 PM            22,053 mobile-header.blade.php
+02/22/2026  06:11 PM             5,154 mobile-table.blade.php
+               3 File(s)         29,823 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\crm
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            12,457 dashboard.php
+               1 File(s)         12,457 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\customers
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/07/2026  11:11 PM            11,244 alerts.php
+02/07/2026  11:25 PM             8,318 bookings.php
+02/21/2026  01:30 PM            30,641 dashboard.php
+02/22/2026  03:02 AM            35,008 dashboard_modern.php
+01/10/2026  08:47 PM            18,684 emi_calculator.php
+02/07/2026  11:12 PM             4,690 emi_history.php
+02/07/2026  11:13 PM             8,848 favorites.php
+02/13/2026  12:35 PM             6,658 login.php
+02/07/2026  11:14 PM             8,341 payments.php
+02/06/2026  10:53 AM            14,093 profile.php
+02/06/2026  10:54 AM             9,575 properties.php
+02/06/2026  10:53 AM            21,974 property_details.php
+02/07/2026  11:12 PM             3,445 property_views.php
+01/10/2026  08:19 PM             7,971 register.php
+02/07/2026  11:12 PM             7,520 reviews.php
+              15 File(s)        197,010 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\emails
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM             2,436 admin_notification.php
+02/13/2026  12:35 PM             2,744 password_reset.php
+02/13/2026  12:35 PM             3,278 payment_success.php
+02/13/2026  12:35 PM             2,854 property_inquiry.php
+02/13/2026  12:35 PM             2,534 welcome.php
+               5 File(s)         13,846 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\employees
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            18,302 activities.php
+03/02/2026  10:13 PM    <DIR>          attendance
+02/22/2026  01:33 AM            16,012 attendance.php
+02/22/2026  06:03 PM            17,941 dashboard.blade.php
+02/13/2026  12:35 PM            31,064 dashboard.php
+02/13/2026  12:35 PM            16,219 documents.php
+03/02/2026  10:13 PM    <DIR>          leaves
+02/22/2026  01:38 AM            17,187 leaves.php
+02/13/2026  12:35 PM             6,699 login.php
+02/13/2026  12:35 PM            18,445 performance.php
+02/23/2026  01:40 AM            19,235 profile.blade.php
+02/13/2026  12:35 PM            10,541 profile.php
+02/13/2026  12:35 PM            24,286 reporting_structure.php
+02/13/2026  12:35 PM            18,411 salary_history.php
+03/02/2026  10:13 PM    <DIR>          tasks
+02/13/2026  12:35 PM            11,769 tasks.php
+              13 File(s)        226,111 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\employees\attendance
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/22/2026  06:12 PM            12,965 index.blade.php
+               1 File(s)         12,965 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\employees\leaves
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/22/2026  06:05 PM            16,169 index.blade.php
+               1 File(s)         16,169 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\employees\tasks
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/23/2026  01:43 AM            14,005 index.blade.php
+               1 File(s)         14,005 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\errors
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM             1,365 400.php
+02/13/2026  12:04 PM             1,707 401.php
+02/13/2026  12:35 PM             1,874 403.php
+02/13/2026  12:35 PM             1,653 404.php
+02/13/2026  12:35 PM             2,601 500.php
+02/13/2026  12:35 PM             4,335 maintenance.php
+               6 File(s)         13,535 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\farmers
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            14,345 create.php
+02/13/2026  12:35 PM            17,827 dashboard.php
+02/13/2026  12:35 PM            17,029 edit.php
+02/13/2026  12:35 PM            19,439 list.php
+02/13/2026  12:35 PM            12,327 search.php
+02/13/2026  12:35 PM            23,898 show.php
+               6 File(s)        104,865 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\home
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM             3,535 about.php
+02/13/2026  12:35 PM             3,875 contact.php
+02/24/2026  10:56 PM            12,393 index.php
+               3 File(s)         19,803 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\interior-design
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM             4,263 contact.php
+11/28/2025  02:36 AM               622 cta.php
+02/08/2026  01:56 AM             2,150 faq.php
+02/08/2026  01:56 AM             1,569 portfolio.php
+11/28/2025  02:36 AM             2,213 process.php
+02/08/2026  01:48 AM             2,227 team.php
+02/08/2026  01:48 AM             2,012 testimonials.php
+               7 File(s)         15,056 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\layouts
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/21/2026  05:09 PM            15,356 admin.php
+02/22/2026  06:10 PM               997 app.blade.php
+02/11/2026  12:11 AM             1,554 app.php
+02/22/2026  12:00 AM             6,881 associate.php
+02/21/2026  09:40 AM            11,265 associate_footer.php
+02/21/2026  11:33 AM            14,892 associate_header.php
+03/01/2026  07:36 PM             4,992 base.php
+02/22/2026  12:17 AM             7,540 customer.php
+02/21/2026  09:32 AM            14,225 customer_footer.php
+02/21/2026  09:54 AM             7,388 customer_header.php
+02/13/2026  12:35 PM             5,039 default.php
+02/13/2026  12:35 PM            11,783 employee_footer.php
+02/13/2026  12:35 PM             7,004 enhanced_universal_template.php
+02/13/2026  12:35 PM             8,208 error_handler.php
+02/21/2026  09:16 AM             8,171 footer.php
+02/19/2026  02:40 AM            12,470 footer_unified.php
+02/13/2026  12:35 PM             2,846 get_customer_details.php
+03/01/2026  07:36 PM            24,363 header.php
+02/25/2026  12:26 AM             2,749 main.php
+02/08/2026  01:41 AM             4,270 modern.php
+02/13/2026  12:35 PM            13,240 modern_footer.php
+02/13/2026  12:35 PM            10,278 simple_template.php
+02/13/2026  12:35 PM            24,677 universal_template.php
+              23 File(s)        220,188 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\leads
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/08/2026  01:47 AM            14,878 create.php
+02/08/2026  01:47 AM            19,052 edit.php
+02/08/2026  01:45 AM            13,166 index.php
+02/08/2026  01:48 AM            25,325 reports.php
+02/08/2026  01:57 AM            28,403 show.php
+               5 File(s)        100,824 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\pages
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/23/2026  11:17 AM            24,210 about.php
+02/13/2026  12:35 PM             9,314 add_colony_tables.php
+02/13/2026  12:04 PM             6,793 add_demo_properties.php
+03/02/2026  10:13 PM    <DIR>          ai
+02/13/2026  12:35 PM            42,469 ai_agent_dashboard.php
+02/13/2026  12:35 PM            22,970 ai_demo.php
+02/08/2026  12:04 AM            29,941 ai_property_assistant.php
+02/13/2026  12:35 PM            25,949 analytics.php
+02/13/2026  12:35 PM            17,874 analytics_dashboard.php
+02/13/2026  12:35 PM             9,816 aps_official_info.php
+02/13/2026  12:35 PM            15,946 aps_portfolio.php
+03/02/2026  10:13 PM    <DIR>          archive_redundant
+02/13/2026  12:35 PM             1,341 associate_notifications.php
+02/08/2026  12:51 AM             9,644 bank.php
+02/23/2026  11:17 AM            11,765 blog.php
+02/13/2026  12:35 PM            33,065 book_plot.php
+02/13/2026  12:35 PM            22,075 book_property.php
+02/08/2026  12:04 AM             3,993 budhacity.php
+02/13/2026  12:35 PM             9,464 builder_dashboard.php
+02/13/2026  12:35 PM            27,916 builder_registration.php
+02/08/2026  12:04 AM             8,380 calc.php
+02/08/2026  12:04 AM             7,389 calculator.php
+02/23/2026  03:51 AM            12,630 careers.php
+02/13/2026  12:35 PM             6,438 clean_dashboard.php
+02/13/2026  12:35 PM             4,573 clean_login.php
+02/23/2026  11:12 AM            12,117 colonies.php
+02/13/2026  12:35 PM            14,643 colonizer_system.php
+02/08/2026  12:04 AM            14,588 coming_soon.php
+02/08/2026  12:04 AM            23,571 commission-opportunity.php
+02/08/2026  12:04 AM            32,016 commission_calculator.php
+02/13/2026  12:35 PM            33,280 commission_dashboard.php
+02/13/2026  12:35 PM            35,064 commission_plan_calculator.php
+02/13/2026  12:35 PM            37,515 commission_plan_manager.php
+02/23/2026  11:17 AM            26,104 company_projects.php
+02/13/2026  12:35 PM             8,765 component_verification.php
+02/22/2026  06:03 PM             9,094 contact.php
+02/13/2026  12:35 PM            13,826 create_mobile_app.php
+02/08/2026  12:17 AM            28,515 customer-reviews.php
+02/13/2026  12:35 PM            33,859 customer_dashboard.php
+02/13/2026  12:35 PM            36,323 customer_public_dashboard.php
+02/13/2026  12:35 PM            32,530 development_cost_calculator.php
+02/23/2026  09:56 PM             5,836 downloads.php
+02/19/2026  11:15 PM             9,351 edit-profile.php
+02/15/2026  10:40 AM            18,700 edit-property.php
+02/13/2026  12:35 PM            18,225 email_system.php
+02/17/2026  01:13 PM             8,738 employee_dashboard.php
+02/08/2026  12:04 AM            32,270 enhanced-property-listings.php
+02/09/2026  01:14 PM             9,988 error.php
+02/13/2026  12:35 PM             4,535 example-page.php
+02/23/2026  03:51 AM             7,231 faq.php
+02/13/2026  12:35 PM            21,535 faqs.php
+02/13/2026  12:35 PM            15,627 featured_properties.php
+02/13/2026  12:04 PM            44,290 financial_services.php
+02/23/2026  03:46 AM             5,159 gallery.php
+02/13/2026  12:35 PM            12,051 gorakhpur-bohisawagar.php
+02/13/2026  12:35 PM            12,018 gorakhpur-minuiwiti.php
+02/13/2026  12:35 PM            12,059 gorakhpur-nayoga.php
+02/23/2026  12:44 PM             6,460 gorakhpur-raghunath-nagri.php
+02/23/2026  12:44 PM             6,360 gorakhpur-suryoday-colony.php
+02/13/2026  12:35 PM            12,343 gorakhpur-unaka.php
+02/13/2026  12:35 PM            55,464 homepage_enhanced.php
+02/25/2026  12:33 AM            15,434 home_new.php
+02/13/2026  12:35 PM            27,232 hybrid_commission_dashboard.php
+02/13/2026  12:35 PM            37,475 interior_design.php
+02/19/2026  11:16 PM            11,448 investor_dashboard.php
+02/08/2026  01:21 AM             6,564 kushinagar-budha-city.php
+02/08/2026  12:04 AM            11,321 kyc-upload.php
+02/13/2026  12:35 PM             9,004 launch_system.php
+02/08/2026  01:10 AM             4,654 legal-documents.php
+02/08/2026  01:10 AM             6,010 legal.php
+02/23/2026  09:47 PM             8,439 legal_services.php
+02/13/2026  12:04 PM            37,359 list_property.php
+02/13/2026  12:35 PM             1,987 log_security_event.php
+02/08/2026  01:05 AM             6,768 lucknow-project.php
+02/08/2026  12:04 AM             5,318 lucknow-ram-nagri.php
+02/13/2026  12:35 PM            23,642 management_dashboard.php
+02/13/2026  12:35 PM            24,540 manage_colonies.php
+02/08/2026  01:05 AM             8,939 mlm-opportunity.php
+02/08/2026  12:47 AM             6,062 my-investments.php
+02/08/2026  12:04 AM            28,232 navigation.php
+02/08/2026  12:04 AM               492 news-detail.php
+02/23/2026  09:47 PM             8,858 news.php
+02/08/2026  12:46 AM             4,419 notifications.php
+02/08/2026  12:46 AM            10,741 plot.php
+02/08/2026  12:04 AM             8,493 plots-availability.php
+02/23/2026  12:47 AM             4,526 privacy_policy.php
+02/19/2026  11:15 PM             9,750 profile.php
+02/20/2026  02:15 AM            10,154 project-details.php
+02/23/2026  09:55 PM             6,948 projects.php
+02/23/2026  09:52 PM            19,551 properties.php
+02/08/2026  12:04 AM               570 property-detail.php
+02/08/2026  01:04 AM            42,877 property-listings.php
+02/13/2026  12:35 PM            42,327 property_detail.php
+02/13/2026  12:35 PM            39,325 property_management.php
+02/15/2026  10:41 AM            11,172 property_purchase.php
+02/08/2026  01:04 AM             2,490 property_sale_success.php
+02/08/2026  01:04 AM               965 protected_page.php
+02/13/2026  12:35 PM            14,977 rahunath_nagri.php
+02/23/2026  09:47 PM            10,810 resell.php
+02/13/2026  12:35 PM            16,568 responsive_header_test.php
+02/08/2026  12:12 AM             6,512 saved-searches.php
+02/23/2026  03:50 AM            15,842 services.php
+02/23/2026  03:50 AM            10,328 sitemap.php
+02/08/2026  12:42 AM            13,340 submit_property.php
+02/13/2026  12:35 PM            11,333 support.php
+02/23/2026  11:12 AM             9,391 team.php
+02/19/2026  11:16 PM            10,173 tenant_dashboard.php
+02/23/2026  12:47 AM             4,047 terms-of-service.php
+02/23/2026  09:47 PM             5,377 testimonials.php
+02/10/2026  02:42 AM            12,023 thank_you.php
+02/08/2026  12:04 AM            14,209 under_construction.php
+02/13/2026  12:35 PM            22,440 unified_dashboard.php
+02/13/2026  12:35 PM            16,227 universal_template_examples.php
+02/13/2026  12:35 PM             4,909 update_company_info.php
+02/13/2026  12:04 PM               671 update_password.php
+02/13/2026  12:04 PM             9,559 user_ai_suggestions.php
+02/15/2026  10:42 AM            18,751 user_dashboard.php
+02/23/2026  12:44 PM             4,283 varanasi-ganga-nagri.php
+02/08/2026  12:06 AM             3,990 virtual_tour.php
+02/13/2026  12:35 PM            13,926 whatsapp_chat.php
+02/13/2026  12:04 PM            10,713 whatsapp_template_manager.php
+             119 File(s)      1,838,490 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\pages\ai
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/18/2026  05:50 PM             4,290 chatbot.php
+02/18/2026  05:50 PM             7,036 description-generator.php
+02/08/2026  12:55 AM             6,191 suggestions.php
+               3 File(s)         17,517 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\pages\archive_redundant
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            34,789 about_enhanced.php
+02/13/2026  12:35 PM            21,734 about_template_new.php
+02/13/2026  12:35 PM            18,799 about_universal.php
+02/11/2026  11:33 PM            14,213 book-property.php
+02/13/2026  12:35 PM            63,315 contact_template.php
+02/13/2026  12:35 PM            19,183 contact_template_new.php
+02/13/2026  12:04 PM            26,678 contact_universal.php
+02/08/2026  12:04 AM               659 project-detail.php
+02/11/2026  11:22 PM            14,296 project_detail.php
+02/08/2026  12:04 AM               487 properties_advanced.php
+02/13/2026  12:04 PM            27,529 properties_complex.php
+02/13/2026  12:35 PM            35,080 properties_enhanced.php
+02/13/2026  12:04 PM            27,531 properties_new.php
+02/13/2026  12:35 PM            23,838 properties_template_new.php
+02/13/2026  12:04 PM            19,697 properties_universal.php
+02/08/2026  12:04 AM            15,827 submit-property.php
+02/08/2026  12:04 AM             3,739 thank-you.php
+              17 File(s)        367,394 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\partials
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/11/2026  02:51 PM             5,160 footer.php.bak
+11/28/2025  08:17 PM             6,091 header.blade.php
+02/11/2026  08:02 PM             7,196 header.php.bak
+               3 File(s)         18,447 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\payment
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM             8,306 failed.php
+02/13/2026  12:35 PM             9,954 index.php
+02/13/2026  12:35 PM             5,331 success.php
+               3 File(s)         23,591 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\payments
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/19/2026  06:22 PM             7,349 checkout.php
+02/19/2026  06:22 PM             2,212 failed.php
+02/19/2026  06:22 PM             5,273 success.php
+               3 File(s)         14,834 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\projects
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            31,551 detail.php
+02/13/2026  12:35 PM            15,116 index.php
+03/02/2026  10:13 PM    <DIR>          microsite
+               2 File(s)         46,667 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\projects\microsite
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:35 AM               945 index.php
+03/02/2026  10:13 PM    <DIR>          partials
+               1 File(s)            945 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\projects\microsite\partials
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/08/2026  10:37 AM             4,134 contact.php
+02/08/2026  10:37 AM             3,939 hero.php
+02/08/2026  10:37 AM             4,293 highlights.php
+02/08/2026  10:37 AM             2,636 location.php
+02/08/2026  10:37 AM             2,677 media.php
+02/08/2026  10:37 AM             2,657 related-projects.php
+               6 File(s)         20,336 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\properties
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/19/2026  06:22 PM             6,661 create.php
+02/19/2026  06:22 PM             7,279 edit.php
+02/19/2026  06:22 PM            12,635 featured.php
+02/22/2026  01:25 AM            22,737 index.php
+02/19/2026  06:22 PM            11,425 show.php
+               5 File(s)         60,737 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\property
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/22/2026  10:24 PM            35,344 index.php
+               1 File(s)         35,344 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\saas
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/07/2026  11:26 PM            15,645 dashboard.php
+03/02/2026  10:13 PM    <DIR>          tools
+               1 File(s)         15,645 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\saas\tools
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+01/10/2026  04:54 PM             4,490 expenses.php
+02/07/2026  11:27 PM             3,952 inventory.php
+02/07/2026  11:27 PM             5,106 whatsapp.php
+               3 File(s)         13,548 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\static
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/18/2025  10:04 PM               537 chat.html
+03/18/2025  10:04 PM             1,334 org__chart.html
+               2 File(s)          1,871 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\team
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/22/2026  04:54 AM            29,460 dashboard.blade.php
+               1 File(s)         29,460 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\test
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM             2,870 consolidation.php
+               1 File(s)          2,870 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\user
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  03:21 AM            10,827 dashboard.php
+02/13/2026  12:35 PM             5,341 dashboard_fallback.php
+02/12/2026  10:19 AM             3,686 enquiries.php
+02/13/2026  12:35 PM            13,725 favorites.php
+02/12/2026  10:22 AM             3,659 investments.php
+02/13/2026  12:35 PM            16,846 network_dashboard.php
+02/19/2026  06:22 PM             3,366 notifications.php
+02/06/2026  10:52 AM            13,793 profile.php
+02/12/2026  10:35 AM            13,593 saved-properties.php
+02/19/2026  06:22 PM             5,750 settings.php
+01/12/2026  12:03 AM             4,787 support.php
+02/07/2026  11:26 PM             3,375 transactions.php
+              12 File(s)         98,748 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\app\views\users
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM             3,748 change_password.php
+02/19/2026  06:22 PM             8,297 profile.php
+               2 File(s)         12,045 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\config
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/24/2026  11:28 PM             9,820 app.php
+02/23/2026  12:14 AM             9,935 app.php.backup.2026-02-22-19-44-28
+03/01/2026  07:36 PM             3,607 application.php
+02/23/2026  12:14 AM             3,866 application.php.backup.2026-02-22-19-44-29
+02/23/2026  10:47 PM             3,852 application.php.backup.2026-02-23-18-17-12
+02/25/2026  12:00 PM             3,664 application.php.backup.2026-02-25-07-30-52
+02/13/2026  12:35 PM             1,789 app_config.json
+03/02/2026  02:56 PM             4,691 bootstrap.php
+02/23/2026  12:14 AM             1,840 cache.php
+02/23/2026  12:14 AM             1,893 cache.php.backup.2026-02-22-19-44-29
+02/17/2026  01:55 AM               157 config.php
+03/02/2026  02:34 AM             1,787 database.php
+02/23/2026  12:14 AM             1,313 database.php.backup.2026-02-22-19-44-04
+02/23/2026  12:14 AM             1,329 database.php.backup.2026-02-22-19-44-30
+02/25/2026  12:00 PM             1,288 database.php.backup.2026-02-25-07-30-50
+02/25/2026  12:00 PM             1,304 database.php.backup.2026-02-25-07-30-52
+03/01/2026  07:36 PM             4,481 deployment.php
+02/23/2026  10:47 PM             4,469 deployment.php.backup.2026-02-23-18-17-13
+02/25/2026  12:00 PM             4,475 deployment.php.backup.2026-02-25-07-30-52
+03/02/2026  10:13 PM    <DIR>          environments
+03/01/2026  07:36 PM             2,166 google_oauth_config.php
+02/23/2026  12:14 AM             2,180 google_oauth_config.php.backup.2026-02-22-19-44-30
+02/23/2026  10:47 PM             2,100 google_oauth_config.php.backup.2026-02-23-18-17-13
+02/25/2026  12:00 PM             2,150 google_oauth_config.php.backup.2026-02-25-07-30-52
+03/01/2026  07:36 PM             1,598 google_oauth_config_associate.php
+02/23/2026  12:14 AM             1,631 google_oauth_config_associate.php.backup.2026-02-22-19-44-30
+02/23/2026  10:47 PM             1,521 google_oauth_config_associate.php.backup.2026-02-23-18-17-13
+02/25/2026  12:00 PM             1,567 google_oauth_config_associate.php.backup.2026-02-25-07-30-52
+03/02/2026  02:29 AM             2,689 helpers.php
+02/23/2026  12:14 AM             4,721 logging.php
+02/23/2026  12:14 AM             4,772 logging.php.backup.2026-02-22-19-44-31
+03/01/2026  07:36 PM             1,149 mail.php
+02/23/2026  12:14 AM             1,200 mail.php.backup.2026-02-22-19-44-31
+02/25/2026  12:00 PM             1,157 mail.php.backup.2026-02-25-07-30-52
+02/17/2026  03:15 AM                94 phpstan-bootstrap.php
+03/01/2026  07:36 PM             5,823 security.php
+02/23/2026  12:14 AM             5,838 security.php.backup.2026-02-22-19-44-31
+02/25/2026  12:00 PM             5,833 security.php.backup.2026-02-25-07-30-52
+02/22/2026  03:13 AM               852 session.php
+              38 File(s)        114,601 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\config\environments
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:04 PM             1,196 development.php
+               1 File(s)          1,196 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM               317 .htaccess
+03/02/2026  10:13 PM    <DIR>          api
+03/02/2026  10:13 PM    <DIR>          assets
+03/02/2026  10:13 PM    <DIR>          css
+03/02/2026  10:13 PM    <DIR>          dist
+03/02/2026  10:13 PM    <DIR>          docs
+02/20/2026  07:49 PM             2,723 download.php
+03/01/2026  07:36 PM             2,947 index.php
+03/02/2026  10:13 PM    <DIR>          js
+11/28/2025  02:36 AM               414 manifest.json
+02/20/2026  04:08 PM               176 test_output.php
+03/02/2026  10:13 PM    <DIR>          uploads
+               5 File(s)          6,577 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\api
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          documents
+02/19/2026  11:06 PM             1,619 ifsc.php
+               1 File(s)          1,619 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\api\documents
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/20/2026  07:58 PM             2,913 download.php
+               1 File(s)          2,913 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          css
+03/02/2026  10:13 PM    <DIR>          images
+03/02/2026  10:13 PM    <DIR>          js
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\css
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/16/2026  11:31 PM             2,309 admin-login.css
+02/13/2026  12:35 PM             1,601 style.css
+               2 File(s)          3,910 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            79,192 01.jpg
+03/02/2026  10:13 PM    <DIR>          agents
+03/02/2026  10:13 PM    <DIR>          amenities
+02/13/2026  12:04 PM               997 app-store.png
+02/13/2026  12:35 PM                 2 apple-touch-icon.png
+02/13/2026  12:35 PM           426,727 apply.jpg
+02/13/2026  12:35 PM                 2 aps-logo.png
+02/13/2026  12:35 PM            85,592 bank.PNG
+03/02/2026  10:13 PM    <DIR>          banner
+03/02/2026  10:13 PM    <DIR>          bg-image
+02/13/2026  12:35 PM            99,420 breadcromb.jpg
+02/13/2026  12:35 PM           119,336 career.jpg
+02/13/2026  12:35 PM            65,436 chat_icon.jpeg
+02/13/2026  12:35 PM           425,233 diwali_offer.jpg
+02/13/2026  12:35 PM               997 google-icon.png
+02/13/2026  12:04 PM               997 google-play.png
+03/02/2026  10:13 PM    <DIR>          hero
+02/13/2026  12:04 PM           161,657 hero-1.jpg
+02/13/2026  12:04 PM            11,603 hero-2.jpg
+02/13/2026  12:04 PM           348,137 hero-3.jpg
+02/13/2026  12:35 PM            25,737 house-floor-plan.png
+03/02/2026  10:13 PM    <DIR>          icons
+03/02/2026  10:13 PM    <DIR>          logo
+02/13/2026  12:04 PM                 2 logo-light.png
+02/13/2026  12:35 PM           161,657 main-bg.jpg
+02/13/2026  12:35 PM           789,473 mapsuryoday.pdf
+02/13/2026  12:35 PM           182,418 open.jpg
+03/02/2026  10:13 PM    <DIR>          profile
+03/02/2026  10:13 PM    <DIR>          promotionalpic
+02/13/2026  12:35 PM            11,603 property-banner.jpg
+02/13/2026  12:35 PM            25,737 property-placeholder.jpg
+02/13/2026  12:35 PM               731 settings.png
+03/02/2026  10:13 PM    <DIR>          site_photo
+03/02/2026  10:13 PM    <DIR>          thank
+03/02/2026  10:13 PM    <DIR>          thumbnail4
+03/02/2026  10:13 PM    <DIR>          user
+02/13/2026  12:35 PM           348,137 work.jpg
+              24 File(s)      3,370,823 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\agents
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM                 2 default.jpg
+               1 File(s)              2 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\amenities
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM           211,996 1.jpg
+02/13/2026  12:35 PM           156,940 2.jpg
+02/13/2026  12:35 PM           229,301 3.jpg
+02/13/2026  12:35 PM           168,020 4.jpg
+02/13/2026  12:35 PM           185,749 5.jpg
+02/13/2026  12:35 PM           145,649 6.jpg
+02/13/2026  12:35 PM            91,941 7.jpg
+               7 File(s)      1,189,596 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\banner
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM         1,779,800 ban1.jpg
+02/13/2026  12:35 PM           236,377 ban2.jpg
+02/13/2026  12:35 PM           525,047 ban3.jpg
+02/13/2026  12:35 PM           342,663 ban4jpg
+02/13/2026  12:35 PM         2,628,055 ban5.jpg
+02/13/2026  12:35 PM         2,628,055 ban6.jpg
+02/13/2026  12:35 PM         2,244,490 ban7.jpg
+02/13/2026  12:35 PM         1,787,726 ban8.jpg
+02/13/2026  12:35 PM            91,255 diwaliban.jpg
+02/13/2026  12:35 PM           225,378 rshmpg.jpg
+              10 File(s)     12,488,846 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\bg-image
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          pattern
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\bg-image\pattern
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM           525,047 bg-1.jpg
+02/13/2026  12:35 PM         1,779,800 bg-2.jpg
+02/13/2026  12:35 PM           342,663 bg-3.jpg
+               3 File(s)      2,647,510 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\hero
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM             7,580 luxury-home-1.jpg
+02/13/2026  12:35 PM             7,580 luxury-home-2.jpg
+               2 File(s)         15,160 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\icons
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM             1,802 icon-128x128.png
+02/13/2026  12:35 PM             2,592 icon-144x144.png
+02/13/2026  12:35 PM             2,711 icon-152x152.png
+02/13/2026  12:35 PM             3,168 icon-192x192.png
+02/13/2026  12:35 PM             5,505 icon-384x384.png
+02/13/2026  12:35 PM             3,895 icon-512x512.png
+02/13/2026  12:35 PM             1,245 icon-72x72.png
+02/13/2026  12:35 PM             1,611 icon-96x96.png
+               8 File(s)         22,529 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\logo
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM             1,996 a.png
+02/13/2026  12:35 PM           140,206 a1.ico
+02/13/2026  12:35 PM             9,520 aps.png
+02/13/2026  12:35 PM            21,265 aps1.png
+02/13/2026  12:35 PM             1,646 apsico.ico
+02/13/2026  12:35 PM             2,538 apsicon.ico
+02/13/2026  12:35 PM            34,120 apslogo.png
+02/13/2026  12:35 PM           176,855 apslogo1.png
+02/13/2026  12:35 PM             6,664 restatelg.png
+02/13/2026  12:35 PM           176,855 test_logo.png
+              10 File(s)        571,665 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\profile
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM             8,229 img_avatar3.png
+               1 File(s)          8,229 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\promotionalpic
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM           583,826 motirampro.png
+               1 File(s)        583,826 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\site_photo
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          gorakhpur
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\site_photo\gorakhpur
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM           199,026 .jpeg
+02/13/2026  12:35 PM            26,442 APSLOGO.png
+02/13/2026  12:35 PM           789,473 APSSuryodayaLayout.pdf
+02/13/2026  12:35 PM           536,520 CERTIFICATE OF INCORPORATION.PDF
+02/13/2026  12:35 PM           105,795 moc.JPG
+02/13/2026  12:35 PM         5,852,549 motiram map raghunath nagri.pdf
+02/13/2026  12:35 PM            19,421 ok1.jpg
+02/13/2026  12:35 PM           105,553 raghunath nagri motiram.JPG
+03/02/2026  10:13 PM    <DIR>          suryoday
+02/13/2026  12:35 PM           224,831 suryoday.jpg
+02/13/2026  12:35 PM           140,720 suryoday1.jpeg
+02/13/2026  12:35 PM           101,064 suryoday2.jpeg
+02/13/2026  12:35 PM           406,991 suryoday_colony_map.jpg
+              12 File(s)      8,508,385 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\site_photo\gorakhpur\suryoday
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM         1,165,276 .png
+02/13/2026  12:35 PM           368,889 aps.png
+02/13/2026  12:35 PM           699,158 apsdesign.png
+02/13/2026  12:35 PM           176,849 g1.jpg
+02/13/2026  12:35 PM           137,430 g2.jpg
+02/13/2026  12:35 PM           134,187 g3.jpg
+02/13/2026  12:35 PM           174,980 g4.jpg
+02/13/2026  12:35 PM           115,936 g5.jpg
+02/13/2026  12:35 PM            80,393 g6.jpg
+02/13/2026  12:35 PM         1,578,633 suryoday.png
+02/13/2026  12:35 PM         1,006,430 suryoday1.png
+02/13/2026  12:35 PM           842,548 suryoday2.png
+              12 File(s)      6,480,709 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\thank
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM         1,281,922 thanku1.png
+02/13/2026  12:35 PM           919,247 thanku2.png
+               2 File(s)      2,201,169 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\thumbnail4
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM            93,252 1.jpg
+02/13/2026  12:35 PM            74,707 2.jpg
+02/13/2026  12:35 PM           106,707 3.jpg
+02/13/2026  12:35 PM           139,296 4.jpg
+               4 File(s)        413,962 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\images\user
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/13/2026  12:35 PM                14 default-avatar.jpg
+               1 File(s)             14 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\assets\js
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/19/2026  02:39 AM             4,083 location-bank-helper.js
+11/28/2025  02:36 AM             4,944 script.js
+               2 File(s)          9,027 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\css
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM             1,003 animations.css
+02/22/2026  03:01 AM            11,617 dashboard.css
+11/28/2025  02:36 AM            19,283 header.css
+11/28/2025  02:36 AM               896 loading.css
+02/22/2026  06:08 PM             9,926 mobile-responsive.css
+02/23/2026  09:55 PM             4,955 pages.css
+02/21/2026  01:25 PM             5,968 style.css
+               7 File(s)         53,648 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\dist
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/02/2026  10:13 PM    <DIR>          .vite
+03/02/2026  10:13 PM    <DIR>          assets
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\dist\.vite
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/21/2026  02:14 AM               325 manifest.json
+               1 File(s)            325 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\dist\assets
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/21/2026  02:14 AM             5,056 main-eVIYgyx_.css
+02/21/2026  02:14 AM            25,139 main-vUD_ZxBJ.js
+02/21/2026  02:14 AM             9,084 style-NV8x2Jt0.css
+               3 File(s)         39,279 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\docs
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+11/28/2025  02:36 AM               652 agreement1.pdf
+               1 File(s)            652 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\js
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+02/23/2026  11:26 AM             3,016 colonies.js
+02/22/2026  03:01 AM            17,235 dashboard.js
+02/19/2026  01:38 PM             2,747 layout.js
+02/19/2026  02:39 AM             8,912 lead-capture.js
+02/22/2026  11:36 PM                25 news.js
+11/28/2025  02:36 AM             2,532 page-transitions.js
+11/28/2025  02:36 AM             6,860 premium-header.js
+02/21/2026  01:26 PM             2,494 utils.js
+               8 File(s)         43,821 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\uploads
+
+03/02/2026  10:13 PM    <DIR>          .
+03/02/2026  10:13 PM    <DIR>          ..
+03/01/2026  11:57 PM               268 .htaccess
+03/01/2026  11:57 PM    <DIR>          documents
+03/01/2026  11:57 PM    <DIR>          profiles
+03/01/2026  11:57 PM    <DIR>          properties
+               1 File(s)            268 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\uploads\documents
+
+03/01/2026  11:57 PM    <DIR>          .
+03/01/2026  11:57 PM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\uploads\profiles
+
+03/01/2026  11:57 PM    <DIR>          .
+03/01/2026  11:57 PM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\xampp\htdocs\apsdreamhome\deployment_package\public\uploads\properties
+
+03/01/2026  11:57 PM    <DIR>          .
+03/01/2026  11:57 PM    <DIR>          ..
+               0 File(s)              0 bytes
+
+     Total Files Listed:
+            1585 File(s)     59,076,950 bytes
+             629 Dir(s)  466,032,902,144 bytes free

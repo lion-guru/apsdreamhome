@@ -1,0 +1,72 @@
+{
+    "app": {
+        "name": "APS Dream Homes",
+        "version": "1.0.0",
+        "environment": "production",
+        "debug": false
+    },
+    "database": {
+        "host": "localhost",
+        "user": "root",
+        "name": "apsdreamhome",
+        "port": "3306",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_unicode_ci"
+    },
+    "auth": {
+        "jwt_secret": "default_jwt_secret",
+        "password_hash_algo": "argon2id",
+        "password_hash_options": {
+            "memory_cost": 65536,
+            "time_cost": 4,
+            "threads": 3
+        }
+    },
+    "google": {
+        "client_id": "",
+        "client_secret": "",
+        "oauth_scopes": [
+            "email",
+            "profile"
+        ],
+        "oauth_prompt": "select_account consent"
+    },
+    "ai": {
+        "gemini_api_key": "",
+        "openai_api_key": ""
+    },
+    "security": {
+        "csrf_protection": true,
+        "password_hash_algo": "argon2id",
+        "password_hash_options": {
+            "memory_cost": 65536,
+            "time_cost": 4,
+            "threads": 3
+        }
+    },
+    "performance": {
+        "cache_enabled": true,
+        "cache_lifetime": 3600,
+        "opcache_enabled": true
+    },
+    "email": {
+        "smtp_host": "smtp.gmail.com",
+        "smtp_port": 587,
+        "smtp_secure": "tls",
+        "smtp_username": "your_email@gmail.com"
+    },
+    "logging": {
+        "log_level": "warning",
+        "log_channels": [
+            "error",
+            "security",
+            "performance"
+        ]
+    },
+    "features": {
+        "property_search": true,
+        "lead_management": true,
+        "visit_scheduling": true,
+        "notification_system": true
+    }
+}
