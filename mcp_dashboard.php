@@ -313,7 +313,7 @@
         // Load server status
         async function loadServerStatus() {
             try {
-                const response = await fetch('/config/mcp_server_manager.php', {
+                const response = await fetch('/apsdreamhome/config/mcp_server_manager.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -386,7 +386,7 @@
         // Load recent logs
         async function loadRecentLogs() {
             try {
-                const response = await fetch('/config/mcp_database_integration.php?action=get_logs&limit=10');
+                const response = await fetch('/apsdreamhome/config/mcp_database_integration.php?action=get_logs&limit=10');
                 const result = await response.json();
                 
                 if (result.success) {
@@ -423,7 +423,7 @@
         // Control functions
         async function startAllServers() {
             try {
-                const response = await fetch('/config/mcp_server_manager.php', {
+                const response = await fetch('/apsdreamhome/config/mcp_server_manager.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -452,7 +452,7 @@
             }
 
             try {
-                const response = await fetch('/config/mcp_server_manager.php', {
+                const response = await fetch('/apsdreamhome/config/mcp_server_manager.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -486,7 +486,7 @@
         }
 
         function openConfiguration() {
-            window.open('/mcp_configuration_gui.php', '_blank');
+            window.open('/apsdreamhome/mcp_configuration_gui.php', '_blank');
         }
 
         function showNotification(message, type) {
