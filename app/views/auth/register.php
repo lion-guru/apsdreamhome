@@ -1,4 +1,7 @@
-<?php include __DIR__ . '/../layouts/header.php'; ?>
+<?php
+// Include path manager for consistent URLs
+require_once __DIR__ . '/../../../config/path_manager.php';
+?>
 
 <section class="py-5" style="background: radial-gradient(circle at top, rgba(34,197,94,.18), transparent 70%), #0f172a;">
     <div class="container py-4">
@@ -27,7 +30,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form action="<?php echo BASE_URL; ?>register/process" method="POST" class="row g-3">
+                        <form action="<?php echo base_url('register/process'); ?>" method="POST" class="row g-3">
                             <div class="col-md-6">
                                 <label for="name" class="form-label fw-semibold text-secondary">Full name</label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="e.g. Rohan Sharma" required autocomplete="name">
@@ -70,7 +73,7 @@
                             <div class="col-12">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
-                                    <label class="form-check-label" for="terms">I agree to the <a href="<?php echo BASE_URL; ?>terms" class="text-decoration-none">Terms</a> and <a href="<?php echo BASE_URL; ?>privacy" class="text-decoration-none">Privacy Policy</a>.</label>
+                                    <label class="form-check-label" for="terms">I agree to the <a href="<?php echo base_url('terms'); ?>" class="text-decoration-none">Terms</a> and <a href="<?php echo base_url('privacy'); ?>" class="text-decoration-none">Privacy Policy</a>.</label>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -83,7 +86,7 @@
                                 <button type="submit" class="btn btn-success btn-lg w-100">Create account</button>
                             </div>
                             <div class="col-12 text-center">
-                                <p class="mb-0 text-secondary">Already a member? <a href="<?php echo BASE_URL; ?>login" class="fw-semibold text-decoration-none">Sign in</a></p>
+                                <p class="mb-0 text-secondary">Already a member? <a href="<?php echo base_url('login'); ?>" class="fw-semibold text-decoration-none">Sign in</a></p>
                             </div>
                         </form>
                     </div>
@@ -116,7 +119,7 @@
     </div>
 </section>
 
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
+<?php include __DIR__ . '/../../../layouts/footer.php'; ?>
 
 <script>
 function toggleAuthPassword(inputId, toggleId) {
