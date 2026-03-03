@@ -268,8 +268,12 @@ class App
             return $this->loadController("Public\\PageController", "services");
         } elseif ($uri === "/gallery") {
             return $this->loadController("Public\\PageController", "gallery");
+        } elseif ($uri === "/legal-services") {
+            return $this->loadController("Public\\PageController", "legalServices");
         } elseif ($uri === "/blog") {
             return $this->loadController("Public\\PageController", "blog");
+        } elseif ($uri === "/projects") {
+            return $this->loadController("Public\\PageController", "projects");
         } elseif ($uri === "/careers") {
             return $this->loadController("Public\\PageController", "careers");
         } elseif ($uri === "/team") {
