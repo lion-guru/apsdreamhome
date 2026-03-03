@@ -21,7 +21,8 @@
             "App\\": "app/"
         },
         "files": [
-            "app/Helpers/UrlHelper.php"
+            "app/Helpers/UrlHelper.php",
+            "app/Helpers/McpHelper.php"
         ]
     },
     "config": {
