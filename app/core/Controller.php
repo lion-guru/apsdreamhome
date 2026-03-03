@@ -209,12 +209,16 @@ class Controller
             $this->view->layout($layout);
         }
 
-        // Add flash messages to all views
-        $data['flash'] = $this->session->getFlashBag()->all();
+        // Add flash messages to all views (if session is available)
+        if ($this->session && method_exists($this->session, 'getFlashBag')) {
+            $data['flash'] = $this->session->getFlashBag()->all();
+        } else {
+            $data['flash'] = [];
+        }
 
         // Add auth and user to all views
         $data['auth'] = $this->auth;
-        $data['user'] = $this->auth ? $this->auth->user() : null;
+        $data['user'] = $this->auth && method_exists($this->auth, 'user') ? $this->auth->user() : null;
 
         return $this->view->render($view, $data);
     }

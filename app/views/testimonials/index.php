@@ -86,7 +86,7 @@
                                 </span>
                             </div>
                             <div class="progress flex-grow-1 me-3" style="height: 25px;">
-                                <div class="progress-bar bg-warning" style="width: {{ $percentage }}%">
+                                <div class="progress-bar bg-warning" style="width: {{ $percentage }}%;">
                                     <span class="text-dark fw-bold">{{ $count }}</span>
                                 </div>
                             </div>
@@ -140,7 +140,7 @@
                              alt="{{ $video['customer_name'] }}" 
                              class="img-fluid rounded-3">
                         <div class="play-overlay position-absolute top-50 start-50 translate-middle">
-                            <button class="btn btn-primary btn-lg rounded-circle" onclick="playVideo('{{ $video['video_url'] }}')">
+                            <button class="btn btn-primary btn-lg rounded-circle" onclick="playVideo('{{ $video['video_url'] }}');">
                                 <i class="fas fa-play"></i>
                             </button>
                         </div>
@@ -320,7 +320,7 @@
     width: 250px;
     height: 250px;
     border-radius: 50%;
-    background: conic-gradient(#ffc107 0deg {{ ($testimonials_stats['average_rating'] ?? 4.8) * 72 }}deg, #e9ecef 0deg);
+    background: conic-gradient(#ffc107 0deg {{ ($testimonials_stats['average_rating'] ?? 4.8) * 72 }}deg, #e9ecef 0deg);;
     display: flex;
     align-items: center;
     justify-content: center;

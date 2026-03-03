@@ -61,7 +61,7 @@
         <div class="row g-4 mb-5">
             @foreach($faq_categories ?? [] as $category)
             <div class="col-md-6 col-lg-4">
-                <div class="category-card card h-100 shadow-sm text-center p-4" onclick="scrollToCategory('{{ $category['id'] }}')" style="cursor: pointer;">
+                <div class="category-card card h-100 shadow-sm text-center p-4" onclick="scrollToCategory('{{ $category['id'] }}');" style="cursor: pointer;">
                     <div class="category-icon mb-3">
                         <i class="fas {{ $category['icon'] }} fa-3x text-primary"></i>
                     </div>
@@ -102,13 +102,13 @@
                         <div class="accordion-body">
                             <p class="mb-0">{{ $faq['answer'] }}</p>
                             <div class="faq-actions mt-3">
-                                <button class="btn btn-outline-primary btn-sm" onclick="markHelpful('{{ $category['id'] }}-{{ $index }}')">
+                                <button class="btn btn-outline-primary btn-sm" onclick="markHelpful('{{ $category['id'] }}-{{ $index }}');">
                                     <i class="fas fa-thumbs-up me-1"></i> Helpful
                                 </button>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="copyAnswer('{{ $category['id'] }}-{{ $index }}')">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="copyAnswer('{{ $category['id'] }}-{{ $index }}');">
                                     <i class="fas fa-copy me-1"></i> Copy
                                 </button>
-                                <button class="btn btn-outline-info btn-sm" onclick="shareAnswer('{{ $category['id'] }}-{{ $index }}')">
+                                <button class="btn btn-outline-info btn-sm" onclick="shareAnswer('{{ $category['id'] }}-{{ $index }}');">
                                     <i class="fas fa-share me-1"></i> Share
                                 </button>
                             </div>
