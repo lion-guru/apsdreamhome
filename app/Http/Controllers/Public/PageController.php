@@ -808,4 +808,318 @@ class PageController extends BaseController
         return $this->render('careers/index', $data, 'layouts/base');
     }
 
+    /**
+     * Team method
+     * @return void
+     */
+    public function team()
+    {
+        $data = [
+            'page_title' => 'Our Team - APS Dream Home',
+            'page_description' => 'Meet the dedicated professionals behind APS Dream Home. Our experienced team is committed to delivering excellence in real estate services.',
+            'leadership_team' => [
+                [
+                    'id' => 1,
+                    'name' => 'Amit Kumar Singh',
+                    'position' => 'Founder & Managing Director',
+                    'bio' => 'With over 15 years of experience in real estate development, Amit founded APS Dream Home with a vision to transform the property landscape in Uttar Pradesh. His leadership and strategic thinking have been instrumental in the company\'s growth.',
+                    'experience' => '15+ Years',
+                    'education' => 'MBA - IIM Lucknow, B.Tech - IIT Kanpur',
+                    'achievements' => [
+                        'Developed 500+ properties across UP',
+                        'Awarded "Best Real Estate Developer 2023"',
+                        'Led 50+ successful project completions'
+                    ],
+                    'image' => 'team/amit-singh.jpg',
+                    'email' => 'amit.singh@apsdreamhomes.com',
+                    'phone' => '+91-9277121101',
+                    'linkedin' => 'https://linkedin.com/in/amit-kumar-singh-aps'
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'Priya Sharma',
+                    'position' => 'Chief Operating Officer',
+                    'bio' => 'Priya brings extensive operational expertise to APS Dream Home. Her focus on process optimization and customer satisfaction has helped establish the company as a trusted name in real estate.',
+                    'experience' => '12+ Years',
+                    'education' => 'MBA - XLRI Jamshedpur, B.Com - Delhi University',
+                    'achievements' => [
+                        'Streamlined operations reducing project timelines by 30%',
+                        'Implemented customer-centric service models',
+                        'Managed team of 100+ professionals'
+                    ],
+                    'image' => 'team/priya-sharma.jpg',
+                    'email' => 'priya.sharma@apsdreamhomes.com',
+                    'phone' => '+91-9277121102',
+                    'linkedin' => 'https://linkedin.com/in/priya-sharma-aps'
+                ],
+                [
+                    'id' => 3,
+                    'name' => 'Rajesh Verma',
+                    'position' => 'Chief Financial Officer',
+                    'bio' => 'Rajesh oversees all financial aspects of APS Dream Home, ensuring fiscal discipline and sustainable growth. His expertise in financial planning has been crucial for the company\'s expansion.',
+                    'experience' => '10+ Years',
+                    'education' => 'CA - ICAI, B.Com - Lucknow University',
+                    'achievements' => [
+                        'Secured funding for projects worth ₹500+ crore',
+                        'Implemented robust financial controls',
+                        'Improved profitability by 25%'
+                    ],
+                    'image' => 'team/rajesh-verma.jpg',
+                    'email' => 'rajesh.verma@apsdreamhomes.com',
+                    'phone' => '+91-9277121103',
+                    'linkedin' => 'https://linkedin.com/in/rajesh-verma-aps'
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'Anjali Gupta',
+                    'position' => 'Head of Marketing & Sales',
+                    'bio' => 'Anjali leads the marketing and sales initiatives at APS Dream Home. Her innovative strategies and deep market understanding have significantly contributed to the company\'s market presence.',
+                    'experience' => '8+ Years',
+                    'education' => 'MBA - Marketing, NMIMS Mumbai',
+                    'achievements' => [
+                        'Increased sales by 40% year-on-year',
+                        'Launched successful digital marketing campaigns',
+                        'Expanded market presence to 5 new cities'
+                    ],
+                    'image' => 'team/anjali-gupta.jpg',
+                    'email' => 'anjali.gupta@apsdreamhomes.com',
+                    'phone' => '+91-9277121104',
+                    'linkedin' => 'https://linkedin.com/in/anjali-gupta-aps'
+                ]
+            ],
+            'department_heads' => [
+                [
+                    'id' => 5,
+                    'name' => 'Vikram Singh',
+                    'position' => 'Head - Construction',
+                    'bio' => 'Vikram ensures quality construction and timely project delivery with his technical expertise and project management skills.',
+                    'experience' => '12+ Years',
+                    'education' => 'B.E. - Civil Engineering',
+                    'image' => 'team/vikram-singh.jpg',
+                    'email' => 'vikram.singh@apsdreamhomes.com',
+                    'phone' => '+91-9277121105'
+                ],
+                [
+                    'id' => 6,
+                    'name' => 'Sneha Patel',
+                    'position' => 'Head - Customer Relations',
+                    'bio' => 'Sneha leads the customer service team, ensuring exceptional service and client satisfaction throughout the buying journey.',
+                    'experience' => '7+ Years',
+                    'education' => 'MBA - Customer Service',
+                    'image' => 'team/sneha-patel.jpg',
+                    'email' => 'sneha.patel@apsdreamhomes.com',
+                    'phone' => '+91-9277121106'
+                ],
+                [
+                    'id' => 7,
+                    'name' => 'Rohit Kumar',
+                    'position' => 'Head - Legal & Compliance',
+                    'bio' => 'Rohit manages all legal aspects ensuring compliance and smooth property transactions for our clients.',
+                    'experience' => '10+ Years',
+                    'education' => 'LL.B. - Lucknow University',
+                    'image' => 'team/rohit-kumar.jpg',
+                    'email' => 'rohit.kumar@apsdreamhomes.com',
+                    'phone' => '+91-9277121107'
+                ],
+                [
+                    'id' => 8,
+                    'name' => 'Kavita Singh',
+                    'position' => 'Head - HR & Administration',
+                    'bio' => 'Kavita oversees human resources and administrative functions, fostering a positive work environment and team growth.',
+                    'experience' => '8+ Years',
+                    'education' => 'MBA - HR',
+                    'image' => 'team/kavita-singh.jpg',
+                    'email' => 'kavita.singh@apsdreamhomes.com',
+                    'phone' => '+91-9277121108'
+                ]
+            ],
+            'team_stats' => [
+                'total_members' => 150,
+                'years_experience' => 100,
+                'projects_completed' => 500,
+                'happy_customers' => 2000
+            ],
+            'company_values' => [
+                [
+                    'icon' => 'fa-handshake',
+                    'title' => 'Integrity',
+                    'description' => 'We conduct business with honesty and transparency in all our dealings.'
+                ],
+                [
+                    'icon' => 'fa-trophy',
+                    'title' => 'Excellence',
+                    'description' => 'We strive for the highest standards in quality and service delivery.'
+                ],
+                [
+                    'icon' => 'fa-users',
+                    'title' => 'Teamwork',
+                    'description' => 'We believe in collaborative effort and mutual respect among team members.'
+                ],
+                [
+                    'icon' => 'fa-lightbulb',
+                    'title' => 'Innovation',
+                    'description' => 'We embrace new ideas and innovative approaches to real estate development.'
+                ]
+            ],
+            'join_team_info' => [
+                'current_openings' => 8,
+                'hiring_process' => '4-step selection process',
+                'growth_opportunities' => 'Career advancement and skill development programs',
+                'work_culture' => 'Supportive, collaborative, and growth-oriented environment'
+            ]
+        ];
+
+        return $this->render('team/index', $data, 'layouts/base');
+    }
+
+    /**
+     * Testimonials method
+     * @return void
+     */
+    public function testimonials()
+    {
+        $data = [
+            'page_title' => 'Testimonials - APS Dream Home',
+            'page_description' => 'Read what our satisfied customers have to say about their experience with APS Dream Home. Real stories from real homeowners.',
+            'customer_testimonials' => [
+                [
+                    'id' => 1,
+                    'name' => 'Rahul Sharma',
+                    'property' => '3BHK Apartment in Gomti Nagar',
+                    'rating' => 5,
+                    'review_date' => '2026-02-15',
+                    'testimonial' => 'APS Dream Home made my dream of owning a home in Lucknow a reality. Their team was extremely professional and helped me find the perfect apartment. The entire process was smooth and transparent.',
+                    'image' => 'testimonials/rahul-sharma.jpg',
+                    'location' => 'Gomti Nagar, Lucknow',
+                    'property_type' => 'Residential',
+                    'experience_years' => '2 years'
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'Priya Singh',
+                    'property' => 'Commercial Space in Vibhuti Khand',
+                    'rating' => 5,
+                    'review_date' => '2026-01-20',
+                    'testimonial' => 'I was looking for a commercial space for my business expansion, and APS Dream Home provided excellent options. Their market knowledge and negotiation skills helped me get the best deal.',
+                    'image' => 'testimonials/priya-singh.jpg',
+                    'location' => 'Vibhuti Khand, Gomti Nagar',
+                    'property_type' => 'Commercial',
+                    'experience_years' => '1 year'
+                ],
+                [
+                    'id' => 3,
+                    'name' => 'Amit Kumar',
+                    'property' => '2BHK Apartment in Alambagh',
+                    'rating' => 4,
+                    'review_date' => '2025-12-10',
+                    'testimonial' => 'Great experience with APS Dream Home! They understood my requirements perfectly and showed me properties that matched my budget. The after-sales service is also commendable.',
+                    'image' => 'testimonials/amit-kumar.jpg',
+                    'location' => 'Alambagh, Lucknow',
+                    'property_type' => 'Residential',
+                    'experience_years' => '3 years'
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'Sneha Patel',
+                    'property' => 'Villa in Hazratganj',
+                    'rating' => 5,
+                    'review_date' => '2025-11-25',
+                    'testimonial' => 'Buying a villa through APS Dream Home was the best decision. Their team handled all the legal documentation and ensured a hassle-free transaction. Highly recommended!',
+                    'image' => 'testimonials/sneha-patel.jpg',
+                    'location' => 'Hazratganj, Lucknow',
+                    'property_type' => 'Residential',
+                    'experience_years' => '1.5 years'
+                ],
+                [
+                    'id' => 5,
+                    'name' => 'Vikram Verma',
+                    'property' => 'Plot in Gorakhpur',
+                    'rating' => 5,
+                    'review_date' => '2025-10-15',
+                    'testimonial' => 'I purchased a plot for building my dream house. APS Dream Home helped me with all the legal verification and ensured the property was free from any disputes. Excellent service!',
+                    'image' => 'testimonials/vikram-verma.jpg',
+                    'location' => 'Gorakhpur',
+                    'property_type' => 'Land',
+                    'experience_years' => '6 months'
+                ],
+                [
+                    'id' => 6,
+                    'name' => 'Anjali Gupta',
+                    'property' => '3BHK in Gomti Nagar Extension',
+                    'rating' => 4,
+                    'review_date' => '2025-09-20',
+                    'testimonial' => 'The team at APS Dream Home is very professional and knowledgeable. They guided me through the entire home buying process and helped me make an informed decision.',
+                    'image' => 'testimonials/anjali-gupta.jpg',
+                    'location' => 'Gomti Nagar Extension, Lucknow',
+                    'property_type' => 'Residential',
+                    'experience_years' => '8 months'
+                ]
+            ],
+            'video_testimonials' => [
+                [
+                    'id' => 1,
+                    'customer_name' => 'Rajesh Kumar',
+                    'property' => 'Luxury Apartment in Gomti Nagar',
+                    'video_url' => 'https://example.com/video1',
+                    'thumbnail' => 'testimonials/video-thumb-1.jpg',
+                    'duration' => '2:45',
+                    'views' => 1250
+                ],
+                [
+                    'id' => 2,
+                    'customer_name' => 'Meera Singh',
+                    'property' => 'Commercial Space in Lucknow',
+                    'video_url' => 'https://example.com/video2',
+                    'thumbnail' => 'testimonials/video-thumb-2.jpg',
+                    'duration' => '3:12',
+                    'views' => 890
+                ],
+                [
+                    'id' => 3,
+                    'customer_name' => 'Sanjay Verma',
+                    'property' => 'Villa in Hazratganj',
+                    'video_url' => 'https://example.com/video3',
+                    'thumbnail' => 'testimonials/video-thumb-3.jpg',
+                    'duration' => '2:30',
+                    'views' => 756
+                ]
+            ],
+            'testimonials_stats' => [
+                'total_reviews' => 2500,
+                'average_rating' => 4.8,
+                'satisfied_customers' => 2000,
+                'years_of_service' => 8
+            ],
+            'rating_distribution' => [
+                '5_star' => 1800,
+                '4_star' => 500,
+                '3_star' => 150,
+                '2_star' => 30,
+                '1_star' => 20
+            ],
+            'featured_properties' => [
+                [
+                    'name' => 'Gomti Nagar Heights',
+                    'total_reviews' => 156,
+                    'average_rating' => 4.9,
+                    'image' => 'properties/featured-1.jpg'
+                ],
+                [
+                    'name' => 'Hazratganj Plaza',
+                    'total_reviews' => 89,
+                    'average_rating' => 4.7,
+                    'image' => 'properties/featured-2.jpg'
+                ],
+                [
+                    'name' => 'Vibhuti Khand Commercial',
+                    'total_reviews' => 67,
+                    'average_rating' => 4.8,
+                    'image' => 'properties/featured-3.jpg'
+                ]
+            ]
+        ];
+
+        return $this->render('testimonials/index', $data, 'layouts/base');
+    }
+
 }
