@@ -31,6 +31,13 @@ class PathManager {
     }
     
     /**
+     * Helper function for base URL generation
+     */
+    public static function base_url($path = '') {
+        return self::buildUrl($path);
+    }
+    
+    /**
      * Build internal URL with correct base path
      */
     public static function buildUrl($path) {
