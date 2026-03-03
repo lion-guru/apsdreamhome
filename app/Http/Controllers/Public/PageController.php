@@ -1122,4 +1122,186 @@ class PageController extends BaseController
         return $this->render('testimonials/index', $data, 'layouts/base');
     }
 
+    /**
+     * FAQ method
+     * @return void
+     */
+    public function faq()
+    {
+        $data = [
+            'page_title' => 'FAQ - APS Dream Home',
+            'page_description' => 'Find answers to frequently asked questions about APS Dream Home, our services, properties, and the real estate buying process.',
+            'faq_categories' => [
+                [
+                    'id' => 'general',
+                    'name' => 'General Questions',
+                    'icon' => 'fa-question-circle',
+                    'faqs' => [
+                        [
+                            'question' => 'What is APS Dream Home?',
+                            'answer' => 'APS Dream Home is a leading real estate developer and property consultancy in Uttar Pradesh, specializing in residential and commercial properties. With over 8 years of experience, we help clients find their dream homes and investment properties.'
+                        ],
+                        [
+                            'question' => 'Where are your properties located?',
+                            'answer' => 'We have properties across major locations in Uttar Pradesh including Lucknow, Gorakhpur, Gomti Nagar, Hazratganj, Vibhuti Khand, Alambagh, and other prime areas. We are continuously expanding to new locations.'
+                        ],
+                        [
+                            'question' => 'How long have you been in business?',
+                            'answer' => 'APS Dream Home has been serving clients for over 8 years, establishing ourselves as a trusted name in the real estate sector with more than 500 successful property transactions.'
+                        ],
+                        [
+                            'question' => 'What makes APS Dream Home different from other real estate companies?',
+                            'answer' => 'We differentiate ourselves through transparent pricing, legal verification of all properties, personalized service, expert guidance throughout the buying process, and strong after-sales support.'
+                        ]
+                    ]
+                ],
+                [
+                    'id' => 'buying',
+                    'name' => 'Buying Process',
+                    'icon' => 'fa-home',
+                    'faqs' => [
+                        [
+                            'question' => 'How do I start the property buying process?',
+                            'answer' => 'Simply browse our properties online, contact our team, schedule property visits, select your preferred property, complete documentation, and finalize the purchase. Our team guides you through each step.'
+                        ],
+                        [
+                            'question' => 'What documents are required to buy a property?',
+                            'answer' => 'You typically need ID proof (Aadhaar/PAN), address proof, income proof, bank statements, and photographs. For specific properties, additional documents may be required based on the property type and financing method.'
+                        ],
+                        [
+                            'question' => 'Can you help with property loans?',
+                            'answer' => 'Yes, we have partnerships with leading banks and financial institutions. Our team assists you in getting pre-approved loans and helps with the complete loan application process.'
+                        ],
+                        [
+                            'question' => 'How long does the buying process take?',
+                            'answer' => 'The process typically takes 30-45 days for ready-to-move properties and longer for under-construction properties. This includes property selection, documentation, loan approval, and registration.'
+                        ]
+                    ]
+                ],
+                [
+                    'id' => 'properties',
+                    'name' => 'Properties',
+                    'icon' => 'fa-building',
+                    'faqs' => [
+                        [
+                            'question' => 'What types of properties do you offer?',
+                            'answer' => 'We offer a wide range of properties including residential apartments, villas, independent houses, commercial spaces, office spaces, retail shops, and residential plots/land.'
+                        ],
+                        [
+                            'question' => 'Are your properties legally verified?',
+                            'answer' => 'Yes, all our properties undergo thorough legal verification. We ensure clear titles, proper approvals, and compliance with all local regulations before listing any property.'
+                        ],
+                        [
+                            'question' => 'Do you have ready-to-move and under-construction properties?',
+                            'answer' => 'Yes, we offer both ready-to-move properties for immediate possession and under-construction properties for those looking to invest in new developments with better pricing.'
+                        ],
+                        [
+                            'question' => 'Can I visit properties before making a decision?',
+                            'answer' => 'Absolutely! We encourage and facilitate property visits. Our team will schedule visits at your convenience and provide detailed information about each property.'
+                        ]
+                    ]
+                ],
+                [
+                    'id' => 'payment',
+                    'name' => 'Payment & Pricing',
+                    'icon' => 'fa-rupee-sign',
+                    'faqs' => [
+                        [
+                            'question' => 'How are property prices determined?',
+                            'answer' => 'Property prices are based on location, size, amenities, construction quality, market demand, and legal compliance. We ensure competitive and transparent pricing.'
+                        ],
+                        [
+                            'question' => 'What payment options are available?',
+                            'answer' => 'We accept various payment methods including bank transfers, cheques, and demand drafts. For under-construction properties, we offer flexible payment plans linked to construction milestones.'
+                        ],
+                        [
+                            'question' => 'Are there any hidden charges?',
+                            'answer' => 'No, we believe in complete transparency. All charges including registration fees, taxes, and other costs are clearly communicated upfront with no hidden surprises.'
+                        ],
+                        [
+                            'question' => 'Do you offer EMI options?',
+                            'answer' => 'Yes, through our banking partners, we offer various EMI options with competitive interest rates. Our team helps you choose the best financing option based on your requirements.'
+                        ]
+                    ]
+                ],
+                [
+                    'id' => 'legal',
+                    'name' => 'Legal & Documentation',
+                    'icon' => 'fa-file-contract',
+                    'faqs' => [
+                        [
+                            'question' => 'Do you help with property registration?',
+                            'answer' => 'Yes, we provide complete assistance with property registration, including documentation preparation, submission, and coordination with the relevant authorities.'
+                        ],
+                        [
+                            'question' => 'What legal clearances do your properties have?',
+                            'answer' => 'All our properties have necessary clearances including land use permissions, building approvals, environmental clearances, and compliance with local development regulations.'
+                        ],
+                        [
+                            'question' => 'Can you help with property verification?',
+                            'answer' => 'Yes, we conduct comprehensive property verification including title search, encumbrance check, and verification of all legal documents before any transaction.'
+                        ],
+                        [
+                            'question' => 'What happens if there are legal issues after purchase?',
+                            'answer' => 'We provide post-purchase legal support and have tie-ups with experienced legal professionals to address any issues that may arise after property purchase.'
+                        ]
+                    ]
+                ],
+                [
+                    'id' => 'support',
+                    'name' => 'Support & Services',
+                    'icon' => 'fa-headset',
+                    'faqs' => [
+                        [
+                            'question' => 'What after-sales services do you provide?',
+                            'answer' => 'We offer comprehensive after-sales support including property handover assistance, utility connections, interior design consultation, and property management services.'
+                        ],
+                        [
+                            'question' => 'How can I contact customer support?',
+                            'answer' => 'You can reach our customer support team via phone at +91-9277121101, email at info@apsdreamhomes.com, or visit our office at 1st floor singhariya chauraha, Kunraghat, Gorakhpur.'
+                        ],
+                        [
+                            'question' => 'Do you provide property management services?',
+                            'answer' => 'Yes, we offer property management services for investors including tenant screening, rent collection, maintenance coordination, and regular property inspections.'
+                        ],
+                        [
+                            'question' => 'Can you help with property resale?',
+                            'answer' => 'Absolutely! We assist clients in reselling their properties through our extensive network, ensuring the best market value and smooth transaction process.'
+                        ]
+                    ]
+                ]
+            ],
+            'contact_info' => [
+                'phone' => '+91-9277121101',
+                'email' => 'info@apsdreamhomes.com',
+                'address' => '1st floor singhariya chauraha, Kunraghat, Gorakhpur, UP - 273008',
+                'working_hours' => 'Mon-Sat: 9:30 AM - 7:00 PM, Sun: 10:00 AM - 5:00 PM'
+            ],
+            'quick_links' => [
+                [
+                    'title' => 'Browse Properties',
+                    'url' => '/properties',
+                    'description' => 'Explore our extensive property portfolio'
+                ],
+                [
+                    'title' => 'Contact Us',
+                    'url' => '/contact',
+                    'description' => 'Get in touch with our expert team'
+                ],
+                [
+                    'title' => 'Financing Options',
+                    'url' => '/properties',
+                    'description' => 'Learn about home loan options'
+                ],
+                [
+                    'title' => 'Property Valuation',
+                    'url' => '/contact',
+                    'description' => 'Get your property valued by experts'
+                ]
+            ]
+        ];
+
+        return $this->render('faq/index', $data, 'layouts/base');
+    }
+
 }
