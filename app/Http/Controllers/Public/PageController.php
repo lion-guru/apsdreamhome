@@ -16,8 +16,93 @@ class PageController extends BaseController
      */
     public function home()
     {
-        // TODO: Implement home functionality
-        return $this->view('home');
+        $data = [
+            'page_title' => 'Welcome to APS Dream Home',
+            'page_description' => 'Trusted Real Estate Partner in Gorakhpur, Lucknow & across Uttar Pradesh',
+            'hero_stats' => [
+                'properties' => '500+',
+                'families' => '2k+',
+                'agents' => '50+',
+                'years' => '10+'
+            ],
+            'featured_properties' => [
+                [
+                    'id' => 1,
+                    'title' => 'Luxury Apartment in Gomti Nagar',
+                    'location' => 'Gomti Nagar, Lucknow',
+                    'price' => '₹75,00,000',
+                    'type' => 'apartment',
+                    'bedrooms' => 3,
+                    'bathrooms' => 2,
+                    'area' => '1500 Sq.ft',
+                    'image' => 'images/properties/luxury-apartment-1.jpg',
+                    'featured' => true
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Modern Villa in Hazratganj',
+                    'location' => 'Hazratganj, Lucknow',
+                    'price' => '₹1.2 Crore',
+                    'type' => 'villa',
+                    'bedrooms' => 4,
+                    'bathrooms' => 3,
+                    'area' => '2000 Sq.ft',
+                    'image' => 'images/properties/modern-villa-1.jpg',
+                    'featured' => true
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Commercial Space in Vibhuti Khand',
+                    'location' => 'Vibhuti Khand, Gomti Nagar',
+                    'price' => '₹85,00,000',
+                    'type' => 'commercial',
+                    'bedrooms' => 0,
+                    'bathrooms' => 2,
+                    'area' => '1200 Sq.ft',
+                    'image' => 'images/properties/commercial-space-1.jpg',
+                    'featured' => false
+                ]
+            ],
+            'property_types' => [
+                ['name' => 'Apartments', 'icon' => 'fa-building', 'count' => '250+'],
+                ['name' => 'Villas', 'icon' => 'fa-home', 'count' => '150+'],
+                ['name' => 'Commercial', 'icon' => 'fa-store', 'count' => '75+'],
+                ['name' => 'Plots/Land', 'icon' => 'fa-map', 'count' => '25+']
+            ],
+            'why_choose_us' => [
+                [
+                    'title' => 'Legal Verification',
+                    'description' => 'All our properties are legally verified and free from disputes.',
+                    'icon' => 'fa-shield-alt'
+                ],
+                [
+                    'title' => 'Best Market Price',
+                    'description' => 'We ensure you get the best deal with transparent pricing.',
+                    'icon' => 'fa-tag'
+                ],
+                [
+                    'title' => 'Expert Support',
+                    'description' => 'Our team of experts guides you through every step of the process.',
+                    'icon' => 'fa-headset'
+                ]
+            ],
+            'testimonials' => [
+                [
+                    'name' => 'Rahul Kumar',
+                    'property' => '3BHK Apartment in Gomti Nagar',
+                    'content' => 'Excellent service from APS Dream Home. They helped me find my dream home within budget.',
+                    'rating' => 5
+                ],
+                [
+                    'name' => 'Priya Singh',
+                    'property' => 'Villa in Hazratganj',
+                    'content' => 'Professional team and transparent process. Highly recommend APS Dream Home.',
+                    'rating' => 5
+                ]
+            ]
+        ];
+
+        return $this->render('home/index', $data, 'layouts/base');
     }
     
     /**
@@ -78,8 +163,76 @@ class PageController extends BaseController
      */
     public function contact()
     {
-        // TODO: Implement contact functionality
-        return $this->view('contact');
+        $data = [
+            'page_title' => 'Contact Us - APS Dream Home',
+            'page_description' => 'Get in touch with APS Dream Home for all your real estate needs. Visit our office or call us to find your dream property.',
+            'contact_info' => [
+                'office_address' => '1st floor singhariya chauraha, Kunraghat, deoria Road, Gorakhpur, UP - 273008',
+                'phone_numbers' => ['+91-9277121112', '+91-9277121112'],
+                'email_addresses' => ['info@apsdreamhomes.com', 'sales@apsdreamhomes.com'],
+                'working_hours' => [
+                    'weekdays' => 'Mon-Sat: 9:30 AM - 7:00 PM',
+                    'sunday' => 'Sun: 10:00 AM - 5:00 PM'
+                ]
+            ],
+            'office_locations' => [
+                [
+                    'name' => 'Head Office - Gorakhpur',
+                    'address' => '1st floor singhariya chauraha, Kunraghat, deoria Road',
+                    'city' => 'Gorakhpur',
+                    'state' => 'Uttar Pradesh',
+                    'pincode' => '273008',
+                    'phone' => '+91-9277121112',
+                    'email' => 'info@apsdreamhomes.com',
+                    'map_embed' => 'https://maps.google.com/maps?q=Gorakhpur,+Uttar+Pradesh&output=embed'
+                ],
+                [
+                    'name' => 'Branch Office - Lucknow',
+                    'address' => 'Gomti Nagar, Vibhuti Khand',
+                    'city' => 'Lucknow', 
+                    'state' => 'Uttar Pradesh',
+                    'pincode' => '226010',
+                    'phone' => '+91-9277121112',
+                    'email' => 'lucknow@apsdreamhomes.com',
+                    'map_embed' => 'https://maps.google.com/maps?q=Lucknow,+Uttar+Pradesh&output=embed'
+                ]
+            ],
+            'contact_form' => [
+                'fields' => [
+                    'name' => ['type' => 'text', 'label' => 'Full Name', 'required' => true],
+                    'email' => ['type' => 'email', 'label' => 'Email Address', 'required' => true],
+                    'phone' => ['type' => 'tel', 'label' => 'Phone Number', 'required' => true],
+                    'subject' => ['type' => 'select', 'label' => 'Subject', 'required' => true, 'options' => [
+                        'Property Inquiry' => 'Property Inquiry',
+                        'Schedule Visit' => 'Schedule Visit',
+                        'General Query' => 'General Query',
+                        'Complaint' => 'Complaint',
+                        'Feedback' => 'Feedback'
+                    ]],
+                    'message' => ['type' => 'textarea', 'label' => 'Message', 'required' => true]
+                ]
+            ],
+            'faq_items' => [
+                [
+                    'question' => 'What types of properties do you offer?',
+                    'answer' => 'We offer residential apartments, villas, commercial spaces, and plots in Gorakhpur, Lucknow, and across Uttar Pradesh.'
+                ],
+                [
+                    'question' => 'How can I schedule a property visit?',
+                    'answer' => 'You can call us at +91-9277121112 or fill out the contact form. Our team will get back to you to arrange a convenient time.'
+                ],
+                [
+                    'question' => 'Do you provide home loan assistance?',
+                    'answer' => 'Yes, we have partnerships with leading banks and financial institutions to help you with home loan assistance and documentation.'
+                ],
+                [
+                    'question' => 'Are your properties legally verified?',
+                    'answer' => 'Absolutely! All our properties undergo thorough legal verification to ensure they are free from disputes and have clear titles.'
+                ]
+            ]
+        ];
+
+        return $this->render('contact/index', $data, 'layouts/base');
     }
 
     /**

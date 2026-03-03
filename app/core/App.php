@@ -257,9 +257,11 @@ class App
         if ($uri === "" || $uri === "/") {
             return $this->loadController("HomeController", "index");
         } elseif ($uri === "/home") {
-            return $this->loadController("HomeController", "index");
+            return $this->loadController("Public\\PageController", "home");
         } elseif ($uri === "/about") {
             return $this->loadController("Public\\PageController", "about");
+        } elseif ($uri === "/contact") {
+            return $this->loadController("Public\\PageController", "contact");
         } elseif ($uri === "/resell") {
             return $this->loadController("Public\\PageController", "resell");
         } elseif ($uri === "/services") {
