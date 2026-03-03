@@ -243,7 +243,13 @@ class PageController extends BaseController
     {
         $data = [
             'page_title' => 'Properties - APS Dream Home',
-            'page_description' => 'Browse our extensive collection of premium properties in Gorakhpur, Lucknow, and across Uttar Pradesh',
+            'page_description' => 'Browse our extensive collection of residential and commercial properties in Gorakhpur, Lucknow, and across Uttar Pradesh.',
+            'property_stats' => [
+                'total_properties' => '500+',
+                'featured_properties' => '25+',
+                'new_listings' => '10+',
+                'avg_price_per_sqft' => '₹4500'
+            ],
             'properties' => [
                 [
                     'id' => 1,
@@ -754,6 +760,122 @@ class PageController extends BaseController
         ];
 
         return $this->render('gallery/index', $data, 'layouts/base');
+    }
+
+    /**
+     * Legal Services method
+     * @return void
+     */
+    public function legalServices()
+    {
+        $data = [
+            'page_title' => 'Legal Services - APS Dream Home',
+            'page_description' => 'Expert legal assistance for all your real estate needs. We provide comprehensive legal services including property verification, documentation, and registration support.',
+            'legal_services' => [
+                [
+                    'id' => 1,
+                    'title' => 'Property Title Verification',
+                    'icon' => 'fa-search',
+                    'description' => 'Thorough verification of property titles to ensure clear ownership and no legal disputes.',
+                    'features' => ['Title Search', 'Ownership Verification', 'Encumbrance Check', 'Legal Heir Verification'],
+                    'process_time' => '3-5 working days',
+                    'price' => 'Starting from ₹5,000'
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Property Documentation',
+                    'icon' => 'fa-file-contract',
+                    'description' => 'Complete documentation support for property transactions with legal compliance.',
+                    'features' => ['Agreement Drafting', 'Sale Deed Preparation', 'Power of Attorney', 'No Objection Certificates'],
+                    'process_time' => '2-3 working days',
+                    'price' => 'Starting from ₹3,000'
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Registration Support',
+                    'icon' => 'fa-landmark',
+                    'description' => 'End-to-end support for property registration with government authorities.',
+                    'features' => ['Document Filing', 'Stamp Duty Calculation', 'Registration Process', 'Document Collection'],
+                    'process_time' => '7-10 working days',
+                    'price' => 'Starting from ₹8,000'
+                ],
+                [
+                    'id' => 4,
+                    'title' => 'Legal Consultation',
+                    'icon' => 'fa-balance-scale',
+                    'description' => 'Expert legal advice for complex property matters and dispute resolution.',
+                    'features' => ['Legal Advisory', 'Dispute Resolution', 'Court Representation', 'Mediation Services'],
+                    'process_time' => 'As per case complexity',
+                    'price' => 'Starting from ₹10,000'
+                ]
+            ],
+            'legal_stats' => [
+                'cases_handled' => '500+',
+                'successful_registrations' => '450+',
+                'years_experience' => '15+',
+                'client_satisfaction' => '98%'
+            ],
+            'process_steps' => [
+                [
+                    'step' => 1,
+                    'title' => 'Initial Consultation',
+                    'description' => 'Understand your requirements and assess the legal aspects of your property transaction.'
+                ],
+                [
+                    'step' => 2,
+                    'title' => 'Document Review',
+                    'description' => 'Thorough review of all property documents and identification of legal requirements.'
+                ],
+                [
+                    'step' => 3,
+                    'title' => 'Legal Process',
+                    'description' => 'Execute all legal procedures including verification, documentation, and registration.'
+                ],
+                [
+                    'step' => 4,
+                    'title' => 'Completion',
+                    'description' => 'Final handover of documents and confirmation of successful legal completion.'
+                ]
+            ],
+            'why_choose_us' => [
+                [
+                    'title' => 'Expert Legal Team',
+                    'description' => 'Highly qualified legal professionals specializing in real estate law.',
+                    'icon' => 'fa-users'
+                ],
+                [
+                    'title' => 'Transparent Process',
+                    'description' => 'Complete transparency in all legal procedures with no hidden charges.',
+                    'icon' => 'fa-eye'
+                ],
+                [
+                    'title' => 'Quick Turnaround',
+                    'description' => 'Efficient legal processes with minimal turnaround time.',
+                    'icon' => 'fa-clock'
+                ],
+                [
+                    'title' => 'Affordable Services',
+                    'description' => 'Competitive pricing for all legal services without compromising quality.',
+                    'icon' => 'fa-tag'
+                ]
+            ],
+            'testimonials' => [
+                [
+                    'name' => 'Rajesh Kumar',
+                    'service' => 'Property Registration',
+                    'content' => 'Excellent legal support for my property registration. The team handled everything professionally.',
+                    'rating' => 5
+                ],
+                [
+                    'name' => 'Anita Sharma',
+                    'service' => 'Title Verification',
+                    'content' => 'Thorough title verification helped me avoid a problematic property. Very grateful for their expertise.',
+                    'rating' => 5
+                ]
+            ]
+        ];
+
+        return $this->render('legal-services/index', $data, 'layouts/base');
     }
 
     /**
