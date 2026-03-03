@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="hero-section bg-gradient-primary text-white py-5">
+<section class="hero-section testimonials-section py-5" id="testimonials-stats" data-rating-degrees="{{ ($testimonials_stats['average_rating'] ?? 4.8) * 72 }} bg-gradient-primary text-white py-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -422,7 +422,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Set rating degrees from testimonials stats
-    const ratingDegrees = {{ ($testimonials_stats['average_rating'] ?? 4.8) * 72 }};
+    const ratingElement = document.getElementById('testimonials-stats');
+    const ratingDegrees = ratingElement ? ratingElement.getAttribute('data-rating-degrees') : '345';
     document.documentElement.style.setProperty('--rating-degrees', ratingDegrees + 'deg');
 });
 
