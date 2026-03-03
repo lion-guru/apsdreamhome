@@ -60,6 +60,35 @@ class HomeController extends Controller
         $this->render('contact/index', $this->data, 'layouts/base');
     }
     
+    public function propertyDetail($id)
+    {
+        // Get specific property data
+        $allProperties = $this->loadAllProperties();
+        $property = null;
+        
+        foreach ($allProperties as $prop) {
+            if ($prop->id == $id) {
+                $property = $prop;
+                break;
+            }
+        }
+        
+        if (!$property) {
+            // Property not found, redirect to properties page
+            header('Location: ' . BASE_URL . '/properties');
+            exit;
+        }
+        
+        $this->data = [
+            'title' => $property->title . ' - APS Dream Home',
+            'description' => 'View details for ' . $property->title . ' in ' . $property->location,
+            'property' => $property,
+            'related_properties' => array_slice($allProperties, 0, 3)
+        ];
+        
+        $this->render('properties/detail', $this->data, 'layouts/base');
+    }
+    
     private function loadFeaturedProperties()
     {
         // Sample featured properties data
