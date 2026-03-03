@@ -52,11 +52,22 @@ if (!function_exists('is_current_page')) {
 
 // Helper function to check active path
 if (!function_exists('is_active_path')) {
-    function is_active_path($path)
+    function is_active_path($paths)
     {
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
         $current_path = trim(parse_url($uri, PHP_URL_PATH), '/');
-        $check_path = trim($path, '/');
+        
+        if (is_array($paths)) {
+            foreach ($paths as $path) {
+                $check_path = trim($path, '/');
+                if (strpos($current_path, $check_path) === 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        $check_path = trim($paths, '/');
         return strpos($current_path, $check_path) === 0;
     }
 }
@@ -360,6 +371,22 @@ if (!function_exists('is_active_path')) {
                             <a class="nav-link <?php echo is_current_page('contact') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>contact">
                                 <i class="fas fa-envelope me-1" aria-hidden="true"></i>Contact
                             </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle <?php echo is_active_path(['blog', 'company', 'career', 'gallery']) ? 'active' : ''; ?>" href="#" id="moreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-h me-1" aria-hidden="true"></i>More
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="moreDropdown">
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>blog"><i class="fas fa-blog me-2"></i>Blog</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>company/projects"><i class="fas fa-building me-2"></i>Company Projects</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>career"><i class="fas fa-briefcase me-2"></i>Career</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>gallery"><i class="fas fa-images me-2"></i>Gallery</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>faq"><i class="fas fa-question-circle me-2"></i>FAQ</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>team"><i class="fas fa-users me-2"></i>Our Team</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>testimonials"><i class="fas fa-star me-2"></i>Testimonials</a></li>
+                            </ul>
                         </li>
                     </ul>
 
