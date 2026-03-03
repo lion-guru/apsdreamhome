@@ -61,7 +61,7 @@
         <div class="row g-4 mb-5">
             @foreach($faq_categories ?? [] as $category)
             <div class="col-md-6 col-lg-4">
-                <div class="category-card card h-100 shadow-sm text-center p-4" onclick="scrollToCategory('{{ $category['id'] }}');" style="cursor: pointer;">
+                <div class="category-card card h-100 shadow-sm text-center p-4 category-card-item" data-category-id="{{ $category['id'] }}" style="cursor: pointer;">
                     <div class="category-icon mb-3">
                         <i class="fas {{ $category['icon'] }} fa-3x text-primary"></i>
                     </div>
@@ -102,13 +102,13 @@
                         <div class="accordion-body">
                             <p class="mb-0">{{ $faq['answer'] }}</p>
                             <div class="faq-actions mt-3">
-                                <button class="btn btn-outline-primary btn-sm" onclick="markHelpful('{{ $category['id'] }}-{{ $index }}');">
+                                <button class="btn btn-outline-primary btn-sm helpful-btn" data-faq-id="{{ $category['id'] }}-{{ $index }}">
                                     <i class="fas fa-thumbs-up me-1"></i> Helpful
                                 </button>
-                                <button class="btn btn-outline-secondary btn-sm" onclick="copyAnswer('{{ $category['id'] }}-{{ $index }}');">
+                                <button class="btn btn-outline-secondary btn-sm copy-btn" data-faq-id="{{ $category['id'] }}-{{ $index }}">
                                     <i class="fas fa-copy me-1"></i> Copy
                                 </button>
-                                <button class="btn btn-outline-info btn-sm" onclick="shareAnswer('{{ $category['id'] }}-{{ $index }}');">
+                                <button class="btn btn-outline-info btn-sm share-btn" data-faq-id="{{ $category['id'] }}-{{ $index }}">
                                     <i class="fas fa-share me-1"></i> Share
                                 </button>
                             </div>
@@ -375,7 +375,7 @@ function searchFAQs() {
         message.innerHTML = `
             <i class="fas fa-info-circle me-2"></i>
             No FAQs found matching "${searchTerm}". Try different keywords or 
-            <a href="{{ url('/contact') }}" class="alert-link">contact our support team</a>.
+            <a href="/contact" class="alert-link">contact our support team</a>.
         `;
         document.getElementById('faqAccordion').appendChild(message);
     }
@@ -478,6 +478,40 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') {
             searchFAQs();
         }
+    });
+    
+    // Add event listeners for category cards
+    const categoryCards = document.querySelectorAll('.category-card-item');
+    categoryCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const categoryId = this.getAttribute('data-category-id');
+            scrollToCategory(categoryId);
+        });
+    });
+    
+    // Add event listeners for FAQ action buttons
+    const helpfulButtons = document.querySelectorAll('.helpful-btn');
+    helpfulButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const faqId = this.getAttribute('data-faq-id');
+            markHelpful(faqId);
+        });
+    });
+    
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    copyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const faqId = this.getAttribute('data-faq-id');
+            copyAnswer(faqId);
+        });
+    });
+    
+    const shareButtons = document.querySelectorAll('.share-btn');
+    shareButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const faqId = this.getAttribute('data-faq-id');
+            shareAnswer(faqId);
+        });
     });
     
     // Add animation to cards on scroll

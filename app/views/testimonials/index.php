@@ -140,7 +140,7 @@
                              alt="{{ $video['customer_name'] }}" 
                              class="img-fluid rounded-3">
                         <div class="play-overlay position-absolute top-50 start-50 translate-middle">
-                            <button class="btn btn-primary btn-lg rounded-circle" onclick="playVideo('{{ $video['video_url'] }}');">
+                            <button class="btn btn-primary btn-lg rounded-circle play-video-btn" data-video-url="{{ $video['video_url'] }}">
                                 <i class="fas fa-play"></i>
                             </button>
                         </div>
@@ -425,6 +425,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const ratingElement = document.getElementById('testimonials-stats');
     const ratingDegrees = ratingElement ? ratingElement.getAttribute('data-rating-degrees') : '345';
     document.documentElement.style.setProperty('--rating-degrees', ratingDegrees + 'deg');
+    
+    // Add event listeners for video play buttons
+    const videoButtons = document.querySelectorAll('.play-video-btn');
+    videoButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const videoUrl = this.getAttribute('data-video-url');
+            playVideo(videoUrl);
+        });
+    });
 });
 
 function playVideo(videoUrl) {

@@ -145,7 +145,7 @@
                                     View Details
                                 </button>
                             </div>
-                            <button class="btn btn-primary btn-sm" onclick="applyForJob('{{ $job['id'] }}');">
+                            <button class="btn btn-primary btn-sm apply-job-btn" data-job-id="{{ $job['id'] }}">
                                 Apply Now
                             </button>
                         </div>
@@ -412,8 +412,19 @@ function applyForJob(jobId) {
     bsModal.show();
     
     modal.addEventListener('hidden.bs.modal', () => {
-        modal.remove();
+        document.body.removeChild(modal);
     });
 }
+
+// Add event listeners for apply job buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const applyButtons = document.querySelectorAll('.apply-job-btn');
+    applyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const jobId = this.getAttribute('data-job-id');
+            applyForJob(jobId);
+        });
+    });
+});
 </script>
 @endsection
