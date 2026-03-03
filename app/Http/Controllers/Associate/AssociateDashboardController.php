@@ -11,13 +11,25 @@ use App\Http\Controllers\BaseController;
 class AssociateDashboardController extends BaseController
 {
     /**
+     * Index method - main dashboard
+     * @return void
+     */
+    public function index()
+    {
+        $data = [
+            'page_title' => 'Associate Dashboard - APS Dream Home',
+            'page_description' => 'Manage your properties, referrals, and earnings'
+        ];
+        return $this->render('dashboard/index', $data, 'layouts/base');
+    }
+
+    /**
      * Dashboard method
      * @return void
      */
     public function dashboard()
     {
-        // TODO: Implement dashboard functionality
-        return $this->view('dashboard');
+        return $this->index();
     }
 
     /**
