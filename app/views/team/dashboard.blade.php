@@ -526,9 +526,17 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .incentive-progress-bar {
+            width: var(--progress-width, 0%);
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
-<body>
+<body id="hierarchy-data" data-hierarchy="{{ json_encode($hierarchyData) }}" data-earnings="{{ json_encode($performanceData['monthly_earnings'] ?? []) }}">
     <!-- Header -->
     <header class="team-header">
         <div class="header-content">
@@ -731,7 +739,7 @@
                 <div class="incentive-description">{{ $incentive['description'] }}</div>
                 @if(isset($incentive['progress']))
                 <div class="incentive-progress">
-                    <div class="progress-bar" style="width: {!! $incentive['progress'] !!}%"></div>
+                    <div class="progress-bar incentive-progress-bar" data-progress="{{ $incentive['progress'] }}"></div>
                 </div>
                 <div class="mt-1 small text-muted">{{ round($incentive['progress'], 1) }}% complete</div>
                 @endif
@@ -744,13 +752,23 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        @php
-            $hierarchyJson = json_encode($hierarchyData);
-            $earningsJson = json_encode($performanceData['monthly_earnings'] ?? []);
-        @endphp
-
         // Team Hierarchy Visualization using D3.js
-        const hierarchyData = {!! $hierarchyJson !!};
+        const hierarchyDataElement = document.getElementById('hierarchy-data');
+        const hierarchyData = hierarchyDataElement ? JSON.parse(hierarchyDataElement.getAttribute('data-hierarchy')) : [];
+        
+        const earningsDataElement = document.getElementById('earnings-data');
+        const earningsData = earningsDataElement ? JSON.parse(earningsDataElement.getAttribute('data-earnings')) : [];
+
+        // Set progress bar widths from data attributes
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBars = document.querySelectorAll('.incentive-progress-bar');
+            progressBars.forEach(bar => {
+                const progress = bar.getAttribute('data-progress');
+                if (progress) {
+                    bar.style.setProperty('--progress-width', progress + '%');
+                }
+            });
+        });
 
         // Simple hierarchy renderer (can be enhanced with D3 tree layout)
         function renderHierarchy() {
@@ -811,7 +829,7 @@
 
         // Team Earnings Chart
         const earningsCtx = document.getElementById('teamEarningsChart').getContext('2d');
-        const earningsData = {!! $earningsJson !!};
+        const chartEarningsData = earningsData; // Use the already defined earningsData
 
         new Chart(earningsCtx, {
             type: 'line',
