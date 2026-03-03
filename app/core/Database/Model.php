@@ -10,133 +10,63 @@ use App\Core\Support\Collection;
 use PDO;
 use RuntimeException;
 
-if (!function_exists('class_basename')) {
-    function class_basename($class) {
-        $class = is_object($class) ? get_class($class) : $class;
-        return basename(str_replace('\\', '/', $class));
-    }
-}
-
 abstract class Model implements \ArrayAccess, \JsonSerializable
 {
+    use HasRelationships;
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table;
+    protected static $table;
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'id';
+    protected static $primaryKey = 'id';
 
     /**
-     * The connection name for the model.
-     *
-     * @var string|null
+     * Indicates if the model should be timestamped.
      */
-    protected $connection;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [];
-
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
-    protected $guarded = [];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [];
-
-    /**
-     * The attributes that should be visible in arrays.
-     *
-     * @var array
-     */
-    protected $visible = [];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [];
+    public $timestamps = true;
 
     /**
      * The model's attributes.
-     *
-     * @var array
      */
     protected $attributes = [];
 
     /**
-     * The model's original attributes.
-     *
-     * @var array
+     * The model attribute's original state.
      */
     protected $original = [];
 
     /**
-     * The attributes that were changed.
-     *
-     * @var array
-     */
-    protected $changes = [];
-
-    /**
-     * The attributes that are dirty.
-     *
-     * @var array
-     */
-    protected $dirty = [];
-
-    /**
      * The loaded relationships for the model.
-     *
-     * @var array
      */
     protected $relations = [];
 
     /**
-     * The connection resolver instance.
-     *
-     * @var \App\Core\Database\ConnectionResolverInterface
+     * The attributes that are mass assignable.
      */
-    protected static $resolver;
+    protected array $fillable = [];
 
     /**
-     * The event dispatcher instance.
-     *
-     * @var \App\Core\Events\Dispatcher
+     * The attributes that aren't mass assignable.
      */
-    protected static $dispatcher;
+    protected array $guarded = ['*'];
 
     /**
-     * The array of booted models.
-     *
-     * @var array
+     * The attributes that should be hidden for arrays.
      */
-    protected static $booted = [];
+    protected array $hidden = [];
 
     /**
-     * Indicates if all mass assignment is enabled.
-     *
-     * @var bool
+     * The attributes that should be visible in arrays.
      */
-    protected static $unguarded = false;
+    protected $visible = [];
+
+    /**
+     * The accessors to append to the model's array form.
+     */
+    protected $appends = [];
 
     /**
      * The cache of the mutated attributes for each class.
@@ -146,110 +76,100 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     protected static $mutatorCache = [];
 
     /**
-     * The many to many relationship methods.
-     *
-     * @var array
+     * Indicates whether attributes are snake cased on arrays.
      */
-    public static $manyMethods = ['belongsToMany', 'morphToMany', 'morphedByMany'];
+    public static $snakeAttributes = true;
 
     /**
-     * The name of the "created at" column.
-     *
-     * @var string|null
+     * Indicates if the model exists.
      */
-    const CREATED_AT = 'created_at';
+    public $exists = false;
 
     /**
-     * The name of the "updated at" column.
-     *
-     * @var string|null
+     * Indicates if the model was inserted during the current request lifecycle.
      */
-    const UPDATED_AT = 'updated_at';
+    public $wasRecentlyCreated = false;
 
     /**
-     * The connection name for the model.
-     *
-     * @var string|null
+     * The database connection instance.
      */
     protected static $db;
 
     /**
-     * Create a new Eloquent model instance.
-     *
-     * @param  array  $attributes
-     * @return void
+     * Create a new model instance.
      */
     public function __construct(array $attributes = [])
     {
-        $this->bootIfNotBooted();
-
-        $this->syncOriginal();
-
         $this->fill($attributes);
     }
 
     /**
-     * Boot the model if it's not booted yet.
+     * Get the table associated with the model.
      *
-     * @return void
+     * @return string
      */
-    protected function bootIfNotBooted()
+    public static function getTable()
     {
-        if (!isset(static::$booted[static::class])) {
-            static::$booted[static::class] = true;
-
-            static::boot();
-        }
+        return static::$table ?? Str::snake(Str::pluralStudly(class_basename(static::class)));
     }
 
     /**
-     * The "booting" method of the model.
-     *
-     * @return void
+     * Get the table qualified key name.
+     * 
+     * @return string
      */
-    protected static function boot()
+    public function getQualifiedKeyName()
     {
-        static::bootTraits();
+        return $this->getTable() . '.' . $this->getKeyName();
     }
 
     /**
-     * Boot all of the bootable traits on the model.
+     * Get the primary key for the model.
      *
-     * @return void
+     * @return string
      */
-    protected static function bootTraits()
+    public static function getPrimaryKey()
     {
-        $class = static::class;
-
-        foreach (class_uses_recursive($class) as $trait) {
-            if (method_exists($class, $method = 'boot'.class_basename($trait))) {
-                forward_static_call([$class, $method]);
-            }
-        }
+        return static::$primaryKey;
     }
 
     /**
-     * Fill the model with an array of attributes.
+     * Get the primary key for the model.
      *
-     * @param  array  $attributes
-     * @return $this
+     * @return string
      */
-    public function fill(array $attributes)
+    public function getKeyName()
     {
-        foreach ($attributes as $key => $value) {
-            $this->setAttribute($key, $value);
-        }
+        return static::getPrimaryKey();
+    }
 
-        return $this;
+    /**
+     * Get the value of the model's primary key.
+     *
+     * @return mixed
+     */
+    public function getKey()
+    {
+        return $this->getAttribute($this->getKeyName());
+    }
+
+    /**
+     * Get the default foreign key name for the model.
+     *
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        return Str::snake(class_basename($this)) . '_' . $this->getKeyName();
     }
 
     /**
      * Set the database connection instance.
      *
-     * @param  \App\Core\Database\Database  $db
+     * @param  Database  $db
      * @return void
      */
-    public static function setConnection(Database $db)
+    public static function setDatabase(Database $db)
     {
         static::$db = $db;
     }
@@ -269,123 +189,225 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     }
 
     /**
-     * Get the table associated with the model.
+     * Get the current connection name for the model.
      *
-     * @return string
+     * @return string|null
      */
-    public function getTable()
+    public function getConnectionName()
     {
-        if (isset($this->table)) {
-            return $this->table;
+        return $this->connection ?? null;
+    }
+
+    /**
+     * Set the connection associated with the model.
+     *
+     * @param  string  $name
+     * @return $this
+     */
+    public function setConnection($name)
+    {
+        $this->connection = $name;
+        return $this;
+    }
+
+    /**
+     * Get the database connection for the model.
+     *
+     * @return Database
+     */
+    /**
+     * Get the database connection for the model.
+     *
+     * @return \App\Core\Database\Database
+     */
+    public function getConnection()
+    {
+        return static::resolveConnection($this->getConnectionName());
+    }
+
+    /**
+     * Resolve a connection instance.
+     *
+     * @param  string|null  $connection
+     * @return Database
+     */
+    public static function resolveConnection($connection = null)
+    {
+        return static::getDatabase();
+    }
+
+    /**
+     * Get a new query builder for the model's table.
+     *
+     * @return \App\Core\Database\Builder
+     */
+    public static function query()
+    {
+        return (new static)->newQuery();
+    }
+
+    /**
+     * Get a new query builder that doesn't have any global scopes.
+     *
+     * @return \App\Core\Database\Builder
+     */
+    public function newQueryWithoutScopes()
+    {
+        $builder = $this->newEloquentBuilder(
+            $this->newBaseQueryBuilder()
+        );
+
+        return $builder->setModel($this);
+    }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \App\Core\Database\QueryBuilder  $query
+     * @return \App\Core\Database\Builder
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new Builder($query);
+    }
+
+    /**
+     * Get a new query builder instance for the connection.
+     *
+     * @return \App\Core\Database\QueryBuilder
+     */
+    protected function newBaseQueryBuilder()
+    {
+        return $this->getConnection()->table($this->getTable());
+    }
+
+    /**
+     * Register the global scopes for this builder instance.
+     *
+     * @param  \App\Core\Database\Builder  $builder
+     * @return \App\Core\Database\Builder
+     */
+    public function registerGlobalScopes($builder)
+    {
+        foreach ($this->getGlobalScopes() as $identifier => $scope) {
+            $builder->withGlobalScope($identifier, $scope);
         }
 
-        return str_replace('\\', '', Str::snake(Str::plural(class_basename($this))));
+        return $builder;
     }
 
     /**
-     * Get the primary key for the model.
+     * Get the global scopes for this class instance.
      *
-     * @return string
+     * @return array
      */
-    public function getKeyName()
+    public function getGlobalScopes()
     {
-        return $this->primaryKey;
+        return [];
     }
 
     /**
-     * Set the primary key for the model.
-     *
-     * @param  string  $key
-     * @return void
+     * Fill the model with an array of attributes.
      */
-    public function setKeyName($key)
+    public function fill(array $attributes): self
     {
-        $this->primaryKey = $key;
+        foreach ($this->fillableFromArray($attributes) as $key => $value) {
+            if ($this->isFillable($key)) {
+                $this->setAttribute($key, $value);
+            }
+        }
+
+        return $this;
     }
 
     /**
-     * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
+     * Get the fillable attributes of a given array.
      */
-    public function getIncrementing()
+    protected function fillableFromArray(array $attributes)
     {
-        return $this->incrementing;
+        if (count($this->getFillable()) > 0) {
+            return array_intersect_key($attributes, array_flip($this->getFillable()));
+        }
+
+        return $attributes;
     }
 
     /**
-     * Set whether IDs are incrementing.
-     *
-     * @param  bool  $value
-     * @return void
+     * Get the fillable attributes for the model.
      */
-    public function setIncrementing($value)
+    public function getFillable()
     {
-        $this->incrementing = $value;
+        return $this->fillable;
     }
 
     /**
-     * Get the value of the model's primary key.
-     *
-     * @return mixed
+     * Determine if the given attribute may be mass assigned.
      */
-    public function getKey()
+    public function isFillable($key)
     {
-        return $this->getAttribute($this->getKeyName());
+        if (in_array($key, $this->getGuarded())) {
+            return false;
+        }
+
+        return empty($this->getFillable()) || in_array($key, $this->getFillable());
     }
 
     /**
-     * Get a plain attribute (not a relationship).
-     *
-     * @param  string  $key
-     * @return mixed
+     * Get the guarded attributes for the model.
+     */
+    public function getGuarded()
+    {
+        return $this->guarded;
+    }
+
+    /**
+     * Set a given attribute on the model.
+     */
+    public function setAttribute($key, $value): self
+    {
+        if ($this->hasSetMutator($key)) {
+            $method = 'set' . Str::studly($key) . 'Attribute';
+            return $this->{$method}($value);
+        }
+
+        $this->attributes[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Determine if a set mutator exists for an attribute.
+     */
+    public function hasSetMutator($key)
+    {
+        return method_exists($this, 'set' . Str::studly($key) . 'Attribute');
+    }
+
+    /**
+     * Get an attribute from the model.
      */
     public function getAttribute($key)
     {
-        if (!$key) {
-            return;
-        }
-
-        // If the attribute exists in the attribute array or has a "get" mutator.
-        if (array_key_exists($key, $this->attributes) ||
-            $this->hasGetMutator($key)) {
+        if (array_key_exists($key, $this->attributes) || $this->hasGetMutator($key)) {
             return $this->getAttributeValue($key);
         }
 
-        // If the key exists as a method, we'll assume the developer is accessing
-        // a custom relationship method on the model.
-        if (method_exists($this, $key)) {
+        if (method_exists(self::class, $key)) {
             return $this->getRelationshipFromMethod($key);
         }
+
+        return null;
     }
 
     /**
      * Get a plain attribute (not a relationship).
-     *
-     * @param  string  $key
-     * @return mixed
      */
-    protected function getAttributeValue($key)
+    public function getAttributeValue($key)
     {
         $value = $this->getAttributeFromArray($key);
 
-        // If the attribute has a get mutator, we will call that then return what
-        // it returns back to the caller as this is a convenient way to mutate
-        // values as they are retrieved.
         if ($this->hasGetMutator($key)) {
             return $this->mutateAttribute($key, $value);
-        }
-
-        // If the attribute exists within the cast array, we will convert it to
-        // the appropriate cast type before returning it.
-        if ($this->hasCast($key)) {
-            return $this->castAttribute($key, $value);
-        }
-
-        // If the attribute is listed as a date, we will convert it to a DateTime
-        // instance on retrieval, which makes it quite convenient to work with.
-        if (in_array($key, $this->getDates()) && !is_null($value)) {
-            return $this->asDateTime($value);
         }
 
         return $value;
@@ -393,384 +415,151 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
 
     /**
      * Get an attribute from the $attributes array.
-     *
-     * @param  string  $key
-     * @return mixed
      */
     protected function getAttributeFromArray($key)
     {
-        if (array_key_exists($key, $this->attributes)) {
-            return $this->attributes[$key];
-        }
-
-        return null;
+        return $this->attributes[$key] ?? null;
     }
 
     /**
      * Determine if a get mutator exists for an attribute.
-     *
-     * @param  string  $key
-     * @return bool
      */
     public function hasGetMutator($key)
     {
-        return method_exists($this, 'get'.Str::studly($key).'Attribute');
+        return method_exists($this, 'get' . Str::studly($key) . 'Attribute');
     }
 
     /**
      * Get the value of an attribute using its mutator.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return mixed
      */
     protected function mutateAttribute($key, $value)
     {
-        return $this->{'get'.Str::studly($key).'Attribute'}($value);
+        return $this->{'get' . Str::studly($key) . 'Attribute'}($value);
     }
 
     /**
-     * Get the casts array.
+     * Get all of the current attributes on the model.
      *
      * @return array
      */
-    public function getCasts()
+    public function getAttributes(): array
     {
-        return $this->casts;
-    }
-
-    /**
-     * Determine whether an attribute should be cast to a native type.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function hasCast($key)
-    {
-        return array_key_exists($key, $this->getCasts());
-    }
-
-    /**
-     * Cast an attribute to a native PHP type.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return mixed
-     */
-    protected function castAttribute($key, $value)
-    {
-        if (is_null($value)) {
-            return $value;
-        }
-
-        switch ($this->getCastType($key)) {
-            case 'int':
-            case 'integer':
-                return (int) $value;
-            case 'real':
-            case 'float':
-            case 'double':
-                return (float) $value;
-            case 'string':
-                return (string) $value;
-            case 'bool':
-            case 'boolean':
-                return (bool) $value;
-            case 'array':
-                return $this->fromJson($value);
-            case 'json':
-                return $this->fromJson($value);
-            case 'date':
-                return $this->asDate($value);
-            case 'datetime':
-                return $this->asDateTime($value);
-            case 'timestamp':
-                return $this->asTimestamp($value);
-            default:
-                return $value;
-        }
-    }
-
-    /**
-     * Get the type of cast for a model attribute.
-     *
-     * @param  string  $key
-     * @return string
-     */
-    protected function getCastType($key)
-    {
-        return $this->casts[$key];
-    }
-
-    /**
-     * Get the attributes that should be converted to dates.
-     *
-     * @return array
-     */
-    public function getDates()
-    {
-        $defaults = [static::CREATED_AT, static::UPDATED_AT];
-
-        return $this->timestamps ? array_merge($this->dates, $defaults) : $this->dates;
-    }
-
-    /**
-     * Convert a DateTime to a storable string.
-     *
-     * @param  \DateTime|int  $value
-     * @return string
-     */
-    public function fromDateTime($value)
-    {
-        return $this->asDateTime($value)->format($this->getDateFormat());
-    }
-
-    /**
-     * Return a timestamp as DateTime object.
-     *
-     * @param  mixed  $value
-     * @return \DateTime
-     */
-    protected function asDateTime($value)
-    {
-        if ($value instanceof DateTime) {
-            return $value;
-        }
-
-        if (is_numeric($value)) {
-            return (new DateTime)->setTimestamp($value);
-        }
-
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value)) {
-            return DateTime::createFromFormat('Y-m-d', $value)->startOfDay();
-        }
-
-        return new DateTime($value);
-    }
-
-    /**
-     * Return a timestamp as DateTime object.
-     *
-     * @param  mixed  $value
-     * @return int
-     */
-    protected function asTimestamp($value)
-    {
-        return $this->asDateTime($value)->getTimestamp();
-    }
-
-    /**
-     * Get the format for database stored dates.
-     *
-     * @return string
-     */
-    protected function getDateFormat()
-    {
-        return 'Y-m-d H:i:s';
-    }
-
-    /**
-     * Set a given attribute on the model.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return mixed
-     */
-    public function setAttribute($key, $value)
-    {
-        // First we will check for the presence of a mutator for the set operation
-        // which simply lets the developers tweak the attribute as it is set on
-        // the model, such as "json_decode" or any additional serialization.
-        if ($this->hasSetMutator($key)) {
-            return $this->setMutatedAttributeValue($key, $value);
-        }
-
-        // If an attribute is listed as a "date", we'll convert it from a DateTime
-        // instance into a string for storage on the databases. We'll also set
-        // the date format to be used for the model if it hasn't been set.
-        elseif ($value && in_array($key, $this->getDates())) {
-            $this->setDateAttributes($key, $value);
-        }
-
-        // If the attribute is listed as "json", we'll JSON encode it as it's
-        // most likely an array or object being stored. Otherwise we'll just
-        // store the raw value in the attribute array.
-        else {
-            $this->attributes[$key] = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Determine if a set mutator exists for an attribute.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function hasSetMutator($key)
-    {
-        return method_exists($this, 'set'.Str::studly($key).'Attribute');
-    }
-
-    /**
-     * Set the value of an attribute using its mutator.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return mixed
-     */
-    protected function setMutatedAttributeValue($key, $value)
-    {
-        return $this->{'set'.Str::studly($key).'Attribute'}($value);
-    }
-
-    /**
-     * Set the date attributes.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
-     */
-    protected function setDateAttributes($key, $value)
-    {
-        $this->attributes[$key] = $this->fromDateTime($value);
-    }
-
-    /**
-     * Get the relationships for the model.
-     *
-     * @return array
-     */
-    public function getRelations()
-    {
-        return $this->relations;
-    }
-
-    /**
-     * Get a relationship.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
-    public function getRelation($key)
-    {
-        return $this->relations[$key];
-    }
-
-    /**
-     * Determine if the given relation is loaded.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function relationLoaded($key)
-    {
-        return array_key_exists($key, $this->relations);
-    }
-
-    /**
-     * Set the specific relationship in the model.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return $this
-     */
-    public function setRelation($key, $value)
-    {
-        $this->relations[$key] = $value;
-
-        return $this;
+        return $this->attributes;
     }
 
     /**
      * Get the model's original attribute values.
-     *
-     * @param  string|null  $key
-     * @param  mixed  $default
-     * @return mixed|array
      */
-    public function getOriginal($key = null, $default = null)
+    public function getOriginal(): array
     {
-        if (is_null($key)) {
-            return $this->original;
-        }
-
-        return $this->original[$key] ?? $default;
+        return $this->original;
     }
 
     /**
-     * Sync the original attributes with the current.
-     *
-     * @return $this
+     * Save the model to the database.
+{{ ... }}
      */
-    public function syncOriginal()
+    public function save(array $options = []): bool
     {
-        $this->original = $this->attributes;
+        if ($this->exists) {
+            $saved = $this->performUpdate();
+        } else {
+            $saved = $this->performInsert();
 
-        return $this;
-    }
-
-    /**
-     * Sync a single original attribute with its current value.
-     *
-     * @param  string  $attribute
-     * @return $this
-     */
-    public function syncOriginalAttribute($attribute)
-    {
-        $this->original[$attribute] = $this->attributes[$attribute];
-
-        return $this;
-    }
-
-    /**
-     * Determine if the model or given attribute(s) have been modified.
-     *
-     * @param  array|string|null  $attributes
-     * @return bool
-     */
-    public function isDirty($attributes = null)
-    {
-        if (is_null($attributes)) {
-            return count($this->getDirty()) > 0;
-        }
-
-        $attributes = is_array($attributes) ? $attributes : func_get_args();
-
-        foreach ($attributes as $attribute) {
-            if ($this->isDirtyAttribute($attribute)) {
-                return true;
+            // Set the connection name if not already set
+            if (!$this->getConnectionName()) {
+                $this->setConnection('default');
             }
         }
 
-        return false;
+        if ($saved) {
+            $this->syncOriginal();
+        }
+
+        return $saved;
     }
 
     /**
-     * Determine if the given attribute was changed.
-     *
-     * @param  string  $attribute
-     * @return bool
+     * Perform a model insert operation.
      */
-    public function isDirtyAttribute($attribute)
+    protected function performInsert(): bool
     {
-        return !array_key_exists($attribute, $this->original) ||
-               $this->attributes[$attribute] !== $this->original[$attribute];
+        $attributes = $this->getAttributes();
+
+        if ($this->timestamps) {
+            $now = date('Y-m-d H:i:s');
+            $this->setAttribute('created_at', $now);
+            $this->setAttribute('updated_at', $now);
+
+            $attributes = $this->getAttributes();
+        }
+
+        $result = static::query()->insert($attributes);
+
+        if ($result) {
+            $this->setAttribute(static::getPrimaryKey(), static::getDatabase()->lastInsertId());
+            $this->exists = true;
+            $this->syncOriginal();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Perform a model update operation.
+     */
+    protected function performUpdate(): bool
+    {
+        if ($this->timestamps) {
+            $this->setAttribute('updated_at', date('Y-m-d H:i:s'));
+        }
+
+        $dirty = $this->getDirty();
+
+        if (empty($dirty)) {
+            return true;
+        }
+
+        $result = static::query()
+            ->where(static::getPrimaryKey(), $this->getAttribute(static::getPrimaryKey()))
+            ->update($dirty);
+
+        if ($result) {
+            $this->syncOriginal();
+        }
+
+        return $result > 0;
+    }
+
+    /**
+     * Delete the model from the database.
+     */
+    public function delete(): bool
+    {
+        if (!$this->exists) {
+            return false;
+        }
+
+        $result = static::query()
+            ->where(static::getPrimaryKey(), $this->getAttribute(static::getPrimaryKey()))
+            ->delete();
+
+        if ($result) {
+            $this->exists = false;
+        }
+
+        return $result > 0;
     }
 
     /**
      * Get the attributes that have been changed since last sync.
-     *
-     * @return array
      */
-    public function getDirty()
+    public function getDirty(): array
     {
         $dirty = [];
 
         foreach ($this->attributes as $key => $value) {
-            if (!array_key_exists($key, $this->original) ||
-                $value !== $this->original[$key]) {
+            if (!array_key_exists($key, $this->original) || $value !== $this->original[$key]) {
                 $dirty[$key] = $value;
             }
         }
@@ -779,360 +568,106 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     }
 
     /**
-     * Get the attributes that were changed.
-     *
-     * @return array
+     * Sync the original attributes with the current ones.
      */
-    public function getChanges()
+    public function syncOriginal(): self
     {
-        return $this->changes;
-    }
-
-    /**
-     * Determine if the model was given any attributes.
-     *
-     * @return bool
-     */
-    public function wasChanged($attributes = null)
-    {
-        if (is_null($attributes)) {
-            return count($this->changes) > 0;
-        }
-
-        $attributes = is_array($attributes) ? $attributes : func_get_args();
-
-        foreach ($attributes as $attribute) {
-            if (array_key_exists($attribute, $this->changes)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Save the model to the database.
-     *
-     * @return bool
-     */
-    public function save()
-    {
-        $saved = $this->exists ? $this->update() : $this->insert();
-
-        if ($saved) {
-            $this->syncOriginal();
-            $this->fireModelEvent('saved', false);
-        }
-
-        return $saved;
-    }
-
-    /**
-     * Insert a new record into the database.
-     *
-     * @return bool
-     */
-    public function insert()
-    {
-        $attributes = $this->getAttributes();
-
-        $sql = "INSERT INTO {$this->getTable()} (" . implode(', ', array_keys($attributes)) . ") VALUES (" . implode(', ', array_fill(0, count($attributes), '?')) . ")";
-
-        $stmt = static::getDatabase()->prepare($sql);
-
-        foreach ($attributes as $key => $value) {
-            $stmt->bindValue($key + 1, $value);
-        }
-
-        return $stmt->execute();
-    }
-
-    /**
-     * Update the model in the database.
-     *
-     * @return bool
-     */
-    public function update()
-    {
-        $attributes = $this->getDirty();
-
-        if (empty($attributes)) {
-            return true;
-        }
-
-        $sql = "UPDATE {$this->getTable()} SET ";
-
-        $set = [];
-        foreach ($attributes as $key => $value) {
-            $set[] = "$key = ?";
-        }
-
-        $sql .= implode(', ', $set) . " WHERE {$this->getKeyName()} = ?";
-
-        $stmt = static::getDatabase()->prepare($sql);
-
-        $i = 1;
-        foreach ($attributes as $value) {
-            $stmt->bindValue($i++, $value);
-        }
-
-        $stmt->bindValue($i, $this->getKey());
-
-        return $stmt->execute();
-    }
-
-    /**
-     * Delete the model from the database.
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        if ($this->exists) {
-            $sql = "DELETE FROM {$this->getTable()} WHERE {$this->getKeyName()} = ?";
-
-            $stmt = static::getDatabase()->prepare($sql);
-            $stmt->bindValue(1, $this->getKey());
-
-            return $stmt->execute();
-        }
-
-        return false;
+        $this->original = $this->attributes;
+        return $this;
     }
 
     /**
      * Find a model by its primary key.
-     *
-     * @param  mixed  $id
-     * @param  array  $columns
-     * @return static|null
      */
-    public static function find($id, $columns = ['*'])
+    public static function find($id, array $columns = ['*'])
     {
-        $instance = new static;
+        $instance = new static();
 
-        $sql = "SELECT " . implode(', ', $columns) . " FROM {$instance->getTable()} WHERE {$instance->getKeyName()} = ?";
+        $model = static::query()
+            ->select($columns)
+            ->where(static::getPrimaryKey(), $id)
+            ->first();
 
-        $stmt = static::getDatabase()->prepare($sql);
-        $stmt->bindValue(1, $id);
-        $stmt->execute();
-
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($result) {
-            $instance->fill($result);
-            $instance->exists = true;
-            return $instance;
+        if (!$model) {
+            return null;
         }
 
-        return null;
+        return $instance->newFromBuilder((array) $model);
+    }
+
+    /**
+     * Find a model by its primary key or throw an exception.
+     */
+    public static function findOrFail($id, array $columns = ['*'])
+    {
+        $model = static::find($id, $columns);
+
+        if (!$model) {
+            throw new RuntimeException("No query results for model [" . static::class . "]");
+        }
+
+        return $model;
     }
 
     /**
      * Get all of the models from the database.
-     *
-     * @param  array  $columns
-     * @return static[]
      */
-    public static function all($columns = ['*'])
+    public static function all(array $columns = ['*']): array
+    {
+        $instance = new static();
+
+        $models = static::query()
+            ->select($columns)
+            ->get();
+
+        return array_map(function ($model) use ($instance) {
+            return $instance->newFromBuilder((array) $model);
+        }, $models);
+    }
+
+    /**
+     * Create a new Eloquent Collection instance.
+     *
+     * @param  array  $models
+     * @return \App\Core\Support\Collection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new Collection($models);
+    }
+
+    /**
+     * Create a collection of models from plain arrays.
+     *
+     * @param  array  $items
+     * @return \App\Core\Support\Collection
+     */
+    public function hydrate(array $items)
     {
         $instance = new static;
 
-        $sql = "SELECT " . implode(', ', $columns) . " FROM {$instance->getTable()}";
+        $items = array_map(function ($item) use ($instance) {
+            return $instance->newFromBuilder((array) $item);
+        }, $items);
 
-        $stmt = static::getDatabase()->prepare($sql);
-        $stmt->execute();
-
-        $models = [];
-
-        while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $model = new static;
-            $model->fill($result);
-            $model->exists = true;
-            $models[] = $model;
-        }
-
-        return $models;
+        return $instance->newCollection($items);
     }
 
     /**
-     * Convert the model instance to JSON.
-     *
-     * @param  int  $options
-     * @return string
+     * Create a new model instance that is existing.
      */
-    public function toJson($options = 0)
+    public function newFromBuilder(array $attributes = [])
     {
-        return json_encode($this->jsonSerialize(), $options);
-    }
+        $model = new static();
+        $model->fill($attributes);
+        $model->exists = true;
+        $model->syncOriginal();
 
-    /**
-     * Convert the object into something JSON serializable.
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * Convert the model instance to an array.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        $attributes = $this->attributesToArray();
-
-        return array_merge($attributes, $this->relationsToArray());
-    }
-
-    /**
-     * Convert the model's attributes to an array.
-     *
-     * @return array
-     */
-    public function attributesToArray()
-    {
-        $attributes = $this->getArrayableAttributes();
-
-        $attributes = $this->addCastAttributesToArray(
-            $attributes, $this->getMutatedAttributes()
-        );
-
-        return $attributes;
-    }
-
-    /**
-     * Get the model's attributes as a plain array.
-     *
-     * @return array
-     */
-    public function getArrayableAttributes()
-    {
-        return $this->getArrayableItems($this->attributes);
-    }
-
-    /**
-     * Get the model's relationships as a plain array.
-     *
-     * @return array
-     */
-    public function relationsToArray()
-    {
-        $relations = $this->getArrayableRelations();
-
-        return array_map(function ($values) {
-            if ($values instanceof Arrayable) {
-                return $values->toArray();
-            }
-
-            return $values;
-        }, $relations);
-    }
-
-    /**
-     * Get the model's relationships as a plain array.
-     *
-     * @return array
-     */
-    public function getArrayableRelations()
-    {
-        return $this->getArrayableItems($this->relations);
-    }
-
-    /**
-     * Get an attribute array of all arrayable attributes.
-     *
-     * @param  array  $attributes
-     * @return array
-     */
-    protected function getArrayableItems(array $attributes)
-    {
-        if (count($this->getVisible()) > 0) {
-            $attributes = array_intersect_key($attributes, array_flip($this->getVisible()));
-        }
-
-        if (count($this->getHidden()) > 0) {
-            $attributes = array_diff_key($attributes, array_flip($this->getHidden()));
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Get the visible attributes for the model.
-     *
-     * @return array
-     */
-    public function getVisible()
-    {
-        return $this->visible;
-    }
-
-    /**
-     * Get the hidden attributes for the model.
-     *
-     * @return array
-     */
-    public function getHidden()
-    {
-        return $this->hidden;
-    }
-
-    /**
-     * Get the attributes that should be converted to dates.
-     *
-     * @return array
-     */
-    public function getDates()
-    {
-        $defaults = [static::CREATED_AT, static::UPDATED_AT];
-
-        return $this->timestamps ? array_merge($this->dates, $defaults) : $this->dates;
-    }
-
-    /**
-     * Get the mutated attributes for a given instance.
-     *
-     * @return array
-     */
-    public function getMutatedAttributes()
-    {
-        $class = static::class;
-
-        if (!isset(static::$mutatorCache[$class])) {
-            static::mutateAttributesForClass($class);
-        }
-
-        return static::$mutatorCache[$class];
-    }
-
-    /**
-     * Extract and cache all the mutated attributes of a class.
-     *
-     * @param  string  $class
-     * @return void
-     */
-    protected static function mutateAttributesForClass($class)
-    {
-        static::$mutatorCache[$class] = collect($class)->map(function ($value) {
-            return preg_grep('/^get.+Attribute$/', get_class_methods($value));
-        })->flatten()->reduce(function ($mutatedAttributes, $match) {
-            if (preg_match('/^get(.+)Attribute$/', $match, $matches)) {
-                $mutatedAttributes[] = Str::snake($matches[1]);
-            }
-
-            return $mutatedAttributes;
-        }, []);
+        return $model;
     }
 
     /**
      * Dynamically retrieve attributes on the model.
-     *
-     * @param  string  $key
-     * @return mixed
      */
     public function __get($key)
     {
@@ -1141,14 +676,26 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
 
     /**
      * Dynamically set attributes on the model.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
      */
     public function __set($key, $value)
     {
         $this->setAttribute($key, $value);
+    }
+
+    /**
+     * Determine if an attribute exists on the model.
+     */
+    public function __isset($key)
+    {
+        return $this->offsetExists($key);
+    }
+
+    /**
+     * Unset an attribute on the model.
+     */
+    public function __unset($key)
+    {
+        $this->offsetUnset($key);
     }
 
     /**
@@ -1184,48 +731,182 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     }
 
     /**
-     * Determine if the given attribute exists.
+     * Convert the model to its string representation.
      */
-    public function __isset($key)
+    public function __toString()
     {
-        return $this->offsetExists($key);
+        return $this->toJson();
     }
 
     /**
-     * Unset an attribute on the model.
+     * Convert the object into something JSON serializable.
+     *
+     * @return array
      */
-    public function __unset($key)
+    public function jsonSerialize(): mixed
     {
-        $this->offsetUnset($key);
+        return $this->toArray();
+    }
+
+    /**
+     * Convert the model instance to JSON.
+     */
+    public function toJson($options = 0)
+    {
+        return json_encode($this->toArray(), $options);
+    }
+
+    /**
+     * Convert the model instance to an array.
+     */
+    public function toArray()
+    {
+        return $this->attributesToArray();
+    }
+
+    /**
+     * Convert the model's attributes to an array.
+     */
+    public function attributesToArray()
+    {
+        $attributes = $this->getArrayableAttributes();
+
+        $mutatedAttributes = $this->getMutatedAttributes();
+
+        foreach ($mutatedAttributes as $key) {
+            if (!array_key_exists($key, $attributes)) {
+                continue;
+            }
+
+            $attributes[$key] = $this->mutateAttributeForArray(
+                $key,
+                $attributes[$key]
+            );
+        }
+
+        foreach ($this->getArrayableRelations() as $key => $value) {
+            if (in_array($key, $this->hidden)) {
+                continue;
+            }
+
+            if ($value instanceof Arrayable) {
+                $relation = $value->toArray();
+            } elseif (is_null($value)) {
+                $relation = $value;
+            }
+
+            $attributes[$key] = $relation ?? $value;
+
+            if (isset($relation) && ($this->relationLoaded($key) || $value !== null)) {
+                $attributes[$key] = $relation;
+            }
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Get an attribute array of all arrayable attributes.
+     */
+    protected function getArrayableAttributes()
+    {
+        return $this->getArrayableItems($this->attributes);
+    }
+
+    /**
+     * Get all of the appendable values that are arrayable.
+     */
+    protected function getArrayableAppends()
+    {
+        if (!count($this->appends)) {
+            return [];
+        }
+
+        $appends = array_combine($this->appends, $this->appends);
+
+        return $this->getArrayableItems($appends);
+    }
+
+    /**
+     * Get an attribute array of all arrayable relations.
+     */
+    protected function getArrayableRelations()
+    {
+        return $this->getArrayableItems($this->relations);
+    }
+
+    /**
+     * Get an attribute array of all arrayable values.
+     */
+    protected function getArrayableItems(array $values)
+    {
+        if (count($this->visible) > 0) {
+            $values = array_intersect_key($values, array_flip($this->visible));
+        }
+
+        foreach ($this->hidden as $hidden) {
+            unset($values[$hidden]);
+        }
+
+        return $values;
+    }
+
+
+    /**
+     * Get the mutated attributes for a given instance.
+     */
+    public function getMutatedAttributes()
+    {
+        $class = static::class;
+
+        if (!isset(static::$mutatorCache[$class])) {
+            static::cacheMutatedAttributes($class);
+        }
+
+        return static::$mutatorCache[$class];
+    }
+
+    /**
+     * Extract and cache all the mutated attributes of a class.
+     */
+    public static function cacheMutatedAttributes($class)
+    {
+        $mutatedAttributes = [];
+
+        if (preg_match_all('/(?<=^|;)get([^;]+?)Attribute(;|$)/', implode(';', get_class_methods($class)), $matches)) {
+            foreach ($matches[1] as $match) {
+                if (static::$snakeAttributes) {
+                    $match = Str::snake($match);
+                }
+
+                $mutatedAttributes[] = lcfirst($match);
+            }
+        }
+
+        static::$mutatorCache[$class] = $mutatedAttributes;
+    }
+
+    /**
+     * Handle dynamic static method calls into the model.
+     */
+    public static function __callStatic($method, $parameters)
+    {
+        return static::query()->$method(...$parameters);
     }
 
     /**
      * Handle dynamic method calls into the model.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
      */
     public function __call($method, $parameters)
     {
-        if (in_array($method, static::$manyMethods)) {
-            return $this->$method(...$parameters);
-        }
-
-        throw new RuntimeException("Method {$method} does not exist.");
+        return $this->newQuery()->$method(...$parameters);
     }
 
     /**
-     * Handle dynamic static method calls into the method.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
+     * Get a new query builder for the model's table.
      */
-    public static function __callStatic($method, $parameters)
+    public function newQuery()
     {
-        $instance = new static;
-
-        return $instance->$method(...$parameters);
+        return $this->registerGlobalScopes($this->newQueryWithoutScopes());
     }
 }
