@@ -8,7 +8,7 @@
             </h1>
             <div class="d-flex">
                 <!-- Date Range Filter -->
-                <form class="d-flex align-items-center me-3" method="GET" action="/admin/leads/reports">
+                <form class="d-flex align-items-center me-3" method="GET" action="http://localhost.//admin/leads/reports">
                     <div class="input-group">
                         <input type="date"
                             name="start_date"

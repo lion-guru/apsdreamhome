@@ -230,7 +230,7 @@ class SecurityManager {
     /**
      * Check rate limiting
      */
-    public function checkRateLimit($ip, $action = 'general') {
+    public function checkRateLimit($ip, $action='http://localhost./general') {
         $rate_file = __DIR__ . "/../logs/rate_limit_{$action}.json";
 
         // Create directory if it doesn't exist

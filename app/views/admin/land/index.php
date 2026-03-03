@@ -4,12 +4,12 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Kissan Land Management')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Land Records')); ?></li>
                 </ul>
             </div>
             <div class="col-auto float-end ms-auto">
-                <a href="/admin/land/create" class="btn btn-primary">
+                <a href="http://localhost.//admin/land/create" class="btn btn-primary">
                     <i class="fas fa-plus me-1"></i> <?php echo h($mlSupport->translate('Add New Record')); ?>
                 </a>
             </div>

@@ -117,7 +117,7 @@ try {
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <img src="assets/images/about-hero.jpg"
+                                    <img src="http://localhost./assets/images/about-hero.jpg"
                                          alt="Our Journey - ' . htmlspecialchars($company_name) . '"
                                          class="img-fluid rounded shadow"
                                          onerror="this.src=\'https://via.placeholder.com/600x400/667eea/ffffff?text=Our+Journey\'"
@@ -335,7 +335,7 @@ try {
                             <h3 class="mb-4">Ready to Learn More About Our Services?</h3>
                             <p class="mb-4">Contact our team to discover how we can help you find your perfect property or develop your real estate project.</p>
                             <div class="d-flex flex-wrap justify-content-center gap-3">
-                                <a href="contact_template.php" class="btn btn-primary btn-lg">
+                                <a href="http://localhost./contact_template.php" class="btn btn-primary btn-lg">
                                     <i class="fas fa-phone me-2"></i>Contact Us Today
                                 </a>
                                 <a href="tel:' . htmlspecialchars($company_phone) . '" class="btn btn-success btn-lg">
@@ -387,9 +387,9 @@ try {
                         </div>
 
                         <div class="mt-4">
-                            <a href="index_template.php" class="btn btn-primary me-2">Homepage</a>
-                            <a href="contact_template.php" class="btn btn-success me-2">Contact Us</a>
-                            <a href="properties_template.php" class="btn btn-info">Properties</a>
+                            <a href="http://localhost./index_template.php" class="btn btn-primary me-2">Homepage</a>
+                            <a href="http://localhost./contact_template.php" class="btn btn-success me-2">Contact Us</a>
+                            <a href="http://localhost./properties_template.php" class="btn btn-info">Properties</a>
                         </div>
                     </div>
                 </div>

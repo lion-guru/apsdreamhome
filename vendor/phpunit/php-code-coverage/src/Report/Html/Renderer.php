@@ -214,7 +214,7 @@ abstract class Renderer
         );
 
         if ($node instanceof DirectoryNode) {
-            $buffer .= '         <li class="breadcrumb-item">(<a href="dashboard.html">Dashboard</a>)</li>' . "\n";
+            $buffer .= '         <li class="breadcrumb-item">(<a href="http://localhost./dashboard.html">Dashboard</a>)</li>' . "\n";
         }
 
         return $buffer;

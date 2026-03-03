@@ -152,13 +152,13 @@
                     <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
                 </div>
                 <div class="card-body">
-                    <a href="/employee/tasks" class="btn btn-primary btn-sm btn-block mb-2">
+                    <a href="http://localhost.//employee/tasks" class="btn btn-primary btn-sm btn-block mb-2">
                         <i class="fas fa-tasks me-2"></i>View Tasks
                     </a>
-                    <a href="/employee/attendance" class="btn btn-success btn-sm btn-block mb-2">
+                    <a href="http://localhost.//employee/attendance" class="btn btn-success btn-sm btn-block mb-2">
                         <i class="fas fa-calendar-check me-2"></i>View Attendance
                     </a>
-                    <a href="/employee/leaves" class="btn btn-warning btn-sm btn-block mb-2">
+                    <a href="http://localhost.//employee/leaves" class="btn btn-warning btn-sm btn-block mb-2">
                         <i class="fas fa-calendar-alt me-2"></i>Apply Leave
                     </a>
                     <button type="button" class="btn btn-info btn-sm btn-block" onclick="changePassword()">
@@ -178,7 +178,7 @@
                 <h5 class="modal-title">Change Password</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/employee/change-password" method="POST">
+            <form action="http://localhost.//employee/change-password" method="POST">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="current_password" class="form-label">Current Password</label>

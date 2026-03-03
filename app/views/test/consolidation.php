@@ -33,13 +33,13 @@ ob_start();
                     <div class="col-md-6">
                         <h5>Navigation Test:</h5>
                         <div class="d-grid gap-2">
-                            <a href="/auth/login" class="btn btn-primary">
+                            <a href="http://localhost.//auth/login" class="btn btn-primary">
                                 <i class="fas fa-sign-in-alt me-2"></i>Test Login Page
                             </a>
-                            <a href="/auth/register" class="btn btn-success">
+                            <a href="http://localhost.//auth/register" class="btn btn-success">
                                 <i class="fas fa-user-plus me-2"></i>Test Register Page
                             </a>
-                            <a href="/" class="btn btn-outline-secondary">
+                            <a href="http://localhost.//" class="btn btn-outline-secondary">
                                 <i class="fas fa-home me-2"></i>Back to Home
                             </a>
                         </div>

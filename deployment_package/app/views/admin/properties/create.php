@@ -10,8 +10,8 @@
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Add New Property')); ?></h3>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                        <li class="breadcrumb-item"><a href="/admin/properties"><?php echo h($mlSupport->translate('Properties')); ?></a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost.//admin/properties"><?php echo h($mlSupport->translate('Properties')); ?></a></li>
                         <li class="breadcrumb-item active" aria-current="page"><?php echo h($mlSupport->translate('Add Property')); ?></li>
                     </ol>
                 </nav>
@@ -24,7 +24,7 @@
         <div class="col-md-12">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <form action="/admin/properties/store" method="POST" class="needs-validation" novalidate>
+                    <form action="http://localhost.//admin/properties/store" method="POST" class="needs-validation" novalidate>
                         <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
                         <div class="row">
                             <div class="col-md-12 mb-3">

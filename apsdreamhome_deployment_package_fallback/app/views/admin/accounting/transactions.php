@@ -4,16 +4,16 @@
             <div class="col">
                 <h3 class="page-title"><?= h($mlSupport->translate('All Transactions')) ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/accounting"><?= h($mlSupport->translate('Accounting')) ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/accounting"><?= h($mlSupport->translate('Accounting')) ?></a></li>
                     <li class="breadcrumb-item active"><?= h($mlSupport->translate('Transactions')) ?></li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/accounting/income/add" class="btn btn-success btn-sm me-2">
+                <a href="http://localhost.//admin/accounting/income/add" class="btn btn-success btn-sm me-2">
                     <i class="fas fa-plus me-1"></i> <?= h($mlSupport->translate('Add Income')) ?>
                 </a>
-                <a href="/admin/accounting/expense/add" class="btn btn-danger btn-sm">
+                <a href="http://localhost.//admin/accounting/expense/add" class="btn btn-danger btn-sm">
                     <i class="fas fa-minus me-1"></i> <?= h($mlSupport->translate('Add Expense')) ?>
                 </a>
             </div>

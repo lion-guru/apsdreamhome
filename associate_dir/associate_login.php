@@ -259,12 +259,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </p>
                             <p class="mb-2">
                                 Don't have an account? 
-                                <a href="associate_registration.php">
+                                <a href="http://localhost./associate_registration.php">
                                     <i class="fas fa-user-plus me-1"></i>Register Now
                                 </a>
                             </p>
                             <p class="mb-0">
-                                <a href="index.php">
+                                <a href="http://localhost./index.php">
                                     <i class="fas fa-home me-1"></i>Back to Website
                                 </a>
                             </p>

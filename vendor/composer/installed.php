@@ -1,6 +1,6 @@
 <?php return array(
     'root' => array(
-        'name' => 'apsdreamhome/real-estate',
+        'name' => 'http://localhost./real-estate',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
         'reference' => '815e996ffa3b6cf5cfb665f02b042b209ba565bd',
@@ -10,7 +10,7 @@
         'dev' => true,
     ),
     'versions' => array(
-        'apsdreamhome/real-estate' => array(
+        'http://localhost./real-estate' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '815e996ffa3b6cf5cfb665f02b042b209ba565bd',

@@ -6,7 +6,7 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//associate/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Team Management</li>
                 </ol>
             </nav>
@@ -90,7 +90,7 @@
                             <div class="text-center py-5">
                                 <i class="fas fa-users fa-3x text-muted mb-3"></i>
                                 <p class="text-muted">No members in your team yet</p>
-                                <a href="/associate/recruit" class="btn btn-primary">
+                                <a href="http://localhost.//associate/recruit" class="btn btn-primary">
                                     <i class="fas fa-user-plus mr-2"></i>Add New Members
                                 </a>
                             </div>

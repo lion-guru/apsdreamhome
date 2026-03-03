@@ -23,7 +23,7 @@ class AssetHelper
         $minified = self::$config['minification']['enabled'];
         $suffix = $minified ? '.min' : '';
 
-        return '<link rel="stylesheet" href="/apsdreamhome/public/assets/minified/' . $bundle . $suffix . '.css">';
+        return '<link rel="stylesheet" href="http://localhost./public/assets/minified/' . $bundle . $suffix . '.css">';
     }
 
     public static function js($bundle)
@@ -35,17 +35,17 @@ class AssetHelper
         $minified = self::$config['minification']['enabled'];
         $suffix = $minified ? '.min' : '';
 
-        return '<script src="/apsdreamhome/public/assets/minified/' . $bundle . $suffix . '.js"></script>';
+        return '<script src="http://localhost./public/assets/minified/' . $bundle . $suffix . '.js"></script>';
     }
 
     public static function image($path)
     {
-        return '/apsdreamhome/public/assets/images/' . $path;
+        return 'http://localhost./public/assets/images/' . $path;
     }
 
     public static function versioned($path)
     {
         $version = filemtime(PUBLIC_PATH . '/' . $path);
-        return '/apsdreamhome/public/' . $path . '?v=' . $version;
+        return 'http://localhost./public/' . $path . '?v=' . $version;
     }
 }

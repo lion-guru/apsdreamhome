@@ -135,7 +135,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/expenses/store" method="POST" enctype="multipart/form-data">
+            <form action="http://localhost.//associate/expenses/store" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Category <span class="text-danger">*</span></label>

@@ -11,7 +11,7 @@
                 </h1>
                 <div class="d-flex">
                     <!-- Search Form -->
-                    <form class="form-inline mr-3" method="GET" action="/farmers/search">
+                    <form class="form-inline mr-3" method="GET" action="http://localhost.//farmers/search">
                         <div class="input-group">
                             <input type="text"
                                    name="q"
@@ -25,7 +25,7 @@
                             </div>
                         </div>
                     </form>
-                    <a href="/farmers" class="btn btn-secondary">
+                    <a href="http://localhost.//farmers" class="btn btn-secondary">
                         <i class="fas fa-arrow-left mr-2"></i>सभी किसान देखें
                     </a>
                 </div>
@@ -56,7 +56,7 @@
                             "<strong><?= htmlspecialchars($search_term) ?></strong>" के लिए कोई किसान नहीं मिला।
                         </p>
                         <div class="d-flex justify-content-center">
-                            <a href="/farmers/create" class="btn btn-primary mr-3">
+                            <a href="http://localhost.//farmers/create" class="btn btn-primary mr-3">
                                 <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
                             </a>
                             <button type="button" class="btn btn-secondary" onclick="clearSearch()">
@@ -189,7 +189,7 @@
 
 <script>
 function clearSearch() {
-    window.location.href = '/farmers/search';
+    window.location.href='http://localhost.//farmers/search';
 }
 </script>
 

@@ -56,7 +56,7 @@
             <div class="col">
                 <h3 class="page-title"><?= h($mlSupport->translate('AI Ecosystem Hub')) ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?= h($mlSupport->translate('AI Hub')) ?></li>
                 </ul>
             </div>

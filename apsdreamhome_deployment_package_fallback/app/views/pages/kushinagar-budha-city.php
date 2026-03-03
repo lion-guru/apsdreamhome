@@ -115,7 +115,7 @@ ob_start();
                         <a href="tel:+91XXXXXXXXXX" class="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-primary">
                             <i class="fas fa-phone-alt me-2"></i>Call for Booking
                         </a>
-                        <a href="/contact" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3 fw-bold">
+                        <a href="http://localhost.//contact" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3 fw-bold">
                             Get Details
                         </a>
                     </div>

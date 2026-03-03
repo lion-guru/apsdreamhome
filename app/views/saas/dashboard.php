@@ -10,9 +10,9 @@
                     <i class="fas fa-plus me-1"></i> Quick Action
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/property/add"><i class="fas fa-building me-2"></i> Add Listing</a></li>
-                    <li><a class="dropdown-item" href="/leads/add"><i class="fas fa-user-plus me-2"></i> New Lead</a></li>
-                    <li><a class="dropdown-item" href="/visits/schedule"><i class="fas fa-calendar-plus me-2"></i> Schedule Visit</a></li>
+                    <li><a class="dropdown-item" href="http://localhost.//property/add"><i class="fas fa-building me-2"></i> Add Listing</a></li>
+                    <li><a class="dropdown-item" href="http://localhost.//leads/add"><i class="fas fa-user-plus me-2"></i> New Lead</a></li>
+                    <li><a class="dropdown-item" href="http://localhost.//visits/schedule"><i class="fas fa-calendar-plus me-2"></i> Schedule Visit</a></li>
                 </ul>
             </div>
         </div>
@@ -85,7 +85,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Recent Leads</h5>
-                    <a href="/leads" class="btn btn-sm btn-link">View All</a>
+                    <a href="http://localhost.//leads" class="btn btn-sm btn-link">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -171,7 +171,7 @@
                 <div class="card-body">
                     <h5 class="fw-bold mb-3"><i class="fas fa-robot me-2"></i> AI Assistant</h5>
                     <p class="small">Get property descriptions, lead scoring, and market insights instantly.</p>
-                    <a href="/ai/hub" class="btn btn-light btn-sm w-100">Open AI Hub</a>
+                    <a href="http://localhost.//ai/hub" class="btn btn-light btn-sm w-100">Open AI Hub</a>
                 </div>
             </div>
 
@@ -241,28 +241,28 @@
                 <div class="card-body">
                     <div class="list-group list-group-flush">
                         <?php if ($professional_type === 'builder'): ?>
-                            <a href="/projects/inventory" class="list-group-item list-group-item-action border-0 px-0">
+                            <a href="http://localhost.//projects/inventory" class="list-group-item list-group-item-action border-0 px-0">
                                 <i class="fas fa-boxes text-primary me-2"></i> Inventory Management
                             </a>
-                            <a href="/construction/workflow" class="list-group-item list-group-item-action border-0 px-0">
+                            <a href="http://localhost.//construction/workflow" class="list-group-item list-group-item-action border-0 px-0">
                                 <i class="fas fa-tasks text-primary me-2"></i> Project Workflow
                             </a>
                         <?php elseif ($professional_type === 'contractor'): ?>
-                            <a href="/expenses/manage" class="list-group-item list-group-item-action border-0 px-0">
+                            <a href="http://localhost.//expenses/manage" class="list-group-item list-group-item-action border-0 px-0">
                                 <i class="fas fa-calculator text-primary me-2"></i> Expense Tracker
                             </a>
-                            <a href="/labor/management" class="list-group-item list-group-item-action border-0 px-0">
+                            <a href="http://localhost.//labor/management" class="list-group-item list-group-item-action border-0 px-0">
                                 <i class="fas fa-hard-hat text-primary me-2"></i> Labor Records
                             </a>
                         <?php else: ?>
-                            <a href="/marketing/whatsapp" class="list-group-item list-group-item-action border-0 px-0">
+                            <a href="http://localhost.//marketing/whatsapp" class="list-group-item list-group-item-action border-0 px-0">
                                 <i class="fab fa-whatsapp text-success me-2"></i> WhatsApp Marketing
                             </a>
-                            <a href="/referrals" class="list-group-item list-group-item-action border-0 px-0">
+                            <a href="http://localhost.//referrals" class="list-group-item list-group-item-action border-0 px-0">
                                 <i class="fas fa-handshake text-primary me-2"></i> Referral Program
                             </a>
                         <?php endif; ?>
-                        <a href="/documents" class="list-group-item list-group-item-action border-0 px-0">
+                        <a href="http://localhost.//documents" class="list-group-item list-group-item-action border-0 px-0">
                             <i class="fas fa-file-contract text-primary me-2"></i> Document Vault
                         </a>
                     </div>

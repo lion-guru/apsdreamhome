@@ -46,7 +46,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">पासवर्ड बदलें</h6>
                 </div>
                 <div class="card-body">
-                    <form action="/customer/change-password" method="POST">
+                    <form action="http://localhost.//customer/change-password" method="POST">
                         <?php echo getCsrfField(); ?>
                         <div class="form-group">
                             <label class="small">पुराना पासवर्ड</label>
@@ -76,7 +76,7 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <form action="/customer/update-profile" method="POST" id="profileForm">
+                    <form action="http://localhost.//customer/update-profile" method="POST" id="profileForm">
                         <?php echo getCsrfField(); ?>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -188,7 +188,7 @@
                     </div>
                     <?php if (!$customer['aadhaar_verified'] || !$customer['pan_verified']): ?>
                         <div class="mt-2 text-center">
-                            <a href="/customer/kyc-upload" class="btn btn-sm btn-outline-info">दस्तावेज अपलोड करें</a>
+                            <a href="http://localhost.//customer/kyc-upload" class="btn btn-sm btn-outline-info">दस्तावेज अपलोड करें</a>
                         </div>
                     <?php endif; ?>
                 </div>

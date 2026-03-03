@@ -162,10 +162,10 @@ echo "<div class='row mt-4'>
                 <h4><i class='fas fa-rocket me-2'></i>Quick Actions</h4>
             </div>
             <div class='card-body text-center'>
-                <a href='comprehensive_system_test.php' class='btn btn-primary me-2'><i class='fas fa-vial me-2'></i>Run System Tests</a>
-                <a href='ai_demo.php' class='btn btn-success me-2'><i class='fas fa-robot me-2'></i>Test AI Features</a>
-                <a href='test_whatsapp_integration.php' class='btn btn-warning me-2'><i class='fas fa-mobile-alt me-2'></i>Test WhatsApp</a>
-                <a href='test_email_system.php' class='btn btn-info me-2'><i class='fas fa-envelope me-2'></i>Test Email</a>
+                <a href='http://localhost./comprehensive_system_test.php' class='btn btn-primary me-2'><i class='fas fa-vial me-2'></i>Run System Tests</a>
+                <a href='http://localhost./ai_demo.php' class='btn btn-success me-2'><i class='fas fa-robot me-2'></i>Test AI Features</a>
+                <a href='http://localhost./test_whatsapp_integration.php' class='btn btn-warning me-2'><i class='fas fa-mobile-alt me-2'></i>Test WhatsApp</a>
+                <a href='http://localhost./test_email_system.php' class='btn btn-info me-2'><i class='fas fa-envelope me-2'></i>Test Email</a>
                 <button onclick='refreshDashboard()' class='btn btn-secondary'><i class='fas fa-redo me-2'></i>Refresh</button>
             </div>
         </div>
@@ -344,7 +344,7 @@ echo "<div class='tab-pane fade' id='templates' role='tabpanel'>";
 echo "<div class='card template-card'>";
 echo "<div class='card-header d-flex justify-content-between align-items-center'>";
 echo "<h4><i class='fas fa-edit me-2'></i>WhatsApp Templates</h4>";
-echo "<a href='whatsapp_template_manager.php' class='btn btn-success btn-sm'><i class='fas fa-external-link-alt me-2'></i>Open Template Manager</a>";
+echo "<a href='http://localhost./whatsapp_template_manager.php' class='btn btn-success btn-sm'><i class='fas fa-external-link-alt me-2'></i>Open Template Manager</a>";
 echo "</div>";
 echo "<div class='card-body'>";
 echo "<div class='row'>";
@@ -368,8 +368,8 @@ echo "</div>";
 echo "<div class='col-md-4'>";
 echo "<h5>Quick Actions:</h5>";
 echo "<div class='d-grid gap-2'>";
-echo "<a href='whatsapp_template_manager.php' class='btn btn-primary'><i class='fas fa-plus me-2'></i>Create New Template</a>";
-echo "<a href='whatsapp_template_manager.php' class='btn btn-outline-primary'><i class='fas fa-edit me-2'></i>Manage Templates</a>";
+echo "<a href='http://localhost./whatsapp_template_manager.php' class='btn btn-primary'><i class='fas fa-plus me-2'></i>Create New Template</a>";
+echo "<a href='http://localhost./whatsapp_template_manager.php' class='btn btn-outline-primary'><i class='fas fa-edit me-2'></i>Manage Templates</a>";
 echo "<a href='whatsapp_template_manager.php#test' class='btn btn-outline-success'><i class='fas fa-vial me-2'></i>Test Templates</a>";
 echo "</div>";
 echo "</div>";
@@ -380,7 +380,7 @@ echo "</div>";
 echo "</div></div>
 
 <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js'></script>
-<script src='assets/js/ai_client.js'></script>
+<script src='http://localhost./assets/js/ai_client.js'></script>
 <script>
 async function testAI() {
     const prompt = document.getElementById('aiTestInput').value;

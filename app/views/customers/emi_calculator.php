@@ -4,7 +4,7 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent p-0 mb-2">
-                    <li class="breadcrumb-item"><a href="/customer/dashboard">डैशबोर्ड</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//customer/dashboard">डैशबोर्ड</a></li>
                     <li class="breadcrumb-item active" aria-current="page">EMI कैलकुलेटर</li>
                 </ol>
             </nav>
@@ -161,7 +161,7 @@
                     </div>
                     
                     <div class="mt-4">
-                        <form action="/customer/emi-save" method="POST">
+                        <form action="http://localhost.//customer/emi-save" method="POST">
                             <?php echo getCsrfField(); ?>
                             <input type="hidden" name="property_id" value="<?= $property['id'] ?? '' ?>">
                             <input type="hidden" name="total_price" id="save_totalPrice">

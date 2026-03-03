@@ -29,7 +29,7 @@ ob_start();
             <p class="text-muted">Stay updated with properties that match your criteria.</p>
         </div>
         <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end">
-            <a href="properties.php" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <a href="http://localhost./properties.php" class="btn btn-primary rounded-pill px-4 shadow-sm">
                 <i class="fas fa-search me-2"></i>New Search
             </a>
         </div>
@@ -47,16 +47,16 @@ ob_start();
                     <p class="small opacity-75 mb-0">Member</p>
                 </div>
                 <div class="list-group list-group-flush">
-                    <a href="customer_dashboard.php" class="list-group-item list-group-item-action py-3 px-4 border-0">
+                    <a href="http://localhost./customer_dashboard.php" class="list-group-item list-group-item-action py-3 px-4 border-0">
                         <i class="fas fa-th-large me-3 text-primary"></i>Dashboard
                     </a>
-                    <a href="profile.php" class="list-group-item list-group-item-action py-3 px-4 border-0">
+                    <a href="http://localhost./profile.php" class="list-group-item list-group-item-action py-3 px-4 border-0">
                         <i class="fas fa-user me-3 text-primary"></i>My Profile
                     </a>
-                    <a href="saved-searches.php" class="list-group-item list-group-item-action py-3 px-4 border-0 active bg-primary-soft text-primary fw-bold">
+                    <a href="http://localhost./saved-searches.php" class="list-group-item list-group-item-action py-3 px-4 border-0 active bg-primary-soft text-primary fw-bold">
                         <i class="fas fa-search me-3 text-primary"></i>Saved Searches
                     </a>
-                    <a href="logout.php" class="list-group-item list-group-item-action py-3 px-4 border-0 text-danger">
+                    <a href="http://localhost./logout.php" class="list-group-item list-group-item-action py-3 px-4 border-0 text-danger">
                         <i class="fas fa-sign-out-alt me-3"></i>Logout
                     </a>
                 </div>
@@ -94,7 +94,7 @@ ob_start();
                     </div>
                     <h5 class="fw-bold">No saved searches yet</h5>
                     <p class="text-muted mx-auto" style="max-width: 400px;">When you perform a property search, you can save it to quickly access it later and receive email updates.</p>
-                    <a href="properties.php" class="btn btn-primary rounded-pill px-4 mt-2">Start Searching</a>
+                    <a href="http://localhost./properties.php" class="btn btn-primary rounded-pill px-4 mt-2">Start Searching</a>
                 </div>
 
                 <!-- Example of how a saved search would look -->

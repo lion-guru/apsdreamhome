@@ -9,7 +9,7 @@
                     <i class="fas fa-users mr-2"></i>
                     किसान मैनेजमेंट डैशबोर्ड
                 </h1>
-                <a href="/farmers/create" class="btn btn-primary">
+                <a href="http://localhost.//farmers/create" class="btn btn-primary">
                     <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
                 </a>
             </div>
@@ -108,7 +108,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-users mr-2"></i>हाल ही के किसान
                     </h6>
-                    <a href="/farmers" class="btn btn-sm btn-outline-primary">
+                    <a href="http://localhost.//farmers" class="btn btn-sm btn-outline-primary">
                         सभी देखें
                     </a>
                 </div>
@@ -117,7 +117,7 @@
                         <div class="text-center py-4">
                             <i class="fas fa-users fa-3x text-muted mb-3"></i>
                             <p class="text-muted">कोई किसान नहीं मिला</p>
-                            <a href="/farmers/create" class="btn btn-primary">
+                            <a href="http://localhost.//farmers/create" class="btn btn-primary">
                                 पहला किसान जोड़ें
                             </a>
                         </div>
@@ -216,16 +216,16 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="/farmers/create" class="btn btn-primary">
+                        <a href="http://localhost.//farmers/create" class="btn btn-primary">
                             <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
                         </a>
-                        <a href="/farmers/search" class="btn btn-secondary">
+                        <a href="http://localhost.//farmers/search" class="btn btn-secondary">
                             <i class="fas fa-search mr-2"></i>किसान खोजें
                         </a>
-                        <a href="/land-holdings/create" class="btn btn-info">
+                        <a href="http://localhost.//land-holdings/create" class="btn btn-info">
                             <i class="fas fa-map mr-2"></i>जमीन होल्डिंग जोड़ें
                         </a>
-                        <a href="/land-purchases/create" class="btn btn-success">
+                        <a href="http://localhost.//land-purchases/create" class="btn btn-success">
                             <i class="fas fa-shopping-cart mr-2"></i>जमीन खरीदें
                         </a>
                     </div>
@@ -238,7 +238,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-shopping-cart mr-2"></i>हाल की खरीद
                     </h6>
-                    <a href="/land-purchases" class="btn btn-sm btn-outline-primary">
+                    <a href="http://localhost.//land-purchases" class="btn btn-sm btn-outline-primary">
                         सभी देखें
                     </a>
                 </div>
@@ -304,7 +304,7 @@
 <script>
 function deleteFarmer(id, name) {
     document.getElementById('farmerName').textContent = name;
-    document.getElementById('confirmDeleteBtn').href = '/farmers/' + id + '/delete';
+    document.getElementById('confirmDeleteBtn').href='http://localhost.//farmers/' + id + '/delete';
     $('#deleteModal').modal('show');
 }
 </script>

@@ -9,7 +9,7 @@ class ImageHelper
 {
     public static function responsiveImage($filename, $alt = '', $class = '')
     {
-        $baseUrl = '/apsdreamhome/public/assets/images';
+        $baseUrl = 'http://localhost./public/assets/images';
         $optimizedPath = $baseUrl . '/optimized/' . $filename;
         $thumbnailPath = $baseUrl . '/thumbnails/' . $filename;
         $webpPath = $baseUrl . '/optimized/' . pathinfo($filename, PATHINFO_FILENAME) . '.webp';
@@ -30,16 +30,16 @@ HTML;
     public static function getWebpUrl($filename)
     {
         $webpFilename = pathinfo($filename, PATHINFO_FILENAME) . '.webp';
-        return '/apsdreamhome/public/assets/images/optimized/' . $webpFilename;
+        return 'http://localhost./public/assets/images/optimized/' . $webpFilename;
     }
 
     public static function getOptimizedUrl($filename)
     {
-        return '/apsdreamhome/public/assets/images/optimized/' . $filename;
+        return 'http://localhost./public/assets/images/optimized/' . $filename;
     }
 
     public static function getThumbnailUrl($filename)
     {
-        return '/apsdreamhome/public/assets/images/thumbnails/' . $filename;
+        return 'http://localhost./public/assets/images/thumbnails/' . $filename;
     }
 }

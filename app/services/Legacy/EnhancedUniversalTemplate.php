@@ -60,9 +60,9 @@ class EnhancedUniversalTemplate {
                 <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>css/style.css">
                 <link rel="stylesheet" href="<?php echo ASSETS_URL; ?>css/property-cards.css">
             <?php else: ?>
-                <link rel="stylesheet" href="/apsdreamhome/public/assets/css/modern-design-system.css">
-                <link rel="stylesheet" href="/apsdreamhome/public/assets/css/style.css">
-                <link rel="stylesheet" href="/apsdreamhome/public/assets/css/property-cards.css">
+                <link rel="stylesheet" href="http://localhost./public/assets/css/modern-design-system.css">
+                <link rel="stylesheet" href="http://localhost./public/assets/css/style.css">
+                <link rel="stylesheet" href="http://localhost./public/assets/css/property-cards.css">
             <?php endif; ?>
 
         <style>
@@ -366,7 +366,7 @@ class EnhancedUniversalTemplate {
             <?php if (defined('ASSETS_URL')): ?>
                 <script src="<?php echo ASSETS_URL; ?>js/script.js"></script>
             <?php else: ?>
-                <script src="/apsdreamhome/public/assets/js/script.js"></script>
+                <script src="http://localhost./public/assets/js/script.js"></script>
             <?php endif; ?>
 
             <script>

@@ -146,8 +146,8 @@ try {
     $total = $count_result->fetch(PDO::FETCH_ASSOC)['total'];
 
     echo "<p><strong>Total Properties Available: {$total}</strong></p>\n";
-    echo "<p><a href='properties.php' class='btn btn-primary'>View Properties Page</a></p>\n";
-    echo "<p><a href='admin_panel.php' class='btn btn-success'>Go to Admin Panel</a></p>\n";
+    echo "<p><a href='http://localhost./properties.php' class='btn btn-primary'>View Properties Page</a></p>\n";
+    echo "<p><a href='http://localhost./admin_panel.php' class='btn btn-success'>Go to Admin Panel</a></p>\n";
 
 } catch (PDOException $e) {
     echo "<h3>❌ Database Error:</h3>\n";

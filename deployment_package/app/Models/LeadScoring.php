@@ -241,7 +241,7 @@ class LeadScoring extends Model
     {
         $decayRules = $this->query(
             "SELECT * FROM lead_scoring_history
-             WHERE lead_id = ? AND action = 'scored' AND applied_at < DATE_SUB(NOW(), INTERVAL 1 DAY)
+             WHERE lead_id = ? AND action='http://localhost./scored' AND applied_at < DATE_SUB(NOW(), INTERVAL 1 DAY)
              ORDER BY applied_at DESC LIMIT 10",
             [$leadId]
         )->fetchAll();
@@ -412,7 +412,7 @@ class LeadScoring extends Model
             "SELECT lsr.rule_name, COUNT(lsh.id) as applications, AVG(lsh.points_change) as avg_points
              FROM lead_scoring_history lsh
              LEFT JOIN lead_scoring_rules lsr ON lsh.rule_id = lsr.id
-             WHERE lsh.applied_at >= ? AND lsh.action = 'scored'
+             WHERE lsh.applied_at >= ? AND lsh.action='http://localhost./scored'
              GROUP BY lsr.id, lsr.rule_name
              ORDER BY applications DESC LIMIT 10",
             [$startDate]

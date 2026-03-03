@@ -21,7 +21,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="/customer/register">
+                    <form method="POST" action="http://localhost.//customer/register">
                         <?php echo csrf_field(); ?>
                         <div class="row">
                             <div class="col-md-12 mb-4">
@@ -107,7 +107,7 @@
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="terms" name="terms" required>
                                 <label class="custom-control-label" for="terms">
-                                    I agree to the <a href="/terms" target="_blank">Terms and Conditions</a>
+                                    I agree to the <a href="http://localhost.//terms" target="_blank">Terms and Conditions</a>
                                 </label>
                             </div>
                         </div>
@@ -120,7 +120,7 @@
                 <div class="card-footer text-center bg-light">
                     <small class="text-muted">
                         Already have an account?
-                        <a href="/customer/login" class="text-primary font-weight-bold">Login here</a>
+                        <a href="http://localhost.//customer/login" class="text-primary font-weight-bold">Login here</a>
                     </small>
                 </div>
             </div>

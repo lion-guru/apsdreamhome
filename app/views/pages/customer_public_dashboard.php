@@ -160,7 +160,7 @@ $inquiries_result = $conn->query("SELECT * FROM customer_inquiries WHERE custome
                                     <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#profileModal">
                                         <i class="fas fa-edit me-1"></i>Edit Profile
                                     </button>
-                                    <a href="auth/logout.php" class="btn btn-outline-light">
+                                    <a href="http://localhost./auth/logout.php" class="btn btn-outline-light">
                                         <i class="fas fa-sign-out-alt me-1"></i>Logout
                                     </a>
                                 </div>

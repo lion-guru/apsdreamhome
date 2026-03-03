@@ -18,7 +18,7 @@
                             <i class="fas fa-calculator fa-4x text-muted mb-4"></i>
                             <h4 class="text-gray-800">अभी तक कोई रिकॉर्ड नहीं है!</h4>
                             <p class="text-muted">EMI कैलकुलेटर का उपयोग करें और अपनी गणनाओं को यहाँ सेव करें।</p>
-                            <a href="/customer/emi-calculator" class="btn btn-primary mt-3">कैलकुलेटर पर जाएं</a>
+                            <a href="http://localhost.//customer/emi-calculator" class="btn btn-primary mt-3">कैलकुलेटर पर जाएं</a>
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">

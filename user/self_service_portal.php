@@ -122,7 +122,7 @@ try {
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Welcome, <?= htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8') ?></h2>
-            <a href="/logout.php" class="btn btn-outline-danger">Logout</a>
+            <a href="http://localhost.//logout.php" class="btn btn-outline-danger">Logout</a>
         </div>
 
         <div class="card mb-4">
@@ -180,7 +180,7 @@ try {
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Recent Notifications</h5>
-                <a href="/notifications.php" class="btn btn-sm btn-outline-primary">View All</a>
+                <a href="http://localhost.//notifications.php" class="btn btn-sm btn-outline-primary">View All</a>
             </div>
             <div class="card-body">
                 <?php if (count($notifications) > 0): ?>

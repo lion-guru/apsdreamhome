@@ -5,12 +5,12 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Booking Management')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Bookings')); ?></li>
                 </ul>
             </div>
             <div class="col-auto">
-                <a href="/admin/bookings/create" class="btn btn-primary">
+                <a href="http://localhost.//admin/bookings/create" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i><?php echo h($mlSupport->translate('Add Booking')); ?>
                 </a>
             </div>
@@ -38,7 +38,7 @@
             <!-- Search and Filter -->
             <div class="card mb-4">
                 <div class="card-body">
-                    <form method="GET" action="/admin/bookings" class="row g-3">
+                    <form method="GET" action="http://localhost.//admin/bookings" class="row g-3">
                         <div class="col-md-5">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="search"
@@ -59,7 +59,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <a href="/admin/bookings" class="btn btn-outline-secondary w-100">
+                            <a href="http://localhost.//admin/bookings" class="btn btn-outline-secondary w-100">
                                 <i class="fas fa-eraser me-2"></i><?php echo h($mlSupport->translate('Clear')); ?>
                             </a>
                         </div>

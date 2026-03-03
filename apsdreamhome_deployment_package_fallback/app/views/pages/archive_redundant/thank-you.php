@@ -43,10 +43,10 @@ ob_start();
                 </div>
 
                 <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="index.php" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm">
+                    <a href="http://localhost./index.php" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm">
                         <i class="fas fa-home me-2"></i> Back to Home
                     </a>
-                    <a href="properties.php" class="btn btn-outline-dark rounded-pill px-5 py-3 fw-bold">
+                    <a href="http://localhost./properties.php" class="btn btn-outline-dark rounded-pill px-5 py-3 fw-bold">
                         <i class="fas fa-search me-2"></i> Browse Properties
                     </a>
                 </div>

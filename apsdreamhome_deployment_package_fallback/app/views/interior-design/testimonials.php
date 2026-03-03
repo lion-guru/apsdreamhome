@@ -37,7 +37,7 @@
         </div>
 
         <div class="text-center mt-4">
-            <a href="testimonials" class="btn btn-outline-primary">View All Testimonials</a>
+            <a href="http://localhost./testimonials" class="btn btn-outline-primary">View All Testimonials</a>
         </div>
     </div>
 </section>

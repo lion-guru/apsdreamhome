@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     <?php endif; ?>
                     
-                    <form action="support.php" method="post" id="supportForm">
+                    <form action="http://localhost./support.php" method="post" id="supportForm">
                         <div class="mb-3">
                             <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
                             <input type="text" class="form-control form-control-lg" id="subject" name="subject" required 
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ?>
                     
                     <div class="text-end mt-3">
-                        <a href="support_tickets.php" class="btn btn-outline-primary btn-sm">
+                        <a href="http://localhost./support_tickets.php" class="btn btn-outline-primary btn-sm">
                             View All Tickets <i class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>

@@ -11,8 +11,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($page_title); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/customers"><?php echo h($mlSupport->translate('Customers')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/customers"><?php echo h($mlSupport->translate('Customers')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Profile')); ?></li>
                 </ul>
             </div>
@@ -26,7 +26,7 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-auto">
-                            <img class="rounded-circle" alt="User Image" src="/assets/img/profiles/<?php echo h($customer['profile_image'] ?? 'default-avatar.jpg'); ?>" width="80" height="80" onerror="this.src='/assets/img/profiles/default-avatar.jpg'">
+                            <img class="rounded-circle" alt="User Image" src="/assets/img/profiles/<?php echo h($customer['profile_image'] ?? 'default-avatar.jpg'); ?>" width="80" height="80" onerror="this.src='http://localhost.//assets/img/profiles/default-avatar.jpg'">
                         </div>
                         <div class="col">
                             <h4 class="user-name mb-0"><?php echo h($customer['name'] ?? 'N/A'); ?></h4>

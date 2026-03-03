@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Edit Land Record')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/land"><?php echo h($mlSupport->translate('Land Records')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/land"><?php echo h($mlSupport->translate('Land Records')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Edit')); ?></li>
                 </ul>
             </div>
@@ -183,7 +183,7 @@
 
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary"><?php echo h($mlSupport->translate('Update Record')); ?></button>
-                            <a href="/admin/land" class="btn btn-secondary"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/land" class="btn btn-secondary"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

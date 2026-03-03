@@ -205,10 +205,10 @@
 </div>
 
 <!-- Include JavaScript -->
-<script src="/assets/js/ai-property-search.js"></script>
+<script src="http://localhost.//assets/js/ai-property-search.js"></script>
 
 <!-- Include CSS -->
-<link rel="stylesheet" href="/assets/css/ai-features.css">
+<link rel="stylesheet" href="http://localhost.//assets/css/ai-features.css">
 
 <!-- Initialize AI Features -->
 <script>

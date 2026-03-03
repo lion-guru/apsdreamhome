@@ -6,7 +6,7 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//associate/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Earnings and Commissions</li>
                 </ol>
             </nav>
@@ -101,7 +101,7 @@
                                 <button type="submit" class="btn btn-primary mr-2">
                                     <i class="fas fa-filter mr-1"></i>फिल्टर
                                 </button>
-                                <a href="/associate/earnings" class="btn btn-secondary">
+                                <a href="http://localhost.//associate/earnings" class="btn btn-secondary">
                                     <i class="fas fa-times mr-1"></i>क्लियर
                                 </a>
                             </div>

@@ -54,11 +54,11 @@ class AssetBundler
 
     public function getMinifiedCSS($filename)
     {
-        return '/apsdreamhome/public/assets/minified/' . $filename . '.min.css';
+        return 'http://localhost./public/assets/minified/' . $filename . '.min.css';
     }
 
     public function getMinifiedJS($filename)
     {
-        return '/apsdreamhome/public/assets/minified/' . $filename . '.min.js';
+        return 'http://localhost./public/assets/minified/' . $filename . '.min.js';
     }
 }

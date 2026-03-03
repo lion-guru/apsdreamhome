@@ -348,7 +348,7 @@ try {
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="index.php">
+            <a class="navbar-brand fw-bold" href="http://localhost./index.php">
                 <i class="fas fa-home me-2"></i>APS Dream Homes Pvt Ltd
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -357,24 +357,24 @@ try {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
+                        <a class="nav-link" href="http://localhost./index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="properties.php">Properties</a>
+                        <a class="nav-link" href="http://localhost./properties.php">Properties</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.php">About</a>
+                        <a class="nav-link" href="http://localhost./about.php">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="contact.php">Contact</a>
+                        <a class="nav-link active" href="http://localhost./contact.php">Contact</a>
                     </li>
                 </ul>
                 <div class="d-flex">
                     <a href="tel:<?php echo $settings['company_phone'] ?? '+91-9554000001'; ?>" class="btn btn-outline-success me-2">
                         <i class="fas fa-phone me-1"></i><?php echo $settings['company_phone'] ?? '+91-9554000001'; ?>
                     </a>
-                    <a href="customer_login.php" class="btn btn-outline-light me-2">Login</a>
-                    <a href="customer_registration.php" class="btn btn-success">Register</a>
+                    <a href="http://localhost./customer_login.php" class="btn btn-outline-light me-2">Login</a>
+                    <a href="http://localhost./customer_registration.php" class="btn btn-success">Register</a>
                 </div>
             </div>
         </div>
@@ -476,7 +476,7 @@ try {
                                 </div>
                             </div>
 
-                            <form id="contactForm" method="POST" action="process_contact.php" class="needs-validation" novalidate>
+                            <form id="contactForm" method="POST" action="http://localhost./process_contact.php" class="needs-validation" novalidate>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
@@ -864,10 +864,10 @@ try {
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h5 class="mb-3">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="index.php" class="text-white-50">Home</a></li>
-                        <li class="mb-2"><a href="properties.php" class="text-white-50">Properties</a></li>
-                        <li class="mb-2"><a href="about.php" class="text-white-50">About Us</a></li>
-                        <li class="mb-2"><a href="contact.php" class="text-white-50">Contact</a></li>
+                        <li class="mb-2"><a href="http://localhost./index.php" class="text-white-50">Home</a></li>
+                        <li class="mb-2"><a href="http://localhost./properties.php" class="text-white-50">Properties</a></li>
+                        <li class="mb-2"><a href="http://localhost./about.php" class="text-white-50">About Us</a></li>
+                        <li class="mb-2"><a href="http://localhost./contact.php" class="text-white-50">Contact</a></li>
                     </ul>
                 </div>
 

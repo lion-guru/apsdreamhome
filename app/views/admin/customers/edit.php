@@ -11,8 +11,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($page_title); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/customers"><?php echo h($mlSupport->translate('Customers')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/customers"><?php echo h($mlSupport->translate('Customers')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Edit Customer')); ?></li>
                 </ul>
             </div>
@@ -124,7 +124,7 @@
 
                         <div class="form-group mt-4 mb-0">
                             <button class="btn btn-primary btn-lg" type="submit"><?php echo h($mlSupport->translate('Update Customer')); ?></button>
-                            <a href="/admin/customers" class="btn btn-secondary btn-lg"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/customers" class="btn btn-secondary btn-lg"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

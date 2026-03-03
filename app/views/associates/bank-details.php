@@ -1,4 +1,4 @@
-<script src="/public/assets/js/location-bank-helper.js"></script>
+<script src="http://localhost.//public/assets/js/location-bank-helper.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Placeholder functions if they don't exist in other scripts

@@ -42,7 +42,7 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2><i class="fas fa-user-tie me-2"></i>Lead Management</h2>
-            <a href="/leads/create" class="btn btn-primary">
+            <a href="http://localhost.//leads/create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Add New Lead
             </a>
         </div>
@@ -88,7 +88,7 @@
                     <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-search me-1"></i>Filter
                     </button>
-                    <a href="/leads" class="btn btn-outline-secondary">
+                    <a href="http://localhost.//leads" class="btn btn-outline-secondary">
                         <i class="fas fa-undo me-1"></i>Reset
                     </a>
                 </div>
@@ -215,7 +215,7 @@
                         <i class="fas fa-users fa-3x text-muted mb-3"></i>
                         <h4 class="text-muted">No leads found</h4>
                         <p class="text-muted">Get started by adding your first lead.</p>
-                        <a href="/leads/create" class="btn btn-primary">
+                        <a href="http://localhost.//leads/create" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add New Lead
                         </a>
                     </div>

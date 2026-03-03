@@ -337,7 +337,7 @@ function getPropertyStatistics() {
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="associate_dashboard.php">
+            <a class="navbar-brand fw-bold" href="http://localhost./associate_dashboard.php">
                 <i class="fas fa-home me-2"></i>APS Dream Homes
             </a>
             <div class="navbar-nav ms-auto">
@@ -347,17 +347,17 @@ function getPropertyStatistics() {
                         <?php echo htmlspecialchars($associate_name); ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="associate_dashboard.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_dashboard.php">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a></li>
-                        <li><a class="dropdown-item" href="development_cost_calculator.php">
+                        <li><a class="dropdown-item" href="http://localhost./development_cost_calculator.php">
                             <i class="fas fa-calculator me-2"></i>Cost Calculator
                         </a></li>
-                        <li><a class="dropdown-item" href="property_management.php">
+                        <li><a class="dropdown-item" href="http://localhost./property_management.php">
                             <i class="fas fa-building me-2"></i>Property Management
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="associate_logout.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_logout.php">
                             <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </a></li>
                     </ul>
@@ -551,13 +551,13 @@ function getPropertyStatistics() {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="text-center">
-                                    <a href="development_cost_calculator.php" class="btn btn-primary-custom me-2">
+                                    <a href="http://localhost./development_cost_calculator.php" class="btn btn-primary-custom me-2">
                                         <i class="fas fa-calculator me-2"></i>Calculate Plot Rate
                                     </a>
-                                    <a href="property_management.php" class="btn btn-primary-custom me-2">
+                                    <a href="http://localhost./property_management.php" class="btn btn-primary-custom me-2">
                                         <i class="fas fa-building me-2"></i>Manage Properties
                                     </a>
-                                    <a href="commission_plan_manager.php" class="btn btn-primary-custom">
+                                    <a href="http://localhost./commission_plan_manager.php" class="btn btn-primary-custom">
                                         <i class="fas fa-cog me-2"></i>Manage Plans
                                     </a>
                                 </div>

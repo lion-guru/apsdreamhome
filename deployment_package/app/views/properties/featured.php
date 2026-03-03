@@ -62,7 +62,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                     <i class="fas fa-home mr-2"></i>
                     Featured Properties
                 </h1>
-                <a href="/properties" class="btn btn-outline-primary">
+                <a href="http://localhost.//properties" class="btn btn-outline-primary">
                     <i class="fas fa-th-list mr-2"></i>View All Properties
                 </a>
             </div>
@@ -78,7 +78,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <i class="fas fa-home fa-4x text-muted mb-4"></i>
                         <h4 class="text-muted">No featured properties found</h4>
                         <p class="text-muted mb-4">No properties have been featured yet.</p>
-                        <a href="/properties" class="btn btn-primary">
+                        <a href="http://localhost.//properties" class="btn btn-primary">
                             <i class="fas fa-search mr-2"></i>View Properties
                         </a>
                     </div>
@@ -215,7 +215,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <p class="card-text">
                             Find your favorite property from thousands of listings
                         </p>
-                        <a href="/properties" class="btn btn-light btn-lg">
+                        <a href="http://localhost.//properties" class="btn btn-light btn-lg">
                             <i class="fas fa-th-list mr-2"></i>View All Properties
                         </a>
                     </div>

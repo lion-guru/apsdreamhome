@@ -6,7 +6,7 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/farmers">किसान</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//farmers">किसान</a></li>
                     <li class="breadcrumb-item"><a href="/farmers/<?= $farmer['id'] ?>">
                         <?= htmlspecialchars($farmer['name']) ?>
                     </a></li>

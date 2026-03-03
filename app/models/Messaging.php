@@ -277,7 +277,7 @@ class Messaging extends Model
         if ($existing) {
             // Remove reaction
             $db->query("DELETE FROM message_reactions WHERE id = ?", [$existing['id']]);
-            $action = 'removed';
+            $action='http://localhost./removed';
         } else {
             // Add reaction
             $db->query(
@@ -285,7 +285,7 @@ class Messaging extends Model
                  VALUES (?, ?, ?, ?)",
                 [$messageId, $userId, $userType, $reactionType]
             );
-            $action = 'added';
+            $action='http://localhost./added';
         }
 
         return [

@@ -15,7 +15,7 @@
                         <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
                     <?php endif; ?>
 
-                    <form action="/auth/reset-password" method="POST">
+                    <form action="http://localhost.//auth/reset-password" method="POST">
                         <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? ''); ?>">
 
                         <div class="mb-3">
@@ -38,7 +38,7 @@
 
                     <div class="text-center mt-4">
                         <p class="mb-0">
-                            <a href="/login" class="text-decoration-none">Back to Login</a>
+                            <a href="http://localhost.//login" class="text-decoration-none">Back to Login</a>
                         </p>
                     </div>
                 </div>

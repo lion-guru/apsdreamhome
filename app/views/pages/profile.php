@@ -83,7 +83,7 @@ ob_start();
             </div>
         </div>
         <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end mt-4 mt-md-0">
-            <a href="edit-profile.php" class="btn btn-primary rounded-pill px-4 shadow-sm me-2">
+            <a href="http://localhost./edit-profile.php" class="btn btn-primary rounded-pill px-4 shadow-sm me-2">
                 <i class="fas fa-edit me-2"></i>Edit Profile
             </a>
             <a href="<?= h($user_data['utype']) ?>_dashboard.php" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">

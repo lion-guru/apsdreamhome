@@ -4,14 +4,14 @@
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2 fw-bold">Add New Payment</h1>
-    <a href="/admin/payments" class="btn btn-outline-secondary">
+    <a href="http://localhost.//admin/payments" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left me-1"></i> Back to Payments
     </a>
 </div>
 
 <div class="card shadow-sm border-0">
     <div class="card-body p-4">
-        <form id="addPaymentForm" action="/admin/payments/store" method="POST">
+        <form id="addPaymentForm" action="http://localhost.//admin/payments/store" method="POST">
             <!-- CSRF Token -->
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
             
@@ -129,7 +129,7 @@ $(document).ready(function() {
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = '/admin/payments';
+                        window.location.href='http://localhost.//admin/payments';
                     });
                 } else {
                     Swal.fire({

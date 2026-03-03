@@ -103,8 +103,8 @@
         </div>
         
         <div class="btn-group">
-            <a href="/user/dashboard" class="btn btn-primary">Go to Dashboard</a>
-            <a href="/properties" class="btn btn-outline">Browse More</a>
+            <a href="http://localhost.//user/dashboard" class="btn btn-primary">Go to Dashboard</a>
+            <a href="http://localhost.//properties" class="btn btn-outline">Browse More</a>
         </div>
     </div>
 </div>

@@ -220,7 +220,7 @@ try {
                         <h2 id="page-title">Dashboard Overview</h2>
                         <div class="d-flex align-items-center">
                             <span class="me-3">Welcome, <?php echo $_SESSION['admin_username'] ?? 'Admin'; ?></span>
-                            <a href="logout.php" class="btn btn-outline-danger btn-sm">
+                            <a href="http://localhost./logout.php" class="btn btn-outline-danger btn-sm">
                                 <i class="fas fa-sign-out-alt me-1"></i>Logout
                             </a>
                         </div>

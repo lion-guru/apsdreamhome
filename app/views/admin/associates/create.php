@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Add Associate')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Add Associate')); ?></li>
                 </ul>
             </div>
@@ -23,7 +23,7 @@
         <div class="col-md-12">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <form action="/admin/associates/store" method="POST" class="needs-validation" novalidate>
+                    <form action="http://localhost.//admin/associates/store" method="POST" class="needs-validation" novalidate>
                         <?php echo csrf_field(); ?>
                         <div class="row">
                             <div class="col-md-6">
@@ -76,7 +76,7 @@
                         </div>
                         <div class="submit-section mt-4">
                             <button type="submit" class="btn btn-primary submit-btn"><?php echo h($mlSupport->translate('Create Associate')); ?></button>
-                            <a href="/admin/associates" class="btn btn-secondary submit-btn"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/associates" class="btn btn-secondary submit-btn"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

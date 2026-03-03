@@ -476,7 +476,7 @@ $current_year = date('Y');
 
                             <div class="text-center mt-3">
                                 <small class="text-muted">
-                                    Already have an account? <a href="builder_login.php">Login here</a>
+                                    Already have an account? <a href="http://localhost./builder_login.php">Login here</a>
                                 </small>
                             </div>
                         </form>

@@ -76,14 +76,14 @@
                                 </div>
 
                                 <div class="mt-5 text-center">
-                                    <img src="/assets/images/logo.png" alt="APS Dream Home" class="img-fluid" style="max-height: 100px; opacity: 0.8;">
+                                    <img src="http://localhost.//assets/images/logo.png" alt="APS Dream Home" class="img-fluid" style="max-height: 100px; opacity: 0.8;">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Registration Form Column -->
                         <div class="col-lg-8">
-                            <form method="POST" action="/associate/store" class="needs-validation" novalidate>
+                            <form method="POST" action="http://localhost.//associate/store" class="needs-validation" novalidate>
                                 <h4 class="text-primary mb-4 border-bottom pb-2">Personal Information</h4>
                                 
                                 <div class="row g-3">
@@ -160,7 +160,7 @@
                 </div>
                 
                 <div class="card-footer bg-light text-center py-3">
-                    <p class="mb-0 text-muted">Already have an account? <a href="/associate/login" class="text-primary fw-bold text-decoration-none">Login Here</a></p>
+                    <p class="mb-0 text-muted">Already have an account? <a href="http://localhost.//associate/login" class="text-primary fw-bold text-decoration-none">Login Here</a></p>
                 </div>
             </div>
         </div>

@@ -71,8 +71,8 @@ class PaymentController extends AdminController
             foreach ($payments as $payment) {
                 $actions = '<div class="btn-group">';
                 $actions .= '<button type="button" class="btn btn-sm btn-info" onclick="viewPayment(' . $payment['id'] . ')" title="View"><i class="fas fa-eye"></i></button>';
-                $actions .= '<a href="/admin/payments/edit/' . $payment['id'] . '" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>';
-                $actions .= '<a href="/admin/payments/receipt/' . $payment['id'] . '" class="btn btn-sm btn-secondary" title="Receipt" target="_blank"><i class="fas fa-file-invoice"></i></a>';
+                $actions .= '<a href="http://localhost.//admin/payments/edit/' . $payment['id'] . '" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>';
+                $actions .= '<a href="http://localhost.//admin/payments/receipt/' . $payment['id'] . '" class="btn btn-sm btn-secondary" title="Receipt" target="_blank"><i class="fas fa-file-invoice"></i></a>';
                 $actions .= '<button type="button" class="btn btn-sm btn-danger" onclick="deletePayment(' . $payment['id'] . ')" title="Delete"><i class="fas fa-trash"></i></button>';
                 $actions .= '</div>';
 

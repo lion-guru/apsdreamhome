@@ -40,7 +40,7 @@ $maxPrice = htmlspecialchars($_GET['max_price'] ?? '');
                     <h5 class="mb-0">Filters</h5>
                 </div>
                 <div class="card-body">
-                    <form method="GET" action="/properties" class="vstack gap-3">
+                    <form method="GET" action="http://localhost.//properties" class="vstack gap-3">
                         <div>
                             <label for="location" class="form-label fw-semibold text-secondary">Location</label>
                             <input type="text" class="form-control" id="location" name="location" placeholder="City or area" value="<?php echo $locationValue; ?>">
@@ -82,7 +82,7 @@ $maxPrice = htmlspecialchars($_GET['max_price'] ?? '');
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Apply filters</button>
-                            <a href="/properties" class="btn btn-outline-secondary">Clear all</a>
+                            <a href="http://localhost.//properties" class="btn btn-outline-secondary">Clear all</a>
                         </div>
                     </form>
                 </div>
@@ -97,7 +97,7 @@ $maxPrice = htmlspecialchars($_GET['max_price'] ?? '');
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <form method="GET" action="/properties" class="vstack gap-3">
+                    <form method="GET" action="http://localhost.//properties" class="vstack gap-3">
                         <div>
                             <label for="location-mobile" class="form-label fw-semibold text-secondary">Location</label>
                             <input type="text" class="form-control" id="location-mobile" name="location" value="<?php echo $locationValue; ?>">
@@ -124,7 +124,7 @@ $maxPrice = htmlspecialchars($_GET['max_price'] ?? '');
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Apply filters</button>
-                            <a href="/properties" class="btn btn-outline-secondary">Clear all</a>
+                            <a href="http://localhost.//properties" class="btn btn-outline-secondary">Clear all</a>
                         </div>
                     </form>
                 </div>
@@ -193,7 +193,7 @@ $maxPrice = htmlspecialchars($_GET['max_price'] ?? '');
             <?php else: ?>
                 <div class="alert alert-info border-0 rounded-4" role="alert">
                     <i class="fas fa-info-circle me-2"></i>No properties found matching your criteria.
-                    <a href="/properties" class="ms-2 text-decoration-none">Reset filters</a>
+                    <a href="http://localhost.//properties" class="ms-2 text-decoration-none">Reset filters</a>
                 </div>
             <?php endif; ?>
 

@@ -10,8 +10,8 @@
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Edit Property')); ?></h3>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                        <li class="breadcrumb-item"><a href="/admin/properties"><?php echo h($mlSupport->translate('Properties')); ?></a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost.//admin/properties"><?php echo h($mlSupport->translate('Properties')); ?></a></li>
                         <li class="breadcrumb-item active" aria-current="page"><?php echo h($mlSupport->translate('Edit Property')); ?></li>
                     </ol>
                 </nav>

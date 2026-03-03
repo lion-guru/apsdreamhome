@@ -10,7 +10,7 @@
                             <p class="card-text mb-0">आपकी सभी प्रॉपर्टी बुकिंग्स और साइट विजिट्स की स्थिति यहाँ देखें।</p>
                         </div>
                         <div class="col-md-4 text-right">
-                            <a href="/customer/properties" class="btn btn-light">
+                            <a href="http://localhost.//customer/properties" class="btn btn-light">
                                 <i class="fas fa-plus mr-1"></i> नई बुकिंग करें
                             </a>
                         </div>
@@ -25,7 +25,7 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <form action="/customer/bookings" method="GET" class="row">
+                    <form action="http://localhost.//customer/bookings" method="GET" class="row">
                         <div class="col-md-3 mb-3">
                             <label class="small font-weight-bold">स्टेटस</label>
                             <select name="status" class="form-control">
@@ -46,7 +46,7 @@
                         </div>
                         <div class="col-md-3 mb-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary mr-2">फिल्टर करें</button>
-                            <a href="/customer/bookings" class="btn btn-secondary">रीसेट</a>
+                            <a href="http://localhost.//customer/bookings" class="btn btn-secondary">रीसेट</a>
                         </div>
                     </form>
                 </div>
@@ -127,7 +127,7 @@ function cancelBooking(bookingId) {
     if (confirm('क्या आप वाकई इस बुकिंग को कैंसिल करना चाहते हैं?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/customer/cancel-booking/' + bookingId;
+        form.action='http://localhost.//customer/cancel-booking/' + bookingId;
         document.body.appendChild(form);
         form.submit();
     }

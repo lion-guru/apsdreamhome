@@ -5,12 +5,12 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Plot Management')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Plots')); ?></li>
                 </ul>
             </div>
             <div class="col-auto float-end ms-auto">
-                <a href="/admin/plots/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i> <?php echo h($mlSupport->translate('Add Plot')); ?></a>
+                <a href="http://localhost.//admin/plots/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i> <?php echo h($mlSupport->translate('Add Plot')); ?></a>
             </div>
         </div>
     </div>

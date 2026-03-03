@@ -529,8 +529,8 @@ function handleSendMessage($conn, $data) {
                         <?php echo htmlspecialchars($associate_name); ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="associate_portal.php"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                        <li><a class="dropdown-item" href="associate_logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item" href="http://localhost./associate_portal.php"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                        <li><a class="dropdown-item" href="http://localhost./associate_logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -579,7 +579,7 @@ function handleSendMessage($conn, $data) {
                             <i class="fas fa-chart-bar"></i> Reports
                         </a>
                         <hr>
-                        <a href="properties.php" target="_blank" class="nav-link">
+                        <a href="http://localhost./properties.php" target="_blank" class="nav-link">
                             <i class="fas fa-building"></i> Properties
                         </a>
                     </nav>

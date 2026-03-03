@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Edit Associate')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Edit Associate')); ?></li>
                 </ul>
             </div>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="submit-section mt-4">
                             <button type="submit" class="btn btn-primary submit-btn"><?php echo h($mlSupport->translate('Update Associate')); ?></button>
-                            <a href="/admin/associates" class="btn btn-secondary submit-btn"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/associates" class="btn btn-secondary submit-btn"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

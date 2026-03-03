@@ -390,16 +390,16 @@ try {
                         <?php echo htmlspecialchars($associate_name); ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="associate_crm.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_crm.php">
                             <i class="fas fa-users me-2"></i>Associate CRM
                         </a></li>
-                        <li><a class="dropdown-item" href="associate_portal.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_portal.php">
                             <i class="fas fa-building me-2"></i>Associate Portal
                         </a></li>
-                        <li><a class="dropdown-item" href="associate_notifications.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_notifications.php">
                             <i class="fas fa-bell me-2"></i>Notifications
                         </a></li>
-                        <li><a class="dropdown-item" href="associate_self_service.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_self_service.php">
                             <i class="fas fa-cog me-2"></i>Self Service
                         </a></li>
                     </ul>
@@ -431,7 +431,7 @@ try {
             <?php endif; ?>
 
             <?php if (isset($accessible_modules['commission_management'])): ?>
-            <a href="commission_dashboard.php"><i class="fas fa-rupee-sign me-2"></i>Commission Dashboard</a>
+            <a href="http://localhost./commission_dashboard.php"><i class="fas fa-rupee-sign me-2"></i>Commission Dashboard</a>
             <?php endif; ?>
 
             <?php if (isset($accessible_modules['reports'])): ?>

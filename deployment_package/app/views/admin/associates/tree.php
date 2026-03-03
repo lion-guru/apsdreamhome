@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Associate Tree View')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Tree View')); ?></li>
                 </ul>
             </div>
@@ -82,7 +82,7 @@
                                         $html .= '<br><small class="text-muted">' . h($member['user_email']) . ' | ' . h($member['user_phone']) . '</small>';
                                         $html .= '<br><span class="text-success small">' . h($mlSupport->translate('Comm')) . ': ₹' . h(number_format($member['total_commission'], 2)) . '</span>';
                                         $html .= '<span class="text-info small ms-3">' . h($mlSupport->translate('Directs')) . ': ' . h($member['direct_downline_count']) . '</span>';
-                                        $html .= ' | <a href="/admin/associates/tree/' . h($member['id']) . '" class="small text-primary">' . h($mlSupport->translate('View Team')) . '</a>';
+                                        $html .= ' | <a href="http://localhost.//admin/associates/tree/' . h($member['id']) . '" class="small text-primary">' . h($mlSupport->translate('View Team')) . '</a>';
                                         $html .= '</div>';
                                         $html .= '</div>';
 

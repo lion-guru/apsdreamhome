@@ -6,7 +6,7 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//associate/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Payout Management</li>
                 </ol>
             </nav>
@@ -84,7 +84,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/associate/request-payout" id="payoutForm">
+                    <form method="POST" action="http://localhost.//associate/request-payout" id="payoutForm">
                         <div class="form-group mb-3">
                             <label for="amount" class="form-label">Withdrawal Amount <span class="text-danger">*</span></label>
                             <div class="input-group">

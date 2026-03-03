@@ -21,7 +21,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="/customer/authenticate">
+                    <form method="POST" action="http://localhost.//customer/authenticate">
                         <div class="form-group mb-4">
                             <label for="email" class="form-label">
                                 <i class="fas fa-envelope mr-2"></i>Email Address
@@ -68,7 +68,7 @@
                         </button>
 
                         <div class="text-center">
-                            <a href="/customer/forgot-password" class="text-muted">
+                            <a href="http://localhost.//customer/forgot-password" class="text-muted">
                                 <i class="fas fa-question-circle mr-1"></i>Forgot Password?
                             </a>
                         </div>
@@ -77,12 +77,12 @@
                 <div class="card-footer text-center bg-light">
                     <small class="text-muted">
                         Don't have an account?
-                        <a href="/customer/register" class="text-primary font-weight-bold">Register here</a>
+                        <a href="http://localhost.//customer/register" class="text-primary font-weight-bold">Register here</a>
                     </small>
                     <br>
                     <small class="text-muted">
                         Are you an Associate?
-                        <a href="/associate/login" class="text-success font-weight-bold">Associate Login</a>
+                        <a href="http://localhost.//associate/login" class="text-success font-weight-bold">Associate Login</a>
                     </small>
                 </div>
             </div>

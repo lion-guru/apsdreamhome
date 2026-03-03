@@ -5,12 +5,12 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('User Management')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Users')); ?></li>
                 </ul>
             </div>
             <div class="col-auto float-end ms-auto">
-                <a href="/admin/users/create" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo h($mlSupport->translate('Add User')); ?></a>
+                <a href="http://localhost.//admin/users/create" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo h($mlSupport->translate('Add User')); ?></a>
             </div>
         </div>
     </div>

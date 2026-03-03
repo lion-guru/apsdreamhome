@@ -54,8 +54,8 @@
         <h2>Unauthorized</h2>
         <p>You need to be logged in to access this resource.</p>
         <div>
-            <a href="/" class="btn">Go to Homepage</a>
-            <a href="/login" class="btn">Login</a>
+            <a href="http://localhost.//" class="btn">Go to Homepage</a>
+            <a href="http://localhost.//login" class="btn">Login</a>
         </div>
     </div>
 </body>

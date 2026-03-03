@@ -41,7 +41,7 @@ if (!$project) {
         $page_title = 'Project Not Found | APS Dream Homes';
         $layout = 'modern';
         ob_start();
-        echo '<div class="container py-5 mt-5 text-center"><div class="alert alert-warning py-5 rounded-4 shadow-sm"><i class="fas fa-exclamation-triangle fa-3x mb-3"></i><h3>Project Not Found</h3><p class="mb-4">The project you are looking for does not exist or has been moved.</p><a href="projects.php" class="btn btn-primary rounded-pill px-4">View All Projects</a></div></div>';
+        echo '<div class="container py-5 mt-5 text-center"><div class="alert alert-warning py-5 rounded-4 shadow-sm"><i class="fas fa-exclamation-triangle fa-3x mb-3"></i><h3>Project Not Found</h3><p class="mb-4">The project you are looking for does not exist or has been moved.</p><a href="http://localhost./projects.php" class="btn btn-primary rounded-pill px-4">View All Projects</a></div></div>';
         $content = ob_get_clean();
         require_once __DIR__ . '/../layouts/' . $layout . '.php';
         exit;

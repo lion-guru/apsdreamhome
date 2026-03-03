@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Associate Details')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/associates"><?php echo h($mlSupport->translate('Associates')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Details')); ?></li>
                 </ul>
             </div>
@@ -21,7 +21,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body text-center">
                     <div class="profile-img mb-3">
-                        <img src="/admin-assets/img/profiles/avatar-01.png" class="rounded-circle" width="100" alt="Profile">
+                        <img src="http://localhost.//admin-assets/img/profiles/avatar-01.png" class="rounded-circle" width="100" alt="Profile">
                     </div>
                     <h4 class="mb-1"><?php echo h($associate['user_name']); ?></h4>
                     <p class="text-muted mb-2"><?php echo h($associate['associate_code']); ?></p>

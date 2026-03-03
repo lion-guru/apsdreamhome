@@ -19,8 +19,8 @@ require_once 'includes/templates/header.php';
                 <p class="lead mb-4">Find answers to common questions about our real estate services</p>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a href="index.php" class="text-white">Home</a></li>
-                        <li class="breadcrumb-item"><a href="about.php" class="text-white">About</a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost./index.php" class="text-white">Home</a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost./about.php" class="text-white">About</a></li>
                         <li class="breadcrumb-item active text-white" aria-current="page">FAQs</li>
                     </ol>
                 </nav>
@@ -293,7 +293,7 @@ require_once 'includes/templates/header.php';
                 <h3 class="mb-3">Still have questions?</h3>
                 <p class="lead text-muted mb-4">Our expert team is here to help you with any questions or concerns</p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
-                    <a href="contact.php" class="btn btn-primary btn-lg">
+                    <a href="http://localhost./contact.php" class="btn btn-primary btn-lg">
                         <i class="fas fa-phone me-2"></i>Contact Us
                     </a>
                     <a href="tel:+917007444842" class="btn btn-outline-primary btn-lg">

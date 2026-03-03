@@ -93,17 +93,17 @@ $content = '
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="documents" class="btn btn-success w-100">
+                    <a href="http://localhost./documents" class="btn btn-success w-100">
                         <i class="fas fa-upload me-2"></i>Upload Docs
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="payments" class="btn btn-info w-100">
+                    <a href="http://localhost./payments" class="btn btn-info w-100">
                         <i class="fas fa-credit-card me-2"></i>Make Payment
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="support" class="btn btn-warning w-100">
+                    <a href="http://localhost./support" class="btn btn-warning w-100">
                         <i class="fas fa-headset me-2"></i>Get Support
                     </a>
                 </div>

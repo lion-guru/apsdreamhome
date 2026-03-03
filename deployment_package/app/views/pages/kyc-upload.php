@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.status === 'success') {
                 alert(data.message);
-                window.location.href = '/dashboard';
+                window.location.href='http://localhost.//dashboard';
             } else {
                 alert(data.message);
                 submitBtn.disabled = false;

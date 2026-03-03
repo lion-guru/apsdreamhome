@@ -134,7 +134,7 @@ ob_start();
                     </div>
 
                     <div class="d-grid">
-                        <a href="contact.php" class="btn btn-success rounded-pill py-2 shadow-sm">
+                        <a href="http://localhost./contact.php" class="btn btn-success rounded-pill py-2 shadow-sm">
                             <i class="fas fa-comment-dots me-2"></i>Ask a Question
                         </a>
                     </div>

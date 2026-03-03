@@ -110,7 +110,7 @@ ob_start();
             <p class="text-muted">Keep your account information up to date.</p>
         </div>
         <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end mt-4 mt-md-0">
-            <a href="profile.php" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+            <a href="http://localhost./profile.php" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
                 <i class="fas fa-arrow-left me-2"></i>Back to Profile
             </a>
         </div>

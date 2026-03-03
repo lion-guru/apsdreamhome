@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?= h($mlSupport->translate('Add New Expense')) ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/accounting"><?= h($mlSupport->translate('Accounting')) ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/accounting"><?= h($mlSupport->translate('Accounting')) ?></a></li>
                     <li class="breadcrumb-item active"><?= h($mlSupport->translate('Add Expense')) ?></li>
                 </ul>
             </div>
@@ -16,7 +16,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <form action="/admin/accounting/expense/store" method="POST" class="needs-validation" novalidate>
+                    <form action="http://localhost.//admin/accounting/expense/store" method="POST" class="needs-validation" novalidate>
                         <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
 
                         <div class="row mb-3">
@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="text-end">
-                            <a href="/admin/accounting" class="btn btn-secondary me-2"><?= h($mlSupport->translate('Cancel')) ?></a>
+                            <a href="http://localhost.//admin/accounting" class="btn btn-secondary me-2"><?= h($mlSupport->translate('Cancel')) ?></a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i><?= h($mlSupport->translate('Save Expense')) ?>
                             </button>

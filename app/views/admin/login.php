@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($page_title) ? h($page_title) : 'Admin Login - APS Dream Homes'; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/css/admin-login.css" rel="stylesheet">
+    <link href="http://localhost.//assets/css/admin-login.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -53,7 +53,7 @@
         <div class="alert alert-danger"><?php echo h($error); ?></div>
         <?php endif; ?>
 
-        <form action="/admin/login" method="post" autocomplete="off" novalidate>
+        <form action="http://localhost.//admin/login" method="post" autocomplete="off" novalidate>
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="username">

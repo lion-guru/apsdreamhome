@@ -9,7 +9,7 @@
                     <i class="fas fa-user-plus mr-2"></i>
                     नया किसान जोड़ें
                 </h1>
-                <a href="/farmers" class="btn btn-secondary">
+                <a href="http://localhost.//farmers" class="btn btn-secondary">
                     <i class="fas fa-arrow-left mr-2"></i>वापस जाएं
                 </a>
             </div>
@@ -26,7 +26,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/farmers/store" id="farmerForm">
+                    <form method="POST" action="http://localhost.//farmers/store" id="farmerForm">
                         <div class="row">
                             <!-- Personal Information -->
                             <div class="col-md-6">
@@ -187,7 +187,7 @@
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="fas fa-save mr-2"></i>किसान रजिस्टर करें
                                 </button>
-                                <a href="/farmers" class="btn btn-secondary btn-lg ml-3">
+                                <a href="http://localhost.//farmers" class="btn btn-secondary btn-lg ml-3">
                                     <i class="fas fa-times mr-2"></i>रद्द करें
                                 </a>
                             </div>

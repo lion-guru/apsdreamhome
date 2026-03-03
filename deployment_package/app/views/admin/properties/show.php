@@ -5,8 +5,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Property Details')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/properties"><?php echo h($mlSupport->translate('Properties')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/properties"><?php echo h($mlSupport->translate('Properties')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('View Property')); ?></li>
                 </ul>
             </div>
@@ -107,7 +107,7 @@
                     </div>
 
                     <div class="text-end mt-4">
-                        <a href="/admin/properties" class="btn btn-secondary"><?php echo h($mlSupport->translate('Back to List')); ?></a>
+                        <a href="http://localhost.//admin/properties" class="btn btn-secondary"><?php echo h($mlSupport->translate('Back to List')); ?></a>
                     </div>
                 </div>
             </div>

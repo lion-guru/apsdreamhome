@@ -31,7 +31,7 @@ if (!isset($title)) {
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" href="http://localhost.//">
                 <i class="fas fa-home me-2"></i>APS Dream Home
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -40,16 +40,16 @@ if (!isset($title)) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" href="http://localhost.//">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/properties">Properties</a>
+                        <a class="nav-link" href="http://localhost.//properties">Properties</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
+                        <a class="nav-link" href="http://localhost.//about">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
+                        <a class="nav-link" href="http://localhost.//contact">Contact</a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li class="nav-item dropdown">
@@ -57,18 +57,18 @@ if (!isset($title)) {
                                 <i class="fas fa-user me-1"></i><?= h($_SESSION['user_name'] ?? 'User') ?>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="http://localhost.//dashboard">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="http://localhost.//profile">Profile</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                                <li><a class="dropdown-item" href="http://localhost.//logout">Logout</a></li>
                             </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="/auth/login">Login</a>
+                            <a class="nav-link" href="http://localhost.//auth/login">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="/auth/register">Register</a>
+                            <a class="btn btn-primary ms-2" href="http://localhost.//auth/register">Register</a>
                         </li>
                     <?php endif; ?>
                 </ul>

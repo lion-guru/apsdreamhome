@@ -281,14 +281,14 @@ $page_title = "Error $error_code - " . $error['title'] . " | APS Dream Home";
 
             <?php if ($error_code === 404): ?>
                 <div class="error-search">
-                    <form action="/search" method="get">
+                    <form action="http://localhost.//search" method="get">
                         <input type="text" name="q" placeholder="Search our website..." aria-label="Search">
                         <button type="submit"><i class="fas fa-search"></i> Search</button>
                     </form>
                 </div>
             <?php endif; ?>
 
-            <a href="index.php" class="btn-home">
+            <a href="http://localhost./index.php" class="btn-home">
                 <i class="fas fa-home"></i> Back to Homepage
             </a>
         </div>

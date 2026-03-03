@@ -219,7 +219,7 @@ AND p.name NOT LIKE '%bulk%';
 -- User gets only view permissions
 INSERT IGNORE INTO `role_permissions` (`role_id`, `permission_id`)
 SELECT 5, p.id FROM `permissions` p
-WHERE p.action = 'view';
+WHERE p.action='http://localhost./view';
 ";
 
 echo "\nAssigning permissions to roles...\n";

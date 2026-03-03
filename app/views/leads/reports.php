@@ -11,7 +11,7 @@
                 </h1>
                 <div class="d-flex">
                     <!-- Date Range Filter -->
-                    <form class="form-inline mr-3" method="GET" action="/leads/reports">
+                    <form class="form-inline mr-3" method="GET" action="http://localhost.//leads/reports">
                         <div class="input-group">
                             <input type="date"
                                    name="start_date"

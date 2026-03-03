@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Post New Job</h1>
-        <a href="/admin/careers" class="btn btn-secondary">
+        <a href="http://localhost.//admin/careers" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to List
         </a>
     </div>
@@ -15,7 +15,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-body">
-            <form action="/admin/careers/store" method="POST">
+            <form action="http://localhost.//admin/careers/store" method="POST">
                 <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
                 
                 <div class="row">

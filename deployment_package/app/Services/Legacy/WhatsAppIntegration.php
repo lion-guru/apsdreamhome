@@ -643,15 +643,15 @@ function getWhatsAppStats() {
         $db = \App\Core\App::database();
 
         // Get total messages sent
-        $total_sent_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'SENT'");
+        $total_sent_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action='http://localhost./SENT'");
         $total_sent = $total_sent_row['count'] ?? 0;
 
         // Get total messages delivered
-        $total_delivered_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'DELIVERED'");
+        $total_delivered_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action='http://localhost./DELIVERED'");
         $total_delivered = $total_delivered_row['count'] ?? 0;
 
         // Get total messages failed
-        $total_failed_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action = 'FAILED'");
+        $total_failed_row = $db->fetch("SELECT COUNT(*) as count FROM whatsapp_logs WHERE action='http://localhost./FAILED'");
         $total_failed = $total_failed_row['count'] ?? 0;
 
         // Get success rate
@@ -659,9 +659,9 @@ function getWhatsAppStats() {
 
         // Get recent activity (last 7 days)
         $recent_query = "SELECT
-            COUNT(CASE WHEN action = 'SENT' THEN 1 END) as sent_7days,
-            COUNT(CASE WHEN action = 'DELIVERED' THEN 1 END) as delivered_7days,
-            COUNT(CASE WHEN action = 'FAILED' THEN 1 END) as failed_7days
+            COUNT(CASE WHEN action='http://localhost./SENT' THEN 1 END) as sent_7days,
+            COUNT(CASE WHEN action='http://localhost./DELIVERED' THEN 1 END) as delivered_7days,
+            COUNT(CASE WHEN action='http://localhost./FAILED' THEN 1 END) as failed_7days
         FROM whatsapp_logs
         WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
 

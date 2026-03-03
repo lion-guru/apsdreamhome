@@ -147,7 +147,7 @@ ob_start();
             <div class="card border-0 shadow-sm rounded-4 h-100">
                 <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold"><i class="fas fa-gem text-warning me-2"></i>Curated Opportunities</h5>
-                    <a href="properties.php" class="btn btn-sm btn-link text-decoration-none p-0">View Marketplace <i class="fas fa-arrow-right ms-1"></i></a>
+                    <a href="http://localhost./properties.php" class="btn btn-sm btn-link text-decoration-none p-0">View Marketplace <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

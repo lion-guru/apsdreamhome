@@ -41,11 +41,11 @@ class AssetOptimizer {
         
         // Check if we need to regenerate
         if (file_exists($output_file) && filemtime($output_file) >= $last_modified) {
-            return '/apsdreamhome/cache/optimized/' . $output_name;
+            return 'http://localhost./cache/optimized/' . $output_name;
         }
         
         file_put_contents($output_file, $combined);
-        return '/apsdreamhome/cache/optimized/' . $output_name;
+        return 'http://localhost./cache/optimized/' . $output_name;
     }
     
     public function optimizeJS($files, $output_name = 'combined.js') {
@@ -67,11 +67,11 @@ class AssetOptimizer {
         
         // Check if we need to regenerate
         if (file_exists($output_file) && filemtime($output_file) >= $last_modified) {
-            return '/apsdreamhome/cache/optimized/' . $output_name;
+            return 'http://localhost./cache/optimized/' . $output_name;
         }
         
         file_put_contents($output_file, $combined);
-        return '/apsdreamhome/cache/optimized/' . $output_name;
+        return 'http://localhost./cache/optimized/' . $output_name;
     }
     
     private function minifyCSS($css) {

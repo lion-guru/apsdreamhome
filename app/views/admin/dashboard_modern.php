@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="/public/css/dashboard.css" rel="stylesheet">
+    <link href="http://localhost.//public/css/dashboard.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -553,7 +553,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-logo">
-                <img src="/public/assets/images/logo/apslogo.png" alt="APS Dream Home">
+                <img src="http://localhost.//public/assets/images/logo/apslogo.png" alt="APS Dream Home">
                 <h3>APS Dream Home</h3>
             </a>
         </div>
@@ -699,7 +699,7 @@
                 </button>
 
                 <div class="user-menu">
-                    <img src="/public/assets/images/user/default-avatar.jpg" alt="User" class="user-avatar">
+                    <img src="http://localhost.//public/assets/images/user/default-avatar.jpg" alt="User" class="user-avatar">
                     <div class="user-info">
                         <span class="user-name">Admin User</span>
                         <span class="user-role">Administrator</span>
@@ -863,7 +863,7 @@
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/public/js/dashboard.js"></script>
+    <script src="http://localhost.//public/js/dashboard.js"></script>
     <script>
         // Mobile Menu Toggle
         document.getElementById('mobileMenuToggle').addEventListener('click', function() {

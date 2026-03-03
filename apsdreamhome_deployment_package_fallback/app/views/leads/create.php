@@ -9,7 +9,7 @@
                     <i class="fas fa-user-tie mr-2"></i>
                     नया लीड बनाएं
                 </h1>
-                <a href="/leads" class="btn btn-secondary">
+                <a href="http://localhost.//leads" class="btn btn-secondary">
                     <i class="fas fa-arrow-left mr-2"></i>सभी लीड्स देखें
                 </a>
             </div>
@@ -26,7 +26,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/leads/store" id="leadForm">
+                    <form method="POST" action="http://localhost.//leads/store" id="leadForm">
                         <div class="row">
                             <!-- Basic Information -->
                             <div class="col-md-6">
@@ -205,7 +205,7 @@
                                 <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="fas fa-save mr-2"></i>लीड बनाएं
                                 </button>
-                                <a href="/leads" class="btn btn-secondary btn-lg ml-3">
+                                <a href="http://localhost.//leads" class="btn btn-secondary btn-lg ml-3">
                                     <i class="fas fa-times mr-2"></i>रद्द करें
                                 </a>
                             </div>

@@ -131,7 +131,7 @@ $relatedProjects = $data['relatedProjects'] ?? [];
                     <h4 class="mb-4">Interested?</h4>
                     <p class="text-muted mb-4">Fill out the form below and our team will get back to you shortly.</p>
                     
-                    <form action="/api/enquiry" method="POST" id="projectEnquiryForm">
+                    <form action="http://localhost.//api/enquiry" method="POST" id="projectEnquiryForm">
                         <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
                         <input type="hidden" name="source" value="project_details">
                         

@@ -11,12 +11,12 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($page_title); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Customers')); ?></li>
                 </ul>
             </div>
             <div class="col-auto float-end ms-auto">
-                <a href="/admin/customers/create" class="btn btn-primary">
+                <a href="http://localhost.//admin/customers/create" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i><?php echo h($mlSupport->translate('Add Customer')); ?>
                 </a>
             </div>
@@ -44,7 +44,7 @@
             <!-- Search and Filter -->
             <div class="card mb-4">
                 <div class="card-body">
-                    <form method="GET" action="/admin/customers" class="row g-3">
+                    <form method="GET" action="http://localhost.//admin/customers" class="row g-3">
                         <div class="col-md-8">
                             <div class="input-group">
                                 <input type="text" class="form-control" name="search"
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <a href="/admin/customers" class="btn btn-outline-secondary w-100">
+                            <a href="http://localhost.//admin/customers" class="btn btn-outline-secondary w-100">
                                 <i class="fas fa-eraser me-2"></i><?php echo h($mlSupport->translate('Clear Filters')); ?>
                             </a>
                         </div>
@@ -92,7 +92,7 @@
                                                     <?php echo h($mlSupport->translate('No customers have been registered yet.')); ?>
                                                 <?php endif; ?>
                                             </p>
-                                            <a href="/admin/customers/create" class="btn btn-primary">
+                                            <a href="http://localhost.//admin/customers/create" class="btn btn-primary">
                                                 <i class="fas fa-plus me-2"></i><?php echo h($mlSupport->translate('Add First Customer')); ?>
                                             </a>
                                         </td>
@@ -104,7 +104,7 @@
                                             <td>
                                                 <h2 class="table-avatar">
                                                     <a href="/admin/customers/show/<?php echo h($customer['id']); ?>" class="avatar avatar-sm me-2">
-                                                        <img class="avatar-img rounded-circle" src="/assets/img/profiles/<?php echo h($customer['profile_image'] ?? 'default-avatar.jpg'); ?>" alt="Customer Image" onerror="this.src='/assets/img/profiles/default-avatar.jpg'">
+                                                        <img class="avatar-img rounded-circle" src="/assets/img/profiles/<?php echo h($customer['profile_image'] ?? 'default-avatar.jpg'); ?>" alt="Customer Image" onerror="this.src='http://localhost.//assets/img/profiles/default-avatar.jpg'">
                                                     </a>
                                                     <a href="/admin/customers/show/<?php echo h($customer['id']); ?>">
                                                         <?php echo h($customer['name'] ?? 'N/A'); ?>
@@ -178,7 +178,7 @@
     function deleteCustomer(id, name) {
         const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
         document.getElementById('deleteModalBody').innerHTML = '<?php echo h($mlSupport->translate('Are you sure you want to delete customer')); ?> <strong>' + name + '</strong>? <?php echo h($mlSupport->translate('This action cannot be undone.')); ?>';
-        document.getElementById('deleteForm').action = '/admin/customers/delete/' + id;
+        document.getElementById('deleteForm').action='http://localhost.//admin/customers/delete/' + id;
         modal.show();
     }
 </script>

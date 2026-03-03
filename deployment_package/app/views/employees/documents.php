@@ -201,7 +201,7 @@
                 <h5 class="modal-title">Upload Document</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/employee/documents/upload" method="POST" enctype="multipart/form-data">
+            <form action="http://localhost.//employee/documents/upload" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">

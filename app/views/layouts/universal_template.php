@@ -456,7 +456,7 @@ class UniversalTemplate {
         ?>
         <nav class="navbar navbar-expand-lg navbar-light fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" href="http://localhost.//">
                     <i class="fas fa-home me-2"></i>APS Dream Home
                 </a>
 
@@ -467,20 +467,20 @@ class UniversalTemplate {
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>" href="/">Home</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>" href="http://localhost.//">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'properties.php') ? 'active' : ''; ?>" href="properties">Properties</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'properties.php') ? 'active' : ''; ?>" href="http://localhost./properties">Properties</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : ''; ?>" href="about">About</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : ''; ?>" href="http://localhost./about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : ''; ?>" href="contact">Contact</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : ''; ?>" href="http://localhost./contact">Contact</a>
                         </li>
                         <?php if ($is_logged_in): ?>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'customer_dashboard.php') ? 'active' : ''; ?>" href="customer_dashboard">Dashboard</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'customer_dashboard.php') ? 'active' : ''; ?>" href="http://localhost./customer_dashboard">Dashboard</a>
                         </li>
                         <?php endif; ?>
                     </ul>
@@ -492,15 +492,15 @@ class UniversalTemplate {
                                     <i class="fas fa-user-circle me-1"></i> <?php echo htmlspecialchars($user_name); ?>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="profile"><i class="fas fa-user me-2"></i>Profile</a></li>
-                                    <li><a class="dropdown-item" href="customer_dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="http://localhost./profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                    <li><a class="dropdown-item" href="http://localhost./customer_dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                    <li><a class="dropdown-item text-danger" href="http://localhost./logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                                 </ul>
                             </div>
                         <?php else: ?>
-                            <a href="customer_login" class="btn btn-outline-primary me-2">Login</a>
-                            <a href="customer_registration" class="btn btn-primary">Register</a>
+                            <a href="http://localhost./customer_login" class="btn btn-outline-primary me-2">Login</a>
+                            <a href="http://localhost./customer_registration" class="btn btn-primary">Register</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -539,10 +539,10 @@ class UniversalTemplate {
                     <div class="col-lg-2 col-md-6 mb-4">
                         <h5>Quick Links</h5>
                         <ul class="list-unstyled">
-                            <li class="mb-2"><a href="/" class="text-white-50">Home</a></li>
-                            <li class="mb-2"><a href="properties" class="text-white-50">Properties</a></li>
-                            <li class="mb-2"><a href="about" class="text-white-50">About Us</a></li>
-                            <li class="mb-2"><a href="contact" class="text-white-50">Contact</a></li>
+                            <li class="mb-2"><a href="http://localhost.//" class="text-white-50">Home</a></li>
+                            <li class="mb-2"><a href="http://localhost./properties" class="text-white-50">Properties</a></li>
+                            <li class="mb-2"><a href="http://localhost./about" class="text-white-50">About Us</a></li>
+                            <li class="mb-2"><a href="http://localhost./contact" class="text-white-50">Contact</a></li>
                         </ul>
                     </div>
 
@@ -574,8 +574,8 @@ class UniversalTemplate {
                         <p class="mb-0">&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <a href="privacy" class="text-white-50 me-3">Privacy Policy</a>
-                        <a href="terms" class="text-white-50">Terms of Service</a>
+                        <a href="http://localhost./privacy" class="text-white-50 me-3">Privacy Policy</a>
+                        <a href="http://localhost./terms" class="text-white-50">Terms of Service</a>
                     </div>
                 </div>
             </div>

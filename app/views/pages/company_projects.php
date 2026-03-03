@@ -288,13 +288,13 @@
         <h2 class="text-white mb-4">Interested in Our Projects?</h2>
         <p class="text-white-50 mb-4">Get in touch with us for detailed project information and investment opportunities</p>
         <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="/contact" class="btn btn-light btn-lg px-4 py-3">
+            <a href="http://localhost.//contact" class="btn btn-light btn-lg px-4 py-3">
                 <i class="fas fa-phone me-2"></i>Contact Us
             </a>
-            <a href="/properties" class="btn btn-outline-light btn-lg px-4 py-3">
+            <a href="http://localhost.//properties" class="btn btn-outline-light btn-lg px-4 py-3">
                 <i class="fas fa-search me-2"></i>Browse Properties
             </a>
-            <a href="/about" class="btn btn-warning btn-lg px-4 py-3">
+            <a href="http://localhost.//about" class="btn btn-warning btn-lg px-4 py-3">
                 <i class="fas fa-info-circle me-2"></i>Learn More
             </a>
         </div>

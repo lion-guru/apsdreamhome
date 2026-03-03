@@ -3,7 +3,7 @@
     <div class="col-12">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/admin/leads">Leads</a></li>
+                <li class="breadcrumb-item"><a href="http://localhost.//admin/leads">Leads</a></li>
                 <li class="breadcrumb-item"><a href="/admin/leads/<?= $lead['id'] ?>">
                         <?= htmlspecialchars($lead['name']) ?>
                     </a></li>
@@ -276,7 +276,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '/admin/leads';
+                    window.location.href='http://localhost.//admin/leads';
                 } else {
                     alert('Failed to delete lead: ' + data.message);
                 }

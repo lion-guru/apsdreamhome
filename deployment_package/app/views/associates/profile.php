@@ -6,7 +6,7 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/associate/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//associate/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Profile Management</li>
                 </ol>
             </nav>
@@ -166,13 +166,13 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="/associate/kyc" class="btn btn-outline-warning">
+                        <a href="http://localhost.//associate/kyc" class="btn btn-outline-warning">
                             <i class="fas fa-id-card mr-2"></i>KYC अपडेट करें
                         </a>
-                        <a href="/associate/change-password" class="btn btn-outline-info">
+                        <a href="http://localhost.//associate/change-password" class="btn btn-outline-info">
                             <i class="fas fa-key mr-2"></i>पासवर्ड चेंज करें
                         </a>
-                        <a href="/associate/bank-details" class="btn btn-outline-success">
+                        <a href="http://localhost.//associate/bank-details" class="btn btn-outline-success">
                             <i class="fas fa-university mr-2"></i>बैंक डिटेल्स अपडेट करें
                         </a>
                     </div>
@@ -191,7 +191,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/associate/update-profile">
+                    <form method="POST" action="http://localhost.//associate/update-profile">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">

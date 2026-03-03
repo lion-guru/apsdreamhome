@@ -155,9 +155,9 @@ class MachineLearningService
             INNER JOIN (
                 SELECT user_id, property_id, 
                        (CASE 
-                        WHEN action = 'view' THEN 1
-                        WHEN action = 'favorite' THEN 3
-                        WHEN action = 'inquire' THEN 5
+                        WHEN action='http://localhost./view' THEN 1
+                        WHEN action='http://localhost./favorite' THEN 3
+                        WHEN action='http://localhost./inquire' THEN 5
                         ELSE 0
                        END) as interaction_score
                 FROM user_interactions
@@ -454,13 +454,13 @@ class MachineLearningService
                 COUNT(DISTINCT user_id) as unique_viewers,
                 COUNT(*) as total_interactions,
                 AVG(CASE 
-                    WHEN action = 'view' THEN 1
-                    WHEN action = 'favorite' THEN 3
-                    WHEN action = 'inquire' THEN 5
+                    WHEN action='http://localhost./view' THEN 1
+                    WHEN action='http://localhost./favorite' THEN 3
+                    WHEN action='http://localhost./inquire' THEN 5
                     ELSE 0
                 END) as engagement_score,
-                COUNT(CASE WHEN action = 'favorite' THEN 1 END) as favorites,
-                COUNT(CASE WHEN action = 'inquire' THEN 1 END) as inquiries
+                COUNT(CASE WHEN action='http://localhost./favorite' THEN 1 END) as favorites,
+                COUNT(CASE WHEN action='http://localhost./inquire' THEN 1 END) as inquiries
             FROM user_interactions
             WHERE property_id = ?
             AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
@@ -550,9 +550,9 @@ class MachineLearningService
                 user_id,
                 property_id,
                 (CASE 
-                    WHEN action = 'view' THEN 1
-                    WHEN action = 'favorite' THEN 3
-                    WHEN action = 'inquire' THEN 5
+                    WHEN action='http://localhost./view' THEN 1
+                    WHEN action='http://localhost./favorite' THEN 3
+                    WHEN action='http://localhost./inquire' THEN 5
                     ELSE 0
                 END) as rating
             FROM user_interactions
@@ -755,7 +755,7 @@ class MachineLearningService
         $sql = "
             SELECT 
                 algorithm,
-                AVG(CASE WHEN user_action = 'positive' THEN 1 ELSE 0 END) as success_rate
+                AVG(CASE WHEN user_action='http://localhost./positive' THEN 1 ELSE 0 END) as success_rate
             FROM recommendation_performance
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
             GROUP BY algorithm

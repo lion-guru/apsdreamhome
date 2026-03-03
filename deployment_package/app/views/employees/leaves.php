@@ -163,7 +163,7 @@
                 <h5 class="modal-title">Apply for Leave</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/employee/apply-leave" method="POST">
+            <form action="http://localhost.//employee/apply-leave" method="POST">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">

@@ -106,9 +106,9 @@ try {
     echo "</div>\n";
 
     echo "<div class='mt-4'>\n";
-    echo "<a href='index.php' class='btn btn-primary'>View Updated Homepage</a>\n";
-    echo "<a href='about.php' class='btn btn-secondary'>View About Page</a>\n";
-    echo "<a href='contact.php' class='btn btn-success'>View Contact Page</a>\n";
+    echo "<a href='http://localhost./index.php' class='btn btn-primary'>View Updated Homepage</a>\n";
+    echo "<a href='http://localhost./about.php' class='btn btn-secondary'>View About Page</a>\n";
+    echo "<a href='http://localhost./contact.php' class='btn btn-success'>View Contact Page</a>\n";
     echo "</div>\n";
 
 } catch (PDOException $e) {

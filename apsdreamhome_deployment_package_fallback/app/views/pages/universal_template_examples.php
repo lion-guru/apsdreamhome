@@ -14,10 +14,10 @@ function example_homepage() {
                     <h1 class='display-4 fw-bold mb-4'>Find Your Dream Home</h1>
                     <p class='lead mb-4'>Discover the perfect property with APS Dream Home</p>
                     <div class='d-flex justify-content-center gap-3'>
-                        <a href='properties' class='btn btn-light btn-lg'>
+                        <a href='http://localhost./properties' class='btn btn-light btn-lg'>
                             <i class='fas fa-search me-2'></i>Browse Properties
                         </a>
-                        <a href='contact' class='btn btn-outline-light btn-lg'>
+                        <a href='http://localhost./contact' class='btn btn-outline-light btn-lg'>
                             <i class='fas fa-phone me-2'></i>Contact Us
                         </a>
                     </div>
@@ -140,17 +140,17 @@ function example_dashboard() {
                         </a>
                     </div>
                     <div class='col-md-3'>
-                        <a href='documents' class='btn btn-success w-100'>
+                        <a href='http://localhost./documents' class='btn btn-success w-100'>
                             <i class='fas fa-upload me-2'></i>Upload Docs
                         </a>
                     </div>
                     <div class='col-md-3'>
-                        <a href='payments' class='btn btn-info w-100'>
+                        <a href='http://localhost./payments' class='btn btn-info w-100'>
                             <i class='fas fa-credit-card me-2'></i>Make Payment
                         </a>
                     </div>
                     <div class='col-md-3'>
-                        <a href='support' class='btn btn-warning w-100'>
+                        <a href='http://localhost./support' class='btn btn-warning w-100'>
                             <i class='fas fa-headset me-2'></i>Get Support
                         </a>
                     </div>
@@ -224,12 +224,12 @@ function example_login() {
 
                             <div class='row mt-3'>
                                 <div class='col-6'>
-                                    <a href='forgot-password' class='text-decoration-none'>
+                                    <a href='http://localhost./forgot-password' class='text-decoration-none'>
                                         <i class='fas fa-key me-1'></i>Forgot Password?
                                     </a>
                                 </div>
                                 <div class='col-6 text-end'>
-                                    <a href='customer_registration' class='text-decoration-none'>
+                                    <a href='http://localhost./customer_registration' class='text-decoration-none'>
                                         <i class='fas fa-user-plus me-1'></i>Register
                                     </a>
                                 </div>
@@ -261,19 +261,19 @@ function example_admin() {
                 <div class='card admin-sidebar'>
                     <h5 class='card-title'>Admin Panel</h5>
                     <div class='list-group list-group-flush'>
-                        <a href='admin_dashboard' class='list-group-item admin-nav-link active'>
+                        <a href='http://localhost./admin_dashboard' class='list-group-item admin-nav-link active'>
                             <i class='fas fa-tachometer-alt me-2'></i>Dashboard
                         </a>
-                        <a href='admin_properties' class='list-group-item admin-nav-link'>
+                        <a href='http://localhost./admin_properties' class='list-group-item admin-nav-link'>
                             <i class='fas fa-home me-2'></i>Properties
                         </a>
-                        <a href='admin_users' class='list-group-item admin-nav-link'>
+                        <a href='http://localhost./admin_users' class='list-group-item admin-nav-link'>
                             <i class='fas fa-users me-2'></i>Users
                         </a>
-                        <a href='admin_reports' class='list-group-item admin-nav-link'>
+                        <a href='http://localhost./admin_reports' class='list-group-item admin-nav-link'>
                             <i class='fas fa-chart-bar me-2'></i>Reports
                         </a>
-                        <a href='admin_settings' class='list-group-item admin-nav-link'>
+                        <a href='http://localhost./admin_settings' class='list-group-item admin-nav-link'>
                             <i class='fas fa-cog me-2'></i>Settings
                         </a>
                     </div>

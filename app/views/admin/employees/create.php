@@ -4,8 +4,8 @@
             <div class="col-sm-12">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Add Employee')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/employees"><?php echo h($mlSupport->translate('Employees')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/employees"><?php echo h($mlSupport->translate('Employees')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Add Employee')); ?></li>
                 </ul>
             </div>
@@ -23,7 +23,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form action="/admin/employees/store" method="POST" class="needs-validation" novalidate>
+                    <form action="http://localhost.//admin/employees/store" method="POST" class="needs-validation" novalidate>
                         <?php echo csrf_field(); ?>
                         <div class="row">
                             <div class="col-sm-6">
@@ -110,7 +110,7 @@
                         </div>
                         <div class="submit-section mt-4">
                             <button type="submit" class="btn btn-primary submit-btn"><?php echo h($mlSupport->translate('Save Employee')); ?></button>
-                            <a href="/admin/employees" class="btn btn-secondary submit-btn ms-2"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/employees" class="btn btn-secondary submit-btn ms-2"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

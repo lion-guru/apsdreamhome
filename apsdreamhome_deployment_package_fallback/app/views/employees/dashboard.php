@@ -161,7 +161,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-tasks mr-2"></i>टुडे टास्क्स
                     </h6>
-                    <a href="/employee/tasks" class="btn btn-sm btn-outline-primary">सभी देखें</a>
+                    <a href="http://localhost.//employee/tasks" class="btn btn-sm btn-outline-primary">सभी देखें</a>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($dashboard_data['today_tasks'])): ?>
@@ -230,13 +230,13 @@
                         <button type="button" class="btn btn-outline-success" onclick="recordAttendance('check_out')">
                             <i class="fas fa-sign-out-alt mr-2"></i>चेक आउट
                         </button>
-                        <a href="/employee/tasks" class="btn btn-outline-info">
+                        <a href="http://localhost.//employee/tasks" class="btn btn-outline-info">
                             <i class="fas fa-tasks mr-2"></i>मेरे टास्क्स
                         </a>
-                        <a href="/employee/leaves" class="btn btn-outline-warning">
+                        <a href="http://localhost.//employee/leaves" class="btn btn-outline-warning">
                             <i class="fas fa-calendar mr-2"></i>लीव अप्लाई करें
                         </a>
-                        <a href="/employee/profile" class="btn btn-outline-secondary">
+                        <a href="http://localhost.//employee/profile" class="btn btn-outline-secondary">
                             <i class="fas fa-user mr-2"></i>मेरा प्रोफाइल
                         </a>
                     </div>
@@ -251,7 +251,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-chart-line mr-2"></i>परफॉर्मेंस ओवरव्यू
                     </h6>
-                    <a href="/employee/performance" class="btn btn-sm btn-outline-primary">डिटेल्स देखें</a>
+                    <a href="http://localhost.//employee/performance" class="btn btn-sm btn-outline-primary">डिटेल्स देखें</a>
                 </div>
                 <div class="card-body">
                     <?php
@@ -313,7 +313,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-history mr-2"></i>रिसेंट एक्टिविटीज
                     </h6>
-                    <a href="/employee/activities" class="btn btn-sm btn-outline-primary">सभी देखें</a>
+                    <a href="http://localhost.//employee/activities" class="btn btn-sm btn-outline-primary">सभी देखें</a>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($dashboard_data['recent_activities'])): ?>
@@ -503,7 +503,7 @@ function recordAttendance(action) {
     if (confirm(`क्या आप ${action === 'check_in' ? 'चेक इन' : 'चेक आउट'} करना चाहते हैं?`)) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/employee/record-attendance';
+        form.action='http://localhost.//employee/record-attendance';
 
         const actionInput = document.createElement('input');
         actionInput.type = 'hidden';

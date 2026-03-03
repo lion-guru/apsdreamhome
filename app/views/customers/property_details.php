@@ -4,8 +4,8 @@
         <div class="col-md-8">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb bg-transparent p-0 mb-2">
-                    <li class="breadcrumb-item"><a href="/customer/dashboard">डैशबोर्ड</a></li>
-                    <li class="breadcrumb-item"><a href="/customer/properties">प्रॉपर्टीज</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//customer/dashboard">डैशबोर्ड</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//customer/properties">प्रॉपर्टीज</a></li>
                     <li class="breadcrumb-item active" aria-current="page"><?= h($property['title']) ?></li>
                 </ol>
             </nav>
@@ -30,7 +30,7 @@
                             $images = !empty($property['all_images']) ? explode(',', $property['all_images']) : [];
                             if (empty($images)): ?>
                                 <div class="carousel-item active">
-                                    <img src="/assets/img/property-placeholder.jpg" class="d-block w-100" style="height: 450px; object-fit: cover;" alt="Placeholder">
+                                    <img src="http://localhost.//assets/img/property-placeholder.jpg" class="d-block w-100" style="height: 450px; object-fit: cover;" alt="Placeholder">
                                 </div>
                             <?php else: ?>
                                 <?php foreach ($images as $index => $image): ?>
@@ -245,7 +245,7 @@
                     <hr>
 
                     <h6 class="font-weight-bold text-gray-900 mb-3">साइट विजिट / बुकिंग</h6>
-                    <form action="/customer/book-visit" method="POST">
+                    <form action="http://localhost.//customer/book-visit" method="POST">
                         <input type="hidden" name="property_id" value="<?= $property['id'] ?>">
                         <div class="form-group">
                             <label class="small">पसंदीदा तारीख</label>

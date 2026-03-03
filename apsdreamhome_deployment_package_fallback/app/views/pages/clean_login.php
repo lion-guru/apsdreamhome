@@ -74,12 +74,12 @@ $content = '
 
                         <div class="row mt-3">
                             <div class="col-6">
-                                <a href="forgot-password" class="text-decoration-none">
+                                <a href="http://localhost./forgot-password" class="text-decoration-none">
                                     <i class="fas fa-key me-1"></i>Forgot Password?
                                 </a>
                             </div>
                             <div class="col-6 text-end">
-                                <a href="customer_registration" class="text-decoration-none">
+                                <a href="http://localhost./customer_registration" class="text-decoration-none">
                                     <i class="fas fa-user-plus me-1"></i>Register
                                 </a>
                             </div>

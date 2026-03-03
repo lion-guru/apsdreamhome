@@ -45,7 +45,7 @@ include __DIR__ . '/../layouts/header.php'; ?>
                         </div>
                     </div>
 
-                    <form action="/payment/process" method="POST" id="payment-form">
+                    <form action="http://localhost.//payment/process" method="POST" id="payment-form">
                         <input type="hidden" name="property_id" value="<?php echo $property['id']; ?>">
 
                         <div class="mb-3">

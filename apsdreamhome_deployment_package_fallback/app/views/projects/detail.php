@@ -101,7 +101,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                              class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name']) ?>"
                              id="mainImage">
                     <?php else: ?>
-                        <img src="/assets/images/no-project-image.jpg"
+                        <img src="http://localhost.//assets/images/no-project-image.jpg"
                              class="img-fluid rounded shadow" alt="No Image Available"
                              id="mainImage">
                     <?php endif; ?>

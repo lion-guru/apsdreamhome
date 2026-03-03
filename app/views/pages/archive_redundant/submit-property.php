@@ -271,7 +271,7 @@ ob_start();
             </div>
             
             <div class="text-center mt-4">
-                <p class="text-muted small">By submitting, you agree to our <a href="legal.php">Terms & Conditions</a>.</p>
+                <p class="text-muted small">By submitting, you agree to our <a href="http://localhost./legal.php">Terms & Conditions</a>.</p>
             </div>
         </div>
     </div>

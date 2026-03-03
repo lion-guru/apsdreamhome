@@ -24,7 +24,7 @@ if (!defined('GOOGLE_CLIENT_SECRET')) {
 $http_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 $protocol = ($http_host === 'localhost' || strpos($http_host, '127.0.0.1') !== false) ? 'http' : 'https';
 $host = $http_host;
-$path = '/apsdreamhome/google_callback_associate.php';
+$path = 'http://localhost./google_callback_associate.php';
 
 // Set the redirect URL for associates
 if (!defined('GOOGLE_REDIRECT_URL_ASSOCIATE')) {

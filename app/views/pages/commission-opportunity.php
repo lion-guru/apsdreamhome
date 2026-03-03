@@ -95,15 +95,15 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="30">
+            <a class="navbar-brand" href="http://localhost./index.php">
+                <img src="http://localhost./assets/images/logo/apslogo.png" alt="APS Dream Home" height="30">
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.php"><i class="fas fa-home"></i> Home</a>
-                <a class="nav-link" href="properties.php"><i class="fas fa-building"></i> Properties</a>
-                <a class="nav-link active" href="commission-opportunity.php"><i class="fas fa-coins"></i> Commission Systems</a>
-                <a class="nav-link" href="register_mlm.php"><i class="fas fa-user-plus"></i> Register</a>
-                <a class="nav-link" href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a class="nav-link" href="http://localhost./index.php"><i class="fas fa-home"></i> Home</a>
+                <a class="nav-link" href="http://localhost./properties.php"><i class="fas fa-building"></i> Properties</a>
+                <a class="nav-link active" href="http://localhost./commission-opportunity.php"><i class="fas fa-coins"></i> Commission Systems</a>
+                <a class="nav-link" href="http://localhost./register_mlm.php"><i class="fas fa-user-plus"></i> Register</a>
+                <a class="nav-link" href="http://localhost./login.php"><i class="fas fa-sign-in-alt"></i> Login</a>
             </div>
         </div>
     </nav>
@@ -214,14 +214,14 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
                 <div class="col-md-6">
                     <div class="visual-showcase">
                         <h4 class="mb-3">🎯 MLM Commission Structure</h4>
-                        <img src="assets/images/mlm/commission-visualization.jpg" alt="MLM Commission Structure" class="img-fluid rounded mb-3">
+                        <img src="http://localhost./assets/images/mlm/commission-visualization.jpg" alt="MLM Commission Structure" class="img-fluid rounded mb-3">
                         <p class="text-muted">Build your network across 10 levels and earn from team performance. The more your team grows, the more you earn!</p>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="visual-showcase">
                         <h4 class="mb-3">💰 Earning Potential Visualization</h4>
-                        <img src="assets/images/portfolio/enhanced-design.jpg" alt="Earning Potential" class="img-fluid rounded mb-3">
+                        <img src="http://localhost./assets/images/portfolio/enhanced-design.jpg" alt="Earning Potential" class="img-fluid rounded mb-3">
                         <p class="text-muted">See the potential earnings with our hybrid commission system. Combine direct sales with network building for maximum income!</p>
                     </div>
                 </div>
@@ -419,10 +419,10 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <p class="mb-4">Free registration • No hidden charges • Start earning immediately</p>
-                    <a href="register_mlm.php" class="btn btn-light btn-lg cta-button me-3">
+                    <a href="http://localhost./register_mlm.php" class="btn btn-light btn-lg cta-button me-3">
                         <i class="fas fa-user-plus"></i> Register Now
                     </a>
-                    <a href="commission-calculator.php" class="btn btn-outline-light btn-lg cta-button">
+                    <a href="http://localhost./commission-calculator.php" class="btn btn-outline-light btn-lg cta-button">
                         <i class="fas fa-calculator"></i> Calculate Earnings
                     </a>
                 </div>
@@ -435,16 +435,16 @@ $pageDescription = "Select between MLM Network System, Traditional Local Market,
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <img src="assets/images/logo/apslogo.png" alt="APS Dream Home" height="40" class="mb-2">
+                    <img src="http://localhost./assets/images/logo/apslogo.png" alt="APS Dream Home" height="40" class="mb-2">
                     <p>Building dreams and creating wealth through innovative commission systems</p>
                 </div>
                 <div class="col-md-6 text-end">
                     <h5>Quick Links</h5>
                     <div class="d-flex justify-content-end gap-3">
-                        <a href="properties.php" class="text-light">Properties</a>
-                        <a href="register_mlm.php" class="text-light">Register</a>
-                        <a href="login.php" class="text-light">Login</a>
-                        <a href="contact.php" class="text-light">Contact</a>
+                        <a href="http://localhost./properties.php" class="text-light">Properties</a>
+                        <a href="http://localhost./register_mlm.php" class="text-light">Register</a>
+                        <a href="http://localhost./login.php" class="text-light">Login</a>
+                        <a href="http://localhost./contact.php" class="text-light">Contact</a>
                     </div>
                 </div>
             </div>

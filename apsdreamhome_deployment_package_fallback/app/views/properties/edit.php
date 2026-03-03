@@ -25,8 +25,8 @@ include __DIR__ . '/../layouts/header.php';
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/properties">Properties</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//">Home</a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//properties">Properties</a></li>
                     <li class="breadcrumb-item"><a href="/properties/<?php echo $property['id']; ?>">Property Details</a></li>
                     <li class="breadcrumb-item active">Edit Property</li>
                 </ol>

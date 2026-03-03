@@ -213,7 +213,7 @@
                 <h5 class="modal-title" id="attendanceModalTitle">Record Attendance</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/employee/record-attendance" method="POST" id="attendanceForm">
+            <form action="http://localhost.//employee/record-attendance" method="POST" id="attendanceForm">
                 <div class="modal-body">
                     <input type="hidden" name="action" id="attendanceAction">
 

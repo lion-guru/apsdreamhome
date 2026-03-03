@@ -37,4 +37,4 @@ try {
 }
 
 // Provide a link back to the admin panel
-echo "\n<a href='../index.php'>Back to Admin Panel</a>";
+echo "\n<a href='http://localhost./../index.php'>Back to Admin Panel</a>";

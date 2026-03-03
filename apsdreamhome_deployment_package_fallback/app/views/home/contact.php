@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - APS Dream Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="http://localhost.//assets/css/style.css">
 </head>
 <body>
     <?php include '../app/views/includes/header.php'; ?>
@@ -16,7 +16,7 @@
                 <h1 class="h3 mb-3">Get in Touch</h1>
                 <p class="text-muted">Have questions about a property or need help with buying/selling? Send us a message and we’ll respond shortly.</p>
 
-                <form action="/contact" method="POST" class="mt-4">
+                <form action="http://localhost.//contact" method="POST" class="mt-4">
                     <input type="hidden" name="_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="mb-3">
                         <label for="name" class="form-label">Your Name</label>

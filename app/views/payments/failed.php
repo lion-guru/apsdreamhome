@@ -30,7 +30,7 @@
                         <a href="javascript:history.back()" class="btn btn-primary me-md-2">
                             <i class="fas fa-arrow-left"></i> Try Again
                         </a>
-                        <a href="/contact" class="btn btn-outline-primary">
+                        <a href="http://localhost.//contact" class="btn btn-outline-primary">
                             <i class="fas fa-support"></i> Contact Support
                         </a>
                     </div>

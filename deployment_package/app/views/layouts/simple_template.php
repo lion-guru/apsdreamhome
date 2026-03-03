@@ -91,7 +91,7 @@ function simple_header($page_title = 'APS Dream Home', $show_nav = true) {
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" href="http://localhost.//">
                     <i class="fas fa-home me-2"></i>APS Dream Home
                 </a>
 
@@ -102,20 +102,20 @@ function simple_header($page_title = 'APS Dream Home', $show_nav = true) {
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>" href="/">Home</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : ''; ?>" href="http://localhost.//">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'properties.php') ? 'active' : ''; ?>" href="properties">Properties</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'properties.php') ? 'active' : ''; ?>" href="http://localhost./properties">Properties</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : ''; ?>" href="about">About</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : ''; ?>" href="http://localhost./about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : ''; ?>" href="contact">Contact</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : ''; ?>" href="http://localhost./contact">Contact</a>
                         </li>
                         <?php if (isset($_SESSION['customer_logged_in']) && $_SESSION['customer_logged_in']): ?>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'customer_dashboard.php') ? 'active' : ''; ?>" href="customer_dashboard">Dashboard</a>
+                            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'customer_dashboard.php') ? 'active' : ''; ?>" href="http://localhost./customer_dashboard">Dashboard</a>
                         </li>
                         <?php endif; ?>
                     </ul>
@@ -123,10 +123,10 @@ function simple_header($page_title = 'APS Dream Home', $show_nav = true) {
                     <div class="d-flex align-items-center">
                         <?php if (isset($_SESSION['customer_logged_in']) && $_SESSION['customer_logged_in']): ?>
                             <span class="me-3">Welcome, <?php echo htmlspecialchars($_SESSION['customer_name'] ?? 'User'); ?>!</span>
-                            <a href="logout.php" class="btn btn-outline-primary btn-sm">Logout</a>
+                            <a href="http://localhost./logout.php" class="btn btn-outline-primary btn-sm">Logout</a>
                         <?php else: ?>
-                            <a href="customer_login.php" class="btn btn-outline-primary me-2">Login</a>
-                            <a href="customer_registration.php" class="btn btn-primary">Register</a>
+                            <a href="http://localhost./customer_login.php" class="btn btn-outline-primary me-2">Login</a>
+                            <a href="http://localhost./customer_registration.php" class="btn btn-primary">Register</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -158,8 +158,8 @@ function simple_footer($show_footer = true) {
                     <div class="col-md-6 text-md-end">
                         <p>&copy; <?php echo date('Y'); ?> APS Dream Home. All rights reserved.</p>
                         <p class="mb-0">
-                            <a href="privacy.php" class="text-white-50 me-3">Privacy Policy</a>
-                            <a href="terms.php" class="text-white-50">Terms of Service</a>
+                            <a href="http://localhost./privacy.php" class="text-white-50 me-3">Privacy Policy</a>
+                            <a href="http://localhost./terms.php" class="text-white-50">Terms of Service</a>
                         </p>
                     </div>
                 </div>

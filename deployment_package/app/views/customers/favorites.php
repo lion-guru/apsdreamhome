@@ -10,7 +10,7 @@
                             <p class="card-text mb-0">आपकी पसंद की गई सभी प्रॉपर्टीज की सूची यहाँ है।</p>
                         </div>
                         <div class="col-md-4 text-right">
-                            <a href="/customer/properties" class="btn btn-light text-danger">
+                            <a href="http://localhost.//customer/properties" class="btn btn-light text-danger">
                                 <i class="fas fa-search mr-1"></i> और प्रॉपर्टीज खोजें
                             </a>
                         </div>
@@ -25,7 +25,7 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <form action="/customer/favorites" method="GET" class="row">
+                    <form action="http://localhost.//customer/favorites" method="GET" class="row">
                         <div class="col-md-3 mb-3">
                             <label class="small font-weight-bold">प्रॉपर्टी टाइप</label>
                             <select name="property_type" class="form-control">
@@ -130,7 +130,7 @@
                 </div>
                 <h4 class="text-gray-800">अभी तक कोई पसंदीदा प्रॉपर्टी नहीं है!</h4>
                 <p class="text-muted">अपनी पसंद की प्रॉपर्टीज को यहाँ देखने के लिए उन्हें हार्ट आइकन से मार्क करें।</p>
-                <a href="/customer/properties" class="btn btn-primary mt-3">प्रॉपर्टीज खोजें</a>
+                <a href="http://localhost.//customer/properties" class="btn btn-primary mt-3">प्रॉपर्टीज खोजें</a>
             </div>
         <?php endif; ?>
     </div>

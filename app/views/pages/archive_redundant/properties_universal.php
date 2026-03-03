@@ -132,7 +132,7 @@ $content = "
             <div class='col-lg-10'>
                 <div class='card shadow-sm'>
                     <div class='card-body p-4'>
-                        <form method='GET' action='properties.php' class='row g-3'>
+                        <form method='GET' action='http://localhost./properties.php' class='row g-3'>
                             <div class='col-md-3'>
                                 <label class='form-label'>Property Type</label>
                                 <select class='form-select' name='type'>
@@ -193,7 +193,7 @@ $content = "
                                     <button type='submit' class='btn btn-primary flex-fill'>
                                         <i class='fas fa-search me-2'></i>Search Properties
                                     </button>
-                                    <a href='properties.php' class='btn btn-outline-secondary'>
+                                    <a href='http://localhost./properties.php' class='btn btn-outline-secondary'>
                                         <i class='fas fa-times me-2'></i>Clear Filters
                                     </a>
                                 </div>
@@ -224,7 +224,7 @@ $content = "
                     }
                     $content .= "
                     </p>
-                    <a href='properties.php' class='btn btn-primary'>
+                    <a href='http://localhost./properties.php' class='btn btn-primary'>
                         <i class='fas fa-arrow-left me-2'></i>View All Properties
                     </a>
                 </div>

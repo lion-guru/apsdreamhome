@@ -4,12 +4,12 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Employees Management')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Employees')); ?></li>
                 </ul>
             </div>
             <div class="col-auto float-end ms-auto">
-                <a href="/admin/employees/create" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo h($mlSupport->translate('Add Employee')); ?></a>
+                <a href="http://localhost.//admin/employees/create" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo h($mlSupport->translate('Add Employee')); ?></a>
             </div>
         </div>
     </div>

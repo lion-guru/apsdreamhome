@@ -19,7 +19,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="/associate/authenticate">
+                    <form method="POST" action="http://localhost.//associate/authenticate">
                         <div class="form-group mb-4">
                             <label for="login_id" class="form-label">
                                 <i class="fas fa-user mr-2"></i>Email or Mobile
@@ -66,7 +66,7 @@
                         </button>
 
                         <div class="text-center">
-                            <a href="/associate/forgot-password" class="text-muted">
+                            <a href="http://localhost.//associate/forgot-password" class="text-muted">
                                 <i class="fas fa-question-circle mr-1"></i>Forgot Password?
                             </a>
                         </div>
@@ -75,7 +75,7 @@
                 <div class="card-footer text-center bg-light">
                     <small class="text-muted">
                         Don't have an account?
-                        <a href="/associate/register" class="text-primary font-weight-bold">Register here</a>
+                        <a href="http://localhost.//associate/register" class="text-primary font-weight-bold">Register here</a>
                     </small>
                 </div>
             </div>

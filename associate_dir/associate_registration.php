@@ -460,7 +460,7 @@ $indian_states = [
                             <div class="col-12 text-center mt-3">
                                 <p class="text-muted">
                                     Already have an account? 
-                                    <a href="associate_login.php" class="text-primary text-decoration-none">Login here</a>
+                                    <a href="http://localhost./associate_login.php" class="text-primary text-decoration-none">Login here</a>
                                 </p>
                             </div>
                         </form>

@@ -418,6 +418,6 @@ async function generateCode() {
 }
 </script>
 
-<script src="assets/js/ai_client.js"></script>
+<script src="http://localhost./assets/js/ai_client.js"></script>
 
 <?php include 'includes/enhanced_universal_template.php'; ?>

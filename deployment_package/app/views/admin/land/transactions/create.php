@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Add Transaction')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/land"><?php echo h($mlSupport->translate('Land Records')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/land"><?php echo h($mlSupport->translate('Land Records')); ?></a></li>
                     <?php if (!empty($kisan_id)): ?>
                         <li class="breadcrumb-item"><a href="/admin/land/transactions/<?php echo $kisan_id; ?>"><?php echo h($mlSupport->translate('Transactions')); ?></a></li>
                     <?php endif; ?>
@@ -33,7 +33,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form action="/admin/land/transactions/store" method="POST" class="needs-validation" novalidate>
+                    <form action="http://localhost.//admin/land/transactions/store" method="POST" class="needs-validation" novalidate>
                         <?php echo csrf_field(); ?>
 
                         <div class="form-group mb-3">
@@ -71,7 +71,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg"><?php echo h($mlSupport->translate('Add Transaction')); ?></button>
-                            <a href="/admin/land" class="btn btn-light"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/land" class="btn btn-light"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

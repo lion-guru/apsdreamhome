@@ -73,10 +73,10 @@ include __DIR__ . '/../layouts/header.php'; ?>
                     <?php endif; ?>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                        <a href="/properties" class="btn btn-primary me-md-2">
+                        <a href="http://localhost.//properties" class="btn btn-primary me-md-2">
                             <i class="fas fa-search"></i> Browse More Properties
                         </a>
-                        <a href="/profile" class="btn btn-outline-primary">
+                        <a href="http://localhost.//profile" class="btn btn-outline-primary">
                             <i class="fas fa-user"></i> View Profile
                         </a>
                     </div>

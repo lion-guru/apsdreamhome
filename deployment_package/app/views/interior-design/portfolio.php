@@ -30,7 +30,7 @@
         </div>
 
         <div class="text-center mt-4">
-            <a href="gallery" class="btn btn-outline-primary">View All Projects</a>
+            <a href="http://localhost./gallery" class="btn btn-outline-primary">View All Projects</a>
         </div>
     </div>
 </section>

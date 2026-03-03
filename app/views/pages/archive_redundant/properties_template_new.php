@@ -58,7 +58,7 @@ try {
                     <h1 class="display-4 fw-bold mb-4">Our Properties</h1>
                     <p class="lead mb-4">Discover your dream home from our curated collection of premium properties across Gorakhpur and surrounding areas.</p>
                     <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
-                        <a href="contact_template.php" class="btn btn-primary btn-lg">
+                        <a href="http://localhost./contact_template.php" class="btn btn-primary btn-lg">
                             <i class="fas fa-phone me-2"></i>Schedule a Visit
                         </a>
                         <a href="tel:' . htmlspecialchars($company_phone) . '" class="btn btn-outline-light btn-lg">
@@ -187,7 +187,7 @@ try {
                             <i class="fas fa-home fa-3x text-muted mb-3"></i>
                             <h4>No Properties Available</h4>
                             <p class="text-muted">Check back soon for new property listings.</p>
-                            <a href="contact_template.php" class="btn btn-primary btn-lg">
+                            <a href="http://localhost./contact_template.php" class="btn btn-primary btn-lg">
                                 <i class="fas fa-phone me-2"></i>Contact Us for Updates
                             </a>
                         </div>';
@@ -250,7 +250,7 @@ try {
                             <h3 class="mb-4">Ready to Find Your Perfect Property?</h3>
                             <p class="mb-4">Contact our expert team today to explore the best properties that match your requirements and budget.</p>
                             <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
-                                <a href="contact_template.php" class="btn btn-primary btn-lg">
+                                <a href="http://localhost./contact_template.php" class="btn btn-primary btn-lg">
                                     <i class="fas fa-phone me-2"></i>Contact Us Today
                                 </a>
                                 <a href="tel:' . htmlspecialchars($company_phone) . '" class="btn btn-success btn-lg">
@@ -438,9 +438,9 @@ try {
                         </div>
 
                         <div class="mt-4">
-                            <a href="index_template.php" class="btn btn-primary me-2">Homepage</a>
-                            <a href="contact_template.php" class="btn btn-success me-2">Contact Us</a>
-                            <a href="about_template.php" class="btn btn-info">About Us</a>
+                            <a href="http://localhost./index_template.php" class="btn btn-primary me-2">Homepage</a>
+                            <a href="http://localhost./contact_template.php" class="btn btn-success me-2">Contact Us</a>
+                            <a href="http://localhost./about_template.php" class="btn btn-info">About Us</a>
                         </div>
                     </div>
                 </div>

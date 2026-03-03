@@ -47,7 +47,7 @@ if (!isset($user)) {
                         <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
                     <?php endif; ?>
 
-                    <form action="/profile/update" method="POST" enctype="multipart/form-data">
+                    <form action="http://localhost.//profile/update" method="POST" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="username" class="form-label">Username *</label>
@@ -142,7 +142,7 @@ if (!isset($user)) {
                             </span>
                         </div>
                         <div class="mb-3">
-                            <a href="/auth/resend-verification" class="btn btn-sm btn-outline-primary">Resend Verification Email</a>
+                            <a href="http://localhost.//auth/resend-verification" class="btn btn-sm btn-outline-primary">Resend Verification Email</a>
                         </div>
                     <?php endif; ?>
 
@@ -158,9 +158,9 @@ if (!isset($user)) {
                     <h5 class="mb-0">Quick Actions</h5>
                 </div>
                 <div class="card-body">
-                    <a href="/properties/create" class="btn btn-outline-primary w-100 mb-2">Add New Property</a>
-                    <a href="/saved-searches" class="btn btn-outline-secondary w-100 mb-2">Saved Searches</a>
-                    <a href="/change-password" class="btn btn-outline-warning w-100">Change Password</a>
+                    <a href="http://localhost.//properties/create" class="btn btn-outline-primary w-100 mb-2">Add New Property</a>
+                    <a href="http://localhost.//saved-searches" class="btn btn-outline-secondary w-100 mb-2">Saved Searches</a>
+                    <a href="http://localhost.//change-password" class="btn btn-outline-warning w-100">Change Password</a>
                 </div>
             </div>
         </div>

@@ -95,7 +95,7 @@ class AIDashboardController {
         $leadInsights = $analyst->analyzeData('leads');
 
         // 2. Intent Trend Analysis (Simulated from logs)
-        $sql = "SELECT details FROM ai_audit_log WHERE action = 'nlp_analysis' ORDER BY created_at DESC LIMIT 50";
+        $sql = "SELECT details FROM ai_audit_log WHERE action='http://localhost./nlp_analysis' ORDER BY created_at DESC LIMIT 50";
         $logs = $this->db->fetchAll($sql);
 
         $intents = [];

@@ -236,10 +236,10 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             <div class="quick-actions" data-aos="fade-up">
                 <h2 style="text-align: center; margin-bottom: 30px;">🚀 Quick Start</h2>
                 <div class="text-center">
-                    <a href="index_improved.php" class="action-btn">
+                    <a href="http://localhost./index_improved.php" class="action-btn">
                         <i class="fas fa-home me-2"></i>Go to Homepage
                     </a>
-                    <a href="admin/" class="action-btn secondary">
+                    <a href="http://localhost./admin/" class="action-btn secondary">
                         <i class="fas fa-cog me-2"></i>Admin Panel
                     </a>
                 </div>
@@ -260,7 +260,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Enhanced homepage with company showcase, team presentation, and featured properties
                         </p>
-                        <a href="index_improved.php" class="nav-link">
+                        <a href="http://localhost./index_improved.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Visit Homepage
                         </a>
                     </div>
@@ -278,7 +278,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Browse all available properties with advanced search and filtering options
                         </p>
-                        <a href="property-listings.php" class="nav-link">
+                        <a href="http://localhost./property-listings.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Properties
                         </a>
                     </div>
@@ -296,7 +296,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Learn about APS Dream Homes, our team, and our commitment to excellence
                         </p>
-                        <a href="about.php" class="nav-link">
+                        <a href="http://localhost./about.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>About Company
                         </a>
                     </div>
@@ -314,7 +314,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Get in touch with us for inquiries, appointments, and property consultations
                         </p>
-                        <a href="contact.php" class="nav-link">
+                        <a href="http://localhost./contact.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Contact Us
                         </a>
                     </div>
@@ -332,7 +332,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Join our team! Explore career opportunities and apply for positions
                         </p>
-                        <a href="careers.php" class="nav-link">
+                        <a href="http://localhost./careers.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Careers
                         </a>
                     </div>
@@ -350,7 +350,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Find answers to frequently asked questions about our services and properties
                         </p>
-                        <a href="faq.php" class="nav-link">
+                        <a href="http://localhost./faq.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View FAQ
                         </a>
                     </div>
@@ -372,7 +372,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Read genuine customer reviews and testimonials about our services
                         </p>
-                        <a href="customer-reviews.php" class="nav-link">
+                        <a href="http://localhost./customer-reviews.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Read Reviews
                         </a>
                     </div>
@@ -390,7 +390,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Read our latest articles, tips, and insights about real estate
                         </p>
-                        <a href="blog.php" class="nav-link">
+                        <a href="http://localhost./blog.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Read Blog
                         </a>
                     </div>
@@ -408,7 +408,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Explore our comprehensive real estate services and solutions
                         </p>
-                        <a href="services.php" class="nav-link">
+                        <a href="http://localhost./services.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Our Services
                         </a>
                     </div>
@@ -426,7 +426,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             View our completed and ongoing real estate projects
                         </p>
-                        <a href="projects.php" class="nav-link">
+                        <a href="http://localhost./projects.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Projects
                         </a>
                     </div>
@@ -444,7 +444,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Meet our dedicated team of real estate professionals
                         </p>
-                        <a href="team.php" class="nav-link">
+                        <a href="http://localhost./team.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Our Team
                         </a>
                     </div>
@@ -462,7 +462,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Premium features inspired by market leaders with modern amenities
                         </p>
-                        <a href="enhanced-features.php" class="nav-link">
+                        <a href="http://localhost./enhanced-features.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Features
                         </a>
                     </div>
@@ -480,7 +480,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Market comparison and competitive advantages analysis
                         </p>
-                        <a href="competitor-analysis.php" class="nav-link">
+                        <a href="http://localhost./competitor-analysis.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Analysis
                         </a>
                     </div>
@@ -502,7 +502,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Complete setup guide for Google Business Profile optimization
                         </p>
-                        <a href="google-business-profile.php" class="nav-link">
+                        <a href="http://localhost./google-business-profile.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Setup Guide
                         </a>
                     </div>
@@ -520,7 +520,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Track your marketing performance and online presence
                         </p>
-                        <a href="marketing-dashboard.php" class="nav-link">
+                        <a href="http://localhost./marketing-dashboard.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Dashboard
                         </a>
                     </div>
@@ -538,7 +538,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Track complete implementation status and next steps
                         </p>
-                        <a href="online-presence-status.php" class="nav-link">
+                        <a href="http://localhost./online-presence-status.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Status
                         </a>
                     </div>
@@ -556,7 +556,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Access admin dashboard for content management
                         </p>
-                        <a href="admin/" class="nav-link">
+                        <a href="http://localhost./admin/" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>Admin Login
                         </a>
                     </div>
@@ -574,7 +574,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             XML sitemap for search engine optimization
                         </p>
-                        <a href="sitemap.xml.php" class="nav-link">
+                        <a href="http://localhost./sitemap.xml.php" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Sitemap
                         </a>
                     </div>
@@ -592,7 +592,7 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
                         <p class="nav-description">
                             Search engine crawling instructions
                         </p>
-                        <a href="robots.txt" class="nav-link">
+                        <a href="http://localhost./robots.txt" class="nav-link">
                             <i class="fas fa-arrow-right me-2"></i>View Robots
                         </a>
                     </div>
@@ -603,13 +603,13 @@ $page_description = 'Navigate through all pages of APS Dream Homes website';
             <div class="text-center mt-5" data-aos="fade-up">
                 <h2 style="margin-bottom: 30px;">👤 User Section</h2>
                 <div class="d-flex justify-content-center flex-wrap">
-                    <a href="login.php" class="action-btn">
+                    <a href="http://localhost./login.php" class="action-btn">
                         <i class="fas fa-sign-in-alt me-2"></i>Login
                     </a>
-                    <a href="register.php" class="action-btn secondary">
+                    <a href="http://localhost./register.php" class="action-btn secondary">
                         <i class="fas fa-user-plus me-2"></i>Register
                     </a>
-                    <a href="dashboard.php" class="action-btn secondary">
+                    <a href="http://localhost./dashboard.php" class="action-btn secondary">
                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                     </a>
                 </div>

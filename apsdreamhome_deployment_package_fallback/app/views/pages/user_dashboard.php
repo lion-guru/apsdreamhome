@@ -47,7 +47,7 @@ ob_start();
             <p class="lead text-muted">Manage your profile, properties, and track your activity.</p>
         </div>
         <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end mt-3 mt-md-0">
-            <a href="submit-property.php" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <a href="http://localhost./submit-property.php" class="btn btn-primary rounded-pill px-4 shadow-sm">
                 <i class="fas fa-plus me-2"></i>Add New Property
             </a>
         </div>
@@ -100,7 +100,7 @@ ob_start();
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-header bg-transparent border-0 p-4 d-flex justify-content-between align-items-center">
                     <h4 class="fw-bold mb-0"><i class="fas fa-list me-2 text-primary"></i>My Properties</h4>
-                    <a href="properties.php" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+                    <a href="http://localhost./properties.php" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <?php if (count($properties) > 0): ?>
@@ -162,9 +162,9 @@ ob_start();
                         </div>
                     <?php else: ?>
                         <div class="text-center py-5">
-                            <img src="/assets/images/no-data.svg" alt="No Properties" class="mb-3" style="width: 150px; opacity: 0.5;">
+                            <img src="http://localhost.//assets/images/no-data.svg" alt="No Properties" class="mb-3" style="width: 150px; opacity: 0.5;">
                             <h5 class="text-muted">You haven't listed any properties yet.</h5>
-                            <a href="submit-property.php" class="btn btn-primary rounded-pill mt-3 px-4">Start Listing</a>
+                            <a href="http://localhost./submit-property.php" class="btn btn-primary rounded-pill mt-3 px-4">Start Listing</a>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -215,7 +215,7 @@ ob_start();
                     </div>
                     <h5 class="mt-3 mb-1 fw-bold"><?= h($user_name) ?></h5>
                     <p class="text-muted small mb-3"><?= h($user_data['email'] ?? 'No email provided') ?></p>
-                    <a href="profile.php" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Profile</a>
+                    <a href="http://localhost./profile.php" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Profile</a>
                 </div>
                 <hr class="text-muted opacity-25">
                 <div class="row text-center mt-3">
@@ -336,7 +336,7 @@ ob_start();
                         <small class="text-muted">High Priority</small>
                     </div>
                     <p class="mb-1 small text-muted">Upload your documents to get verified and list more properties.</p>
-                    <a href="profile.php" class="btn btn-link btn-sm p-0 text-decoration-none">Update Now <i class="fas fa-arrow-right ms-1 small"></i></a>
+                    <a href="http://localhost./profile.php" class="btn btn-link btn-sm p-0 text-decoration-none">Update Now <i class="fas fa-arrow-right ms-1 small"></i></a>
                 </div>
                 <div class="list-group-item bg-transparent border-0 px-0 mb-3">
                     <div class="d-flex w-100 justify-content-between">

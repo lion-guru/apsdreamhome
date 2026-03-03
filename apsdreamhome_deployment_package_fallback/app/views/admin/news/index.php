@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800"><?= $mlSupport->translate('Manage News') ?></h1>
-        <a href="/admin/news/create" class="btn btn-primary">
+        <a href="http://localhost.//admin/news/create" class="btn btn-primary">
             <i class="fas fa-plus"></i> <?= $mlSupport->translate('Add News') ?>
         </a>
     </div>

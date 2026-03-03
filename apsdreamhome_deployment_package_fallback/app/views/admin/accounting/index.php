@@ -4,16 +4,16 @@
             <div class="col">
                 <h3 class="page-title"><?= h($mlSupport->translate('Accounting Dashboard')) ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?= h($mlSupport->translate('Dashboard')) ?></a></li>
                     <li class="breadcrumb-item active"><?= h($mlSupport->translate('Accounting')) ?></li>
                 </ul>
             </div>
             <div class="col-auto">
                 <div class="btn-group">
-                    <a href="/admin/accounting/income/add" class="btn btn-success">
+                    <a href="http://localhost.//admin/accounting/income/add" class="btn btn-success">
                         <i class="fas fa-plus me-2"></i><?= h($mlSupport->translate('Add Income')) ?>
                     </a>
-                    <a href="/admin/accounting/expense/add" class="btn btn-danger">
+                    <a href="http://localhost.//admin/accounting/expense/add" class="btn btn-danger">
                         <i class="fas fa-minus me-2"></i><?= h($mlSupport->translate('Add Expense')) ?>
                     </a>
                 </div>

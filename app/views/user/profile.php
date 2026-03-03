@@ -12,7 +12,7 @@
                     <h2 class="h3 mb-0 text-gray-800"><?= $title ?? 'My Profile' ?></h2>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="/dashboard" class="text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="http://localhost.//dashboard" class="text-decoration-none">Dashboard</a></li>
                             <li class="breadcrumb-item active">Profile</li>
                         </ol>
                     </nav>
@@ -125,7 +125,7 @@
                         <h5 class="mb-0 text-primary fw-bold">Send Feedback</h5>
                     </div>
                     <div class="card-body">
-                        <form action="/profile/feedback" method="post" class="needs-validation" novalidate>
+                        <form action="http://localhost.//profile/feedback" method="post" class="needs-validation" novalidate>
                             <?= csrf_field(); ?>
                             <div class="mb-3">
                                 <label class="form-label text-muted">Full Name</label>
@@ -160,7 +160,7 @@
                     <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="/profile/update" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <form action="http://localhost.//profile/update" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                     <?= csrf_field(); ?>
                     <div class="modal-body">
                         <div class="row">

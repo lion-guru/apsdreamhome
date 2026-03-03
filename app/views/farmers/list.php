@@ -11,7 +11,7 @@
                 </h1>
                 <div class="d-flex">
                     <!-- Search Form -->
-                    <form class="form-inline mr-3" method="GET" action="/farmers/search">
+                    <form class="form-inline mr-3" method="GET" action="http://localhost.//farmers/search">
                         <div class="input-group">
                             <input type="text"
                                    name="q"
@@ -25,7 +25,7 @@
                             </div>
                         </div>
                     </form>
-                    <a href="/farmers/create" class="btn btn-primary">
+                    <a href="http://localhost.//farmers/create" class="btn btn-primary">
                         <i class="fas fa-plus mr-2"></i>नया किसान जोड़ें
                     </a>
                 </div>
@@ -141,7 +141,7 @@
                             <i class="fas fa-users fa-4x text-muted mb-4"></i>
                             <h4 class="text-muted">कोई किसान नहीं मिला</h4>
                             <p class="text-muted mb-4">अभी तक कोई किसान रजिस्टर्ड नहीं है।</p>
-                            <a href="/farmers/create" class="btn btn-primary btn-lg">
+                            <a href="http://localhost.//farmers/create" class="btn btn-primary btn-lg">
                                 <i class="fas fa-plus mr-2"></i>पहला किसान जोड़ें
                             </a>
                         </div>
@@ -309,7 +309,7 @@
 <script>
 function deleteFarmer(id, name) {
     document.getElementById('farmerName').textContent = name;
-    document.getElementById('confirmDeleteBtn').href = '/farmers/' + id + '/delete';
+    document.getElementById('confirmDeleteBtn').href='http://localhost.//farmers/' + id + '/delete';
     $('#deleteModal').modal('show');
 }
 

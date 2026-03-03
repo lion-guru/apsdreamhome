@@ -139,7 +139,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/leads/add" method="POST">
+            <form action="http://localhost.//associate/leads/add" method="POST">
                 <div class="modal-body">
                     <div class="form-row">
                         <div class="form-group col-md-6">

@@ -11,7 +11,7 @@ if (!defined('BASE_URL')) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     
-    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/apsdreamhome/public/index.php';
+    $scriptName = $_SERVER['SCRIPT_NAME'] ?? 'http://localhost./public/index.php';
     $scriptDir = dirname($scriptName);
     $scriptDir = str_replace('/public', '', $scriptDir);
     $scriptDir = rtrim($scriptDir, '/\\');

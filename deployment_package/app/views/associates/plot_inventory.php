@@ -397,7 +397,7 @@
                             <i class="fas fa-home fa-4x text-muted mb-4"></i>
                             <h4 class="text-muted">No Allocated Plots</h4>
                             <p class="text-muted mb-4">You don't have any plots allocated yet. Contact your upline or admin to get plots allocated.</p>
-                            <a href="/associate/request-allocation" class="btn btn-primary">
+                            <a href="http://localhost.//associate/request-allocation" class="btn btn-primary">
                                 <i class="fas fa-plus me-2"></i>Request Plot Allocation
                             </a>
                         </div>

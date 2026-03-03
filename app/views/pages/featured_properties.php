@@ -228,8 +228,8 @@ try {
     <nav class="bg-light border-bottom py-2" aria-label="breadcrumb">
         <div class="container">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                <li class="breadcrumb-item"><a href="properties.php">Properties</a></li>
+                <li class="breadcrumb-item"><a href="http://localhost./index.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="http://localhost./properties.php">Properties</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Featured Properties</li>
             </ol>
         </div>
@@ -246,7 +246,7 @@ try {
                             <h3 class="h4 mb-3">Filter Featured Properties</h3>
                         </div>
                         <div class="d-flex justify-content-center flex-wrap gap-2">
-                            <a href="featured_properties.php" class="btn btn-primary filter-btn">All Featured</a>
+                            <a href="http://localhost./featured_properties.php" class="btn btn-primary filter-btn">All Featured</a>
                             <?php if (!empty($propertyTypes)): ?>
                                 <?php foreach ($propertyTypes as $type): ?>
                                 <a href="featured_properties.php?type=<?php echo urlencode($type); ?>"
@@ -333,7 +333,7 @@ try {
                     <p class="text-muted mb-4">
                         We're currently updating our featured properties collection. Please check back soon for new premium listings.
                     </p>
-                    <a href="properties.php" class="btn btn-primary">Browse All Properties</a>
+                    <a href="http://localhost./properties.php" class="btn btn-primary">Browse All Properties</a>
                 </div>
             </div>
             <?php endif; ?>
@@ -345,10 +345,10 @@ try {
                         <h3 class="mb-3">Don't See What You're Looking For?</h3>
                         <p class="text-muted mb-4">Contact our property experts for personalized recommendations and exclusive listings</p>
                         <div class="d-flex gap-3 justify-content-center flex-wrap">
-                            <a href="contact.php" class="btn btn-primary btn-lg">
+                            <a href="http://localhost./contact.php" class="btn btn-primary btn-lg">
                                 <i class="fas fa-phone me-2"></i>Contact Us
                             </a>
-                            <a href="properties.php" class="btn btn-outline-primary btn-lg">
+                            <a href="http://localhost./properties.php" class="btn btn-outline-primary btn-lg">
                                 <i class="fas fa-search me-2"></i>Browse All Properties
                             </a>
                         </div>

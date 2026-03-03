@@ -10,7 +10,7 @@
                             <p class="card-text mb-0">अपने सपनों का घर खोजने के लिए नीचे दिए गए फिल्टर का उपयोग करें।</p>
                         </div>
                         <div class="col-md-4 text-right">
-                            <a href="/customer/favorites" class="btn btn-light">
+                            <a href="http://localhost.//customer/favorites" class="btn btn-light">
                                 <i class="fas fa-heart text-danger mr-1"></i> मेरी पसंद
                             </a>
                         </div>
@@ -25,7 +25,7 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <form action="/customer/properties" method="GET" class="row">
+                    <form action="http://localhost.//customer/properties" method="GET" class="row">
                         <div class="col-md-3 mb-3">
                             <label class="small font-weight-bold">सर्च करें</label>
                             <input type="text" name="search" class="form-control" placeholder="नाम या लोकेशन..." value="<?= h($filters['search'] ?? '') ?>">
@@ -131,7 +131,7 @@
                 </div>
                 <h4>कोई प्रॉपर्टी नहीं मिली</h4>
                 <p class="text-muted">कृपया अपनी सर्च क्राइटेरिया बदलें या बाद में प्रयास करें।</p>
-                <a href="/customer/properties" class="btn btn-primary mt-3">सभी प्रॉपर्टीज देखें</a>
+                <a href="http://localhost.//customer/properties" class="btn btn-primary mt-3">सभी प्रॉपर्टीज देखें</a>
             </div>
         <?php endif; ?>
     </div>
@@ -172,7 +172,7 @@
 function toggleFavorite(propertyId) {
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '/customer/toggle-favorite/' + propertyId;
+    form.action='http://localhost.//customer/toggle-favorite/' + propertyId;
     document.body.appendChild(form);
     form.submit();
 }

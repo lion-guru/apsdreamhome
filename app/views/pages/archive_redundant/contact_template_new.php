@@ -347,9 +347,9 @@ try {
                             </div>
                         </div>
                         <div class="mt-4">
-                            <a href="index_template.php" class="btn btn-primary me-2">Homepage</a>
-                            <a href="about_template.php" class="btn btn-success me-2">About Us</a>
-                            <a href="properties_template.php" class="btn btn-info">Properties</a>
+                            <a href="http://localhost./index_template.php" class="btn btn-primary me-2">Homepage</a>
+                            <a href="http://localhost./about_template.php" class="btn btn-success me-2">About Us</a>
+                            <a href="http://localhost./properties_template.php" class="btn btn-info">Properties</a>
                         </div>
                     </div>
                 </div>

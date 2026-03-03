@@ -295,7 +295,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="associate_dashboard.php">
+            <a class="navbar-brand fw-bold" href="http://localhost./associate_dashboard.php">
                 <i class="fas fa-home me-2"></i>APS Dream Homes
             </a>
             <div class="navbar-nav ms-auto">
@@ -305,17 +305,17 @@ if (isset($_GET['calculated']) && $calculation_result) {
                         <?php echo htmlspecialchars($associate_name); ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="associate_dashboard.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_dashboard.php">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a></li>
-                        <li><a class="dropdown-item" href="hybrid_commission_dashboard.php">
+                        <li><a class="dropdown-item" href="http://localhost./hybrid_commission_dashboard.php">
                             <i class="fas fa-rupee-sign me-2"></i>Hybrid Commission Dashboard
                         </a></li>
-                        <li><a class="dropdown-item" href="property_management.php">
+                        <li><a class="dropdown-item" href="http://localhost./property_management.php">
                             <i class="fas fa-building me-2"></i>Property Management
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="associate_logout.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_logout.php">
                             <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </a></li>
                     </ul>

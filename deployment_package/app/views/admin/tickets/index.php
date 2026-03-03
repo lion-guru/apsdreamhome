@@ -5,12 +5,12 @@
                 <h2 class="page-title">Support Tickets</h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Tickets</li>
                     </ol>
                 </nav>
             </div>
-            <a href="/admin/tickets/create" class="btn btn-primary">
+            <a href="http://localhost.//admin/tickets/create" class="btn btn-primary">
                 <i class="fas fa-plus"></i> New Ticket
             </a>
         </div>

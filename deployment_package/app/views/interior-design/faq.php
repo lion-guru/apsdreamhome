@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="faq" class="btn btn-outline-primary">View All FAQs</a>
+                    <a href="http://localhost./faq" class="btn btn-outline-primary">View All FAQs</a>
                 </div>
             </div>
         </div>

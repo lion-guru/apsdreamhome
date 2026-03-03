@@ -107,7 +107,7 @@ $stats = [
                 </tbody>
             </table>
         </div>
-        <a href="add_project.php" class="btn btn-primary mt-3"><i class="fa fa-plus"></i> Add New Project</a>
+        <a href="http://localhost./add_project.php" class="btn btn-primary mt-3"><i class="fa fa-plus"></i> Add New Project</a>
     </div>
     <!-- AI Suggestions & Automation Status Panel -->
     <div class="dashboard-card p-4 bg-white rounded shadow-sm">

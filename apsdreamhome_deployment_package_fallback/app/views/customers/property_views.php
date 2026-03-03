@@ -45,7 +45,7 @@
                 <i class="fas fa-history fa-4x text-muted mb-4"></i>
                 <h4 class="text-gray-800">अभी तक कोई हिस्ट्री नहीं है!</h4>
                 <p class="text-muted">आपके द्वारा देखी गई प्रॉपर्टीज यहाँ दिखाई देंगी।</p>
-                <a href="/customer/properties" class="btn btn-primary mt-3">प्रॉपर्टीज खोजें</a>
+                <a href="http://localhost.//customer/properties" class="btn btn-primary mt-3">प्रॉपर्टीज खोजें</a>
             </div>
         <?php endif; ?>
     </div>

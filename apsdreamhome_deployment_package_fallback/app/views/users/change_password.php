@@ -24,7 +24,7 @@ if (!defined('BASE_URL')) {
                         <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
                     <?php endif; ?>
 
-                    <form action="/change-password" method="POST">
+                    <form action="http://localhost.//change-password" method="POST">
                         <div class="mb-3">
                             <label for="current_password" class="form-label">Current Password *</label>
                             <input type="password" class="form-control" id="current_password" name="current_password" required>
@@ -47,7 +47,7 @@ if (!defined('BASE_URL')) {
                     </form>
 
                     <div class="text-center mt-3">
-                        <a href="/profile" class="text-decoration-none">← Back to Profile</a>
+                        <a href="http://localhost.//profile" class="text-decoration-none">← Back to Profile</a>
                     </div>
                 </div>
             </div>

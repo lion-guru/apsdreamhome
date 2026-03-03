@@ -351,7 +351,7 @@ echo "<div class='row'>
                 <button class='btn btn-info me-2' onclick='refreshAnalytics()'>
                     <i class='fas fa-redo me-2'></i>Refresh Data
                 </button>
-                <a href='management_dashboard.php' class='btn btn-secondary'>
+                <a href='http://localhost./management_dashboard.php' class='btn btn-secondary'>
                     <i class='fas fa-arrow-left me-2'></i>Back to Management
                 </a>
             </div>

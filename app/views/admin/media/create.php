@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Upload Media</h1>
-        <a href="/admin/media" class="btn btn-secondary">
+        <a href="http://localhost.//admin/media" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Library
         </a>
     </div>
@@ -15,7 +15,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-body">
-            <form action="/admin/media/store" method="POST" enctype="multipart/form-data">
+            <form action="http://localhost.//admin/media/store" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?= $this->getCsrfToken() ?>">
                 
                 <div class="mb-3">

@@ -25,7 +25,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form action="/auth/forgot-password" method="POST" class="vstack gap-3">
+                        <form action="http://localhost.//auth/forgot-password" method="POST" class="vstack gap-3">
                             <div>
                                 <label for="email" class="form-label fw-semibold text-secondary">Email address</label>
                                 <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="name@example.com" required autocomplete="email">
@@ -37,9 +37,9 @@
                 </div>
                 <div class="text-center mt-4 text-white-50">
                     <p class="mb-0">
-                        <a href="/login" class="text-decoration-none text-white">Back to login</a>
+                        <a href="http://localhost.//login" class="text-decoration-none text-white">Back to login</a>
                         <span class="mx-2">|</span>
-                        <a href="/register" class="text-decoration-none text-white">Create account</a>
+                        <a href="http://localhost.//register" class="text-decoration-none text-white">Create account</a>
                     </p>
                 </div>
             </div>

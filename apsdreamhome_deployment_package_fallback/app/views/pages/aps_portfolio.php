@@ -233,9 +233,9 @@ try {
     echo "</div>\n";
 
     echo "<div class='mt-4'>\n";
-    echo "<a href='properties.php' class='btn btn-primary'>View All Projects</a>\n";
-    echo "<a href='index.php' class='btn btn-success'>Go to Homepage</a>\n";
-    echo "<a href='admin_panel.php' class='btn btn-secondary'>Manage Portfolio</a>\n";
+    echo "<a href='http://localhost./properties.php' class='btn btn-primary'>View All Projects</a>\n";
+    echo "<a href='http://localhost./index.php' class='btn btn-success'>Go to Homepage</a>\n";
+    echo "<a href='http://localhost./admin_panel.php' class='btn btn-secondary'>Manage Portfolio</a>\n";
     echo "</div>\n";
 
 } catch (PDOException $e) {

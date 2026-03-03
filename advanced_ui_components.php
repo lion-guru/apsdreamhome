@@ -609,7 +609,7 @@ self.addEventListener('push', (event) => {
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Offline - APS Dream Home</title>
-    <link href='/public/assets/css/style.css' rel='stylesheet'>
+    <link href='http://localhost.//public/assets/css/style.css' rel='stylesheet'>
 </head>
 <body>
     <div class='container text-center mt-5'>

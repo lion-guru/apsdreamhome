@@ -67,7 +67,7 @@ $page_description = 'Discover exceptional residential and commercial spaces craf
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="fas fa-search me-2"></i>Search
                             </button>
-                            <a href="/projects" class="btn btn-outline-secondary">
+                            <a href="http://localhost.//projects" class="btn btn-outline-secondary">
                                 <i class="fas fa-undo me-2"></i>Reset
                             </a>
                         </div>
@@ -85,7 +85,7 @@ $page_description = 'Discover exceptional residential and commercial spaces craf
                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
                     <h4>No Projects Found</h4>
                     <p class="text-muted">Try adjusting your search criteria or browse all our projects.</p>
-                    <a href="/projects" class="btn btn-primary">View All Projects</a>
+                    <a href="http://localhost.//projects" class="btn btn-primary">View All Projects</a>
                 </div>
             </div>
         <?php else: ?>
@@ -99,7 +99,7 @@ $page_description = 'Discover exceptional residential and commercial spaces craf
                                      class="card-img-top" alt="<?= htmlspecialchars($project['project_name']) ?>"
                                      style="height: 250px; object-fit: cover;">
                             <?php else: ?>
-                                <img src="/assets/images/no-project-image.jpg"
+                                <img src="http://localhost.//assets/images/no-project-image.jpg"
                                      class="card-img-top" alt="No Image Available"
                                      style="height: 250px; object-fit: cover;">
                             <?php endif; ?>

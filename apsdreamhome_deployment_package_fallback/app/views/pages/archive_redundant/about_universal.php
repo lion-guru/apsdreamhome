@@ -53,7 +53,7 @@ $content = "
                     <a href='#contact' class='btn btn-light btn-lg'>
                         <i class='fas fa-phone me-2'></i>Get In Touch
                     </a>
-                    <a href='properties.php' class='btn btn-outline-light btn-lg'>
+                    <a href='http://localhost./properties.php' class='btn btn-outline-light btn-lg'>
                         <i class='fas fa-search me-2'></i>Browse Properties
                     </a>
                 </div>
@@ -104,7 +104,7 @@ $content = "
                 </div>
             </div>
             <div class='col-lg-6'>
-                <img src='assets/images/about/company-story.jpg'
+                <img src='http://localhost./assets/images/about/company-story.jpg'
                      alt='Company Story'
                      class='img-fluid rounded shadow'
                      onerror=\"this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmOWZhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNvbXBhbnkgU3Rvcnk8L3RleHQ+PC9zdmc+'\">
@@ -217,7 +217,7 @@ if (!empty($team_members)) {
             <div class='col-lg-4 col-md-6' data-aos='fade-up'>
                 <div class='card h-100 border-0 shadow-sm text-center'>
                     <div class='card-body p-4'>
-                        <img src='assets/images/user-placeholder.jpg'
+                        <img src='http://localhost./assets/images/user-placeholder.jpg'
                              alt='" . htmlspecialchars(($member['first_name'] ?? '') . ' ' . ($member['last_name'] ?? '')) . "'
                              class='rounded-circle mb-3' width='100' height='100'>
                         <h5 class='card-title fw-bold mb-2'>
@@ -269,7 +269,7 @@ if (!empty($testimonials)) {
                         </div>
                         <p class='card-text fst-italic mb-4'>\"" . htmlspecialchars($testimonial['message'] ?? '') . "\"</p>
                         <div class='d-flex align-items-center'>
-                            <img src='assets/images/user-placeholder.jpg'
+                            <img src='http://localhost./assets/images/user-placeholder.jpg'
                                  alt='" . htmlspecialchars($testimonial['name'] ?? 'Customer') . "'
                                  class='rounded-circle me-3' width='50' height='50'>
                             <div>
@@ -347,10 +347,10 @@ $content .= "
                 <h2 class='display-5 fw-bold mb-4'>Ready to Find Your Dream Home?</h2>
                 <p class='lead mb-4'>Get in touch with our expert team today</p>
                 <div class='d-flex gap-3 justify-content-center flex-wrap'>
-                    <a href='contact.php' class='btn btn-light btn-lg'>
+                    <a href='http://localhost./contact.php' class='btn btn-light btn-lg'>
                         <i class='fas fa-phone me-2'></i>Contact Us
                     </a>
-                    <a href='properties.php' class='btn btn-outline-light btn-lg'>
+                    <a href='http://localhost./properties.php' class='btn btn-outline-light btn-lg'>
                         <i class='fas fa-search me-2'></i>Browse Properties
                     </a>
                 </div>

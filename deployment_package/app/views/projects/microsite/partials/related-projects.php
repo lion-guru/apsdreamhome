@@ -14,7 +14,7 @@ $items = array_slice($related, 0, 3);
                 <p class="section-subtitle">Explore other developments in <?php echo h($cityLabel); ?>.</p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <a href="/projects" class="btn btn-outline-primary">View All Projects</a>
+                <a href="http://localhost.//projects" class="btn btn-outline-primary">View All Projects</a>
             </div>
         </div>
         <div class="row g-4">

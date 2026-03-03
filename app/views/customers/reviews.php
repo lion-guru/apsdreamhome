@@ -20,7 +20,7 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <form action="/customer/reviews" method="GET" class="row">
+                    <form action="http://localhost.//customer/reviews" method="GET" class="row">
                         <div class="col-md-3 mb-3">
                             <label class="small font-weight-bold">रेटिंग</label>
                             <select name="rating" class="form-control">
@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-md-3 mb-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-info mr-2">फिल्टर</button>
-                            <a href="/customer/reviews" class="btn btn-secondary">रीसेट</a>
+                            <a href="http://localhost.//customer/reviews" class="btn btn-secondary">रीसेट</a>
                         </div>
                     </form>
                 </div>
@@ -105,7 +105,7 @@
                         <i class="fas fa-comment-slash fa-4x text-muted mb-4"></i>
                         <h4 class="text-gray-800">अभी तक कोई समीक्षा नहीं दी गई है!</h4>
                         <p class="text-muted">अपनी खरीदी गई या देखी गई प्रॉपर्टीज के बारे में अपनी राय साझा करें।</p>
-                        <a href="/customer/properties" class="btn btn-primary">प्रॉपर्टीज देखें</a>
+                        <a href="http://localhost.//customer/properties" class="btn btn-primary">प्रॉपर्टीज देखें</a>
                     </div>
                 </div>
             <?php endif; ?>

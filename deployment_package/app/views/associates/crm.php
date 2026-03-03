@@ -488,7 +488,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/crm/lead/store" method="POST">
+            <form action="http://localhost.//associate/crm/lead/store" method="POST">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Full Name <span class="text-danger">*</span></label>
@@ -591,7 +591,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/crm/lead/update" method="POST">
+            <form action="http://localhost.//associate/crm/lead/update" method="POST">
                 <div class="modal-body">
                     <input type="hidden" name="lead_id" id="edit_lead_id">
                     <div class="form-group">
@@ -707,7 +707,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/crm/customer/store" method="POST">
+            <form action="http://localhost.//associate/crm/customer/store" method="POST">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Full Name <span class="text-danger">*</span></label>
@@ -789,7 +789,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/expenses/store" method="POST" enctype="multipart/form-data">
+            <form action="http://localhost.//associate/expenses/store" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Category <span class="text-danger">*</span></label>
@@ -844,7 +844,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/crm/visit/schedule" method="POST">
+            <form action="http://localhost.//associate/crm/visit/schedule" method="POST">
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Select Client Type <span class="text-danger">*</span></label>
@@ -934,7 +934,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/crm/visit/store" method="POST" id="visitForm">
+            <form action="http://localhost.//associate/crm/visit/store" method="POST" id="visitForm">
                 <div class="modal-body">
                     <input type="hidden" name="latitude" id="visit_lat">
                     <input type="hidden" name="longitude" id="visit_lng">
@@ -973,7 +973,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/associate/crm/visit/client-location" method="POST" id="clientVisitForm">
+            <form action="http://localhost.//associate/crm/visit/client-location" method="POST" id="clientVisitForm">
                 <div class="modal-body">
                     <input type="hidden" name="lead_id" id="checkin_lead_id">
                     <input type="hidden" name="customer_id" id="checkin_customer_id">
@@ -1003,7 +1003,7 @@
     </div>
 </div>
 
-<script src="/public/assets/js/location-bank-helper.js"></script>
+<script src="http://localhost.//public/assets/js/location-bank-helper.js"></script>
 <script>
     function openScheduleModal(type, id) {
         // Reset selections

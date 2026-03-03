@@ -4,8 +4,8 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Create EMI Plan')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/emi"><?php echo h($mlSupport->translate('EMI Plans')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/emi"><?php echo h($mlSupport->translate('EMI Plans')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Create Plan')); ?></li>
                 </ul>
             </div>
@@ -23,7 +23,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form action="/admin/emi/store" method="POST" class="needs-validation" id="createEmiForm" novalidate>
+                    <form action="http://localhost.//admin/emi/store" method="POST" class="needs-validation" id="createEmiForm" novalidate>
                         <?php echo csrf_field(); ?>
 
                         <div class="row">
@@ -93,7 +93,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg"><?php echo h($mlSupport->translate('Create EMI Plan')); ?></button>
-                            <a href="/admin/emi" class="btn btn-light"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/emi" class="btn btn-light"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

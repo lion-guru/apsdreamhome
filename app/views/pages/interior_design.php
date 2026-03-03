@@ -407,8 +407,8 @@ try {
     <nav class="bg-light border-bottom py-2" aria-label="breadcrumb">
         <div class="container">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-                <li class="breadcrumb-item"><a href="services.php">Services</a></li>
+                <li class="breadcrumb-item"><a href="http://localhost./index.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="http://localhost./services.php">Services</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Interior Design</li>
             </ol>
         </div>
@@ -462,7 +462,7 @@ try {
                     <p class="text-muted mb-4">
                         We're currently expanding our interior design services. Please contact us for immediate design consultation.
                     </p>
-                    <a href="contact.php" class="btn btn-primary">Contact Us</a>
+                    <a href="http://localhost./contact.php" class="btn btn-primary">Contact Us</a>
                 </div>
             </div>
             <?php endif; ?>
@@ -775,7 +775,7 @@ try {
                         <a href="tel:+919554000001" class="btn btn-light btn-lg">
                             <i class="fas fa-phone me-2"></i>Call Now: +91-9554000001
                         </a>
-                        <a href="contact.php" class="btn btn-outline-light btn-lg">
+                        <a href="http://localhost./contact.php" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-calendar me-2"></i>Schedule Consultation
                         </a>
                     </div>
@@ -854,7 +854,7 @@ try {
                 <a href="#contact" class="btn btn-outline-light btn-lg">Get Started</a>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
-                <img src="/assets/img/interior-design/hero-image.jpg" 
+                <img src="http://localhost.//assets/img/interior-design/hero-image.jpg" 
                      alt="Interior Design Services" 
                      class="img-fluid rounded shadow" 
                      loading="lazy">

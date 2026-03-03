@@ -1,0 +1,68 @@
+{
+    "timestamp": "2026-03-03 07:52:27",
+    "total_fixes_attempted": 9,
+    "successful_fixes": 6,
+    "success_rate": 66.7,
+    "fix_results": {
+        "base_url": {
+            "fix_base_url": {
+                "status": "NO_CHANGE",
+                "message": "BASE_URL already correct"
+            }
+        },
+        "htaccess": {
+            "fix_public_htaccess": {
+                "status": "SUCCESS",
+                "message": "public\/.htaccess updated"
+            },
+            "create_root_htaccess": {
+                "status": "SUCCESS",
+                "message": "Root .htaccess created"
+            }
+        },
+        "path_fix": {
+            "fix_hardcoded_paths": {
+                "status": "SUCCESS",
+                "files_fixed": 678,
+                "total_fixes": 678,
+                "message": "Fixed paths in 678 files"
+            }
+        },
+        "navigation": {
+            "fix_header_navigation": {
+                "status": "NO_CHANGE",
+                "message": "Header navigation already correct"
+            },
+            "fix_footer_links": {
+                "status": "NO_CHANGE",
+                "message": "Footer links already correct"
+            }
+        },
+        "form_fix": {
+            "fix_form_actions": {
+                "status": "SUCCESS",
+                "forms_fixed": 0,
+                "message": "Fixed 0 form actions"
+            }
+        },
+        "routing_helper": {
+            "create_url_helper": {
+                "status": "SUCCESS",
+                "message": "URL helper functions created"
+            },
+            "update_composer_autoload": {
+                "status": "SUCCESS",
+                "message": "Composer autoload updated"
+            }
+        }
+    },
+    "base_url": "http:\/\/localhost.",
+    "summary": {
+        "base_url_fixed": false,
+        "htaccess_fixed": true,
+        "paths_fixed": true,
+        "navigation_fixed": false,
+        "forms_fixed": true,
+        "helpers_created": true
+    }
+}

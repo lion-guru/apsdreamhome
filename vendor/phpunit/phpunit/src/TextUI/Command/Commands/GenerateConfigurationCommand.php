@@ -59,7 +59,7 @@ final readonly class GenerateConfigurationCommand implements Command
         }
 
         if ($src === '') {
-            $src = 'src';
+            $src='http://localhost./src';
         }
 
         if ($cacheDirectory === '') {

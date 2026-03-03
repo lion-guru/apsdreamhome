@@ -241,10 +241,10 @@ require_once 'includes/templates/professional_header.php';
                 <h2 class="display-5 fw-bold mb-4">🎯 Ready to Test?</h2>
                 <p class="lead mb-4">Resize your browser window or use developer tools to test responsiveness across different screen sizes.</p>
                 <div class="d-flex gap-3 justify-content-center flex-wrap">
-                    <a href="/" class="btn btn-light btn-lg px-5">
+                    <a href="http://localhost.//" class="btn btn-light btn-lg px-5">
                         <i class="fas fa-home me-2"></i>Homepage
                     </a>
-                    <a href="properties" class="btn btn-outline-light btn-lg px-5">
+                    <a href="http://localhost./properties" class="btn btn-outline-light btn-lg px-5">
                         <i class="fas fa-search me-2"></i>Test Search
                     </a>
                     <button class="btn btn-warning btn-lg px-5" onclick="window.location.reload()">

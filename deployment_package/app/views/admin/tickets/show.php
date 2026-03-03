@@ -8,8 +8,8 @@
                 </h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="/admin/tickets">Tickets</a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="http://localhost.//admin/tickets">Tickets</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Details</li>
                     </ol>
                 </nav>

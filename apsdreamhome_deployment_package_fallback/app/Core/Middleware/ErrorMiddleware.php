@@ -384,7 +384,7 @@ class ErrorMiddleware extends Middleware
                     Our team has been notified and is working on fixing the issue.
                 </p>
                 <div class="error-actions">
-                    <a href="/" class="btn btn-primary">Go Home</a>
+                    <a href="http://localhost.//" class="btn btn-primary">Go Home</a>
                     <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
                     <button onclick="location.reload()" class="btn btn-secondary">Try Again</button>
                 </div>

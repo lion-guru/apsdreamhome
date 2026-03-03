@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($data['title']) ? $data['title'] : 'About Us' ?> - APS Dream Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="http://localhost.//assets/css/style.css">
 </head>
 <body>
     <?php include '../app/views/includes/header.php'; ?>

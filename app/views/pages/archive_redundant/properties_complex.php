@@ -166,7 +166,7 @@ ob_start();
                         <h3 class="card-title text-center mb-4">
                             <i class="fas fa-search me-2"></i>Advanced Property Search
                         </h3>
-                        <form method="GET" action="properties.php" class="search-form">
+                        <form method="GET" action="http://localhost./properties.php" class="search-form">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="type" class="form-label fw-bold">Property Type</label>
@@ -215,7 +215,7 @@ ob_start();
                                         <button type="submit" class="btn btn-primary btn-lg px-4">
                                             <i class="fas fa-search me-2"></i>Search Properties
                                         </button>
-                                        <a href="properties.php" class="btn btn-outline-secondary btn-lg px-4">
+                                        <a href="http://localhost./properties.php" class="btn btn-outline-secondary btn-lg px-4">
                                             <i class="fas fa-eraser me-2"></i>Clear Filters
                                         </a>
                                     </div>
@@ -431,10 +431,10 @@ ob_start();
                 <h2 class="display-5 fw-bold mb-4">Can't Find What You're Looking For?</h2>
                 <p class="lead mb-4">Let our experts help you find the perfect property</p>
                 <div class="d-flex gap-3 justify-content-center flex-wrap">
-                    <a href="contact.php" class="btn btn-light btn-lg">
+                    <a href="http://localhost./contact.php" class="btn btn-light btn-lg">
                         <i class="fas fa-phone me-2"></i>Contact Us
                     </a>
-                    <a href="about.php" class="btn btn-outline-light btn-lg">
+                    <a href="http://localhost./about.php" class="btn btn-outline-light btn-lg">
                         <i class="fas fa-info-circle me-2"></i>Learn More
                     </a>
                 </div>

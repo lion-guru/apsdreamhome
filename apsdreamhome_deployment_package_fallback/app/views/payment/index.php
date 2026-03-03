@@ -115,7 +115,7 @@
         </div>
 
         <!-- Payment Form -->
-        <form id="paymentForm" method="POST" action="process-payment">
+        <form id="paymentForm" method="POST" action="http://localhost./process-payment">
             <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
             <input type="hidden" name="property_id" value="<?= $_GET['property_id'] ?? '' ?>">
             <input type="hidden" name="amount" value="<?= $amount ?? '' ?>">

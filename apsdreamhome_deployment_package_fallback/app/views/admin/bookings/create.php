@@ -4,8 +4,8 @@
             <div class="col-sm-12">
                 <h3 class="page-title"><?php echo h($mlSupport->translate('Add Booking')); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
-                    <li class="breadcrumb-item"><a href="/admin/bookings"><?php echo h($mlSupport->translate('Bookings')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/dashboard"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin/bookings"><?php echo h($mlSupport->translate('Bookings')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Add Booking')); ?></li>
                 </ul>
             </div>
@@ -16,7 +16,7 @@
         <div class="col-md-8 offset-md-2">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <form action="/admin/bookings/store" method="POST">
+                    <form action="http://localhost.//admin/bookings/store" method="POST">
                         <?php echo csrf_field(); ?>
 
                         <div class="row">
@@ -95,7 +95,7 @@
 
                         <div class="submit-section text-center">
                             <button type="submit" class="btn btn-primary submit-btn"><?php echo h($mlSupport->translate('Submit')); ?></button>
-                            <a href="/admin/bookings" class="btn btn-secondary submit-btn"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin/bookings" class="btn btn-secondary submit-btn"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

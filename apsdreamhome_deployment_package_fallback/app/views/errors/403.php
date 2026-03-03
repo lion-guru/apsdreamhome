@@ -52,11 +52,11 @@
         <h1>403</h1>
         <h2>Access Forbidden</h2>
         <p>You don't have permission to access this resource.</p>
-        <a href="/" class="btn">Go to Homepage</a>
+        <a href="http://localhost.//" class="btn">Go to Homepage</a>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="/dashboard" class="btn" style="margin-left: 10px;">Go to Dashboard</a>
+            <a href="http://localhost.//dashboard" class="btn" style="margin-left: 10px;">Go to Dashboard</a>
         <?php else: ?>
-            <a href="/login" class="btn" style="margin-left: 10px;">Login</a>
+            <a href="http://localhost.//login" class="btn" style="margin-left: 10px;">Login</a>
         <?php endif; ?>
     </div>
 </body>

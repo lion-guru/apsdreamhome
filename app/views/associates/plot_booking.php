@@ -491,7 +491,7 @@
                                 <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
                                 <h4>Plot Not Found</h4>
                                 <p class="text-muted">The selected plot is not available for booking.</p>
-                                <a href="/associate/plot-booking" class="btn btn-primary">
+                                <a href="http://localhost.//associate/plot-booking" class="btn btn-primary">
                                     <i class="fas fa-arrow-left me-2"></i>Back to Booking
                                 </a>
                             </div>

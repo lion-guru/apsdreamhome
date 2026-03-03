@@ -285,13 +285,13 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <a href="index.php" class="btn-action btn-primary-action">
+            <a href="http://localhost./index.php" class="btn-action btn-primary-action">
                 <i class="fas fa-home me-2"></i>Back to Home
             </a>
-            <a href="properties.php" class="btn-action btn-secondary-action">
+            <a href="http://localhost./properties.php" class="btn-action btn-secondary-action">
                 <i class="fas fa-search me-2"></i>Browse Properties
             </a>
-            <a href="contact.php" class="btn-action btn-secondary-action">
+            <a href="http://localhost./contact.php" class="btn-action btn-secondary-action">
                 <i class="fas fa-phone me-2"></i>Contact Us
             </a>
         </div>

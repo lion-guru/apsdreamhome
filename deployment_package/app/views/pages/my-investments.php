@@ -31,7 +31,7 @@ include 'includes/user_sidebar.php';
                     <h2 class="h3 mb-0 text-gray-800">My Investments</h2>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="customer_dashboard.php" class="text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="http://localhost./customer_dashboard.php" class="text-decoration-none">Dashboard</a></li>
                             <li class="breadcrumb-item active">Investments</li>
                         </ol>
                     </nav>
@@ -61,7 +61,7 @@ include 'includes/user_sidebar.php';
                             <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
                             <h5>No active investments found</h5>
                             <p class="text-muted">You haven't purchased any plots yet.</p>
-                            <a href="property.php" class="btn btn-primary px-4 shadow-none">Start Investing</a>
+                            <a href="http://localhost./property.php" class="btn btn-primary px-4 shadow-none">Start Investing</a>
                         </div>
                     </div>
                 </div>

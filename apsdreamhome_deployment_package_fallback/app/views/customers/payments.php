@@ -23,7 +23,7 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-body">
-                    <form action="/customer/payments" method="GET" class="row">
+                    <form action="http://localhost.//customer/payments" method="GET" class="row">
                         <div class="col-md-2 mb-3">
                             <label class="small font-weight-bold">स्टेटस</label>
                             <select name="status" class="form-control">
@@ -52,7 +52,7 @@
                         </div>
                         <div class="col-md-3 mb-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary mr-2">फिल्टर</button>
-                            <a href="/customer/payments" class="btn btn-secondary">रीसेट</a>
+                            <a href="http://localhost.//customer/payments" class="btn btn-secondary">रीसेट</a>
                         </div>
                     </form>
                 </div>

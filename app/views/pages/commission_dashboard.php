@@ -224,7 +224,7 @@ $current_level_info = $structure[$associate_level];
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="associate_dashboard.php">
+            <a class="navbar-brand fw-bold" href="http://localhost./associate_dashboard.php">
                 <i class="fas fa-home me-2"></i>APS Dream Homes
             </a>
             <div class="navbar-nav ms-auto">
@@ -234,14 +234,14 @@ $current_level_info = $structure[$associate_level];
                         <?php echo htmlspecialchars($associate_name); ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="associate_dashboard.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_dashboard.php">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a></li>
-                        <li><a class="dropdown-item" href="associate_profile.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_profile.php">
                             <i class="fas fa-user me-2"></i>Profile
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="associate_logout.php">
+                        <li><a class="dropdown-item" href="http://localhost./associate_logout.php">
                             <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </a></li>
                     </ul>
@@ -497,7 +497,7 @@ $current_level_info = $structure[$associate_level];
                                             <small class="text-muted">Total earnings available for withdrawal</small>
                                         </div>
                                         <div class="col-md-6">
-                                            <form method="post" action="process_withdrawal.php">
+                                            <form method="post" action="http://localhost./process_withdrawal.php">
                                                 <div class="mb-3">
                                                     <label class="form-label">Withdrawal Amount</label>
                                                     <input type="number" class="form-control" name="amount"

@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="/public/css/pages.css" rel="stylesheet">
+    <link href="http://localhost.//public/css/pages.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -608,7 +608,7 @@
     <header class="customer-header">
         <nav class="customer-nav">
             <a href="#" class="customer-logo">
-                <img src="/public/assets/images/logo/apslogo.png" alt="APS Dream Home">
+                <img src="http://localhost.//public/assets/images/logo/apslogo.png" alt="APS Dream Home">
                 <h3>APS Dream Home</h3>
             </a>
 
@@ -626,7 +626,7 @@
                 </button>
 
                 <div class="user-profile">
-                    <img src="/public/assets/images/user/default-avatar.jpg" alt="User" class="user-avatar">
+                    <img src="http://localhost.//public/assets/images/user/default-avatar.jpg" alt="User" class="user-avatar">
                     <span>John Doe</span>
                     <i class="bi bi-chevron-down"></i>
                 </div>
@@ -696,7 +696,7 @@
                 <!-- Property Card 1 -->
                 <div class="property-card">
                     <div style="position: relative;">
-                        <img src="/public/assets/images/hero/luxury-home-1.jpg" alt="Property" class="property-image">
+                        <img src="http://localhost.//public/assets/images/hero/luxury-home-1.jpg" alt="Property" class="property-image">
                         <span class="property-badge">Featured</span>
                         <button class="property-favorite">
                             <i class="bi bi-heart"></i>
@@ -729,7 +729,7 @@
                 <!-- Property Card 2 -->
                 <div class="property-card">
                     <div style="position: relative;">
-                        <img src="/public/assets/images/hero/luxury-home-2.jpg" alt="Property" class="property-image">
+                        <img src="http://localhost.//public/assets/images/hero/luxury-home-2.jpg" alt="Property" class="property-image">
                         <span class="property-badge">New</span>
                         <button class="property-favorite active">
                             <i class="bi bi-heart-fill"></i>
@@ -762,7 +762,7 @@
                 <!-- Property Card 3 -->
                 <div class="property-card">
                     <div style="position: relative;">
-                        <img src="/public/assets/images/property-banner.jpg" alt="Property" class="property-image">
+                        <img src="http://localhost.//public/assets/images/property-banner.jpg" alt="Property" class="property-image">
                         <span class="property-badge">Hot Deal</span>
                         <button class="property-favorite">
                             <i class="bi bi-heart"></i>

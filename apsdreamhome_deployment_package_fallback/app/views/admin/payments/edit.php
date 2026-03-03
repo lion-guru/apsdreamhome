@@ -4,7 +4,7 @@
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2 fw-bold">Edit Payment</h1>
-    <a href="/admin/payments" class="btn btn-outline-secondary">
+    <a href="http://localhost.//admin/payments" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left me-1"></i> Back to Payments
     </a>
 </div>
@@ -151,7 +151,7 @@ $(document).ready(function() {
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = '/admin/payments';
+                        window.location.href='http://localhost.//admin/payments';
                     });
                 } else {
                     Swal.fire({

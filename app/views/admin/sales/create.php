@@ -9,7 +9,7 @@
             <div class="col">
                 <h3 class="page-title"><?php echo h($page_title); ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
+                    <li class="breadcrumb-item"><a href="http://localhost.//admin"><?php echo h($mlSupport->translate('Dashboard')); ?></a></li>
                     <li class="breadcrumb-item active"><?php echo h($mlSupport->translate('Sales Entry')); ?></li>
                 </ul>
             </div>
@@ -34,7 +34,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form action="/admin/sales/store" method="POST" class="needs-validation" novalidate>
+                    <form action="http://localhost.//admin/sales/store" method="POST" class="needs-validation" novalidate>
                         <?php echo csrf_field(); ?>
                         
                         <div class="row g-3">
@@ -84,7 +84,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fa fa-save"></i> <?php echo h($mlSupport->translate('Save Sales Entry')); ?>
                             </button>
-                            <a href="/admin" class="btn btn-secondary"><?php echo h($mlSupport->translate('Cancel')); ?></a>
+                            <a href="http://localhost.//admin" class="btn btn-secondary"><?php echo h($mlSupport->translate('Cancel')); ?></a>
                         </div>
                     </form>
                 </div>

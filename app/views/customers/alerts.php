@@ -97,7 +97,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/customer/create-alert" method="POST">
+            <form action="http://localhost.//customer/create-alert" method="POST">
                 <?php echo getCsrfField(); ?>
                 <div class="modal-body">
                     <div class="row">

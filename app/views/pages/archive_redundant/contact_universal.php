@@ -203,7 +203,7 @@ $content = "
                         }
 
                         $content .= "
-                        <form method='POST' action='contact.php' id='contactForm'>
+                        <form method='POST' action='http://localhost./contact.php' id='contactForm'>
                             <div class='row g-4'>
                                 <div class='col-md-6'>
                                     <label for='name' class='form-label fw-bold'>Full Name *</label>
@@ -282,7 +282,7 @@ if (!empty($agents)) {
                     <div class='card-body p-4'>
                         <div class='row align-items-center'>
                             <div class='col-md-4 text-center'>
-                                <img src='assets/images/user-placeholder.jpg'
+                                <img src='http://localhost./assets/images/user-placeholder.jpg'
                                      alt='" . htmlspecialchars(($agent['first_name'] ?? '') . ' ' . ($agent['last_name'] ?? '')) . "'
                                      class='rounded-circle mb-3' width='100' height='100'>
                             </div>

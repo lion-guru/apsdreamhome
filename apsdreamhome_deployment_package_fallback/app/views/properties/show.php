@@ -37,8 +37,8 @@ include __DIR__ . '/../layouts/header.php';
 <div class="container py-5">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item"><a href="/properties">Properties</a></li>
+            <li class="breadcrumb-item"><a href="http://localhost.//">Home</a></li>
+            <li class="breadcrumb-item"><a href="http://localhost.//properties">Properties</a></li>
             <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars($property['title']); ?></li>
         </ol>
     </nav>
@@ -171,8 +171,8 @@ include __DIR__ . '/../layouts/header.php';
                         <div class="text-center py-4">
                             <i class="fas fa-user-lock fa-2x text-primary mb-3"></i>
                             <p class="text-secondary mb-3">Please log in to connect with a property advisor.</p>
-                            <a href="/login" class="btn btn-primary w-100">Login to continue</a>
-                            <a href="/register" class="btn btn-outline-primary w-100 mt-2">Create an account</a>
+                            <a href="http://localhost.//login" class="btn btn-primary w-100">Login to continue</a>
+                            <a href="http://localhost.//register" class="btn btn-outline-primary w-100 mt-2">Create an account</a>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -182,7 +182,7 @@ include __DIR__ . '/../layouts/header.php';
                 <div class="card-body">
                     <h6 class="fw-semibold mb-3">Need help comparing?</h6>
                     <p class="text-secondary small">Our specialists can shortlist properties based on your budget, location and timeline.</p>
-                    <a href="/contact" class="btn btn-outline-primary w-100">Request callback</a>
+                    <a href="http://localhost.//contact" class="btn btn-outline-primary w-100">Request callback</a>
                 </div>
             </div>
         </div>
