@@ -88,8 +88,97 @@ class PageController extends BaseController
      */
     public function properties()
     {
-        // TODO: Implement properties functionality
-        return $this->view('properties');
+        $data = [
+            'page_title' => 'Properties - APS Dream Home',
+            'page_description' => 'Browse our extensive collection of premium properties in Gorakhpur, Lucknow, and across Uttar Pradesh',
+            'properties' => [
+                [
+                    'id' => 1,
+                    'title' => 'Luxury Apartment in Gomti Nagar',
+                    'location' => 'Gomti Nagar, Lucknow',
+                    'price' => 7500000,
+                    'type' => 'apartment',
+                    'bedrooms' => 3,
+                    'bathrooms' => 2,
+                    'area' => 1500,
+                    'featured' => true,
+                    'image' => 'properties/luxury-apartment-1.jpg',
+                    'description' => 'Spacious 3BHK luxury apartment with modern amenities and prime location in Gomti Nagar.',
+                    'amenities' => ['Parking', 'Swimming Pool', 'Gym', 'Security', 'Power Backup'],
+                    'status' => 'ready-to-move'
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Modern Villa in Hazratganj',
+                    'location' => 'Hazratganj, Lucknow',
+                    'price' => 12000000,
+                    'type' => 'villa',
+                    'bedrooms' => 4,
+                    'bathrooms' => 3,
+                    'area' => 2000,
+                    'featured' => true,
+                    'image' => 'properties/modern-villa-1.jpg',
+                    'description' => 'Elegant 4BHK villa with private garden and premium finishing in the heart of Hazratganj.',
+                    'amenities' => ['Private Garden', 'Swimming Pool', 'Gym', 'Security', 'Power Backup', 'Servant Room'],
+                    'status' => 'ready-to-move'
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Commercial Space in Vibhuti Khand',
+                    'location' => 'Vibhuti Khand, Gomti Nagar',
+                    'price' => 8500000,
+                    'type' => 'commercial',
+                    'bedrooms' => 0,
+                    'bathrooms' => 2,
+                    'area' => 1200,
+                    'featured' => false,
+                    'image' => 'properties/commercial-space-1.jpg',
+                    'description' => 'Premium commercial space ideal for offices and retail in prime business district.',
+                    'amenities' => ['Parking', 'Power Backup', 'Security', 'Conference Room', 'Reception'],
+                    'status' => 'ready-to-move'
+                ],
+                [
+                    'id' => 4,
+                    'title' => '2BHK Apartment in Alambagh',
+                    'location' => 'Alambagh, Lucknow',
+                    'price' => 4500000,
+                    'type' => 'apartment',
+                    'bedrooms' => 2,
+                    'bathrooms' => 1,
+                    'area' => 950,
+                    'featured' => false,
+                    'image' => 'properties/2bhk-apartment-1.jpg',
+                    'description' => 'Affordable 2BHK apartment with good connectivity and essential amenities.',
+                    'amenities' => ['Parking', 'Security', 'Power Backup'],
+                    'status' => 'under-construction'
+                ],
+                [
+                    'id' => 5,
+                    'title' => '3BHK in Gomti Nagar Extension',
+                    'location' => 'Gomti Nagar Extension, Lucknow',
+                    'price' => 6500000,
+                    'type' => 'apartment',
+                    'bedrooms' => 3,
+                    'bathrooms' => 2,
+                    'area' => 1350,
+                    'featured' => false,
+                    'image' => 'properties/3bhk-extension-1.jpg',
+                    'description' => 'Modern 3BHK apartment in developing area with great investment potential.',
+                    'amenities' => ['Parking', 'Security', 'Power Backup', 'Children Play Area'],
+                    'status' => 'under-construction'
+                ]
+            ],
+            'property_types' => [
+                'apartment' => 'Apartments',
+                'villa' => 'Villas',
+                'commercial' => 'Commercial Spaces',
+                'plot' => 'Plots/Land'
+            ],
+            'featured_count' => 2,
+            'total_properties' => 5
+        ];
+
+        return $this->render('properties/index', $data, 'layouts/base');
     }
 
     /**
@@ -98,8 +187,154 @@ class PageController extends BaseController
      */
     public function services()
     {
-        // TODO: Implement services functionality
-        return $this->view('services');
+        $data = [
+            'page_title' => 'Our Services - APS Dream Home',
+            'page_description' => 'Discover our comprehensive range of real estate services designed to help you find your perfect property or sell your current one with ease.',
+            'services_stats' => [
+                'properties_sold' => 500,
+                'happy_clients' => 1000,
+                'years_experience' => 15,
+                'projects_completed' => 50
+            ],
+            'main_services' => [
+                [
+                    'id' => 1,
+                    'title' => 'Property Buying',
+                    'icon' => 'fas fa-home',
+                    'description' => 'We help you find and purchase your dream property with expert guidance throughout the buying process.',
+                    'features' => ['Property Search', 'Site Visits', 'Price Negotiation', 'Legal Documentation'],
+                    'process_steps' => [
+                        'Understand your requirements',
+                        'Shortlist suitable properties',
+                        'Arrange site visits',
+                        'Negotiate best price',
+                        'Complete legal formalities'
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Property Selling',
+                    'icon' => 'fas fa-dollar-sign',
+                    'description' => 'Sell your property at the best market price with our extensive network and marketing expertise.',
+                    'features' => ['Market Analysis', 'Property Valuation', 'Marketing', 'Buyer Verification'],
+                    'process_steps' => [
+                        'Free property valuation',
+                        'Marketing strategy',
+                        'Buyer screening',
+                        'Negotiation support',
+                        'Smooth documentation'
+                    ]
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Legal Services',
+                    'icon' => 'fas fa-balance-scale',
+                    'description' => 'Complete legal assistance for property transactions including documentation and verification.',
+                    'features' => ['Title Verification', 'Documentation', 'Registration Support', 'Legal Consultation'],
+                    'process_steps' => [
+                        'Document verification',
+                        'Title search',
+                        'Agreement drafting',
+                        'Registration process',
+                        'Post-sale support'
+                    ]
+                ],
+                [
+                    'id' => 4,
+                    'title' => 'Financial Services',
+                    'icon' => 'fas fa-chart-line',
+                    'description' => 'Home loan assistance and financial planning to make your property purchase affordable.',
+                    'features' => ['Loan Assistance', 'Bank Tie-ups', 'EMI Calculator', 'Financial Planning'],
+                    'process_steps' => [
+                        'Eligibility assessment',
+                        'Bank application support',
+                        'Loan negotiation',
+                        'Documentation help',
+                        'Disbursement coordination'
+                    ]
+                ]
+            ],
+            'specialized_services' => [
+                [
+                    'title' => 'NRI Services',
+                    'icon' => 'fas fa-globe',
+                    'description' => 'Dedicated services for NRI clients including remote property management and investment guidance.',
+                    'features' => ['Remote Property Management', 'Investment Guidance', 'Documentation Support', 'Regular Updates']
+                ],
+                [
+                    'title' => 'Investment Advisory',
+                    'icon' => 'fas fa-chart-pie',
+                    'description' => 'Expert advice on real estate investment opportunities with ROI analysis and market trends.',
+                    'features' => ['Market Analysis', 'ROI Calculation', 'Risk Assessment', 'Portfolio Management']
+                ],
+                [
+                    'title' => 'Property Management',
+                    'icon' => 'fas fa-building',
+                    'description' => 'Complete property management services for landlords including tenant management and maintenance.',
+                    'features' => ['Tenant Management', 'Rent Collection', 'Maintenance Support', 'Legal Compliance']
+                ],
+                [
+                    'title' => 'Vastu Consultation',
+                    'icon' => 'fas fa-om',
+                    'description' => 'Traditional Vastu consultation for harmonious living spaces and positive energy.',
+                    'features' => ['Site Analysis', 'Layout Planning', 'Remedies', 'Consultation Reports']
+                ]
+            ],
+            'why_choose_us' => [
+                [
+                    'title' => 'Expert Team',
+                    'icon' => 'fas fa-users',
+                    'description' => 'Highly experienced professionals with deep knowledge of real estate market.'
+                ],
+                [
+                    'title' => 'Transparent Process',
+                    'icon' => 'fas fa-eye',
+                    'description' => 'Complete transparency in all dealings with no hidden charges.'
+                ],
+                [
+                    'title' => 'Best Prices',
+                    'icon' => 'fas fa-tag',
+                    'description' => 'Competitive pricing and best value for your money.'
+                ],
+                [
+                    'title' => 'Legal Safety',
+                    'icon' => 'fas fa-shield-alt',
+                    'description' => 'All properties legally verified with complete documentation.'
+                ],
+                [
+                    'title' => 'Customer Support',
+                    'icon' => 'fas fa-headset',
+                    'description' => '24/7 customer support for all your queries and assistance.'
+                ],
+                [
+                    'title' => 'Quick Processing',
+                    'icon' => 'fas fa-clock',
+                    'description' => 'Fast and efficient processing of all property transactions.'
+                ]
+            ],
+            'testimonials' => [
+                [
+                    'name' => 'Rajesh Kumar',
+                    'property' => '3BHK Apartment in Gomti Nagar',
+                    'content' => 'Excellent service from start to finish. The team helped me find the perfect home within my budget.',
+                    'rating' => 5
+                ],
+                [
+                    'name' => 'Priya Sharma',
+                    'property' => 'Commercial Space in Vibhuti Khand',
+                    'content' => 'Professional approach and great market knowledge. Got the best price for my commercial property.',
+                    'rating' => 5
+                ],
+                [
+                    'name' => 'Amit Verma',
+                    'property' => 'Villa in Hazratganj',
+                    'content' => 'Smooth documentation process and transparent dealing. Highly recommend their services.',
+                    'rating' => 5
+                ]
+            ]
+        ];
+
+        return $this->render('services/index', $data, 'layouts/base');
     }
 
     /**
