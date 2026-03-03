@@ -146,11 +146,11 @@
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             @if($user->status == 'active')
-                                                <button class="btn btn-outline-warning" title="Suspend" onclick="updateStatus({{ $user->id }}, 'suspended');">
+                                                <button class="btn btn-outline-warning" title="Suspend" onclick="updateStatus({{ $user->id }}, 'suspended');"
                                                     <i class="bi bi-pause"></i>
                                                 </button>
                                             @else
-                                                <button class="btn btn-outline-success" title="Activate" onclick="updateStatus({{ $user->id }}, 'active');">
+                                                <button class="btn btn-outline-success" title="Activate" onclick="updateStatus({{ $user->id }}, 'active');"
                                                     <i class="bi bi-play"></i>
                                                 </button>
                                             @endif
