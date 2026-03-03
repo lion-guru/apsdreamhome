@@ -1,0 +1,30 @@
+{
+    "name": "APS Dream Home",
+    "type": "php",
+    "environment": {
+        "DB_HOST": "localhost",
+        "DB_PORT": "3306",
+        "DB_NAME": "apsdreamhome",
+        "DB_USER": "root",
+        "APP_URL": "https:\/\/your-domain.com",
+        "APP_ENV": "production"
+    },
+    "mcp_servers": {
+        "filesystem": true,
+        "git": true,
+        "github": true,
+        "mysql": true,
+        "playwright": true,
+        "postman-api": true,
+        "puppeteer": true,
+        "memory": true,
+        "sequential-thinking": true
+    },
+    "paths": {
+        "root": "C:\\xampp\\htdocs\\apsdreamhome",
+        "config": "C:\\xampp\\htdocs\\apsdreamhome\/config",
+        "app": "C:\\xampp\\htdocs\\apsdreamhome\/app",
+        "public": "C:\\xampp\\htdocs\\apsdreamhome\/public",
+        "database": "C:\\xampp\\htdocs\\apsdreamhome\/database"
+    }
+}

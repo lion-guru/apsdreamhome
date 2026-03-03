@@ -1,0 +1,51 @@
+{
+    "servers": {
+        "filesystem": {
+            "name": "File System",
+            "status": "active",
+            "description": "File system operations and management"
+        },
+        "git": {
+            "name": "GitKraken",
+            "status": "active",
+            "description": "Git version control and repository management"
+        },
+        "github": {
+            "name": "GitHub",
+            "status": "active",
+            "description": "GitHub API integration and repository management"
+        },
+        "mysql": {
+            "name": "MySQL Database",
+            "status": "active",
+            "description": "MySQL database operations and queries"
+        },
+        "playwright": {
+            "name": "Playwright",
+            "status": "active",
+            "description": "Web automation and testing"
+        },
+        "postman-api": {
+            "name": "Postman API",
+            "status": "active",
+            "description": "API testing and documentation"
+        },
+        "puppeteer": {
+            "name": "Puppeteer",
+            "status": "active",
+            "description": "Web scraping and automation"
+        },
+        "memory": {
+            "name": "Memory",
+            "status": "active",
+            "description": "Knowledge graph and memory management"
+        },
+        "sequential-thinking": {
+            "name": "Sequential Thinking",
+            "status": "active",
+            "description": "Step-by-step reasoning and analysis"
+        }
+    },
+    "environment": "production",
+    "lastUpdated": "2026-03-03 09:51:07"
+}

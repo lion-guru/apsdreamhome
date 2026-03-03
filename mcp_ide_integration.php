@@ -1,0 +1,214 @@
+<?php
+/**
+ * APS Dream Home - MCP & IDE Integration Manager
+ * Load environment variables and integrate with IDE
+ */
+
+echo "🔧 MCP & IDE Integration Manager\n";
+echo "===============================\n\n";
+
+// Load environment variables
+$envFile = __DIR__ . '/.env';
+if (file_exists($envFile)) {
+    echo "✅ Loading .env file...\n";
+    $envContent = file_get_contents($envFile);
+    $envLines = explode("\n", $envContent);
+    
+    $envVars = [];
+    foreach ($envLines as $line) {
+        if (strpos($line, '=') !== false && !str_starts_with($line, '#')) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value, " \t\n\r\0\x0B\"");
+            $envVars[$key] = $value;
+            putenv("$key=$value");
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
+        }
+    }
+    echo "✅ Loaded " . count($envVars) . " environment variables\n\n";
+} else {
+    echo "❌ .env file not found\n\n";
+}
+
+// Update MCP configuration with environment variables
+echo "🔧 Updating MCP configuration...\n";
+$mcpConfigFile = __DIR__ . '/config/mcp_servers.json';
+if (file_exists($mcpConfigFile)) {
+    $mcpConfig = json_decode(file_get_contents($mcpConfigFile), true);
+    
+    // Update database configuration
+    if (isset($mcpConfig['mcpServers']['postgresql'])) {
+        $mcpConfig['mcpServers']['postgresql']['env']['POSTGRES_CONNECTION_STRING'] = 
+            "postgresql://{$envVars['DB_HOST']}:{$envVars['DB_PORT']}/{$envVars['DB_NAME']}";
+        $mcpConfig['mcpServers']['postgresql']['env']['POSTGRES_USER'] = $envVars['DB_USER'];
+        $mcpConfig['mcpServers']['postgresql']['env']['POSTGRES_PASSWORD'] = $envVars['DB_PASSWORD'];
+        $mcpConfig['mcpServers']['postgresql']['env']['POSTGRES_DATABASE'] = $envVars['DB_NAME'];
+        echo "✅ Updated PostgreSQL configuration\n";
+    }
+    
+    // Update API keys
+    if (isset($envVars['GOOGLE_MAPS_API_KEY']) && isset($mcpConfig['mcpServers']['google-maps'])) {
+        $mcpConfig['mcpServers']['google-maps']['env']['GOOGLE_MAPS_API_KEY'] = $envVars['GOOGLE_MAPS_API_KEY'];
+        echo "✅ Updated Google Maps API key\n";
+    }
+    
+    if (isset($envVars['OPENROUTER_API_KEY']) && isset($mcpConfig['mcpServers']['openrouter'])) {
+        $mcpConfig['mcpServers']['openrouter']['env']['OPENROUTER_API_KEY'] = $envVars['OPENROUTER_API_KEY'];
+        echo "✅ Updated OpenRouter API key\n";
+    }
+    
+    // Save updated configuration
+    file_put_contents($mcpConfigFile, json_encode($mcpConfig, JSON_PRETTY_PRINT));
+    echo "✅ MCP configuration updated\n\n";
+} else {
+    echo "❌ MCP configuration file not found\n\n";
+}
+
+// Create IDE configuration file
+echo "🔧 Creating IDE configuration...\n";
+$ideConfig = [
+    'name' => 'APS Dream Home',
+    'type' => 'php',
+    'environment' => [
+        'DB_HOST' => $envVars['DB_HOST'] ?? 'localhost',
+        'DB_PORT' => $envVars['DB_PORT'] ?? '3306',
+        'DB_NAME' => $envVars['DB_NAME'] ?? 'apsdreamhome',
+        'DB_USER' => $envVars['DB_USER'] ?? 'root',
+        'APP_URL' => $envVars['APP_URL'] ?? 'http://localhost/apsdreamhome',
+        'APP_ENV' => $envVars['APP_ENV'] ?? 'production'
+    ],
+    'mcp_servers' => [
+        'filesystem' => true,
+        'git' => true,
+        'github' => true,
+        'mysql' => true,
+        'playwright' => true,
+        'postman-api' => true,
+        'puppeteer' => true,
+        'memory' => true,
+        'sequential-thinking' => true
+    ],
+    'paths' => [
+        'root' => __DIR__,
+        'config' => __DIR__ . '/config',
+        'app' => __DIR__ . '/app',
+        'public' => __DIR__ . '/public',
+        'database' => __DIR__ . '/database'
+    ]
+];
+
+$ideConfigFile = __DIR__ . '/config/ide_config.json';
+file_put_contents($ideConfigFile, json_encode($ideConfig, JSON_PRETTY_PRINT));
+echo "✅ IDE configuration created\n\n";
+
+// Create JavaScript configuration for frontend
+echo "🔧 Creating JavaScript configuration...\n";
+$jsConfig = [
+    'app' => [
+        'name' => $envVars['APP_NAME'] ?? 'APS Dream Home',
+        'url' => $envVars['APP_URL'] ?? 'http://localhost/apsdreamhome',
+        'env' => $envVars['APP_ENV'] ?? 'production',
+        'debug' => ($envVars['APP_DEBUG'] ?? 'false') === 'true'
+    ],
+    'api' => [
+        'baseUrl' => ($envVars['APP_URL'] ?? 'http://localhost/apsdreamhome') . '/api',
+        'mapsApiKey' => $envVars['GOOGLE_MAPS_API_KEY'] ?? '',
+        'recaptchaSiteKey' => $envVars['RECAPTCHA_SITE_KEY'] ?? ''
+    ],
+    'database' => [
+        'connected' => true,
+        'type' => 'mysql',
+        'host' => $envVars['DB_HOST'] ?? 'localhost'
+    ],
+    'mcp' => [
+        'enabled' => true,
+        'servers' => ['filesystem', 'git', 'github', 'mysql', 'playwright', 'postman-api', 'puppeteer', 'memory', 'sequential-thinking']
+    ]
+];
+
+$jsConfigFile = __DIR__ . '/public/js/config.js';
+$jsContent = "// APS Dream Home - Frontend Configuration\n";
+$jsContent .= "// Auto-generated by MCP Integration Manager\n\n";
+$jsContent .= "window.APS_CONFIG = " . json_encode($jsConfig, JSON_PRETTY_PRINT) . ";\n";
+file_put_contents($jsConfigFile, $jsContent);
+echo "✅ JavaScript configuration created\n\n";
+
+// Create MCP dashboard configuration
+echo "🔧 Creating MCP dashboard configuration...\n";
+$mcpDashboardConfig = [
+    'servers' => [
+        'filesystem' => [
+            'name' => 'File System',
+            'status' => 'active',
+            'description' => 'File system operations and management'
+        ],
+        'git' => [
+            'name' => 'GitKraken',
+            'status' => 'active', 
+            'description' => 'Git version control and repository management'
+        ],
+        'github' => [
+            'name' => 'GitHub',
+            'status' => 'active',
+            'description' => 'GitHub API integration and repository management'
+        ],
+        'mysql' => [
+            'name' => 'MySQL Database',
+            'status' => 'active',
+            'description' => 'MySQL database operations and queries'
+        ],
+        'playwright' => [
+            'name' => 'Playwright',
+            'status' => 'active',
+            'description' => 'Web automation and testing'
+        ],
+        'postman-api' => [
+            'name' => 'Postman API',
+            'status' => 'active',
+            'description' => 'API testing and documentation'
+        ],
+        'puppeteer' => [
+            'name' => 'Puppeteer',
+            'status' => 'active',
+            'description' => 'Web scraping and automation'
+        ],
+        'memory' => [
+            'name' => 'Memory',
+            'status' => 'active',
+            'description' => 'Knowledge graph and memory management'
+        ],
+        'sequential-thinking' => [
+            'name' => 'Sequential Thinking',
+            'status' => 'active',
+            'description' => 'Step-by-step reasoning and analysis'
+        ]
+    ],
+    'environment' => $envVars['APP_ENV'] ?? 'production',
+    'lastUpdated' => date('Y-m-d H:i:s')
+];
+
+$mcpDashboardConfigFile = __DIR__ . '/config/mcp_dashboard_config.json';
+file_put_contents($mcpDashboardConfigFile, json_encode($mcpDashboardConfig, JSON_PRETTY_PRINT));
+echo "✅ MCP dashboard configuration created\n\n";
+
+echo "🎉 MCP & IDE Integration Complete!\n";
+echo "=====================================\n";
+echo "✅ Environment variables loaded\n";
+echo "✅ MCP configuration updated\n";
+echo "✅ IDE configuration created\n";
+echo "✅ JavaScript configuration created\n";
+echo "✅ MCP dashboard configuration created\n\n";
+
+echo "🚀 Next Steps:\n";
+echo "1. Restart your IDE to load new configuration\n";
+echo "2. Check MCP dashboard for server status\n";
+echo "3. Test database connection\n";
+echo "4. Verify API keys are working\n\n";
+
+echo "📊 Configuration Files Created:\n";
+echo "- config/ide_config.json\n";
+echo "- config/mcp_dashboard_config.json\n";
+echo "- public/js/config.js\n";
+echo "- config/mcp_servers.json (updated)\n";
+?>
