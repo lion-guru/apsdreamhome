@@ -392,6 +392,30 @@ class Controller
     }
 
     /**
+     * Render a view with data and layout
+     *
+     * @param string $view The view name
+     * @param array $data The data to pass to the view
+     * @param string|null $layout The layout to use (optional)
+     * @return void
+     */
+    public function render($view, $data = [], $layout = null)
+    {
+        if ($layout !== null) {
+            $this->view->layout($layout);
+        }
+
+        // Add flash messages to all views
+        $data['flash'] = $this->session->getFlashBag()->all();
+
+        // Add auth and user to all views
+        $data['auth'] = $this->auth;
+        $data['user'] = $this->auth ? $this->auth->user() : null;
+
+        echo $this->view->render($view, $data);
+    }
+
+    /**
      * Magic method to handle undefined method calls
      *
      * @param string $method

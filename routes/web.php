@@ -18,6 +18,7 @@ return [
             '/property' => 'HomeController@propertyDetail',
             '/property/' => 'HomeController@propertyDetail',
             '/featured-properties' => 'HomeController@featuredProperties',
+            '/services' => 'HomeController@services',
         ],
         'POST' => [
             '/contact' => 'HomeController@contact',

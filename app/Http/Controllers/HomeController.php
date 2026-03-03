@@ -221,6 +221,13 @@ class HomeController extends Controller
         ];
     }
     
+    public function services()
+    {
+        // Redirect to PageController services method
+        $pageController = new \App\Http\Controllers\Public\PageController();
+        return $pageController->services();
+    }
+    
     private function loadOfficeLocations()
     {
         return [
