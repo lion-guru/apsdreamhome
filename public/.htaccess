@@ -57,3 +57,8 @@ AddDefaultCharset UTF-8
 ErrorDocument 404 /index.php?error=404
 ErrorDocument 500 /index.php?error=500
 ErrorDocument 403 /index.php?error=403
+
+# PHP Timezone Fix
+<IfModule mod_php.c>
+    php_value date.timezone Asia/Kolkata
+</IfModule>

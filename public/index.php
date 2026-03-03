@@ -4,6 +4,12 @@
  * Front Controller for the Application
  */
 
+// Fix timezone warnings immediately
+date_default_timezone_set('Asia/Kolkata');
+ini_set('date.timezone', 'Asia/Kolkata');
+
+require_once __DIR__ . '/../config/timezone_fix.php';
+
 // Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -24,14 +30,6 @@ function debug_log($message)
 debug_log("Request started: " . ($_SERVER['REQUEST_URI'] ?? 'CLI'));
 debug_log("Request method: " . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
 debug_log("HTTP_HOST: " . ($_SERVER['HTTP_HOST'] ?? 'NOT_SET'));
-
-// Load centralized path configuration
-require_once __DIR__ . '/../config/paths.php';
-
-// Set HTTP_HOST to avoid warnings in config files
-if (!isset($_SERVER['HTTP_HOST'])) {
-    $_SERVER['HTTP_HOST'] = 'localhost';
-}
 
 // Define BASE_URL if not already defined
 if (!defined('BASE_URL')) {
