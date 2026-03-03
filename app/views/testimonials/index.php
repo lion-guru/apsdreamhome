@@ -86,7 +86,7 @@
                                 </span>
                             </div>
                             <div class="progress flex-grow-1 me-3" style="height: 25px;">
-                                <div class="progress-bar bg-warning" style="width: {{ $percentage }}%;">
+                                <div class="progress-bar bg-warning progress-bar-custom" data-width="{{ $percentage }}">
                                     <span class="text-dark fw-bold">{{ $count }}</span>
                                 </div>
                             </div>
@@ -310,6 +310,10 @@
     transform: translateX(5px);
 }
 
+.progress-bar-custom {
+    width: var(--progress-width, 0%);
+}
+
 .rating-circle {
     max-width: 300px;
     margin: 0 auto;
@@ -407,6 +411,17 @@
 </style>
 
 <script>
+// Set progress bar widths from data attributes
+document.addEventListener('DOMContentLoaded', function() {
+    const progressBars = document.querySelectorAll('.progress-bar-custom');
+    progressBars.forEach(bar => {
+        const width = bar.getAttribute('data-width');
+        if (width) {
+            bar.style.setProperty('--progress-width', width + '%');
+        }
+    });
+});
+
 function playVideo(videoUrl) {
     // Create modal for video playback
     const modal = document.createElement('div');
