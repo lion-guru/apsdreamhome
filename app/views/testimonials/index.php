@@ -324,7 +324,7 @@
     width: 250px;
     height: 250px;
     border-radius: 50%;
-    background: conic-gradient(#ffc107 0deg {{ ($testimonials_stats['average_rating'] ?? 4.8) * 72 }}deg, #e9ecef 0deg);
+    background: conic-gradient(#ffc107 0deg var(--rating-degrees, 345deg), #e9ecef 0deg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -420,6 +420,10 @@ document.addEventListener('DOMContentLoaded', function() {
             bar.style.setProperty('--progress-width', width + '%');
         }
     });
+    
+    // Set rating degrees from testimonials stats
+    const ratingDegrees = {{ ($testimonials_stats['average_rating'] ?? 4.8) * 72 }};
+    document.documentElement.style.setProperty('--rating-degrees', ratingDegrees + 'deg');
 });
 
 function playVideo(videoUrl) {
