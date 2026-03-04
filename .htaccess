@@ -1,10 +1,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
+    # Specific redirect for publiccontact to contact page
+    RewriteRule ^publiccontact$ /apsdreamhome/public/contact [R=301,L]
+    
     # Redirect to public folder
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ public/$1 [L]
+    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
 
 # Security headers
