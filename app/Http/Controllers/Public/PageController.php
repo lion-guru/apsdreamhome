@@ -111,50 +111,156 @@ class PageController extends BaseController
      */
     public function about()
     {
-        $this->data = [
-            'title' => 'About Us - APS Dream Home',
-            'description' => 'Learn about APS Dream Home - Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction.',
-            'company_info' => [
-                'name' => 'APS Dream Homes Pvt Ltd',
-                'established' => '2017',
-                'experience' => '8+ Years',
-                'projects' => '50+',
-                'properties' => '500+',
-                'happy_families' => '2000+',
-                'registration_no' => 'U70109UP2022PTC163047'
-            ],
-            'mission' => 'To provide transparent and hassle-free real estate services with a focus on customer satisfaction and quality construction.',
-            'vision' => 'To become the most trusted real estate developer in Uttar Pradesh by delivering excellence in every project.',
-            'values' => [
-                'Transparency',
-                'Quality',
-                'Customer Satisfaction',
-                'Integrity',
-                'Innovation'
-            ],
-            'team' => [
-                (object)[
-                    'name' => 'Amit Kumar Singh',
-                    'position' => 'Managing Director',
-                    'experience' => '15+ Years',
-                    'description' => 'Leading the company with vision and expertise in real estate development.'
-                ],
-                (object)[
-                    'name' => 'Priya Singh',
-                    'position' => 'Operations Head',
-                    'experience' => '10+ Years',
-                    'description' => 'Managing day-to-day operations with focus on efficiency and quality.'
-                ],
-                (object)[
-                    'name' => 'Rahul Verma',
-                    'position' => 'Technical Director',
-                    'experience' => '12+ Years',
-                    'description' => 'Ensuring technical excellence and innovation in construction.'
+        try {
+            // Try to get data from database
+            $pdo = new \PDO(
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
+                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
+                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
+                ";charset=utf8mb4",
+                $_ENV['DB_USERNAME'] ?? 'root',
+                $_ENV['DB_PASSWORD'] ?? '',
+                [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                    \PDO::ATTR_EMULATE_PREPARES => false,
                 ]
-            ]
-        ];
+            );
+
+            $company_info_db = null;
+            $team_members_db = [];
+            $stats_db = null;
+
+            // Get company info from database (check if table exists)
+            $tables = $pdo->query("SHOW TABLES LIKE 'company_info'")->fetchAll();
+            if (!empty($tables)) {
+                $stmt = $pdo->query("SELECT * FROM company_info WHERE id = 1 LIMIT 1");
+                $company_info_db = $stmt->fetch();
+            }
+
+            // Get team members from database (check if table exists)
+            $tables = $pdo->query("SHOW TABLES LIKE 'team_members'")->fetchAll();
+            if (!empty($tables)) {
+                // Use a simple query that should work with most table structures
+                $stmt = $pdo->query("SELECT * FROM team_members LIMIT 3");
+                $team_members_db = $stmt->fetchAll();
+            }
+
+            // Get statistics from database (check if table exists)
+            $tables = $pdo->query("SHOW TABLES LIKE 'company_stats'")->fetchAll();
+            if (!empty($tables)) {
+                $stmt = $pdo->query("SELECT * FROM company_stats WHERE id = 1 LIMIT 1");
+                $stats_db = $stmt->fetch();
+            }
+
+            if ($company_info_db || $team_members_db || $stats_db) {
+                // Use database data
+                $data = [
+                    'title' => $company_info_db['page_title'] ?? 'About Us - APS Dream Home',
+                    'description' => $company_info_db['meta_description'] ?? 'Learn about APS Dream Home - Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction.',
+                    'company_info' => [
+                        'name' => $company_info_db['company_name'] ?? 'APS Dream Homes Pvt Ltd',
+                        'established' => $company_info_db['established_year'] ?? '2017',
+                        'experience' => $stats_db['experience_years'] ?? '8+ Years',
+                        'projects' => $stats_db['completed_projects'] ?? '50+',
+                        'properties' => $stats_db['properties_delivered'] ?? '500+',
+                        'happy_families' => $stats_db['happy_customers'] ?? '2000+',
+                        'registration_no' => $company_info_db['registration_no'] ?? 'U70109UP2022PTC163047'
+                    ],
+                    'mission' => $company_info_db['mission_statement'] ?? 'To provide transparent and hassle-free real estate services with a focus on customer satisfaction and quality construction.',
+                    'vision' => $company_info_db['vision_statement'] ?? 'To become the most trusted real estate developer in Uttar Pradesh by delivering excellence in every project.',
+                    'values' => $company_info_db['core_values'] ? explode(',', $company_info_db['core_values']) : [
+                        'Transparency',
+                        'Quality',
+                        'Customer Satisfaction',
+                        'Integrity',
+                        'Innovation'
+                    ],
+                    'team' => !empty($team_members_db) ? array_map(function($member) {
+                        return (object)[
+                            'name' => $member['name'],
+                            'position' => $member['position'],
+                            'experience' => $member['experience'],
+                            'description' => $member['description'],
+                            'image' => $member['image'] ?? 'team/default.jpg'
+                        ];
+                    }, $team_members_db) : [
+                        (object)[
+                            'name' => 'Amit Kumar Singh',
+                            'position' => 'Managing Director',
+                            'experience' => '15+ Years',
+                            'description' => 'Leading the company with vision and expertise in real estate development.',
+                            'image' => 'team/amit.jpg'
+                        ],
+                        (object)[
+                            'name' => 'Priya Singh',
+                            'position' => 'Operations Head',
+                            'experience' => '10+ Years',
+                            'description' => 'Managing day-to-day operations with focus on efficiency and quality.',
+                            'image' => 'team/priya.jpg'
+                        ],
+                        (object)[
+                            'name' => 'Rahul Verma',
+                            'position' => 'Technical Director',
+                            'experience' => '12+ Years',
+                            'description' => 'Ensuring technical excellence and innovation in construction.',
+                            'image' => 'team/rahul.jpg'
+                        ]
+                    ]
+                ];
+            } else {
+                throw new Exception("No data found in database");
+            }
+        } catch (Exception $e) {
+            // Fallback to sample data if database fails
+            $data = [
+                'title' => 'About Us - APS Dream Home',
+                'description' => 'Learn about APS Dream Home - Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction.',
+                'company_info' => [
+                    'name' => 'APS Dream Homes Pvt Ltd',
+                    'established' => '2017',
+                    'experience' => '8+ Years',
+                    'projects' => '50+',
+                    'properties' => '500+',
+                    'happy_families' => '2000+',
+                    'registration_no' => 'U70109UP2022PTC163047'
+                ],
+                'mission' => 'To provide transparent and hassle-free real estate services with a focus on customer satisfaction and quality construction.',
+                'vision' => 'To become the most trusted real estate developer in Uttar Pradesh by delivering excellence in every project.',
+                'values' => [
+                    'Transparency',
+                    'Quality',
+                    'Customer Satisfaction',
+                    'Integrity',
+                    'Innovation'
+                ],
+                'team' => [
+                    (object)[
+                        'name' => 'Amit Kumar Singh',
+                        'position' => 'Managing Director',
+                        'experience' => '15+ Years',
+                        'description' => 'Leading the company with vision and expertise in real estate development.',
+                        'image' => 'team/amit.jpg'
+                    ],
+                    (object)[
+                        'name' => 'Priya Singh',
+                        'position' => 'Operations Head',
+                        'experience' => '10+ Years',
+                        'description' => 'Managing day-to-day operations with focus on efficiency and quality.',
+                        'image' => 'team/priya.jpg'
+                    ],
+                    (object)[
+                        'name' => 'Rahul Verma',
+                        'position' => 'Technical Director',
+                        'experience' => '12+ Years',
+                        'description' => 'Ensuring technical excellence and innovation in construction.',
+                        'image' => 'team/rahul.jpg'
+                    ]
+                ]
+            ];
+        }
         
-        $this->render('about/index', $this->data, 'layouts/base');
+        return $this->render('about/index', $data, 'layouts/base');
     }
 
     /**
