@@ -884,182 +884,277 @@ class PageController extends BaseController
      */
     public function blog()
     {
-        $data = [
-            'page_title' => 'Blog - APS Dream Home',
-            'page_description' => 'Stay updated with the latest real estate trends, property tips, and market insights from our expert team.',
-            'blog_categories' => [
+        try {
+            // Try to get data from database
+            $pdo = new \PDO(
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
+                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
+                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
+                ";charset=utf8mb4",
+                $_ENV['DB_USERNAME'] ?? 'root',
+                $_ENV['DB_PASSWORD'] ?? '',
                 [
-                    'id' => 1,
-                    'name' => 'Property Tips',
-                    'slug' => 'property-tips',
-                    'post_count' => 24,
-                    'description' => 'Expert advice on buying, selling, and maintaining properties'
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Market Trends',
-                    'slug' => 'market-trends',
-                    'post_count' => 18,
-                    'description' => 'Latest real estate market analysis and predictions'
-                ],
-                [
-                    'id' => 3,
-                    'name' => 'Investment Guide',
-                    'slug' => 'investment-guide',
-                    'post_count' => 15,
-                    'description' => 'Smart investment strategies for real estate'
-                ],
-                [
-                    'id' => 4,
-                    'name' => 'Home Improvement',
-                    'slug' => 'home-improvement',
-                    'post_count' => 22,
-                    'description' => 'Tips and ideas for home renovation and improvement'
-                ],
-                [
-                    'id' => 5,
-                    'name' => 'Legal & Documentation',
-                    'slug' => 'legal-documentation',
-                    'post_count' => 12,
-                    'description' => 'Understanding legal aspects of real estate transactions'
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                    \PDO::ATTR_EMULATE_PREPARES => false,
                 ]
-            ],
-            'featured_posts' => [
-                [
-                    'id' => 1,
-                    'title' => 'Top 10 Things to Check Before Buying a Property in 2026',
-                    'slug' => 'top-10-things-check-buying-property-2026',
-                    'excerpt' => 'A comprehensive guide to help you make informed decisions when purchasing your dream home. From legal verification to structural inspection, we cover everything you need to know.',
-                    'content' => 'Buying a property is one of the biggest financial decisions you\'ll ever make. In this comprehensive guide, we walk you through the essential checks and considerations before making your purchase...',
-                    'author' => [
-                        'name' => 'Rajesh Kumar',
-                        'avatar' => 'authors/rajesh-kumar.jpg',
-                        'role' => 'Senior Property Advisor'
+            );
+
+            // Get news articles from database
+            $stmt = $pdo->query("SELECT * FROM news ORDER BY date DESC, created_at DESC");
+            $news_articles = $stmt->fetchAll();
+
+            if (!empty($news_articles)) {
+                // Format database data
+                $featured_posts = array_map(function($article) {
+                    return [
+                        'id' => $article['id'],
+                        'title' => $article['title'],
+                        'excerpt' => $article['summary'] ?? substr(strip_tags($article['content'] ?? ''), 0, 150) . '...',
+                        'content' => $article['content'],
+                        'featured_image' => $article['image'] ?? 'blog/default-featured.jpg',
+                        'published_date' => $article['date'],
+                        'category' => 'Real Estate News',
+                        'reading_time' => ceil(str_word_count(strip_tags($article['content'] ?? '')) / 200) . ' min read',
+                        'author' => [
+                            'name' => 'APS Dream Home Team',
+                            'role' => 'Real Estate Experts',
+                            'avatar' => 'authors/aps-team.jpg'
+                        ],
+                        'featured' => $article['id'] <= 2, // First 2 articles as featured
+                        'views' => rand(100, 5000),
+                        'likes' => rand(10, 200),
+                        'comments' => rand(0, 50)
+                    ];
+                }, array_slice($news_articles, 0, 3));
+
+                $recent_posts = array_map(function($article) {
+                    return [
+                        'id' => $article['id'],
+                        'title' => $article['title'],
+                        'excerpt' => $article['summary'] ?? substr(strip_tags($article['content'] ?? ''), 0, 120) . '...',
+                        'thumbnail' => $article['image'] ?? 'blog/thumbnails/default.jpg',
+                        'published_date' => $article['date'],
+                        'category' => 'Real Estate News',
+                        'reading_time' => ceil(str_word_count(strip_tags($article['content'] ?? '')) / 200) . ' min read',
+                        'author' => 'APS Dream Home Team',
+                        'views' => rand(50, 2000)
+                    ];
+                }, $news_articles);
+
+                $data = [
+                    'page_title' => 'Blog - APS Dream Home',
+                    'page_description' => 'Stay updated with the latest real estate trends, property tips, and market insights from our expert team.',
+                    'blog_stats' => [
+                        'total_posts' => count($news_articles),
+                        'total_categories' => 5,
+                        'total_authors' => 3,
+                        'total_views' => array_sum(array_column($featured_posts, 'views')) + array_sum(array_column($recent_posts, 'views'))
                     ],
-                    'category' => 'Property Tips',
-                    'featured_image' => 'blog/featured-1.jpg',
-                    'published_date' => '2026-02-20',
-                    'updated_date' => '2026-02-22',
-                    'reading_time' => '8 min read',
-                    'views' => 2450,
-                    'likes' => 89,
-                    'comments' => 23,
-                    'tags' => ['property-buying', 'real-estate-tips', 'home-purchase', 'investment'],
-                    'featured' => true
+                    'blog_categories' => [
+                        [
+                            'name' => 'Property Buying',
+                            'description' => 'Tips and guides for buying your dream property',
+                            'post_count' => 15
+                        ],
+                        [
+                            'name' => 'Investment',
+                            'description' => 'Real estate investment strategies and opportunities',
+                            'post_count' => 12
+                        ],
+                        [
+                            'name' => 'Market Trends',
+                            'description' => 'Latest market analysis and property trends',
+                            'post_count' => 8
+                        ],
+                        [
+                            'name' => 'Legal Tips',
+                            'description' => 'Legal aspects and documentation guidance',
+                            'post_count' => 6
+                        ],
+                        [
+                            'name' => 'Home Loans',
+                            'description' => 'Financing options and loan guidance',
+                            'post_count' => 10
+                        ],
+                        [
+                            'name' => 'Vastu Tips',
+                            'description' => 'Vastu compliant property guidance',
+                            'post_count' => 4
+                        ]
+                    ],
+                    'featured_posts' => $featured_posts,
+                    'recent_posts' => $recent_posts,
+                    'popular_tags' => [
+                        ['name' => 'property-buying', 'count' => 15],
+                        ['name' => 'investment', 'count' => 12],
+                        ['name' => 'home-loan', 'count' => 10],
+                        ['name' => 'real-estate-tips', 'count' => 8],
+                        ['name' => 'market-trends', 'count' => 6],
+                        ['name' => 'vastu', 'count' => 4]
+                    ]
+                ];
+            } else {
+                throw new Exception("No news articles found");
+            }
+        } catch (Exception $e) {
+            // Fallback to sample data if database fails
+            $data = [
+                'page_title' => 'Blog - APS Dream Home',
+                'page_description' => 'Stay updated with the latest real estate trends, property tips, and market insights from our expert team.',
+                'blog_stats' => [
+                    'total_posts' => 91,
+                    'total_categories' => 5,
+                    'total_authors' => 8,
+                    'total_views' => 45670,
+                    'total_comments' => 234
                 ],
-                [
-                    'id' => 2,
-                    'title' => 'Lucknow Real Estate Market: Trends & Predictions for 2026',
-                    'slug' => 'lucknow-real-estate-market-trends-predictions-2026',
-                    'excerpt' => 'An in-depth analysis of Lucknow\'s property market, including emerging hotspots, price trends, and investment opportunities for homebuyers and investors.',
-                    'content' => 'The Lucknow real estate market has shown remarkable resilience and growth over the past few years. Our comprehensive analysis reveals key trends that are shaping the future of property investments in the city...',
-                    'author' => [
-                        'name' => 'Priya Sharma',
-                        'avatar' => 'authors/priya-sharma.jpg',
-                        'role' => 'Market Analyst'
+                'blog_categories' => [
+                    [
+                        'name' => 'Property Buying',
+                        'description' => 'Tips and guides for buying your dream property',
+                        'post_count' => 15
                     ],
-                    'category' => 'Market Trends',
-                    'featured_image' => 'blog/featured-2.jpg',
-                    'published_date' => '2026-02-18',
-                    'updated_date' => '2026-02-19',
-                    'reading_time' => '6 min read',
-                    'views' => 1890,
-                    'likes' => 67,
-                    'comments' => 15,
-                    'tags' => ['lucknow', 'market-trends', 'investment', 'property-prices'],
-                    'featured' => true
+                    [
+                        'name' => 'Investment',
+                        'description' => 'Real estate investment strategies and opportunities',
+                        'post_count' => 12
+                    ],
+                    [
+                        'name' => 'Market Trends',
+                        'description' => 'Latest market analysis and property trends',
+                        'post_count' => 8
+                    ],
+                    [
+                        'name' => 'Legal Tips',
+                        'description' => 'Legal aspects and documentation guidance',
+                        'post_count' => 6
+                    ],
+                    [
+                        'name' => 'Home Loans',
+                        'description' => 'Financing options and loan guidance',
+                        'post_count' => 10
+                    ],
+                    [
+                        'name' => 'Vastu Tips',
+                        'description' => 'Vastu compliant property guidance',
+                        'post_count' => 4
+                    ]
                 ],
-                [
-                    'id' => 3,
-                    'title' => 'Home Renovation Ideas That Increase Property Value',
-                    'slug' => 'home-renovation-ideas-increase-property-value',
-                    'excerpt' => 'Discover the most impactful home improvement projects that offer the best return on investment and significantly boost your property\'s market value.',
-                    'content' => 'Strategic home renovations can dramatically increase your property\'s value while improving your living experience. We\'ve compiled the most effective renovation ideas that offer excellent ROI...',
-                    'author' => [
-                        'name' => 'Amit Verma',
-                        'avatar' => 'authors/amit-verma.jpg',
-                        'role' => 'Interior Designer'
+                'featured_posts' => [
+                    [
+                        'id' => 1,
+                        'title' => 'Top 10 Things to Check Before Buying a Property in 2024',
+                        'excerpt' => 'Discover the essential checklist every homebuyer should follow before making their property purchase. From legal verification to property inspection, we cover everything you need to know.',
+                        'featured_image' => 'blog/featured-1.jpg',
+                        'published_date' => '2026-03-01',
+                        'category' => 'Property Buying',
+                        'reading_time' => '8 min read',
+                        'author' => [
+                            'name' => 'Amit Kumar Singh',
+                            'role' => 'Real Estate Expert',
+                            'avatar' => 'authors/amit.jpg'
+                        ],
+                        'featured' => true,
+                        'views' => 5420,
+                        'likes' => 145,
+                        'comments' => 23
                     ],
-                    'category' => 'Home Improvement',
-                    'featured_image' => 'blog/featured-3.jpg',
-                    'published_date' => '2026-02-15',
-                    'updated_date' => '2026-02-16',
-                    'reading_time' => '7 min read',
-                    'views' => 1675,
-                    'likes' => 92,
-                    'comments' => 31,
-                    'tags' => ['renovation', 'home-improvement', 'property-value', 'roi'],
-                    'featured' => true
+                    [
+                        'id' => 2,
+                        'title' => 'How to Calculate ROI on Real Estate Investments',
+                        'excerpt' => 'Learn the proven methods to calculate return on investment for your real estate properties. This comprehensive guide covers both residential and commercial property investments.',
+                        'featured_image' => 'blog/featured-2.jpg',
+                        'published_date' => '2026-02-28',
+                        'category' => 'Investment',
+                        'reading_time' => '6 min read',
+                        'author' => [
+                            'name' => 'Priya Sharma',
+                            'role' => 'Investment Advisor',
+                            'avatar' => 'authors/priya.jpg'
+                        ],
+                        'featured' => true,
+                        'views' => 3890,
+                        'likes' => 98,
+                        'comments' => 15
+                    ],
+                    [
+                        'id' => 3,
+                        'title' => 'Vastu Tips for Your New Home: Complete Guide',
+                        'excerpt' => 'Transform your living space with these essential Vastu principles. Our expert guide helps you create a harmonious and positive environment in your new home.',
+                        'featured_image' => 'blog/featured-3.jpg',
+                        'published_date' => '2026-02-25',
+                        'category' => 'Vastu Tips',
+                        'reading_time' => '5 min read',
+                        'author' => [
+                            'name' => 'Dr. Ramesh Kumar',
+                            'role' => 'Vastu Consultant',
+                            'avatar' => 'authors/ramesh.jpg'
+                        ],
+                        'featured' => false,
+                        'views' => 2780,
+                        'likes' => 76,
+                        'comments' => 12
+                    ]
+                ],
+                'recent_posts' => [
+                    [
+                        'id' => 4,
+                        'title' => 'Home Loan Interest Rates: Current Market Analysis',
+                        'excerpt' => 'Stay updated with the latest home loan interest rates and market trends. Our analysis helps you make informed decisions about your home financing.',
+                        'thumbnail' => 'blog/recent-1.jpg',
+                        'published_date' => '2026-02-20',
+                        'category' => 'Home Loans',
+                        'reading_time' => '4 min read',
+                        'author' => 'Vikram Singh',
+                        'views' => 1890
+                    ],
+                    [
+                        'id' => 5,
+                        'title' => 'Legal Documents Needed for Property Registration',
+                        'excerpt' => 'Complete guide to all legal documents required for property registration in India. Make your property buying process smooth and hassle-free.',
+                        'thumbnail' => 'blog/recent-2.jpg',
+                        'published_date' => '2026-02-18',
+                        'category' => 'Legal Tips',
+                        'reading_time' => '7 min read',
+                        'author' => 'Legal Team',
+                        'views' => 2340
+                    ],
+                    [
+                        'id' => 6,
+                        'title' => 'Best Areas for Real Estate Investment in Lucknow',
+                        'excerpt' => 'Discover the most promising locations for real estate investment in Lucknow. Our expert analysis covers growth potential and ROI expectations.',
+                        'thumbnail' => 'blog/recent-3.jpg',
+                        'published_date' => '2026-02-15',
+                        'category' => 'Investment',
+                        'reading_time' => '6 min read',
+                        'author' => 'Property Experts',
+                        'views' => 3120
+                    ],
+                    [
+                        'id' => 7,
+                        'title' => 'Property Tax Guide for Homeowners',
+                        'excerpt' => 'Everything you need to know about property tax calculation, payment methods, and deadlines. Essential information for every homeowner.',
+                        'thumbnail' => 'blog/recent-4.jpg',
+                        'published_date' => '2026-02-12',
+                        'category' => 'Legal Tips',
+                        'reading_time' => '5 min read',
+                        'author' => 'Tax Experts',
+                        'views' => 1560
+                    ]
+                ],
+                'popular_tags' => [
+                    ['name' => 'property-buying', 'count' => 45],
+                    ['name' => 'investment', 'count' => 38],
+                    ['name' => 'home-loan', 'count' => 32],
+                    ['name' => 'real-estate-tips', 'count' => 28],
+                    ['name' => 'market-trends', 'count' => 25],
+                    ['name' => 'renovation', 'count' => 22],
+                    ['name' => 'vastu', 'count' => 18],
+                    ['name' => 'tax-benefits', 'count' => 15]
                 ]
-            ],
-            'recent_posts' => [
-                [
-                    'id' => 4,
-                    'title' => 'Understanding RERA: A Homebuyer\'s Complete Guide',
-                    'slug' => 'understanding-rera-homebuyers-complete-guide',
-                    'excerpt' => 'Everything you need to know about RERA and how it protects homebuyers\' interests in real estate transactions.',
-                    'author' => 'Rajesh Kumar',
-                    'category' => 'Legal & Documentation',
-                    'published_date' => '2026-02-14',
-                    'reading_time' => '5 min read',
-                    'thumbnail' => 'blog/recent-1.jpg',
-                    'views' => 890
-                ],
-                [
-                    'id' => 5,
-                    'title' => 'Vastu Tips for New Home Construction',
-                    'slug' => 'vastu-tips-new-home-construction',
-                    'excerpt' => 'Traditional Vastu principles to consider when building your dream home for positive energy and prosperity.',
-                    'author' => 'Priya Sharma',
-                    'category' => 'Property Tips',
-                    'published_date' => '2026-02-12',
-                    'reading_time' => '4 min read',
-                    'thumbnail' => 'blog/recent-2.jpg',
-                    'views' => 756
-                ],
-                [
-                    'id' => 6,
-                    'title' => 'Smart Home Features That Add Value to Your Property',
-                    'slug' => 'smart-home-features-add-value-property',
-                    'excerpt' => 'Modern smart home technologies that not only enhance convenience but also increase your property\'s market value.',
-                    'author' => 'Amit Verma',
-                    'category' => 'Home Improvement',
-                    'published_date' => '2026-02-10',
-                    'reading_time' => '6 min read',
-                    'thumbnail' => 'blog/recent-3.jpg',
-                    'views' => 623
-                ],
-                [
-                    'id' => 7,
-                    'title' => 'Tax Benefits of Home Loans in India 2026',
-                    'slug' => 'tax-benefits-home-loans-india-2026',
-                    'excerpt' => 'Complete guide to tax deductions and benefits available on home loans under various sections of the Income Tax Act.',
-                    'author' => 'Rajesh Kumar',
-                    'category' => 'Investment Guide',
-                    'published_date' => '2026-02-08',
-                    'reading_time' => '7 min read',
-                    'thumbnail' => 'blog/recent-4.jpg',
-                    'views' => 1120
-                ]
-            ],
-            'popular_tags' => [
-                ['name' => 'property-buying', 'count' => 45],
-                ['name' => 'investment', 'count' => 38],
-                ['name' => 'home-loan', 'count' => 32],
-                ['name' => 'real-estate-tips', 'count' => 28],
-                ['name' => 'market-trends', 'count' => 25],
-                ['name' => 'renovation', 'count' => 22],
-                ['name' => 'vastu', 'count' => 18],
-                ['name' => 'tax-benefits', 'count' => 15]
-            ],
-            'blog_stats' => [
-                'total_posts' => 91,
-                'total_categories' => 5,
-                'total_authors' => 8,
-                'total_views' => 45670,
-                'total_comments' => 234
-            ]
-        ];
+            ];
+        }
 
         return $this->render('blog/index', $data, 'layouts/base');
     }
@@ -1324,162 +1419,156 @@ class PageController extends BaseController
      */
     public function team()
     {
-        $data = [
-            'page_title' => 'Our Team - APS Dream Home',
-            'page_description' => 'Meet the dedicated professionals behind APS Dream Home. Our experienced team is committed to delivering excellence in real estate services.',
-            'leadership_team' => [
+        try {
+            // Try to get data from database
+            $pdo = new \PDO(
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
+                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
+                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
+                ";charset=utf8mb4",
+                $_ENV['DB_USERNAME'] ?? 'root',
+                $_ENV['DB_PASSWORD'] ?? '',
                 [
-                    'id' => 1,
-                    'name' => 'Amit Kumar Singh',
-                    'position' => 'Founder & Managing Director',
-                    'bio' => 'With over 15 years of experience in real estate development, Amit founded APS Dream Home with a vision to transform the property landscape in Uttar Pradesh. His leadership and strategic thinking have been instrumental in the company\'s growth.',
-                    'experience' => '15+ Years',
-                    'education' => 'MBA - IIM Lucknow, B.Tech - IIT Kanpur',
-                    'achievements' => [
-                        'Developed 500+ properties across UP',
-                        'Awarded "Best Real Estate Developer 2023"',
-                        'Led 50+ successful project completions'
-                    ],
-                    'image' => 'team/amit-singh.jpg',
-                    'email' => 'amit.singh@apsdreamhomes.com',
-                    'phone' => '+91-9277121101',
-                    'linkedin' => 'https://linkedin.com/in/amit-kumar-singh-aps'
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Priya Sharma',
-                    'position' => 'Chief Operating Officer',
-                    'bio' => 'Priya brings extensive operational expertise to APS Dream Home. Her focus on process optimization and customer satisfaction has helped establish the company as a trusted name in real estate.',
-                    'experience' => '12+ Years',
-                    'education' => 'MBA - XLRI Jamshedpur, B.Com - Delhi University',
-                    'achievements' => [
-                        'Streamlined operations reducing project timelines by 30%',
-                        'Implemented customer-centric service models',
-                        'Managed team of 100+ professionals'
-                    ],
-                    'image' => 'team/priya-sharma.jpg',
-                    'email' => 'priya.sharma@apsdreamhomes.com',
-                    'phone' => '+91-9277121102',
-                    'linkedin' => 'https://linkedin.com/in/priya-sharma-aps'
-                ],
-                [
-                    'id' => 3,
-                    'name' => 'Rajesh Verma',
-                    'position' => 'Chief Financial Officer',
-                    'bio' => 'Rajesh oversees all financial aspects of APS Dream Home, ensuring fiscal discipline and sustainable growth. His expertise in financial planning has been crucial for the company\'s expansion.',
-                    'experience' => '10+ Years',
-                    'education' => 'CA - ICAI, B.Com - Lucknow University',
-                    'achievements' => [
-                        'Secured funding for projects worth ₹500+ crore',
-                        'Implemented robust financial controls',
-                        'Improved profitability by 25%'
-                    ],
-                    'image' => 'team/rajesh-verma.jpg',
-                    'email' => 'rajesh.verma@apsdreamhomes.com',
-                    'phone' => '+91-9277121103',
-                    'linkedin' => 'https://linkedin.com/in/rajesh-verma-aps'
-                ],
-                [
-                    'id' => 4,
-                    'name' => 'Anjali Gupta',
-                    'position' => 'Head of Marketing & Sales',
-                    'bio' => 'Anjali leads the marketing and sales initiatives at APS Dream Home. Her innovative strategies and deep market understanding have significantly contributed to the company\'s market presence.',
-                    'experience' => '8+ Years',
-                    'education' => 'MBA - Marketing, NMIMS Mumbai',
-                    'achievements' => [
-                        'Increased sales by 40% year-on-year',
-                        'Launched successful digital marketing campaigns',
-                        'Expanded market presence to 5 new cities'
-                    ],
-                    'image' => 'team/anjali-gupta.jpg',
-                    'email' => 'anjali.gupta@apsdreamhomes.com',
-                    'phone' => '+91-9277121104',
-                    'linkedin' => 'https://linkedin.com/in/anjali-gupta-aps'
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                    \PDO::ATTR_EMULATE_PREPARES => false,
                 ]
-            ],
-            'department_heads' => [
-                [
-                    'id' => 5,
-                    'name' => 'Vikram Singh',
-                    'position' => 'Head - Construction',
-                    'bio' => 'Vikram ensures quality construction and timely project delivery with his technical expertise and project management skills.',
-                    'experience' => '12+ Years',
-                    'education' => 'B.E. - Civil Engineering',
-                    'image' => 'team/vikram-singh.jpg',
-                    'email' => 'vikram.singh@apsdreamhomes.com',
-                    'phone' => '+91-9277121105'
+            );
+
+            // Get team members from database
+            $stmt = $pdo->query("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
+            $team_members = $stmt->fetchAll();
+
+            // Get team stats
+            $stats_stmt = $pdo->query("SELECT COUNT(*) as total_members, AVG(EXTRACT(YEAR FROM AGE(created_at))) as avg_experience FROM team_members WHERE status = 'active'");
+            $team_stats = $stats_stmt->fetch();
+
+            if (!empty($team_members)) {
+                // Format database data
+                $leadership_team = array_filter($team_members, function($member) {
+                    return $member['category'] === 'leadership';
+                });
+                
+                $department_heads = array_filter($team_members, function($member) {
+                    return $member['category'] === 'department_head';
+                });
+
+                $data = [
+                    'page_title' => 'Our Team - APS Dream Home',
+                    'page_description' => 'Meet the dedicated professionals behind APS Dream Home. Our experienced team is committed to delivering excellence in real estate services.',
+                    'leadership_team' => array_map(function($member) {
+                        return [
+                            'id' => $member['id'],
+                            'name' => $member['name'],
+                            'position' => $member['position'],
+                            'bio' => $member['bio'],
+                            'experience' => $member['experience'],
+                            'education' => $member['education'],
+                            'achievements' => json_decode($member['achievements'] ?? '[]', true),
+                            'image' => $member['image'] ?? 'team/default-avatar.jpg',
+                            'email' => $member['email'],
+                            'phone' => $member['phone'],
+                            'linkedin' => $member['linkedin'] ?? '#'
+                        ];
+                    }, $leadership_team),
+                    'department_heads' => array_map(function($member) {
+                        return [
+                            'id' => $member['id'],
+                            'name' => $member['name'],
+                            'position' => $member['position'],
+                            'bio' => $member['bio'],
+                            'experience' => $member['experience'],
+                            'education' => $member['education'],
+                            'image' => $member['image'] ?? 'team/default-avatar.jpg',
+                            'email' => $member['email'],
+                            'phone' => $member['phone']
+                        ];
+                    }, $department_heads),
+                    'team_stats' => [
+                        'total_members' => $team_stats['total_members'] ?? 150,
+                        'years_experience' => round($team_stats['avg_experience'] ?? 100),
+                        'projects_completed' => 500,
+                        'happy_customers' => 2000
+                    ]
+                ];
+            } else {
+                throw new Exception("No team members found");
+            }
+        } catch (Exception $e) {
+            // Fallback to sample data if database fails
+            $data = [
+                'page_title' => 'Our Team - APS Dream Home',
+                'page_description' => 'Meet the dedicated professionals behind APS Dream Home. Our experienced team is committed to delivering excellence in real estate services.',
+                'leadership_team' => [
+                    [
+                        'id' => 1,
+                        'name' => 'Amit Kumar Singh',
+                        'position' => 'Founder & Managing Director',
+                        'bio' => 'With over 15 years of experience in real estate development, Amit founded APS Dream Home with a vision to transform the property landscape in Uttar Pradesh. His leadership and strategic thinking have been instrumental in the company\'s growth.',
+                        'experience' => '15+ Years',
+                        'education' => 'MBA - IIM Lucknow, B.Tech - IIT Kanpur',
+                        'achievements' => [
+                            'Developed 500+ properties across UP',
+                            'Awarded "Best Real Estate Developer 2023"',
+                            'Led 50+ successful project completions'
+                        ],
+                        'image' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+                        'email' => 'amit.singh@apsdreamhomes.com',
+                        'phone' => '+91-9277121101',
+                        'linkedin' => 'https://linkedin.com/in/amit-kumar-singh-aps'
+                    ],
+                    [
+                        'id' => 2,
+                        'name' => 'Priya Sharma',
+                        'position' => 'Chief Operating Officer',
+                        'bio' => 'Priya brings extensive operational expertise to APS Dream Home. Her focus on process optimization and customer satisfaction has helped establish the company as a trusted name in real estate.',
+                        'experience' => '12+ Years',
+                        'education' => 'MBA - XLRI Jamshedpur, B.Com - Delhi University',
+                        'achievements' => [
+                            'Streamlined operations reducing project timelines by 30%',
+                            'Implemented customer-centric service models',
+                            'Managed team of 100+ professionals'
+                        ],
+                        'image' => 'https://images.unsplash.com/photo-1494790108755-2616b332c1ca?w=400',
+                        'email' => 'priya.sharma@apsdreamhomes.com',
+                        'phone' => '+91-9277121102',
+                        'linkedin' => 'https://linkedin.com/in/priya-sharma-aps'
+                    ]
                 ],
-                [
-                    'id' => 6,
-                    'name' => 'Sneha Patel',
-                    'position' => 'Head - Customer Relations',
-                    'bio' => 'Sneha leads the customer service team, ensuring exceptional service and client satisfaction throughout the buying journey.',
-                    'experience' => '7+ Years',
-                    'education' => 'MBA - Customer Service',
-                    'image' => 'team/sneha-patel.jpg',
-                    'email' => 'sneha.patel@apsdreamhomes.com',
-                    'phone' => '+91-9277121106'
+                'department_heads' => [
+                    [
+                        'id' => 3,
+                        'name' => 'Vikram Singh',
+                        'position' => 'Head - Construction',
+                        'bio' => 'Vikram ensures quality construction and timely project delivery with his technical expertise and project management skills.',
+                        'experience' => '12+ Years',
+                        'education' => 'B.E. - Civil Engineering',
+                        'image' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+                        'email' => 'vikram.singh@apsdreamhomes.com',
+                        'phone' => '+91-9277121105'
+                    ],
+                    [
+                        'id' => 4,
+                        'name' => 'Sneha Patel',
+                        'position' => 'Head - Customer Relations',
+                        'bio' => 'Sneha leads the customer service team, ensuring exceptional service and client satisfaction throughout the buying journey.',
+                        'experience' => '7+ Years',
+                        'education' => 'MBA - Customer Service',
+                        'image' => 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
+                        'email' => 'sneha.patel@apsdreamhomes.com',
+                        'phone' => '+91-9277121106'
+                    ]
                 ],
-                [
-                    'id' => 7,
-                    'name' => 'Rohit Kumar',
-                    'position' => 'Head - Legal & Compliance',
-                    'bio' => 'Rohit manages all legal aspects ensuring compliance and smooth property transactions for our clients.',
-                    'experience' => '10+ Years',
-                    'education' => 'LL.B. - Lucknow University',
-                    'image' => 'team/rohit-kumar.jpg',
-                    'email' => 'rohit.kumar@apsdreamhomes.com',
-                    'phone' => '+91-9277121107'
-                ],
-                [
-                    'id' => 8,
-                    'name' => 'Kavita Singh',
-                    'position' => 'Head - HR & Administration',
-                    'bio' => 'Kavita oversees human resources and administrative functions, fostering a positive work environment and team growth.',
-                    'experience' => '8+ Years',
-                    'education' => 'MBA - HR',
-                    'image' => 'team/kavita-singh.jpg',
-                    'email' => 'kavita.singh@apsdreamhomes.com',
-                    'phone' => '+91-9277121108'
+                'team_stats' => [
+                    'total_members' => 150,
+                    'years_experience' => 100,
+                    'projects_completed' => 500,
+                    'happy_customers' => 2000
                 ]
-            ],
-            'team_stats' => [
-                'total_members' => 150,
-                'years_experience' => 100,
-                'projects_completed' => 500,
-                'happy_customers' => 2000
-            ],
-            'company_values' => [
-                [
-                    'icon' => 'fa-handshake',
-                    'title' => 'Integrity',
-                    'description' => 'We conduct business with honesty and transparency in all our dealings.'
-                ],
-                [
-                    'icon' => 'fa-trophy',
-                    'title' => 'Excellence',
-                    'description' => 'We strive for the highest standards in quality and service delivery.'
-                ],
-                [
-                    'icon' => 'fa-users',
-                    'title' => 'Teamwork',
-                    'description' => 'We believe in collaborative effort and mutual respect among team members.'
-                ],
-                [
-                    'icon' => 'fa-lightbulb',
-                    'title' => 'Innovation',
-                    'description' => 'We embrace new ideas and innovative approaches to real estate development.'
-                ]
-            ],
-            'join_team_info' => [
-                'current_openings' => 8,
-                'hiring_process' => '4-step selection process',
-                'growth_opportunities' => 'Career advancement and skill development programs',
-                'work_culture' => 'Supportive, collaborative, and growth-oriented environment'
-            ]
-        ];
+            ];
 
         return $this->render('team/index', $data, 'layouts/base');
+        }
     }
 
     /**
@@ -1491,99 +1580,102 @@ class PageController extends BaseController
         $data = [
             'page_title' => 'Company Projects - APS Dream Home',
             'page_description' => 'Explore our completed and ongoing projects across Gorakhpur, Lucknow, and Uttar Pradesh.',
-            'project_categories' => [
-                'residential' => [
-                    'title' => 'Residential Projects',
-                    'description' => 'Luxury apartments, villas, and residential complexes',
-                    'count' => '45+ Projects',
-                    'icon' => 'fa-home'
-                ],
-                'commercial' => [
-                    'title' => 'Commercial Projects',
-                    'description' => 'Office spaces, retail complexes, and commercial buildings',
-                    'count' => '28+ Projects',
-                    'icon' => 'fa-building'
-                ],
-                'plots' => [
-                    'title' => 'Plots & Land',
-                    'description' => 'Residential and commercial plots with clear titles',
-                    'count' => '32+ Projects',
-                    'icon' => 'fa-map'
-                ]
+            'project_stats' => [
+                'total' => '105+',
+                'completed' => '45+',
+                'ongoing' => '28+',
+                'upcoming' => '32+'
             ],
-            'featured_projects' => [
+            'company_projects' => [
                 [
                     'id' => 1,
-                    'name' => 'APS Heights',
-                    'type' => 'Residential',
+                    'title' => 'APS Heights',
+                    'project_type' => 'residential',
                     'location' => 'Gorakhpur - Kunraghat',
-                    'status' => 'Completed',
+                    'status' => 'completed',
                     'description' => 'Premium residential apartments with modern amenities',
                     'units' => '120 Units',
                     'price_range' => '₹45L - ₹85L',
-                    'image' => 'projects/aps-heights.jpg',
+                    'image_url' => 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800',
                     'completion_date' => '2025-12-15',
                     'highlights' => ['24/7 Security', 'Power Backup', 'Children Play Area', 'Gym']
                 ],
                 [
                     'id' => 2,
-                    'name' => 'Dream City Plaza',
-                    'type' => 'Commercial',
+                    'title' => 'Dream City Plaza',
+                    'project_type' => 'commercial',
                     'location' => 'Gorakhpur - City Center',
-                    'status' => 'Ongoing',
+                    'status' => 'ongoing',
                     'description' => 'Modern commercial complex with retail spaces and offices',
                     'units' => '85 Units',
                     'price_range' => '₹25L - ₹2Cr',
-                    'image' => 'projects/dream-city-plaza.jpg',
-                    'expected_completion' => '2026-09-30',
-                    'highlights' => ['Prime Location', 'Modern Architecture', 'Parking Facility', 'Food Court']
+                    'image_url' => 'https://images.unsplash.com/photo-1497366214041-937c73f5ca5c?w=800',
+                    'completion_date' => '2024-06-30',
+                    'highlights' => ['Prime Location', 'Modern Design', 'Parking Available', '24/7 Security']
                 ],
                 [
                     'id' => 3,
-                    'name' => 'Green Valley Enclave',
-                    'type' => 'Plots',
-                    'location' => 'Gorakhpur - NH-28',
-                    'status' => 'Available',
-                    'description' => 'Premium residential plots with all infrastructure',
-                    'units' => '200 Plots',
-                    'size_range' => '1000 - 5000 sqft',
-                    'price_range' => '₹2500 - ₹4500 per sqft',
-                    'image' => 'projects/green-valley-enclave.jpg',
-                    'highlights' => ['Clear Titles', 'Gated Community', 'Wide Roads', 'Underground Utilities']
-                ]
-            ],
-            'project_stats' => [
-                'total_projects' => '105+',
-                'completed_projects' => '78',
-                'ongoing_projects' => '15',
-                'happy_families' => '2000+',
-                'total_area' => '500+ Acres'
-            ],
-            'achievement_highlights' => [
-                [
-                    'icon' => 'fa-trophy',
-                    'title' => 'Best Real Estate Developer 2025',
-                    'description' => 'Awarded by Uttar Pradesh Real Estate Council'
+                    'title' => 'Green Valley Villas',
+                    'project_type' => 'residential',
+                    'location' => 'Lucknow - Gomti Nagar',
+                    'status' => 'ongoing',
+                    'description' => 'Luxury villas with private gardens and premium amenities',
+                    'units' => '35 Units',
+                    'price_range' => '₹1.2Cr - ₹2.5Cr',
+                    'image_url' => 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
+                    'completion_date' => '2024-09-15',
+                    'highlights' => ['Private Garden', 'Swimming Pool', 'Club House', 'Smart Home']
                 ],
                 [
-                    'icon' => 'fa-certificate',
-                    'title' => 'RERA Certified Projects',
-                    'description' => 'All projects are RERA registered and compliant'
+                    'id' => 4,
+                    'title' => 'Tech Park Phase 2',
+                    'project_type' => 'commercial',
+                    'location' => 'Gorakhpur - IT City',
+                    'status' => 'upcoming',
+                    'description' => 'State-of-the-art IT park with modern office spaces',
+                    'units' => '200 Units',
+                    'price_range' => '₹30L - ₹5Cr',
+                    'image_url' => 'https://images.unsplash.com/photo-1467987509530-3c583bb6b684?w=800',
+                    'completion_date' => '2025-03-30',
+                    'highlights' => ['IT Infrastructure', 'Power Backup', 'Food Court', 'Gym']
+                ]
+            ],
+            'company_info' => [
+                'established' => '2022',
+                'description' => 'APS Dream Homes Pvt Ltd is a registered real estate development company specializing in residential and commercial properties across Gorakhpur and surrounding regions. With a commitment to quality construction, innovative design, and customer satisfaction, we have established ourselves as a trusted name in the real estate industry.',
+                'portfolio_description' => 'Our portfolio includes premium apartments, luxury villas, commercial spaces, and plotted developments, each designed to meet the evolving needs of modern homeowners and investors.',
+                'locations' => 'Gorakhpur, Lucknow, Delhi NCR',
+                'registration' => 'U70109UP2022PTC163047',
+                'team_size' => '50+ Professionals'
+            ],
+            'our_values' => [
+                [
+                    'icon' => 'fa-home',
+                    'title' => 'Quality Construction',
+                    'description' => 'Premium materials and modern construction techniques'
+                ],
+                [
+                    'icon' => 'fa-users',
+                    'title' => 'Customer Satisfaction',
+                    'description' => '1000+ happy families served across Uttar Pradesh'
                 ],
                 [
                     'icon' => 'fa-leaf',
-                    'title' => 'Green Building Initiative',
-                    'description' => 'Sustainable and eco-friendly construction practices'
+                    'title' => 'Sustainable Development',
+                    'description' => 'Eco-friendly construction practices and green buildings'
                 ],
                 [
                     'icon' => 'fa-shield-alt',
-                    'title' => '100% Legal Clearance',
-                    'description' => 'All projects have complete legal documentation'
+                    'title' => 'Legal Compliance',
+                    'description' => '100% legal clearance and transparent documentation'
                 ]
             ]
         ];
 
-        return $this->render('company-projects/index', $data, 'layouts/base');
+        // Debug: Check if data is set
+        error_log('Company projects data: ' . print_r($data['company_projects'], true));
+
+        return $this->render('pages/company_projects', $data, 'layouts/base');
     }
 
     /**
@@ -1592,146 +1684,132 @@ class PageController extends BaseController
      */
     public function testimonials()
     {
-        $data = [
-            'page_title' => 'Testimonials - APS Dream Home',
-            'page_description' => 'Read what our satisfied customers have to say about their experience with APS Dream Home. Real stories from real homeowners.',
-            'customer_testimonials' => [
+        try {
+            // Try to get data from database
+            $pdo = new \PDO(
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
+                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
+                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
+                ";charset=utf8mb4",
+                $_ENV['DB_USERNAME'] ?? 'root',
+                $_ENV['DB_PASSWORD'] ?? '',
                 [
-                    'id' => 1,
-                    'name' => 'Rahul Sharma',
-                    'property' => '3BHK Apartment in Gomti Nagar',
-                    'rating' => 5,
-                    'review_date' => '2026-02-15',
-                    'testimonial' => 'APS Dream Home made my dream of owning a home in Lucknow a reality. Their team was extremely professional and helped me find the perfect apartment. The entire process was smooth and transparent.',
-                    'image' => 'testimonials/rahul-sharma.jpg',
-                    'location' => 'Gomti Nagar, Lucknow',
-                    'property_type' => 'Residential',
-                    'experience_years' => '2 years'
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Priya Singh',
-                    'property' => 'Commercial Space in Vibhuti Khand',
-                    'rating' => 5,
-                    'review_date' => '2026-01-20',
-                    'testimonial' => 'I was looking for a commercial space for my business expansion, and APS Dream Home provided excellent options. Their market knowledge and negotiation skills helped me get the best deal.',
-                    'image' => 'testimonials/priya-singh.jpg',
-                    'location' => 'Vibhuti Khand, Gomti Nagar',
-                    'property_type' => 'Commercial',
-                    'experience_years' => '1 year'
-                ],
-                [
-                    'id' => 3,
-                    'name' => 'Amit Kumar',
-                    'property' => '2BHK Apartment in Alambagh',
-                    'rating' => 4,
-                    'review_date' => '2025-12-10',
-                    'testimonial' => 'Great experience with APS Dream Home! They understood my requirements perfectly and showed me properties that matched my budget. The after-sales service is also commendable.',
-                    'image' => 'testimonials/amit-kumar.jpg',
-                    'location' => 'Alambagh, Lucknow',
-                    'property_type' => 'Residential',
-                    'experience_years' => '3 years'
-                ],
-                [
-                    'id' => 4,
-                    'name' => 'Sneha Patel',
-                    'property' => 'Villa in Hazratganj',
-                    'rating' => 5,
-                    'review_date' => '2025-11-25',
-                    'testimonial' => 'Buying a villa through APS Dream Home was the best decision. Their team handled all the legal documentation and ensured a hassle-free transaction. Highly recommended!',
-                    'image' => 'testimonials/sneha-patel.jpg',
-                    'location' => 'Hazratganj, Lucknow',
-                    'property_type' => 'Residential',
-                    'experience_years' => '1.5 years'
-                ],
-                [
-                    'id' => 5,
-                    'name' => 'Vikram Verma',
-                    'property' => 'Plot in Gorakhpur',
-                    'rating' => 5,
-                    'review_date' => '2025-10-15',
-                    'testimonial' => 'I purchased a plot for building my dream house. APS Dream Home helped me with all the legal verification and ensured the property was free from any disputes. Excellent service!',
-                    'image' => 'testimonials/vikram-verma.jpg',
-                    'location' => 'Gorakhpur',
-                    'property_type' => 'Land',
-                    'experience_years' => '6 months'
-                ],
-                [
-                    'id' => 6,
-                    'name' => 'Anjali Gupta',
-                    'property' => '3BHK in Gomti Nagar Extension',
-                    'rating' => 4,
-                    'review_date' => '2025-09-20',
-                    'testimonial' => 'The team at APS Dream Home is very professional and knowledgeable. They guided me through the entire home buying process and helped me make an informed decision.',
-                    'image' => 'testimonials/anjali-gupta.jpg',
-                    'location' => 'Gomti Nagar Extension, Lucknow',
-                    'property_type' => 'Residential',
-                    'experience_years' => '8 months'
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                    \PDO::ATTR_EMULATE_PREPARES => false,
                 ]
-            ],
-            'video_testimonials' => [
-                [
-                    'id' => 1,
-                    'customer_name' => 'Rajesh Kumar',
-                    'property' => 'Luxury Apartment in Gomti Nagar',
-                    'video_url' => 'https://example.com/video1',
-                    'thumbnail' => 'testimonials/video-thumb-1.jpg',
-                    'duration' => '2:45',
-                    'views' => 1250
+            );
+
+            // Get testimonials from database
+            $stmt = $pdo->query("SELECT * FROM testimonials WHERE status = 'approved' ORDER BY sort_order ASC, created_at DESC");
+            $testimonials = $stmt->fetchAll();
+
+            if (!empty($testimonials)) {
+                // Format database data
+                $customer_testimonials = array_map(function($testimonial) {
+                    return [
+                        'id' => $testimonial['id'],
+                        'name' => $testimonial['name'],
+                        'property' => $testimonial['property'],
+                        'rating' => $testimonial['rating'],
+                        'review_date' => $testimonial['review_date'],
+                        'testimonial' => $testimonial['testimonial'],
+                        'image' => $testimonial['image'] ?? 'testimonials/default-avatar.jpg',
+                        'location' => $testimonial['location'],
+                        'property_type' => $testimonial['property_type'],
+                        'experience_years' => $testimonial['experience_years']
+                    ];
+                }, $testimonials);
+
+                $data = [
+                    'page_title' => 'Testimonials - APS Dream Home',
+                    'page_description' => 'Read what our satisfied customers have to say about their experience with APS Dream Home. Real stories from real homeowners.',
+                    'customer_testimonials' => $customer_testimonials,
+                    'testimonial_stats' => [
+                        'total_testimonials' => count($testimonials),
+                        'average_rating' => 4.8,
+                        'years_of_service' => 8,
+                        'satisfaction_rate' => 98
+                    ]
+                ];
+            } else {
+                throw new Exception("No testimonials found");
+            }
+        } catch (Exception $e) {
+            // Fallback to sample data if database fails
+            $data = [
+                'page_title' => 'Testimonials - APS Dream Home',
+                'page_description' => 'Read what our satisfied customers have to say about their experience with APS Dream Home. Real stories from real homeowners.',
+                'customer_testimonials' => [
+                    [
+                        'id' => 1,
+                        'name' => 'Rahul Sharma',
+                        'property' => '3BHK Apartment in Gomti Nagar',
+                        'rating' => 5,
+                        'review_date' => '2026-02-15',
+                        'testimonial' => 'APS Dream Home made my dream of owning a home in Lucknow a reality. Their team was extremely professional and helped me find the perfect apartment. The entire process was smooth and transparent.',
+                        'image' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+                        'location' => 'Gomti Nagar, Lucknow',
+                        'property_type' => 'Residential',
+                        'experience_years' => '2 years'
+                    ],
+                    [
+                        'id' => 2,
+                        'name' => 'Priya Singh',
+                        'property' => 'Commercial Space in Vibhuti Khand',
+                        'rating' => 5,
+                        'review_date' => '2026-01-20',
+                        'testimonial' => 'I was looking for a commercial space for my business expansion, and APS Dream Home provided excellent options. Their market knowledge and negotiation skills helped me get the best deal.',
+                        'image' => 'https://images.unsplash.com/photo-1494790108755-2616b332c1ca?w=400',
+                        'location' => 'Vibhuti Khand, Gomti Nagar',
+                        'property_type' => 'Commercial',
+                        'experience_years' => '1 year'
+                    ],
+                    [
+                        'id' => 3,
+                        'name' => 'Amit Kumar',
+                        'property' => '2BHK Apartment in Alambagh',
+                        'rating' => 4,
+                        'review_date' => '2025-12-10',
+                        'testimonial' => 'Great experience with APS Dream Home! They understood my requirements perfectly and showed me properties that matched my budget. The after-sales service is also commendable.',
+                        'image' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+                        'location' => 'Alambagh, Lucknow',
+                        'property_type' => 'Residential',
+                        'experience_years' => '3 years'
+                    ],
+                    [
+                        'id' => 4,
+                        'name' => 'Sneha Patel',
+                        'property' => 'Villa in Hazratganj',
+                        'rating' => 5,
+                        'review_date' => '2025-11-25',
+                        'testimonial' => 'Buying a villa through APS Dream Home was the best decision. Their team handled all the legal documentation and ensured a hassle-free transaction. Highly recommended!',
+                        'image' => 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
+                        'location' => 'Hazratganj, Lucknow',
+                        'property_type' => 'Residential',
+                        'experience_years' => '1.5 years'
+                    ],
+                    [
+                        'id' => 5,
+                        'name' => 'Vikram Verma',
+                        'property' => 'Plot in Gorakhpur',
+                        'rating' => 5,
+                        'review_date' => '2025-10-15',
+                        'testimonial' => 'I purchased a plot for building my dream house. APS Dream Home helped me with all the legal verification and ensured the property was free from any disputes. Excellent service!',
+                        'image' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+                        'location' => 'Gorakhpur',
+                        'property_type' => 'Land',
+                        'experience_years' => '6 months'
+                    ]
                 ],
-                [
-                    'id' => 2,
-                    'customer_name' => 'Meera Singh',
-                    'property' => 'Commercial Space in Lucknow',
-                    'video_url' => 'https://example.com/video2',
-                    'thumbnail' => 'testimonials/video-thumb-2.jpg',
-                    'duration' => '3:12',
-                    'views' => 890
-                ],
-                [
-                    'id' => 3,
-                    'customer_name' => 'Sanjay Verma',
-                    'property' => 'Villa in Hazratganj',
-                    'video_url' => 'https://example.com/video3',
-                    'thumbnail' => 'testimonials/video-thumb-3.jpg',
-                    'duration' => '2:30',
-                    'views' => 756
-                ]
-            ],
-            'testimonials_stats' => [
-                'total_reviews' => 2500,
-                'average_rating' => 4.8,
-                'satisfied_customers' => 2000,
-                'years_of_service' => 8
-            ],
-            'rating_distribution' => [
-                '5_star' => 1800,
-                '4_star' => 500,
-                '3_star' => 150,
-                '2_star' => 30,
-                '1_star' => 20
-            ],
-            'featured_properties' => [
-                [
-                    'name' => 'Gomti Nagar Heights',
-                    'total_reviews' => 156,
-                    'average_rating' => 4.9,
-                    'image' => 'properties/featured-1.jpg'
-                ],
-                [
-                    'name' => 'Hazratganj Plaza',
-                    'total_reviews' => 89,
-                    'average_rating' => 4.7,
-                    'image' => 'properties/featured-2.jpg'
-                ],
-                [
-                    'name' => 'Vibhuti Khand Commercial',
-                    'total_reviews' => 67,
+                'testimonial_stats' => [
+                    'total_testimonials' => 1000,
                     'average_rating' => 4.8,
-                    'image' => 'properties/featured-3.jpg'
+                    'years_of_service' => 8,
+                    'satisfaction_rate' => 98
                 ]
-            ]
-        ];
+            ];
+        }
 
         return $this->render('testimonials/index', $data, 'layouts/base');
     }

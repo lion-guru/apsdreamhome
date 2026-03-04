@@ -1,30 +1,42 @@
 <?php
-// Web Routes
-$router->get('/', 'HomeController@index');
+// Web Routes - APS Dream Home
+
+// Simple test route
+$router->get('/test', function() {
+    echo "Route working!";
+    exit;
+});
+
+// Property routes - CRITICAL
+error_log("PROPERTIES DEBUG: Adding properties route");
 $router->get('/properties', 'Property\PropertyController@index');
 $router->get('/properties/{id}', 'Property\PropertyController@show');
-$router->get('/map', 'MapController@index');
-$router->get('/ai-assistant', 'AIAssistantController@index');
-$router->get('/ai-dashboard', 'AIDashboardController@index');
-$router->get('/analytics', 'AnalyticsController@index');
-$router->get('/whatsapp-templates', 'WhatsAppTemplateController@index');
+
+// General routes
+$router->get('/', 'HomeController@index');
 $router->get('/mlm-dashboard', 'MLMController@dashboard');
 $router->get('/monitoring', 'MonitoringController@dashboard');
 $router->get('/ai-valuation', 'AIValuationController@index');
-$router->get('/about', 'PageController@about');
-$router->get('/contact', 'PageController@contact');
+$router->get('/about', 'Public\PageController@about');
+$router->get('/contact', 'Public\PageController@contact');
+$router->get('/publiccontact', function() {
+    header('Location: /apsdreamhome/public/contact');
+    exit;
+});
 $router->get('/careers', 'CareerController@index');
 $router->get('/testimonials', 'TestimonialController@index');
 $router->get('/faq', 'FAQController@index');
-$router->get('/team', 'PageController@team');
-$router->get('/blog', 'BlogController@index');
+$router->get('/team', 'Public\PageController@team');
+$router->get('/blog', 'Public\PageController@blog');
 $router->get('/blog/{slug}', 'BlogController@show');
 $router->get('/blog/category/{category}', 'BlogController@category');
 $router->get('/gallery', 'GalleryController@index');
 $router->get('/gallery/project/{projectId}', 'GalleryController@project');
 $router->get('/company/projects', 'Public\PageController@companyProjects');
+$router->get('/projects', 'ProjectController@index');
+$router->get('/resell', 'ResellController@index');
 
-// Auth routes
+// Authentication routes
 $router->get('/login', 'AuthController@login');
 $router->post('/login', 'AuthController@authenticate');
 $router->get('/register', 'AuthController@register');
@@ -52,6 +64,13 @@ $router->get('/admin/properties/delete/{id}', 'Admin\PropertyController@destroy'
 $router->post('/admin/properties/toggle-featured/{id}', 'Admin\PropertyController@toggleFeatured');
 $router->get('/admin/users', 'Admin\UserController@index');
 $router->get('/admin/dashboard', 'AdminController@dashboard');
+
+// Customer & Associate routes
+$router->get('/customer/dashboard', 'CustomerController@dashboard');
+$router->get('/associate/dashboard', 'AssociateController@dashboard');
+$router->get('/associate/register', 'AssociateController@register');
+$router->post('/associate/register', 'AssociateController@store');
+$router->get('/employee/login', 'EmployeeController@login');
 
 // Map routes
 $router->get('/map', 'MapController@index');
