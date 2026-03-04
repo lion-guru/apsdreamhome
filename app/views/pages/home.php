@@ -1,0 +1,1 @@
+<!DOCTYPE html>\n<html>\n<head>\n    <title>APS Dream Home</title>\n</head>\n<body>\n    <h1>Welcome to APS Dream Home</h1>\n    <p>Your real estate solution</p>\n</body>\n</html>
