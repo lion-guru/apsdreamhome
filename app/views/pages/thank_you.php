@@ -1,3 +1,8 @@
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,347 +20,262 @@
             align-items: center;
             justify-content: center;
             margin: 0;
+            overflow: hidden;
         }
 
-        .success-container {
+        .thank-you-container {
             text-align: center;
             color: white;
             max-width: 800px;
             padding: 40px 20px;
             position: relative;
+            z-index: 2;
         }
 
         .success-icon {
-            font-size: 100px;
+            font-size: 120px;
             margin-bottom: 30px;
-            animation: bounceIn 1s ease-out;
-            color: white;
+            animation: bounce 2s infinite;
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        .success-title {
+        .thank-you-title {
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .success-subtitle {
+        .thank-you-subtitle {
             font-size: 1.5rem;
             margin-bottom: 30px;
             opacity: 0.9;
         }
 
-        .success-message {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .next-steps {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
-            backdrop-filter: blur(10px);
-        }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            text-align: left;
-        }
-
-        .step-number {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .step-desc {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
         .action-buttons {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
-            margin-top: 30px;
+            margin: 40px 0;
             flex-wrap: wrap;
         }
 
-        .btn-action {
+        .btn-custom {
             padding: 15px 30px;
-            border-radius: 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
             text-decoration: none;
-            font-weight: 600;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
-            min-width: 150px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .btn-primary-action {
-            background: white;
-            color: #28a745;
-        }
-
-        .btn-primary-action:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-secondary-action {
+        .btn-primary-custom {
             background: rgba(255, 255, 255, 0.2);
             color: white;
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-secondary-action:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .reference-info {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
         }
 
-        .reference-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffc107;
-            margin-bottom: 10px;
+        .btn-primary-custom:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .social-share {
-            margin-top: 30px;
-        }
-
-        .social-share a {
-            display: inline-block;
-            margin: 0 10px;
+        .btn-secondary-custom {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
         }
 
-        .social-share a:hover {
-            color: #ffc107;
-            transform: scale(1.2);
+        .btn-secondary-custom:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .contact-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-top: 40px;
         }
 
-        .celebration-particles {
-            position: fixed;
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .contact-item i {
+            margin-right: 15px;
+            font-size: 1.3rem;
+        }
+
+        .particles {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            overflow: hidden;
             z-index: 1;
         }
 
         .particle {
             position: absolute;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            animation: celebrate 3s ease-in-out infinite;
+            animation: float 6s ease-in-out infinite;
         }
 
-        @keyframes celebrate {
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes float {
             0%, 100% {
-                transform: translateY(0px) scale(0);
+                transform: translateY(0) rotate(0deg);
                 opacity: 0;
             }
-            50% {
-                transform: translateY(-100px) scale(1);
+            10% {
                 opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .thank-you-title {
+                font-size: 2.5rem;
+            }
+            
+            .thank-you-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .success-icon {
+                font-size: 80px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-custom {
+                width: 100%;
+                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Celebration Particles -->
-    <div class="celebration-particles" id="particles"></div>
-
-    <div class="success-container">
-        <!-- Success Icon -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="thank-you-container">
         <div class="success-icon">
             <i class="fas fa-check-circle"></i>
         </div>
-
-        <!-- Main Title -->
-        <h1 class="success-title">Thank You!</h1>
-        <p class="success-subtitle">Your submission has been received successfully</p>
-
-        <!-- Success Message -->
-        <div class="success-message">
-            <p>We have received your inquiry and our team will review it shortly. You should receive a confirmation email within the next few minutes.</p>
-            <p><strong>What happens next?</strong> Our customer service team will contact you within 24 hours to discuss your requirements and provide personalized assistance.</p>
-        </div>
-
-        <!-- Reference Information -->
-        <div class="reference-info">
-            <div class="reference-number">REF: #<?php echo \App\Helpers\SecurityHelper::secureRandomInt(100000, 999999); ?></div>
-            <p>Please save this reference number for your records. Quote it when contacting us about this inquiry.</p>
-        </div>
-
-        <!-- Next Steps -->
-        <div class="next-steps">
-            <h4><i class="fas fa-list-ol me-2"></i>What Happens Next?</h4>
-
-            <div class="step-item">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <div class="step-title">Email Confirmation</div>
-                    <div class="step-desc">You'll receive an email confirmation within 5 minutes</div>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <div class="step-title">Team Review</div>
-                    <div class="step-desc">Our specialists will review your requirements within 24 hours</div>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <div class="step-title">Personal Contact</div>
-                    <div class="step-desc">We'll contact you to discuss details and next steps</div>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <div class="step-title">Customized Solution</div>
-                    <div class="step-desc">Receive a tailored proposal based on your needs</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
+        
+        <h1 class="thank-you-title">Thank You!</h1>
+        <p class="thank-you-subtitle">Your submission has been received successfully.</p>
+        
         <div class="action-buttons">
-            <a href="index.php" class="btn-action btn-primary-action">
-                <i class="fas fa-home me-2"></i>Back to Home
+            <a href="<?= BASE_URL ?>" class="btn-custom btn-primary-custom">
+                <i class="fas fa-home"></i>
+                Back to Home
             </a>
-            <a href="properties.php" class="btn-action btn-secondary-action">
-                <i class="fas fa-search me-2"></i>Browse Properties
+            <a href="<?= BASE_URL ?>properties" class="btn-custom btn-secondary-custom">
+                <i class="fas fa-building"></i>
+                Browse Properties
             </a>
-            <a href="contact.php" class="btn-action btn-secondary-action">
-                <i class="fas fa-phone me-2"></i>Contact Us
+            <a href="<?= BASE_URL ?>contact" class="btn-custom btn-secondary-custom">
+                <i class="fas fa-phone"></i>
+                Contact Us
             </a>
         </div>
-
-        <!-- Social Share -->
-        <div class="social-share">
-            <p class="mb-2">Share your experience:</p>
-            <a href="#" onclick="shareOnFacebook()"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" onclick="shareOnTwitter()"><i class="fab fa-twitter"></i></a>
-            <a href="#" onclick="shareOnLinkedIn()"><i class="fab fa-linkedin-in"></i></a>
+        
+        <div class="contact-info">
+            <h3>Need Assistance?</h3>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <span>info@apsdreamhome.com</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>+91 98765 43210</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Gorakhpur, Uttar Pradesh</span>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Create celebration particles
+        // Create floating particles
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = 20;
-
+            const particleCount = 50;
+            
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-
-                // Random size
-                const size = Math.random() * 6 + 2;
+                
+                const size = Math.random() * 10 + 5;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
-
-                // Random position
                 particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = '100%';
-
-                // Random animation delay
-                particle.style.animationDelay = Math.random() * 3 + 's';
-                particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                
                 particlesContainer.appendChild(particle);
             }
         }
-
-        // Social sharing functions
-        function shareOnFacebook() {
-            const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('Just inquired about properties with APS Dream Homes!');
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
-        }
-
-        function shareOnTwitter() {
-            const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('Just started my property search with APS Dream Homes! 🏠');
-            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
-        }
-
-        function shareOnLinkedIn() {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent('Property Inquiry - APS Dream Homes');
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}`, '_blank');
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            createParticles();
+        
+        // Initialize particles when page loads
+        window.addEventListener('load', createParticles);
+        
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
         });
+        
+        // Auto-redirect after 10 seconds (optional)
+        setTimeout(() => {
+            const autoRedirect = confirm('Would you like to return to the homepage?');
+            if (autoRedirect) {
+                window.location.href = '<?= BASE_URL ?>';
+            }
+        }, 10000);
     </script>
 </body>
 </html>

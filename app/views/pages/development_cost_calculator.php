@@ -31,7 +31,7 @@ $hybrid_system = new HybridRealEstateCommission($conn);
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['calculate_plot_rate'])) {
+    if (isset(Security::sanitize($_POST['calculate_plot_rate']))) {
         $result = calculatePlotRate($_POST);
         if ($result['success']) {
             $_SESSION['calculation_result'] = $result;
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if (isset($_POST['save_cost_breakdown'])) {
+    if (isset(Security::sanitize($_POST['save_cost_breakdown']))) {
         $result = saveCostBreakdown($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];
@@ -669,3 +669,21 @@ if (isset($_GET['calculated']) && $calculation_result) {
     </script>
 </body>
 </html>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 671 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

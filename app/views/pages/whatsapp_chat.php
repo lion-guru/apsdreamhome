@@ -14,10 +14,10 @@ $config = AppConfig::getInstance();
 $conn = $config->getDatabaseConnection();
 
 // Handle WhatsApp message submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['whatsapp_message'])) {
-    $name = trim($_POST['name']);
-    $phone = trim($_POST['phone']);
-    $message = trim($_POST['message']);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && Security::sanitize($_POST['whatsapp_message']) !== null) {
+    $name = trim(Security::sanitize($_POST['name']));
+    $phone = trim(Security::sanitize($_POST['phone']));
+    $message = trim(Security::sanitize($_POST['message']));
 
     if (!empty($name) && !empty($phone) && !empty($message)) {
         // Store inquiry in database

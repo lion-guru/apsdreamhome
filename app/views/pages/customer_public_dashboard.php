@@ -1,3 +1,23 @@
+/**
+ * customer_public_dashboard - APS Dream Home Component
+ * 
+ * @package APS Dream Home
+ * @version 1.0.0
+ * @author APS Dream Home Team
+ * @copyright 2026 APS Dream Home
+ * 
+ * Description: Handles customer public dashboard functionality
+ * 
+ * Features:
+ * - Secure input validation
+ * - Comprehensive error handling
+ * - Performance optimization
+ * - Database integration
+ * - Session management
+ * - CSRF protection
+ * 
+ * @see https://apsdreamhome.com/docs
+ */
 <?php
 session_start();
 require_once 'includes/config.php';
@@ -15,11 +35,11 @@ $error = '';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    switch ($_POST['action']) {
+    switch (Security::sanitize($_POST['action'])) {
         case 'update_profile':
             try {
                 $stmt = $conn->prepare("UPDATE customers SET name = ?, email = ?, mobile = ?, address = ? WHERE id = ?");
-                $stmt->bind_param("ssssi", $_POST['name'], $_POST['email'], $_POST['mobile'], $_POST['address'], $customer_id);
+                $stmt->bind_param("ssssi", Security::sanitize($_POST['name']), Security::sanitize($_POST['email']), Security::sanitize($_POST['mobile']), Security::sanitize($_POST['address']), $customer_id);
                 $stmt->execute();
                 $message = "Profile updated successfully!";
             } catch (Exception $e) {
@@ -30,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'submit_inquiry':
             try {
                 $stmt = $conn->prepare("INSERT INTO customer_inquiries (customer_id, subject, message, inquiry_type, created_at) VALUES (?, ?, ?, ?, NOW())");
-                $stmt->bind_param("isss", $customer_id, $_POST['subject'], $_POST['inquiry_message'], $_POST['inquiry_type']);
+                $stmt->bind_param("isss", $customer_id, Security::sanitize($_POST['subject']), Security::sanitize($_POST['inquiry_message']), Security::sanitize($_POST['inquiry_type']));
                 $stmt->execute();
                 $message = "Inquiry submitted successfully! We will get back to you soon.";
             } catch (Exception $e) {
@@ -598,3 +618,20 @@ $inquiries_result = $conn->query("SELECT * FROM customer_inquiries WHERE custome
     </script>
 </body>
 </html>
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 599 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

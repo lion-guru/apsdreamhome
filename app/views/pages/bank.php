@@ -1,4 +1,8 @@
-<!-- Page Header -->
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+ge Header -->
 <section class="bank-hero-section section-padding bg-primary text-white text-center rounded-bottom-4 py-5" data-aos="fade-down">
     <div class="container py-4">
         <h1 class="display-5 fw-bold mb-2">Bank Details</h1>

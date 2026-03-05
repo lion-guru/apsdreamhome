@@ -216,7 +216,7 @@ function verifyDeployment($basePath) {
 }
 
 // Run deployment if accessed directly
-if (php_sapi_name() === 'cli' || isset($_GET['deploy'])) {
+if (php_sapi_name() === 'cli' || isset(Security::sanitize($_GET['deploy']))) {
     deployProduction($productionConfig);
 } else {
     echo "<h1>APS Dream Home Production Deployment</h1>";

@@ -424,7 +424,7 @@ class WhatsAppIntegration {
         }
 
         // Verify webhook token
-        $token = $_GET['token'] ?? '';
+        $token = Security::sanitize($_GET['token']) ?? '';
         if ($token !== $this->config['webhook_verify_token']) {
             return ['error' => 'Invalid webhook token'];
         }
@@ -774,3 +774,21 @@ function sendWhatsAppBookingConfirmation($phone_number, $booking_details) {
 
     return sendWhatsAppTemplateMessage($phone_number, 'booking_confirmation', $variables);
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 776 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

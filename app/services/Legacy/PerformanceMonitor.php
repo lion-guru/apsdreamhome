@@ -408,3 +408,74 @@ function getPerformanceMonitor() {
 // Automatic performance monitoring setup
 register_shutdown_function('end_performance_monitoring');
 start_performance_monitoring();
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Core\PerformanceMonitor.php
+
+function record($key, $value, $tags = [])
+    {
+        $this->metrics[] = [
+            'key' => $key,
+            'value' => $value,
+            'timestamp' => microtime(true),
+            'tags' => $tags
+        ];
+    }
+function time($key, callable $callback, $tags = [])
+    {
+        $start = microtime(true);
+        $result = $callback();
+        $executionTime = microtime(true) - $start;
+
+        $this->record($key, $executionTime, $tags);
+        return $result;
+    }
+function cache($key, $hit, $tags = [])
+    {
+        $this->record($key, $hit ? 1 : 0, array_merge($tags, [
+            'type' => 'cache',
+            'result' => $hit ? 'hit' : 'miss'
+        ]));
+    }
+function getCacheStats()
+    {
+        $cacheMetrics = array_filter($this->metrics, function($metric) {
+            return isset($metric['tags']['type']) && $metric['tags']['type'] === 'cache';
+        }
+function getDatabaseStats()
+    {
+        $dbMetrics = array_filter($this->metrics, function($metric) {
+            return isset($metric['tags']['type']) && $metric['tags']['type'] === 'database';
+        }
+function exportMetrics()
+    {
+        return [
+            'timestamp' => date('Y-m-d H:i:s'),
+            'performance' => $this->getMetrics(),
+            'cache' => $this->getCacheStats(),
+            'database' => $this->getDatabaseStats()
+        ];
+    }
+function getQueryType($query)
+    {
+        $query = strtolower(trim($query));
+
+        if (strpos($query, 'select') === 0) {
+            return 'SELECT';
+        }
+function performance()
+{
+    return PerformanceMonitor::getInstance();
+}
+function benchmark(callable $callback, $label = 'unnamed')
+{
+    return performance()->time($label, $callback);
+}
+function cache_hit($key)
+{
+    performance()->cache($key, true);
+}
+function cache_miss($key)
+{
+    performance()->cache($key, false);
+}

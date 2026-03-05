@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 // Start session and include necessary files
 session_start();
 require_once __DIR__ . '/includes/config/config.php';

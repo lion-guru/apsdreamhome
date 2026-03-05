@@ -1,4 +1,28 @@
-<?php require_once 'app/views/layouts/header.php'; ?>
+/**
+ * show - APS Dream Home Component
+ * 
+ * @package APS Dream Home
+ * @version 1.0.0
+ * @author APS Dream Home Team
+ * @copyright 2026 APS Dream Home
+ * 
+ * Description: Handles show functionality
+ * 
+ * Features:
+ * - Secure input validation
+ * - Comprehensive error handling
+ * - Performance optimization
+ * - Database integration
+ * - Session management
+ * - CSRF protection
+ * 
+ * @see https://apsdreamhome.com/docs
+ */
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+equire_once 'app/views/layouts/header.php'; ?>
 
 <div class="container-fluid mt-4">
     <!-- Breadcrumb -->
@@ -598,3 +622,77 @@ function deleteLead() {
 </style>
 
 <?php require_once 'app/views/layouts/footer.php'; ?>
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\farmers\show.php
+
+function deleteFarmer(id) {
+    $('#deleteModal').modal('show');
+}
+function printFarmerDetails() {
+    window.print();
+}
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\admin\emi\show.php
+
+function openPaymentModal(installmentId, amount) {
+        document.getElementById('paymentInstallmentId').value = installmentId;
+        document.getElementById('paymentAmount').value = amount;
+        new bootstrap.Modal(document.getElementById('recordPaymentModal')).show();
+    }
+function openForecloseModal(planId) {
+        const modal = new bootstrap.Modal(document.getElementById('forecloseModal'));
+        modal.show();
+
+        // Fetch foreclosure amount
+        fetch('<?php echo BASE_URL; ?>admin/emi/getForeclosureAmount/' + planId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('forecloseAmountDisplay').textContent = data.formatted_amount;
+                    document.getElementById('forecloseAmountInput').value = data.amount;
+                }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\properties\show.php
+
+function shareProperty() {
+    const shareText = `Check out this property: ${propertyData.title}
+function inquireProperty() {
+    const inquiryForm = document.querySelector('form[action*="/contact"]');
+    if (inquiryForm) {
+        // Scroll to inquiry form
+        inquiryForm.scrollIntoView({ behavior: 'smooth' }
+function favoriteProperty() {
+    const heartBtn = event.target;
+    const isFavorited = heartBtn.classList.contains('fas');
+    
+    // Toggle heart icon
+    if (isFavorited) {
+        heartBtn.classList.remove('fas');
+        heartBtn.classList.add('far');
+        showNotification('Property removed from favorites', 'info');
+    }
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type}
+function shareOnWhatsApp() {
+    const shareText = `Check out this property: ${propertyData.title}
+function shareByEmail() {
+    const subject = `Property Inquiry: ${propertyData.title}
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 660 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

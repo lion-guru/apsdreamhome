@@ -19,7 +19,7 @@ if (!verifyCSRFToken()) {
     exit();
 }
 
-$lead_id = intval($_GET['lead_id'] ?? 0);
+$lead_id = intval(Security::sanitize($_GET['lead_id']) ?? 0);
 
 if ($lead_id <= 0) {
     echo json_encode(['success' => false, 'error' => h($mlSupport->translate('Invalid lead ID'))]);

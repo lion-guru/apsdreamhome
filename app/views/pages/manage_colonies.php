@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * APS Dream Homes - Colony Management System
  * Enhanced colony management for APS own projects
@@ -602,3 +605,21 @@ $total_revenue = array_sum(array_map(function($colony) {
     </script>
 </body>
 </html>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 607 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

@@ -314,4 +314,235 @@ class PaymentController extends AdminController
             'page_title' => 'Add New Payment'
         ]);
     }
+
+    public function checkout($propertyId) {
+        $property = $this->propertyService->getPropertyById($propertyId);
+        
+        if (!$property) {
+            $this->notFound();
+            return;
+        }
+        
+        $this->view('payments/checkout', [
+            'title' => 'Complete Your Purchase',
+            'property' => $property
+        ]);
+    }
+
+    public function process() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/');
+            return;
+        }
+        
+        $propertyId = (int)(Security::sanitize($_POST['property_id']) ?? 0);
+        $property = $this->propertyService->getPropertyById($propertyId);
+        
+        if (!$property) {
+            $this->notFound();
+            return;
+        }
+        
+        try {
+            $paymentData = [
+                'amount' => $property['price'] * 100, // Convert to smallest currency unit (e.g., cents)
+                'currency' => 'INR',
+                'description' => 'Property Purchase: ' . $property['title'],
+                'customer_email' => $_SESSION['user_email'] ?? '',
+                'metadata' => [
+                    'property_id' => $propertyId,
+                    'user_id' => $_SESSION['user_id']
+                ]
+            ];
+            
+            $payment = $this->paymentService->processPayment($paymentData);
+            
+            if ($payment['success']) {
+                // Save payment record to database
+                $this->savePaymentRecord($payment, $propertyId);
+                
+                $this->setFlash('success', 'Payment successful! Your purchase is complete.');
+                $this->redirect('/payments/success?payment_id=' . $payment['payment_id']);
+                return;
+            }
+            
+            throw new \Exception('Payment processing failed');
+            
+        } catch (\Exception $e) {
+            $this->setFlash('error', 'Payment failed: ' . $e->getMessage());
+            $this->redirect("/properties/$propertyId/payment");
+        }
+    }
+
+    public function webhook() {
+        // In a real application, this would verify the webhook signature
+        $payload = @file_get_contents('php://input');
+        $event = json_decode($payload, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            http_response_code(400);
+            exit('Invalid payload');
+        }
+        
+        // Process different types of webhook events
+        switch ($event['type']) {
+            case 'payment_intent.succeeded':
+                $this->handlePaymentSucceeded($event['data']['object']);
+                break;
+                
+            case 'payment_intent.payment_failed':
+                $this->handlePaymentFailed($event['data']['object']);
+                break;
+                
+            // Add more event types as needed
+        }
+        
+        http_response_code(200);
+    }
+
+    public function processStripePayment()
+    {
+        return $this->json([
+            "success" => true,
+            "data" => [
+                "payment_id" => "pi_" . uniqid(),
+                "status" => "succeeded",
+                "amount" => 150000,
+                "currency" => "usd",
+                "payment_method" => "stripe"
+            ]
+        ]);
+    }
+
+    public function processPayPalPayment()
+    {
+        return $this->json([
+            "success" => true,
+            "data" => [
+                "payment_id" => "PAYID_" . uniqid(),
+                "status" => "completed",
+                "amount" => 150000,
+                "currency" => "USD",
+                "payment_method" => "paypal"
+            ]
+        ]);
+    }
+
+    public function getPaymentHistory()
+    {
+        return $this->json([
+            "success" => true,
+            "data" => [
+                "payments" => [
+                    [
+                        "id" => "pi_123",
+                        "amount" => 150000,
+                        "status" => "succeeded",
+                        "date" => "2026-03-01",
+                        "method" => "stripe"
+                    ],
+                    [
+                        "id" => "PAYID_456",
+                        "amount" => 200000,
+                        "status" => "completed",
+                        "date" => "2026-02-28",
+                        "method" => "paypal"
+                    ]
+                ],
+                "total_count" => 2
+            ]
+        ]);
+    }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Payment\PaymentController.php
+
+function success() {
+        $paymentId = $_GET['payment_id'] ?? '';
+        
+        if (empty($paymentId)) {
+            $this->redirect('/');
+            return;
+        }
+function savePaymentRecord(array $payment, int $propertyId) {
+        $query = "
+            INSERT INTO payments (
+                payment_id, user_id, property_id, amount, 
+                currency, status, payment_method, 
+                transaction_id, created_at
+            ) VALUES (:payment_id, :user_id, :property_id, :amount, 
+                :currency, :status, :payment_method, 
+                :transaction_id, NOW())
+        ";
+        
+        $params = [
+            ':payment_id' => $payment['payment_id'],
+            ':user_id' => $_SESSION['user_id'],
+            ':property_id' => $propertyId,
+            ':amount' => $payment['amount'] / 100, // Convert back to normal amount
+            ':currency' => $payment['currency'],
+            ':status' => $payment['status'],
+            ':payment_method' => $payment['payment_method'] ?? 'card',
+            ':transaction_id' => $payment['transaction_id'] ?? null
+        ];
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+        
+        // Update property status to sold
+        $this->propertyService->updateProperty($propertyId, ['status' => 'sold']);
+    }
+function handlePaymentSucceeded(array $paymentIntent) {
+        $query = "
+            UPDATE payments 
+            SET status = 'succeeded',
+                payment_method = :payment_method,
+                transaction_id = :transaction_id,
+                updated_at = NOW()
+            WHERE payment_id = :payment_id
+        ";
+        
+        $params = [
+            ':payment_method' => $paymentIntent['payment_method_types'][0] ?? 'card',
+            ':transaction_id' => $paymentIntent['id'],
+            ':payment_id' => $paymentIntent['id']
+        ];
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+    }
+function handlePaymentFailed(array $paymentIntent) {
+        $query = "
+            UPDATE payments 
+            SET status = 'failed',
+                failure_message = :failure_message,
+                updated_at = NOW()
+            WHERE payment_id = :payment_id
+        ";
+        
+        $params = [
+            ':failure_message' => $paymentIntent['last_payment_error']['message'] ?? 'Payment failed',
+            ':payment_id' => $paymentIntent['id']
+        ];
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+    }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 530 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

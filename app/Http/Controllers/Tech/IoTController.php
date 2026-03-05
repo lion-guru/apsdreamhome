@@ -1161,9 +1161,9 @@ class IoTController extends BaseController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
-            $property_value = (float)($_POST['property_value'] ?? 0);
-            $smart_home_cost = (float)($_POST['smart_home_cost'] ?? 0);
-            $monthly_energy_savings = (float)($_POST['energy_savings'] ?? 0);
+            $property_value = (float)(Security::sanitize($_POST['property_value']) ?? 0);
+            $smart_home_cost = (float)(Security::sanitize($_POST['smart_home_cost']) ?? 0);
+            $monthly_energy_savings = (float)(Security::sanitize($_POST['energy_savings']) ?? 0);
 
             $roi_data = $this->calculateROI($property_value, $smart_home_cost, $monthly_energy_savings);
 
@@ -1201,3 +1201,21 @@ class IoTController extends BaseController
         ];
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 1203 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

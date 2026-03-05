@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * APS Dream Home - Colonizer Company Management System
  * Complete integration of all systems for colonizer/plotting company

@@ -1,3 +1,8 @@
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,103 +52,82 @@
             opacity: 0.9;
         }
 
-        .construction-message {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            height: 30px;
+            overflow: hidden;
+            margin: 30px 0;
             backdrop-filter: blur(10px);
         }
 
         .progress-bar {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            height: 8px;
-            margin: 30px 0;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #fff 0%, #f8f9fa 100%);
             height: 100%;
-            width: 75%;
+            background: linear-gradient(90deg, #fff 0%, #f8f9fa 100%);
             border-radius: 50px;
-            animation: progress 3s ease-in-out infinite;
+            width: 75%;
+            animation: progressAnimation 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-weight: 600;
         }
 
-        .construction-features {
+        .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-top: 40px;
+            margin: 40px 0;
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 25px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .feature-card:hover {
             transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .feature-icon {
             font-size: 2.5rem;
             margin-bottom: 15px;
-            color: #fff;
-        }
-
-        .feature-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .feature-desc {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .contact-info {
-            margin-top: 40px;
-            padding: 30px;
             background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
+            margin-top: 40px;
         }
 
-        .social-links {
-            margin-top: 20px;
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            font-size: 1.1rem;
         }
 
-        .social-links a {
-            display: inline-block;
-            margin: 0 10px;
-            color: white;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: #f8f9fa;
-            transform: scale(1.2);
+        .contact-item i {
+            margin-right: 15px;
+            font-size: 1.3rem;
         }
 
         .particles {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            overflow: hidden;
             z-index: 1;
         }
 
@@ -159,247 +143,150 @@
                 transform: translateY(0);
             }
             40% {
-                transform: translateY(-10px);
+                transform: translateY(-20px);
             }
             60% {
-                transform: translateY(-5px);
+                transform: translateY(-10px);
             }
         }
 
-        @keyframes progress {
+        @keyframes progressAnimation {
             0% {
                 width: 0%;
             }
             50% {
-                width: 75%;
+                width: 85%;
             }
             100% {
-                width: 100%;
+                width: 75%;
             }
         }
 
         @keyframes float {
             0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-                opacity: 0.7;
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
             }
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-                opacity: 0.3;
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
             }
         }
 
-        .countdown {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .countdown-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px 15px;
-            border-radius: 10px;
-            min-width: 80px;
-        }
-
-        .countdown-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            display: block;
-        }
-
-        .countdown-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .back-home {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 15px 30px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .back-home:hover {
-            background: white;
-            color: #f39c12;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        @media (max-width: 768px) {
+            .construction-title {
+                font-size: 2.5rem;
+            }
+            
+            .construction-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .construction-icon {
+                font-size: 80px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background Particles -->
     <div class="particles" id="particles"></div>
-
+    
     <div class="construction-container">
-        <!-- Construction Icon -->
         <div class="construction-icon">
-            <i class="fas fa-tools"></i>
+            <i class="fas fa-hard-hat"></i>
         </div>
-
-        <!-- Main Title -->
+        
         <h1 class="construction-title">Under Construction</h1>
-        <p class="construction-subtitle">Something Amazing is Coming Soon!</p>
-
-        <!-- Construction Message -->
-        <div class="construction-message">
-            <p>We're working hard to bring you an incredible experience. This section of our website is currently being upgraded with new features and improvements.</p>
-            <p><strong>Expected Completion:</strong> Our development team is working diligently to complete this section. Check back soon for updates!</p>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
-        </div>
-        <p style="font-size: 0.9rem; opacity: 0.8;">75% Complete</p>
-
-        <!-- Countdown Timer (Optional) -->
-        <div class="countdown" id="countdown">
-            <div class="countdown-item">
-                <span class="countdown-number" id="days">00</span>
-                <span class="countdown-label">Days</span>
-            </div>
-            <div class="countdown-item">
-                <span class="countdown-number" id="hours">00</span>
-                <span class="countdown-label">Hours</span>
-            </div>
-            <div class="countdown-item">
-                <span class="countdown-number" id="minutes">00</span>
-                <span class="countdown-label">Minutes</span>
-            </div>
-            <div class="countdown-item">
-                <span class="countdown-number" id="seconds">00</span>
-                <span class="countdown-label">Seconds</span>
+        <p class="construction-subtitle">We're building something amazing for you!</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <span>75% Complete</span>
             </div>
         </div>
-
-        <!-- Features Coming Soon -->
-        <div class="construction-features">
+        
+        <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-home"></i>
                 </div>
-                <div class="feature-title">Property Search</div>
-                <div class="feature-desc">Advanced search with filters and maps</div>
+                <h4>Modern Design</h4>
+                <p>Beautiful and intuitive interface</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-calculator"></i>
-                </div>
-                <div class="feature-title">Mortgage Calculator</div>
-                <div class="feature-desc">Calculate EMI and loan eligibility</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-camera"></i>
-                </div>
-                <div class="feature-title">Virtual Tours</div>
-                <div class="feature-desc">360° property tours and videos</div>
-            </div>
+            
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-mobile-alt"></i>
                 </div>
-                <div class="feature-title">Mobile App</div>
-                <div class="feature-desc">Native iOS and Android apps</div>
+                <h4>Mobile Friendly</h4>
+                <p>Perfect on all devices</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h4>Lightning Fast</h4>
+                <p>Optimized performance</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h4>Secure</h4>
+                <p>Your data is protected</p>
             </div>
         </div>
-
-        <!-- Contact Information -->
+        
         <div class="contact-info">
-            <h4><i class="fas fa-phone me-2"></i>Contact Us During Construction</h4>
-            <p>For immediate assistance or inquiries, please contact us:</p>
-            <div class="row mt-3">
-                <div class="col-md-4">
-                    <strong>Phone:</strong><br>
-                    +91-522-400-1234
-                </div>
-                <div class="col-md-4">
-                    <strong>Email:</strong><br>
-                    info@apsdreamhomes.com
-                </div>
-                <div class="col-md-4">
-                    <strong>Office:</strong><br>
-                    123, Gomti Nagar, Lucknow
-                </div>
+            <h3>Get Notified When We Launch!</h3>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <span>info@apsdreamhome.com</span>
             </div>
-
-            <!-- Social Links -->
-            <div class="social-links">
-                <a href="https://facebook.com/apsdreamhomes" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://twitter.com/apsdreamhomes" target="_blank"><i class="fab fa-twitter"></i></a>
-                <a href="https://instagram.com/apsdreamhomes" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="https://linkedin.com/company/apsdreamhomes" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>+91 98765 43210</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Gorakhpur, Uttar Pradesh</span>
             </div>
         </div>
-
-        <!-- Back to Home -->
-        <a href="index.php" class="back-home">
-            <i class="fas fa-home me-2"></i>Back to Homepage
-        </a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Create floating particles
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 50;
-
+            
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-
-                // Random size
-                const size = Math.random() * 4 + 2;
+                
+                const size = Math.random() * 10 + 5;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
-
-                // Random position
                 particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-
-                // Random animation delay
                 particle.style.animationDelay = Math.random() * 6 + 's';
                 particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-
+                
                 particlesContainer.appendChild(particle);
             }
         }
-
-        // Countdown Timer
-        function updateCountdown() {
-            const targetDate = new Date('2024-12-31T23:59:59').getTime();
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
-            if (distance > 0) {
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                document.getElementById('days').textContent = days.toString().padStart(2, '0');
-                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-            }
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            createParticles();
-            setInterval(updateCountdown, 1000);
-        });
-
-        // Smooth scroll for any internal links
+        
+        // Initialize particles when page loads
+        window.addEventListener('load', createParticles);
+        
+        // Add smooth scroll behavior
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();

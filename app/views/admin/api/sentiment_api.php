@@ -13,7 +13,7 @@ if (!isAdmin()) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // CSRF validation
-    $csrf_token = $_POST['csrf_token'] ?? '';
+    $csrf_token = Security::sanitize($_POST['csrf_token']) ?? '';
     if (!verifyCSRFToken($csrf_token)) {
         http_response_code(403);
         echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Security validation failed'))]);

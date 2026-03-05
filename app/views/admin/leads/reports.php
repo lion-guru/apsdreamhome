@@ -1,4 +1,8 @@
-<!-- Page Header -->
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+ge Header -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
@@ -13,12 +17,12 @@
                         <input type="date"
                             name="start_date"
                             class="form-control"
-                            value="<?= htmlspecialchars($_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'))) ?>">
+                            value="<?= htmlspecialchars(Security::sanitize($_GET['start_date']) ?? date('Y-m-d', strtotime('-30 days'))) ?>">
                         <span class="input-group-text">to</span>
                         <input type="date"
                             name="end_date"
                             class="form-control"
-                            value="<?= htmlspecialchars($_GET['end_date'] ?? date('Y-m-d')) ?>">
+                            value="<?= htmlspecialchars(Security::sanitize($_GET['end_date']) ?? date('Y-m-d')) ?>">
                         <button class="btn btn-outline-secondary" type="submit">
                             <i class="fas fa-filter"></i>
                         </button>
@@ -53,25 +57,25 @@
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item">
                         <a class="nav-link <?= $reportType == 'summary' ? 'active' : '' ?>"
-                            href="/admin/leads/reports?type=summary&start_date=<?= $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= $_GET['end_date'] ?? date('Y-m-d') ?>">
+                            href="/admin/leads/reports?type=summary&start_date=<?= Security::sanitize($_GET['start_date']) ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= Security::sanitize($_GET['end_date']) ?? date('Y-m-d') ?>">
                             <i class="fas fa-chart-pie me-1"></i>Summary Report
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= $reportType == 'performance' ? 'active' : '' ?>"
-                            href="/admin/leads/reports?type=performance&start_date=<?= $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= $_GET['end_date'] ?? date('Y-m-d') ?>">
+                            href="/admin/leads/reports?type=performance&start_date=<?= Security::sanitize($_GET['start_date']) ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= Security::sanitize($_GET['end_date']) ?? date('Y-m-d') ?>">
                             <i class="fas fa-chart-line me-1"></i>Performance Report
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= $reportType == 'source' ? 'active' : '' ?>"
-                            href="/admin/leads/reports?type=source&start_date=<?= $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= $_GET['end_date'] ?? date('Y-m-d') ?>">
+                            href="/admin/leads/reports?type=source&start_date=<?= Security::sanitize($_GET['start_date']) ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= Security::sanitize($_GET['end_date']) ?? date('Y-m-d') ?>">
                             <i class="fas fa-bullhorn me-1"></i>Source Report
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= $reportType == 'conversion' ? 'active' : '' ?>"
-                            href="/admin/leads/reports?type=conversion&start_date=<?= $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= $_GET['end_date'] ?? date('Y-m-d') ?>">
+                            href="/admin/leads/reports?type=conversion&start_date=<?= Security::sanitize($_GET['start_date']) ?? date('Y-m-d', strtotime('-30 days')) ?>&end_date=<?= Security::sanitize($_GET['end_date']) ?? date('Y-m-d') ?>">
                             <i class="fas fa-exchange-alt me-1"></i>Conversion Report
                         </a>
                     </li>

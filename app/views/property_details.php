@@ -15,7 +15,7 @@ if (!defined('BASE_URL')) {
 include BASE_URL . 'app/views/includes/header.php';
 
 // Get property ID from URL
-$property_id = $_GET['id'] ?? 0;
+$property_id = Security::sanitize($_GET['id']) ?? 0;
 
 if (!$property_id) {
     header('Location: /properties');
@@ -461,3 +461,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 include BASE_URL . 'app/views/includes/footer.php';
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\customers\property_details.php
+
+function updateStars(rating) {
+            $('.rating-star').each(function() {
+                if ($(this).data('rating') <= rating) {
+                    $(this).removeClass('far').addClass('fas');
+                }

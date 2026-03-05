@@ -12,8 +12,8 @@ if (!defined('INCLUDED_FROM_MAIN')) {
 require_once __DIR__ . '/init.php';
 
 // Default error code
-$error_code = isset($_GET['code']) ? (int)$_GET['code'] : 404;
-$is_internal = isset($_GET['internal']) && $_GET['internal'] == 1;
+$error_code = Security::sanitize($_GET['code']) !== null ? (int)Security::sanitize($_GET['code']) : 404;
+$is_internal = Security::sanitize($_GET['internal']) !== null && Security::sanitize($_GET['internal']) == 1;
 
 // Set HTTP response code
 http_response_code($error_code);

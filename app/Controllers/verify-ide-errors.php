@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 /**
  * APS Dream Home - IDE Error Verification
  * Verification of IDE errors vs actual application status

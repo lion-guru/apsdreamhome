@@ -19,7 +19,7 @@ if (!isAdmin()) {
 }
 
 // CSRF Validation
-$csrf_token = $_GET['csrf_token'] ?? $_POST['csrf_token'] ?? '';
+$csrf_token = $_GET['csrf_token'] ?? Security::sanitize($_POST['csrf_token']) ?? '';
 if (!verifyCSRFToken($csrf_token)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Invalid CSRF token'))]);
@@ -27,7 +27,7 @@ if (!verifyCSRFToken($csrf_token)) {
 }
 
 // Get request type
-$action = $_GET['action'] ?? $_POST['action'] ?? '';
+$action = $_GET['action'] ?? Security::sanitize($_POST['action']) ?? '';
 $currentRole = $_SESSION['admin_role'] ?? '';
 
 try {
@@ -605,3 +605,21 @@ function exportBookings($db, $format)
         echo json_encode(['success' => true, 'bookings' => $bookings]);
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 607 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

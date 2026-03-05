@@ -230,4 +230,192 @@ class UserController extends AdminController
             $this->redirect('/admin/users');
         }
     }
+
+    public function show()
+    {
+        // TODO: Implement show functionality
+        return $this->view('show');
+    }
+
+    public function dashboard()
+    {
+        $this->requireLogin();
+
+        $user = $this->auth->user();
+
+        // Get user statistics
+        $stats = $this->userService->getUserStats($_SESSION['user_id']);
+
+        // Get recent activities
+        $recentActivities = $this->userService->getRecentActivities($_SESSION['user_id']);
+
+        $this->view('users/dashboard', [
+            'title' => 'My Dashboard',
+            'user' => $user,
+            'stats' => $stats,
+            'recent_activities' => $recentActivities
+        ]);
+    }
+
+    public function profile()
+    {
+        $this->requireLogin();
+
+        try {
+            $data = [
+                'username' => Security::sanitize($_POST['username']) ?? '',
+                'mobile' => Security::sanitize($_POST['mobile']) ?? '',
+                'address' => Security::sanitize($_POST['address']) ?? '',
+                'city' => Security::sanitize($_POST['city']) ?? '',
+                'state' => Security::sanitize($_POST['state']) ?? '',
+                'country' => Security::sanitize($_POST['country']) ?? '',
+                'pincode' => Security::sanitize($_POST['pincode']) ?? ''
+            ];
+
+            $result = $this->userService->updateProfile($_SESSION['user_id'], $data);
+
+            if ($result) {
+                $this->setFlash('success', 'Profile updated successfully!');
+            } else {
+                $this->setFlash('error', 'Failed to update profile');
+            }
+        } catch (\Exception $e) {
+            $this->setFlash('error', $e->getMessage());
+            $_SESSION['form_data'] = $_POST;
+        }
+
+        $this->redirect('/profile');
+    }
+
+    public function changePassword()
+    {
+        $this->requireLogin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $currentPassword = Security::sanitize($_POST['current_password']) ?? '';
+                $newPassword = Security::sanitize($_POST['new_password']) ?? '';
+                $confirmPassword = Security::sanitize($_POST['confirm_password']) ?? '';
+
+                if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
+                    throw new \Exception('All fields are required');
+                }
+
+                if ($newPassword !== $confirmPassword) {
+                    throw new \Exception('New password and confirm password do not match');
+                }
+
+                $result = $this->userService->changePassword(
+                    $_SESSION['user_id'],
+                    $currentPassword,
+                    $newPassword
+                );
+
+                if ($result) {
+                    $this->setFlash('success', 'Password changed successfully!');
+                    $this->redirect('/profile');
+                    return;
+                }
+
+                throw new \Exception('Failed to change password');
+            } catch (\Exception $e) {
+                $this->setFlash('error', $e->getMessage());
+            }
+        }
+
+        $this->view('users/change_password', [
+            'title' => 'Change Password'
+        ]);
+    }
+
+    public function forgotPassword()
+    {
+        if ($this->isLoggedIn()) {
+            $this->redirect('/');
+            return;
+        }
+
+        $this->view('auth/forgot_password', [
+            'title' => 'Forgot Password'
+        ]);
+    }
+
+    public function sendPasswordReset()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = Security::sanitize($_POST['email']) ?? '';
+
+            if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->setFlash('error', 'Please provide a valid email address');
+                $this->redirect('/forgot-password');
+                return;
+            }
+
+            try {
+                $result = $this->userService->requestPasswordReset($email);
+
+                if ($result) {
+                    $this->setFlash('success', 'If an account exists with this email, a password reset link has been sent.');
+                    $this->redirect('/login');
+                    return;
+                }
+
+                throw new \Exception('Failed to send password reset email');
+            } catch (\Exception $e) {
+                $this->setFlash('error', $e->getMessage());
+                $this->redirect('/forgot-password');
+            }
+        }
+
+        $this->redirect('/forgot-password');
+    }
+
+    public function resetPasswordForm($token)
+    {
+        if (empty($token)) {
+            $this->setFlash('error', 'Invalid reset token');
+            $this->redirect('/login');
+            return;
+        }
+
+        $this->view('auth/reset_password', [
+            'title' => 'Reset Password',
+            'token' => $token
+        ]);
+    }
+
+    public function googleLogin()
+    {
+        $authUrl = $this->googleAuthService->getAuthUrl();
+        header('Location: ' . $authUrl);
+        exit;
+    }
+
+    public function googleCallback()
+    {
+        if (isset($_GET['code'])) {
+            try {
+                $user = $this->googleAuthService->handleCallback($_GET['code']);
+
+                if ($user) {
+                    // Log the user in
+                    $_SESSION['user_id'] = $user->id;
+                    $_SESSION['user_email'] = $user->email;
+                    $_SESSION['user_role'] = $user->role;
+
+                    $this->setFlash('success', 'Logged in successfully with Google!');
+                    $this->redirect('/dashboard');
+                    return;
+                }
+
+                throw new \Exception('Failed to authenticate with Google');
+            } catch (\Exception $e) {
+                $this->setFlash('error', $e->getMessage());
+            }
+        } else {
+            $this->setFlash('error', 'Invalid request');
+        }
+
+        $this->redirect('/login');
+    }
 }

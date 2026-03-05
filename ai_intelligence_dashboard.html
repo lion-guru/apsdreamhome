@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APS Dream Home - AI Intelligence Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --primary-color: #2962ff;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+        --info-color: #17a2b8;
+        --ai-purple: #8b5cf6;
+        --ai-cyan: #06b6d4;
+        --dark-bg: #0f0f23;
+        --card-bg: #1a1a2e;
+      }
+
+      /* AI Accuracy Classes */
+      .ai-accuracy-94 {
+        width: 94% !important;
+      }
+      .ai-accuracy-87 {
+        width: 87% !important;
+      }
+      .ai-accuracy-91 {
+        width: 91% !important;
+      }
+      .ai-accuracy-96 {
+        width: 96% !important;
+      }
+      .ai-accuracy-82 {
+        width: 82% !important;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          #0f0f23 0%,
+          #1a1a2e 50%,
+          #16213e 100%
+        );
+        color: #fff;
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+      }
+
+      .ai-header {
+        background: linear-gradient(
+          90deg,
+          rgba(139, 92, 246, 0.1) 0%,
+          rgba(6, 182, 212, 0.1) 100%
+        );
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+        padding: 1.5rem 0;
+      }
+
+      .ai-metric-card {
+        background: rgba(255, 255, 255, 0.03);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .ai-metric-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+      }
+
+      .ai-metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+        border-color: rgba(139, 92, 246, 0.4);
+      }
+
+      .ai-metric-value {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .ai-metric-label {
+        color: #b8b8b8;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .ai-status-indicator {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+        animation: aiPulse 2s infinite;
+      }
+
+      .ai-active {
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+      }
+
+      .ai-training {
+        background: linear-gradient(135deg, #f39c12, #e74c3c);
+        box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+      }
+
+      .ai-beta {
+        background: linear-gradient(135deg, #17a2b8, #27ae60);
+        box-shadow: 0 0 20px rgba(23, 162, 184, 0.5);
+      }
+
+      @keyframes aiPulse {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.7;
+          transform: scale(1.1);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .ai-chart-container {
+        background: rgba(255, 255, 255, 0.03);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .ai-workflow-item {
+        background: rgba(139, 92, 246, 0.05);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .ai-workflow-item:hover {
+        background: rgba(139, 92, 246, 0.1);
+        transform: translateX(5px);
+      }
+
+      .ai-accuracy-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+      }
+
+      .ai-metric-icon {
+        font-size: 2rem;
+      }
+
+      .ai-icon-purple {
+        color: #8b5cf6;
+      }
+      .ai-icon-cyan {
+        color: #06b6d4;
+      }
+      .ai-icon-green {
+        color: #27ae60;
+      }
+      .ai-icon-orange {
+        color: #f39c12;
+      }
+
+      .ai-icon-white {
+        color: white;
+        font-size: 1.5rem;
+      }
+
+      .ai-accuracy-fill-orange {
+        background: linear-gradient(90deg, #f39c12, #e74c3c);
+      }
+
+      .ai-accuracy-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+        border-radius: 4px;
+        transition: width 1s ease;
+      }
+
+      .ai-integration-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .ai-integration-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .ai-integration-item:hover {
+        background: rgba(139, 92, 246, 0.1);
+        transform: translateY(-3px);
+      }
+
+      .ai-brain-animation {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        animation: brainPulse 3s infinite;
+      }
+
+      @keyframes brainPulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 20px rgba(139, 92, 246, 0);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+        }
+      }
+
+      .floating-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(139, 92, 246, 0.5);
+        border-radius: 50%;
+        animation: float 20s infinite linear;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(100vh) translateX(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) translateX(100px);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Floating Particles -->
+    <div class="floating-particles" id="particles"></div>
+
+    <div class="ai-header">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h1 class="h2 mb-0">
+              <i class="bi bi-cpu"></i> APS Dream Home - AI Intelligence
+            </h1>
+            <p class="mb-0 text-muted">
+              Advanced AI Integration & Autonomous Operations
+            </p>
+          </div>
+          <div class="col-md-6 text-end">
+            <span class="ai-status-indicator ai-active"></span>
+            <span>AI Systems Operational</span>
+            <span class="ms-3" id="ai-current-time"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid mt-4">
+      <!-- AI Key Metrics -->
+      <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="ai-metric-card">
+            <div class="text-center">
+              <div class="ai-metric-value">89.3%</div>
+              <div class="ai-metric-label">AI Accuracy Score</div>
+              <div class="mt-3">
+                <i class="bi bi-graph-up ai-metric-icon ai-icon-purple"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="ai-metric-card">
+            <div class="text-center">
+              <div class="ai-metric-value">92.7%</div>
+              <div class="ai-metric-label">Automation Efficiency</div>
+              <div class="mt-3">
+                <i class="bi bi-gear ai-metric-icon ai-icon-cyan"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="ai-metric-card">
+            <div class="text-center">
+              <div class="ai-metric-value">67%</div>
+              <div class="ai-metric-label">Productivity Increase</div>
+              <div class="mt-3">
+                <i class="bi bi-lightning ai-metric-icon ai-icon-green"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+          <div class="ai-metric-card">
+            <div class="text-center">
+              <div class="ai-metric-value">$12.4K</div>
+              <div class="ai-metric-label">Monthly Savings</div>
+              <div class="mt-3">
+                <i
+                  class="bi bi-currency-dollar ai-metric-icon ai-icon-orange"
+                ></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Performance Charts -->
+      <div class="row mb-4">
+        <div class="col-lg-8">
+          <div class="ai-chart-container">
+            <h5 class="mb-3">AI Performance Analytics</h5>
+            <canvas id="aiPerformanceChart" height="100"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ai-chart-container">
+            <h5 class="mb-3">AI Resource Usage</h5>
+            <canvas id="aiResourceChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Workflows -->
+      <div class="row mb-4">
+        <div class="col-lg-6">
+          <div class="ai-chart-container">
+            <h5 class="mb-3">AI Workflows Status</h5>
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-active"></span>
+                  <strong>Property Valuation</strong>
+                  <div class="text-muted small">
+                    94% accuracy • 2.3s response
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-success">127 requests</div>
+                </div>
+              </div>
+              <div class="ai-accuracy-bar">
+                <div class="ai-accuracy-fill ai-accuracy-96"></div>
+              </div>
+            </div>
+
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-active"></span>
+                  <strong>Lead Scoring</strong>
+                  <div class="text-muted small">
+                    91% accuracy • 1.8s response
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-success">89 requests</div>
+                </div>
+              </div>
+              <div class="ai-accuracy-bar">
+                <div class="ai-accuracy-fill ai-accuracy-91"></div>
+              </div>
+            </div>
+
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-active"></span>
+                  <strong>Customer Recommendations</strong>
+                  <div class="text-muted small">
+                    87% accuracy • 3.1s response
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-success">156 requests</div>
+                </div>
+              </div>
+              <div class="ai-accuracy-bar">
+                <div class="ai-accuracy-fill ai-accuracy-87"></div>
+              </div>
+            </div>
+
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-training"></span>
+                  <strong>Market Analysis</strong>
+                  <div class="text-muted small">
+                    82% accuracy • 5.2s response
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-warning">45 requests</div>
+                </div>
+              </div>
+              <div class="ai-accuracy-bar">
+                <div
+                  class="ai-accuracy-fill ai-accuracy-fill-orange ai-accuracy-82"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="ai-chart-container">
+            <h5 class="mb-3">AI-Powered Features</h5>
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-active"></span>
+                  <strong>Intelligent Property Search</strong>
+                  <div class="text-muted small">
+                    NLP queries • Image recognition
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-info">92% accuracy</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-active"></span>
+                  <strong>Automated Lead Qualification</strong>
+                  <div class="text-muted small">
+                    Behavior analysis • Priority ranking
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-info">89% accuracy</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-beta"></span>
+                  <strong>Smart Customer Support</strong>
+                  <div class="text-muted small">
+                    Chatbot • Ticket classification
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-info">85% accuracy</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-workflow-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="ai-status-indicator ai-training"></span>
+                  <strong>Predictive Maintenance</strong>
+                  <div class="text-muted small">
+                    Health monitoring • Issue prediction
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="text-warning">78% accuracy</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Integrations -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="ai-chart-container">
+            <h5 class="mb-3">AI System Integrations</h5>
+            <div class="ai-integration-grid">
+              <div class="ai-integration-item">
+                <div class="ai-brain-animation">
+                  <i class="bi bi-database ai-icon-white"></i>
+                </div>
+                <h6>CRM System</h6>
+                <div class="text-success">Connected</div>
+                <small>99.2% sync</small>
+              </div>
+              <div class="ai-integration-item">
+                <div class="ai-brain-animation">
+                  <i class="bi bi-envelope ai-icon-white"></i>
+                </div>
+                <h6>Email Marketing</h6>
+                <div class="text-success">Connected</div>
+                <small>97.8% sync</small>
+              </div>
+              <div class="ai-integration-item">
+                <div class="ai-brain-animation">
+                  <i class="bi bi-share ai-icon-white"></i>
+                </div>
+                <h6>Social Media</h6>
+                <div class="text-success">Connected</div>
+                <small>95.4% sync</small>
+              </div>
+              <div class="ai-integration-item">
+                <div class="ai-brain-animation">
+                  <i class="bi bi-credit-card ai-icon-white"></i>
+                </div>
+                <h6>Payment Gateway</h6>
+                <div class="text-success">Connected</div>
+                <small>99.9% sync</small>
+              </div>
+              <div class="ai-integration-item">
+                <div class="ai-brain-animation">
+                  <i class="bi bi-graph-up ai-icon-white"></i>
+                </div>
+                <h6>Analytics Platform</h6>
+                <div class="text-success">Connected</div>
+                <small>98.7% sync</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Create floating particles
+      function createParticles() {
+        const particlesContainer = document.getElementById("particles");
+        for (let i = 0; i < 20; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.animationDelay = Math.random() * 20 + "s";
+          particle.style.animationDuration = 15 + Math.random() * 10 + "s";
+          particlesContainer.appendChild(particle);
+        }
+      }
+      createParticles();
+
+      // Update current time
+      function updateTime() {
+        const now = new Date();
+        document.getElementById("ai-current-time").textContent =
+          now.toLocaleString();
+      }
+      setInterval(updateTime, 1000);
+      updateTime();
+
+      // AI Performance Chart
+      const aiPerformanceCtx = document
+        .getElementById("aiPerformanceChart")
+        .getContext("2d");
+      new Chart(aiPerformanceCtx, {
+        type: "line",
+        data: {
+          labels: [
+            "00:00",
+            "04:00",
+            "08:00",
+            "12:00",
+            "16:00",
+            "20:00",
+            "24:00",
+          ],
+          datasets: [
+            {
+              label: "AI Accuracy (%)",
+              data: [87, 88, 89, 91, 90, 92, 89.3],
+              borderColor: "#8b5cf6",
+              backgroundColor: "rgba(139, 92, 246, 0.1)",
+              tension: 0.4,
+            },
+            {
+              label: "Requests Processed",
+              data: [234, 189, 312, 456, 398, 287, 417],
+              borderColor: "#06b6d4",
+              backgroundColor: "rgba(6, 182, 212, 0.1)",
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: "#fff" },
+            },
+          },
+          scales: {
+            x: {
+              ticks: { color: "#fff" },
+              grid: { color: "rgba(255, 255, 255, 0.1)" },
+            },
+            y: {
+              ticks: { color: "#fff" },
+              grid: { color: "rgba(255, 255, 255, 0.1)" },
+            },
+          },
+        },
+      });
+
+      // AI Resource Chart
+      const aiResourceCtx = document
+        .getElementById("aiResourceChart")
+        .getContext("2d");
+      new Chart(aiResourceCtx, {
+        type: "doughnut",
+        data: {
+          labels: [
+            "AI Processing",
+            "Data Analysis",
+            "Automation",
+            "Learning",
+            "API Calls",
+          ],
+          datasets: [
+            {
+              data: [35, 25, 20, 15, 5],
+              backgroundColor: [
+                "#8b5cf6",
+                "#06b6d4",
+                "#27ae60",
+                "#f39c12",
+                "#e74c3c",
+              ],
+              borderWidth: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: "#fff" },
+              position: "bottom",
+            },
+          },
+        },
+      });
+
+      // Animate accuracy bars on scroll
+      const observerOptions = {
+        threshold: 0.5,
+        rootMargin: "0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const accuracyFills =
+              entry.target.querySelectorAll(".ai-accuracy-fill");
+            accuracyFills.forEach((fill) => {
+              const width = fill.style.width;
+              fill.style.width = "0%";
+              setTimeout(() => {
+                fill.style.width = width;
+              }, 200);
+            });
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".ai-workflow-item").forEach((item) => {
+        observer.observe(item);
+      });
+    </script>
+  </body>
+</html>

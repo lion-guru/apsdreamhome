@@ -81,7 +81,7 @@ function updateAIToolSettings($tool_name, $settings) {
 $action = $_GET['action'] ?? '';
 
 // Global CSRF validation for state-changing requests or sensitive GETs
-$csrf_token = $_GET['csrf_token'] ?? $_POST['csrf_token'] ?? '';
+$csrf_token = $_GET['csrf_token'] ?? Security::sanitize($_POST['csrf_token']) ?? '';
 if (!verifyCSRFToken($csrf_token)) {
     http_response_code(403);
     echo json_encode(['error' => h($mlSupport->translate('Security validation failed'))]);
@@ -110,8 +110,8 @@ switch ($action) {
             exit();
         }
 
-        $tool_name = $_POST['tool'] ?? '';
-        $settings = $_POST['settings'] ?? '';
+        $tool_name = Security::sanitize($_POST['tool']) ?? '';
+        $settings = Security::sanitize($_POST['settings']) ?? '';
 
         if (!empty($tool_name) && !empty($settings)) {
             $settings = json_decode($settings, true);

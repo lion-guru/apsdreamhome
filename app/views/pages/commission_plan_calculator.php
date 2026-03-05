@@ -30,7 +30,7 @@ $plans = $plans_result->fetch_all(MYSQLI_ASSOC);
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['calculate_scenario'])) {
+    if (isset(Security::sanitize($_POST['calculate_scenario']))) {
         $result = calculateScenario($_POST);
         if ($result['success']) {
             $_SESSION['calculation_result'] = $result;
@@ -726,3 +726,21 @@ if (isset($_GET['calculated']) && $calculation_result) {
     </script>
 </body>
 </html>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 728 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

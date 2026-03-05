@@ -11,7 +11,7 @@
             <div class="col-lg-6">
                 <form class="search-form" id="newsSearch" action="<?= BASE_URL ?>news" method="GET">
                     <div class="input-group">
-                        <input type="text" name="q" class="form-control" placeholder="Search news..." id="searchInput" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
+                        <input type="text" name="q" class="form-control" placeholder="Search news..." id="searchInput" value="<?= Security::sanitize($_GET['q']) !== null ? htmlspecialchars(Security::sanitize($_GET['q'])) : '' ?>">
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i>
                         </button>

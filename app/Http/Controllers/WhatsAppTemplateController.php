@@ -125,10 +125,10 @@ class WhatsAppTemplateController extends BaseController
         try {
             $templateData = [
                 'id' => uniqid('template_'),
-                'name' => $_POST['templateName'] ?? '',
-                'category' => $_POST['templateCategory'] ?? '',
-                'content' => $_POST['templateContent'] ?? '',
-                'description' => $_POST['templateDescription'] ?? '',
+                'name' => Security::sanitize($_POST['templateName']) ?? '',
+                'category' => Security::sanitize($_POST['templateCategory']) ?? '',
+                'content' => Security::sanitize($_POST['templateContent']) ?? '',
+                'description' => Security::sanitize($_POST['templateDescription']) ?? '',
                 'created_at' => date('Y-m-d H:i:s'),
                 'status' => 'active'
             ];
@@ -156,10 +156,10 @@ class WhatsAppTemplateController extends BaseController
         
         try {
             $templateData = [
-                'name' => $_POST['templateName'] ?? '',
-                'category' => $_POST['templateCategory'] ?? '',
-                'content' => $_POST['templateContent'] ?? '',
-                'description' => $_POST['templateDescription'] ?? '',
+                'name' => Security::sanitize($_POST['templateName']) ?? '',
+                'category' => Security::sanitize($_POST['templateCategory']) ?? '',
+                'content' => Security::sanitize($_POST['templateContent']) ?? '',
+                'description' => Security::sanitize($_POST['templateDescription']) ?? '',
                 'updated_at' => date('Y-m-d H:i:s')
             ];
             
@@ -206,8 +206,8 @@ class WhatsAppTemplateController extends BaseController
         header('Content-Type: application/json');
         
         try {
-            $templateId = $_POST['templateId'] ?? '';
-            $testNumber = $_POST['testNumber'] ?? '';
+            $templateId = Security::sanitize($_POST['templateId']) ?? '';
+            $testNumber = Security::sanitize($_POST['testNumber']) ?? '';
             
             // Simulate sending test message
             echo json_encode([

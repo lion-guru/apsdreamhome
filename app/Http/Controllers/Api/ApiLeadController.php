@@ -334,8 +334,8 @@ class ApiLeadController extends Controller
                 'file_path' => 'leads/' . $lead->id . '/' . $filename,
                 'file_type' => $file['type'],
                 'file_size' => $file['size'],
-                'description' => $_POST['description'] ?? '',
-                'is_private' => isset($_POST['is_private']) ? $_POST['is_private'] === 'true' : false,
+                'description' => Security::sanitize($_POST['description']) ?? '',
+                'is_private' => isset(Security::sanitize($_POST['is_private'])) ? Security::sanitize($_POST['is_private']) === 'true' : false,
                 'uploaded_by' => $currentUser->id,
             ];
 
@@ -898,3 +898,21 @@ class ApiLeadController extends Controller
         ], $statusCode);
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 900 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

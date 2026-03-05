@@ -1,0 +1,114 @@
+/* Font Awesome Essential Styles */
+.fa, .fas, .far, .fab {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+.fa-home:before { content: "\f015"; }
+.fa-map-marker-alt:before { content: "\f3c5"; }
+.fa-bed:before { content: "\f236"; }
+.fa-bath:before { content: "\f2cd"; }
+.fa-ruler-combined:before { content: "\f546"; }
+.fa-star:before { content: "\f005"; }
+.fa-award:before { content: "\f559"; }
+.fa-hard-hat:before { content: "\f807"; }
+.fa-smile:before { content: "\f118"; }
+.fa-handshake:before { content: "\f2b5"; }
+.fa-building:before { content: "\f1ad"; }
+.fa-store:before { content: "\f54e"; }
+.fa-mountain:before { content: "\f6fc"; }
+.fa-facebook:before { content: "\f09a"; }
+.fa-twitter:before { content: "\f099"; }
+.fa-instagram:before { content: "\f16d"; }
+.fa-linkedin:before { content: "\f08c"; }
+.fa-youtube:before { content: "\f167"; }
+.fa-whatsapp:before { content: "\f232"; }
+.fa-google-play:before { content: "\f3ab"; }
+.fa-apple:before { content: "\f179"; }
+.fa-check-circle:before { content: "\f058"; }
+.fa-exclamation-triangle:before { content: "\f071"; }
+.fa-bars:before { content: "\f0c9"; }
+.fa-search:before { content: "\f002"; }
+.fa-user:before { content: "\f007"; }
+.fa-envelope:before { content: "\f0e0"; }
+.fa-phone:before { content: "\f095"; }
+.fa-clock:before { content: "\f017"; }
+.fa-arrow-right:before { content: "\f061"; }
+.fa-arrow-left:before { content: "\f060"; }
+.fa-chevron-down:before { content: "\f078"; }
+.fa-chevron-up:before { content: "\f077"; }
+.fa-times:before { content: "\f00d"; }
+.fa-plus:before { content: "\f067"; }
+.fa-edit:before { content: "\f044"; }
+.fa-trash:before { content: "\f1f8"; }
+.fa-eye:before { content: "\f06e"; }
+.fa-download:before { content: "\f019"; }
+.fa-upload:before { content: "\f093"; }
+.fa-save:before { content: "\f0c7"; }
+.fa-print:before { content: "\f02f"; }
+.fa-share:before { content: "\f064"; }
+.fa-heart:before { content: "\f004"; }
+.fa-bookmark:before { content: "\f02e"; }
+.fa-comment:before { content: "\f075"; }
+.fa-calendar:before { content: "\f133"; }
+.fa-camera:before { content: "\f030"; }
+.fa-video:before { content: "\f03d"; }
+.fa-image:before { content: "\f03e"; }
+.fa-file:before { content: "\f15b"; }
+.fa-folder:before { content: "\f07b"; }
+.fa-tag:before { content: "\f02b"; }
+.fa-filter:before { content: "\f0b0"; }
+.fa-sort:before { content: "\f0dc"; }
+.fa-sync:before { content: "\f021"; }
+.fa-refresh:before { content: "\f021"; }
+.fa-cog:before { content: "\f013"; }
+.fa-wrench:before { content: "\f0ad"; }
+.fa-tools:before { content: "\f7d9"; }
+.fa-plug:before { content: "\f1e6"; }
+.fa-wifi:before { content: "\f1eb"; }
+.fa-database:before { content: "\f1c0"; }
+.fa-server:before { content: "\f233"; }
+.fa-cloud:before { content: "\f0c2"; }
+.fa-lock:before { content: "\f023"; }
+.fa-unlock:before { content: "\f09c"; }
+.fa-key:before { content: "\f084"; }
+.fa-shield-alt:before { content: "\f3ed"; }
+.fa-bell:before { content: "\f0f3"; }
+.fa-envelope-open:before { content: "\f2b6"; }
+.fa-paper-plane:before { content: "\f1d8"; }
+.fa-map:before { content: "\f279"; }
+.fa-location-arrow:before { content: "\f124"; }
+.fa-compass:before { content: "\f14e"; }
+.fa-globe:before { content: "\f0ac"; }
+.fa-flag:before { content: "\f024"; }
+.fa-book:before { content: "\f02d"; }
+.fa-graduation-cap:before { content: "\f19d"; }
+.fa-briefcase:before { content: "\f0b1"; }
+.fa-chart-line:before { content: "\f201"; }
+.fa-chart-bar:before { content: "\f080"; }
+.fa-pie-chart:before { content: "\f200"; }
+.fa-tachometer-alt:before { content: "\f3fd"; }
+.fa-rocket:before { content: "\f135"; }
+
+.fa-1x { font-size: 1em; }
+.fa-2x { font-size: 2em; }
+.fa-3x { font-size: 3em; }
+.fa-4x { font-size: 4em; }
+.fa-5x { font-size: 5em; }
+
+.fa-lg { font-size: 1.33333em; line-height: 0.75em; vertical-align: -0.0667em; }
+.fa-sm { font-size: 0.875em; line-height: 0.07143em; vertical-align: 0.07143em; }
+.fa-xs { font-size: 0.75em; line-height: 0.08333em; vertical-align: 0.08333em; }
+
+.text-primary { color: var(--bs-primary) !important; }
+.text-secondary { color: var(--bs-secondary) !important; }
+.text-success { color: var(--bs-success) !important; }
+.text-danger { color: var(--bs-danger) !important; }
+.text-warning { color: var(--bs-warning) !important; }
+.text-info { color: var(--bs-info) !important; }
+.text-light { color: var(--bs-light) !important; }
+.text-dark { color: var(--bs-dark) !important; }
+.text-muted { color: var(--bs-secondary-color) !important; }

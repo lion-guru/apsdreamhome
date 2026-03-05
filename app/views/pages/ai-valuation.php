@@ -1,5 +1,8 @@
 <?php
-$page_title = 'AI Property Valuation - APS Dream Home';
+
+// TODO: Add proper error handling with try-catch blocks
+
+page_title = 'AI Property Valuation - APS Dream Home';
 $page_description = 'Advanced AI-powered property valuation and market analysis';
 include __DIR__ . '/../layouts/base.php';
 ?>
@@ -451,11 +454,11 @@ function displayInvestmentAnalysis(analysis) {
                 </div>
                 <div class="trend-item">
                     <span class="trend-label">5 Year Projection</span>
-                    <span class="trend-value">' + analysis.roi_projection.5_year_projection + '%</span>
+                    <span class="trend-value">' + analysis.roi_projection.five_year_projection + '%</span>
                 </div>
                 <div class="trend-item">
                     <span class="trend-label">10 Year Projection</span>
-                    <span class="trend-value">' + analysis.roi_projection.10_year_projection + '%</span>
+                    <span class="trend-value">' + analysis.roi_projection.ten_year_projection + '%</span>
                 </div>
             </div>
             
@@ -492,6 +495,6 @@ function displayInvestmentAnalysis(analysis) {
 
 function showError(message) {
     document.getElementById('valuationResults').querySelector('.results-content').innerHTML = 
-        `<div class="alert alert-danger">' + message + '</div>`;
+        '<div class="alert alert-danger">' + message + '</div>';
 }
 </script>

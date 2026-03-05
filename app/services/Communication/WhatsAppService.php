@@ -372,7 +372,7 @@ class WhatsAppService
     public function verifyWebhook(string $mode, string $token): ?string
     {
         if ($mode === 'subscribe' && $token === $this->webhookVerifyToken) {
-            return $_GET['challenge'] ?? 'verified';
+            return Security::sanitize($_GET['challenge']) ?? 'verified';
         }
         return null;
     }

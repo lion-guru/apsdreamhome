@@ -431,3 +431,34 @@ function cache_forget(string $key): bool
 }
 
 ?>
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Cache.php
+
+function __clone() {}
+function __wakeup() {
+        throw new Exception('Cannot unserialize singleton');
+    }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\Cache.php
+
+function __call($name, $arguments) {
+        if (method_exists($this->cache, $name)) {
+            return call_user_func_array([$this->cache, $name], $arguments);
+        }
+function __callStatic($name, $arguments) {
+        return call_user_func_array([ModernCache::class, $name], $arguments);
+    }
+class calls to the modern Core Cache.
+ */
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use App\Core\Cache as ModernCache;
+
+class Cache {
+    private $cache;
+
+    public function __construct() {
+        $this->cache = new ModernCache();
+    }

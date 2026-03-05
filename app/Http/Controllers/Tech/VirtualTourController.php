@@ -60,8 +60,8 @@ class VirtualTourController extends BaseController
             sendJsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
         }
 
-        $property_id = $_POST['property_id'] ?? '';
-        $panorama_type = $_POST['panorama_type'] ?? 'interior';
+        $property_id = Security::sanitize($_POST['property_id']) ?? '';
+        $panorama_type = Security::sanitize($_POST['panorama_type']) ?? 'interior';
 
         if (empty($property_id) || !isset($_FILES['panorama_image'])) {
             sendJsonResponse(['success' => false, 'error' => 'Property ID and image are required'], 400);
@@ -525,3 +525,21 @@ class VirtualTourController extends BaseController
         }
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 527 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

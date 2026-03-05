@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/universal_template.php';
 // Handle form submission
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $login = $_POST['login'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $login = Security::sanitize($_POST['login']) ?? '';
+    $password = Security::sanitize($_POST['password']) ?? '';
 
     if (empty($login) || empty($password)) {
         $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Please fill in all fields!</div>';
@@ -50,7 +50,7 @@ $content = '
                                 <i class="fas fa-envelope me-1"></i>Email or Phone *
                             </label>
                             <input type="text" class="form-control" name="login"
-                                   value="' . htmlspecialchars($_POST['login'] ?? '') . '" required>
+                                   value="' . htmlspecialchars(Security::sanitize($_POST['login']) ?? '') . '" required>
                             <div class="form-text">Enter your registered email or phone</div>
                         </div>
 

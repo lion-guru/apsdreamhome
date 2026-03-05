@@ -99,7 +99,8 @@ class View
      */
     protected function getDefaultBasePath()
     {
-        return App::getInstance()->basePath('app/views');
+        // For custom router system, use direct path
+        return dirname(__DIR__, 3) . '/app/views';
     }
 
     /**
@@ -218,7 +219,7 @@ class View
         $view = str_replace('.', '/', $view);
 
         foreach (static::$extensions as $extension) {
-            // First check in the default base path (resources/views)
+            // Check in app/views directory only
             $path = $this->basePath . '/' . $view . '.' . $extension;
 
             // Normalize path separator
@@ -227,17 +228,9 @@ class View
             if (file_exists($path)) {
                 return $path;
             }
-
-            // Also check in app/views directory for admin views
-            $appViewsPath = App::getInstance()->basePath('app/views') . '/' . $view . '.' . $extension;
-            $appViewsPath = str_replace(['\\', '//'], '/', $appViewsPath);
-
-            if (file_exists($appViewsPath)) {
-                return $appViewsPath;
-            }
         }
 
-        throw new InvalidArgumentException("View [{$view}] not found in paths: {$this->basePath}");
+        throw new InvalidArgumentException("View [{$view}] not found in path: {$this->basePath}");
     }
 
     /**

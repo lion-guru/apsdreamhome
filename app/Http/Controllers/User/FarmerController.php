@@ -105,16 +105,16 @@ class FarmerController extends Controller
             }
 
             $data = [
-                'name' => $_POST['name'] ?? '',
-                'email' => $_POST['email'] ?? '',
-                'phone' => $_POST['phone'] ?? '',
-                'address' => $_POST['address'] ?? '',
-                'state_id' => $_POST['state_id'] ?? null,
-                'district_id' => $_POST['district_id'] ?? null,
-                'aadhar_number' => $_POST['aadhar_number'] ?? '',
-                'pan_number' => $_POST['pan_number'] ?? '',
-                'bank_account' => $_POST['bank_account'] ?? '',
-                'ifsc_code' => $_POST['ifsc_code'] ?? '',
+                'name' => Security::sanitize($_POST['name']) ?? '',
+                'email' => Security::sanitize($_POST['email']) ?? '',
+                'phone' => Security::sanitize($_POST['phone']) ?? '',
+                'address' => Security::sanitize($_POST['address']) ?? '',
+                'state_id' => Security::sanitize($_POST['state_id']) ?? null,
+                'district_id' => Security::sanitize($_POST['district_id']) ?? null,
+                'aadhar_number' => Security::sanitize($_POST['aadhar_number']) ?? '',
+                'pan_number' => Security::sanitize($_POST['pan_number']) ?? '',
+                'bank_account' => Security::sanitize($_POST['bank_account']) ?? '',
+                'ifsc_code' => Security::sanitize($_POST['ifsc_code']) ?? '',
                 'status' => 'active'
             ];
 
@@ -200,16 +200,16 @@ class FarmerController extends Controller
             }
 
             $data = [
-                'name' => $_POST['name'] ?? '',
-                'email' => $_POST['email'] ?? '',
-                'phone' => $_POST['phone'] ?? '',
-                'address' => $_POST['address'] ?? '',
-                'state_id' => $_POST['state_id'] ?? null,
-                'district_id' => $_POST['district_id'] ?? null,
-                'aadhar_number' => $_POST['aadhar_number'] ?? '',
-                'pan_number' => $_POST['pan_number'] ?? '',
-                'bank_account' => $_POST['bank_account'] ?? '',
-                'ifsc_code' => $_POST['ifsc_code'] ?? ''
+                'name' => Security::sanitize($_POST['name']) ?? '',
+                'email' => Security::sanitize($_POST['email']) ?? '',
+                'phone' => Security::sanitize($_POST['phone']) ?? '',
+                'address' => Security::sanitize($_POST['address']) ?? '',
+                'state_id' => Security::sanitize($_POST['state_id']) ?? null,
+                'district_id' => Security::sanitize($_POST['district_id']) ?? null,
+                'aadhar_number' => Security::sanitize($_POST['aadhar_number']) ?? '',
+                'pan_number' => Security::sanitize($_POST['pan_number']) ?? '',
+                'bank_account' => Security::sanitize($_POST['bank_account']) ?? '',
+                'ifsc_code' => Security::sanitize($_POST['ifsc_code']) ?? ''
             ];
 
             // Validate required fields

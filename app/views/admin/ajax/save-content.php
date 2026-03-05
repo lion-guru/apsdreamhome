@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * AJAX Handler for saving content updates from visual editor
  */
@@ -13,7 +16,7 @@ if (!hasRole('superadmin') && !hasRole('manager')) {
 }
 
 // CSRF validation
-$csrf_token = $_POST['csrf_token'] ?? '';
+$csrf_token = Security::sanitize($_POST['csrf_token']) ?? '';
 if (!verifyCSRFToken($csrf_token)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Security validation failed'))]);
@@ -33,9 +36,9 @@ if(!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQU
 $superAdmin = new SuperAdminController();
 
 // Get POST data
-$content = isset($_POST['content']) ? $_POST['content'] : null;
-$pageId = isset($_POST['page_id']) ? (int)$_POST['page_id'] : null;
-$layout = isset($_POST['layout']) ? $_POST['layout'] : null;
+$content = isset(Security::sanitize($_POST['content'])) ? Security::sanitize($_POST['content']) : null;
+$pageId = isset(Security::sanitize($_POST['page_id'])) ? (int)Security::sanitize($_POST['page_id']) : null;
+$layout = isset(Security::sanitize($_POST['layout'])) ? Security::sanitize($_POST['layout']) : null;
 
 if(!$content || !$pageId) {
     echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Missing required parameters'))]);

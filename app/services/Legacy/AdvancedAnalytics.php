@@ -153,9 +153,9 @@ class AdvancedAnalytics {
 
         $sessionId = session_id();
         $userId = $_SESSION['user_id'] ?? null;
-        $source = $_GET['utm_source'] ?? '';
-        $medium = $_GET['utm_medium'] ?? '';
-        $campaign = $_GET['utm_campaign'] ?? '';
+        $source = Security::sanitize($_GET['utm_source']) ?? '';
+        $medium = Security::sanitize($_GET['utm_medium']) ?? '';
+        $campaign = Security::sanitize($_GET['utm_campaign']) ?? '';
         
         $sql = "INSERT INTO analytics_conversions 
                 (session_id, user_id, conversion_type, conversion_value, property_id, funnel_stage, source, medium, campaign) 

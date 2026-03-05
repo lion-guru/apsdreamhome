@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 namespace App\Core\Database;
 
 use PDO;
@@ -32,6 +35,11 @@ class QueryBuilder
      * The orderings for the query.
      */
     protected $orders = [];
+
+    /**
+     * The join clauses for the query.
+     */
+    protected $joins = [];
 
     /**
      * The maximum number of records to return.
@@ -145,6 +153,20 @@ class QueryBuilder
         $this->orders[] = [
             'column' => $column,
             'direction' => strtolower($direction) === 'asc' ? 'asc' : 'desc',
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Add a "where not null" clause to the query.
+     */
+    public function whereNotNull($column, $boolean = 'and'): self
+    {
+        $this->wheres[] = [
+            'type' => 'NotNull',
+            'column' => $column,
+            'boolean' => $boolean,
         ];
 
         return $this;
@@ -392,6 +414,46 @@ class QueryBuilder
         }
 
         return $this->bindings[$type] ?? [];
+    }
+
+    /**
+     * Add a join clause to the query.
+     */
+    public function join(string $table, string $first, string $operator, string $second): self
+    {
+        $this->joins[] = [
+            'type' => 'inner',
+            'table' => $table,
+            'first' => $first,
+            'operator' => $operator,
+            'second' => $second
+        ];
+        
+        return $this;
+    }
+
+    /**
+     * Add a left join clause to the query.
+     */
+    public function leftJoin(string $table, string $first, string $operator, string $second): self
+    {
+        $this->joins[] = [
+            'type' => 'left',
+            'table' => $table,
+            'first' => $first,
+            'operator' => $operator,
+            'second' => $second
+        ];
+        
+        return $this;
+    }
+
+    /**
+     * Get the array of join clauses.
+     */
+    public function getJoins(): array
+    {
+        return $this->joins ?? [];
     }
 
     /**

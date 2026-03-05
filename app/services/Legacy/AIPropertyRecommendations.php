@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Services\Legacy;
 /**
  * AI-Powered Property Recommendations - APS Dream Homes

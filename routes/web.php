@@ -17,37 +17,59 @@ $router->get('/', 'HomeController@index');
 $router->get('/mlm-dashboard', 'MLMController@dashboard');
 $router->get('/monitoring', 'MonitoringController@dashboard');
 $router->get('/ai-valuation', 'AIValuationController@index');
+// General pages
 $router->get('/about', 'Public\PageController@about');
 $router->get('/contact', 'Public\PageController@contact');
-$router->get('/publiccontact', function() {
-    header('Location: /apsdreamhome/public/contact');
-    exit;
-});
-$router->get('/careers', 'CareerController@index');
-$router->get('/testimonials', 'TestimonialController@index');
-$router->get('/faq', 'FAQController@index');
-$router->get('/team', 'Public\PageController@team');
+$router->post('/contact', 'Public\PageController@submitContact');
+$router->get('/careers', 'Public\PageController@careers');
+$router->get('/career', 'Public\PageController@careers');
+$router->get('/careers/apply', 'Public\PageController@careerApply');
+$router->post('/careers/apply', 'Public\PageController@submitCareerApplication');
+$router->get('/company/projects', 'Public\PageController@projects');
 $router->get('/blog', 'Public\PageController@blog');
+$router->get('/blog/{slug}', 'Public\PageController@blogPost');
+$router->get('/faq', 'Public\PageController@faq');
+$router->get('/team', 'Public\PageController@team');
+$router->get('/testimonials', 'Public\PageController@testimonials');
 $router->get('/blog/{slug}', 'BlogController@show');
 $router->get('/blog/category/{category}', 'BlogController@category');
 $router->get('/gallery', 'GalleryController@index');
 $router->get('/gallery/project/{projectId}', 'GalleryController@project');
-$router->get('/company/projects', 'Public\PageController@companyProjects');
 $router->get('/projects', 'ProjectController@index');
+$router->get('/projects/{id}', 'ProjectController@detail');
 $router->get('/resell', 'ResellController@index');
 
 // Authentication routes
 $router->get('/login', 'AuthController@login');
 $router->post('/login', 'AuthController@authenticate');
+$router->get('/employee/login', 'AuthController@employeeLogin');
+$router->post('/employee/login', 'AuthController@authenticateEmployee');
+$router->get('/associate/login', 'AuthController@associateLogin');
+$router->post('/associate/login', 'AuthController@authenticateAssociate');
+$router->get('/admin/login', 'AuthController@adminLogin');
+$router->post('/admin/login', 'AuthController@authenticateAdmin');
 $router->get('/register', 'AuthController@register');
-$router->post('/register', 'AuthController@store');
+$router->post('/register', 'AuthController@handleRegister');
+$router->get('/associate/register', 'AuthController@associateRegister');
+$router->post('/associate/register', 'AuthController@handleAssociateRegister');
 $router->get('/logout', 'AuthController@logout');
+
+// Agent authentication
+$router->get('/agent/login', 'AgentController@login');
+$router->post('/agent/login', 'AgentController@authenticate');
 
 // Dashboard routes (protected)
 $router->get('/dashboard', 'DashboardController@index');
 $router->get('/dashboard/profile', 'DashboardController@profile');
 $router->post('/dashboard/profile', 'DashboardController@updateProfile');
 $router->get('/dashboard/favorites', 'DashboardController@favorites');
+$router->get('/associate/dashboard', 'DashboardController@associate');
+$router->get('/admin/dashboard', 'AdminController@dashboard');
+
+// Agent routes
+$router->get('/agents/dashboard', 'AgentController@dashboard');
+$router->get('/associate/login', 'AgentController@login');
+$router->post('/associate/login', 'AgentController@authenticate');
 $router->post('/dashboard/favorites/add', 'DashboardController@addFavorite');
 $router->post('/dashboard/favorites/remove', 'DashboardController@removeFavorite');
 $router->get('/dashboard/inquiries', 'DashboardController@inquiries');

@@ -23,7 +23,7 @@ class BaseApiController extends BaseController
         \header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
         \header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, X-API-Key");
 
-        if ($this->request()->getMethod() === 'OPTIONS') {
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             \header("HTTP/1.1 200 OK");
             exit();
         }
@@ -120,5 +120,98 @@ class BaseApiController extends BaseController
             logger()->error("API Key Validation Error: " . $e->getMessage());
             return $this->jsonError('Internal server error during API key validation', 500);
         }
+    }
+
+    public function model($modelName)
+    {
+        return $this->models[$modelName] ?? null;
+    }
+
+    public function render($view, $data = [], $layout = null, $echo = true)
+    {
+        // Define BASE_URL if not defined
+        if (!defined('BASE_URL')) {
+            define('BASE_URL', 'http://localhost/apsdreamhome/public');
+        }
+        
+        $data = array_merge($this->data, $data);
+        $layout = $layout ?? $this->layout;
+
+        // Use the fallback implementation since we don't have flash bag
+        extract($data, EXTR_SKIP);
+
+        $basePath = rtrim($this->getViewsBasePath(), '/\\') . '/';
+        $viewPath = $basePath . ltrim(str_replace('\\', '/', $view), '/') . '.php';
+
+        if (!file_exists($viewPath)) {
+            throw new Exception("View not found: {$viewPath}");
+        }
+
+        ob_start();
+        include $viewPath;
+        $content = ob_get_clean();
+
+        if ($layout) {
+            $layoutPath = $basePath . ltrim(str_replace('\\', '/', $layout), '/') . '.php';
+            
+            if (file_exists($layoutPath)) {
+                // Pass content to layout - layout expects $content variable
+                $data['content'] = $content;
+                extract($data, EXTR_SKIP);
+                ob_start();
+                include $layoutPath;
+                $output = ob_get_clean();
+
+                // End performance monitoring before output
+                $this->endPerformanceMonitoring();
+
+                if ($echo) {
+                    echo $output;
+                }
+                return $output;
+            }
+        }
+
+        // End performance monitoring for non-layout renders
+        $this->endPerformanceMonitoring();
+
+        if ($echo) {
+            echo $content;
+        }
+        return $content;
+    }
+
+    public function renderError($message)
+    {
+        return $this->notFound($message);
+    }
+
+    public function getBaseUrl()
+    {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'];
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+        return $protocol . $host . $scriptDir . '/';
+    }
+
+    public function getCurrentUserId()
+    {
+        return $_SESSION['user_id'] ?? null;
+    }
+
+    public function getCurrentAssociateId()
+    {
+        return $_SESSION['associate_id'] ?? null;
+    }
+
+    public function forbidden($message = 'Forbidden')
+    {
+        return parent::forbidden($message);
+    }
+
+    public function isAjaxRequest()
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
 }

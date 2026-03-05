@@ -3,7 +3,7 @@
 header('Content-Type: image/png');
 
 // Get the first letter of the username
-$username = isset($_GET['name']) ? $_GET['name'] : 'U';
+$username = isset(Security::sanitize($_GET['name'])) ? Security::sanitize($_GET['name']) : 'U';
 $initials = strtoupper(substr($username, 0, 1));
 
 // Avatar size

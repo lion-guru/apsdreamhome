@@ -19,7 +19,7 @@ if (!isAdmin()) {
 }
 
 // CSRF validation
-$csrf_token = $_GET['csrf_token'] ?? '';
+$csrf_token = Security::sanitize($_GET['csrf_token']) ?? '';
 if (!verifyCSRFToken($csrf_token)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Security validation failed'))]);
@@ -28,7 +28,7 @@ if (!verifyCSRFToken($csrf_token)) {
 
 try {
     $db = \App\Core\App::database();
-    $query = trim($_GET['q'] ?? '');
+    $query = trim(Security::sanitize($_GET['q']) ?? '');
 
     if (strlen($query) < 2) {
         echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Search query too short'))]);

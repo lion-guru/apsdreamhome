@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 // Modern, AI-powered, feature-rich dashboard for Employees (2025 best practices)
 require_once dirname(__DIR__) . '/layouts/header.php';
 session_start();

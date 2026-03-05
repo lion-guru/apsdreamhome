@@ -1,4 +1,29 @@
 <?php
+//
+// ERROR HANDLING CONFIGURATION
+//
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+function handleError(,  = null,  = null) {
+     = date('Y-m-d H:i:s') . ' - ERROR: ' . ;
+    if ()  .= ' in ' . ;
+    if ()  .= ' on line ' . ;
+    error_log();
+    return false;
+}
+
+function safeExecute(,  = 'Operation failed') {
+    try {
+        return ();
+    } catch (Exception ) {
+        handleError( . ': ' . (), (), ());
+        return null;
+    }
+}
+
+//
 
 namespace App\Http\Controllers\Employee;
 
@@ -68,8 +93,8 @@ class EmployeeController extends BaseController
             $this->redirect('employee/login');
         }
 
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
+        $email = Security::sanitize($_POST['email']) ?? '';
+        $password = Security::sanitize($_POST['password']) ?? '';
 
         if (empty($email) || empty($password)) {
             $this->setFlash('login_error', 'Please enter both email and password.');
@@ -181,14 +206,14 @@ class EmployeeController extends BaseController
         $employeeId = $_SESSION['employee_id'];
 
         $data = [
-            'name' => $_POST['name'] ?? '',
-            'phone' => $_POST['phone'] ?? '',
-            'emergency_contact' => $_POST['emergency_contact'] ?? '',
-            'blood_group' => $_POST['blood_group'] ?? '',
-            'address' => $_POST['address'] ?? '',
-            'city' => $_POST['city'] ?? '',
-            'state' => $_POST['state'] ?? '',
-            'pincode' => $_POST['pincode'] ?? ''
+            'name' => Security::sanitize($_POST['name']) ?? '',
+            'phone' => Security::sanitize($_POST['phone']) ?? '',
+            'emergency_contact' => Security::sanitize($_POST['emergency_contact']) ?? '',
+            'blood_group' => Security::sanitize($_POST['blood_group']) ?? '',
+            'address' => Security::sanitize($_POST['address']) ?? '',
+            'city' => Security::sanitize($_POST['city']) ?? '',
+            'state' => Security::sanitize($_POST['state']) ?? '',
+            'pincode' => Security::sanitize($_POST['pincode']) ?? ''
         ];
 
         $success = $this->employeeModel->updateEmployee($employeeId, $data);
@@ -246,9 +271,9 @@ class EmployeeController extends BaseController
         $employeeId = $_SESSION['employee_id'];
 
         $data = [
-            'status' => $_POST['status'] ?? 'pending',
-            'actual_hours' => $_POST['actual_hours'] ?? null,
-            'completion_notes' => $_POST['completion_notes'] ?? null
+            'status' => Security::sanitize($_POST['status']) ?? 'pending',
+            'actual_hours' => Security::sanitize($_POST['actual_hours']) ?? null,
+            'completion_notes' => Security::sanitize($_POST['completion_notes']) ?? null
         ];
 
         // If marking as completed, set completed_at
@@ -320,9 +345,9 @@ class EmployeeController extends BaseController
         }
 
         $employeeId = $_SESSION['employee_id'];
-        $action = $_POST['action'] ?? 'check_in';
-        $location = $_POST['location'] ?? null;
-        $notes = $_POST['notes'] ?? null;
+        $action = Security::sanitize($_POST['action']) ?? 'check_in';
+        $location = Security::sanitize($_POST['location']) ?? null;
+        $notes = Security::sanitize($_POST['notes']) ?? null;
 
         // Check if already checked in today
         $todayAttendance = $this->employeeModel->getEmployeeAttendance($employeeId, [
@@ -385,10 +410,10 @@ class EmployeeController extends BaseController
         $employeeId = $_SESSION['employee_id'];
 
         $data = [
-            'leave_type_id' => $_POST['leave_type_id'] ?? null,
-            'start_date' => $_POST['start_date'] ?? '',
-            'end_date' => $_POST['end_date'] ?? '',
-            'reason' => $_POST['reason'] ?? '',
+            'leave_type_id' => Security::sanitize($_POST['leave_type_id']) ?? null,
+            'start_date' => Security::sanitize($_POST['start_date']) ?? '',
+            'end_date' => Security::sanitize($_POST['end_date']) ?? '',
+            'reason' => Security::sanitize($_POST['reason']) ?? '',
             'status' => 'pending'
         ];
 
@@ -519,9 +544,9 @@ class EmployeeController extends BaseController
         }
 
         $employeeId = $_SESSION['employee_id'];
-        $currentPassword = $_POST['current_password'] ?? '';
-        $newPassword = $_POST['new_password'] ?? '';
-        $confirmPassword = $_POST['confirm_password'] ?? '';
+        $currentPassword = Security::sanitize($_POST['current_password']) ?? '';
+        $newPassword = Security::sanitize($_POST['new_password']) ?? '';
+        $confirmPassword = Security::sanitize($_POST['confirm_password']) ?? '';
 
         // Validate current password
         $employee = $this->employeeModel->getEmployeeById($employeeId);
@@ -832,7 +857,7 @@ class EmployeeController extends BaseController
         }
 
         $employeeId = $_SESSION['employee_id'];
-        $requestId = $_POST['request_id'] ?? null;
+        $requestId = Security::sanitize($_POST['request_id']) ?? null;
 
         if (!$requestId) {
             $this->jsonResponse(['success' => false, 'message' => 'Request ID is required'], 400);
@@ -1019,7 +1044,7 @@ class EmployeeController extends BaseController
             $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
         }
 
-        $documentId = $_POST['document_id'] ?? null;
+        $documentId = Security::sanitize($_POST['document_id']) ?? null;
         $userId = $_SESSION['employee_id'];
 
         if (!$documentId) {
@@ -1098,7 +1123,7 @@ class EmployeeController extends BaseController
         }
 
         $employeeId = $_SESSION['employee_id'];
-        $action = $_POST['action'] ?? null;
+        $action = Security::sanitize($_POST['action']) ?? null;
 
         if (!$action || !in_array($action, ['clock_in', 'clock_out'])) {
             $this->jsonResponse(['success' => false, 'message' => 'Invalid action'], 400);
@@ -1245,3 +1270,96 @@ class EmployeeController extends BaseController
         }
     }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Admin\EmployeeController.php
+
+function index()
+    {
+        $filters = [
+            'search' => $this->request->get('search', ''),
+            'department' => $this->request->get('department', '')
+        ];
+        
+        $employees = $this->model('Employee')->getAllEmployees($filters);
+        
+        return $this->render('admin/employees/index', [
+            'employees' => $employees,
+            'filters' => $filters,
+            'page_title' => $this->mlSupport->translate('Employee Management') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+function create()
+    {
+        $employeeModel = $this->model('Employee');
+        $roles = $employeeModel->getRoles();
+        $departments = $employeeModel->getDepartments();
+
+        return $this->render('admin/employees/create', [
+            'roles' => $roles,
+            'departments' => $departments,
+            'page_title' => $this->mlSupport->translate('Add New Employee') . ' - ' . $this->getConfig('app_name')
+        ]);
+    }
+function store()
+    {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+function show($id)
+    {
+        $employeeModel = $this->model('Employee');
+        $employee = $employeeModel->getEmployeeById($id);
+        
+        if (!$employee) {
+            $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
+            return $this->redirect('/admin/employees');
+        }
+function edit($id)
+    {
+        $employeeModel = $this->model('Employee');
+        $employee = $employeeModel->getEmployeeById($id);
+        
+        if (!$employee) {
+            $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
+            return $this->redirect('/admin/employees');
+        }
+function destroy($id)
+    {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+function offboard($id)
+    {
+        if ($this->request->method() !== 'POST') {
+            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+            return $this->back();
+        }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\EmployeeController.php
+
+function requireAuth()
+    {
+        if (!$this->isLoggedIn()) {
+            $this->setFlash('error', 'Please login to access this page');
+            $this->redirect('/login');
+        }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 1322 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

@@ -1,4 +1,8 @@
-<?php require_once 'app/views/layouts/header.php'; ?>
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+equire_once 'app/views/layouts/header.php'; ?>
 
 <div class="container-fluid mt-4">
     <!-- Page Header -->
@@ -280,3 +284,21 @@
 </style>
 
 <?php require_once 'app/views/layouts/footer.php'; ?>
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\admin\emi\create.php
+
+function calculateEMI() {
+        const total = parseFloat(totalAmountInput.value) || 0;
+        const down = parseFloat(downPaymentInput.value) || 0;
+        const rate = parseFloat(interestRateInput.value) || 0;
+        const months = parseInt(tenureMonthsInput.value) || 0;
+
+        if (total > 0 && months > 0) {
+            const principal = total - down;
+            let emi = 0;
+
+            if (rate > 0) {
+                const r = rate / (12 * 100);
+                emi = principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+            }

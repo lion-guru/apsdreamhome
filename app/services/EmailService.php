@@ -51,33 +51,411 @@ class EmailService {
     }
 
     /**
-     * Send lead welcome email
+     * Send welcome email to new user
      */
-    public function sendLeadWelcomeEmail($to, $name) {
+    public function sendWelcomeEmail($to, $name) {
         try {
             $this->mail->addAddress($to, $name);
-            $this->mail->Subject = 'Welcome to APS Dream Home - Lead Created';
+            $this->mail->Subject = 'Welcome to APS Dream Home - Your Account is Ready!';
 
-            // Email body
-            $message = "
-            <html>
-            <body>
-                <h2>Welcome to APS Dream Home!</h2>
-                <p>Dear $name,</p>
-                <p>Thank you for your interest in APS Dream Home. We have received your inquiry and our team will contact you shortly.</p>
-                <p>We will help you find your dream property!</p>
-                <br>
-                <p>Best regards,<br>APS Dream Home Team</p>
-            </body>
-            </html>
-            ";
+            $message = $this->getWelcomeEmailTemplate($name);
 
             $this->mail->msgHTML($message);
             $this->mail->send();
-            return true;
+            return ['success' => true, 'message' => 'Welcome email sent successfully'];
         } catch (Exception $e) {
-            error_log("Lead welcome email failed: " . $this->mail->ErrorInfo);
-            return false;
+            error_log("Welcome email failed: " . $this->mail->ErrorInfo);
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
+
+    /**
+     * Send property inquiry notification to admin
+     */
+    public function sendPropertyInquiryNotification($inquiryData) {
+        try {
+            $adminEmail = getenv('ADMIN_EMAIL') ?: 'admin@apsdreamhome.com';
+            $this->mail->addAddress($adminEmail, 'APS Dream Home Admin');
+            $this->mail->Subject = 'New Property Inquiry - ' . $inquiryData['property_title'];
+
+            $message = $this->getInquiryNotificationTemplate($inquiryData);
+
+            $this->mail->msgHTML($message);
+            $this->mail->send();
+            return ['success' => true, 'message' => 'Inquiry notification sent to admin'];
+        } catch (Exception $e) {
+            error_log("Inquiry notification failed: " . $this->mail->ErrorInfo);
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Send inquiry response to user
+     */
+    public function sendInquiryResponse($userEmail, $userName, $propertyTitle, $response) {
+        try {
+            $this->mail->addAddress($userEmail, $userName);
+            $this->mail->Subject = 'Response to Your Property Inquiry - ' . $propertyTitle;
+
+            $message = $this->getInquiryResponseTemplate($userName, $propertyTitle, $response);
+
+            $this->mail->msgHTML($message);
+            $this->mail->send();
+            return ['success' => true, 'message' => 'Inquiry response sent to user'];
+        } catch (Exception $e) {
+            error_log("Inquiry response failed: " . $this->mail->ErrorInfo);
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Send newsletter subscription confirmation
+     */
+    public function sendNewsletterConfirmation($userEmail, $userName) {
+        try {
+            $this->mail->addAddress($userEmail, $userName);
+            $this->mail->Subject = 'Welcome to APS Dream Home Newsletter';
+
+            $message = $this->getNewsletterConfirmationTemplate($userName);
+
+            $this->mail->msgHTML($message);
+            $this->mail->send();
+            return ['success' => true, 'message' => 'Newsletter confirmation sent'];
+        } catch (Exception $e) {
+            error_log("Newsletter confirmation failed: " . $this->mail->ErrorInfo);
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get welcome email template
+     */
+    private function getWelcomeEmailTemplate($userName) {
+        return "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Welcome to APS Dream Home</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #0d6efd, #6610f2); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+                .button { display: inline-block; background: #0d6efd; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+                .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>Welcome to APS Dream Home! 🏠</h1>
+                </div>
+                <div class='content'>
+                    <h2>Hello {$userName}!</h2>
+                    <p>Thank you for joining APS Dream Home! Your account has been successfully created and you're now part of our real estate community.</p>
+
+                    <p>Here's what you can do with your new account:</p>
+                    <ul>
+                        <li>🔍 <strong>Browse Properties:</strong> Explore our extensive collection of residential, commercial, and land properties</li>
+                        <li>❤️ <strong>Save Favorites:</strong> Bookmark properties you love and track price changes</li>
+                        <li>📧 <strong>Get Alerts:</strong> Receive notifications for new properties matching your preferences</li>
+                        <li>📞 <strong>Contact Agents:</strong> Directly inquire about properties you're interested in</li>
+                        <li>👤 <strong>Manage Profile:</strong> Update your preferences and account information</li>
+                    </ul>
+
+                    <a href='http://localhost:8000/dashboard' class='button'>Explore Your Dashboard</a>
+
+                    <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+
+                    <p>Happy property hunting!</p>
+                    <p><strong>The APS Dream Home Team</strong></p>
+                </div>
+                <div class='footer'>
+                    <p>This email was sent to you because you created an account with APS Dream Home.</p>
+                    <p>If you didn't create this account, please ignore this email.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+    }
+
+    /**
+     * Get inquiry notification template for admin
+     */
+    private function getInquiryNotificationTemplate($inquiryData) {
+        return "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>New Property Inquiry</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #dc3545, #fd7e14); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+                .info-box { background: white; padding: 15px; border-radius: 5px; margin: 10px 0; border-left: 4px solid #0d6efd; }
+                .button { display: inline-block; background: #0d6efd; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>📧 New Property Inquiry</h1>
+                </div>
+                <div class='content'>
+                    <h2>You have received a new property inquiry!</h2>
+
+                    <div class='info-box'>
+                        <h4>Property Details</h4>
+                        <p><strong>Property:</strong> {$inquiryData['property_title']}</p>
+                        <p><strong>Location:</strong> {$inquiryData['location']}</p>
+                        <p><strong>Price:</strong> ₹" . number_format($inquiryData['price']) . "</p>
+                    </div>
+
+                    <div class='info-box'>
+                        <h4>Customer Details</h4>
+                        <p><strong>Name:</strong> {$inquiryData['name']}</p>
+                        <p><strong>Email:</strong> {$inquiryData['email']}</p>
+                        <p><strong>Phone:</strong> {$inquiryData['phone']}</p>
+                    </div>
+
+                    <div class='info-box'>
+                        <h4>Message</h4>
+                        <p>" . nl2br(htmlspecialchars($inquiryData['message'])) . "</p>
+                    </div>
+
+                    <div class='info-box'>
+                        <h4>Action Required</h4>
+                        <p>Please respond to this inquiry within 24 hours to maintain good customer service.</p>
+                        <a href='http://localhost:8000/admin/inquiries' class='button'>View All Inquiries</a>
+                    </div>
+
+                    <p><strong>Inquiry Date:</strong> " . date('M j, Y \a\t g:i A', strtotime($inquiryData['created_at'])) . "</p>
+
+                    <p>Best regards,<br><strong>APS Dream Home System</strong></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+    }
+
+    /**
+     * Get inquiry response template for user
+     */
+    private function getInquiryResponseTemplate($userName, $propertyTitle, $response) {
+        return "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Inquiry Response</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #198754, #20c997); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+                .response-box { background: white; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #198754; }
+                .button { display: inline-block; background: #0d6efd; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>📬 Response to Your Inquiry</h1>
+                </div>
+                <div class='content'>
+                    <h2>Hello {$userName}!</h2>
+                    <p>Thank you for your interest in <strong>{$propertyTitle}</strong>. We've received your inquiry and here's our response:</p>
+
+                    <div class='response-box'>
+                        " . nl2br(htmlspecialchars($response)) . "
+                    </div>
+
+                    <p>If you have any further questions or need additional information, please don't hesitate to contact us.</p>
+
+                    <div style='text-align: center; margin: 30px 0;'>
+                        <a href='http://localhost:8000/properties' class='button'>Browse More Properties</a>
+                        <a href='http://localhost:8000/dashboard/inquiries' class='button' style='background: #6c757d; margin-left: 10px;'>View All Inquiries</a>
+                    </div>
+
+                    <p>We hope to assist you in finding your dream property!</p>
+                    <p>Best regards,<br><strong>The APS Dream Home Team</strong></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+    }
+
+    /**
+     * Get newsletter confirmation template
+     */
+    private function getNewsletterConfirmationTemplate($userName) {
+        return "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Newsletter Subscription Confirmed</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+                .button { display: inline-block; background: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+                .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>📧 Welcome to Our Newsletter!</h1>
+                </div>
+                <div class='content'>
+                    <h2>Hello {$userName}!</h2>
+                    <p>Thank you for subscribing to the APS Dream Home newsletter! You're now part of our community and will receive regular updates about:</p>
+
+                    <ul>
+                        <li>🏠 <strong>New Property Listings:</strong> Be the first to know about new properties in your preferred locations</li>
+                        <li>📈 <strong>Market Insights:</strong> Get valuable information about real estate trends and market analysis</li>
+                        <li>💡 <strong>Investment Tips:</strong> Expert advice on property investment opportunities</li>
+                        <li>🏆 <strong>Exclusive Offers:</strong> Special deals and discounts for our newsletter subscribers</li>
+                        <li>📊 <strong>Success Stories:</strong> Real stories from our satisfied customers</li>
+                    </ul>
+
+                    <p>We'll only send you valuable content and never spam your inbox. You can unsubscribe at any time.</p>
+
+                    <div style='text-align: center; margin: 30px 0;'>
+                        <a href='http://localhost:8000/properties' class='button'>Explore Properties Now</a>
+                    </div>
+
+                    <p>Thank you for choosing APS Dream Home for your real estate needs!</p>
+                    <p>Best regards,<br><strong>The APS Dream Home Team</strong></p>
+                </div>
+                <div class='footer'>
+                    <p>You received this email because you subscribed to our newsletter.</p>
+                    <p><a href='http://localhost:8000/unsubscribe'>Unsubscribe</a> if you no longer wish to receive these emails.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+    }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\EmailService.php
+
+function sendInquiryNotification($data) {
+        $subject = "New Property Inquiry: " . ($data['property_title'] ?? 'General');
+        $body = "
+            <h3>New Property Inquiry</h3>
+            <p><strong>Name:</strong> {$data['name']}
+function sendPaymentConfirmation($email, $order) {
+        $subject = "Payment Confirmation: Order #" . $order['order_id'];
+        $body = "
+            <h3>Payment Successful</h3>
+            <p>Dear {$order['user_name']}
+function sendPasswordResetEmail($email, $name, $reset_link) {
+        $subject = "Password Reset Request - APS Dream Homes";
+        $body = "
+            <h3>Password Reset Request</h3>
+            <p>Dear {$name}
+function sendAdminNotification($admin_email, $template, $data) {
+        $subject = "Admin Notification: " . ($data['type'] ?? 'System Alert');
+        $body = "
+            <h3>System Notification</h3>
+            <p><strong>Type:</strong> {$data['type']}
+function sendInquiryConfirmation($email, $property_title, $inquiry, $response_message) {
+        $subject = "Re: Inquiry for " . $property_title;
+        $body = "
+            <h3>Inquiry Response</h3>
+            <p>Dear Customer,</p>
+            <p>Thank you for your inquiry regarding <strong>{$property_title}
+function testEmailConfiguration() {
+        $subject = "Test Email Configuration";
+        $body = "This is a test email to verify your email configuration is working correctly.";
+        return $this->send($this->config['from_email'], $subject, $body);
+    }
+function sendLeadWelcomeEmail($leadId) {
+        try {
+            $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ?", [$leadId]);
+
+            if (!$lead) return false;
+
+            return $this->sendTemplatedEmail($lead['email'], 'welcome', [
+                'lead_name' => $lead['name'] ?? (($lead['first_name'] ?? '') . ' ' . ($lead['last_name'] ?? '')),
+                'company_name' => $this->config['from_name']
+            ]);
+        }
+function sendTemplatedEmail($to, $template, $data = []) {
+        if (!isset($this->templates[$template])) {
+            return false;
+        }
+function loadConfiguration() {
+        // Priority: Environment Variables > Database Config > Default
+        $this->config['username'] = getenv('EMAIL_USERNAME') ?: $this->config['username'];
+        $this->config['password'] = getenv('EMAIL_PASSWORD') ?: $this->config['password'];
+
+        // Optionally load from database configuration
+        try {
+            $results = $this->db->fetchAll("SELECT `key`, `value` FROM email_config");
+            foreach ($results as $row) {
+                if (isset($this->config[$row['key']])) {
+                    $this->config[$row['key']] = $row['value'];
+                }
+function sendFromTemplate($template_name, $to, $template_data = []) {
+        try {
+            // Check if template exists
+            if (!isset($this->templates[$template_name])) {
+                throw new Exception("Email template not found: {$template_name}
+function queueEmail($to, $subject, $body, $options = []) {
+        try {
+            $status = 'pending';
+            $scheduled_at = $options['scheduled_at'] ?? date('Y-m-d H:i:s');
+
+            return $this->db->execute("
+                INSERT INTO email_queue 
+                (recipient, subject, body, status, scheduled_at, created_at) 
+                VALUES (?, ?, ?, ?, ?, NOW())
+            ", [$to, $subject, $body, $status, $scheduled_at]);
+        }
+function processEmailQueue() {
+        try {
+            // Fetch pending emails
+            $emails = $this->db->fetchAll("
+                SELECT id, recipient, subject, body 
+                FROM email_queue 
+                WHERE status = 'pending' AND scheduled_at <= NOW()
+                LIMIT 50
+            ");
+
+            foreach ($emails as $email) {
+                // Attempt to send email
+                $sent = $this->send(
+                    $email['recipient'], 
+                    $email['subject'], 
+                    $email['body']
+                );
+
+                // Update email status
+                $status = $sent ? 'sent' : 'failed';
+                $this->db->execute("
+                    UPDATE email_queue 
+                    SET status = ?, sent_at = NOW() 
+                    WHERE id = ?
+                ", [$status, $email['id']]);
+            }
+function getEmailService() {
+    // If a global container function exists, use it
+    if (function_exists('container')) {
+        try {
+            $container = container();
+            $logger = $container->resolve('logger');
+            $db = $container->resolve('db_connection');
+            return new EmailService($logger, $db);
+        }

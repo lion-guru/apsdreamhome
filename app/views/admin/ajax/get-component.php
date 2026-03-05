@@ -9,14 +9,14 @@ if (!isAdmin()) {
 }
 
 // CSRF validation
-$csrf_token = $_GET['csrf_token'] ?? '';
+$csrf_token = Security::sanitize($_GET['csrf_token']) ?? '';
 if (!verifyCSRFToken($csrf_token)) {
     http_response_code(403);
     echo json_encode(['error' => h($mlSupport->translate('Security validation failed'))]);
     exit();
 }
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+if (!isset(Security::sanitize($_GET['id'])) || !is_numeric(Security::sanitize($_GET['id']))) {
     http_response_code(400);
     echo json_encode(['error' => h($mlSupport->translate('Invalid component ID'))]);
     exit;
@@ -26,7 +26,7 @@ $db = \App\Core\App::database();
 $layoutTemplate = new Admin\Models\LayoutTemplate($db->getConnection());
 
 try {
-    $component = $layoutTemplate->getById($_GET['id']);
+    $component = $layoutTemplate->getById(Security::sanitize($_GET['id']));
     if (!$component) {
         http_response_code(404);
         echo json_encode(['error' => h($mlSupport->translate('Component not found'))]);

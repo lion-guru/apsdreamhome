@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * Employee Tasks View
  * Shows employee tasks and allows status updates

@@ -31,7 +31,7 @@ $hybrid_system = new HybridRealEstateCommission($conn);
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['add_property'])) {
+    if (Security::sanitize($_POST['add_property']) !== null) {
         $result = addProperty($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if (isset($_POST['update_property'])) {
+    if (Security::sanitize($_POST['update_property']) !== null) {
         $result = updateProperty($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if (isset($_POST['record_sale'])) {
+    if (Security::sanitize($_POST['record_sale']) !== null) {
         $result = recordPropertySale($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];
@@ -825,3 +825,21 @@ $customers = $customers_result->fetch_all(MYSQLI_ASSOC);
     </script>
 </body>
 </html>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 827 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

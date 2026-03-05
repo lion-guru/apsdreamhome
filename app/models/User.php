@@ -217,3 +217,18 @@ class User extends Model
         }
     }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\User.php
+
+class calls to the modern Model.
+ */
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use App\Models\User as ModernUser;
+
+class User extends ModernUser {
+    // This class now inherits from the modern Model
+    // and can be used as a drop-in replacement.
+}

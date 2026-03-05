@@ -138,8 +138,8 @@ class MLMController extends BaseController
         header('Content-Type: application/json');
         
         try {
-            $businessVolume = $_POST['business_volume'] ?? 0;
-            $planId = $_POST['plan_id'] ?? 'starter';
+            $businessVolume = Security::sanitize($_POST['business_volume']) ?? 0;
+            $planId = Security::sanitize($_POST['plan_id']) ?? 'starter';
             
             $commission = [
                 'binary_commission' => $businessVolume * 0.12,

@@ -237,3 +237,81 @@ function admin_auth_required() {
     AuthMiddleware::requireAdminAuth();
 }
 
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Core\Middleware\AuthMiddleware.php
+
+function __construct(array $options = [])
+    {
+        parent::__construct();
+        $this->options = array_merge([
+            'redirect' => '/login',
+            'except' => [],
+            'only' => [],
+            'ajax_only' => false,
+            'remember_me' => true,
+        ], $options);
+    }
+function handle(array $request, callable $next)
+    {
+        // Check if this request should bypass authentication
+        if ($this->shouldBypass($request)) {
+            return $next($request);
+        }
+function handleUnauthenticated(array $request)
+    {
+        $this->logSecurityEvent('unauthenticated_access_attempt', [
+            'path' => $request['path'] ?? '',
+            'method' => $request['method'] ?? 'GET',
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ]);
+        
+        // Check if AJAX request
+        if ($this->isAjaxRequest()) {
+            return $this->errorResponse('Authentication required', 401);
+        }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Middleware\AuthMiddleware.php
+
+function adminAuth() {
+        if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(401);
+                echo json_encode(['error' => 'Admin authentication required']);
+                exit;
+            }
+function employeeAuth() {
+        if (!isset($_SESSION['employee_id'])) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(401);
+                echo json_encode(['error' => 'Employee authentication required']);
+                exit;
+            }
+function customerAuth() {
+        if (!isset($_SESSION['customer_id'])) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(401);
+                echo json_encode(['error' => 'Customer authentication required']);
+                exit;
+            }
+function associateAuth() {
+        if (!isset($_SESSION['associate_id'])) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(401);
+                echo json_encode(['error' => 'Associate authentication required']);
+                exit;
+            }
+function auth() {
+        if (!isset($_SESSION['user_id']) && !isset($_SESSION['admin_logged_in']) &&
+            !isset($_SESSION['employee_id']) && !isset($_SESSION['customer_id']) &&
+            !isset($_SESSION['associate_id'])) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                http_response_code(401);
+                echo json_encode(['error' => 'Authentication required']);
+                exit;
+            }

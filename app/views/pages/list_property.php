@@ -1,4 +1,29 @@
 <?php
+//
+// ERROR HANDLING CONFIGURATION
+//
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+function handleError($errno = null, $errstr = null, $errfile = null, $errline = null) {
+    $message = date('Y-m-d H:i:s') . ' - ERROR: ' . $errstr;
+    if ($errfile) $message .= ' in ' . $errfile;
+    if ($errline) $message .= ' on line ' . $errline;
+    error_log($message);
+    return false;
+}
+
+function safeExecute($callback, $errorMessage = 'Operation failed') {
+    try {
+        return $callback();
+    } catch (Exception $e) {
+        handleError($errorMessage . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
+        return null;
+    }
+}
+
+//
 /**
  * Resell Properties System - User Property Upload
  * APS Dream Homes - Property Listing for Individual Sellers
@@ -16,21 +41,21 @@ $property_id = sanitizeInput($_GET['id'] ?? 0);
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = sanitizeInput($_POST['full_name']);
-    $mobile = sanitizeInput($_POST['mobile']);
-    $email = sanitizeInput($_POST['email']);
-    $property_title = sanitizeInput($_POST['property_title']);
-    $property_type = sanitizeInput($_POST['property_type']);
-    $price = sanitizeInput($_POST['price']);
-    $bedrooms = sanitizeInput($_POST['bedrooms']);
-    $bathrooms = sanitizeInput($_POST['bathrooms']);
-    $area = sanitizeInput($_POST['area']);
-    $address = sanitizeInput($_POST['address']);
-    $city = sanitizeInput($_POST['city']);
-    $state = sanitizeInput($_POST['state']);
-    $description = sanitizeInput($_POST['description']);
-    $features = isset($_POST['features']) ? $_POST['features'] : [];
-    $terms_accepted = isset($_POST['terms_accepted']) ? 1 : 0;
+    $full_name = sanitizeInput(Security::sanitize($_POST['full_name']));
+    $mobile = sanitizeInput(Security::sanitize($_POST['mobile']));
+    $email = sanitizeInput(Security::sanitize($_POST['email']));
+    $property_title = sanitizeInput(Security::sanitize($_POST['property_title']));
+    $property_type = sanitizeInput(Security::sanitize($_POST['property_type']));
+    $price = sanitizeInput(Security::sanitize($_POST['price']));
+    $bedrooms = sanitizeInput(Security::sanitize($_POST['bedrooms']));
+    $bathrooms = sanitizeInput(Security::sanitize($_POST['bathrooms']));
+    $area = sanitizeInput(Security::sanitize($_POST['area']));
+    $address = sanitizeInput(Security::sanitize($_POST['address']));
+    $city = sanitizeInput(Security::sanitize($_POST['city']));
+    $state = sanitizeInput(Security::sanitize($_POST['state']));
+    $description = sanitizeInput(Security::sanitize($_POST['description']));
+    $features = Security::sanitize($_POST['features']) !== null ? Security::sanitize($_POST['features']) : [];
+    $terms_accepted = Security::sanitize($_POST['terms_accepted']) !== null ? 1 : 0;
 
     // Validation
     if (empty($full_name) || empty($mobile) || empty($email) || empty($property_title) || empty($price)) {
@@ -688,3 +713,21 @@ $indian_states = [
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 690 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

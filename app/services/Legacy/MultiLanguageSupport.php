@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Services\Legacy;
 /**
  * Multi-Language Support - APS Dream Homes
@@ -114,8 +116,8 @@ class MultiLanguageSupport {
      */
     private function loadCurrentLanguage() {
         // Detect language from URL parameter
-        if (isset($_GET['lang']) && in_array($_GET['lang'], $this->supportedLanguages)) {
-            $this->currentLanguage = $_GET['lang'];
+        if (isset(Security::sanitize($_GET['lang'])) && in_array(Security::sanitize($_GET['lang']), $this->supportedLanguages)) {
+            $this->currentLanguage = Security::sanitize($_GET['lang']);
             $_SESSION['language'] = $this->currentLanguage;
         }
         // Detect from session

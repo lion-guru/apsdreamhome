@@ -582,3 +582,64 @@ class FileCacheLayer
         return $this->cacheDir . '/' . md5($key) . '.cache';
     }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\CacheManager.php
+
+function setBrowserCache($ttl = 3600, $public = true) {
+        $expires = gmdate('D, d M Y H:i:s T', time() + $ttl);
+        $max_age = $ttl;
+        $cache_control = $public ? 'public' : 'private';
+        
+        header("Cache-Control: {$cache_control}
+function getCacheFile($key) {
+        $filename = md5($key) . '.cache';
+        return $this->cache_dir . $filename;
+    }
+function cacheQuery($query, $params, $result, $ttl = 1800) {
+        $key = 'query_' . md5($query . serialize($params));
+        return $this->set($key, $result, $ttl);
+    }
+function getCachedQuery($query, $params) {
+        $key = 'query_' . md5($query . serialize($params));
+        return $this->get($key);
+    }
+function cacheAPIResponse($endpoint, $params, $response, $ttl = 3600) {
+        $key = 'api_' . md5($endpoint . serialize($params));
+        return $this->set($key, $response, $ttl);
+    }
+function getCachedAPIResponse($endpoint, $params) {
+        $key = 'api_' . md5($endpoint . serialize($params));
+        return $this->get($key);
+    }
+function cacheHTML($key, $html, $ttl = 3600) {
+        return $this->set('html_' . $key, $html, $ttl);
+    }
+function getCachedHTML($key) {
+        return $this->get('html_' . $key);
+    }
+function cacheImageMetadata($image_path, $metadata, $ttl = 86400) {
+        $key = 'img_meta_' . md5($image_path);
+        return $this->set($key, $metadata, $ttl);
+    }
+function getCachedImageMetadata($image_path) {
+        $key = 'img_meta_' . md5($image_path);
+        return $this->get($key);
+    }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 627 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

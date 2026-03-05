@@ -64,9 +64,9 @@ class AdminAuthController extends BaseController
      */
     public function processLogin()
     {
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $captcha = $_POST['captcha_answer'] ?? '';
+        $username = trim(Security::sanitize($_POST['username']) ?? '');
+        $password = Security::sanitize($_POST['password']) ?? '';
+        $captcha = Security::sanitize($_POST['captcha_answer']) ?? '';
 
         if (empty($username) || empty($password)) {
             $this->setFlash('error', 'Please fill in all fields');

@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * 🔧 AUTO-FIX: MISSING API ENDPOINTS
  * Autonomous fix for the 9 missing API endpoints identified in audit
@@ -214,9 +216,9 @@ class ReviewController extends Controller
             "success" => true,
             "data" => [
                 "review_id" => uniqid(),
-                "property_id" => $_POST["property_id"] ?? 1,
-                "rating" => $_POST["rating"] ?? 5,
-                "comment" => $_POST["comment"] ?? "Great property!",
+                "property_id" => Security::sanitize($_POST["property_id"]) ?? 1,
+                "rating" => Security::sanitize($_POST["rating"]) ?? 5,
+                "comment" => Security::sanitize($_POST["comment"]) ?? "Great property!",
                 "user_id" => 1,
                 "created_at" => date("Y-m-d H:i:s")
             ]
@@ -264,9 +266,9 @@ class SupportController extends Controller
             "success" => true,
             "data" => [
                 "ticket_id" => "TKT_" . uniqid(),
-                "subject" => $_POST["subject"] ?? "General Inquiry",
-                "message" => $_POST["message"] ?? "Need assistance",
-                "priority" => $_POST["priority"] ?? "medium",
+                "subject" => Security::sanitize($_POST["subject"]) ?? "General Inquiry",
+                "message" => Security::sanitize($_POST["message"]) ?? "Need assistance",
+                "priority" => Security::sanitize($_POST["priority"]) ?? "medium",
                 "user_id" => 1,
                 "status" => "open",
                 "created_at" => date("Y-m-d H:i:s")

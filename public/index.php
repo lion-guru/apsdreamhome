@@ -1,6 +1,7 @@
 <?php
 /**
- * APS Dream Home - Entry Point
+ * APS Dream Home - Public Entry Point
+ * Main application entry point
  */
 
 // Define constants
@@ -8,6 +9,7 @@ define('ROOT_PATH', dirname(__DIR__));
 define('APP_PATH', ROOT_PATH . '/app');
 define('CONFIG_PATH', ROOT_PATH . '/config');
 define('STORAGE_PATH', ROOT_PATH . '/storage');
+define('BASE_URL', 'http://localhost/apsdreamhome/public');
 
 // Autoload
 require_once ROOT_PATH . '/vendor/autoload.php';
@@ -18,6 +20,18 @@ require_once CONFIG_PATH . '/app.php';
 // Start session
 session_start();
 
-// Load router
+// Load custom router (working system)
 require_once ROOT_PATH . '/routes/index.php';
+
+// Create router instance
+$router = new Router();
+
+// Load web routes (contains all routes)
+require_once ROOT_PATH . '/routes/web.php';
+
+// Load API routes
+require_once ROOT_PATH . '/routes/api.php';
+
+// Dispatch router
+$router->dispatch();
 ?>

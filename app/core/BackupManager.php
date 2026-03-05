@@ -588,3 +588,108 @@ function restore_backup($backupName)
 }
 
 ?>
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Backup\BackupManager.php
+
+function loadConfig() {
+        $this->config = [
+            'backup_path' => realpath(__DIR__ . '/../../../../backups') ?: __DIR__ . '/../../../../backups',
+            'retention_days' => [
+                'daily' => 7,    // Keep daily backups for 7 days
+                'weekly' => 4,   // Keep weekly backups for 4 weeks
+                'monthly' => 12  // Keep monthly backups for 12 months
+            ],
+            'compression' => true,
+            'encrypt_backups' => true,
+            'encryption_key' => getenv('BACKUP_ENCRYPTION_KEY'),
+            'cloud_storage' => [
+                'enabled' => getenv('CLOUD_BACKUP_ENABLED') === 'true',
+                'provider' => getenv('CLOUD_STORAGE_PROVIDER') ?: 'local',
+                'credentials' => [
+                    'aws_key' => getenv('AWS_ACCESS_KEY_ID'),
+                    'aws_secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                    'aws_bucket' => getenv('AWS_BACKUP_BUCKET'),
+                    'aws_region' => getenv('AWS_REGION')
+                ]
+            ]
+        ];
+
+        $this->backupPath = $this->config['backup_path'];
+    }
+function initializeBackupDirectory() {
+        $directories = ['daily', 'weekly', 'monthly'];
+        foreach ($directories as $dir) {
+            $path = "{$this->backupPath}
+function createBackup($type = 'daily') {
+        try {
+            $startTime = microtime(true);
+            $timestamp = date('Y-m-d_His');
+            $filename = "backup_{$type}
+function encryptBackup($filepath) {
+        if (!extension_loaded('openssl')) {
+            throw new Exception("OpenSSL extension is required for encryption");
+        }
+function uploadToCloud($filepath, $type) {
+        switch ($this->config['cloud_storage']['provider']) {
+            case 'aws':
+                $this->uploadToS3($filepath, $type);
+                break;
+            case 'local':
+                // Already saved locally
+                break;
+            default:
+                throw new Exception("Unsupported cloud storage provider");
+        }
+function uploadToS3($filepath, $type) {
+        if (!class_exists('Aws\S3\S3Client')) {
+            throw new Exception("AWS SDK is required for S3 uploads");
+        }
+function cleanOldBackups($type) {
+        if (!isset($this->config['retention_days'][$type])) {
+            return;
+        }
+function decryptBackup($filepath) {
+        $key = base64_decode($this->config['encryption_key']);
+        $data = file_get_contents($filepath);
+
+        $ivSize = openssl_cipher_iv_length('aes-256-cbc');
+        $iv = substr($data, 0, $ivSize);
+        $encrypted = substr($data, $ivSize);
+
+        $decrypted = openssl_decrypt(
+            $encrypted,
+            'aes-256-cbc',
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
+
+        if ($decrypted === false) {
+            throw new Exception("Failed to decrypt backup file");
+        }
+function decompressBackup($filepath) {
+        $outFile = substr($filepath, 0, -3); // Remove .gz
+        $sfp = gzopen($filepath, 'rb');
+        $fp = fopen($outFile, 'wb');
+
+        if (!$sfp || !$fp) {
+            throw new Exception("Failed to decompress backup file");
+        }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 677 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * APS Dream Home - Header Component
  * This file contains the navigation and header logic without HTML/HEAD tags
@@ -237,7 +239,7 @@ if (!function_exists('is_active_path')) {
     $site_title = get_setting('site_title', 'APS Dream Home') ?: 'APS Dream Home';
     ?>
     <!-- Top Bar for Public Site -->
-    <div class="top-bar bg-primary text-white py-2 d-none d-lg-block">
+    <div class="top-bar bg-gradient-primary text-white py-2 d-none d-lg-block">
         <div class="container">
             <div class="row g-2 align-items-center">
                 <div class="col-lg-6">
@@ -255,10 +257,11 @@ if (!function_exists('is_active_path')) {
                 </div>
                 <div class="col-lg-6 text-lg-end">
                     <div class="social-links d-flex justify-content-lg-end gap-3">
-                        <a href="#" class="text-white" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white" title="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-white" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-white social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white social-icon" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white social-icon" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-white social-icon" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>
@@ -270,7 +273,7 @@ if (!function_exists('is_active_path')) {
     $logo_setting = get_setting('logo_path', '');
     $logo_url = !empty($logo_setting)
         ? (str_starts_with($logo_setting, 'http') ? $logo_setting : BASE_URL . ltrim($logo_setting, '/'))
-        : BASE_URL . 'public/assets/images/logo/apslogo.png';
+        : BASE_URL . '/assets/images/logo/apslogo.png';
 
     if (!empty($raw_logo_path)) {
         if (str_starts_with($raw_logo_path, 'http')) {
@@ -291,7 +294,7 @@ if (!function_exists('is_active_path')) {
 
     <!-- Main Header for Public Site -->
     <header class="public-header">
-        <nav class="navbar navbar-expand-lg navbar-dark premium-navbar sticky-top" aria-label="Primary Navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark premium-navbar-gradient sticky-top" aria-label="Primary Navigation">
             <div class="container-fluid">
                 <a class="navbar-brand premium-brand" href="<?= BASE_URL; ?>" title="<?= htmlspecialchars($site_title); ?>">
                     <div class="brand-container">
@@ -311,13 +314,13 @@ if (!function_exists('is_active_path')) {
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav premium-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo is_current_page('') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>">
+                            <a class="nav-link <?php echo is_current_page('') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>/">
                                 <i class="fas fa-house-chimney me-1" aria-hidden="true"></i>Home
                             </a>
                         </li>
 
                         <li class="nav-item dropdown mega-dropdown">
-                            <a class="nav-link dropdown-toggle premium-dropdown-toggle <?php echo is_active_path('properties') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>properties" id="propertiesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle premium-dropdown-toggle <?php echo is_active_path('properties') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>/properties" id="propertiesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-home me-1" aria-hidden="true"></i>Properties
                             </a>
                             <div class="dropdown-menu premium-mega-menu" aria-labelledby="propertiesDropdown">
@@ -327,18 +330,18 @@ if (!function_exists('is_active_path')) {
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <h6 class="mega-header"><i class="fas fa-search me-2"></i>Browse by Type</h6>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties"><i class="fas fa-th-large me-2"></i>All Properties</a>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=apartment"><i class="fas fa-building me-2"></i>Apartments</a>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=villa"><i class="fas fa-house-user me-2"></i>Villas</a>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=commercial"><i class="fas fa-city me-2"></i>Commercial Spaces</a>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?type=plots"><i class="fas fa-map me-2"></i>Plots / Land</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties"><i class="fas fa-th-large me-2"></i>All Properties</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties?type=apartment"><i class="fas fa-building me-2"></i>Apartments</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties?type=villa"><i class="fas fa-home me-2"></i>Villas</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties?type=commercial"><i class="fas fa-store me-2"></i>Commercial Spaces</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties?type=plots"><i class="fas fa-map-marked-alt me-2"></i>Plots / Land</a>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <h6 class="mega-header"><i class="fas fa-fire me-2"></i>Featured Collections</h6>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?featured=1"><i class="fas fa-star me-2"></i>Featured Listings</a>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>resell"><i class="fas fa-recycle me-2"></i>Resale Properties</a>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?status=ready-to-move"><i class="fas fa-key me-2"></i>Ready to Move</a>
-                                                    <a class="mega-item" href="<?= BASE_URL; ?>properties?price=5000000-10000000"><i class="fas fa-rupee-sign me-2"></i>₹50L - ₹1Cr Homes</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties?featured=1"><i class="fas fa-star me-2"></i>Featured Listings</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/resell"><i class="fas fa-recycle me-2"></i>Resale Properties</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties?status=ready-to-move"><i class="fas fa-key me-2"></i>Ready to Move</a>
+                                                    <a class="mega-item" href="<?= BASE_URL; ?>/properties?price=5000000-10000000"><i class="fas fa-rupee-sign me-2"></i>₹50L - ₹1Cr Homes</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -353,7 +356,7 @@ if (!function_exists('is_active_path')) {
                                                     <span class="stat-number">2k+</span>
                                                     <span class="stat-label">Happy Families</span>
                                                 </div>
-                                                <a href="<?= BASE_URL; ?>properties" class="btn btn-light btn-sm w-100 mt-3">Explore All</a>
+                                                <a href="<?= BASE_URL; ?>/properties" class="btn btn-light btn-sm w-100 mt-3">Explore All</a>
                                             </div>
                                         </div>
                                     </div>
@@ -362,13 +365,13 @@ if (!function_exists('is_active_path')) {
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link <?php echo is_current_page('about') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>about">
+                            <a class="nav-link <?php echo is_current_page('about') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>/about">
                                 <i class="fas fa-info-circle me-1" aria-hidden="true"></i>About
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link <?php echo is_current_page('contact') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>contact">
+                            <a class="nav-link <?php echo is_current_page('contact') ? 'active' : ''; ?>" href="<?= BASE_URL; ?>/contact">
                                 <i class="fas fa-envelope me-1" aria-hidden="true"></i>Contact
                             </a>
                         </li>
@@ -378,48 +381,51 @@ if (!function_exists('is_active_path')) {
                                 <i class="fas fa-ellipsis-h me-1" aria-hidden="true"></i>More
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="moreDropdown">
-                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>blog"><i class="fas fa-blog me-2"></i>Blog</a></li>
-                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>company/projects"><i class="fas fa-building me-2"></i>Company Projects</a></li>
-                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>career"><i class="fas fa-briefcase me-2"></i>Career</a></li>
-                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>gallery"><i class="fas fa-images me-2"></i>Gallery</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>/blog"><i class="fas fa-blog me-2"></i>Blog</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>/company/projects"><i class="fas fa-building me-2"></i>Company Projects</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>/career"><i class="fas fa-briefcase me-2"></i>Career</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>/gallery"><i class="fas fa-images me-2"></i>Gallery</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>faq"><i class="fas fa-question-circle me-2"></i>FAQ</a></li>
-                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>team"><i class="fas fa-users me-2"></i>Our Team</a></li>
-                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>testimonials"><i class="fas fa-star me-2"></i>Testimonials</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>/faq"><i class="fas fa-question-circle me-2"></i>FAQ</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>/team"><i class="fas fa-users me-2"></i>Our Team</a></li>
+                                <li><a class="dropdown-item" href="<?= BASE_URL; ?>/testimonials"><i class="fas fa-star me-2"></i>Testimonials</a></li>
                             </ul>
                         </li>
                     </ul>
 
                     <div class="navbar-actions d-flex align-items-center">
-                        <a href="<?= BASE_URL; ?>properties" class="btn btn-outline-light me-2 d-none d-lg-block">
+                        <a href="<?= BASE_URL; ?>/properties" class="btn btn-outline-light me-2 d-none d-lg-block">
                             <i class="fas fa-search me-1"></i>Search
                         </a>
 
                         <div class="dropdown">
-                            <button class="btn btn-premium-accent dropdown-toggle" type="button" id="authDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-gradient-accent dropdown-toggle" type="button" id="authDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle me-1"></i> Account
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end premium-dropdown-menu" aria-labelledby="authDropdown">
                                 <li>
                                     <h6 class="dropdown-header">Login As</h6>
                                 </li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>login"><i class="fas fa-sign-in-alt me-2"></i>User Login</a></li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>associate/login"><i class="fas fa-user-tie me-2"></i>Associate Login</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>register"><i class="fas fa-user-plus me-2"></i>Register</a></li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>associate/register"><i class="fas fa-handshake me-2"></i>Join as Associate</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/login"><i class="fas fa-sign-in-alt me-2"></i>User Login</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/employee/login"><i class="fas fa-user-tie me-2"></i>Employee Login</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/associate/login"><i class="fas fa-handshake me-2"></i>Associate Login</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li>
-                                    <h6 class="dropdown-header">Dashboards</h6>
+                                    <h6 class="dropdown-header">Register</h6>
                                 </li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>admin"><i class="fas fa-user-shield me-2"></i>Admin Panel</a></li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>employee/login"><i class="fas fa-id-badge me-2"></i>Employee Login</a></li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>customer/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Customer Dashboard</a></li>
-                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>associate/dashboard"><i class="fas fa-chart-line me-2"></i>Associate Dashboard</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/register"><i class="fas fa-user-plus me-2"></i>Customer Register</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/associate/register"><i class="fas fa-handshake me-2"></i>Join as Associate</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <h6 class="dropdown-header">Quick Access</h6>
+                                </li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/admin/login"><i class="fas fa-user-shield me-2"></i>Admin Panel</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/customer/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Customer Dashboard</a></li>
+                                <li><a class="dropdown-item premium-item" href="<?= BASE_URL; ?>/associate/dashboard"><i class="fas fa-chart-line me-2"></i>Associate Dashboard</a></li>
                             </ul>
                         </div>
                     </div>
@@ -445,3 +451,294 @@ if (!function_exists('is_active_path')) {
 
 <!-- Main Content will be inserted here -->
 <div class="content-wrapper <?php echo ($is_logged_in && in_array($user_type, ['employee', 'customer', 'associate'])) ? 'main-content' : ''; ?>">
+
+<!-- Custom Header Styles -->
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.premium-navbar-gradient {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    height: 60px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.public-header {
+    position: relative;
+    z-index: 1000;
+}
+
+.premium-navbar-gradient {
+    position: relative;
+    z-index: 1001;
+}
+
+/* Header height adjustments */
+.public-header .navbar {
+    min-height: 60px !important;
+    padding: 8px 0 !important;
+}
+
+.public-header .navbar-brand {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.brand-logo {
+    height: 40px !important;
+    width: auto !important;
+    max-height: 40px !important;
+}
+
+/* Slim top bar */
+.top-bar {
+    padding: 6px 0 !important;
+    font-size: 0.85rem !important;
+}
+
+.btn-gradient-accent {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    padding: 8px 20px !important;
+    font-size: 14px !important;
+    border-radius: 25px !important;
+}
+
+.btn-gradient-accent:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+}
+
+.premium-dropdown-menu {
+    background: rgba(26, 26, 46, 0.95) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border-radius: 16px;
+    padding: 12px;
+    margin-top: 8px;
+    min-width: 280px;
+}
+
+.premium-item {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin: 4px 0;
+    padding: 12px 16px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500;
+}
+
+.premium-item:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.social-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    font-size: 12px;
+}
+
+.social-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.premium-navbar .nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 20px 16px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.premium-navbar .nav-link:hover {
+    color: #667eea !important;
+    transform: translateY(-1px);
+}
+
+.premium-navbar .nav-link.active {
+    color: #667eea !important;
+}
+
+.premium-navbar .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.premium-mega-menu {
+    background: rgba(26, 26, 46, 0.98) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    border-radius: 20px;
+    margin-top: 12px;
+    padding: 20px;
+}
+
+.mega-item {
+    display: block;
+    padding: 12px 16px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    margin: 4px 0;
+    font-weight: 500;
+}
+
+.mega-item:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.mega-header {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Enhanced dropdown animation */
+.dropdown-menu {
+    animation: slideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .premium-navbar-gradient {
+        height: 50px !important;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+    }
+    
+    .public-header .navbar {
+        min-height: 50px !important;
+    }
+    
+    .brand-logo {
+        height: 30px !important;
+        max-height: 30px !important;
+    }
+    
+    .btn-gradient-accent {
+        font-size: 12px !important;
+        padding: 6px 12px !important;
+    }
+    
+    .premium-navbar .nav-link {
+        padding: 12px 12px !important;
+        font-size: 14px;
+    }
+    
+    .top-bar {
+        display: none !important;
+    }
+}
+
+/* Full width container */
+.public-header .container-fluid {
+    max-width: 100% !important;
+    padding: 0 30px;
+}
+
+@media (min-width: 1400px) {
+    .public-header .container-fluid {
+        padding: 0 60px;
+    }
+}
+
+/* Enhanced visual effects */
+.premium-navbar-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Dropdown headers styling */
+.dropdown-header {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    font-weight: 600 !important;
+    padding: 8px 12px !important;
+    margin: 4px 0 !important;
+}
+
+.dropdown-divider {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    margin: 8px 0 !important;
+}
+</style>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 726 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

@@ -376,3 +376,54 @@ function send_password_reset_email($user_email, $user_name, $reset_token)
 {
     return EmailManager::getInstance()->sendPasswordResetEmail($user_email, $user_name, $reset_token);
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Notification\EmailManager.php
+
+function loadConfig() {
+        // Load from environment variables
+        $this->config = [
+            'host' => getenv('SMTP_HOST') ?: 'smtp.gmail.com',
+            'port' => getenv('SMTP_PORT') ?: 587,
+            'username' => getenv('SMTP_USERNAME'),
+            'password' => getenv('SMTP_PASSWORD'),
+            'from_email' => getenv('MAIL_FROM_ADDRESS'),
+            'from_name' => getenv('MAIL_FROM_NAME') ?: 'APS Dream Homes',
+            'encryption' => getenv('SMTP_ENCRYPTION') ?: 'tls'
+        ];
+
+        // Load admin emails
+        $adminEmailsStr = getenv('ADMIN_EMAILS');
+        if ($adminEmailsStr) {
+            $this->adminEmails = array_map('trim', explode(',', $adminEmailsStr));
+        }
+function initializeMailer() {
+        $this->mailer = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $this->mailer->isSMTP();
+            $this->mailer->Host       = $this->config['host'];
+            $this->mailer->SMTPAuth   = true;
+            $this->mailer->Username   = $this->config['username'];
+            $this->mailer->Password   = $this->config['password'];
+            $this->mailer->SMTPSecure = $this->config['encryption'];
+            $this->mailer->Port       = $this->config['port'];
+
+            // Recipients
+            $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
+        }
+function loadTemplates() {
+        $templatePath = __DIR__ . '/../../../../../resources/views/notifications/email';
+        if (is_dir($templatePath)) {
+            $files = glob($templatePath . '/*.html');
+            foreach ($files as $file) {
+                $name = basename($file, '.html');
+                $this->templates[$name] = file_get_contents($file);
+            }
+function sendCriticalAlert($subject, $details) {
+        $sentCount = 0;
+        foreach ($this->adminEmails as $email) {
+            if ($this->send($email, "[CRITICAL] $subject", $details)) {
+                $sentCount++;
+            }
