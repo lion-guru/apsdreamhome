@@ -40,12 +40,12 @@ class SupportController extends BaseController
     public function store()
     {
         // XSS Protection - Sanitize input
-        $name = strip_tags($_POST['name'] ?? "");
-        $email = filter_var($_POST['email'] ?? "", FILTER_SANITIZE_EMAIL);
-        $phone = preg_replace("/[^0-9+\- ]/", "", $_POST['phone'] ?? "");
-        $category = strip_tags($_POST['category'] ?? "");
-        $subject = strip_tags($_POST['subject'] ?? "");
-        $message = strip_tags($_POST['message'] ?? "");
+        $name = strip_tags(Security::sanitize($_POST['name']) ?? "");
+        $email = filter_var(Security::sanitize($_POST['email']) ?? "", FILTER_SANITIZE_EMAIL);
+        $phone = preg_replace("/[^0-9+\- ]/", "", Security::sanitize($_POST['phone']) ?? "");
+        $category = strip_tags(Security::sanitize($_POST['category']) ?? "");
+        $subject = strip_tags(Security::sanitize($_POST['subject']) ?? "");
+        $message = strip_tags(Security::sanitize($_POST['message']) ?? "");
 
         if (empty($name) || empty($email) || empty($subject) || empty($message)) {
             $this->setFlash('error', 'Please fill in all required fields.');
@@ -85,5 +85,21 @@ class SupportController extends BaseController
         }
 
         return $this->redirect('/support');
+    }
+
+    public function createSupportTicket()
+    {
+        return $this->json([
+            "success" => true,
+            "data" => [
+                "ticket_id" => "TKT_" . uniqid(),
+                "subject" => Security::sanitize($_POST["subject"]) ?? "General Inquiry",
+                "message" => Security::sanitize($_POST["message"]) ?? "Need assistance",
+                "priority" => Security::sanitize($_POST["priority"]) ?? "medium",
+                "user_id" => 1,
+                "status" => "open",
+                "created_at" => date("Y-m-d H:i:s")
+            ]
+        ]);
     }
 }

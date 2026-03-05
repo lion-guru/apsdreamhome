@@ -1,4 +1,8 @@
-<?php include '../app/views/includes/header.php'; ?>
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+nclude '../app/views/includes/header.php'; ?>
 
 <div class="container">
     <div class="row justify-content-center">

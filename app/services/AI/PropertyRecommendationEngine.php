@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 namespace App\Services\AI;
 
 use App\Core\Database;
@@ -414,3 +417,25 @@ class PropertyRecommendationEngine
         return $this->db->query($sql, $params)->rowCount() > 0;
     }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\PropertyRecommendationEngine.php
+
+function generateRecommendations($userId, $limit = 10) {
+        return $this->recommendationService->getRecommendations((int)$userId, (int)$limit);
+    }
+function __call($name, $arguments) {
+        if (method_exists($this->recommendationService, $name)) {
+            return call_user_func_array([$this->recommendationService, $name], $arguments);
+        }
+class is a proxy for the modern RecommendationService.
+ */
+
+use App\Services\RecommendationService;
+
+class PropertyRecommendationEngine {
+    private $recommendationService;
+    
+    public function __construct($database = null) {
+        $this->recommendationService = new RecommendationService();
+    }

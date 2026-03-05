@@ -1,5 +1,8 @@
 <?php
-/**
+
+// TODO: Add proper error handling with try-catch blocks
+
+**
  * Payout Processing View
  */
 ?>

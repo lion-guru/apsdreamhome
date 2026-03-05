@@ -1,4 +1,8 @@
-<div class="container-fluid mt-4">
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+ass="container-fluid mt-4">
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">

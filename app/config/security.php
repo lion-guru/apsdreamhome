@@ -1,5 +1,8 @@
 <?php
-/**
+
+// TODO: Add proper error handling with try-catch blocks
+
+**
  * Security Configuration
  */
 
@@ -35,3 +38,22 @@ return [
         'max_age' => 86400,
     ],
 ];
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Helpers\security.php
+
+function csrf_token() {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+function csrf_field() {
+        return '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
+    }
+function validate_csrf_token($token) {
+        if (empty($_SESSION['csrf_token']) || empty($token)) {
+            return false;
+        }
+function sanitize_input($data) {
+        if (is_array($data)) {
+            return array_map('sanitize_input', $data);
+        }

@@ -1,4 +1,8 @@
-@extends('layouts.admin')
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+s('layouts.admin')
 @section('title', $title ?? 'Users Management - APS Dream Home')
 @section('content')
 
@@ -23,34 +27,34 @@
                     <form method="GET" class="row g-3">
                         <div class="col-md-3">
                             <label class="form-label">Search</label>
-                            <input type="text" name="search" class="form-control" placeholder="Search users..." value="{{ $_GET['search'] ?? '' }}">
+                            <input type="text" name="search" class="form-control" placeholder="Search users..." value="{{ Security::sanitize($_GET['search']) ?? '' }}">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Role</label>
                             <select name="role" class="form-select">
                                 <option value="">All Roles</option>
-                                <option value="user" {{ ($_GET['role'] ?? '') == 'user' ? 'selected' : '' }}>Users</option>
-                                <option value="agent" {{ ($_GET['role'] ?? '') == 'agent' ? 'selected' : '' }}>Agents</option>
-                                <option value="admin" {{ ($_GET['role'] ?? '') == 'admin' ? 'selected' : '' }}>Admins</option>
-                                <option value="employee" {{ ($_GET['role'] ?? '') == 'employee' ? 'selected' : '' }}>Employees</option>
+                                <option value="user" {{ (Security::sanitize($_GET['role']) ?? '') == 'user' ? 'selected' : '' }}>Users</option>
+                                <option value="agent" {{ (Security::sanitize($_GET['role']) ?? '') == 'agent' ? 'selected' : '' }}>Agents</option>
+                                <option value="admin" {{ (Security::sanitize($_GET['role']) ?? '') == 'admin' ? 'selected' : '' }}>Admins</option>
+                                <option value="employee" {{ (Security::sanitize($_GET['role']) ?? '') == 'employee' ? 'selected' : '' }}>Employees</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="active" {{ ($_GET['status'] ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="inactive" {{ ($_GET['status'] ?? '') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                <option value="suspended" {{ ($_GET['status'] ?? '') == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                                <option value="active" {{ (Security::sanitize($_GET['status']) ?? '') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ (Security::sanitize($_GET['status']) ?? '') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                <option value="suspended" {{ (Security::sanitize($_GET['status']) ?? '') == 'suspended' ? 'selected' : '' }}>Suspended</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Registered</label>
                             <select name="date_range" class="form-select">
                                 <option value="">All Time</option>
-                                <option value="today" {{ ($_GET['date_range'] ?? '') == 'today' ? 'selected' : '' }}>Today</option>
-                                <option value="week" {{ ($_GET['date_range'] ?? '') == 'week' ? 'selected' : '' }}>This Week</option>
-                                <option value="month" {{ ($_GET['date_range'] ?? '') == 'month' ? 'selected' : '' }}>This Month</option>
+                                <option value="today" {{ (Security::sanitize($_GET['date_range']) ?? '') == 'today' ? 'selected' : '' }}>Today</option>
+                                <option value="week" {{ (Security::sanitize($_GET['date_range']) ?? '') == 'week' ? 'selected' : '' }}>This Week</option>
+                                <option value="month" {{ (Security::sanitize($_GET['date_range']) ?? '') == 'month' ? 'selected' : '' }}>This Month</option>
                             </select>
                         </div>
                         <div class="col-md-3">

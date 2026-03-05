@@ -33,10 +33,10 @@ class MediaLibraryManager {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['media_file'])) {
             try {
                 $file = $_FILES['media_file'];
-                $title = $_POST['title'] ?? '';
-                $description = $_POST['description'] ?? '';
-                $category = $_POST['category'] ?? 'general';
-                $tags = $_POST['tags'] ?? '';
+                $title = Security::sanitize($_POST['title']) ?? '';
+                $description = Security::sanitize($_POST['description']) ?? '';
+                $category = Security::sanitize($_POST['category']) ?? 'general';
+                $tags = Security::sanitize($_POST['tags']) ?? '';
 
                 // Validate file
                 $this->validateFile($file);
@@ -294,7 +294,7 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
     try {
         $mediaManager = new MediaLibraryManager();
 
-        $action = $_POST['action'] ?? $_GET['action'] ?? '';
+        $action = Security::sanitize($_POST['action']) ?? $_GET['action'] ?? '';
 
         switch ($action) {
             case 'upload':
@@ -315,16 +315,16 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
                 break;
 
             case 'delete_file':
-                $id = intval($_POST['id'] ?? 0);
+                $id = intval(Security::sanitize($_POST['id']) ?? 0);
                 echo json_encode($mediaManager->deleteMediaFile($id));
                 break;
 
             case 'update_file':
-                $id = intval($_POST['id'] ?? 0);
-                $title = $_POST['title'] ?? '';
-                $description = $_POST['description'] ?? '';
-                $category = $_POST['category'] ?? '';
-                $tags = $_POST['tags'] ?? '';
+                $id = intval(Security::sanitize($_POST['id']) ?? 0);
+                $title = Security::sanitize($_POST['title']) ?? '';
+                $description = Security::sanitize($_POST['description']) ?? '';
+                $category = Security::sanitize($_POST['category']) ?? '';
+                $tags = Security::sanitize($_POST['tags']) ?? '';
                 echo json_encode($mediaManager->updateMediaFile($id, $title, $description, $category, $tags));
                 break;
 

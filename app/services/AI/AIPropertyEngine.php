@@ -977,8 +977,8 @@ if (isset($_GET['action'])) {
 
         case 'chatbot':
             // Process chatbot message
-            $userId = $_POST['user_id'] ?? $_SESSION['user_id'] ?? 1;
-            $message = $_POST['message'] ?? '';
+            $userId = Security::sanitize($_POST['user_id']) ?? $_SESSION['user_id'] ?? 1;
+            $message = Security::sanitize($_POST['message']) ?? '';
 
             $chatbot = new AIPropertyChatbot($db);
             $response = $chatbot->processMessage($userId, $message);
@@ -992,7 +992,7 @@ if (isset($_GET['action'])) {
 
         case 'valuation':
             // Generate AI property valuation
-            $propertyId = $_GET['property_id'] ?? $_POST['property_id'] ?? 0;
+            $propertyId = $_GET['property_id'] ?? Security::sanitize($_POST['property_id']) ?? 0;
 
             $valuation = new AIPropertyValuation($db);
             $result = $valuation->generateValuation($propertyId);
@@ -1010,3 +1010,21 @@ if (isset($_GET['action'])) {
     }
 }
 ?>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 1012 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

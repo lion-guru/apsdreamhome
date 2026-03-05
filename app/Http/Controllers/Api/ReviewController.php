@@ -128,4 +128,50 @@ class ReviewController extends BaseApiController
             return $this->jsonError($e->getMessage(), 500);
         }
     }
+
+    public function addPropertyReview()
+    {
+        return $this->json([
+            "success" => true,
+            "data" => [
+                "review_id" => uniqid(),
+                "property_id" => Security::sanitize($_POST["property_id"]) ?? 1,
+                "rating" => Security::sanitize($_POST["rating"]) ?? 5,
+                "comment" => Security::sanitize($_POST["comment"]) ?? "Great property!",
+                "user_id" => 1,
+                "created_at" => date("Y-m-d H:i:s")
+            ]
+        ]);
+    }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\ReviewController.php
+
+function getPropertyReviews($id)
+    {
+        return $this->json([
+            "success" => true,
+            "data" => [
+                "property_id" => $id,
+                "reviews" => [
+                    [
+                        "id" => 1,
+                        "rating" => 5,
+                        "comment" => "Excellent property!",
+                        "user_name" => "John Doe",
+                        "created_at" => "2026-03-01"
+                    ],
+                    [
+                        "id" => 2,
+                        "rating" => 4,
+                        "comment" => "Good location, nice amenities",
+                        "user_name" => "Jane Smith",
+                        "created_at" => "2026-02-28"
+                    ]
+                ],
+                "average_rating" => 4.5,
+                "total_reviews" => 2
+            ]
+        ]);
+    }

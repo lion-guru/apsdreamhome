@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 function loadEnv() {
     $envFile = __DIR__ . '/../../.env';
     if (!file_exists($envFile)) {

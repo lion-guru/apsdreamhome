@@ -541,3 +541,139 @@ class SecurityManager {
     }
 }
 ?>
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\SecurityManager.php
+
+function sanitizeSqlInput($input) {
+        if (!$this->security_config['sql_injection_protection']) return $input;
+
+        // Remove potential SQL injection characters
+        $input = preg_replace('/[\'";`()]/', '', $input);
+
+        // Additional SQL injection prevention
+        $input = str_replace(['--', '/*', '*/', 'xp_'], '', $input);
+
+        return $input;
+    }
+function checkIPReputation($ip_address) {
+        if (!$this->security_config['ip_reputation_check']) return true;
+
+        try {
+            // Check against local blacklist using modern PDO-based API
+            $result = $this->db->fetchOne("
+                SELECT COUNT(*) as blocked
+                FROM ip_blacklist
+                WHERE ip_address = ? AND blocked_until > NOW()
+            ", [$ip_address]);
+
+            if ($result && $result['blocked'] > 0) {
+                $this->logger->log(
+                    "Blocked suspicious IP: {$ip_address}
+function setSecurityHeaders() {
+        if (!$this->security_config['security_headers']) return;
+
+        // Prevent clickjacking
+        header('X-Frame-Options: SAMEORIGIN');
+
+        // Prevent MIME type sniffing
+        header('X-Content-Type-Options: nosniff');
+
+        // Enable XSS protection in browsers
+        header('X-XSS-Protection: 1; mode=block');
+
+        // Strict transport security (for HTTPS)
+        header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+
+        // Referrer policy
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+
+        // Content Security Policy
+        header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self';");
+    }
+function generateCsrfToken() {
+        if (!$this->security_config['csrf_protection']) return null;
+
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = \bin2hex(\App\Helpers\SecurityHelper::secureRandomBytes(32));
+        }
+function validateCsrfToken($token) {
+        if (!$this->security_config['csrf_protection']) return true;
+
+        $session_token = $_SESSION['csrf_token'] ?? null;
+        return \hash_equals($session_token, $token);
+    }
+function setSecurityLevel($level) {
+        switch ($level) {
+            case self::LEVEL_LOW:
+                $this->security_config = [
+                    'xss_protection' => false,
+                    'csrf_protection' => false,
+                    'sql_injection_protection' => false,
+                    'rate_limiting' => false,
+                    'ip_reputation_check' => false,
+                    'security_headers' => false,
+                    'input_sanitization' => false
+                ];
+                break;
+            case self::LEVEL_MEDIUM:
+                $this->security_config = [
+                    'xss_protection' => true,
+                    'csrf_protection' => true,
+                    'sql_injection_protection' => true,
+                    'rate_limiting' => false,
+                    'ip_reputation_check' => false,
+                    'security_headers' => true,
+                    'input_sanitization' => true
+                ];
+                break;
+            case self::LEVEL_HIGH:
+                $this->security_config = [
+                    'xss_protection' => true,
+                    'csrf_protection' => true,
+                    'sql_injection_protection' => true,
+                    'rate_limiting' => true,
+                    'ip_reputation_check' => true,
+                    'security_headers' => true,
+                    'input_sanitization' => true
+                ];
+                break;
+            case self::LEVEL_CRITICAL:
+                $this->security_config = [
+                    'xss_protection' => true,
+                    'csrf_protection' => true,
+                    'sql_injection_protection' => true,
+                    'rate_limiting' => true,
+                    'ip_reputation_check' => true,
+                    'security_headers' => true,
+                    'input_sanitization' => true
+                ];
+                // Additional strict measures can be added here
+                break;
+        }
+function getSecurityManager() {
+    $container = container(); // Assuming dependency container is loaded
+
+    // Lazy load dependencies
+    $logger = $container->resolve('logger');
+    $db = $container->resolve('db_connection');
+
+    return new SecurityManager($logger, $db);
+}
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 661 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

@@ -249,7 +249,7 @@ class Auth
             return $headers['apikey'];
         }
 
-        return $_GET['api_key'] ?? null;
+        return Security::sanitize($_GET['api_key']) ?? null;
     }
 
     /**
@@ -452,3 +452,71 @@ class Auth
         exit;
     }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Core\Auth.php
+
+function user() {
+        if ($this->user) {
+            return $this->user;
+        }
+function id() {
+        return $_SESSION['user_id'] ?? null;
+    }
+function register(array $data) {
+        $userModel = new User();
+        
+        // Hash the password
+        if (!empty($data['password'])) {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Middleware\Auth.php
+
+function handle($request, $next)
+    {
+        // Check if user is authenticated
+        if (!$this->isAuthenticated($request)) {
+            return $this->unauthorizedResponse();
+        }
+function isAuthenticated($request)
+    {
+        // Check session or token
+        if (isset($_SESSION['user_id']) || $this->validateToken($request)) {
+            return true;
+        }
+function decodeJWT($token)
+    {
+        // JWT decoding logic
+        // This is a simplified version - use a proper JWT library in production
+        $parts = explode('.', $token);
+        if (count($parts) !== 3) {
+            return false;
+        }
+function unauthorizedResponse()
+    {
+        header('HTTP/1.1 401 Unauthorized');
+        header('Content-Type: application/json');
+        echo json_encode([
+            'error' => 'Unauthorized',
+            'message' => 'Authentication required'
+        ]);
+        exit;
+    }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 504 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

@@ -442,4 +442,362 @@ class ProjectController extends AdminController
         fclose($output);
         exit;
     }
+
+    public function detail($id)
+    {
+        try {
+            // Get project details
+            $project = $this->getProjectById($id);
+            
+            if (!$project) {
+                header('HTTP/1.0 404 Not Found');
+                $this->render('errors/404', [
+                    'page_title' => 'Project Not Found - APS Dream Home'
+                ]);
+                return;
+            }
+            
+            // Get related projects
+            $relatedProjects = $this->getRelatedProjects($id, $project['city'], 3);
+            
+            // Get project gallery
+            $gallery = $this->getProjectGallery($id);
+            
+            // Get project amenities
+            $amenities = $this->getProjectAmenities($id);
+            
+            // Get project specifications
+            $specifications = $this->getProjectSpecifications($id);
+            
+            // SEO meta data
+            $metaData = [
+                'title' => $project['name'] . ' - APS Dream Home | ' . $project['type'] . ' Project in ' . $project['city'],
+                'description' => substr(strip_tags($project['description']), 0, 150),
+                'keywords' => $project['name'] . ', ' . $project['city'] . ', ' . $project['type'] . ', APS Dream Home, real estate',
+                'canonical' => BASE_URL . '/projects/' . $id
+            ];
+            
+            $this->render('projects/detail', [
+                'page_title' => $metaData['title'],
+                'page_description' => $metaData['description'],
+                'meta_data' => $metaData,
+                'project' => $project,
+                'related_projects' => $relatedProjects,
+                'gallery' => $gallery,
+                'amenities' => $amenities,
+                'specifications' => $specifications
+            ]);
+            
+        } catch (\Exception $e) {
+            error_log("ProjectController detail error: " . $e->getMessage());
+            
+            // Fallback to sample data
+            $this->render('projects/detail', [
+                'page_title' => 'Project Details - APS Dream Home',
+                'page_description' => 'Premium real estate project details',
+                'project' => $this->getSampleProject($id),
+                'related_projects' => array_slice($this->getSampleProjects(), 0, 3),
+                'gallery' => $this->getSampleGallery(),
+                'amenities' => $this->getSampleAmenities(),
+                'specifications' => $this->getSampleSpecifications()
+            ]);
+        }
+    }
+
+    public function submitEnquiry()
+    {
+        try {
+            $data = [
+                'project_id' => Security::sanitize($_POST['project_id']) ?? 0,
+                'name' => Security::sanitize($_POST['name']) ?? '',
+                'email' => Security::sanitize($_POST['email']) ?? '',
+                'phone' => Security::sanitize($_POST['phone']) ?? '',
+                'message' => Security::sanitize($_POST['message']) ?? '',
+                'budget' => Security::sanitize($_POST['budget']) ?? '',
+                'preferred_time' => Security::sanitize($_POST['preferred_time']) ?? '',
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
+            ];
+            
+            // Validate required fields
+            if (empty($data['name']) || empty($data['email']) || empty($data['phone'])) {
+                $_SESSION['flash_messages'][] = [
+                    'type' => 'danger',
+                    'text' => 'Please fill in all required fields'
+                ];
+                header('Location: ' . $_SERVER['HTTP_REFERER']);
+                exit;
+            }
+            
+            // Save enquiry
+            $enquiryModel = new ProjectEnquiry();
+            $enquiryId = $enquiryModel->create($data);
+            
+            if ($enquiryId) {
+                // Send email notification (implement email service)
+                $this->sendEnquiryNotification($data);
+                
+                $_SESSION['flash_messages'][] = [
+                    'type' => 'success',
+                    'text' => 'Your enquiry has been submitted successfully. We will contact you soon!'
+                ];
+            } else {
+                $_SESSION['flash_messages'][] = [
+                    'type' => 'danger',
+                    'text' => 'Failed to submit enquiry. Please try again.'
+                ];
+            }
+            
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
+            exit;
+            
+        } catch (\Exception $e) {
+            error_log("ProjectController submitEnquiry error: " . $e->getMessage());
+            
+            $_SESSION['flash_messages'][] = [
+                'type' => 'danger',
+                'text' => 'An error occurred. Please try again.'
+            ];
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
+            exit;
+        }
+    }
+
+    public function apiProjects()
+    {
+        try {
+            header('Content-Type: application/json');
+            
+            $projects = $this->getSampleProjects();
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $projects,
+                'total' => count($projects)
+            ]);
+            
+        } catch (\Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'error' => 'Failed to fetch projects'
+            ]);
+        }
+    }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\ProjectController.php
+
+function getFilteredProjects($type, $status, $city, $price_min, $price_max)
+    {
+        return $this->getSampleProjects();
+    }
+function getProjectStats()
+    {
+        return $this->getSampleStats();
+    }
+function getProjectById($id)
+    {
+        return $this->getSampleProject($id);
+    }
+function getRelatedProjects($id, $city, $limit)
+    {
+        return array_slice($this->getSampleProjects(), 0, $limit);
+    }
+function getProjectGallery($id)
+    {
+        return $this->getSampleGallery();
+    }
+function getProjectAmenities($id)
+    {
+        return $this->getSampleAmenities();
+    }
+function getProjectSpecifications($id)
+    {
+        return $this->getSampleSpecifications();
+    }
+function sendEnquiryNotification($data)
+    {
+        // Implement email notification service
+        error_log("Project enquiry notification: " . json_encode($data));
+    }
+function getSampleProjects()
+    {
+        return [
+            [
+                'id' => 1,
+                'name' => 'APS Gardenia',
+                'type' => 'Residential',
+                'category' => 'Apartment',
+                'status' => 'Ongoing',
+                'completion' => '65%',
+                'city' => 'Lucknow',
+                'location' => 'Gomti Nagar',
+                'price_range' => '₹85L - ₹1.5Cr',
+                'base_price' => 8500000,
+                'featured_image' => 'projects/aps-gardenia.jpg',
+                'short_description' => 'Luxury residential apartments with modern amenities',
+                'description' => 'Premium 3/4 BHK apartments with world-class amenities and excellent connectivity.',
+                'total_units' => 120,
+                'available_units' => 45,
+                'possession_date' => '2024-12-31'
+            ],
+            [
+                'id' => 2,
+                'name' => 'APS Grand Plaza',
+                'type' => 'Commercial',
+                'category' => 'Office Space',
+                'status' => 'Completed',
+                'completion' => '100%',
+                'city' => 'Lucknow',
+                'location' => 'Hazratganj',
+                'price_range' => '₹45L - ₹2.5Cr',
+                'base_price' => 4500000,
+                'featured_image' => 'projects/aps-grand-plaza.jpg',
+                'short_description' => 'Premium commercial complex in heart of city',
+                'description' => 'State-of-the-art commercial complex with modern infrastructure and strategic location.',
+                'total_units' => 80,
+                'available_units' => 25,
+                'possession_date' => '2023-06-30'
+            ],
+            [
+                'id' => 3,
+                'name' => 'APS Greens',
+                'type' => 'Residential',
+                'category' => 'Villa',
+                'status' => 'Completed',
+                'completion' => '100%',
+                'city' => 'Lucknow',
+                'location' => 'Indira Nagar',
+                'price_range' => '₹65L - ₹1.2Cr',
+                'base_price' => 6500000,
+                'featured_image' => 'projects/aps-greens.jpg',
+                'short_description' => 'Eco-friendly residential project',
+                'description' => 'Sustainable living with green spaces and modern amenities.',
+                'total_units' => 60,
+                'available_units' => 15,
+                'possession_date' => '2023-12-31'
+            ]
+        ];
+    }
+function getSampleProject($id)
+    {
+        $projects = $this->getSampleProjects();
+        return $projects[array_search($id, array_column($projects, 'id'))] ?? $projects[0];
+    }
+function getSampleStats()
+    {
+        return [
+            'total_projects' => 25,
+            'ongoing_projects' => 8,
+            'completed_projects' => 17,
+            'total_units' => 1500,
+            'happy_families' => 5000,
+            'cities_served' => 6
+        ];
+    }
+function getSampleGallery()
+    {
+        return [
+            'projects/aps-gardenia-1.jpg',
+            'projects/aps-gardenia-2.jpg',
+            'projects/aps-gardenia-3.jpg',
+            'projects/aps-gardenia-4.jpg',
+            'projects/aps-gardenia-5.jpg'
+        ];
+    }
+function getSampleAmenities()
+    {
+        return [
+            'Swimming Pool',
+            'Gymnasium',
+            'Children\'s Play Area',
+            'Landscaped Gardens',
+            '24/7 Security',
+            'Power Backup',
+            'Clubhouse',
+            'Parking',
+            'Jogging Track',
+            'Multipurpose Hall'
+        ];
+    }
+function getSampleSpecifications()
+    {
+        return [
+            'Structure' => 'RCC Framed Structure',
+            'Walls' => 'Brick Masonry with Plaster',
+            'Flooring' => 'Vitrified Tiles',
+            'Doors' => 'Engineered Wood',
+            'Windows' => 'UPVC with Double Glazing',
+            'Kitchen' => 'Modular with Granite Platform',
+            'Bathrooms' => 'Premium Sanitary Ware',
+            'Electrical' => 'Concealed Copper Wiring'
+        ];
+    }
+class amenities and excellent connectivity.',
+                'total_units' => 120,
+                'available_units' => 45,
+                'possession_date' => '2024-12-31'
+            ],
+            [
+                'id' => 2,
+                'name' => 'APS Grand Plaza',
+                'type' => 'Commercial',
+                'category' => 'Office Space',
+                'status' => 'Completed',
+                'completion' => '100%',
+                'city' => 'Lucknow',
+                'location' => 'Hazratganj',
+                'price_range' => '₹45L - ₹2.5Cr',
+                'base_price' => 4500000,
+                'featured_image' => 'projects/aps-grand-plaza.jpg',
+                'short_description' => 'Premium commercial complex in heart of city',
+                'description' => 'State-of-the-art commercial complex with modern infrastructure and strategic location.',
+                'total_units' => 80,
+                'available_units' => 25,
+                'possession_date' => '2023-06-30'
+            ],
+            [
+                'id' => 3,
+                'name' => 'APS Greens',
+                'type' => 'Residential',
+                'category' => 'Villa',
+                'status' => 'Completed',
+                'completion' => '100%',
+                'city' => 'Lucknow',
+                'location' => 'Indira Nagar',
+                'price_range' => '₹65L - ₹1.2Cr',
+                'base_price' => 6500000,
+                'featured_image' => 'projects/aps-greens.jpg',
+                'short_description' => 'Eco-friendly residential project',
+                'description' => 'Sustainable living with green spaces and modern amenities.',
+                'total_units' => 60,
+                'available_units' => 15,
+                'possession_date' => '2023-12-31'
+            ]
+        ];
+    }
+
+    private function getSampleProject($id)
+    {
+        $projects = $this->getSampleProjects();
+        return $projects[array_search($id, array_column($projects, 'id'))] ?? $projects[0];
+    }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 785 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

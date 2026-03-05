@@ -60,8 +60,8 @@ class AdvancedPaymentController extends BaseController
     public function processPayment()
     {
         try {
-            $gateway = $_POST['gateway'] ?? '';
-            $payment_method = $_POST['payment_method'] ?? '';
+            $gateway = Security::sanitize($_POST['gateway']) ?? '';
+            $payment_method = Security::sanitize($_POST['payment_method']) ?? '';
 
             if (!$this->isValidGateway($gateway)) {
                 $this->setFlash('error', 'Invalid payment gateway selected');
@@ -303,9 +303,9 @@ class AdvancedPaymentController extends BaseController
     public function emiCalculator()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $principal = (float)($_POST['principal'] ?? 0);
-            $interest_rate = (float)($_POST['interest_rate'] ?? 0);
-            $tenure_years = (int)($_POST['tenure_years'] ?? 0);
+            $principal = (float)(Security::sanitize($_POST['principal']) ?? 0);
+            $interest_rate = (float)(Security::sanitize($_POST['interest_rate']) ?? 0);
+            $tenure_years = (int)(Security::sanitize($_POST['tenure_years']) ?? 0);
 
             if ($principal > 0 && $interest_rate > 0 && $tenure_years > 0) {
                 $emi_data = $this->calculateEMI($principal, $interest_rate, $tenure_years);
@@ -604,3 +604,21 @@ class AdvancedPaymentController extends BaseController
         }
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 606 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

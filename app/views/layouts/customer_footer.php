@@ -1,4 +1,7 @@
-</div>
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 
     <!-- Chart.js for analytics -->
     <?php if (isset($include_charts) && $include_charts): ?>

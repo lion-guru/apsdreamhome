@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Services\Legacy;
 /**
  * Comprehensive Validation and Sanitization Library
@@ -278,3 +280,47 @@ function validator() {
     return $validatorInstance;
 }
 
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Security\Legacy\Validator.php
+
+function validatePassword($password) {
+        if (strlen($password) < 8) {
+            return 'Password must be at least 8 characters long';
+        }
+class InputValidator {
+    public static function sanitize($input, $type = 'string') {
+        switch ($type) {
+            case 'int':
+                return filter_var($input, FILTER_VALIDATE_INT);
+            case 'email':
+                return filter_var($input, FILTER_VALIDATE_EMAIL);
+            case 'url':
+                return filter_var($input, FILTER_VALIDATE_URL);
+            case 'string':
+            default:
+                return h(\trim($input));
+        }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\Validator.php
+
+function __call($name, $arguments) {
+        if (method_exists($this->validator, $name)) {
+            return call_user_func_array([$this->validator, $name], $arguments);
+        }
+function __callStatic($name, $arguments) {
+        return call_user_func_array([ModernValidator::class, $name], $arguments);
+    }
+class calls to the modern Core Validator.
+ */
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use App\Core\Support\Validator as ModernValidator;
+
+class Validator {
+    private $validator;
+
+    public function __construct($data = []) {
+        $this->validator = new ModernValidator($data);
+    }

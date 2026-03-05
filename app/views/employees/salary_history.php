@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * Employee Salary History View
  * Shows employee salary history and payment records

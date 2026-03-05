@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 /**
  * APS Dream Home - VCRUNTIME140.dll Analysis
  * Analyzes and explains the VCRUNTIME140.dll warning issue

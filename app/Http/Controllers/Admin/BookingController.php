@@ -197,4 +197,48 @@ class BookingController extends AdminController
             logger()->error("Notification Error: " . $e->getMessage());
         }
     }
+
+    public function availability($propertyId)
+    {
+        try {
+            if (!\is_numeric($propertyId)) {
+                return $this->jsonError('Invalid property ID', 400);
+            }
+
+            $sql = "SELECT visit_date FROM visit_availability WHERE property_id = ? AND visit_date >= CURDATE()";
+            $result = $this->db->fetchAll($sql, [$propertyId]);
+            
+            $availableDates = \array_column($result, 'visit_date');
+            
+            return $this->jsonSuccess($availableDates);
+        } catch (Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
+        }
+    }
+
+    public function myBookings()
+    {
+        try {
+            $user = $this->auth->user();
+            $sql = "SELECT b.*, p.title as property_title, p.location 
+                    FROM bookings b
+                    JOIN properties p ON b.property_id = p.id
+                    WHERE b.customer_id = ?
+                    ORDER BY b.visit_date DESC";
+            $bookings = $this->db->fetchAll($sql, [$user->id]);
+
+            return $this->jsonSuccess($bookings);
+        } catch (Exception $e) {
+            return $this->jsonError($e->getMessage(), 500);
+        }
+    }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Api\BookingController.php
+
+function book()
+    {
+        if ($this->request()->method() !== 'POST') {
+            return $this->jsonError('Method not allowed', 405);
+        }

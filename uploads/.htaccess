@@ -58,7 +58,7 @@ RewriteRule ^ - [F,L]
 # SIZE LIMITATIONS
 # ===================================================================
 # Limit file size for uploads (adjust as needed)
-LimitRequestBody 10485760  # 10MB limit
+# LimitRequestBody 10485760  # 10MB limit - Commented out due to syntax issue
 
 # ===================================================================
 # ACCESS LOGGING

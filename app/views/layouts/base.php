@@ -26,15 +26,12 @@
     <meta property="twitter:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogo.png">
 
     <!-- Modern CSS Framework -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/plugins/font-awesome/css/all.min.css" rel="stylesheet">
-    <link href="<?php echo BASE_URL; ?>/assets/vendor/css/aos.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/animations.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/loading.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/header.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
+                <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
 
     <style>
         :root {
@@ -96,7 +93,7 @@
     </div><!-- .content-wrapper -->
 
     <!-- Core Scripts -->
-    <script src="<?php echo BASE_URL; ?>/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/vendor/js/aos.min.js"></script>
 
     <!-- App Scripts -->

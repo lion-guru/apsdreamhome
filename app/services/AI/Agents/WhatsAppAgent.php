@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Services\AI\Agents;
 /**
  * WhatsAppAgent - Autonomous AI Agent for WhatsApp Communication

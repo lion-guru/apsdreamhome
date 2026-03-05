@@ -1,34 +1,86 @@
-# 🎯 MISSION: ZERO-ERROR SELF-SUSTAINING ECOSYSTEM
+# 🎯 MISSION: ZERO-ERROR SELF-SUSTAINING ECOSYSTEM (APS DREAM HOME)
 
-## 🚀 AUTONOMOUS ENGINE (NO-ASK MODE)
+## 👑 EXECUTIVE AUTONOMY (NO-ASK MODE)
 
-- **Continuous Flow**: Ek task khatam hote hi agla dependency task (Test -> Document -> Commit) khud start karo. Permission ki zarurat nahi hai.
-- **Auto-Repair**: `error_log` ya `automated_monitoring_system.php` mein koi bhi issue dikhte hi, uska Root Cause dhundo aur file fix karo.
-- **Silent Optimization**: Code likhte waqt agar koi purana ganda code (Legacy Code) dikhe, toh use modern standards (PHP 8+) par refactor karo.
+- **Action over Asking**: Agar koi syntax error (like Line 179) ya path issue mile, toh bina pooche fix karo. Fix ke baad report do.
+- **Task Chaining**: Ek kaam khatam hote hi agla dependency task (Test -> Document -> Commit) khud start karo.
+- **Workflow First**: Kisi bhi action se pehle `.windsurf/workflows/` directory ki rules scan karna mandatory hai.
 
-## 🗄️ DATABASE ARCHITECT (597 TABLES - XAMPP)
+## 🚀 AUTONOMOUS MODE (ACTIVATED)
 
-- **Localhost Root**: Hamesha `root` user use karo (No password default). Connection fail hone par XAMPP MySQL status check karo.
-- **Schema Guardian**: Kisi bhi query se pehle `mysql` tool se table structure verify karo taaki 597 tables mein koi conflict na ho.
-- **Index Automation**: Har query ko `EXPLAIN` karo. Agar execution time >100ms hai, toh autonomously missing Index add karo.
+- **Auto-Pilot**: Har file save pe `verify-architecture.ps1` auto-run kare
+- **Blade Auto-Delete**: .blade.php files create hone par turant delete karke .php mein convert kare
+- **No-Ask Workflow**: Windsurf ko bina bol kaam karwane ke liye on_save hook active
+- **Self-Aware**: Project khud-jaan check karta hai aur fix karta hai
 
-## 🛡️ SECURITY & PERFORMANCE (THE SHIELD)
+## 🏗️ IMMUTABLE ARCHITECTURE RULES
 
-- **Global Sanitizer**: Har `$_POST`, `$_GET`, aur API input ko SQLi aur XSS se sanitize karne ke liye central middleware use/create karo.
-- **Puppeteer Crawler**: Website ke har route ko Puppeteer se crawl karo. 404/500 error milne par fix karke re-test karo.
-- **API Stress Test**: 88 REST endpoints ko stress test karo aur unka `swagger.json` auto-update karo.
+- **Strict MVC**:
+  - Controllers: `app/Http/Controllers/` (Extend BaseController)
+  - Models: `app/Models/` (Use Prepared Statements)
+  - Views: `app/views/pages/` (.php ONLY, No Blade)
+  - Routes: `routes/web.php`
+- **Zero Duplicate Policy**: Naya file banane se pehle check karo. Agar file exist karti hai, toh use `smart-editing-no-duplicates.md` ke mutabik edit/enhance karo.
 
-## 🐙 GITKRAKEN WORKFLOW
+## 🗄️ DATABASE & XAMPP STANDARDS
 
-- **Atomic Commits**: Har bug fix (jaise line 179) ya module complete hone par GitKraken tool se commit karo.
-- **Message Format**: `[Auto-Fix] <scope>: <brief_action>` (e.g., `[Auto-Fix] PropertyModel: Fixed array offset on line 179`).
+- **Connection**: MySQL `root` user (no password) on localhost.
+- **Schema Guardian**: 610 tables ka logic break na ho, isliye har query se pehle `mysql` tool se table structure verify karo.
+- **Optimization**: Har query ko `EXPLAIN` karo. Agar execution time >100ms hai, toh autonomously index add karo.
 
-## 📊 REAL-TIME MONITORING
+## 🛡️ SAFETY & CLEANUP PROTOCOL
 
-- **Dashboard Sync**: Har task ke baad `monitoring_dashboard.html` update karo taaki progress dikhti rahe.
-- **Memory Storage**: Complex DB relations ko Memory MCP mein save karo taaki baar-baar scan na karna pade.
+- **Backup First**: Core `config/` ya framework files edit karne se pehle `.bak` version banao.
+- **Safe Migration**: Purane legacy code ko delete mat karo. Use extract karke MVC mein dalo aur purani file ko `_DEPRECATED/` folder mein shift karo.
+- **Security Shield**: Har input ko SQLi aur XSS se sanitize karne ke liye middleware use karo.
 
-## 🚫 FINAL BOUNDARIES
+## 🐙 TOOL INTEGRATION & MONITORING
 
-- Core `config/` files ko edit karne se pehle uska `.bak` (backup) zaroori hai.
-- Architectural change (like changing DB engine) ke bina kaam ruko mat.
+- **GitKraken**: Har bug fix ya module complete hone par atomic commit karo. Format: `[Auto-Fix] <scope>: <action]`.
+- **Puppeteer**: Frontend change ke baad UI verify karo. 404/500 errors ko turant fix karo.
+- **Dashboard**: Har cycle ke baad `monitoring_dashboard.html` update karo taaki progress dikhti rahe.
+
+## 🚨 WORKFLOW TRIGGERS (MANUAL OVERRIDE)
+
+- "Cascade, run verify-architecture": Architecture check karne ke liye.
+- "Cascade, run intelligent-auto-complete": Project score aur completion ke liye.
+- "Cascade, run cleanup-and-migrate": Purane code ko MVC mein lane ke liye.
+- **Slack Notifications**: Har major "Auto-Fix" ya "Deployment" ke baad #project-updates channel par summary bhejo.
+- **Alert System**: Agar 500 Error ya Database fail hota hai, toh turant Slack par alert bhejo.
+
+## 🤖 ADVANCED AUTONOMOUS FEATURES
+
+### 📡 AI Log Analysis & Security Sentinel
+
+- **Auto IP Blocking**: Suspicious activity par IP block karo
+- **Slack Photo Alerts**: Hacker attempts par photo ke saath alert bhejo
+- **Dashboard Monitoring**: Bar-bar dashboard open karne wale users track karo
+- **Auto-Threat Detection**: Real-time security scanning
+
+### ⚡ Autonomous Database Watchdog (Sentinel)
+
+- **610 Tables Health Check**: Har raat database health checkup
+- **Auto-Optimization**: Heavy tables ko optimize/repair karo
+- **Query Performance Alert**: >0.5s queries par Slack alert
+- **Smart Indexing**: "Sir, leads_table ko indexing ki zarurat hai, kya main kar du?"
+
+### 🛡️ AI Security Sentinel (Smart Middleware)
+
+- **Code Auto-Fix**: $\_POST direct use par Security::sanitize() mein convert karo
+- **Vulnerability Scanner**: Naye controllers mein auto security check
+- **SQLi/XSS Prevention**: Real-time vulnerability fix
+- **Zero Security Debt**: Kabhi bhi attack ki tension nahi
+
+### 🔄 Auto-Pilot System
+
+- **On_Save Hook**: File save pe automatic architecture verification
+- **Blade Auto-Conversion**: .blade.php create hote hi delete karke .php banao
+- **No-Ask Workflow**: Bina instruction ke autonomous operation
+- **Self-Healing Code**: Errors ko khud detect aur fix karo
+
+---
+
+**Status:** ACTIVE & PERMANENT  
+**Authority:** IMMUTABLE SYSTEM RULES  
+**Autonomous Mode:** 🚀 ACTIVATED  
+**Last Updated:** 2026-03-05

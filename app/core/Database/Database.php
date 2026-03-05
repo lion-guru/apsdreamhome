@@ -10,6 +10,12 @@ class Database
     private static $instance = null;
     protected $pdo;
     protected $config;
+    
+    // Performance optimization features
+    private $queryCount = 0;
+    private $queryLog = [];
+    private $slowQueryThreshold = 1.0; // seconds
+    private $performanceLog = [];
 
     public static function getInstance(array $config = [])
     {
@@ -66,9 +72,21 @@ class Database
 
     public function query($sql, $params = [])
     {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        return $stmt;
+        $startTime = microtime(true);
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+            
+            $this->logQuery($sql, $params, $executionTime);
+            
+            return $stmt;
+        } catch (PDOException $e) {
+            throw new \RuntimeException("Query failed: " . $e->getMessage());
+        }
     }
 
     public function execute($sql, $params = [])
@@ -150,4 +168,98 @@ class Database
     {
         return $this->pdo;
     }
+    
+    /**
+     * Log query performance
+     */
+    private function logQuery($sql, $params, $executionTime)
+    {
+        $this->queryCount++;
+        
+        $this->queryLog[] = [
+            'sql' => $sql,
+            'params' => $params,
+            'execution_time' => $executionTime,
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+        
+        // Log slow queries
+        if ($executionTime > $this->slowQueryThreshold) {
+            $this->performanceLog[] = [
+                'type' => 'slow_query',
+                'sql' => $sql,
+                'execution_time' => $executionTime,
+                'threshold' => $this->slowQueryThreshold,
+                'timestamp' => date('Y-m-d H:i:s')
+            ];
+        }
+    }
+    
+    /**
+     * Get query performance statistics
+     */
+    public function getPerformanceStats()
+    {
+        return [
+            'query_count' => $this->queryCount,
+            'slow_queries' => count($this->performanceLog),
+            'average_time' => $this->queryCount > 0 ? 
+                array_sum(array_column($this->queryLog, 'execution_time')) / $this->queryCount : 0,
+            'performance_log' => $this->performanceLog
+        ];
+    }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Database.php
+
+function getConnection() {
+        return $this->db->getConnection();
+    }
+function rollback() {
+        return $this->db->rollBack();
+    }
+function prepare($sql) {
+        return $this->db->prepare($sql);
+    }
+function executeQuery($sql, $params = [], $types = '') {
+        // App\Core\Database::query handles both select and non-select
+        return $this->db->query($sql, $params);
+    }
+function affectedRows() {
+        return $this->db->affectedRows();
+    }
+function escapeString($value) {
+        return $this->db->escapeString($value);
+    }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Models\Database.php
+
+function getId()
+    {
+        return $this->id;
+    }
+function getName()
+    {
+        return $this->name;
+    }
+function getHost()
+    {
+        return $this->host;
+    }
+function getUsername()
+    {
+        return $this->username;
+    }
+function getPassword()
+    {
+        return $this->password;
+    }
+function getCreatedat()
+    {
+        return $this->created_at;
+    }
+function getUpdatedat()
+    {
+        return $this->updated_at;
+    }

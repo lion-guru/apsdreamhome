@@ -1,5 +1,8 @@
 <?php
-echo "==========================================\n";
+
+// TODO: Add proper error handling with try-catch blocks
+
+cho "==========================================\n";
 echo "🌟 APS DREAM HOME - ROUTING TESTING GUIDE\n";
 echo "==========================================\n\n";
 

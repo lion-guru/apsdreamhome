@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 /**
  * APS Dream Home - Fix All IDE Syntax Errors
  * Fixes all PHP syntax errors detected by IDE

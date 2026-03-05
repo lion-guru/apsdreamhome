@@ -50,8 +50,8 @@ class SocialMediaController extends BaseController
     {
         header('Content-Type: application/json');
 
-        $post_type = $_POST['post_type'] ?? '';
-        $platform = $_POST['platform'] ?? '';
+        $post_type = Security::sanitize($_POST['post_type']) ?? '';
+        $platform = Security::sanitize($_POST['platform']) ?? '';
 
         if (empty($post_type) || empty($platform)) {
             sendJsonResponse(['success' => false, 'error' => 'Post type and platform required'], 400);
@@ -544,8 +544,8 @@ class SocialMediaController extends BaseController
             }
 
             $share_data = [
-                'property_id' => $_POST['property_id'] ?? null,
-                'platform' => $_POST['platform'] ?? '',
+                'property_id' => Security::sanitize($_POST['property_id']) ?? null,
+                'platform' => Security::sanitize($_POST['platform']) ?? '',
                 'user_id' => $_SESSION['user_id'] ?? null,
                 'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
@@ -759,3 +759,21 @@ class SocialMediaController extends BaseController
         }
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 761 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

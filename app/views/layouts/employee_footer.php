@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 // DEPRECATED: This file is nearly identical to customer_footer.php
 // Employee footer template - only differs in JavaScript comments
 // Use app/views/layouts/customer_footer.php instead and customize as needed

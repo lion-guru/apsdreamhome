@@ -32,25 +32,25 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
 
         try {
-            $page = (int)($_GET['page'] ?? 1);
-            $limit = min((int)($_GET['limit'] ?? 10), 50); // Max 50 per page
+            $page = (int)(Security::sanitize($_GET['page']) ?? 1);
+            $limit = min((int)(Security::sanitize($_GET['limit']) ?? 10), 50); // Max 50 per page
             $offset = ($page - 1) * $limit;
 
             // Build filters
             $filters = [];
-            if (isset($_GET['property_type']) && !empty($_GET['property_type'])) {
-                $filters['property_type'] = $_GET['property_type'];
+            if (isset(Security::sanitize($_GET['property_type'])) && !empty(Security::sanitize($_GET['property_type']))) {
+                $filters['property_type'] = Security::sanitize($_GET['property_type']);
             }
-            if (isset($_GET['city']) && !empty($_GET['city'])) {
-                $filters['city'] = $_GET['city'];
+            if (isset(Security::sanitize($_GET['city'])) && !empty(Security::sanitize($_GET['city']))) {
+                $filters['city'] = Security::sanitize($_GET['city']);
             }
-            if (isset($_GET['min_price']) && !empty($_GET['min_price'])) {
-                $filters['min_price'] = $_GET['min_price'];
+            if (isset(Security::sanitize($_GET['min_price'])) && !empty(Security::sanitize($_GET['min_price']))) {
+                $filters['min_price'] = Security::sanitize($_GET['min_price']);
             }
-            if (isset($_GET['max_price']) && !empty($_GET['max_price'])) {
-                $filters['max_price'] = $_GET['max_price'];
+            if (isset(Security::sanitize($_GET['max_price'])) && !empty(Security::sanitize($_GET['max_price']))) {
+                $filters['max_price'] = Security::sanitize($_GET['max_price']);
             }
-            if (isset($_GET['featured']) && $_GET['featured'] === 'true') {
+            if (isset(Security::sanitize($_GET['featured'])) && Security::sanitize($_GET['featured']) === 'true') {
                 $filters['featured'] = true;
             }
 
@@ -269,7 +269,7 @@ class MobileApiController extends BaseController
         $this->setCorsHeaders();
 
         try {
-            $user_id = (int)($_GET['user_id'] ?? 0);
+            $user_id = (int)(Security::sanitize($_GET['user_id']) ?? 0);
 
             if (!$user_id) {
                 http_response_code(400);
@@ -721,3 +721,21 @@ class MobileApiController extends BaseController
         }
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 723 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

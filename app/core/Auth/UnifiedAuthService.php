@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 /**
  * Unified Authentication Service
  * Consolidates session management for both MVC and Legacy systems

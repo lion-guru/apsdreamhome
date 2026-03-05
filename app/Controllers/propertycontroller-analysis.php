@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 /**
  * APS Dream Home - PropertyController IDE Issues Analysis
  * Analysis of PropertyController IDE warnings and their impact

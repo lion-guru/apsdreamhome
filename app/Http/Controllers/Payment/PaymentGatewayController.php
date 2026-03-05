@@ -118,7 +118,7 @@ class PaymentGatewayController extends BaseController
      */
     public function processPayment()
     {
-        if (!isset($_POST['submit_payment'])) {
+        if (!isset(Security::sanitize($_POST['submit_payment']))) {
             $this->render('payment/payment_form', [
                 'page_title' => 'Payment Gateway - Secure Payment'
             ]);
@@ -132,13 +132,13 @@ class PaymentGatewayController extends BaseController
 
             // Get payment details
             $payment_data = [
-                'amount' => floatval($_POST['amount']),
-                'customer_name' => $_POST['customer_name'] ?? '',
-                'customer_email' => $_POST['customer_email'] ?? '',
-                'customer_phone' => $_POST['customer_phone'] ?? '',
-                'plot_id' => intval($_POST['plot_id'] ?? 0),
-                'payment_type' => $_POST['payment_type'] ?? '',
-                'gateway' => $_POST['gateway'] ?? ''
+                'amount' => floatval(Security::sanitize($_POST['amount'])),
+                'customer_name' => Security::sanitize($_POST['customer_name']) ?? '',
+                'customer_email' => Security::sanitize($_POST['customer_email']) ?? '',
+                'customer_phone' => Security::sanitize($_POST['customer_phone']) ?? '',
+                'plot_id' => intval(Security::sanitize($_POST['plot_id']) ?? 0),
+                'payment_type' => Security::sanitize($_POST['payment_type']) ?? '',
+                'gateway' => Security::sanitize($_POST['gateway']) ?? ''
             ];
 
             // Validate payment data

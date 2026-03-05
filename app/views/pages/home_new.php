@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * New Home Page Template for APS Dream Home
  * Compatible with local assets and project structure

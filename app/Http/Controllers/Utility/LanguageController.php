@@ -83,7 +83,7 @@ class LanguageController extends BaseController
      */
     public function setLanguage()
     {
-        $lang_code = $_GET['lang'] ?? $_POST['lang'] ?? '';
+        $lang_code = $_GET['lang'] ?? Security::sanitize($_POST['lang']) ?? '';
 
         if (empty($lang_code) || !isset($this->supported_languages[$lang_code])) {
             $lang_code = $this->detectLanguage();
@@ -208,7 +208,7 @@ class LanguageController extends BaseController
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->saveTranslation($_POST['language'], $_POST['key'], $_POST['translation']);
+            $this->saveTranslation(Security::sanitize($_POST['language']), Security::sanitize($_POST['key']), Security::sanitize($_POST['translation']));
         }
 
         $languages = $this->getAvailableLanguages();
@@ -282,7 +282,7 @@ class LanguageController extends BaseController
         }
 
         $file = $_FILES['translation_file'];
-        $language = $_POST['language'] ?? '';
+        $language = Security::sanitize($_POST['language']) ?? '';
 
         if (empty($language) || !isset($this->supported_languages[$language])) {
             $this->setFlashMessage('error', 'Please select a valid language');
@@ -459,8 +459,8 @@ class LanguageController extends BaseController
 
         header('Content-Type: application/json');
 
-        $target_language = $_POST['language'] ?? '';
-        $text_to_translate = $_POST['text'] ?? '';
+        $target_language = Security::sanitize($_POST['language']) ?? '';
+        $text_to_translate = Security::sanitize($_POST['text']) ?? '';
 
         if (empty($target_language) || empty($text_to_translate)) {
             sendJsonResponse(['success' => false, 'error' => 'Language and text are required'], 400);
@@ -504,9 +504,9 @@ class LanguageController extends BaseController
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $language_code = $_POST['language_code'] ?? '';
-            $language_name = $_POST['language_name'] ?? '';
-            $native_name = $_POST['native_name'] ?? '';
+            $language_code = Security::sanitize($_POST['language_code']) ?? '';
+            $language_name = Security::sanitize($_POST['language_name']) ?? '';
+            $native_name = Security::sanitize($_POST['native_name']) ?? '';
 
             if (empty($language_code) || empty($language_name)) {
                 $this->setFlashMessage('error', 'Language code and name are required');
@@ -518,8 +518,8 @@ class LanguageController extends BaseController
             $this->supported_languages[$language_code] = [
                 'name' => $language_name,
                 'native_name' => $native_name,
-                'flag' => $_POST['flag'] ?? '🌐',
-                'rtl' => isset($_POST['rtl']) ? true : false
+                'flag' => Security::sanitize($_POST['flag']) ?? '🌐',
+                'rtl' => isset(Security::sanitize($_POST['rtl'])) ? true : false
             ];
 
             // Create empty translation file based on English
@@ -734,3 +734,21 @@ class LanguageController extends BaseController
         setcookie('user_language', $lang_code, time() + (30 * 24 * 60 * 60), '/');
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 736 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

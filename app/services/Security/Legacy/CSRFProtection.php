@@ -59,7 +59,7 @@ class CSRFProtection {
         self::initializeSession();
 
         if ($token === null) {
-            $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+            $token = Security::sanitize($_POST['csrf_token']) ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
         }
 
         if (!isset($_SESSION['csrf_token']) || !isset($_SESSION['csrf_expires'])) {
@@ -154,3 +154,20 @@ namespace {
     }
 }
 ?>
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\CSRFProtection.php
+
+function generateCSRFToken() {
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(\App\Helpers\SecurityHelper::secureRandomBytes(32));
+    }
+function validateCSRFToken($token) {
+    if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
+        http_response_code(403);
+        die('CSRF token validation failed');
+    }
+function getCSRFTokenField() {
+    $token = generateCSRFToken();
+    return '<input type="hidden" name="csrf_token" value="' . h($token) . '">';
+}

@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
@@ -102,5 +104,17 @@ class VisitController extends AdminController
         $result = $stmt->execute([$status, $id]);
 
         return $this->jsonResponse(['success' => $result]);
+    }
+
+    public function show()
+    {
+        // TODO: Implement show functionality
+        return $this->view('show');
+    }
+
+    public function destroy()
+    {
+        // TODO: Implement destroy functionality
+        return $this->view('destroy');
     }
 }

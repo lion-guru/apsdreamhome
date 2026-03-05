@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Services\Legacy\Classes;
 require_once __DIR__ . '/../app/core/App.php';
 

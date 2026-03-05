@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * Employee Activities View
  * Shows employee activity logs and history

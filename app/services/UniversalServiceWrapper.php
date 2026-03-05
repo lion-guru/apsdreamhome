@@ -1,5 +1,8 @@
 <?php
-namespace App\Services;
+
+// TODO: Add proper error handling with try-catch blocks
+
+amespace App\Services;
 
 /**
  * Universal Service Wrapper for SMS, Email, and KYC

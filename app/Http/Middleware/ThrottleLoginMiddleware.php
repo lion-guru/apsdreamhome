@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Http\Middleware;
 
 class ThrottleLoginMiddleware extends RateLimitMiddleware

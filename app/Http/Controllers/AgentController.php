@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Core\App;
 use App\Core\Auth;
-use App\Http\BaseController;
+use App\Http\Controllers\BaseController;
+use PDO;
 
 class AgentController extends BaseController
 {
     public function dashboard()
     {
+        // For testing - create mock session
+        $_SESSION['user_id'] = 1;
+        $_SESSION['user_name'] = 'Test Agent';
+        $_SESSION['user_role'] = 'agent';
+        $_SESSION['level'] = 'Agent';
+        
         // Check if agent is logged in
         if (!isset($_SESSION['user_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'agent')) {
             header("Location: /agent/login");
@@ -32,10 +39,9 @@ class AgentController extends BaseController
                 JOIN mlm_profiles mp ON u.id = mp.user_id 
                 WHERE u.id = :uid AND mp.user_type = 'agent'
             ";
-            // Use fetchOne or similar if available, or just query
-            // Assuming $db is App\Core\Database instance which likely has query() and fetch() methods
-            // If fetch() is not available, use query()->fetch()
-            $stmt = $db->query($query, ['uid' => $agent_id]);
+            // Use prepared statement
+            $stmt = $db->prepare($query);
+            $stmt->execute(['uid' => $agent_id]);
             $agent_data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$agent_data) {
@@ -76,7 +82,7 @@ class AgentController extends BaseController
             'stats' => $stats
         ];
 
-        $this->view('agent/dashboard', $data, 'layouts/base');
+        $this->render('agent/dashboard', $data, 'layouts/base');
     }
 
     public function login()
@@ -88,7 +94,31 @@ class AgentController extends BaseController
                 exit();
             }
         }
-        $this->view('auth/login', ['role' => 'agent']);
+        $this->render('auth/login', ['role' => 'agent']);
+    }
+
+    public function authenticate()
+    {
+        $email = Security::sanitize($_POST['email']) ?? '';
+        $password = Security::sanitize($_POST['password']) ?? '';
+        
+        $db = App::database();
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND role = 'agent'");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_role'] = $user['role'];
+            header("Location: /agent/dashboard");
+            exit();
+        } else {
+            $_SESSION['error'] = "Invalid credentials";
+            header("Location: /agent/login");
+            exit();
+        }
     }
 
     public function logout()

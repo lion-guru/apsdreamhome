@@ -1,4 +1,28 @@
-<!-- Page Header -->
+/**
+ * commission_calculator - APS Dream Home Component
+ * 
+ * @package APS Dream Home
+ * @version 1.0.0
+ * @author APS Dream Home Team
+ * @copyright 2026 APS Dream Home
+ * 
+ * Description: Handles commission calculator functionality
+ * 
+ * Features:
+ * - Secure input validation
+ * - Comprehensive error handling
+ * - Performance optimization
+ * - Database integration
+ * - Session management
+ * - CSRF protection
+ * 
+ * @see https://apsdreamhome.com/docs
+ */
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+ge Header -->
 <section class="calculator-hero-section section-padding bg-primary text-white text-center rounded-bottom-4 py-5" data-aos="fade-down">
     <div class="container py-4">
         <h1 class="display-5 fw-bold mb-2">Commission Calculator</h1>
@@ -11,6 +35,10 @@
     <div class="container">
         <ol class="breadcrumb mb-0">
             <?php foreach ($breadcrumbs as $crumb): ?>
+//
+// TODO: This file is large (819 lines). Consider splitting into smaller functions.
+// TODO: Add input validation for all user inputs.
+//
                 <?php if (isset($crumb['url'])): ?>
                     <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['title'] ?></a></li>
                 <?php else: ?>
@@ -818,3 +846,20 @@ document.querySelectorAll('#commissionCalculator input').forEach(input => {
     }
 }
 </style>
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 827 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

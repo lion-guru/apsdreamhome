@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 namespace App\Models;
 
 use App\Core\Database;
@@ -567,3 +569,21 @@ class Invoice extends Model
         ];
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 571 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

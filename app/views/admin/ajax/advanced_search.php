@@ -19,18 +19,18 @@ if (!isAdmin()) {
 }
 
 // CSRF Validation
-if (!isset($_GET['csrf_token']) || !verifyCSRFToken($_GET['csrf_token'])) {
+if (!isset(Security::sanitize($_GET['csrf_token'])) || !verifyCSRFToken(Security::sanitize($_GET['csrf_token']))) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Invalid CSRF token'))]);
     exit();
 }
 
 try {
-    $module = $_GET['module'] ?? 'all';
-    $dateRange = $_GET['date_range'] ?? 'all';
-    $status = $_GET['status'] ?? 'all';
-    $sortBy = $_GET['sort'] ?? 'date';
-    $searchQuery = trim($_GET['q'] ?? '');
+    $module = Security::sanitize($_GET['module']) ?? 'all';
+    $dateRange = Security::sanitize($_GET['date_range']) ?? 'all';
+    $status = Security::sanitize($_GET['status']) ?? 'all';
+    $sortBy = Security::sanitize($_GET['sort']) ?? 'date';
+    $searchQuery = trim(Security::sanitize($_GET['q']) ?? '');
 
     // Establish database connection
     $db = \App\Core\App::database();

@@ -1,4 +1,8 @@
-<!-- Footer -->
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+oter -->
 <footer class="footer bg-dark text-light py-5">
     <div class="container">
         <!-- Top Footer Section -->
@@ -37,7 +41,7 @@
                 <h5 class="footer-heading mb-4">About Us</h5>
                 <p class="text-light-muted">Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction. Building dreams into reality with trust and innovation.</p>
                 <div class="mt-3">
-                    <a href="<?php echo BASE_URL; ?>about" class="btn btn-outline-light btn-sm">Learn More</a>
+                    <a href="<?php echo BASE_URL; ?>/about" class="btn btn-outline-light btn-sm">Learn More</a>
                 </div>
             </div>
 
@@ -47,19 +51,19 @@
                     <div class="col-6">
                         <ul class="list-unstyled footer-links">
                             <li><a href="<?php echo BASE_URL; ?>">Home</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>properties">Properties</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>projects">Projects</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>resell">Resell</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>gallery">Gallery</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/properties">Properties</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/projects">Projects</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/resell">Resell</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/gallery">Gallery</a></li>
                         </ul>
                     </div>
                     <div class="col-6">
                         <ul class="list-unstyled footer-links">
-                            <li><a href="<?php echo BASE_URL; ?>blog">Blog</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>careers">Careers</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>team">Our Team</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>testimonials">Testimonials</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>faq">FAQs</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/blog">Blog</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/careers">Careers</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/team">Our Team</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/testimonials">Testimonials</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/faq">FAQs</a></li>
                         </ul>
                     </div>
                 </div>
@@ -114,10 +118,10 @@
                 <div class="download-apps">
                     <p class="mb-2">Download Our App:</p>
                     <a href="#" class="me-2">
-                        <img src="<?php echo BASE_URL ?? '/'; ?>public/assets/images/google-play.png" alt="Google Play" style="height: 35px;">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/google-play.png" alt="Google Play" style="height: 35px;">
                     </a>
                     <a href="#">
-                        <img src="<?php echo BASE_URL ?? '/'; ?>public/assets/images/app-store.png" alt="App Store" style="height: 35px;">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/app-store.png" alt="App Store" style="height: 35px;">
                     </a>
                 </div>
             </div>
@@ -135,15 +139,15 @@
             <div class="col-md-6">
                 <ul class="list-inline text-md-end mb-0">
                     <li class="list-inline-item">
-                        <a href="<?php echo BASE_URL ?? '/'; ?>privacy" class="text-light-muted">Privacy Policy</a>
+                        <a href="<?php echo BASE_URL ?? '/'; ?>/privacy" class="text-light-muted">Privacy Policy</a>
                     </li>
                     <li class="list-inline-item mx-3">|</li>
                     <li class="list-inline-item">
-                        <a href="<?php echo BASE_URL ?? '/'; ?>terms" class="text-light-muted">Terms of Service</a>
+                        <a href="<?php echo BASE_URL ?? '/'; ?>/terms" class="text-light-muted">Terms of Service</a>
                     </li>
                     <li class="list-inline-item mx-3">|</li>
                     <li class="list-inline-item">
-                        <a href="<?php echo BASE_URL ?? '/'; ?>sitemap" class="text-light-muted">Sitemap</a>
+                        <a href="<?php echo BASE_URL ?? '/'; ?>/sitemap" class="text-light-muted">Sitemap</a>
                     </li>
                 </ul>
             </div>
@@ -155,3 +159,21 @@
 <button id="backToTop" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4" style="display: none;">
     <i class="fas fa-arrow-up"></i>
 </button>
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\admin\layouts\footer.php
+
+function refreshDashboard() {
+            // Add dashboard refresh logic here
+            console.log('Dashboard refreshed');
+        }
+function confirmDelete(message) {
+            return confirm(message || 'Are you sure you want to delete this item?');
+        }
+function ajaxRequest(url, method, data, callback) {
+            $.ajax({
+                url: url,
+                method: method,
+                data: data,
+                success: function(response) {
+                    if (callback) callback(response);
+                }

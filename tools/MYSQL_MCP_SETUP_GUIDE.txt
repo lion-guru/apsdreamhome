@@ -1,0 +1,55 @@
+APS Dream Home - MySQL MCP Manual Installation
+==============================================
+
+🔧 MANUAL INSTALLATION STEPS:
+
+1. 📦 Install Node.js (if not already installed)
+   Download from: https://nodejs.org/
+
+2. 🔧 Install MySQL MCP Server globally
+   npm install -g mysql-mcp-server
+
+3. 🔄 Restart Windsurf IDE
+   - Close Windsurf IDE completely
+   - Reopen the project
+   - Check MCP tools status
+
+4. 🗄️ Verify MySQL MCP connection
+   - Look for MySQL MCP in MCP tools list
+   - Should show green status
+   - Test with a simple query
+
+5. 🧪 Test database operations
+   - Try querying tables
+   - Test insert/update operations
+   - Verify connection works
+
+🔧 TROUBLESHOOTING:
+
+❌ If installation fails:
+   npm install -g mysql-mcp-server --force
+
+❌ If MCP shows red:
+   1. Check MySQL is running (XAMPP Control Panel)
+   2. Verify database credentials in .env
+   3. Restart IDE
+   4. Check .windsurf/mcp_servers.json configuration
+
+❌ If connection fails:
+   1. Verify MySQL credentials
+   2. Check firewall settings
+   3. Ensure XAMPP MySQL is running on port 3306
+
+🎯 CONFIGURATION DETAILS:
+- Host: localhost
+- Port: 3306
+- User: root
+- Password: (empty)
+- Database: apsdreamhome
+
+🎉 SUCCESS INDICATORS:
+✅ MySQL MCP shows green in IDE
+✅ Can execute SQL queries
+✅ Database operations work
+✅ Tables are accessible
+✅ Data manipulation possible

@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 /**
  * Modernized User Dashboard
  * Migrated from Views/dashboards/user_dashboard.php

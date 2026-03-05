@@ -433,7 +433,7 @@ class App
         
         // Property routes
         elseif ($uri === "/properties") {
-            return $this->loadController("HomeController", "properties");
+            return $this->loadController("Property\\PropertyController", "index");
         } elseif (preg_match('/^\/properties\/(\d+)$/', $uri, $matches)) {
             return $this->loadController("HomeController", "propertyDetail", [$matches[1]]);
         } elseif ($uri === "/projects") {
@@ -610,4 +610,38 @@ class App
     {
         return $this->basePath . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '\\/') : '');
     }
+    
+    public static function database()
+    {
+        $host = '127.0.0.1';
+        $dbname = 'apsdreamhome';
+        $username = 'root';
+        $password = '';
+        
+        try {
+            $pdo = new \PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            return $pdo;
+        } catch (\PDOException $e) {
+            throw new \Exception("Database connection failed: " . $e->getMessage());
+        }
+    }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 629 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

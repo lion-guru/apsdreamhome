@@ -169,7 +169,7 @@ class PageController extends BaseController
                     ],
                     'mission' => $company_info_db['mission_statement'] ?? 'To provide transparent and hassle-free real estate services with a focus on customer satisfaction and quality construction.',
                     'vision' => $company_info_db['vision_statement'] ?? 'To become the most trusted real estate developer in Uttar Pradesh by delivering excellence in every project.',
-                    'values' => $company_info_db['core_values'] ? explode(',', $company_info_db['core_values']) : [
+                    'values' => ($company_info_db['core_values'] ?? '') ? explode(',', $company_info_db['core_values']) : [
                         'Transparency',
                         'Quality',
                         'Customer Satisfaction',
@@ -181,7 +181,7 @@ class PageController extends BaseController
                             'name' => $member['name'],
                             'position' => $member['position'],
                             'experience' => $member['experience'],
-                            'description' => $member['description'],
+                            'description' => $member['description'] ?? 'Experienced professional with expertise in real estate and customer service.',
                             'image' => $member['image'] ?? 'team/default.jpg'
                         ];
                     }, $team_members_db) : [
@@ -1262,7 +1262,7 @@ class PageController extends BaseController
             ];
         }
 
-        return $this->render('blog/index', $data, 'layouts/base');
+        return $this->render('pages/blog', $data, 'layouts/base');
     }
 
     /**
@@ -1542,21 +1542,21 @@ class PageController extends BaseController
             );
 
             // Get team members from database
-            $stmt = $pdo->query("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC");
+            $stmt = $pdo->query("SELECT * FROM team_members WHERE status = 'active' ORDER BY id ASC");
             $team_members = $stmt->fetchAll();
 
             // Get team stats
-            $stats_stmt = $pdo->query("SELECT COUNT(*) as total_members, AVG(EXTRACT(YEAR FROM AGE(created_at))) as avg_experience FROM team_members WHERE status = 'active'");
+            $stats_stmt = $pdo->query("SELECT COUNT(*) as total_members FROM team_members WHERE status = 'active'");
             $team_stats = $stats_stmt->fetch();
 
             if (!empty($team_members)) {
                 // Format database data
                 $leadership_team = array_filter($team_members, function($member) {
-                    return $member['category'] === 'leadership';
+                    return ($member['category'] ?? '') === 'leadership';
                 });
                 
                 $department_heads = array_filter($team_members, function($member) {
-                    return $member['category'] === 'department_head';
+                    return ($member['category'] ?? '') === 'department_head';
                 });
 
                 $data = [
@@ -1807,7 +1807,7 @@ class PageController extends BaseController
             );
 
             // Get testimonials from database
-            $stmt = $pdo->query("SELECT * FROM testimonials WHERE status = 'approved' ORDER BY sort_order ASC, created_at DESC");
+            $stmt = $pdo->query("SELECT * FROM testimonials WHERE status = 'approved' ORDER BY created_at DESC");
             $testimonials = $stmt->fetchAll();
 
             if (!empty($testimonials)) {
@@ -1839,9 +1839,9 @@ class PageController extends BaseController
                     ]
                 ];
             } else {
-                throw new Exception("No testimonials found");
+                throw new \Exception("No testimonials found");
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Fallback to sample data if database fails
             $data = [
                 'page_title' => 'Testimonials - APS Dream Home',
@@ -2337,8 +2337,259 @@ class PageController extends BaseController
                 ]
             ]
         ];
+    }
 
-        return $this->render('sitemap/index', $data, 'layouts/base');
+    /**
+     * Company Projects Page
+     */
+    public function projects()
+    {
+        // Project data based on research
+        $projects = [
+            'uttar_pradesh' => [
+                'name' => 'Uttar Pradesh Projects',
+                'icon' => '🏛️',
+                'description' => 'Premium residential and commercial plots in key locations',
+                'locations' => [
+                    [
+                        'name' => 'Plots in Kaushambi',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1000-5000 sq ft',
+                        'price' => 'Starting from ₹1,500/sq ft'
+                    ],
+                    [
+                        'name' => 'Plots in Karwi Chitrakoot',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1200-4000 sq ft',
+                        'price' => 'Starting from ₹1,200/sq ft'
+                    ],
+                    [
+                        'name' => 'Plots in Gauhani Jari Prayagraj',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1500-6000 sq ft',
+                        'price' => 'Starting from ₹2,000/sq ft'
+                    ],
+                    [
+                        'name' => 'Plots in Chunar (Phase-3) Mirzapur',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1000-4500 sq ft',
+                        'price' => 'Starting from ₹1,800/sq ft'
+                    ],
+                    [
+                        'name' => 'Plots in Bendow Karchhana Prayagraj',
+                        'status' => 'Available',
+                        'type' => 'Commercial',
+                        'size' => '2000-8000 sq ft',
+                        'price' => 'Starting from ₹2,500/sq ft'
+                    ]
+                ]
+            ],
+            'bihar' => [
+                'name' => 'Bihar Projects',
+                'icon' => '🌾',
+                'description' => 'Strategic locations with high growth potential',
+                'locations' => [
+                    [
+                        'name' => 'Plots in Alipur Bihata Patna',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1500-6000 sq ft',
+                        'price' => 'Starting from ₹1,800/sq ft'
+                    ],
+                    [
+                        'name' => 'Plots in Rajgir (Ankuri Bazar) Nalanda',
+                        'status' => 'Available',
+                        'type' => 'Commercial',
+                        'size' => '2000-10000 sq ft',
+                        'price' => 'Starting from ₹2,000/sq ft'
+                    ],
+                    [
+                        'name' => 'Plots in Aamas Gaya Aurangabad',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1000-4000 sq ft',
+                        'price' => 'Starting from ₹1,500/sq ft'
+                    ]
+                ]
+            ],
+            'madhya_pradesh' => [
+                'name' => 'Madhya Pradesh Projects',
+                'icon' => '🏞️',
+                'description' => 'Emerging locations with excellent connectivity',
+                'locations' => [
+                    [
+                        'name' => 'Plots in Khutaha Bela Satana',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1000-4000 sq ft',
+                        'price' => 'Starting from ₹1,000/sq ft'
+                    ],
+                    [
+                        'name' => 'Plots in Raipur Rewa',
+                        'status' => 'Available',
+                        'type' => 'Residential',
+                        'size' => '1200-5000 sq ft',
+                        'price' => 'Starting from ₹1,200/sq ft'
+                    ]
+                ]
+            ]
+        ];
+
+        $stats = [
+            'total_projects' => '25+',
+            'locations' => '15+',
+            'states_covered' => '3',
+            'happy_customers' => '2000+',
+            'years_experience' => '15+'
+        ];
+
+        $data = [
+            'page_title' => 'Our Projects - APS Dream Home',
+            'projects' => $projects,
+            'stats' => $stats,
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Projects', 'url' => '']
+            ]
+        ];
+
+        $this->render('pages/projects', $data);
+    }
+
+    public function careerApply()
+    {
+        $data = [
+            'page_title' => 'Career Application - APS Dream Home',
+            'breadcrumbs' => [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Careers', 'url' => BASE_URL . 'careers'],
+                ['title' => 'Apply', 'url' => '']
+            ]
+        ];
+        $this->render('pages/career_apply', $data);
+    }
+
+    public function submitCareerApplication()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                // Validate form data
+                $name = trim(Security::sanitize($_POST['name']) ?? '');
+                $email = trim(Security::sanitize($_POST['email']) ?? '');
+                $phone = trim(Security::sanitize($_POST['phone']) ?? '');
+                $position = trim(Security::sanitize($_POST['position']) ?? '');
+                $experience = trim(Security::sanitize($_POST['experience']) ?? '');
+                $message = trim(Security::sanitize($_POST['message']) ?? '');
+                $resume = $_FILES['resume'] ?? null;
+
+                // Basic validation
+                if (empty($name) || empty($email) || empty($phone) || empty($position)) {
+                    $_SESSION['error'] = 'Please fill all required fields';
+                    header('Location: ' . BASE_URL . 'careers/apply');
+                    exit;
+                }
+
+                // Validate email
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $_SESSION['error'] = 'Please enter a valid email address';
+                    header('Location: ' . BASE_URL . 'careers/apply');
+                    exit;
+                }
+
+                // Handle file upload
+                $resume_path = '';
+                if ($resume && $resume['error'] === UPLOAD_ERR_OK) {
+                    $allowed_types = ['pdf', 'doc', 'docx'];
+                    $file_ext = strtolower(pathinfo($resume['name'], PATHINFO_EXTENSION));
+                    
+                    if (!in_array($file_ext, $allowed_types)) {
+                        $_SESSION['error'] = 'Please upload PDF, DOC, or DOCX file only';
+                        header('Location: ' . BASE_URL . 'careers/apply');
+                        exit;
+                    }
+
+                    $upload_dir = 'uploads/resumes/';
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+
+                    $filename = time() . '_' . basename($resume['name']);
+                    $resume_path = $upload_dir . $filename;
+                    
+                    if (!move_uploaded_file($resume['tmp_name'], $resume_path)) {
+                        $_SESSION['error'] = 'Failed to upload resume';
+                        header('Location: ' . BASE_URL . 'careers/apply');
+                        exit;
+                    }
+                }
+
+                // Save to database
+                $pdo = new PDO(
+                    "mysql:host={$_ENV['DB_HOST']};dbname={$_ENV['DB_DATABASE']}",
+                    $_ENV['DB_USERNAME'] ?? 'root',
+                    $_ENV['DB_PASSWORD'] ?? '',
+                    [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES => false,
+                    ]
+                );
+
+                $stmt = $pdo->prepare("
+                    INSERT INTO career_applications 
+                    (name, email, phone, position, experience, message, resume_path, status, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                ");
+
+                $stmt->execute([$name, $email, $phone, $position, $experience, $message, $resume_path]);
+
+                // Send email notification
+                $to = 'hr@apsdreamhome.com';
+                $subject = 'New Career Application - ' . $position;
+                $email_body = "
+                    Name: $name\n
+                    Email: $email\n
+                    Phone: $phone\n
+                    Position: $position\n
+                    Experience: $experience\n
+                    Message: $message\n
+                    Resume: " . BASE_URL . $resume_path . "\n
+                ";
+
+                mail($to, $subject, $email_body, "From: $email");
+
+                $_SESSION['success'] = 'Your application has been submitted successfully!';
+                header('Location: ' . BASE_URL . 'careers');
+                exit;
+
+            } catch (Exception $e) {
+                $_SESSION['error'] = 'An error occurred. Please try again.';
+                header('Location: ' . BASE_URL . 'careers/apply');
+                exit;
+            }
+        }
     }
 
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 2577 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

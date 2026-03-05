@@ -23,7 +23,7 @@ if (!isAdmin()) {
 }
 
 // CSRF validation
-$csrf_token = $_GET['csrf_token'] ?? '';
+$csrf_token = Security::sanitize($_GET['csrf_token']) ?? '';
 if (!verifyCSRFToken($csrf_token)) {
     header('Content-Type: application/json');
     echo json_encode([
@@ -41,7 +41,7 @@ $response = [
 ];
 
 // Get chart type from request
-$chartType = isset($_GET['chart']) ? $_GET['chart'] : '';
+$chartType = isset(Security::sanitize($_GET['chart'])) ? Security::sanitize($_GET['chart']) : '';
 
 // Handle different chart types
 switch ($chartType) {

@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -25,34 +28,33 @@ class HomeController extends Controller
         $this->render('home/index', $this->data, 'layouts/base');
     }
     
-    public function properties()
-    {
-        // Load all properties data
-        $this->data = [
-            'title' => 'Properties - APS Dream Home',
-            'description' => 'Browse our extensive collection of premium properties in Gorakhpur, Lucknow, and across Uttar Pradesh',
-            'properties' => $this->loadAllProperties()
-        ];
-
-        // Render the view with data
-        $this->render('properties/index', $this->data, 'layouts/base');
-    }
-    
-    public function projects()
-    {
-        // Load projects data
-        $this->data = [
-            'title' => 'Projects - APS Dream Home',
-            'description' => 'Explore our ongoing and completed residential and commercial projects across Uttar Pradesh',
-            'projects' => $this->loadProjects()
-        ];
-
-        // Render the view with data
-        $this->render('projects/index', $this->data, 'layouts/base');
-    }
-    
     public function contact()
     {
+        // Handle POST request (form submission)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = Security::sanitize($_POST['name']) ?? '';
+            $email = Security::sanitize($_POST['email']) ?? '';
+            $phone = Security::sanitize($_POST['phone']) ?? '';
+            $subject = Security::sanitize($_POST['subject']) ?? '';
+            $message = Security::sanitize($_POST['message']) ?? '';
+
+            // Basic validation
+            if (empty($name) || empty($email) || empty($subject) || empty($message)) {
+                $_SESSION['error'] = 'Please fill in all required fields.';
+            } else {
+                // Here you would typically save to database or send email
+                // For now, we'll just show a success message
+                $_SESSION['success'] = 'Thank you for your message! We will get back to you within 24 hours.';
+                
+                // You could also log the contact request
+                error_log("Contact form submission: Name: $name, Email: $email, Subject: $subject");
+            }
+            
+            // Redirect back to contact page
+            header('Location: /apsdreamhome/public/contact');
+            exit;
+        }
+
         // Load contact data
         $this->data = [
             'title' => 'Contact Us - APS Dream Home',
@@ -79,7 +81,7 @@ class HomeController extends Controller
         
         if (!$property) {
             // Property not found, redirect to properties page
-            header('Location: ' . BASE_URL . '/properties');
+            header('Location: /properties');
             exit;
         }
         
@@ -108,7 +110,7 @@ class HomeController extends Controller
                 'area' => 1500,
                 'type' => 'apartment',
                 'featured' => true,
-                'image_path' => BASE_URL . '/assets/images/property-1.jpg'
+                'image_path' => '/assets/images/property-1.jpg'
             ],
             (object)[
                 'id' => 2,
@@ -121,7 +123,7 @@ class HomeController extends Controller
                 'area' => 2000,
                 'type' => 'villa',
                 'featured' => true,
-                'image_path' => BASE_URL . '/assets/images/property-2.jpg'
+                'image_path' => '/assets/images/property-2.jpg'
             ],
             (object)[
                 'id' => 3,
@@ -134,7 +136,7 @@ class HomeController extends Controller
                 'area' => 1200,
                 'type' => 'commercial',
                 'featured' => false,
-                'image_path' => BASE_URL . '/assets/images/property-3.jpg'
+                'image_path' => '/assets/images/property-3.jpg'
             ]
         ];
     }
@@ -152,7 +154,7 @@ class HomeController extends Controller
                 'bathrooms' => 2,
                 'area' => 1500,
                 'featured' => true,
-                'image_path' => BASE_URL . '/assets/images/property-1.jpg'
+                'image_path' => '/assets/images/property-1.jpg'
             ],
             (object)[
                 'id' => 2,
@@ -164,7 +166,7 @@ class HomeController extends Controller
                 'bathrooms' => 3,
                 'area' => 2000,
                 'featured' => true,
-                'image_path' => BASE_URL . '/assets/images/property-2.jpg'
+                'image_path' => '/assets/images/property-2.jpg'
             ],
             (object)[
                 'id' => 3,
@@ -176,7 +178,7 @@ class HomeController extends Controller
                 'bathrooms' => 2,
                 'area' => 1200,
                 'featured' => false,
-                'image_path' => BASE_URL . '/assets/images/property-3.jpg'
+                'image_path' => '/assets/images/property-3.jpg'
             ],
             (object)[
                 'id' => 4,
@@ -188,7 +190,7 @@ class HomeController extends Controller
                 'bathrooms' => 1,
                 'area' => 950,
                 'featured' => false,
-                'image_path' => BASE_URL . '/assets/images/property-4.jpg'
+                'image_path' => '/assets/images/property-4.jpg'
             ],
             (object)[
                 'id' => 5,
@@ -200,7 +202,7 @@ class HomeController extends Controller
                 'bathrooms' => 2,
                 'area' => 1350,
                 'featured' => false,
-                'image_path' => BASE_URL . '/assets/images/property-5.jpg'
+                'image_path' => '/assets/images/property-5.jpg'
             ]
         ];
     }
@@ -216,7 +218,7 @@ class HomeController extends Controller
                 'status' => 'Ongoing',
                 'completion' => '65%',
                 'description' => 'Luxury residential apartments with modern amenities',
-                'image_path' => BASE_URL . '/assets/images/project-1.jpg'
+                'image_path' => '/assets/images/project-1.jpg'
             ],
             (object)[
                 'id' => 2,
@@ -226,7 +228,7 @@ class HomeController extends Controller
                 'status' => 'Completed',
                 'completion' => '100%',
                 'description' => 'Premium commercial spaces in the heart of Lucknow',
-                'image_path' => BASE_URL . '/assets/images/project-2.jpg'
+                'image_path' => '/assets/images/project-2.jpg'
             ]
         ];
     }
@@ -323,4 +325,214 @@ class HomeController extends Controller
             ]
         ];
     }
+    
+    private function loadOfficeLocations()
+    {
+        return [
+            (object)[
+                'name' => 'Main Office - Gorakhpur',
+                'address' => '1st floor singhariya chauraha, Kunraghat, deoria Road, Gorakhpur, UP - 273008',
+                'phone' => '+91 7007444842',
+                'email' => 'info@apsdreamhome.com',
+                'hours' => 'Mon-Sat: 9:30 AM - 7:00 PM, Sun: 10:00 AM - 5:00 PM'
+            ],
+            (object)[
+                'name' => 'Branch Office - Lucknow',
+                'address' => 'VIP Road, Gomti Nagar, Lucknow, UP - 226010',
+                'phone' => '+91 7007444843',
+                'email' => 'lucknow@apsdreamhome.com',
+                'hours' => 'Mon-Sat: 10:00 AM - 6:00 PM'
+            ]
+        ];
+    }
+
+    /**
+     * About page
+     */
+    public function about()
+    {
+        $this->data = [
+            'page_title' => 'About Us - APS Dream Home',
+            'page_description' => 'Learn about APS Dream Home - Leading real estate developer in Gorakhpur and Lucknow with 8+ years of excellence.',
+            'stats' => $this->loadHeroStats(),
+            'why_choose_us' => $this->loadWhyChooseUs(),
+            'testimonials' => $this->loadTestimonials()
+        ];
+
+        $this->render('pages/about', $this->data, 'layouts/base');
+    }
+
+    /**
+     * Blog page
+     */
+    public function blog()
+    {
+        // Sample blog data
+        $blog_posts = [
+            [
+                'id' => 1,
+                'title' => 'Top 10 Areas to Invest in Gorakhpur 2024',
+                'excerpt' => 'Discover the most promising residential and commercial areas in Gorakhpur for real estate investment this year.',
+                'content' => 'Full content would go here...',
+                'category' => 'investment',
+                'featured_image' => 'assets/images/blog/blog-1.jpg',
+                'created_at' => '2024-01-15',
+                'read_time' => 5
+            ],
+            [
+                'id' => 2,
+                'title' => 'Complete Guide to Home Loans in India',
+                'excerpt' => 'Everything you need to know about getting a home loan, from eligibility to documentation.',
+                'content' => 'Full content would go here...',
+                'category' => 'finance',
+                'featured_image' => 'assets/images/blog/blog-2.jpg',
+                'created_at' => '2024-01-10',
+                'read_time' => 8
+            ],
+            [
+                'id' => 3,
+                'title' => 'Villas vs Apartments: Which is Better?',
+                'excerpt' => 'A comprehensive comparison to help you decide between villas and apartments based on your lifestyle and budget.',
+                'content' => 'Full content would go here...',
+                'category' => 'buying-guide',
+                'featured_image' => 'assets/images/blog/blog-3.jpg',
+                'created_at' => '2024-01-05',
+                'read_time' => 6
+            ]
+        ];
+
+        $categories = [
+            ['category' => 'investment'],
+            ['category' => 'finance'],
+            ['category' => 'buying-guide'],
+            ['category' => 'market-trends']
+        ];
+
+        $this->data = [
+            'page_title' => 'Blog - APS Dream Home',
+            'page_description' => 'Stay updated with latest real estate news, market insights, and property tips from APS Dream Home.',
+            'blog_posts' => $blog_posts,
+            'categories' => $categories
+        ];
+
+        $this->render('pages/blog', $this->data, 'layouts/base');
+    }
+
+    /**
+     * Projects page
+     */
+    public function projects()
+    {
+        $this->data = [
+            'page_title' => 'Our Projects - APS Dream Home',
+            'page_description' => 'Explore our ongoing and completed real estate projects in Gorakhpur and Lucknow.',
+            'projects' => $this->loadProjects()
+        ];
+
+        $this->render('pages/projects', $this->data, 'layouts/base');
+    }
+
+    /**
+     * Career page
+     */
+    public function career()
+    {
+        $this->data = [
+            'page_title' => 'Careers - APS Dream Home',
+            'page_description' => 'Join our team at APS Dream Home. Explore career opportunities in real estate development.'
+        ];
+
+        $this->render('pages/careers', $this->data, 'layouts/base');
+    }
+
+    /**
+     * Gallery page - Redirect to GalleryController
+     */
+    public function gallery()
+    {
+        // Redirect to GalleryController
+        $this->redirect('/gallery');
+    }
+
+    /**
+     * FAQ page
+     */
+    public function faq()
+    {
+        $this->data = [
+            'page_title' => 'FAQ - APS Dream Home',
+            'page_description' => 'Find answers to frequently asked questions about our properties and services.',
+            'categories' => [
+                ['id' => 1, 'name' => 'General', 'slug' => 'general'],
+                ['id' => 2, 'name' => 'Properties', 'slug' => 'properties']
+            ],
+            'faqs' => [
+                [
+                    'id' => 1,
+                    'question' => 'What types of properties do you offer?',
+                    'answer' => 'We offer apartments, villas, and commercial spaces.',
+                    'category_id' => 2
+                ]
+            ]
+        ];
+
+        $this->render('pages/faq', $this->data, 'layouts/base');
+    }
+
+    /**
+     * Team page
+     */
+    public function team()
+    {
+        $this->data = [
+            'page_title' => 'Our Team - APS Dream Home',
+            'page_description' => 'Meet the experienced professionals behind APS Dream Home\'s success.'
+        ];
+
+        $this->render('pages/team', $this->data, 'layouts/base');
+    }
+
+    /**
+     * Testimonials page
+     */
+    public function testimonials()
+    {
+        $this->data = [
+            'page_title' => 'Testimonials - APS Dream Home',
+            'page_description' => 'Read what our satisfied customers say about their experience with APS Dream Home.',
+            'testimonials' => $this->loadTestimonials()
+        ];
+
+        $this->render('pages/testimonials', $this->data, 'layouts/base');
+    }
+
+    /**
+     * Resell page
+     */
+    public function resell()
+    {
+        $this->data = [
+            'page_title' => 'Resell Properties - APS Dream Home',
+            'page_description' => 'Find resale properties and pre-owned homes in prime locations.'
+        ];
+
+        $this->render('pages/resell', $this->data, 'layouts/base');
+    }
 }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 520 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

@@ -605,8 +605,8 @@ class QuantumComputingController extends BaseController
     {
         header('Content-Type: application/json');
 
-        $algorithm = $_POST['algorithm'] ?? '';
-        $problem_size = (int)($_POST['problem_size'] ?? 1000);
+        $algorithm = Security::sanitize($_POST['algorithm']) ?? '';
+        $problem_size = (int)(Security::sanitize($_POST['problem_size']) ?? 1000);
 
         if (empty($algorithm)) {
             sendJsonResponse(['success' => false, 'error' => 'Algorithm selection required'], 400);
@@ -889,9 +889,9 @@ class QuantumComputingController extends BaseController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
-            $investment_amount = (float)($_POST['investment'] ?? 0);
-            $timeframe = (int)($_POST['timeframe'] ?? 5);
-            $application_area = $_POST['application'] ?? 'portfolio_optimization';
+            $investment_amount = (float)(Security::sanitize($_POST['investment']) ?? 0);
+            $timeframe = (int)(Security::sanitize($_POST['timeframe']) ?? 5);
+            $application_area = Security::sanitize($_POST['application']) ?? 'portfolio_optimization';
 
             $roi_data = $this->calculateQuantumROI($investment_amount, $timeframe, $application_area);
 
@@ -1230,3 +1230,21 @@ class QuantumComputingController extends BaseController
         $this->render('quantum/skills_development');
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 1232 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

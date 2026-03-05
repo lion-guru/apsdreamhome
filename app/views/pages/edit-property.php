@@ -34,31 +34,31 @@ if (!$property) {
 }
 
 // Handle form submission
-if (isset($_POST['update_property'])) {
+if (Security::sanitize($_POST['update_property']) !== null) {
     // CSRF Check
-    if (!isset($_POST['csrf_token']) || !CSRFProtection::validateToken($_POST['csrf_token'], 'edit_property')) {
+    if (Security::sanitize($_POST['csrf_token']) === null || !CSRFProtection::validateToken(Security::sanitize($_POST['csrf_token']), 'edit_property')) {
         $error = "Security error: Invalid CSRF token.";
     } else {
         // Collect data
-        $title = $_POST['title'] ?? '';
-        $content = $_POST['content'] ?? '';
-        $ptype = $_POST['ptype'] ?? '';
-        $bhk = $_POST['bhk'] ?? '';
-        $stype = $_POST['stype'] ?? '';
-        $bed = intval($_POST['bed'] ?? 0);
-        $bath = intval($_POST['bath'] ?? 0);
-        $balc = intval($_POST['balc'] ?? 0);
-        $kitc = intval($_POST['kitc'] ?? 0);
-        $hall = intval($_POST['hall'] ?? 0);
-        $floor = $_POST['floor'] ?? '';
-        $asize = $_POST['asize'] ?? '';
-        $price = $_POST['price'] ?? '';
-        $loc = $_POST['loc'] ?? '';
-        $city = $_POST['city'] ?? '';
-        $state = $_POST['state'] ?? '';
-        $feature = $_POST['feature'] ?? '';
-        $status = $_POST['status'] ?? 'available';
-        $totalfloor = $_POST['totalfl'] ?? '';
+        $title = Security::sanitize($_POST['title']) ?? '';
+        $content = Security::sanitize($_POST['content']) ?? '';
+        $ptype = Security::sanitize($_POST['ptype']) ?? '';
+        $bhk = Security::sanitize($_POST['bhk']) ?? '';
+        $stype = Security::sanitize($_POST['stype']) ?? '';
+        $bed = intval(Security::sanitize($_POST['bed']) ?? 0);
+        $bath = intval(Security::sanitize($_POST['bath']) ?? 0);
+        $balc = intval(Security::sanitize($_POST['balc']) ?? 0);
+        $kitc = intval(Security::sanitize($_POST['kitc']) ?? 0);
+        $hall = intval(Security::sanitize($_POST['hall']) ?? 0);
+        $floor = Security::sanitize($_POST['floor']) ?? '';
+        $asize = Security::sanitize($_POST['asize']) ?? '';
+        $price = Security::sanitize($_POST['price']) ?? '';
+        $loc = Security::sanitize($_POST['loc']) ?? '';
+        $city = Security::sanitize($_POST['city']) ?? '';
+        $state = Security::sanitize($_POST['state']) ?? '';
+        $feature = Security::sanitize($_POST['feature']) ?? '';
+        $status = Security::sanitize($_POST['status']) ?? 'available';
+        $totalfloor = Security::sanitize($_POST['totalfl']) ?? '';
 
         // Handle File Uploads (only if new files are provided)
         $upload_dir = __DIR__ . "/../../../public/uploads/property/";

@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * 🔧 LINE 179 ARRAY SYNTAX ERROR FIX
  * Fix array offset syntax error on line 179 in App.php

@@ -229,3 +229,32 @@ class RazorpayGateway implements PaymentGatewayInterface
         return hash_equals($expectedSignature, $signature);
     }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Core\RazorpayGateway.php
+
+function createOrder($order_data)
+    {
+        try {
+            $order_id = 'order_' . uniqid();
+
+            return [
+                'id' => $order_id,
+                'amount' => $order_data['amount'],
+                'currency' => $order_data['currency'],
+                'receipt' => $order_data['receipt'],
+                'status' => 'created',
+                'created_at' => time()
+            ];
+        }
+function refundPayment($payment_id, $amount = null)
+    {
+        try {
+            // In production, this would process refund through Razorpay API
+            return [
+                'success' => true,
+                'refund_id' => 'rfnd_' . uniqid(),
+                'amount' => $amount,
+                'status' => 'processed'
+            ];
+        }

@@ -153,8 +153,8 @@ class BlockchainController extends BaseController
     {
         header('Content-Type: application/json');
 
-        $document_hash = $_POST['document_hash'] ?? '';
-        $property_id = $_POST['property_id'] ?? '';
+        $document_hash = Security::sanitize($_POST['document_hash']) ?? '';
+        $property_id = Security::sanitize($_POST['property_id']) ?? '';
 
         if (empty($document_hash)) {
             sendJsonResponse(['success' => false, 'error' => 'Document hash required'], 400);
@@ -740,8 +740,8 @@ class BlockchainController extends BaseController
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $new_owner_address = $_POST['new_owner_address'] ?? '';
-            $transfer_reason = $_POST['transfer_reason'] ?? '';
+            $new_owner_address = Security::sanitize($_POST['new_owner_address']) ?? '';
+            $transfer_reason = Security::sanitize($_POST['transfer_reason']) ?? '';
 
             if (empty($new_owner_address)) {
                 $this->setFlash('error', 'New owner blockchain address required');
@@ -998,8 +998,8 @@ class BlockchainController extends BaseController
     {
         header('Content-Type: application/json');
 
-        $property_id = $_POST['property_id'] ?? '';
-        $document_hashes = json_decode($_POST['document_hashes'] ?? '[]', true);
+        $property_id = Security::sanitize($_POST['property_id']) ?? '';
+        $document_hashes = json_decode(Security::sanitize($_POST['document_hashes']) ?? '[]', true);
 
         if (empty($property_id) || empty($document_hashes)) {
             sendJsonResponse(['success' => false, 'error' => 'Property ID and document hashes required'], 400);
@@ -1051,7 +1051,7 @@ class BlockchainController extends BaseController
         $property = $this->getPropertyDetails($property_id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $signature_data = $_POST['signature'] ?? '';
+            $signature_data = Security::sanitize($_POST['signature']) ?? '';
 
             if (empty($signature_data)) {
                 $this->setFlash('error', 'Digital signature required');
@@ -1165,3 +1165,21 @@ class BlockchainController extends BaseController
         ];
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 1167 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

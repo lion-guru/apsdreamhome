@@ -6,7 +6,7 @@
 require_once __DIR__ . '/app/core/autoload.php';
 
 // Get news ID from URL
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$id = Security::sanitize($_GET['id']) !== null ? intval(Security::sanitize($_GET['id'])) : 0;
 
 if ($id > 0) {
     // Redirect to the new clean URL structure

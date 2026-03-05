@@ -7,8 +7,8 @@ if (!isset($_SESSION['associate_id'])) {
     exit();
 }
 
-if (isset($_GET['customer_id'])) {
-    $customer_id = $_GET['customer_id'];
+if (isset(Security::sanitize($_GET['customer_id']))) {
+    $customer_id = Security::sanitize($_GET['customer_id']);
 
     // Fetch customer details
     $stmt = $conn->prepare("SELECT c.customer_name, c.customer_email, c.customer_phone, c.customer_address, c.customer_city, c.customer_state, c.customer_zip, b.booking_id, b.total_amount, b.paid_amount, b.remaining_amount FROM customers c JOIN bookings b ON c.customer_id = b.customer_id WHERE c.customer_id = ?");

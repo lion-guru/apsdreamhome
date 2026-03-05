@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 /**
  * Property Booking/Sale Form with MLM Commission Integration
  * This form handles property sales and automatically distributes MLM commissions
@@ -31,10 +34,10 @@ if (!$property) {
 }
 
 // Process form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_booking'])) {
-    $sale_amount = floatval($_POST['sale_amount']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::sanitize($_POST['submit_booking']) !== null) {
+    $sale_amount = floatval(Security::sanitize($_POST['sale_amount']));
     $buyer_id = $_SESSION['user_id'];
-    $agent_id = isset($_POST['agent_id']) ? (int)$_POST['agent_id'] : null;
+    $agent_id = Security::sanitize($_POST['agent_id']) !== null ? (int)Security::sanitize($_POST['agent_id']) : null;
 
     // Process the sale with MLM commissions
     $result = processPropertySaleMLMCommissions($property_id, $buyer_id, $sale_amount, $agent_id);

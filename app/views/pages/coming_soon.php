@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+PE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

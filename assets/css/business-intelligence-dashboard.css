@@ -1,0 +1,414 @@
+/* Business Intelligence Dashboard Styles */
+.bi-dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem 0;
+}
+
+.bi-metric-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.bi-metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.bi-metric-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.bi-metric-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bi-growth-positive {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.bi-growth-negative {
+  color: #dc3545;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.bi-chart-container {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.bi-activity-feed {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.bi-activity-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bi-activity-item:last-child {
+  border-bottom: none;
+}
+
+.bi-activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.2rem;
+}
+
+.bi-activity-content {
+  flex: 1;
+}
+
+.bi-activity-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.bi-activity-time {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.bi-progress-ring {
+  width: 120px;
+  height: 120px;
+  position: relative;
+}
+
+.bi-progress-ring-circle {
+  transform: rotate(-90deg);
+}
+
+.bi-progress-ring-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.bi-revenue-card {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.bi-revenue-amount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.bi-revenue-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.bi-target-progress {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bi-progress-bar {
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bi-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.bi-target-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.bi-conversion-funnel {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.bi-funnel-stage {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.bi-funnel-stage:nth-child(1) {
+  background: #e3f2fd;
+}
+
+.bi-funnel-stage:nth-child(2) {
+  background: #bbdefb;
+}
+
+.bi-funnel-stage:nth-child(3) {
+  background: #90caf9;
+}
+
+.bi-funnel-stage:nth-child(4) {
+  background: #4caf50;
+}
+
+.bi-funnel-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.bi-funnel-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.bi-performance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.bi-kpi-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  text-align: center;
+}
+
+.bi-kpi-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+}
+
+.bi-kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.bi-kpi-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bi-kpi-change {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.bi-kpi-change.positive {
+  color: #28a745;
+}
+
+.bi-kpi-change.negative {
+  color: #dc3545;
+}
+
+.bi-alert-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  border-left: 4px solid #ffc107;
+}
+
+.bi-alert-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.bi-alert-icon {
+  font-size: 1.5rem;
+  color: #ffc107;
+  margin-right: 1rem;
+}
+
+.bi-alert-title {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.bi-alert-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bi-alert-item:last-child {
+  border-bottom: none;
+}
+
+.bi-alert-text {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .bi-dashboard-header {
+    padding: 1rem 0;
+  }
+
+  .bi-metric-card {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .bi-metric-value {
+    font-size: 2rem;
+  }
+
+  .bi-performance-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .bi-chart-container {
+    padding: 1rem;
+  }
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bi-metric-card,
+.bi-chart-container,
+.bi-activity-feed,
+.bi-conversion-funnel,
+.bi-kpi-card,
+.bi-alert-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Icon styling */
+.bi-currency-dollar {
+  color: #00cc66 !important;
+  font-size: 2rem !important;
+}
+
+.bi-people {
+  color: #0066cc !important;
+  font-size: 2rem !important;
+}
+
+.bi-graph-up {
+  color: #28a745 !important;
+  font-size: 2rem !important;
+}
+
+.bi-cart3 {
+  color: #ff6b6b !important;
+  font-size: 2rem !important;
+}
+
+.bi-house-door {
+  color: #17a2b8 !important;
+  font-size: 2rem !important;
+}
+
+.bi-person-check {
+  color: #20c997 !important;
+  font-size: 2rem !important;
+}
+
+.bi-satisfaction-icon {
+  color: #9966ff !important;
+  font-size: 2rem !important;
+}
+
+.bi-trend-icon {
+  color: #ff9800 !important;
+  font-size: 2rem !important;
+}
+
+.bi-building-icon {
+  color: #00bcd4 !important;
+  font-size: 2rem !important;
+}
+
+.bi-success-icon {
+  color: #4caf50 !important;
+  font-size: 2rem !important;
+}
+
+/* Progress bar utility classes */
+.progress-6h {
+  height: 6px !important;
+}
+
+.progress-97 {
+  width: 97% !important;
+}
+
+.progress-89 {
+  width: 89% !important;
+}
+
+.progress-76 {
+  width: 76% !important;
+}
+
+.progress-45 {
+  width: 45% !important;
+}

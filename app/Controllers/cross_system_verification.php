@@ -1,5 +1,8 @@
 <?php
-/**
+
+// TODO: Add proper error handling with try-catch blocks
+
+**
  * Cross-System Verification and Final Summary
  * Compares Admin and Co-Worker system testing results
  */

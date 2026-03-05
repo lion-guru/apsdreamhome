@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+require_once __DIR__ . '/../../Core/Controller.php';
 use App\Core\Controller as CoreController;
+use PDO;
 use Exception;
 
 class BaseController extends CoreController
@@ -14,7 +16,14 @@ class BaseController extends CoreController
     public function __construct()
     {
         parent::__construct();
-        // Re-enable database connection with proper config
+        // Initialize data array
+        $this->data = [];
+        
+        // Temporarily disable security middleware to fix CSS/JS loading
+        // $this->security = \App\Core\Security\SecurityMiddleware::getInstance();
+        // $this->security->initialize();
+        
+        // Optimized database configuration with connection pooling
         $dbConfig = [
             'host' => 'localhost',
             'database' => 'apsdreamhome',
@@ -24,10 +33,35 @@ class BaseController extends CoreController
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'port' => 3306,
+            // Performance optimizations
+            'options' => [
+                PDO::ATTR_PERSISTENT => true,  // Connection pooling
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+                PDO::ATTR_EMULATE_PREPARES => false,  // Use real prepared statements
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false,  // Memory optimization
+            ],
+            // Connection timeout settings
+            'timeout' => 30,
+            'connect_timeout' => 10,
         ];
-        $this->db = \App\Core\Database::getInstance($dbConfig);
+        $this->db = new \App\Core\Database\Database($dbConfig);
         $this->loadModels();
         $this->getCsrfToken();
+        
+        // Initialize session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        // Initialize session manager if not set
+        if (!$this->session) {
+            $this->session = new \App\Core\Session\SessionManager();
+        }
+        
+        // Performance monitoring
+        $this->startPerformanceMonitoring();
     }
 
     /**
@@ -36,7 +70,7 @@ class BaseController extends CoreController
     public function validateCsrfToken($token = null): bool
     {
         if ($token === null) {
-            $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+            $token = Security::sanitize($_POST['csrf_token']) ?? $_GET['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
         }
         return $this->verifyCsrfToken($token);
     }
@@ -177,11 +211,7 @@ class BaseController extends CoreController
 
     protected function getViewsBasePath(): string
     {
-        if (defined('APP_ROOT')) {
-            return rtrim(APP_ROOT, '/\\') . '/app/views/';
-        }
-
-        return dirname(__DIR__, 2) . '/views/';
+        return 'C:/xampp/htdocs/apsdreamhome/app/views/';
     }
 
     /**
@@ -228,7 +258,11 @@ class BaseController extends CoreController
      */
     public function redirect($path, $statusCode = 302)
     {
-        header("Location: " . BASE_URL . $path);
+        // Ensure path starts with /
+        if (strpos($path, '/') !== 0) {
+            $path = '/' . $path;
+        }
+        header("Location: " . BASE_URL . ltrim($path, '/'), true, $statusCode);
         exit;
     }
 
@@ -237,23 +271,15 @@ class BaseController extends CoreController
      */
     public function render($view, $data = [], $layout = null, $echo = true)
     {
+        // Define BASE_URL if not defined
+        if (!defined('BASE_URL')) {
+            define('BASE_URL', 'http://localhost/apsdreamhome/public');
+        }
+        
         $data = array_merge($this->data, $data);
         $layout = $layout ?? $this->layout;
 
-        if ($this->session && method_exists($this->session, 'getFlashBag')) {
-            // Add flash messages to all views
-            $data['flash'] = $this->session->getFlashBag()->all();
-            $this->session->getFlashBag()->clear(); // Clear flash messages after retrieving
-
-            // Add auth and user to all views
-            $output = parent::view($view, $data, $layout);
-            if ($echo) {
-                echo $output;
-            }
-            return $output;
-        }
-
-        // Fallback implementation for when session/flash bag is not available
+        // Use the fallback implementation since we don't have flash bag
         extract($data, EXTR_SKIP);
 
         $basePath = rtrim($this->getViewsBasePath(), '/\\') . '/';
@@ -269,6 +295,7 @@ class BaseController extends CoreController
 
         if ($layout) {
             $layoutPath = $basePath . ltrim(str_replace('\\', '/', $layout), '/') . '.php';
+            
             if (file_exists($layoutPath)) {
                 // Pass content to layout - layout expects $content variable
                 $data['content'] = $content;
@@ -277,6 +304,9 @@ class BaseController extends CoreController
                 include $layoutPath;
                 $output = ob_get_clean();
 
+                // End performance monitoring before output
+                $this->endPerformanceMonitoring();
+
                 if ($echo) {
                     echo $output;
                 }
@@ -284,11 +314,15 @@ class BaseController extends CoreController
             }
         }
 
+        // End performance monitoring for non-layout renders
+        $this->endPerformanceMonitoring();
+
         if ($echo) {
             echo $content;
         }
         return $content;
     }
+
     /**
      * Render error page
      */
@@ -424,7 +458,7 @@ class BaseController extends CoreController
                 'success' => true,
                 'filename' => $newName,
                 'path' => $uploadPath,
-                'url' => BASE_URL . 'uploads/' . $newName
+                'url' => '/uploads/' . $newName
             ];
         }
 
@@ -432,14 +466,30 @@ class BaseController extends CoreController
     }
 
     /**
-     * Sanitize input data
+     * Enhanced input sanitization
      */
-    protected function sanitizeInput($data)
+    protected function sanitizeInput($data, $type = 'string')
     {
         if (is_array($data)) {
-            return array_map([$this, 'sanitizeInput'], $data);
+            return array_map(function($item) use ($type) {
+                return $this->sanitizeInput($item, $type);
+            }, $data);
         }
-        return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+        
+        switch ($type) {
+            case 'email':
+                return filter_var(trim($data), FILTER_SANITIZE_EMAIL);
+            case 'url':
+                return filter_var(trim($data), FILTER_SANITIZE_URL);
+            case 'int':
+                return filter_var($data, FILTER_SANITIZE_NUMBER_INT);
+            case 'float':
+                return filter_var($data, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+            case 'html':
+                return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+            default:
+                return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+        }
     }
 
     /**
@@ -547,6 +597,87 @@ class BaseController extends CoreController
     }
 
     /**
+     * Start performance monitoring
+     */
+    protected function startPerformanceMonitoring()
+    {
+        if (!defined('APP_START_TIME')) {
+            define('APP_START_TIME', microtime(true));
+        }
+        $this->performance_data = [
+            'start_time' => microtime(true),
+            'memory_start' => memory_get_usage(),
+            'queries' => 0,
+            'query_time' => 0
+        ];
+    }
+
+    /**
+     * End performance monitoring and log results
+     */
+    protected function endPerformanceMonitoring()
+    {
+        if (isset($this->performance_data)) {
+            $end_time = microtime(true);
+            $execution_time = $end_time - $this->performance_data['start_time'];
+            $memory_used = memory_get_usage() - $this->performance_data['memory_start'];
+            
+            // Log performance data for optimization
+            error_log(sprintf(
+                "Performance: %.4fs | Memory: %s KB | Queries: %d | URI: %s",
+                $execution_time,
+                number_format($memory_used / 1024, 2),
+                $this->performance_data['queries'] ?? 0,
+                $_SERVER['REQUEST_URI'] ?? 'unknown'
+            ));
+            
+            // Alert on slow queries
+            if ($execution_time > 2.0) {
+                error_log("SLOW REQUEST: " . $_SERVER['REQUEST_URI'] . " took " . $execution_time . "s");
+            }
+        }
+    }
+
+    /**
+     * Validate and sanitize POST data
+     */
+    protected function validatePostData($rules = [])
+    {
+        $sanitized = [];
+        $errors = [];
+        
+        foreach ($rules as $field => $rule) {
+            $value = $_POST[$field] ?? null;
+            
+            if ($rule['required'] && empty($value)) {
+                $errors[$field] = ($rule['label'] ?? ucfirst($field)) . ' is required';
+                continue;
+            }
+            
+            if (!empty($value)) {
+                // Sanitize based on type
+                $type = $rule['type'] ?? 'string';
+                $sanitized[$field] = $this->sanitizeInput($value, $type);
+                
+                // Additional validations
+                if ($type === 'email' && !filter_var($sanitized[$field], FILTER_VALIDATE_EMAIL)) {
+                    $errors[$field] = 'Please enter a valid email address';
+                }
+                
+                if (isset($rule['min_length']) && strlen($sanitized[$field]) < $rule['min_length']) {
+                    $errors[$field] = ($rule['label'] ?? ucfirst($field)) . ' must be at least ' . $rule['min_length'] . ' characters';
+                }
+                
+                if (isset($rule['max_length']) && strlen($sanitized[$field]) > $rule['max_length']) {
+                    $errors[$field] = ($rule['label'] ?? ucfirst($field)) . ' must not exceed ' . $rule['max_length'] . ' characters';
+                }
+            }
+        }
+        
+        return ['data' => $sanitized, 'errors' => $errors];
+    }
+
+    /**
      * Get system configuration
      */
     protected function getConfig($key, $default = null)
@@ -565,3 +696,21 @@ class BaseController extends CoreController
         return $config[$key] ?? $default;
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 698 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

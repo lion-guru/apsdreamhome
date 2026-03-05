@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 /**
  * Employee Leaves View
  * Shows employee leave records and allows leave applications

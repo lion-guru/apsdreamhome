@@ -225,3 +225,18 @@ class Admin extends Model
         return $analytics;
     }
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\Admin.php
+
+class calls to the modern Model.
+ */
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+use App\Models\Admin as ModernAdmin;
+
+class Admin extends ModernAdmin {
+    // This class now inherits from the modern Model
+    // and can be used as a drop-in replacement.
+}

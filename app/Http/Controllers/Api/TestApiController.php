@@ -176,4 +176,16 @@ class TestApiController extends Controller
             'reset_time' => $_SERVER['RATE_LIMIT_RESET'] ?? 'unknown'
         ]);
     }
+
+    public function downloadFile()
+    {
+        $filePath = ROOT . '/public/test-download.pdf';
+        return Response::download($filePath, 'test-document.pdf');
+    }
+
+    public function viewFile()
+    {
+        $filePath = ROOT . '/public/test-download.pdf';
+        return Response::file($filePath, 'test-document.pdf');
+    }
 }

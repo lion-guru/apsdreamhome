@@ -25,16 +25,16 @@ $associate_name = $_SESSION['associate_name'];
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['create_plan'])) {
+    if (isset(Security::sanitize($_POST['create_plan']))) {
         createCommissionPlan($_POST);
-    } elseif (isset($_POST['update_plan'])) {
+    } elseif (isset(Security::sanitize($_POST['update_plan']))) {
         updateCommissionPlan($_POST);
-    } elseif (isset($_POST['activate_plan'])) {
-        activatePlan($_POST['plan_id']);
-    } elseif (isset($_POST['deactivate_plan'])) {
-        deactivatePlan($_POST['plan_id']);
-    } elseif (isset($_POST['delete_plan'])) {
-        deletePlan($_POST['plan_id']);
+    } elseif (isset(Security::sanitize($_POST['activate_plan']))) {
+        activatePlan(Security::sanitize($_POST['plan_id']));
+    } elseif (isset(Security::sanitize($_POST['deactivate_plan']))) {
+        deactivatePlan(Security::sanitize($_POST['plan_id']));
+    } elseif (isset(Security::sanitize($_POST['delete_plan']))) {
+        deletePlan(Security::sanitize($_POST['plan_id']));
     }
 }
 
@@ -754,3 +754,21 @@ function deletePlan($plan_id) {
     </script>
 </body>
 </html>
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 756 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

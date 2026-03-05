@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 namespace App\Core\Database;
 
 use App\Core\App;
@@ -182,7 +185,7 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     protected static function getDatabase()
     {
         if (!static::$db) {
-            static::$db = App::getInstance()->database();
+            static::$db = App::getInstance()->db();
         }
 
         return static::$db;
@@ -603,7 +606,7 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
         $model = static::find($id, $columns);
 
         if (!$model) {
-            throw new \RuntimeException("No query results for model [" . static::class . "]");
+            throw new RuntimeException("No query results for model [" . static::class . "]");
         }
 
         return $model;
@@ -701,7 +704,7 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     /**
      * Determine if the given attribute exists.
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return !is_null($this->getAttribute($offset));
     }
@@ -709,7 +712,7 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     /**
      * Get the value for a given offset.
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->getAttribute($offset);
     }
@@ -717,7 +720,7 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     /**
      * Set the value for a given offset.
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->setAttribute($offset, $value);
     }
@@ -725,7 +728,7 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     /**
      * Unset the value for a given offset.
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset]);
     }
@@ -909,4 +912,74 @@ abstract class Model implements \ArrayAccess, \JsonSerializable
     {
         return $this->registerGlobalScopes($this->newQueryWithoutScopes());
     }
+    protected $db;
+    public function getHidden
+    public function usesTimestamps
+    protected function setTimestamps
+    protected function updateTimestamps
+    public function freshTimestamp
+    protected function getTimestamps
+    protected function addWhere
+    protected function addArrayOfWheres
+    public function orderBy
+    public function limit
 }
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Core\Model.php
+
+function create(array $attributes)
+    {
+        $model = new static($attributes);
+        $model->save();
+        return $model;
+    }
+function where($column, $operator = null, $value = null, $boolean = 'AND')
+    {
+        // Handle dynamic where clauses (when operator is the value and operator defaults to '=')
+        if ($operator !== null && $value === null && func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+function first()
+    {
+        $sql = sprintf('SELECT * FROM %s', static::getTableName());
+        $params = [];
+
+        if (!empty($this->wheres)) {
+            $whereClause = [];
+
+            foreach ($this->wheres as $where) {
+                $whereClause[] = sprintf('%s %s ?', $where['column'], $where['operator']);
+                $params[] = $where['value'];
+            }
+class name to snake_case and pluralize
+        $className = (new \ReflectionClass(static::class))->getShortName();
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $className)) . 's';
+    }
+
+    /**
+     * Fill the model with an array of attributes
+     */
+    public function fill(array $attributes): self
+    {
+        foreach ($this->fillableFromArray($attributes) as $key => $value) {
+            $this->setAttribute($key, $value);
+        }
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 967 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

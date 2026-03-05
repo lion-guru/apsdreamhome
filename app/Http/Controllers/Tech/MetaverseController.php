@@ -226,8 +226,8 @@ class MetaverseController extends BaseController
             sendJsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
         }
 
-        $space_id = $_POST['space_id'] ?? '';
-        $user_avatar = $_POST['avatar'] ?? 'default';
+        $space_id = Security::sanitize($_POST['space_id']) ?? '';
+        $user_avatar = Security::sanitize($_POST['avatar']) ?? 'default';
 
         if (empty($space_id)) {
             sendJsonResponse(['success' => false, 'error' => 'Space ID required'], 400);
@@ -817,11 +817,11 @@ class MetaverseController extends BaseController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $space_data = [
-                'name' => $_POST['name'] ?? '',
-                'description' => $_POST['description'] ?? '',
-                'max_participants' => $_POST['max_participants'] ?? 10,
-                'environment' => $_POST['environment'] ?? 'modern_office',
-                'is_public' => isset($_POST['is_public']) ? 1 : 0
+                'name' => Security::sanitize($_POST['name']) ?? '',
+                'description' => Security::sanitize($_POST['description']) ?? '',
+                'max_participants' => Security::sanitize($_POST['max_participants']) ?? 10,
+                'environment' => Security::sanitize($_POST['environment']) ?? 'modern_office',
+                'is_public' => isset(Security::sanitize($_POST['is_public'])) ? 1 : 0
             ];
 
             if (empty($space_data['name'])) {
@@ -1192,3 +1192,21 @@ class MetaverseController extends BaseController
         ];
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 1194 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//

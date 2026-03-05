@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Add proper error handling with try-catch blocks
+
+
 namespace App\Services\Property;
 
 use App\Core\Database;

@@ -6,7 +6,7 @@
 require_once __DIR__ . '/app/core/autoload.php';
 
 // Get property ID from URL
-$pid = isset($_GET['pid']) ? intval($_GET['pid']) : (isset($_GET['id']) ? intval($_GET['id']) : 0);
+$pid = Security::sanitize($_GET['pid']) !== null ? intval(Security::sanitize($_GET['pid'])) : (Security::sanitize($_GET['id']) !== null ? intval(Security::sanitize($_GET['id'])) : 0);
 
 if ($pid > 0) {
     // Redirect to the new clean URL structure

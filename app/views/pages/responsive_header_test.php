@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Add proper error handling with try-catch blocks
+
 // Responsive Header Test Page for APS Dream Home
 $page_title = 'Responsive Header Test - APS Dream Home';
 $page_description = 'Testing responsive design across all screen sizes';

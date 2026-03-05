@@ -1,4 +1,8 @@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.css">
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+el="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosado/drawflow/dist/drawflow.min.css">
 <style>
     #workflowCanvas {
         background-color: #f0f2f5;

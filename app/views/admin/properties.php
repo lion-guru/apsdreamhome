@@ -1,4 +1,8 @@
-@extends('layouts.admin')
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+s('layouts.admin')
 @section('title', $title ?? 'Properties Management - APS Dream Home')
 @section('content')
 
@@ -23,34 +27,34 @@
                     <form method="GET" class="row g-3">
                         <div class="col-md-3">
                             <label class="form-label">Search</label>
-                            <input type="text" name="search" class="form-control" placeholder="Search properties..." value="{{ $_GET['search'] ?? '' }}">
+                            <input type="text" name="search" class="form-control" placeholder="Search properties..." value="{{ Security::sanitize($_GET['search']) ?? '' }}">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Type</label>
                             <select name="type" class="form-select">
                                 <option value="">All Types</option>
-                                <option value="apartment" {{ ($_GET['type'] ?? '') == 'apartment' ? 'selected' : '' }}>Apartments</option>
-                                <option value="villa" {{ ($_GET['type'] ?? '') == 'villa' ? 'selected' : '' }}>Villas</option>
-                                <option value="commercial" {{ ($_GET['type'] ?? '') == 'commercial' ? 'selected' : '' }}>Commercial</option>
-                                <option value="plots" {{ ($_GET['type'] ?? '') == 'plots' ? 'selected' : '' }}>Plots</option>
+                                <option value="apartment" {{ (Security::sanitize($_GET['type']) ?? '') == 'apartment' ? 'selected' : '' }}>Apartments</option>
+                                <option value="villa" {{ (Security::sanitize($_GET['type']) ?? '') == 'villa' ? 'selected' : '' }}>Villas</option>
+                                <option value="commercial" {{ (Security::sanitize($_GET['type']) ?? '') == 'commercial' ? 'selected' : '' }}>Commercial</option>
+                                <option value="plots" {{ (Security::sanitize($_GET['type']) ?? '') == 'plots' ? 'selected' : '' }}>Plots</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="active" {{ ($_GET['status'] ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="pending" {{ ($_GET['status'] ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="sold" {{ ($_GET['status'] ?? '') == 'sold' ? 'selected' : '' }}>Sold</option>
-                                <option value="inactive" {{ ($_GET['status'] ?? '') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                <option value="active" {{ (Security::sanitize($_GET['status']) ?? '') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="pending" {{ (Security::sanitize($_GET['status']) ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="sold" {{ (Security::sanitize($_GET['status']) ?? '') == 'sold' ? 'selected' : '' }}>Sold</option>
+                                <option value="inactive" {{ (Security::sanitize($_GET['status']) ?? '') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Featured</label>
                             <select name="featured" class="form-select">
                                 <option value="">All</option>
-                                <option value="1" {{ ($_GET['featured'] ?? '') == '1' ? 'selected' : '' }}>Featured</option>
-                                <option value="0" {{ ($_GET['featured'] ?? '') == '0' ? 'selected' : '' }}>Not Featured</option>
+                                <option value="1" {{ (Security::sanitize($_GET['featured']) ?? '') == '1' ? 'selected' : '' }}>Featured</option>
+                                <option value="0" {{ (Security::sanitize($_GET['featured']) ?? '') == '0' ? 'selected' : '' }}>Not Featured</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -209,3 +213,14 @@ function confirmDelete(propertyId) {
 </script>
 
 @endsection
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\customers\properties.php
+
+function toggleFavorite(propertyId) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/customer/toggle-favorite/' + propertyId;
+    document.body.appendChild(form);
+    form.submit();
+}

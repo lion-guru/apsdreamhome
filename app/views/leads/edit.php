@@ -1,4 +1,8 @@
-<?php require_once 'app/views/layouts/header.php'; ?>
+<?php
+
+// TODO: Add proper error handling with try-catch blocks
+
+equire_once 'app/views/layouts/header.php'; ?>
 
 <div class="container-fluid mt-4">
     <!-- Breadcrumb -->
@@ -341,3 +345,19 @@ function deleteLead() {
 </style>
 
 <?php require_once 'app/views/layouts/footer.php'; ?>
+
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\admin\leads\edit.php
+
+function confirmDelete() {
+        fetch('/admin/leads/delete/<?= $lead['id'] ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+
+// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\farmers\edit.php
+
+function deleteFarmer(id) {
+    $('#deleteModal').modal('show');
+}
