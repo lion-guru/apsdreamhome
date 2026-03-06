@@ -670,3 +670,23 @@ Stack trace:
 [06-Mar-2026 13:58:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
 [06-Mar-2026 13:58:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
 [06-Mar-2026 13:58:58 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/about
+[06-Mar-2026 14:06:22 Europe/Berlin] Loading controller: App\Http\Controllers\Public\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Public/PageController.php
+[06-Mar-2026 14:06:22 Europe/Berlin] DEBUG: About method called in PageController
+[06-Mar-2026 14:06:22 Europe/Berlin] Performance: 0.1021s | Memory: 150.57 KB | Queries: 0 | URI: /apsdreamhome/public/about
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/img/logo.png
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/team/amit.jpg
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/team/rahul.jpg
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/team/priya.jpg
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[06-Mar-2026 14:06:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
