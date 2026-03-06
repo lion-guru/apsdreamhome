@@ -1,6 +1,6 @@
 <?php
 /**
- * APS Dream Home - Unified Key Manager
+ * APS Dream Home - API Key Manager
  * Integrates MCP keys with existing API key system
  */
 namespace App\Services;
@@ -8,7 +8,7 @@ namespace App\Services;
 use PDO;
 use PDOException;
 
-class UnifiedKeyManager {
+class ApiKeyManager {
     private $pdo;
     private static $instance = null;
     
