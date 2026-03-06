@@ -4,10 +4,11 @@
     # Specific redirect for publiccontact to contact page
     RewriteRule ^publiccontact$ /apsdreamhome/public/contact [R=301,L]
     
-    # Redirect to public folder
+    # Redirect to public folder, but allow access to public assets
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ public/index.php [L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/index.php?url=$1 [L,QSA]
 </IfModule>
 
 # Security headers

@@ -33,5 +33,6 @@ require_once ROOT_PATH . '/routes/web.php';
 require_once ROOT_PATH . '/routes/api.php';
 
 // Dispatch router
-$router->dispatch();
+$uri = $_GET['url'] ?? $_SERVER['REQUEST_URI'] ?? '/';
+$router->dispatch($uri);
 ?>
