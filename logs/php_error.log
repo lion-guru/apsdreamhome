@@ -1,1 +1,11 @@
 
+[06-Mar-2026 12:30:07 Europe/Berlin] PHP Warning:  Undefined variable $router in C:\xampp\htdocs\apsdreamhome\routes\web.php on line 5
+[06-Mar-2026 12:30:07 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to a member function get() on null in C:\xampp\htdocs\apsdreamhome\routes\web.php:5
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\public\index.php(48): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\routes\web.php on line 5
+[06-Mar-2026 12:30:49 Europe/Berlin] PROPERTIES DEBUG: Adding properties route
+[06-Mar-2026 12:30:54 Europe/Berlin] PROPERTIES DEBUG: Adding properties route
+[06-Mar-2026 12:31:09 Europe/Berlin] PROPERTIES DEBUG: Adding properties route
+[06-Mar-2026 12:31:13 Europe/Berlin] PROPERTIES DEBUG: Adding properties route

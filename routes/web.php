@@ -1,11 +1,11 @@
 <?php
 // Web Routes - APS Dream Home
 
-// Simple test route
-$router->get('/test', function() {
-    echo "Route working!";
-    exit;
-});
+// Include router
+require_once __DIR__ . '/router.php';
+
+// Initialize router
+$router = new Router();
 
 // Property routes - CRITICAL
 error_log("PROPERTIES DEBUG: Adding properties route");
