@@ -21,7 +21,7 @@ require_once CONFIG_PATH . '/app.php';
 session_start();
 
 // Load custom router (working system)
-require_once ROOT_PATH . '/routes/index.php';
+require_once ROOT_PATH . '/routes/router.php';
 
 // Create router instance
 $router = new Router();
