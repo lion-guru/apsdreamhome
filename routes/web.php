@@ -7,8 +7,7 @@ require_once __DIR__ . '/router.php';
 // Initialize router
 $router = new Router();
 
-// Property routes - CRITICAL
-error_log("PROPERTIES DEBUG: Adding properties route");
+// Property routes
 $router->get('/properties', 'Property\PropertyController@index');
 $router->get('/properties/{id}', 'Property\PropertyController@show');
 
@@ -17,11 +16,7 @@ $router->get('/', 'HomeController@index');
 $router->get('/mlm-dashboard', 'MLMController@dashboard');
 $router->get('/monitoring', 'MonitoringController@dashboard');
 $router->get('/ai-valuation', 'AIValuationController@index');
-// General routes
-$router->get('/', 'HomeController@index');
-$router->get('/mlm-dashboard', 'MLMController@dashboard');
-$router->get('/monitoring', 'MonitoringController@dashboard');
-$router->get('/ai-valuation', 'AIValuationController@index');
+
 // General pages
 $router->get('/about', 'Public\PageController@about');
 $router->get('/contact', 'Public\PageController@contact');
@@ -36,12 +31,19 @@ $router->get('/blog/{slug}', 'Public\PageController@blogPost');
 $router->get('/faq', 'Public\PageController@faq');
 $router->get('/team', 'Public\PageController@team');
 $router->get('/testimonials', 'Public\PageController@testimonials');
-$router->get('/blog/{slug}', 'BlogController@show');
+
+// Blog routes
 $router->get('/blog/category/{category}', 'BlogController@category');
+
+// Gallery routes
 $router->get('/gallery', 'GalleryController@index');
 $router->get('/gallery/project/{projectId}', 'GalleryController@project');
+
+// Project routes
 $router->get('/projects', 'ProjectController@index');
 $router->get('/projects/{id}', 'ProjectController@detail');
+
+// Resell routes
 $router->get('/resell', 'ResellController@index');
 
 // Authentication routes
@@ -73,8 +75,6 @@ $router->get('/admin/dashboard', 'AdminController@dashboard');
 
 // Agent routes
 $router->get('/agents/dashboard', 'AgentController@dashboard');
-$router->get('/associate/login', 'AgentController@login');
-$router->post('/associate/login', 'AgentController@authenticate');
 $router->post('/dashboard/favorites/add', 'DashboardController@addFavorite');
 $router->post('/dashboard/favorites/remove', 'DashboardController@removeFavorite');
 $router->get('/dashboard/inquiries', 'DashboardController@inquiries');
@@ -104,6 +104,8 @@ $router->get('/map', 'MapController@index');
 $router->get('/map/properties-data', 'MapController@getPropertiesData');
 $router->get('/map/search-bounds', 'MapController@searchByBounds');
 $router->get('/map/location-suggestions', 'MapController@getLocationSuggestions');
+
+// MCP routes
 $router->get('/mcp_dashboard', 'MCPController@dashboard');
 $router->get('/mcp_configuration_gui', 'MCPController@configuration');
 $router->get('/import_mcp_config', 'MCPController@import');

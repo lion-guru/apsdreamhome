@@ -38,6 +38,8 @@ class Router {
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         
+        error_log("ROUTER DEBUG: Method: $method, URI: $uri");
+        
         // Remove base path - handle both /apsdreamhome and /apsdreamhome/public
         $basePath = '/apsdreamhome';
         $publicPath = '/apsdreamhome/public';
