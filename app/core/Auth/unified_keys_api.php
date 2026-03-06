@@ -4,23 +4,12 @@
  * Handles CRUD operations for both MCP and User API keys
  */
 
-require_once "../config/UnifiedKeyManager.php";
+require_once "../Core/Unified/base.php";
 
 header("Content-Type: application/json");
 
-// Database connection
-$host = "localhost";
-$user = "root";
-$password = "";
-$database = "apsdreamhome";
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$database", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(["success" => false, "message" => "Database connection failed"]);
-    exit;
-}
+// Use unified database connection
+$pdo = aps_db();
 
 $keyManager = \App\Services\UnifiedKeyManager::getInstance($pdo);
 

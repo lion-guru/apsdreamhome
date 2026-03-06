@@ -18,12 +18,9 @@ class UnifiedKeyManager {
     
     public function __construct($pdo = null) {
         if ($pdo === null) {
-            $host = "localhost";
-            $user = "root";
-            $password = "";
-            $database = "apsdreamhome";
-            $pdo = new PDO("mysql:host=$host;dbname=$database", $user, $password);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            // Use unified database connection from base system
+            require_once __DIR__ . '/../Unified/base.php';
+            $pdo = aps_db();
         }
         $this->pdo = $pdo;
     }
