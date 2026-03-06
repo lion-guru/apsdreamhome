@@ -6,8 +6,8 @@ use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Core\View\View;
 use App\Core\Auth;
-use App\Core\Database\Database;
-use App\Core\Session\SessionManager;
+use App\Core\Session\Session;
+use PDO;
 
 /**
  * Base Controller
@@ -119,7 +119,7 @@ class Controller
         $this->response = new \App\Core\Http\Response();
         $this->view = new View();
         $this->session = new \App\Core\Session\Session();
-        $this->db = \App\Core\Database::getInstance();
+        $this->db = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
         $this->auth = null; // Initialize auth if needed
         $this->app = null; // Not using App class
     }

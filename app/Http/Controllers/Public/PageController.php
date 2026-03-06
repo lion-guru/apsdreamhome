@@ -111,6 +111,7 @@ class PageController extends BaseController
      */
     public function about()
     {
+        error_log("DEBUG: About method called in PageController");
         try {
             // Try to get data from database
             $pdo = new \PDO(
@@ -260,7 +261,7 @@ class PageController extends BaseController
             ];
         }
         
-        return $this->render('about/index', $data, 'layouts/base');
+        return $this->render('about/index', $data, 'layouts/base_new');
     }
 
     /**

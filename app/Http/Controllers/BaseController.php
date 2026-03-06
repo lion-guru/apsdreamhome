@@ -46,7 +46,8 @@ class BaseController extends CoreController
             'timeout' => 30,
             'connect_timeout' => 10,
         ];
-        $this->db = new \App\Core\Database\Database($dbConfig);
+        // Initialize database connection
+        $this->db = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
         $this->loadModels();
         $this->getCsrfToken();
         

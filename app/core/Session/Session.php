@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-amespace App\Core\Session;
+namespace App\Core\Session;
 
 /**
  * Simple Session Management Class

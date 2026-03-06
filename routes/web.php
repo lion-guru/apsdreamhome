@@ -17,6 +17,11 @@ $router->get('/', 'HomeController@index');
 $router->get('/mlm-dashboard', 'MLMController@dashboard');
 $router->get('/monitoring', 'MonitoringController@dashboard');
 $router->get('/ai-valuation', 'AIValuationController@index');
+// General routes
+$router->get('/', 'HomeController@index');
+$router->get('/mlm-dashboard', 'MLMController@dashboard');
+$router->get('/monitoring', 'MonitoringController@dashboard');
+$router->get('/ai-valuation', 'AIValuationController@index');
 // General pages
 $router->get('/about', 'Public\PageController@about');
 $router->get('/contact', 'Public\PageController@contact');
