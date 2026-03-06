@@ -355,21 +355,6 @@ class UnifiedAuthService
     {
         $key = 'login_attempts_' . md5($identifier);
         $this->session->remove($key);
-    }
-
-    /**
-     * Get session timeout remaining time
-     */
-    public function getSessionTimeoutRemaining()
-    {
-        if (!$this->session->has('last_activity')) {
-            return 0;
-        }
-
-        $lastActivity = $this->session->get('last_activity');
-        $timeout = $this->config['session_timeout'];
-        $elapsed = time() - $lastActivity;
-
-        return max(0, $timeout - $elapsed);
+        return true;
     }
 }
