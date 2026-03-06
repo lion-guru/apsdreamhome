@@ -92,12 +92,9 @@ $router->post('/admin/properties/toggle-featured/{id}', 'Admin\PropertyControlle
 $router->get('/admin/users', 'Admin\UserController@index');
 $router->get('/admin/dashboard', 'AdminController@dashboard');
 
-// Customer & Associate routes
+// Customer routes
 $router->get('/customer/dashboard', 'CustomerController@dashboard');
-$router->get('/associate/dashboard', 'AssociateController@dashboard');
-$router->get('/associate/register', 'AssociateController@register');
-$router->post('/associate/register', 'AssociateController@store');
-$router->get('/employee/login', 'EmployeeController@login');
+$router->get('/customers/dashboard', 'CustomerController@dashboard');
 
 // Map routes
 $router->get('/map', 'MapController@index');
