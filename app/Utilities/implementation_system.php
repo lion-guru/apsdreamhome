@@ -5,8 +5,8 @@
  * Created: March 6, 2026
  */
 
-// Include unified base system
-require_once __DIR__ . '/../Core/Unified/base.php';
+// Include bootstrap base system
+require_once __DIR__ . '/../Core/Bootstrap/base.php';
 
 class UltimateImplementationSystem {
     private $root;

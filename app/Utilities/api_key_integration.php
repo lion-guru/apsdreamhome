@@ -1,15 +1,15 @@
 <?php
 /**
- * APS Dream Home - Unified Key Management Integration
+ * APS Dream Home - API Key Management Integration
  * Integrates existing API key system with new MCP key storage
  */
 
-require_once __DIR__ . "/../Core/Unified/base.php";
+require_once __DIR__ . "/../Core/Bootstrap/base.php";
 
-echo "🔧 Unified Key Management Integration\n";
+echo "🔧 API Key Management Integration\n";
 echo "====================================\n\n";
 
-// Use unified database connection
+// Use database connection
 $pdo = aps_db();
 echo "✅ Database connected\n\n";
 

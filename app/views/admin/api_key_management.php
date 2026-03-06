@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified Key Management - APS Dream Home</title>
+    <title>API Key Management - APS Dream Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1><i class="bi bi-key-fill me-2"></i>Unified Key Management</h1>
+                    <h1><i class="bi bi-key-fill me-2"></i>API Key Management</h1>
                     <div>
                         <button class="btn btn-success me-2" onclick="loadStats()">
                             <i class="bi bi-arrow-clockwise me-1"></i>Refresh

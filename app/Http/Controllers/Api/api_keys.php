@@ -1,17 +1,17 @@
 <?php
 /**
- * Unified Key Management API Endpoint
+ * API Key Management Endpoint
  * Handles CRUD operations for both MCP and User API keys
  */
 
-require_once "../../../Core/Unified/base.php";
+require_once "../../../Core/Bootstrap/base.php";
 
 header("Content-Type: application/json");
 
-// Use unified database connection
+// Use database connection
 $pdo = aps_db();
 
-$keyManager = \App\Services\UnifiedKeyManager::getInstance($pdo);
+$keyManager = \App\Services\ApiKeyManager::getInstance($pdo);
 
 $action = $_GET["action"] ?? "";
 
