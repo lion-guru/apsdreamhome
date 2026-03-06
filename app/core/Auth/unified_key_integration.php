@@ -4,23 +4,14 @@
  * Integrates existing API key system with new MCP key storage
  */
 
+require_once __DIR__ . "/../Unified/base.php";
+
 echo "🔧 Unified Key Management Integration\n";
 echo "====================================\n\n";
 
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$database = 'apsdreamhome';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$database", $user, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "✅ Database connected\n\n";
-} catch (PDOException $e) {
-    echo "❌ Database connection failed: " . $e->getMessage() . "\n\n";
-    exit;
-}
+// Use unified database connection
+$pdo = aps_db();
+echo "✅ Database connected\n\n";
 
 // Check existing API keys table structure
 echo "🔍 Checking existing API key system...\n";
