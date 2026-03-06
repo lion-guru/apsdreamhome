@@ -4,7 +4,7 @@
  * Handles CRUD operations for both MCP and User API keys
  */
 
-require_once "../Core/Unified/base.php";
+require_once "../../../Core/Unified/base.php";
 
 header("Content-Type: application/json");
 

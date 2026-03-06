@@ -4,7 +4,7 @@
  * Integrates existing API key system with new MCP key storage
  */
 
-require_once __DIR__ . "/../Unified/base.php";
+require_once __DIR__ . "/../Core/Unified/base.php";
 
 echo "🔧 Unified Key Management Integration\n";
 echo "====================================\n\n";

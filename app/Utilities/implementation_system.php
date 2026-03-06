@@ -6,7 +6,7 @@
  */
 
 // Include unified base system
-require_once __DIR__ . '/Unified/base.php';
+require_once __DIR__ . '/../Core/Unified/base.php';
 
 class UltimateImplementationSystem {
     private $root;
