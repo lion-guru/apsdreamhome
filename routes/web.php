@@ -47,19 +47,19 @@ $router->get('/projects/{id}', 'ProjectController@detail');
 $router->get('/resell', 'ResellController@index');
 
 // Authentication routes
-$router->get('/login', 'AuthController@login');
-$router->post('/login', 'AuthController@authenticate');
-$router->get('/employee/login', 'AuthController@employeeLogin');
-$router->post('/employee/login', 'AuthController@authenticateEmployee');
-$router->get('/associate/login', 'AuthController@associateLogin');
-$router->post('/associate/login', 'AuthController@authenticateAssociate');
-$router->get('/admin/login', 'AuthController@adminLogin');
-$router->post('/admin/login', 'AuthController@authenticateAdmin');
-$router->get('/register', 'AuthController@register');
-$router->post('/register', 'AuthController@handleRegister');
-$router->get('/associate/register', 'AuthController@associateRegister');
-$router->post('/associate/register', 'AuthController@handleAssociateRegister');
-$router->get('/logout', 'AuthController@logout');
+$router->get('/login', 'Auth\AdminAuthController@login');
+$router->post('/login', 'Auth\AdminAuthController@authenticate');
+$router->get('/employee/login', 'Auth\AdminAuthController@employeeLogin');
+$router->post('/employee/login', 'Auth\AdminAuthController@authenticateEmployee');
+$router->get('/associate/login', 'Auth\AdminAuthController@associateLogin');
+$router->post('/associate/login', 'Auth\AdminAuthController@authenticateAssociate');
+$router->get('/admin/login', 'Auth\AdminAuthController@adminLogin');
+$router->post('/admin/login', 'Auth\AdminAuthController@authenticateAdmin');
+$router->get('/register', 'Auth\AdminAuthController@register');
+$router->post('/register', 'Auth\AdminAuthController@handleRegister');
+$router->get('/associate/register', 'Auth\AdminAuthController@associateRegister');
+$router->post('/associate/register', 'Auth\AdminAuthController@handleAssociateRegister');
+$router->get('/logout', 'Auth\AdminAuthController@logout');
 
 // Agent authentication
 $router->get('/agent/login', 'AgentController@login');
@@ -71,7 +71,7 @@ $router->get('/dashboard/profile', 'DashboardController@profile');
 $router->post('/dashboard/profile', 'DashboardController@updateProfile');
 $router->get('/dashboard/favorites', 'DashboardController@favorites');
 $router->get('/associate/dashboard', 'DashboardController@associate');
-$router->get('/admin/dashboard', 'AdminController@dashboard');
+$router->get('/admin/dashboard', 'Admin\AdminController@dashboard');
 
 // Agent routes
 $router->get('/agents/dashboard', 'AgentController@dashboard');
@@ -81,7 +81,7 @@ $router->get('/dashboard/inquiries', 'DashboardController@inquiries');
 $router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry');
 
 // Admin routes
-$router->get('/admin', 'AdminController@dashboard');
+$router->get('/admin', 'Admin\AdminController@dashboard');
 $router->get('/admin/properties', 'Admin\PropertyController@index');
 $router->get('/admin/properties/create', 'Admin\PropertyController@create');
 $router->post('/admin/properties/store', 'Admin\PropertyController@store');
@@ -90,7 +90,7 @@ $router->post('/admin/properties/update/{id}', 'Admin\PropertyController@update'
 $router->get('/admin/properties/delete/{id}', 'Admin\PropertyController@destroy');
 $router->post('/admin/properties/toggle-featured/{id}', 'Admin\PropertyController@toggleFeatured');
 $router->get('/admin/users', 'Admin\UserController@index');
-$router->get('/admin/dashboard', 'AdminController@dashboard');
+$router->get('/admin/dashboard', 'Admin\AdminController@dashboard');
 
 // Customer routes
 $router->get('/customer/dashboard', 'CustomerController@dashboard');
