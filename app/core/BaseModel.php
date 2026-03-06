@@ -2,14 +2,13 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-
 namespace App\Core;
 
 /**
- * Unified Model Base Class
- * Bridges legacy manager patterns with modern ORM features
+ * Base Model Class
+ * Provides core database functionality for all models
  */
-abstract class UnifiedModel extends Model
+abstract class BaseModel extends Model
 {
     protected static $legacyMode = false;
     
@@ -31,7 +30,7 @@ abstract class UnifiedModel extends Model
         static::$legacyMode = $enabled;
     }
     
-    public static function findUnified($id)
+    public static function find($id)
     {
         return static::$legacyMode ? static::findLegacy($id) : static::find($id);
     }
@@ -41,7 +40,7 @@ abstract class UnifiedModel extends Model
         return static::find($id); // Fallback to modern method
     }
     
-    public static function allUnified()
+    public static function all()
     {
         return static::$legacyMode ? static::allLegacy() : static::all();
     }
@@ -51,7 +50,7 @@ abstract class UnifiedModel extends Model
         return static::all(); // Fallback to modern method
     }
     
-    public function saveUnified()
+    public function save()
     {
         return static::$legacyMode ? $this->saveLegacy() : $this->save();
     }
@@ -61,7 +60,7 @@ abstract class UnifiedModel extends Model
         return $this->save(); // Fallback to modern method
     }
     
-    public function deleteUnified()
+    public function delete()
     {
         return static::$legacyMode ? $this->deleteLegacy() : $this->delete();
     }

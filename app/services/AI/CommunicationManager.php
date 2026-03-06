@@ -4,10 +4,10 @@
 
 namespace App\Services\AI;
 /**
- * Unified Communication Manager
+ * Communication Manager
  * Handles WhatsApp, Telegram, and Phone interactions with intelligent routing.
  */
-class UnifiedCommManager {
+class CommunicationManager {
     private $db;
     private $aiManager;
 
