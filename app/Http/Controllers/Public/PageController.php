@@ -261,7 +261,7 @@ class PageController extends BaseController
             ];
         }
         
-        return $this->render('about/index', $data, 'layouts/base_new');
+        return $this->render('pages/about', $data, 'layouts/base_new');
     }
 
     /**
@@ -339,7 +339,7 @@ class PageController extends BaseController
             ]
         ];
 
-        return $this->render('contact/index', $data, 'layouts/base');
+        return $this->render('pages/contact', $data, 'layouts/base');
     }
 
     /**

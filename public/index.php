@@ -46,10 +46,6 @@ spl_autoload_register(function ($class) {
 
 // Include required files
 require_once APS_ROOT . '/routes/web.php';
-require_once APS_ROOT . '/routes/router.php';
-
-// Initialize router
-$router = new Router();
 
 // Load routes
 require_once APS_ROOT . '/routes/web.php';
