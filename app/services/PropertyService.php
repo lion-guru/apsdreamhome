@@ -1,169 +1,566 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
+namespace App\Services\Legacy;
 
+/**
+ * Property Management System
+ * Complete CRUD operations for properties
+ */
 
-namespace App\Services;
+class PropertyManager
+{
+    private $db;
+    private $logger;
+    private $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    private $maxFileSize = 5 * 1024 * 1024; // 5MB
+    private $uploadPath = '/uploads/properties/';
 
-use App\Models\Property;
+    public function __construct($db = null, $logger = null)
+    {
+        $this->db = $db ?: \App\Core\App::database();
+        $this->logger = $logger;
 
-class PropertyService {
-    private $propertyModel;
-
-    public function __construct() {
-        $this->propertyModel = new Property();
+        // Create uploads directory if it doesn't exist
+        $this->ensureUploadDirectory();
     }
 
     /**
-     * Get all properties with optional filters
-     * 
-     * @param array $filters
-     * @return array
+     * Get full property details by ID
      */
-    public function getProperties(array $filters = []) {
-        $query = "SELECT * FROM properties WHERE status = 'active'";
-        $params = [];
-        
-        // Apply filters
-        if (!empty($filters['type'])) {
-            $query .= " AND type = ?";
-            $params[] = $filters['type'];
+    public function getPropertyDetails($pid)
+    {
+        $sql = "SELECT p.*, pt.type as ptype_name, c.cname as cityname,
+                       u.name as aname, u.phone as aphone, u.email as aemail, u.profile_image as aimage
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                LEFT JOIN city c ON p.city = c.cid
+                LEFT JOIN users u ON p.agent_id = u.id
+                WHERE p.id = ?";
+
+        $property = $this->db->fetch($sql, [$pid]);
+
+        if ($property) {
+            $property['images'] = $this->getPropertyImages($pid);
         }
-        
-        if (!empty($filters['min_price'])) {
-            $query .= " AND price >= ?";
-            $params[] = $filters['min_price'];
-        }
-        
-        if (!empty($filters['max_price'])) {
-            $query .= " AND price <= ?";
-            $params[] = $filters['max_price'];
-        }
-        
-        if (!empty($filters['location'])) {
-            $query .= " AND location LIKE ?";
-            $params[] = "%{$filters['location']}%";
-        }
-        
-        // Add sorting
-        $sort = $filters['sort'] ?? 'created_at';
-        $order = isset($filters['order']) && strtoupper($filters['order']) === 'ASC' ? 'ASC' : 'DESC';
-        $query .= " ORDER BY $sort $order";
-        
-        // Add pagination
-        $page = max(1, $filters['page'] ?? 1);
-        $perPage = min(20, max(1, $filters['per_page'] ?? 10));
-        $offset = ($page - 1) * $perPage;
-        $query .= " LIMIT ? OFFSET ?";
-        $params[] = $perPage;
-        $params[] = $offset;
-        
-        // Execute query
-        $db = \App\Core\Database::getInstance();
-        $stmt = $db->query($query, $params);
-        
-        return $stmt->fetchAll();
+
+        return $property;
     }
-    
+
     /**
-     * Get property by ID
-     * 
-     * @param int $id
-     * @return Property|null
+     * Get property images
      */
-    public function getPropertyById(int $id) {
-        return Property::find($id);
-    }
-    
-    /**
-     * Create a new property
-     * 
-     * @param array $data
-     * @return int|bool
-     */
-    public function createProperty(array $data) {
-        $requiredFields = ['title', 'description', 'price', 'location', 'type'];
-        foreach ($requiredFields as $field) {
-            if (empty($data[$field])) {
-                throw new \InvalidArgumentException("Missing required field: $field");
+    public function getPropertyImages($pid)
+    {
+        $sql = "SELECT * FROM property_images WHERE property_id = ? ORDER BY is_primary DESC, sort_order ASC";
+        try {
+            return $this->db->fetchAll($sql, [$pid]);
+        } catch (\Exception $e) {
+            // Fallback if column names are different
+            try {
+                $sql = "SELECT * FROM property_images WHERE pid = ? ORDER BY is_primary DESC, sort_order ASC";
+                return $this->db->fetchAll($sql, [$pid]);
+            } catch (\Exception $e2) {
+                return [];
             }
         }
-        
-        $property = new Property();
-        $property->title = $data['title'];
-        $property->description = $data['description'];
-        $property->price = (float)$data['price'];
-        $property->location = $data['location'];
-        $property->property_type = $data['type'];
-        $property->status = 'active';
-        $property->bedrooms = $data['bedrooms'] ?? null;
-        $property->bathrooms = $data['bathrooms'] ?? null;
-        $property->area = $data['area'] ?? null;
+    }
 
-        if ($property->save()) {
-            return $property->id;
+    /**
+     * Get similar properties
+     */
+    public function getSimilarProperties($pid, $limit = 3)
+    {
+        // First get current property details to match criteria
+        $prop = $this->getPropertyDetails($pid);
+        if (!$prop) return [];
+
+        $sql = "SELECT p.*, c.cname as cityname
+                FROM properties p
+                LEFT JOIN city c ON p.city = c.cid
+                WHERE p.id != ? AND (p.property_type_id = ? OR p.city = ?)
+                AND p.status = 'available'
+                ORDER BY p.created_at DESC LIMIT ?";
+
+        return $this->db->fetchAll($sql, [$pid, $prop['property_type_id'] ?? 0, $prop['city'] ?? 0, $limit]);
+    }
+
+    /**
+     * Get properties with advanced filters
+     */
+    public function getProperties($filters = [], $limit = 20, $offset = 0)
+    {
+        $sql = "SELECT p.*, pt.type as property_type_name,
+                       u.name as agent_name,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_image,
+                       (SELECT COUNT(*) FROM property_images WHERE property_id = p.id) as image_count
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                LEFT JOIN users u ON p.agent_id = u.id
+                WHERE 1=1";
+
+        $params = [];
+
+        // Apply filters
+        if (!empty($filters['property_type_id'])) {
+            $sql .= " AND p.property_type_id = ?";
+            $params[] = $filters['property_type_id'];
+        }
+
+        if (!empty($filters['location'])) {
+            $sql .= " AND (p.location LIKE ? OR p.city LIKE ?)";
+            $params[] = "%" . $filters['location'] . "%";
+            $params[] = "%" . $filters['location'] . "%";
+        }
+
+        if (isset($filters['min_price'])) {
+            $sql .= " AND p.price >= ?";
+            $params[] = $filters['min_price'];
+        }
+
+        if (isset($filters['max_price'])) {
+            $sql .= " AND p.price <= ?";
+            $params[] = $filters['max_price'];
+        }
+
+        if (!empty($filters['bedrooms'])) {
+            $sql .= " AND p.bedrooms >= ?";
+            $params[] = $filters['bedrooms'];
+        }
+
+        if (!empty($filters['status'])) {
+            $sql .= " AND p.status = ?";
+            $params[] = $filters['status'];
+        }
+
+        if (!empty($filters['featured'])) {
+            $sql .= " AND p.featured = 1";
+        }
+
+        $sql .= " ORDER BY p.created_at DESC";
+
+        if ($limit > 0) {
+            $sql .= " LIMIT ?";
+            $params[] = (int)$limit;
+        }
+
+        if ($offset > 0) {
+            $sql .= " OFFSET ?";
+            $params[] = (int)$offset;
+        }
+
+        return $this->db->fetchAll($sql, $params);
+    }
+
+    private function ensureUploadDirectory($path = null)
+    {
+        $path = $path ?: dirname(__DIR__) . $this->uploadPath;
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+    }
+
+    public function createProperty($data, $images = [])
+    {
+        $sql = "INSERT INTO properties (
+            title, description, property_type_id, price, location, city, state,
+            bedrooms, bathrooms, area, area_unit, features, amenities, agent_id, status, featured
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $params = [
+            $data['title'],
+            $data['description'],
+            $data['property_type_id'],
+            $data['price'],
+            $data['location'],
+            $data['city'],
+            $data['state'],
+            $data['bedrooms'],
+            $data['bathrooms'],
+            $data['area'],
+            $data['area_unit'],
+            json_encode($data['features'] ?? []),
+            json_encode($data['amenities'] ?? []),
+            $data['agent_id'] ?? null,
+            $data['status'] ?? 'available',
+            $data['featured'] ?? 0
+        ];
+
+        $this->db->execute($sql, $params);
+        $propertyId = $this->db->lastInsertId();
+
+        if ($propertyId && !empty($images)) {
+            $this->handlePropertyImages($propertyId, $images);
+        }
+
+        if ($propertyId && $this->logger) {
+            $this->logger->log("Property created: {$data['title']} (ID: $propertyId)", 'info', 'property');
+        }
+
+        return $propertyId;
+    }
+
+    /**
+     * Get single property by ID
+     */
+    public function getProperty($id)
+    {
+        $sql = "SELECT p.*, pt.type as property_type_name, u.name as agent_name, u.phone as agent_phone, u.email as agent_email
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                LEFT JOIN users u ON p.agent_id = u.id
+                WHERE p.id = ?";
+
+        $property = $this->db->fetch($sql, [$id]);
+
+        if ($property) {
+            // Get property images
+            $property['images'] = $this->getPropertyImages($id);
+            // Get property features
+            $property['features'] = json_decode($property['features'] ?? '[]', true);
+            $property['amenities'] = json_decode($property['amenities'] ?? '[]', true);
+        }
+
+        return $property;
+    }
+
+    /**
+     * Update property
+     */
+    public function updateProperty($id, $data, $images = [])
+    {
+        $sql = "UPDATE properties SET
+            title = ?, description = ?, property_type_id = ?, price = ?, location = ?,
+            city = ?, state = ?, bedrooms = ?, bathrooms = ?, area = ?, area_unit = ?,
+            features = ?, amenities = ?, agent_id = ?, status = ?, featured = ?,
+            updated_at = NOW()
+            WHERE id = ?";
+
+        $params = [
+            $data['title'],
+            $data['description'],
+            $data['property_type_id'],
+            $data['price'],
+            $data['location'],
+            $data['city'],
+            $data['state'],
+            $data['bedrooms'],
+            $data['bathrooms'],
+            $data['area'],
+            $data['area_unit'],
+            json_encode($data['features'] ?? []),
+            json_encode($data['amenities'] ?? []),
+            $data['agent_id'] ?? null,
+            $data['status'] ?? 'available',
+            $data['featured'] ?? 0,
+            $id
+        ];
+
+        try {
+            $this->db->execute($sql, $params);
+            $success = true;
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->log("Error updating property: " . $e->getMessage(), 'error', 'property');
+            }
+            $success = false;
+        }
+
+        if ($success && !empty($images)) {
+            $this->handlePropertyImages($id, $images);
+        }
+
+        if ($success && $this->logger) {
+            $this->logger->log("Property updated: {$data['title']} (ID: $id)", 'info', 'property');
+        }
+
+        return $success;
+    }
+
+    /**
+     * Delete property
+     */
+    public function deleteProperty($id)
+    {
+        try {
+            // First delete property images
+            $this->deletePropertyImages($id);
+
+            // Then delete the property
+            $sql = "DELETE FROM properties WHERE id = ?";
+            $this->db->execute($sql, [$id]);
+
+            if ($this->logger) {
+                $this->logger->log("Property deleted: ID $id", 'warning', 'property');
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->log("Error deleting property: " . $e->getMessage(), 'error', 'property');
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Handle property image uploads
+     */
+    private function handlePropertyImages($propertyId, $images)
+    {
+        foreach ($images as $index => $imageFile) {
+            if ($imageFile['error'] === UPLOAD_ERR_OK) {
+                $this->uploadPropertyImage($propertyId, $imageFile, $index === 0);
+            }
+        }
+    }
+
+    /**
+     * Upload property image
+     */
+    private function uploadPropertyImage($propertyId, $file, $isPrimary = false)
+    {
+        $fileName = $file['name'];
+        $fileSize = $file['size'];
+        $fileTmpName = $file['tmp_name'];
+        $fileError = $file['error'];
+
+        // Validate file
+        if ($fileError !== UPLOAD_ERR_OK) {
+            return false;
+        }
+
+        if ($fileSize > $this->maxFileSize) {
+            return false;
+        }
+
+        $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        if (!in_array($fileExt, $this->allowedExtensions)) {
+            return false;
+        }
+
+        // Generate unique filename
+        $newFileName = 'property_' . \App\Helpers\SecurityHelper::generateRandomString(16, false) . '.' . $fileExt;
+        $uploadPath = $_SERVER['DOCUMENT_ROOT'] . $this->uploadPath . $newFileName;
+
+        if (move_uploaded_file($fileTmpName, $uploadPath)) {
+            // Get next sort order
+            $sortOrder = $this->getNextImageSortOrder($propertyId);
+
+            // Insert into database
+            $sql = "INSERT INTO property_images (property_id, image_path, is_primary, sort_order)
+                    VALUES (?, ?, ?, ?)";
+
+            try {
+                $this->db->execute($sql, [$propertyId, $newFileName, (int)$isPrimary, $sortOrder]);
+                return true;
+            } catch (\Exception $e) {
+                if ($this->logger) {
+                    $this->logger->log("Error saving property image to DB: " . $e->getMessage(), 'error', 'property');
+                }
+                return false;
+            }
         }
 
         return false;
     }
-    
+
     /**
-     * Update a property
-     * 
-     * @param int $id
-     * @param array $data
-     * @return bool
+     * Delete property images
      */
-    public function updateProperty(int $id, array $data) {
-        $property = Property::find($id);
-        
-        if (!$property) {
-            return false;
-        }
-        
-        $updatableFields = [
-            'title', 'description', 'price', 'location', 'property_type',
-            'bedrooms', 'bathrooms', 'area', 'status'
-        ];
-        
-        foreach ($updatableFields as $field) {
-            if (array_key_exists($field, $data)) {
-                $property->$field = $data[$field];
+    private function deletePropertyImages($propertyId)
+    {
+        // Get image files to delete
+        $images = $this->getPropertyImages($propertyId);
+
+        // Delete physical files
+        foreach ($images as $image) {
+            $filePath = $_SERVER['DOCUMENT_ROOT'] . $this->uploadPath . $image['image_path'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
             }
         }
-        
-        return $property->save();
+
+        // Note: Do NOT delete property_images rows here.
+        // They will be removed automatically via FK ON DELETE CASCADE
+        // when the parent property is deleted. This avoids manual DB cleanup
+        // and ensures referential integrity policies are respected.
     }
-    
+
     /**
-     * Delete a property
-     * 
-     * @param int $id
-     * @return bool
+     * Get next image sort order
      */
-    public function deleteProperty(int $id) {
-        $property = Property::find($id);
-        
-        if (!$property) {
-            return false;
+    private function getNextImageSortOrder($propertyId)
+    {
+        $sql = "SELECT MAX(sort_order) as max_order FROM property_images WHERE property_id = ?";
+        try {
+            $row = $this->db->fetch($sql, [$propertyId]);
+            return ($row['max_order'] ?? 0) + 1;
+        } catch (\Exception $e) {
+            return 1;
         }
-        
-        // Soft delete by updating status
-        $property->status = 'deleted';
-        return $property->save();
     }
-    
+
+    /**
+     * Get property types
+     */
+    public function getPropertyTypes()
+    {
+        $sql = "SELECT * FROM property_types WHERE status = 'active' ORDER BY name";
+        try {
+            return $this->db->fetchAll($sql);
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->log("Error getting property types: " . $e->getMessage(), 'error', 'property');
+            }
+            return [];
+        }
+    }
+
+    /**
+     * Search properties
+     */
+    public function searchProperties($query, $limit = 20)
+    {
+        $searchTerm = "%$query%";
+
+        $sql = "SELECT p.*, pt.type as property_type_name,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_image
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                WHERE p.status = 'available'
+                AND (p.title LIKE ? OR p.description LIKE ? OR p.location LIKE ? OR p.city LIKE ?)
+                ORDER BY p.featured DESC, p.created_at DESC
+                LIMIT ?";
+
+        try {
+            return $this->db->fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm, $searchTerm, (int)$limit]);
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->log("Error searching properties: " . $e->getMessage(), 'error', 'property');
+            }
+            return [];
+        }
+    }
+
     /**
      * Get featured properties
-     * 
-     * @param int $limit
-     * @return array
      */
-    public function getFeaturedProperties(int $limit = 6) {
-        $query = "SELECT * FROM properties WHERE status = 'active' AND is_featured = 1 ORDER BY created_at DESC LIMIT ?";
-        $db = \App\Core\Database::getInstance();
-        $stmt = $db->query($query, [$limit]);
-        
-        return $stmt->fetchAll();
+    public function getFeaturedProperties($limit = 6)
+    {
+        $sql = "SELECT p.*, pt.type as property_type_name,
+                       (SELECT image_path FROM property_images WHERE property_id = p.id AND is_primary = 1 LIMIT 1) as primary_image
+                FROM properties p
+                LEFT JOIN property_types pt ON p.property_type_id = pt.id
+                WHERE p.status = 'available' AND p.featured = 1
+                ORDER BY p.created_at DESC
+                LIMIT ?";
+
+        try {
+            return $this->db->fetchAll($sql, [(int)$limit]);
+        } catch (\Exception $e) {
+            if ($this->logger) {
+                $this->logger->log("Error getting featured properties: " . $e->getMessage(), 'error', 'property');
+            }
+            return [];
+        }
+    }
+
+    /**
+     * List a new property (from public form)
+     */
+    public function listProperty($data, $files = null)
+    {
+        $owner_name = trim($data['owner_name'] ?? '');
+        $email = trim($data['email'] ?? '');
+        $phone = trim($data['phone'] ?? '');
+        $property_type = trim($data['property_type'] ?? '');
+        $property_title = trim($data['property_title'] ?? '');
+        $location = trim($data['location'] ?? '');
+        $bedrooms = (int)($data['bedrooms'] ?? 0);
+        $bathrooms = (int)($data['bathrooms'] ?? 0);
+        $area = (float)($data['area'] ?? 0);
+        $price = (float)($data['price'] ?? 0);
+        $description = trim($data['description'] ?? '');
+        $amenities = isset($data['amenities']) ? (is_array($data['amenities']) ? implode(', ', $data['amenities']) : $data['amenities']) : '';
+        $availability = trim($data['availability'] ?? '');
+
+        // Validation
+        $errors = [];
+        if (empty($owner_name)) $errors[] = 'Owner name is required';
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
+        if (empty($phone)) $errors[] = 'Phone number is required';
+        if (empty($property_title)) $errors[] = 'Property title is required';
+
+        if (!empty($errors)) {
+            throw new \Exception(implode(', ', $errors));
+        }
+
+        // Handle image uploads
+        $image_urls = [];
+        if ($files && isset($files['property_images']) && is_array($files['property_images']['name'])) {
+            $upload_dir = dirname(__DIR__) . '/uploads/properties/';
+            $this->ensureUploadDirectory($upload_dir);
+
+            foreach ($files['property_images']['name'] as $key => $name) {
+                if ($files['property_images']['error'][$key] === UPLOAD_ERR_OK) {
+                    $file_extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                    if (in_array($file_extension, $this->allowedExtensions)) {
+                        $file_name = 'property_' . \App\Helpers\SecurityHelper::generateRandomString(16, false) . '_' . $key . '.' . $file_extension;
+                        $file_path = $upload_dir . $file_name;
+
+                        if (move_uploaded_file($files['property_images']['tmp_name'][$key], $file_path)) {
+                            $image_urls[] = $file_name;
+                        }
+                    }
+                }
+            }
+        }
+
+        $images_json = !empty($image_urls) ? json_encode($image_urls) : null;
+
+        // Insert property listing request
+        $sql = "INSERT INTO property_listings
+                (owner_name, email, phone, property_type, property_title, location, bedrooms,
+                 bathrooms, area, price, description, amenities, availability, images, status, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
+
+        $params = [
+            $owner_name,
+            $email,
+            $phone,
+            $property_type,
+            $property_title,
+            $location,
+            $bedrooms,
+            $bathrooms,
+            $area,
+            $price,
+            $description,
+            $amenities,
+            $availability,
+            $images_json
+        ];
+
+        $this->db->execute($sql, $params);
+
+        return true;
     }
 }
+
+//
+// PERFORMANCE OPTIMIZATION GUIDELINES
+//
+// This file contains 548 lines. Consider optimizations:
+//
+// 1. Use database indexing
+// 2. Implement caching
+// 3. Use prepared statements
+// 4. Optimize loops
+// 5. Use lazy loading
+// 6. Implement pagination
+// 7. Use connection pooling
+// 8. Consider Redis for sessions
+// 9. Implement output buffering
+// 10. Use gzip compression
+//
+//
