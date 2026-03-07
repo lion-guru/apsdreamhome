@@ -22,7 +22,8 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-PE html>
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -574,10 +575,10 @@ PE html>
             </div>
             <div class="team-stats">
                 <div class="stat-badge">
-                    <i class="bi bi-trophy me-1"></i><?php echo htmlspecialchars($1); ?>
+                    <i class="bi bi-trophy me-1"></i><?php echo htmlspecialchars($team['name'] ?? 'Team'); ?>
                 </div>
                 <div class="stat-badge">
-                    <i class="bi bi-people me-1"></i><?php echo htmlspecialchars($1); ?> members
+                    <i class="bi bi-people me-1"></i><?php echo htmlspecialchars($team['members'] ?? '0'); ?> members
                 </div>
             </div>
         </div>
@@ -595,7 +596,7 @@ PE html>
                 <div class="overview-value"><?php echo htmlspecialchars(number_format($teamInfo['total_members']) ); ?></div>
                 <div class="overview-label">Total Team Members</div>
                 <div class="overview-change positive">
-                    <i class="bi bi-person-check"></i> <?php echo htmlspecialchars($1); ?> active
+                    <i class="bi bi-person-check"></i> <?php echo htmlspecialchars($teamInfo['active_members'] ?? '0'); ?> active
                 </div>
             </div>
 
@@ -604,7 +605,7 @@ PE html>
                 <div class="overview-icon warning">
                     <i class="bi bi-graph-up"></i>
                 </div>
-                <div class="overview-value"><?php echo htmlspecialchars($1); ?>%</div>
+                <div class="overview-value"><?php echo htmlspecialchars($teamInfo['performance'] ?? '0'); ?>%</div>
                 <div class="overview-label">Avg Performance</div>
                 <div class="overview-change positive">
                     <i class="bi bi-arrow-up"></i> Team efficiency rating
@@ -619,7 +620,7 @@ PE html>
                 <div class="overview-value">₹<?php echo htmlspecialchars(number_format($teamInfo['total_earnings'], 0) ); ?></div>
                 <div class="overview-label">Team Earnings</div>
                 <div class="overview-change positive">
-                    <i class="bi bi-plus-circle"></i> From <?php echo htmlspecialchars($1); ?> members
+                    <i class="bi bi-plus-circle"></i> From <?php echo htmlspecialchars($teamInfo['contributing_members'] ?? '0'); ?> members
                 </div>
             </div>
 
@@ -628,10 +629,10 @@ PE html>
                 <div class="overview-icon primary">
                     <i class="bi bi-diagram-3"></i>
                 </div>
-                <div class="overview-value"><?php echo htmlspecialchars($1); ?></div>
+                <div class="overview-value"><?php echo htmlspecialchars($teamInfo['network_levels'] ?? '0'); ?></div>
                 <div class="overview-label">Network Levels</div>
                 <div class="overview-change positive">
-                    <i class="bi bi-chevron-double-up"></i> <?php echo htmlspecialchars($1); ?> direct reports
+                    <i class="bi bi-chevron-double-up"></i> <?php echo htmlspecialchars($teamInfo['direct_reports'] ?? '0'); ?> direct reports
                 </div>
             </div>
         </div>
@@ -662,12 +663,12 @@ PE html>
                     <span class="badge bg-primary"><?php echo htmlspecialchars(count($performanceData['top_performers']) ); ?> members</span>
                 </div>
                 <div class="mt-3">
-                    <?php if(count($performanceData['top_performers']) > 0)
-                        <?php foreach(array_slice($performanceData['top_performers'], 0, 5) as $performer)
+                    <?php if(count($performanceData['top_performers']) > 0): ?>
+                        <?php foreach(array_slice($performanceData['top_performers'], 0, 5) as $performer): ?>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
-                                <div class="fw-bold small"><?php echo htmlspecialchars($1); ?></div>
-                                <div class="text-muted small">Level <?php echo htmlspecialchars($1); ?></div>
+                                <div class="fw-bold small"><?php echo htmlspecialchars($performer['name'] ?? 'Unknown'); ?></div>
+                                <div class="text-muted small">Level <?php echo htmlspecialchars($performer['level'] ?? '0'); ?></div>
                             </div>
                             <div class="text-end">
                                 <div class="fw-bold text-success">₹<?php echo htmlspecialchars(number_format($performer['earnings'], 0) ); ?></div>
@@ -733,15 +734,15 @@ PE html>
         <!-- Team Activities -->
         <div class="activities-section">
             <h3 class="chart-title mb-4"><i class="bi bi-activity me-2 text-info"></i>Recent Team Activities</h3>
-            <?php if(count($recentActivities) > 0)
-                <?php foreach($recentActivities as $activity)
+            <?php if(count($recentActivities) > 0): ?>
+                <?php foreach($recentActivities as $activity): ?>
                 <div class="activity-item">
-                    <div class="activity-icon <?php echo htmlspecialchars($1); ?>">
-                        <i class="bi bi-<?php echo htmlspecialchars($1); ?>"></i>
+                    <div class="activity-icon <?php echo htmlspecialchars($activity['icon_class'] ?? 'primary'); ?>">
+                        <i class="bi bi-<?php echo htmlspecialchars($activity['icon'] ?? 'person'); ?>"></i>
                     </div>
                     <div class="activity-content">
-                        <h4><?php echo htmlspecialchars($1); ?></h4>
-                        <p><?php echo htmlspecialchars($1); ?></p>
+                        <h4><?php echo htmlspecialchars($activity['title'] ?? 'Activity'); ?></h4>
+                        <p><?php echo htmlspecialchars($activity['description'] ?? 'No description'); ?></p>
                         <small class="activity-time"><?php echo htmlspecialchars(\Carbon\Carbon::parse($activity['date'])->diffForHumans() ); ?></small>
                     </div>
                 </div>
@@ -755,21 +756,21 @@ PE html>
         </div>
 
         <!-- Team Incentives -->
-        <?php if(count($teamIncentives) > 0)
+        <?php if(count($teamIncentives) > 0): ?>
         <div class="incentives-section">
             <h3 class="chart-title mb-4"><i class="bi bi-trophy me-2 text-warning"></i>Team Incentives & Rewards</h3>
-            <?php foreach($teamIncentives as $incentive)
-            <div class="incentive-item <?php echo htmlspecialchars($1); ?>">
+            <?php foreach($teamIncentives as $incentive): ?>
+            <div class="incentive-item <?php echo htmlspecialchars($incentive['type'] ?? 'primary'); ?>">
                 <div class="incentive-header">
-                    <div class="incentive-title"><?php echo htmlspecialchars($1); ?></div>
+                    <div class="incentive-title"><?php echo htmlspecialchars($incentive['title'] ?? 'Incentive'); ?></div>
                     <div class="incentive-amount">₹<?php echo htmlspecialchars(number_format($incentive['amount'], 0) ); ?></div>
                 </div>
-                <div class="incentive-description"><?php echo htmlspecialchars($1); ?></div>
-                <?php if(isset($incentive['progress']))
+                <div class="incentive-description"><?php echo htmlspecialchars($incentive['description'] ?? 'No description'); ?></div>
+                <?php if(isset($incentive['progress'])): ?>
                 <div class="incentive-progress">
-                    <div class="progress-bar incentive-progress-bar" data-progress="<?php echo htmlspecialchars($1); ?>"></div>
+                    <div class="progress-bar incentive-progress-bar" data-progress="<?php echo htmlspecialchars($incentive['progress'] ?? '0'); ?>"></div>
                 </div>
-                <div class="mt-1 small text-muted"><?php echo htmlspecialchars(round($incentive['progress'], 1) ); ?>% complete</div>
+                <div class="mt-1 small text-muted"><?php echo htmlspecialchars(round($incentive['progress'] ?? 0, 1) ); ?>% complete</div>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
@@ -954,7 +955,7 @@ function exportReport() {
 // Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\user\dashboard.php
 
 class
-require_once __DIR__ . '/../../core/Helpers.php';
+require_once __DIR__ . '/../../../core/Helpers.php';
 
 // Ensure $data is defined to prevent errors
 if (!isset($data)) {

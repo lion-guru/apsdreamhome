@@ -3,7 +3,7 @@
  * Migration script to add profile_picture column to users table
  */
 
-require_once __DIR__ . '/../core/init.php';
+require_once __DIR__ . '/../../../core/init.php';
 
 header('Content-Type: text/plain');
 echo "Starting migration: Add profile_picture column to users table\n\n";

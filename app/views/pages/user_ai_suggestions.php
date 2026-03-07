@@ -13,9 +13,9 @@ session_start([
 ]);
 
 // Dependency Injection and Centralized Configuration
-require_once(__DIR__ . '/../../includes/env_loader.php');
-require_once(__DIR__ . '/../../includes/db_security_upgrade.php');
-require_once(__DIR__ . '/../../includes/classes/AIAssistant.php');
+require_once(__DIR__ . '/../../../includes/env_loader.php');
+require_once(__DIR__ . '/../../../includes/db_security_upgrade.php');
+require_once(__DIR__ . '/../../../includes/classes/AIAssistant.php');
 
 // Sanitize input function
 if (!function_exists('sanitizeInput')) {
