@@ -2,8 +2,8 @@
 /**
  * AJAX - Generate AI Follow-up Message
  */
-require_once __DIR__ . '/../core/init.php';
-require_once __DIR__ . '/../../app/services/GeminiService.php';
+require_once __DIR__ . '/../../core/init.php';
+require_once __DIR__ . '/../../../app/services/GeminiService.php';
 
 use App\Services\GeminiService;
 

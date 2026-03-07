@@ -5,7 +5,7 @@
  */
 
 // Start session and include necessary files
-require_once __DIR__ . '/../core/init.php';
+require_once __DIR__ . '/../../core/init.php';
 
 use App\Core\Database;
 $db = \App\Core\App::database();
@@ -41,7 +41,7 @@ $response = [
 ];
 
 // Get chart type from request
-$chartType = isset(Security::sanitize($_GET['chart'])) ? Security::sanitize($_GET['chart']) : '';
+$chartType = isset($_GET['chart']) ? Security::sanitize($_GET['chart']) : '';
 
 // Handle different chart types
 switch ($chartType) {

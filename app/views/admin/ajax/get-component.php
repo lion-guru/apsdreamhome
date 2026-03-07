@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../core/init.php';
+require_once __DIR__ . '/../../core/init.php';
 
 // Verify admin authentication
 if (!isAdmin()) {
@@ -16,7 +16,7 @@ if (!verifyCSRFToken($csrf_token)) {
     exit();
 }
 
-if (!isset(Security::sanitize($_GET['id'])) || !is_numeric(Security::sanitize($_GET['id']))) {
+if (!isset($_GET['id']) || !is_numeric(Security::sanitize($_GET['id']))) {
     http_response_code(400);
     echo json_encode(['error' => h($mlSupport->translate('Invalid component ID'))]);
     exit;

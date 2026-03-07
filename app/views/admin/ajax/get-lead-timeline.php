@@ -2,8 +2,8 @@
 /**
  * AJAX - Get Lead Activity Timeline & AI Summary
  */
-require_once __DIR__ . '/../core/init.php';
-require_once __DIR__ . '/../../app/services/GeminiService.php';
+require_once __DIR__ . '/../../core/init.php';
+require_once __DIR__ . '/../../../app/services/GeminiService.php';
 
 use App\Services\GeminiService;
 
