@@ -6,19 +6,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError(,  = null,  = null) {
-     = date('Y-m-d H:i:s') . ' - ERROR: ' . ;
-    if ()  .= ' in ' . ;
-    if ()  .= ' on line ' . ;
-    error_log();
+function handleError($errno = null, $errstr = null, $errfile = null, $errline = null) {
+    $message = date('Y-m-d H:i:s') . ' - ERROR: ' . $errstr;
+    if ($errfile) $message .= ' in ' . $errfile;
+    if ($errline) $message .= ' on line ' . $errline;
+    error_log($message);
     return false;
 }
 
-function safeExecute(,  = 'Operation failed') {
+function safeExecute($callback, $errorMessage = 'Operation failed') {
     try {
-        return ();
-    } catch (Exception ) {
-        handleError( . ': ' . (), (), ());
+        return $callback();
+    } catch (Exception $e) {
+        handleError($errorMessage . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
         return null;
     }
 }
@@ -40,19 +40,19 @@ $message_type = '';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $company_name = trim(Security::sanitize($_POST['company_name']));
-    $contact_person = trim(Security::sanitize($_POST['contact_person']));
-    $mobile = trim(Security::sanitize($_POST['mobile']));
-    $email = trim(Security::sanitize($_POST['email']));
-    $company_type = trim(Security::sanitize($_POST['company_type']));
-    $established_year = trim(Security::sanitize($_POST['established_year']));
-    $total_projects = trim(Security::sanitize($_POST['total_projects']));
-    $ongoing_projects = trim(Security::sanitize($_POST['ongoing_projects']));
-    $city = trim(Security::sanitize($_POST['city']));
-    $state = trim(Security::sanitize($_POST['state']));
-    $password = trim(Security::sanitize($_POST['password']));
-    $confirm_password = trim(Security::sanitize($_POST['confirm_password']));
-    $terms_accepted = isset(Security::sanitize($_POST['terms_accepted'])) ? 1 : 0;
+    $company_name = trim($_POST['company_name'] ?? '');
+    $contact_person = trim($_POST['contact_person'] ?? '');
+    $mobile = trim($_POST['mobile'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $company_type = trim($_POST['company_type'] ?? '');
+    $established_year = trim($_POST['established_year'] ?? '');
+    $total_projects = trim($_POST['total_projects'] ?? '');
+    $ongoing_projects = trim($_POST['ongoing_projects'] ?? '');
+    $city = trim($_POST['city'] ?? '');
+    $state = trim($_POST['state'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    $confirm_password = trim($_POST['confirm_password'] ?? '');
+    $terms_accepted = isset($_POST['terms_accepted']) ? 1 : 0;
 
     // Validation
     if (empty($company_name) || empty($contact_person) || empty($mobile) || empty($email) || empty($password)) {

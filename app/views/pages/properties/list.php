@@ -41,21 +41,21 @@ $property_id = sanitizeInput($_GET['id'] ?? 0);
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = sanitizeInput(Security::sanitize($_POST['full_name']));
-    $mobile = sanitizeInput(Security::sanitize($_POST['mobile']));
-    $email = sanitizeInput(Security::sanitize($_POST['email']));
-    $property_title = sanitizeInput(Security::sanitize($_POST['property_title']));
-    $property_type = sanitizeInput(Security::sanitize($_POST['property_type']));
-    $price = sanitizeInput(Security::sanitize($_POST['price']));
-    $bedrooms = sanitizeInput(Security::sanitize($_POST['bedrooms']));
-    $bathrooms = sanitizeInput(Security::sanitize($_POST['bathrooms']));
-    $area = sanitizeInput(Security::sanitize($_POST['area']));
-    $address = sanitizeInput(Security::sanitize($_POST['address']));
-    $city = sanitizeInput(Security::sanitize($_POST['city']));
-    $state = sanitizeInput(Security::sanitize($_POST['state']));
-    $description = sanitizeInput(Security::sanitize($_POST['description']));
-    $features = Security::sanitize($_POST['features']) !== null ? Security::sanitize($_POST['features']) : [];
-    $terms_accepted = Security::sanitize($_POST['terms_accepted']) !== null ? 1 : 0;
+    $full_name = sanitizeInput($_POST['full_name'] ?? '');
+    $mobile = sanitizeInput($_POST['mobile'] ?? '');
+    $email = sanitizeInput($_POST['email'] ?? '');
+    $property_title = sanitizeInput($_POST['property_title'] ?? '');
+    $property_type = sanitizeInput($_POST['property_type'] ?? '');
+    $price = sanitizeInput($_POST['price'] ?? '');
+    $bedrooms = sanitizeInput($_POST['bedrooms'] ?? '');
+    $bathrooms = sanitizeInput($_POST['bathrooms'] ?? '');
+    $area = sanitizeInput($_POST['area'] ?? '');
+    $address = sanitizeInput($_POST['address'] ?? '');
+    $city = sanitizeInput($_POST['city'] ?? '');
+    $state = sanitizeInput($_POST['state'] ?? '');
+    $description = sanitizeInput($_POST['description'] ?? '');
+    $features = isset($_POST['features']) ? Security::sanitize($_POST['features']) : [];
+    $terms_accepted = isset($_POST['terms_accepted']) ? 1 : 0;
 
     // Validation
     if (empty($full_name) || empty($mobile) || empty($email) || empty($property_title) || empty($price)) {
