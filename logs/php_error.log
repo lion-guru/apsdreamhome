@@ -1282,3 +1282,137 @@ Stack trace:
 [06-Mar-2026 19:47:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
 [06-Mar-2026 19:47:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
 [06-Mar-2026 19:47:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
+[06-Mar-2026 19:51:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 19:51:21 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 19:51:22 Europe/Berlin] Router Error: View not found: C:/xampp/htdocs/apsdreamhome/app/views/pages/home_new.php
+[06-Mar-2026 19:54:42 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 19:54:42 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 19:54:43 Europe/Berlin] Performance: 0.0159s | Memory: 68.60 KB | Queries: 0 | URI: /apsdreamhome/public/
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/property2.jpg
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/property3.jpg
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/property1.jpg
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/js/bootstrap.bundle.min.js
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/img/logo.png
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/js/jquery.min.js
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/profile/img_avatar3.png
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/js/utils.js
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/profile/img_avatar3.png
+[06-Mar-2026 19:54:43 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/banner/ban1.jpg
+[06-Mar-2026 20:18:37 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/mlm-dashboard
+[06-Mar-2026 20:18:37 Europe/Berlin] Loading controller: App\Http\Controllers\MLMController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/MLMController.php
+[06-Mar-2026 20:18:39 Europe/Berlin] PHP Warning:  require_once(includes/templates/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\pages\mlm-dashboard.php on line 7
+[06-Mar-2026 20:18:39 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'includes/templates/header.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\pages\mlm-dashboard.php:7
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\BaseController.php(294): include()
+#1 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\MLMController.php(26): App\Http\Controllers\BaseController->render('pages/mlm-dashb...', Array)
+#2 C:\xampp\htdocs\apsdreamhome\routes\router.php(119): App\Http\Controllers\MLMController->dashboard()
+#3 C:\xampp\htdocs\apsdreamhome\public\index.php(64): Router->dispatch('/apsdreamhome/p...')
+#4 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\mlm-dashboard.php on line 7
+[06-Mar-2026 20:49:50 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 20:49:50 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 20:49:52 Europe/Berlin] Performance: 0.6606s | Memory: 68.60 KB | Queries: 0 | URI: /apsdreamhome/public/
+[06-Mar-2026 20:49:52 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[06-Mar-2026 20:49:52 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/property3.jpg
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/property2.jpg
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/js/bootstrap.bundle.min.js
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/profile/img_avatar3.png
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/js/jquery.min.js
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/js/utils.js
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/property1.jpg
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/img/logo.png
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/header.css
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/profile/img_avatar3.png
+[06-Mar-2026 20:49:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/images/banner/ban1.jpg
+[06-Mar-2026 22:05:04 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/about
+[06-Mar-2026 22:05:04 Europe/Berlin] Loading controller: App\Http\Controllers\Public\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Public/PageController.php
+[06-Mar-2026 22:05:05 Europe/Berlin] DEBUG: About method called in PageController
+[06-Mar-2026 22:05:07 Europe/Berlin] Performance: 1.3068s | Memory: 150.57 KB | Queries: 0 | URI: /apsdreamhome/public/about
+[06-Mar-2026 22:05:07 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 22:05:07 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 22:05:07 Europe/Berlin] Performance: 0.2508s | Memory: 68.60 KB | Queries: 0 | URI: /apsdreamhome/public/
+[06-Mar-2026 22:05:07 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/ai-dashboard
+[06-Mar-2026 22:05:07 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/mlm-dashboard
+[06-Mar-2026 22:05:07 Europe/Berlin] Loading controller: App\Http\Controllers\MLMController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/MLMController.php
+[06-Mar-2026 22:05:07 Europe/Berlin] PHP Warning:  require_once(../layouts/header_new.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\pages\mlm-dashboard.php on line 7
+[06-Mar-2026 22:05:07 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../layouts/header_new.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\pages\mlm-dashboard.php:7
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\BaseController.php(294): include()
+#1 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\MLMController.php(26): App\Http\Controllers\BaseController->render('pages/mlm-dashb...', Array)
+#2 C:\xampp\htdocs\apsdreamhome\routes\router.php(119): App\Http\Controllers\MLMController->dashboard()
+#3 C:\xampp\htdocs\apsdreamhome\public\index.php(64): Router->dispatch('/apsdreamhome/p...')
+#4 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\mlm-dashboard.php on line 7
+[06-Mar-2026 22:05:18 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/ai-valuation
+[06-Mar-2026 22:05:18 Europe/Berlin] Loading controller: App\Http\Controllers\AIValuationController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIValuationController.php
+[06-Mar-2026 22:05:19 Europe/Berlin] PHP Parse error:  syntax error, unexpected namespaced name "App\Services\AI" in C:\xampp\htdocs\apsdreamhome\app\Services\AI\PropertyValuationEngine.php on line 5
+[06-Mar-2026 22:09:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/ai-dashboard
+[06-Mar-2026 22:20:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 22:20:23 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 22:20:24 Europe/Berlin] Router Error: View not found: C:/xampp/htdocs/apsdreamhome/app/views/pages/home_new_version.php
+[06-Mar-2026 22:39:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 22:39:22 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 22:39:22 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\apsdreamhome\app\views\layouts/header_new.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 19
+[06-Mar-2026 22:39:22 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\apsdreamhome\app\views\layouts/header_new.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 19
+[06-Mar-2026 22:39:22 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\apsdreamhome\app\views\layouts/footer_new.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 25
+[06-Mar-2026 22:39:22 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\apsdreamhome\app\views\layouts/footer_new.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 25
+[06-Mar-2026 22:39:22 Europe/Berlin] Performance: 0.0133s | Memory: 39.91 KB | Queries: 0 | URI: /apsdreamhome/public/
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property1.jpg
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property2.jpg
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property3.jpg
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/why-choose-us.jpg
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[06-Mar-2026 22:39:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/hero-image.jpg
+[06-Mar-2026 22:42:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 22:42:23 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 22:42:24 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\apsdreamhome\app\views\layouts/header_new.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 19
+[06-Mar-2026 22:42:24 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\apsdreamhome\app\views\layouts/header_new.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 19
+[06-Mar-2026 22:42:24 Europe/Berlin] PHP Warning:  include(C:\xampp\htdocs\apsdreamhome\app\views\layouts/footer_new.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 25
+[06-Mar-2026 22:42:24 Europe/Berlin] PHP Warning:  include(): Failed opening 'C:\xampp\htdocs\apsdreamhome\app\views\layouts/footer_new.php' for inclusion (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\layouts\base.php on line 25
+[06-Mar-2026 22:42:24 Europe/Berlin] Performance: 0.0043s | Memory: 39.91 KB | Queries: 0 | URI: /apsdreamhome/public/
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property1.jpg
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/hero-image.jpg
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property3.jpg
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/why-choose-us.jpg
+[06-Mar-2026 22:42:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property2.jpg
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[06-Mar-2026 22:44:06 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[06-Mar-2026 22:44:06 Europe/Berlin] Performance: 0.0022s | Memory: 45.69 KB | Queries: 0 | URI: /apsdreamhome/public/
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/hero-image.jpg
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property2.jpg
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property1.jpg
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property3.jpg
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/why-choose-us.jpg
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css

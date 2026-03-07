@@ -20,7 +20,7 @@ class HomeController extends BaseController
         ];
 
         // Render view with data
-        $this->render('pages/home_new', $data);
+        $this->render('pages/home_new_version', $data);
     }
     
     public function about()
