@@ -19,7 +19,8 @@ if (!isAdmin()) {
 }
 
 // CSRF Validation
-if (!isset($_GET['csrf_token']) || !verifyCSRFToken(Security::sanitize($_GET['csrf_token']))) {
+$csrfToken = Security::sanitize($_GET['csrf_token'] ?? '');
+if (empty($csrfToken) || !verifyCSRFToken($csrfToken)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Invalid CSRF token'))]);
     exit();
