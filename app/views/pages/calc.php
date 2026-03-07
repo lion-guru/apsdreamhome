@@ -162,5 +162,5 @@ ob_start();
 $content = ob_get_clean();
 
 // Include the layout
-require_once __DIR__ . '/../layouts/' . $layout . '.php';
+require_once __DIR__ . '/../../layouts/' . $layout . '.php';
 ?>

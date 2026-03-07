@@ -11,7 +11,7 @@
 </div>
 
 <?php 
-require_once __DIR__ . '/../includes/csrf_protection.php';
+require_once __DIR__ . '/../../includes/csrf_protection.php';
 echo getAdminCSRFTokenField(); 
 ?>
 

@@ -273,4 +273,4 @@ document.addEventListener('DOMContentLoaded', function() {
 $scripts = ob_get_clean();
 
 // Include layout
-require_once __DIR__ . '/../layouts/' . $layout . '.php';
+require_once __DIR__ . '/../../layouts/' . $layout . '.php';
