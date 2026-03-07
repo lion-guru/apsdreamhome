@@ -38,7 +38,7 @@ if (isset($_POST['update_basic'])) {
                     'name' => $name,
                     'email' => $email,
                     'phone' => $phone,
-                    'uid' => $uid
+                    'uid' => (int)$uid
                 ]);
                 if ($success) {
                     $msg = "Profile updated successfully!";
@@ -71,7 +71,7 @@ if (isset($_POST['update_password'])) {
                 $hashed_pass = password_hash($new_pass, PASSWORD_DEFAULT);
                 $success = $db->query("UPDATE users SET password = :password WHERE id = :uid", [
                     'password' => $hashed_pass,
-                    'uid' => $uid
+                    'uid' => (int)$uid
                 ]);
                 if ($success) {
                     $msg = "Password changed successfully!";
