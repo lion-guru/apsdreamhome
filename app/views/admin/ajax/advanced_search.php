@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 // Include admin configuration
-require_once __DIR__ . '/../core/init.php';
+require_once __DIR__ . '/../../core/init.php';
 
 // Verify admin authentication
 if (!isAdmin()) {
@@ -19,7 +19,7 @@ if (!isAdmin()) {
 }
 
 // CSRF Validation
-if (!isset(Security::sanitize($_GET['csrf_token'])) || !verifyCSRFToken(Security::sanitize($_GET['csrf_token']))) {
+if (!isset($_GET['csrf_token']) || !verifyCSRFToken(Security::sanitize($_GET['csrf_token']))) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => h($mlSupport->translate('Invalid CSRF token'))]);
     exit();

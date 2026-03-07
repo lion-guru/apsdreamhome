@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../core/init.php';
-require_once __DIR__ . '/../config/ai_tools_config.php';
+require_once __DIR__ . '/../../core/init.php';
+require_once __DIR__ . '/../../config/ai_tools_config.php';
 
 use App\Core\App;
 

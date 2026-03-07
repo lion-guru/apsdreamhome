@@ -7,7 +7,7 @@
 header('Access-Control-Allow-Origin: *');
 
 // Include admin configuration
-require_once __DIR__ . '/../core/init.php';
+require_once __DIR__ . '/../../core/init.php';
 
 // Verify admin authentication
 if (!isAdmin()) {

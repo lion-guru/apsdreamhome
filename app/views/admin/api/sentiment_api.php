@@ -1,6 +1,6 @@
 <?php
 // Dummy sentiment API endpoint for local testing
-require_once __DIR__ . '/../core/init.php';
+require_once __DIR__ . '/../../core/init.php';
 
 header('Content-Type: application/json');
 
