@@ -4,7 +4,7 @@
  * Displays detailed information about a single property
  */
 
-require_once '../../../includes/db_connection.php';
+require_once __DIR__ . '/../../../includes/db_connection.php';
 $pdo = getMysqliConnection();
 
 ?>
