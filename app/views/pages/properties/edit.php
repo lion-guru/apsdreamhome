@@ -15,7 +15,7 @@ if (!isset($_SESSION['uid'])) {
 
 $db = \App\Core\App::database();
 $uid = $_SESSION['uid'];
-$pid = intval($_GET['id'] ?? 0);
+$pid = intval(Security::sanitize($_GET['id'] ?? 0));
 $error = "";
 $msg = "";
 
@@ -34,9 +34,9 @@ if (!$property) {
 }
 
 // Handle form submission
-if (Security::sanitize($_POST['update_property']) !== null) {
+if (isset($_POST['update_property'])) {
     // CSRF Check
-    if (Security::sanitize($_POST['csrf_token']) === null || !CSRFProtection::validateToken(Security::sanitize($_POST['csrf_token']), 'edit_property')) {
+    if (!isset($_POST['csrf_token']) || !CSRFProtection::validateToken($_POST['csrf_token'], 'edit_property')) {
         $error = "Security error: Invalid CSRF token.";
     } else {
         // Collect data
