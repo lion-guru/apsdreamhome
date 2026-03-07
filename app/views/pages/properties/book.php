@@ -25,16 +25,16 @@ if ($property_id) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = trim(Security::sanitize($_POST['full_name']));
-    $mobile = trim(Security::sanitize($_POST['mobile']));
-    $email = trim(Security::sanitize($_POST['email']));
-    $property_id = trim(Security::sanitize($_POST['property_id']));
-    $booking_type = trim(Security::sanitize($_POST['booking_type']));
-    $visit_date = trim(Security::sanitize($_POST['visit_date']));
-    $visit_time = trim(Security::sanitize($_POST['visit_time']));
-    $budget_range = trim(Security::sanitize($_POST['budget_range']));
-    $financing_needed = isset(Security::sanitize($_POST['financing_needed'])) ? 1 : 0;
-    $special_requirements = trim(Security::sanitize($_POST['special_requirements']));
+    $full_name = trim($_POST['full_name'] ?? '');
+    $mobile = trim($_POST['mobile'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $property_id = trim($_POST['property_id'] ?? '');
+    $booking_type = trim($_POST['booking_type'] ?? '');
+    $visit_date = trim($_POST['visit_date'] ?? '');
+    $visit_time = trim($_POST['visit_time'] ?? '');
+    $budget_range = trim($_POST['budget_range'] ?? '');
+    $financing_needed = isset($_POST['financing_needed']) ? 1 : 0;
+    $special_requirements = trim($_POST['special_requirements'] ?? '');
 
     // Validation
     if (empty($full_name) || empty($mobile) || empty($email) || empty($property_id)) {
