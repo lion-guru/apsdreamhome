@@ -16,7 +16,8 @@ if (!verifyCSRFToken($csrf_token)) {
     exit();
 }
 
-if (!isset($_GET['id']) || !is_numeric(Security::sanitize($_GET['id']))) {
+$componentId = Security::sanitize($_GET['id'] ?? '');
+if (empty($componentId) || !is_numeric($componentId)) {
     http_response_code(400);
     echo json_encode(['error' => h($mlSupport->translate('Invalid component ID'))]);
     exit;
@@ -26,7 +27,7 @@ $db = \App\Core\App::database();
 $layoutTemplate = new Admin\Models\LayoutTemplate($db->getConnection());
 
 try {
-    $component = $layoutTemplate->getById(Security::sanitize($_GET['id']));
+    $component = $layoutTemplate->getById((int)$componentId);
     if (!$component) {
         http_response_code(404);
         echo json_encode(['error' => h($mlSupport->translate('Component not found'))]);

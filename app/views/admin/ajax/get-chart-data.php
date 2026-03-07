@@ -41,7 +41,7 @@ $response = [
 ];
 
 // Get chart type from request
-$chartType = isset($_GET['chart']) ? Security::sanitize($_GET['chart']) : '';
+$chartType = Security::sanitize($_GET['chart'] ?? '');
 
 // Handle different chart types
 switch ($chartType) {
