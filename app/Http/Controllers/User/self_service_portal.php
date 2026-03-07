@@ -53,7 +53,7 @@ if (!isset($_SESSION['last_regeneration'])) {
 }
 
 // Include configuration
-require_once __DIR__ . '/../includes/db_connection.php';
+require_once __DIR__ . '/../../includes/db_connection.php';
 $pdo = getPdoConnection();
 
 // Check if user is logged in

@@ -4,7 +4,7 @@
  * Handles CRUD operations for both MCP and User API keys
  */
 
-require_once "../../../Core/Bootstrap/base.php";
+require_once __DIR__ . "/../../Core/Bootstrap/base.php";
 
 header("Content-Type: application/json");
 
