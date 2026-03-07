@@ -66,9 +66,9 @@ try {
 
 // Validate and sanitize input context
 $context = [
-    'property_type' => $dbSecurity->sanitizeInput(Security::sanitize($_POST['property_type']) ?? ''),
-    'budget' => $dbSecurity->sanitizeInput(Security::sanitize($_POST['budget']) ?? ''),
-    'location' => $dbSecurity->sanitizeInput(Security::sanitize($_POST['location']) ?? '')
+    'property_type' => $dbSecurity->sanitizeInput($_POST['property_type'] ?? ''),
+    'budget' => $dbSecurity->sanitizeInput($_POST['budget'] ?? ''),
+    'location' => $dbSecurity->sanitizeInput($_POST['location'] ?? '')
 ];
 // Validate context completeness
 $missingFields = array_filter($context, function($value) { return empty($value); });
@@ -263,4 +263,10 @@ echo json_encode([
     'status'=>$status
 ]);
 
-
+
+
+
+
+
+
+
