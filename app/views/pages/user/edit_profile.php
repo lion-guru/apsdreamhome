@@ -19,10 +19,10 @@ $msg = '';
 $error = '';
 
 // Handle Basic Profile Update
-if (isset(Security::sanitize($_POST['update_basic']))) {
-    $name = trim(Security::sanitize($_POST['name']) ?? '');
-    $email = trim(Security::sanitize($_POST['email']) ?? '');
-    $phone = trim(Security::sanitize($_POST['phone']) ?? '');
+if (isset($_POST['update_basic'])) {
+    $name = trim(Security::sanitize($_POST['name'] ?? ''));
+    $email = trim(Security::sanitize($_POST['email'] ?? ''));
+    $phone = trim(Security::sanitize($_POST['phone'] ?? ''));
 
     if (!empty($name) && !empty($email)) {
         try {
@@ -49,10 +49,10 @@ if (isset(Security::sanitize($_POST['update_basic']))) {
 }
 
 // Handle Password Update
-if (isset(Security::sanitize($_POST['update_password']))) {
-    $old_pass = Security::sanitize($_POST['old_password']) ?? '';
-    $new_pass = Security::sanitize($_POST['new_password']) ?? '';
-    $conf_pass = Security::sanitize($_POST['confirm_password']) ?? '';
+if (isset($_POST['update_password'])) {
+    $old_pass = Security::sanitize($_POST['old_password'] ?? '');
+    $new_pass = Security::sanitize($_POST['new_password'] ?? '');
+    $conf_pass = Security::sanitize($_POST['confirm_password'] ?? '');
 
     if (!empty($old_pass) && !empty($new_pass) && $new_pass === $conf_pass) {
         try {
