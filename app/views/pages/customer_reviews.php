@@ -33,12 +33,12 @@ $page_description = 'Read what our customers say about APS Dream Homes propertie
 $page_keywords = 'customer reviews, testimonials, APS Dream Homes, client feedback';
 
 // Handle review submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset(Security::sanitize($_POST['submit_review']))) {
-    $property_id = Security::sanitize($_POST['property_id']) ?? null;
-    $rating = Security::sanitize($_POST['rating']) ?? 0;
-    $review_text = trim(Security::sanitize($_POST['review_text']) ?? '');
-    $name = trim(Security::sanitize($_POST['name']) ?? '');
-    $email = trim(Security::sanitize($_POST['email']) ?? '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
+    $property_id = Security::sanitize($_POST['property_id'] ?? '');
+    $rating = Security::sanitize($_POST['rating'] ?? '');
+    $review_text = trim(Security::sanitize($_POST['review_text'] ?? ''));
+    $name = trim(Security::sanitize($_POST['name'] ?? ''));
+    $email = trim(Security::sanitize($_POST['email'] ?? ''));
 
     $errors = [];
     $success = false;
