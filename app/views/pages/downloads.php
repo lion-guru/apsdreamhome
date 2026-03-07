@@ -40,9 +40,9 @@
             <div class="row mb-4">
                 <div class="col-12 text-center">
                     <div class="btn-group flex-wrap" role="group">
-                        <a href="<?= BASE_URL ?>downloads" class="btn btn-outline-primary <?= !isset(Security::sanitize($_GET['category'])) || Security::sanitize($_GET['category']) == 'all' ? 'active' : '' ?>">All</a>
+                        <a href="<?= BASE_URL ?>downloads" class="btn btn-outline-primary <?= (!isset($_GET['category']) || Security::sanitize($_GET['category']) == 'all') ? 'active' : '' ?>">All</a>
                         <?php foreach ($categories as $cat): ?>
-                            <a href="<?= BASE_URL ?>downloads?category=<?= urlencode($cat) ?>" class="btn btn-outline-primary <?= isset(Security::sanitize($_GET['category'])) && Security::sanitize($_GET['category']) == $cat ? 'active' : '' ?>">
+                            <a href="<?= BASE_URL ?>downloads?category=<?= urlencode($cat) ?>" class="btn btn-outline-primary <?= (isset($_GET['category']) && Security::sanitize($_GET['category']) == $cat) ? 'active' : '' ?>">
                                 <?= htmlspecialchars(ucfirst($cat)) ?>
                             </a>
                         <?php endforeach; ?>
@@ -90,7 +90,7 @@
                     <ul class="pagination justify-content-center">
                         <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                             <li class="page-item <?= $pagination['current_page'] == $i ? 'active' : '' ?>">
-                                <a class="page-link" href="?page=<?= $i ?><?= isset(Security::sanitize($_GET['category'])) ? '&category=' . urlencode(Security::sanitize($_GET['category'])) : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?><?= isset($_GET['category']) ? '&category=' . urlencode(Security::sanitize($_GET['category'])) : '' ?>">
                                     <?= $i ?>
                                 </a>
                             </li>
