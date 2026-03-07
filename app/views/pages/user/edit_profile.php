@@ -14,37 +14,45 @@ if (!isset($_SESSION['uid'])) {
 }
 
 $db = \App\Core\App::database();
-$uid = $_SESSION['uid'];
 $msg = '';
 $error = '';
 
 // Handle Basic Profile Update
 if (isset($_POST['update_basic'])) {
-    $name = trim(Security::sanitize($_POST['name'] ?? ''));
-    $email = trim(Security::sanitize($_POST['email'] ?? ''));
-    $phone = trim(Security::sanitize($_POST['phone'] ?? ''));
+    // Get user ID from session properly
+    $uid = $_SESSION['user_id'] ?? $_SESSION['uid'] ?? $_SESSION['auser'] ?? 0;
+    $uid = is_numeric($uid) ? (int)$uid : 0;
 
-    if (!empty($name) && !empty($email)) {
-        try {
-            // Using 'users' table with correct column names: name, email, phone
-            $success = $db->query("UPDATE users SET name = :name, email = :email, phone = :phone WHERE id = :uid", [
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'uid' => $uid
-            ]);
-            if ($success) {
-                $msg = "Profile updated successfully!";
-                $_SESSION['name'] = $name;
-                $_SESSION['uemail'] = $email;
-            } else {
-                $error = "Failed to update profile.";
-            }
-        } catch (Exception $e) {
-            $error = "An error occurred while updating profile: " . $e->getMessage();
-        }
+    if ($uid <= 0) {
+        $msg = "Invalid user session!";
+        $msg_type = "error";
     } else {
-        $error = "Name and Email are required.";
+        $name = trim(Security::sanitize($_POST['name'] ?? ''));
+        $email = trim(Security::sanitize($_POST['email'] ?? ''));
+        $phone = trim(Security::sanitize($_POST['phone'] ?? ''));
+
+        if (!empty($name) && !empty($email)) {
+            try {
+                // Using 'users' table with correct column names: name, email, phone
+                $success = $db->query("UPDATE users SET name = :name, email = :email, phone = :phone WHERE id = :uid", [
+                    'name' => $name,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'uid' => $uid
+                ]);
+                if ($success) {
+                    $msg = "Profile updated successfully!";
+                    $_SESSION['name'] = $name;
+                    $_SESSION['uemail'] = $email;
+                } else {
+                    $error = "Failed to update profile.";
+                }
+            } catch (Exception $e) {
+                $error = "An error occurred while updating profile: " . $e->getMessage();
+            }
+        } else {
+            $error = "Name and Email are required.";
+        }
     }
 }
 
