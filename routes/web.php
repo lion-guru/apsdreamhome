@@ -37,7 +37,6 @@ $router->get('/media/categories', 'Media\MediaLibraryController@categories');
 $router->get('/media/stats', 'Media\MediaLibraryController@getStats');
 
 // Admin routes (Modern MVC)
-$router->get('/admin/dashboard', 'Admin\AdminController@dashboard');
 $router->get('/admin/stats', 'Admin\AdminController@getStats');
 $router->get('/admin/activities', 'Admin\AdminController@getRecentActivities');
 $router->get('/admin/analytics/properties', 'Admin\AdminController@propertyAnalytics');
@@ -131,17 +130,6 @@ $router->post('/communication/sms/bulk', 'Communication\SmsController@sendBulk')
 $router->post('/communication/sms/schedule', 'Communication\SmsController@schedule');
 $router->get('/communication/sms/status/{id}', 'Communication\SmsController@getStatus');
 $router->get('/communication/sms/stats', 'Communication\SmsController@getStats');
-
-// Event routes (Modern MVC)
-$router->get('/events/dashboard', 'Event\EventController@dashboard');
-$router->post('/events/publish', 'Event\EventController@publish');
-$router->get('/events/stats', 'Event\EventController@getStats');
-$router->get('/events/recent', 'Event\EventController@getRecentEvents');
-$router->post('/events/process-queue', 'Event\EventController@processQueue');
-$router->post('/events/clear-logs', 'Event\EventController@clearOldLogs');
-$router->post('/events/subscribe', 'Event\EventController@subscribe');
-$router->get('/events/subscribers/{event}', 'Event\EventController@getSubscribers');
-$router->post('/events/create-tables', 'Event\EventController@createTables');
 
 // Utility routes (Modern MVC)
 $router->get('/utility/alerts', 'Utility\AlertController@index');
