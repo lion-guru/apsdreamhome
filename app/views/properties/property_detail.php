@@ -1,10 +1,11 @@
 <?php
+
 /**
  * Property Detail Page Template
  * Displays detailed information about a single property
  */
 
-require_once __DIR__ . '/../../../includes/db_connection.php';
+require_once __DIR__ . '/../../../../includes/db_connection.php';
 $pdo = getMysqliConnection();
 
 ?>
@@ -31,9 +32,9 @@ $pdo = getMysqliConnection();
                     <?php if (!empty($property_images)): ?>
                         <div class="main-image mb-3">
                             <img src="<?php echo htmlspecialchars($property_images[0]['image_path']); ?>"
-                                 alt="<?php echo htmlspecialchars($property['title']); ?>"
-                                 class="img-fluid rounded shadow"
-                                 id="mainPropertyImage">
+                                alt="<?php echo htmlspecialchars($property['title']); ?>"
+                                class="img-fluid rounded shadow"
+                                id="mainPropertyImage">
                         </div>
                         <?php if (count($property_images) > 1): ?>
                             <div class="image-thumbnails">
@@ -41,9 +42,9 @@ $pdo = getMysqliConnection();
                                     <?php foreach (array_slice($property_images, 0, 6) as $image): ?>
                                         <div class="col-2">
                                             <img src="<?php echo htmlspecialchars($image['image_path']); ?>"
-                                                 alt="Property thumbnail"
-                                                 class="img-fluid rounded cursor-pointer thumbnail-image"
-                                                 onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path']); ?>')">
+                                                alt="Property thumbnail"
+                                                class="img-fluid rounded cursor-pointer thumbnail-image"
+                                                onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path']); ?>')">
                                         </div>
                                     <?php endforeach; ?>
                                     <?php if (count($property_images) > 6): ?>
@@ -59,8 +60,8 @@ $pdo = getMysqliConnection();
                     <?php else: ?>
                         <div class="main-image mb-3">
                             <img src="https://via.placeholder.com/800x500/667eea/ffffff?text=<?php echo urlencode($property['title']); ?>"
-                                 alt="<?php echo htmlspecialchars($property['title']); ?>"
-                                 class="img-fluid rounded shadow">
+                                alt="<?php echo htmlspecialchars($property['title']); ?>"
+                                class="img-fluid rounded shadow">
                         </div>
                     <?php endif; ?>
                 </div>
@@ -158,8 +159,8 @@ $pdo = getMysqliConnection();
 
                         <div class="d-flex gap-2 mb-3">
                             <button class="btn <?php echo $favoriteClass; ?> flex-fill favorite-toggle"
-                                    data-property-id="<?php echo $property['id']; ?>"
-                                    data-is-favorited="<?php echo $isFavorited ? '1' : '0'; ?>">
+                                data-property-id="<?php echo $property['id']; ?>"
+                                data-is-favorited="<?php echo $isFavorited ? '1' : '0'; ?>">
                                 <i class="fas <?php echo $favoriteIcon; ?> me-2"></i><?php echo $favoriteText; ?>
                             </button>
                             <button class="btn btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#inquiryModal">
@@ -189,25 +190,25 @@ $pdo = getMysqliConnection();
                 <ul class="nav nav-tabs" id="propertyTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview"
-                                type="button" role="tab">
+                            type="button" role="tab">
                             <i class="fas fa-info-circle me-2"></i>Overview
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="features-tab" data-bs-toggle="tab" data-bs-target="#features"
-                                type="button" role="tab">
+                            type="button" role="tab">
                             <i class="fas fa-list-ul me-2"></i>Features
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location"
-                                type="button" role="tab">
+                            type="button" role="tab">
                             <i class="fas fa-map me-2"></i>Location
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="agent-tab" data-bs-toggle="tab" data-bs-target="#agent"
-                                type="button" role="tab">
+                            type="button" role="tab">
                             <i class="fas fa-user-tie me-2"></i>Agent
                         </button>
                     </li>
@@ -396,8 +397,8 @@ $pdo = getMysqliConnection();
                                 <div class="agent-info-card">
                                     <div class="agent-avatar mb-3">
                                         <img src="https://via.placeholder.com/100x100/667eea/ffffff?text=Agent"
-                                             alt="Property Agent"
-                                             class="img-fluid rounded-circle">
+                                            alt="Property Agent"
+                                            class="img-fluid rounded-circle">
                                     </div>
                                     <h5><?php echo htmlspecialchars($property['agent_name'] ?? 'Property Agent'); ?></h5>
                                     <p class="text-muted mb-3">Licensed Real Estate Agent</p>
@@ -437,7 +438,7 @@ $pdo = getMysqliConnection();
                                     <div class="mb-3">
                                         <label for="agent-message" class="form-label">Message</label>
                                         <textarea class="form-control" id="agent-message" rows="4"
-                                                  placeholder="I'm interested in this property. Please contact me with more details."></textarea>
+                                            placeholder="I'm interested in this property. Please contact me with more details."></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-paper-plane me-2"></i>Send Message
@@ -454,63 +455,63 @@ $pdo = getMysqliConnection();
 
 <!-- Related Properties -->
 <?php if (!empty($related_properties)): ?>
-<section class="related-properties py-5 bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h3 class="section-title text-center mb-4">
-                    <i class="fas fa-th-large text-primary me-2"></i>
-                    Related Properties
-                </h3>
+    <section class="related-properties py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3 class="section-title text-center mb-4">
+                        <i class="fas fa-th-large text-primary me-2"></i>
+                        Related Properties
+                    </h3>
+                </div>
             </div>
-        </div>
 
-        <div class="row g-4">
-            <?php foreach ($related_properties as $related): ?>
-                <div class="col-lg-3 col-md-6">
-                    <div class="property-card">
-                        <div class="property-image-container">
-                            <?php if ($related['main_image']): ?>
-                                <img src="<?php echo htmlspecialchars($related['main_image']); ?>"
-                                     alt="<?php echo htmlspecialchars($related['title']); ?>"
-                                     class="property-image">
-                            <?php else: ?>
-                                <img src="https://via.placeholder.com/300x200/667eea/ffffff?text=Property"
-                                     alt="<?php echo htmlspecialchars($related['title']); ?>"
-                                     class="property-image">
-                            <?php endif; ?>
+            <div class="row g-4">
+                <?php foreach ($related_properties as $related): ?>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="property-card">
+                            <div class="property-image-container">
+                                <?php if ($related['main_image']): ?>
+                                    <img src="<?php echo htmlspecialchars($related['main_image']); ?>"
+                                        alt="<?php echo htmlspecialchars($related['title']); ?>"
+                                        class="property-image">
+                                <?php else: ?>
+                                    <img src="https://via.placeholder.com/300x200/667eea/ffffff?text=Property"
+                                        alt="<?php echo htmlspecialchars($related['title']); ?>"
+                                        class="property-image">
+                                <?php endif; ?>
 
-                            <div class="property-overlay">
-                                <a href="<?php echo BASE_URL; ?>property?id=<?php echo $related['id']; ?>"
-                                   class="btn btn-light btn-sm">
-                                    <i class="fas fa-eye me-1"></i>View
-                                </a>
+                                <div class="property-overlay">
+                                    <a href="<?php echo BASE_URL; ?>property?id=<?php echo $related['id']; ?>"
+                                        class="btn btn-light btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="property-content">
-                            <h6 class="property-title">
-                                <a href="<?php echo BASE_URL; ?>property?id=<?php echo $related['id']; ?>">
-                                    <?php echo htmlspecialchars($related['title']); ?>
-                                </a>
-                            </h6>
-                            <div class="property-price">
-                                <?php
-                                $price = $related['price'] ?? 0;
-                                echo $price > 0 ? '₹' . number_format($price) : 'Price on Request';
-                                ?>
-                            </div>
-                            <div class="property-location small text-muted">
-                                <i class="fas fa-map-marker-alt me-1"></i>
-                                <?php echo htmlspecialchars($related['city'] ?? 'Location not specified'); ?>
+                            <div class="property-content">
+                                <h6 class="property-title">
+                                    <a href="<?php echo BASE_URL; ?>property?id=<?php echo $related['id']; ?>">
+                                        <?php echo htmlspecialchars($related['title']); ?>
+                                    </a>
+                                </h6>
+                                <div class="property-price">
+                                    <?php
+                                    $price = $related['price'] ?? 0;
+                                    echo $price > 0 ? '₹' . number_format($price) : 'Price on Request';
+                                    ?>
+                                </div>
+                                <div class="property-location small text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    <?php echo htmlspecialchars($related['city'] ?? 'Location not specified'); ?>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 <?php endif; ?>
 
 <!-- Call to Action -->
@@ -575,7 +576,7 @@ $pdo = getMysqliConnection();
                     <div class="mb-3">
                         <label for="inquiry-subject" class="form-label">Subject *</label>
                         <input type="text" class="form-control" id="inquiry-subject" name="subject"
-                               value="Inquiry about <?php echo htmlspecialchars($property['title']); ?>" required>
+                            value="Inquiry about <?php echo htmlspecialchars($property['title']); ?>" required>
                     </div>
 
                     <div class="mb-3">
@@ -592,7 +593,7 @@ $pdo = getMysqliConnection();
                     <div class="mb-3">
                         <label for="inquiry-message" class="form-label">Message *</label>
                         <textarea class="form-control" id="inquiry-message" name="message" rows="4"
-                                  placeholder="Please let me know more about this property. I'm particularly interested in..." required></textarea>
+                            placeholder="Please let me know more about this property. I'm particularly interested in..." required></textarea>
                     </div>
 
                     <div class="alert alert-info">
@@ -612,206 +613,206 @@ $pdo = getMysqliConnection();
 </div>
 
 <script>
-function changeMainImage(imageSrc) {
-    document.getElementById('mainPropertyImage').src = imageSrc;
-}
-
-function shareProperty() {
-    if (navigator.share) {
-        navigator.share({
-            title: '<?php echo htmlspecialchars($property['title']); ?>',
-            text: 'Check out this amazing property!',
-            url: window.location.href
-        });
-    } else {
-        // Fallback for browsers that don't support Web Share API
-        navigator.clipboard.writeText(window.location.href).then(function() {
-            alert('Property link copied to clipboard!');
-        });
+    function changeMainImage(imageSrc) {
+        document.getElementById('mainPropertyImage').src = imageSrc;
     }
-}
 
-// Favorite toggle functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const favoriteButtons = document.querySelectorAll('.favorite-toggle');
+    function shareProperty() {
+        if (navigator.share) {
+            navigator.share({
+                title: '<?php echo htmlspecialchars($property['title']); ?>',
+                text: 'Check out this amazing property!',
+                url: window.location.href
+            });
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                alert('Property link copied to clipboard!');
+            });
+        }
+    }
 
-    favoriteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const propertyId = this.getAttribute('data-property-id');
-            const isFavorited = this.getAttribute('data-is-favorited') === '1';
+    // Favorite toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const favoriteButtons = document.querySelectorAll('.favorite-toggle');
+
+        favoriteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const propertyId = this.getAttribute('data-property-id');
+                const isFavorited = this.getAttribute('data-is-favorited') === '1';
+                const button = this;
+
+                // Show loading state
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+                button.disabled = true;
+
+                fetch('<?php echo BASE_URL; ?>favorites/toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'property_id=' + propertyId
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update button state
+                            if (data.is_favorited) {
+                                button.className = 'btn btn-danger flex-fill favorite-toggle';
+                                button.innerHTML = '<i class="fas fa-heart-broken me-2"></i>Remove from Favorites';
+                                button.setAttribute('data-is-favorited', '1');
+                            } else {
+                                button.className = 'btn btn-outline-secondary flex-fill favorite-toggle';
+                                button.innerHTML = '<i class="fas fa-heart me-2"></i>Save';
+                                button.setAttribute('data-is-favorited', '0');
+                            }
+
+                            // Show success message
+                            showToast(data.message, 'success');
+                        } else {
+                            // Show error message
+                            showToast(data.message, 'error');
+                            // Reset button
+                            button.innerHTML = originalText;
+                            button.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('An error occurred. Please try again.', 'error');
+                        // Reset button
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    });
+            });
+        });
+
+        // Inquiry form submission
+        document.getElementById('submit-inquiry').addEventListener('click', function() {
+            const form = document.getElementById('inquiry-form');
+            const formData = new FormData(form);
             const button = this;
+
+            // Validate form
+            const subject = form.querySelector('[name="subject"]').value.trim();
+            const message = form.querySelector('[name="message"]').value.trim();
+
+            if (!subject || !message) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
 
             // Show loading state
             const originalText = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
             button.disabled = true;
 
-            fetch('<?php echo BASE_URL; ?>favorites/toggle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'property_id=' + propertyId
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update button state
-                    if (data.is_favorited) {
-                        button.className = 'btn btn-danger flex-fill favorite-toggle';
-                        button.innerHTML = '<i class="fas fa-heart-broken me-2"></i>Remove from Favorites';
-                        button.setAttribute('data-is-favorited', '1');
-                    } else {
-                        button.className = 'btn btn-outline-secondary flex-fill favorite-toggle';
-                        button.innerHTML = '<i class="fas fa-heart me-2"></i>Save';
-                        button.setAttribute('data-is-favorited', '0');
-                    }
+            fetch('<?php echo BASE_URL; ?>inquiry/submit', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('inquiryModal'));
+                        modal.hide();
 
-                    // Show success message
-                    showToast(data.message, 'success');
-                } else {
-                    // Show error message
-                    showToast(data.message, 'error');
+                        // Reset form
+                        form.reset();
+
+                        // Show success message
+                        showToast(data.message, 'success');
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('An error occurred. Please try again.', 'error');
+                })
+                .finally(() => {
                     // Reset button
                     button.innerHTML = originalText;
                     button.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('An error occurred. Please try again.', 'error');
-                // Reset button
-                button.innerHTML = originalText;
-                button.disabled = false;
-            });
+                });
         });
-    });
 
-    // Inquiry form submission
-    document.getElementById('submit-inquiry').addEventListener('click', function() {
-        const form = document.getElementById('inquiry-form');
-        const formData = new FormData(form);
-        const button = this;
-
-        // Validate form
-        const subject = form.querySelector('[name="subject"]').value.trim();
-        const message = form.querySelector('[name="message"]').value.trim();
-
-        if (!subject || !message) {
-            showToast('Please fill in all required fields.', 'error');
-            return;
-        }
-
-        // Show loading state
-        const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
-        button.disabled = true;
-
-        fetch('<?php echo BASE_URL; ?>inquiry/submit', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('inquiryModal'));
-                modal.hide();
-
-                // Reset form
-                form.reset();
-
-                // Show success message
-                showToast(data.message, 'success');
-            } else {
-                showToast(data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('An error occurred. Please try again.', 'error');
-        })
-        .finally(() => {
-            // Reset button
-            button.innerHTML = originalText;
-            button.disabled = false;
-        });
-    });
-
-    // Toast notification function
-    function showToast(message, type) {
-        // Create toast element
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.innerHTML = `
+        // Toast notification function
+        function showToast(message, type) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
             <div class="toast-body">
                 ${message}
             </div>
         `;
 
-        // Add to page
-        document.body.appendChild(toast);
+            // Add to page
+            document.body.appendChild(toast);
 
-        // Show toast
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 100);
-
-        // Hide toast after 4 seconds
-        setTimeout(() => {
-            toast.classList.remove('show');
+            // Show toast
             setTimeout(() => {
-                document.body.removeChild(toast);
-            }, 300);
-        }, 4000);
-    }
-});
+                toast.classList.add('show');
+            }, 100);
+
+            // Hide toast after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 4000);
+        }
+    });
 </script>
 
 <style>
-/* Toast notifications */
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    min-width: 300px;
-    max-width: 500px;
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.toast-success {
-    background: #d4edda;
-    border-left: 4px solid #28a745;
-    color: #155724;
-}
-
-.toast-error {
-    background: #f8d7da;
-    border-left: 4px solid #dc3545;
-    color: #721c24;
-}
-
-.toast-body {
-    padding: 1rem;
-}
-
-@media (max-width: 768px) {
+    /* Toast notifications */
     .toast {
-        right: 10px;
-        left: 10px;
-        min-width: auto;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        max-width: 500px;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-}
+
+    .toast.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .toast-success {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        color: #155724;
+    }
+
+    .toast-error {
+        background: #f8d7da;
+        border-left: 4px solid #dc3545;
+        color: #721c24;
+    }
+
+    .toast-body {
+        padding: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .toast {
+            right: 10px;
+            left: 10px;
+            min-width: auto;
+        }
+    }
 </style>
 
 //

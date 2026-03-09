@@ -20,8 +20,8 @@ class FarmerServiceEnhanced
 
     public function __construct($database = null, $logger = null)
     {
-        $this->database = $database ?: Database::getInstance();
-        $this->logger = $logger ?: LoggingService::getInstance();
+        $this->database = $database ?: \App\Core\Database\Database::getInstance();
+        $this->logger = $logger ?: new \App\Services\LoggingService();
         $this->createFarmerTables();
     }
 
@@ -118,7 +118,6 @@ class FarmerServiceEnhanced
                 FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->database->query($sql);
-
         } catch (Exception $e) {
             $this->logger->log("Error creating farmer tables: " . $e->getMessage(), 'error', 'farmer');
             throw new RuntimeException("Failed to create farmer tables: " . $e->getMessage());
@@ -293,17 +292,17 @@ class FarmerServiceEnhanced
                 FROM farmer_profiles f
                 LEFT JOIN associates a ON f.associate_id = a.id
                 WHERE f.id = ?";
-        
+
         try {
             $farmer = $this->database->fetchOne($sql, [$id]);
-            
+
             if ($farmer) {
                 // Get land holdings
                 $farmer['land_holdings'] = $this->getFarmerLandHoldings($id);
                 // Get agreements
                 $farmer['agreements'] = $this->getFarmerAgreements($id);
             }
-            
+
             return $farmer;
         } catch (Exception $e) {
             $this->logger->log("Error fetching farmer $id: " . $e->getMessage(), 'error', 'farmer');
@@ -422,7 +421,6 @@ class FarmerServiceEnhanced
             // Recent registrations
             $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM farmer_profiles WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             $stats['recent_registrations'] = $result['recent'] ?? 0;
-
         } catch (Exception $e) {
             $this->logger->log("Error fetching farmer stats: " . $e->getMessage(), 'error', 'farmer');
         }

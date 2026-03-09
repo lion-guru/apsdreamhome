@@ -21,11 +21,11 @@ class PerformanceMonitoringService
     private $slowQueryThreshold = 100; // milliseconds
     private $memoryThreshold = 50; // MB
     private $cpuThreshold = 80; // percentage
-    
+
     public function __construct()
     {
-        $this->database = Database::getInstance();
-        $this->logger = LoggingService::getInstance();
+        $this->database = \App\Core\Database\Database::getInstance();
+        $this->logger = new LoggingService();
         $this->createPerformanceTables();
     }
 
@@ -81,7 +81,6 @@ class PerformanceMonitoringService
                 INDEX idx_created_at (created_at)
             )";
             $this->database->execute($sql);
-
         } catch (Exception $e) {
             $this->logger->log("Error creating performance tables: " . $e->getMessage(), 'error', 'performance');
         }
@@ -94,7 +93,7 @@ class PerformanceMonitoringService
     {
         try {
             $metrics = $this->collectSystemMetrics();
-            
+
             foreach ($metrics as $type => $typeMetrics) {
                 foreach ($typeMetrics as $name => $value) {
                     $this->recordMetric($type, $name, $value['value'], $value['unit'] ?? null, $value['threshold'] ?? null);
@@ -102,9 +101,8 @@ class PerformanceMonitoringService
             }
 
             $this->checkPerformanceThresholds($metrics);
-            
+
             $this->logger->log("System metrics recorded successfully", 'info', 'performance');
-            
         } catch (Exception $e) {
             $this->logger->log("Error recording system metrics: " . $e->getMessage(), 'error', 'performance');
         }
@@ -120,7 +118,7 @@ class PerformanceMonitoringService
         }
 
         $executionTime = (microtime(true) - $startTime) * 1000; // milliseconds
-        
+
         if ($executionTime > $this->slowQueryThreshold) {
             $this->logSlowQuery($sql, $params, $executionTime);
         }
@@ -155,13 +153,13 @@ class PerformanceMonitoringService
         $memoryUsage = memory_get_usage(true);
         $memoryLimit = $this->parseMemoryLimit(ini_get('memory_limit'));
         $memoryPercent = ($memoryUsage / $memoryLimit) * 100;
-        
+
         $metrics['memory']['usage'] = [
             'value' => round($memoryUsage / 1024 / 1024, 2), // MB
             'unit' => 'MB',
             'threshold' => $this->memoryThreshold
         ];
-        
+
         $metrics['memory']['percentage'] = [
             'value' => round($memoryPercent, 2),
             'unit' => '%',
@@ -215,7 +213,7 @@ class PerformanceMonitoringService
     private function recordMetric($type, $name, $value, $unit = null, $threshold = null)
     {
         $status = 'normal';
-        
+
         if ($threshold !== null) {
             if ($value >= $threshold * 1.2) {
                 $status = 'critical';
@@ -226,7 +224,7 @@ class PerformanceMonitoringService
 
         $sql = "INSERT INTO performance_metrics (metric_type, metric_name, metric_value, metric_unit, threshold_value, status)
                 VALUES (?, ?, ?, ?, ?, ?)";
-        
+
         $this->database->execute($sql, [$type, $name, $value, $unit, $threshold, $status]);
     }
 
@@ -251,10 +249,10 @@ class PerformanceMonitoringService
     private function createPerformanceAlert($type, $name, $value, $threshold, $severity)
     {
         $message = "Performance threshold exceeded for {$type}: {$name}. Current: {$value}, Threshold: {$threshold}";
-        
+
         $sql = "INSERT INTO performance_alerts (alert_type, alert_message, current_value, threshold_value, severity)
                 VALUES (?, ?, ?, ?, ?)";
-        
+
         $this->database->execute($sql, [
             "{$type}_{$name}",
             $message,
@@ -272,10 +270,10 @@ class PerformanceMonitoringService
     private function logSlowQuery($sql, $params, $executionTime)
     {
         $memoryUsage = memory_get_usage(true) / 1024 / 1024; // MB
-        
+
         $sqlLog = "INSERT INTO slow_queries_log (query_sql, query_params, execution_time, memory_usage)
                    VALUES (?, ?, ?, ?)";
-        
+
         $this->database->execute($sqlLog, [
             $sql,
             json_encode($params),
@@ -300,7 +298,7 @@ class PerformanceMonitoringService
         $sql = "SELECT COUNT(*) as count FROM performance_alerts 
                 WHERE severity = 'critical' AND resolved = FALSE 
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)";
-        
+
         $result = $this->database->fetchOne($sql);
         $criticalAlerts = $result['count'] ?? 0;
 
@@ -312,7 +310,7 @@ class PerformanceMonitoringService
             $sql = "SELECT COUNT(*) as count FROM performance_alerts 
                     WHERE severity IN ('medium', 'high') AND resolved = FALSE 
                     AND created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)";
-            
+
             $result = $this->database->fetchOne($sql);
             $warningAlerts = $result['count'] ?? 0;
 
@@ -333,7 +331,7 @@ class PerformanceMonitoringService
         $sql = "SELECT * FROM performance_metrics 
                 ORDER BY created_at DESC 
                 LIMIT ?";
-        
+
         return $this->database->fetchAll($sql, [$limit]);
     }
 
@@ -345,7 +343,7 @@ class PerformanceMonitoringService
         $sql = "SELECT * FROM slow_queries_log 
                 ORDER BY execution_time DESC 
                 LIMIT ?";
-        
+
         return $this->database->fetchAll($sql, [$limit]);
     }
 
@@ -358,7 +356,7 @@ class PerformanceMonitoringService
                 WHERE resolved = FALSE 
                 ORDER BY severity DESC, created_at DESC 
                 LIMIT ?";
-        
+
         return $this->database->fetchAll($sql, [$limit]);
     }
 
@@ -379,7 +377,7 @@ class PerformanceMonitoringService
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                 GROUP BY DATE_FORMAT(created_at, '%H:00')
                 ORDER BY hour";
-        
+
         $trends['memory'] = $this->database->fetchAll($sql);
 
         // CPU usage trend (last 24 hours)
@@ -392,7 +390,7 @@ class PerformanceMonitoringService
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                 GROUP BY DATE_FORMAT(created_at, '%H:00')
                 ORDER BY hour";
-        
+
         $trends['cpu'] = $this->database->fetchAll($sql);
 
         return $trends;
@@ -418,7 +416,7 @@ class PerformanceMonitoringService
     {
         $sql = "SELECT COUNT(*) as count FROM slow_queries_log 
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)";
-        
+
         $result = $this->database->fetchOne($sql);
         return $result['count'] ?? 0;
     }
@@ -430,7 +428,7 @@ class PerformanceMonitoringService
     {
         $totalSpace = disk_total_space('/');
         $freeSpace = disk_free_space('/');
-        
+
         if ($totalSpace && $freeSpace) {
             $usedSpace = $totalSpace - $freeSpace;
             return [
@@ -440,7 +438,7 @@ class PerformanceMonitoringService
                 'used_percent' => ($usedSpace / $totalSpace) * 100
             ];
         }
-        
+
         return ['used_percent' => 0];
     }
 
@@ -460,7 +458,7 @@ class PerformanceMonitoringService
     private function calculateSeverity($value, $threshold)
     {
         $ratio = $value / $threshold;
-        
+
         if ($ratio >= 1.5) {
             return 'critical';
         } elseif ($ratio >= 1.2) {
@@ -479,7 +477,7 @@ class PerformanceMonitoringService
     {
         $unit = strtolower(substr($memoryLimit, -1));
         $value = (int) substr($memoryLimit, 0, -1);
-        
+
         switch ($unit) {
             case 'g':
                 return $value * 1024 * 1024 * 1024;
@@ -511,7 +509,6 @@ class PerformanceMonitoringService
             $this->database->execute($sql, [$days]);
 
             $this->logger->log("Performance data cleanup completed", 'info', 'performance');
-            
         } catch (Exception $e) {
             $this->logger->log("Error cleaning performance data: " . $e->getMessage(), 'error', 'performance');
         }
@@ -546,9 +543,9 @@ class PerformanceMonitoringService
                 FROM performance_metrics 
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                 GROUP BY metric_type, metric_name";
-        
+
         $results = $this->database->fetchAll($sql);
-        
+
         foreach ($results as $row) {
             $summary[$row['metric_type']][$row['metric_name']] = [
                 'average' => $row['avg_value'],
@@ -568,14 +565,14 @@ class PerformanceMonitoringService
                 FROM performance_alerts 
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                 GROUP BY severity";
-        
+
         $results = $this->database->fetchAll($sql);
-        
+
         $summary = [
             'total' => 0,
             'by_severity' => []
         ];
-        
+
         foreach ($results as $row) {
             $summary['by_severity'][$row['severity']] = $row['count'];
             $summary['total'] += $row['count'];

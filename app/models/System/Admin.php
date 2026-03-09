@@ -1,242 +1,430 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\System;
 
 use App\Models\Model;
 use PDO;
 
 /**
- * Admin Model
- * Handles all admin panel related database operations
+ * Admin Model - System Administration
+ * Handles admin-related database operations and analytics
  */
 class Admin extends Model
 {
-    protected static $table = 'admin';
+    protected static $table = 'users';
     protected static $primaryKey = 'id';
-    protected $db;
-
-    protected array $fillable = [
-        'username',
-        'auser',
-        'email',
-        'password',
-        'apass',
-        'role',
-        'status',
-        'permissions',
-        'last_login',
-        'created_at',
-        'updated_at'
-    ];
-
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $this->db = \App\Core\Database::getInstance()->getConnection();
-    }
 
     /**
-     * Find admin by username or email
-     */
-    public function findByUsernameOrEmail($username)
-    {
-        $sql = "SELECT * FROM {$this->table} WHERE auser = :u1 OR username = :u2 OR email = :e1 LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['u1' => $username, 'u2' => $username, 'e1' => $username]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result ? new static($result) : null;
-    }
-
-    /**
-     * Get admin by ID
-     */
-    public function getAdminById($id)
-    {
-        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Get admin by email
-     */
-    public function getAdminByEmail($email)
-    {
-        $sql = "SELECT * FROM {$this->table} WHERE email = :email";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['email' => $email]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Authenticate admin
-     */
-    public function authenticateAdmin($email, $password)
-    {
-        $admin = $this->getAdminByEmail($email);
-
-        if ($admin && password_verify($password, $admin['apass'])) {
-            return $admin;
-        }
-
-        return false;
-    }
-
-    /**
-     * Get dashboard statistics
+     * Get admin dashboard statistics
      */
     public function getDashboardStats()
     {
-        $stats = [];
-
-        // Total users
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM users");
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stats['total_users'] = $result ? (int)$result['total'] : 0;
-
-        // Total properties (active/available)
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM properties WHERE status = 'active' OR status = 'available'");
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stats['total_properties'] = $result ? (int)$result['total'] : 0;
-
-        // Total leads
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM leads WHERE status != 'deleted'");
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stats['total_leads'] = $result ? (int)$result['total'] : 0;
-
-        // Total farmers
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM farmers WHERE status = 'active'");
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stats['total_farmers'] = $result ? (int)$result['total'] : 0;
-
-        // Placeholders for compatibility
-        $stats['new_notifications'] = 5;
-        $stats['revenue_this_month'] = '₹ 45.2L';
-
-        return $stats;
+        try {
+            $stats = [];
+            
+            // Total users
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total_users FROM users");
+            $stmt->execute();
+            $stats['total_users'] = $stmt->fetchColumn();
+            
+            // Total properties
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total_properties FROM properties");
+            $stmt->execute();
+            $stats['total_properties'] = $stmt->fetchColumn();
+            
+            // Total bookings
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total_bookings FROM bookings");
+            $stmt->execute();
+            $stats['total_bookings'] = $stmt->fetchColumn();
+            
+            // Total leads
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total_leads FROM leads");
+            $stmt->execute();
+            $stats['total_leads'] = $stmt->fetchColumn();
+            
+            return $stats;
+            
+        } catch (PDOException $e) {
+            error_log("Admin dashboard stats error: " . $e->getMessage());
+            return [];
+        }
     }
 
     /**
      * Get recent activities
      */
-    public function getRecentActivities()
+    public function getRecentActivities($limit = 10)
     {
-        $activities = [];
-
         try {
-            // Recent Bookings
-            $stmt = $this->db->prepare("SELECT b.id, COALESCE(c.name, 'Unknown Customer') as customer, COALESCE(b.plot_id, b.property_id) as plot_id, COALESCE(b.amount, 0) as amount, b.status, b.booking_date FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id ORDER BY b.booking_date DESC, b.id DESC LIMIT 5");
-            $stmt->execute();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $activities = [];
+            
+            // Recent bookings
+            $stmt = $this->db->prepare("
+                SELECT b.*, u.name as customer_name, p.title as property_title 
+                FROM bookings b 
+                JOIN users u ON b.user_id = u.id 
+                JOIN properties p ON b.property_id = p.id 
+                ORDER BY b.created_at DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($bookings as $booking) {
                 $activities[] = [
                     'type' => 'booking',
-                    'message' => 'New Booking - ' . ucfirst($row['status']) . ' (₹' . number_format($row['amount']) . ') for ' . $row['customer'],
-                    'time' => date('M j, Y', strtotime($row['booking_date']))
+                    'message' => "New booking from {$booking['customer_name']} for {$booking['property_title']}",
+                    'timestamp' => $booking['created_at'],
+                    'data' => $booking
                 ];
             }
-        } catch (\Exception $e) {
-            // Silently fail
-        }
-
-        try {
-            // Recent Properties
-            $stmt = $this->db->prepare("SELECT title, created_at FROM properties ORDER BY created_at DESC LIMIT 3");
-            $stmt->execute();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            
+            // Recent property additions
+            $stmt = $this->db->prepare("
+                SELECT p.*, u.name as agent_name 
+                FROM properties p 
+                JOIN users u ON p.agent_id = u.id 
+                ORDER BY p.created_at DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$limit]);
+            $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($properties as $property) {
                 $activities[] = [
-                    'type' => 'property_added',
-                    'message' => 'New property added: ' . htmlspecialchars($row['title']),
-                    'time' => date('M j, Y', strtotime($row['created_at']))
+                    'type' => 'property',
+                    'message' => "New property added: {$property['title']} by {$property['agent_name']}",
+                    'timestamp' => $property['created_at'],
+                    'data' => $property
                 ];
             }
-        } catch (\Exception $e) {
-            // Silently fail
+            
+            // Sort by timestamp
+            usort($activities, function($a, $b) {
+                return strtotime($b['timestamp']) - strtotime($a['timestamp']);
+            });
+            
+            return array_slice($activities, 0, $limit);
+            
+        } catch (PDOException $e) {
+            error_log("Recent activities error: " . $e->getMessage());
+            return [];
         }
-
-        try {
-            // Recent Users
-            $stmt = $this->db->prepare("SELECT name, created_at FROM users ORDER BY created_at DESC LIMIT 2");
-            $stmt->execute();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $activities[] = [
-                    'type' => 'user_registered',
-                    'message' => 'New user registered: ' . htmlspecialchars($row['name']),
-                    'time' => date('M j, Y', strtotime($row['created_at']))
-                ];
-            }
-        } catch (\Exception $e) {
-            // Silently fail
-        }
-
-        return $activities;
     }
 
     /**
-     * Get comprehensive admin analytics
+     * Get property analytics
      */
-    public function getAdminAnalytics()
+    public function getPropertyAnalytics()
     {
-        $analytics = [];
+        try {
+            $analytics = [];
+            
+            // Properties by status
+            $stmt = $this->db->prepare("
+                SELECT status, COUNT(*) as count 
+                FROM properties 
+                GROUP BY status
+            ");
+            $stmt->execute();
+            $analytics['by_status'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Properties by type
+            $stmt = $this->db->prepare("
+                SELECT type, COUNT(*) as count 
+                FROM properties 
+                GROUP BY type
+            ");
+            $stmt->execute();
+            $analytics['by_type'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Properties by price range
+            $stmt = $this->db->prepare("
+                SELECT 
+                    CASE 
+                        WHEN price < 1000000 THEN 'Under 10L'
+                        WHEN price < 5000000 THEN '10L - 50L'
+                        WHEN price < 10000000 THEN '50L - 1Cr'
+                        ELSE 'Above 1Cr'
+                    END as price_range,
+                    COUNT(*) as count
+                FROM properties
+                GROUP BY price_range
+            ");
+            $stmt->execute();
+            $analytics['by_price_range'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            return $analytics;
+            
+        } catch (PDOException $e) {
+            error_log("Property analytics error: " . $e->getMessage());
+            return [];
+        }
+    }
 
-        // System Overview
-        $stmt = $this->db->prepare("
-            SELECT
-                (SELECT COUNT(*) FROM users WHERE role = 'customer' AND status = 'active') as total_customers,
-                (SELECT COUNT(*) FROM users WHERE role = 'agent' AND status = 'active') as total_agents,
-                (SELECT COUNT(*) FROM associates WHERE status = 'active') as total_associates,
-                (SELECT COUNT(*) FROM properties WHERE status = 'available') as available_properties,
-                (SELECT COUNT(*) FROM properties WHERE status = 'sold') as sold_properties,
-                (SELECT COUNT(*) FROM bookings WHERE status = 'confirmed') as confirmed_bookings,
-                (SELECT COUNT(*) FROM payments WHERE status = 'completed') as completed_payments,
-                (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'completed') as total_revenue,
-                (SELECT COUNT(*) FROM leads WHERE status = 'new') as new_leads,
-                (SELECT COUNT(*) FROM leads WHERE status = 'converted') as converted_leads
-        ");
-        $stmt->execute();
-        $analytics['system_overview'] = $stmt->fetch(PDO::FETCH_ASSOC);
+    /**
+     * Get user management data
+     */
+    public function getUserManagementData()
+    {
+        try {
+            $data = [];
+            
+            // Users by role
+            $stmt = $this->db->prepare("
+                SELECT role, COUNT(*) as count 
+                FROM users 
+                GROUP BY role
+            ");
+            $stmt->execute();
+            $data['by_role'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Recent registrations
+            $stmt = $this->db->prepare("
+                SELECT id, name, email, role, created_at 
+                FROM users 
+                ORDER BY created_at DESC 
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $data['recent_registrations'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Active users this month
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) as active_users 
+                FROM users 
+                WHERE last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            ");
+            $stmt->execute();
+            $data['active_this_month'] = $stmt->fetchColumn();
+            
+            return $data;
+            
+        } catch (PDOException $e) {
+            error_log("User management data error: " . $e->getMessage());
+            return [];
+        }
+    }
 
-        // Monthly Trends
-        $stmt = $this->db->prepare("
-            SELECT
-                DATE_FORMAT(created_at, '%Y-%m') as month,
-                COUNT(CASE WHEN role = 'customer' THEN 1 END) as new_customers,
-                COUNT(CASE WHEN role = 'agent' THEN 1 END) as new_agents,
-                COUNT(CASE WHEN role = 'associate' THEN 1 END) as new_associates,
-                COUNT(properties.id) as new_properties,
-                COALESCE(SUM(CASE WHEN payments.status = 'completed' THEN payments.amount ELSE 0 END), 0) as monthly_revenue
-            FROM users
-            LEFT JOIN associates ON users.id = associates.user_id
-            LEFT JOIN properties ON DATE_FORMAT(properties.created_at, '%Y-%m') = DATE_FORMAT(users.created_at, '%Y-%m')
-            LEFT JOIN payments ON DATE_FORMAT(payments.created_at, '%Y-%m') = DATE_FORMAT(users.created_at, '%Y-%m')
-            WHERE users.created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-            GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-            ORDER BY month DESC
-            LIMIT 12
-        ");
-        $stmt->execute();
-        $analytics['monthly_trends'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    /**
+     * Get lead management data
+     */
+    public function getLeadManagementData()
+    {
+        try {
+            $data = [];
+            
+            // Leads by status
+            $stmt = $this->db->prepare("
+                SELECT status, COUNT(*) as count 
+                FROM leads 
+                GROUP BY status
+            ");
+            $stmt->execute();
+            $data['by_status'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Total leads
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM leads");
+            $stmt->execute();
+            $total_leads = $stmt->fetchColumn();
+            
+            // Converted leads
+            $stmt = $this->db->prepare("SELECT COUNT(*) as converted FROM leads WHERE status = 'converted'");
+            $stmt->execute();
+            $converted_leads = $stmt->fetchColumn();
+            
+            $data['conversion_rate'] = $total_leads > 0 ? ($converted_leads / $total_leads) * 100 : 0;
+            
+            return $data;
+            
+        } catch (PDOException $e) {
+            error_log("Lead management data error: " . $e->getMessage());
+            return [];
+        }
+    }
 
-        return $analytics;
+    /**
+     * Get booking management data
+     */
+    public function getBookingManagementData()
+    {
+        try {
+            $data = [];
+            
+            // Bookings by status
+            $stmt = $this->db->prepare("
+                SELECT status, COUNT(*) as count 
+                FROM bookings 
+                GROUP BY status
+            ");
+            $stmt->execute();
+            $data['by_status'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Recent bookings
+            $stmt = $this->db->prepare("
+                SELECT b.*, u.name as customer_name, p.title as property_title 
+                FROM bookings b 
+                JOIN users u ON b.user_id = u.id 
+                JOIN properties p ON b.property_id = p.id 
+                ORDER BY b.created_at DESC 
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $data['recent_bookings'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Revenue this month
+            $stmt = $this->db->prepare("
+                SELECT COALESCE(SUM(amount), 0) as revenue 
+                FROM payments 
+                WHERE status = 'completed' 
+                AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            ");
+            $stmt->execute();
+            $data['revenue_this_month'] = $stmt->fetchColumn();
+            
+            return $data;
+            
+        } catch (PDOException $e) {
+            error_log("Booking management data error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get system health status
+     */
+    public function getSystemHealthStatus()
+    {
+        try {
+            $health = [];
+            
+            // Database connection
+            $health['database'] = $this->db ? 'healthy' : 'error';
+            
+            // Disk space
+            $free_space = disk_free_space(__DIR__);
+            $total_space = disk_total_space(__DIR__);
+            $health['disk_space'] = [
+                'free' => $this->formatBytes($free_space),
+                'total' => $this->formatBytes($total_space),
+                'percentage' => round(($free_space / $total_space) * 100, 2)
+            ];
+            
+            // Memory usage
+            $health['memory'] = [
+                'used' => $this->formatBytes(memory_get_usage(true)),
+                'peak' => $this->formatBytes(memory_get_peak_usage(true))
+            ];
+            
+            // Last backup (placeholder)
+            $health['last_backup'] = date('Y-m-d H:i:s', strtotime('-1 day'));
+            
+            $health['overall'] = 'healthy';
+            
+            return $health;
+            
+        } catch (Exception $e) {
+            error_log("System health status error: " . $e->getMessage());
+            return ['overall' => 'error'];
+        }
+    }
+
+    /**
+     * Get comprehensive analytics
+     */
+    public function getAnalytics()
+    {
+        try {
+            $analytics = [];
+            
+            // User growth over time
+            $stmt = $this->db->prepare("
+                SELECT DATE(created_at) as date, COUNT(*) as users 
+                FROM users 
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY DATE(created_at)
+                ORDER BY date DESC
+            ");
+            $stmt->execute();
+            $analytics['user_growth'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Revenue trends
+            $stmt = $this->db->prepare("
+                SELECT DATE(created_at) as date, SUM(amount) as revenue 
+                FROM payments 
+                WHERE status = 'completed' 
+                AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY DATE(created_at)
+                ORDER BY date DESC
+            ");
+            $stmt->execute();
+            $analytics['revenue_trends'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Top performing agents
+            $stmt = $this->db->prepare("
+                SELECT u.name, u.email, COUNT(p.id) as properties_sold, COALESCE(SUM(p.price), 0) as total_value
+                FROM users u
+                LEFT JOIN properties p ON u.id = p.agent_id AND p.status = 'sold'
+                WHERE u.role = 'agent'
+                GROUP BY u.id, u.name, u.email
+                ORDER BY properties_sold DESC, total_value DESC
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $analytics['top_agents'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Monthly trends
+            $stmt = $this->db->prepare("
+                SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as new_users,
+                    COUNT(CASE WHEN role = 'associate' THEN 1 END) as new_associates,
+                    COUNT(properties.id) as new_properties,
+                    COALESCE(SUM(CASE WHEN payments.status = 'completed' THEN payments.amount ELSE 0 END), 0) as monthly_revenue
+                FROM users
+                LEFT JOIN associates ON users.id = associates.user_id
+                LEFT JOIN properties ON DATE_FORMAT(properties.created_at, '%Y-%m') = DATE_FORMAT(users.created_at, '%Y-%m')
+                LEFT JOIN payments ON DATE_FORMAT(payments.created_at, '%Y-%m') = DATE_FORMAT(users.created_at, '%Y-%m')
+                WHERE users.created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                ORDER BY month DESC
+                LIMIT 12
+            ");
+            $stmt->execute();
+            $analytics['monthly_trends'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $analytics;
+        } catch (PDOException $e) {
+            error_log("Analytics error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Format bytes to human readable format
+     */
+    private function formatBytes($bytes, $precision = 2)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        
+        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+            $bytes /= 1024;
+        }
+        
+        return round($bytes, $precision) . ' ' . $units[$i];
     }
 }
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\Admin.php
-
-class calls to the modern Model.
+/**
+ * Legacy Admin class - redirects calls to the modern Model.
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use App\Models\Admin as ModernAdmin;
 
-class Admin extends ModernAdmin {
+class LegacyAdmin extends ModernAdmin
+{
     // This class now inherits from the modern Model
     // and can be used as a drop-in replacement.
 }

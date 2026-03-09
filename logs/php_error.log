@@ -1416,3 +1416,61 @@ Stack trace:
 [06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
 [06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
 [06-Mar-2026 22:44:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[07-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[07-Mar-2026 06:39:00 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[07-Mar-2026 06:39:02 Europe/Berlin] Performance: 0.5150s | Memory: 45.69 KB | Queries: 0 | URI: /apsdreamhome/public/
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[07-Mar-2026 06:39:02 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[07-Mar-2026 06:39:02 Europe/Berlin] Performance: 0.0022s | Memory: 45.69 KB | Queries: 0 | URI: /apsdreamhome/public/
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[07-Mar-2026 06:39:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/hero-image.jpg
+[07-Mar-2026 06:39:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property1.jpg
+[07-Mar-2026 06:39:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/why-choose-us.jpg
+[07-Mar-2026 06:39:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property3.jpg
+[07-Mar-2026 06:39:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property2.jpg
+[07-Mar-2026 06:39:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[07-Mar-2026 06:39:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[07-Mar-2026 07:59:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[07-Mar-2026 07:59:40 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[07-Mar-2026 07:59:41 Europe/Berlin] Performance: 0.0118s | Memory: 45.69 KB | Queries: 0 | URI: /apsdreamhome/public/
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property1.jpg
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/hero-image.jpg
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property2.jpg
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property3.jpg
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/why-choose-us.jpg
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[07-Mar-2026 07:59:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[07-Mar-2026 08:00:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/collaboration_dashboard.php
+[08-Mar-2026 21:26:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/
+[08-Mar-2026 21:26:53 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[08-Mar-2026 21:26:56 Europe/Berlin] Performance: 0.7596s | Memory: 45.69 KB | Queries: 0 | URI: /apsdreamhome/public/
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/animations.css
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/header.css
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/hero-image.jpg
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property1.jpg
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/css/loading.css
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/css/bootstrap.min.css
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property2.jpg
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/property3.jpg
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/assets/images/why-choose-us.jpg
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/assets/plugins/font-awesome/css/all.min.css
+[08-Mar-2026 21:26:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/publicpublic/css/style.css
+[08-Mar-2026 21:46:41 Europe/Berlin] ROUTER DEBUG: Method: HEAD, URI: /
+[08-Mar-2026 21:48:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /
+[08-Mar-2026 21:48:59 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[08-Mar-2026 21:49:00 Europe/Berlin] Performance: 0.0627s | Memory: 45.69 KB | Queries: 0 | URI: /?url=/

@@ -6,7 +6,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError($errno = null, $errstr = null, $errfile = null, $errline = null) {
+function handleError($errno = null, $errstr = null, $errfile = null, $errline = null)
+{
     $message = date('Y-m-d H:i:s') . ' - ERROR: ' . $errstr;
     if ($errfile) $message .= ' in ' . $errfile;
     if ($errline) $message .= ' on line ' . $errline;
@@ -14,7 +15,8 @@ function handleError($errno = null, $errstr = null, $errfile = null, $errline = 
     return false;
 }
 
-function safeExecute($callback, $errorMessage = 'Operation failed') {
+function safeExecute($callback, $errorMessage = 'Operation failed')
+{
     try {
         return $callback();
     } catch (Exception $e) {
@@ -30,7 +32,7 @@ function safeExecute($callback, $errorMessage = 'Operation failed') {
  */
 
 session_start();
-require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../../includes/config.php';
 
 $config = AppConfig::getInstance();
 $conn = $config->getDatabaseConnection();
@@ -110,24 +112,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $uploaded_images = [];
             $image_fields = ['featured_image', 'image1', 'image2', 'image3', 'image4', 'image5'];
-            
+
             foreach ($image_fields as $field) {
                 if (isset($_FILES[$field]) && $_FILES[$field]['error'] === UPLOAD_ERR_OK) {
                     $file_name = $_FILES[$field]['name'];
                     $file_tmp = $_FILES[$field]['tmp_name'];
                     $file_size = $_FILES[$field]['size'];
                     $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-                    
+
                     $allowed_ext = ['jpg', 'jpeg', 'png'];
-                    
+
                     if (in_array($file_ext, $allowed_ext)) {
                         if ($file_size <= 2097152) { // 2MB max
                             $new_file_name = 'property_' . $property_id . '_' . time() . '_' . uniqid() . '.' . $file_ext;
                             $file_path = $upload_dir . $new_file_name;
-                            
+
                             if (move_uploaded_file($file_tmp, $file_path)) {
                                 $uploaded_images[] = $new_file_name;
-                                
+
                                 // Insert image record into database
                                 $is_featured = ($field === 'featured_image') ? 1 : 0;
                                 $image_stmt = $conn->prepare("INSERT INTO resell_property_images (property_id, image_name, is_featured, uploaded_at) VALUES (?, ?, ?, NOW())");
@@ -178,12 +180,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // WhatsApp notification function
-function sendWhatsAppNotification($mobile, $message) {
+function sendWhatsAppNotification($mobile, $message)
+{
     error_log("WhatsApp Notification to: " . $mobile . "\nMessage: " . $message);
     return true;
 }
 
-function sanitizeInput($data) {
+function sanitizeInput($data)
+{
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
@@ -192,16 +196,43 @@ function sanitizeInput($data) {
 
 // Get states for dropdown
 $indian_states = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
-    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
-    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh',
-    'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu and Kashmir', 'Ladakh'
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Delhi',
+    'Jammu and Kashmir',
+    'Ladakh'
 ];
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -214,19 +245,22 @@ $indian_states = [
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .listing-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             max-width: 1000px;
         }
+
         .header-section {
             background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
             color: white;
             padding: 3rem 2rem 2rem;
             text-align: center;
         }
+
         .logo-section {
             background: linear-gradient(45deg, #17a2b8, #007bff);
             color: white;
@@ -234,10 +268,12 @@ $indian_states = [
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .form-control:focus {
             border-color: #ff6b35;
             box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
         }
+
         .btn-submit {
             background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
             border: none;
@@ -247,11 +283,13 @@ $indian_states = [
             font-weight: 600;
             transition: all 0.3s;
         }
+
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             color: white;
         }
+
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -259,12 +297,14 @@ $indian_states = [
             margin-bottom: 1rem;
             border-radius: 0 10px 10px 0;
         }
+
         .benefits-section {
             background: #f8f9fa;
             padding: 1.5rem;
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .feature-icon {
             width: 50px;
             height: 50px;
@@ -277,6 +317,7 @@ $indian_states = [
             font-size: 20px;
             margin-right: 1rem;
         }
+
         .whatsapp-info {
             background: #d4edda;
             border-left: 4px solid #28a745;
@@ -286,6 +327,7 @@ $indian_states = [
         }
     </style>
 </head>
+
 <body>
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -307,10 +349,10 @@ $indian_states = [
                     <div class="p-4">
                         <!-- Messages -->
                         <?php if ($message): ?>
-                        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-                            <?php echo $message; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                            <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
+                                <?php echo $message; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                         <?php endif; ?>
 
                         <!-- Information Box -->
@@ -419,7 +461,7 @@ $indian_states = [
                                             <i class="fas fa-tag me-1"></i>Property Title *
                                         </label>
                                         <input type="text" class="form-control" name="property_title"
-                                               placeholder="e.g., 3 BHK Apartment in Prime Location" required>
+                                            placeholder="e.g., 3 BHK Apartment in Prime Location" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -526,7 +568,7 @@ $indian_states = [
                                     <i class="fas fa-align-left me-1"></i>Description
                                 </label>
                                 <textarea class="form-control" name="description" rows="4"
-                                          placeholder="Describe your property, nearby amenities, etc."></textarea>
+                                    placeholder="Describe your property, nearby amenities, etc."></textarea>
                             </div>
 
                             <!-- Property Images Upload -->
@@ -541,7 +583,7 @@ $indian_states = [
                                         Supported formats: JPG, PNG, JPEG. Max size: 2MB per image.
                                     </small>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -556,7 +598,7 @@ $indian_states = [
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -571,7 +613,7 @@ $indian_states = [
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -712,6 +754,7 @@ $indian_states = [
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
 
 //

@@ -8,6 +8,30 @@ $router->post('/api/property-inquiry', 'Api\ApiEnquiryController@propertyInquiry
 
 // AI Assistant API Routes
 $router->post('/api/ai/chat', 'AIAssistantController@chat');
+
+// Dependency Injection Container Routes
+require_once __DIR__ . '/container.php';
+
+// Core Functions Routes
+require_once __DIR__ . '/core-functions.php';
+
+// Request Middleware Routes
+require_once __DIR__ . '/request-middleware.php';
+
+// Farmer Management Routes
+require_once __DIR__ . '/farmers.php';
+
+// Security Management Routes
+require_once __DIR__ . '/security.php';
+
+// Performance Cache Management Routes
+require_once __DIR__ . '/performance-cache.php';
+
+// Event Bus Management Routes
+require_once __DIR__ . '/events.php';
+
+// Core Functions Management Routes
+require_once __DIR__ . '/core-functions-new.php';
 $router->get('/api/ai/recommendations', 'AIAssistantController@recommendations');
 $router->get('/api/ai/analyze/{id}', 'AIAssistantController@analyze');
 
@@ -44,4 +68,3 @@ $router->get('/api/mlm/commission-history', 'MLMController@getCommissionHistory'
 $router->post('/api/ai-valuation/calculate', 'AIValuationController@calculateValuation');
 $router->get('/api/ai-valuation/market-trends', 'AIValuationController@getMarketTrends');
 $router->post('/api/ai-valuation/investment-analysis', 'AIValuationController@getInvestmentAnalysis');
-?>

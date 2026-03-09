@@ -2,36 +2,50 @@
 
 namespace App\Services;
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-class EmailService {
-    private $mail;
+use Exception;
 
-    public function __construct() {
-        $this->mail = new PHPMailer(true);
-        
-        // Server settings
-        $this->mail->isSMTP();
-        $this->mail->Host = getenv('MAIL_HOST') ?: 'localhost';
-        $this->mail->SMTPAuth = true;
-        $this->mail->Username = getenv('MAIL_USERNAME');
-        $this->mail->Password = getenv('MAIL_PASSWORD');
-        $this->mail->SMTPSecure = getenv('MAIL_ENCRYPTION') ?: 'tls';
-        $this->mail->Port = getenv('MAIL_PORT') ?: 587;
-        
-        // Sender info
-        $this->mail->setFrom(getenv('MAIL_FROM_ADDRESS') ?: 'no-reply@apsdreamhome.com', getenv('MAIL_FROM_NAME') ?: 'APS Dream Home');
-        $this->mail->isHTML(true);
+class EmailService
+{
+    private $config;
+
+    public function __construct()
+    {
+        $this->config = [
+            'host' => getenv('MAIL_HOST') ?: 'localhost',
+            'username' => getenv('MAIL_USERNAME') ?: '',
+            'password' => getenv('MAIL_PASSWORD') ?: '',
+            'from_address' => getenv('MAIL_FROM_ADDRESS') ?: 'no-reply@apsdreamhome.com',
+            'from_name' => getenv('MAIL_FROM_NAME') ?: 'APS Dream Home'
+        ];
+    }
+
+    /**
+     * General email sending method
+     */
+    public function send($to, $subject, $body, $fromName = null)
+    {
+        try {
+            $headers = [
+                'From: ' . ($fromName ? "$fromName <{$this->config['from_address']}>" : "{$this->config['from_name']} <{$this->config['from_address']}>"),
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=UTF-8'
+            ];
+
+            return mail($to, $subject, $body, implode("\r\n", $headers));
+        } catch (Exception $e) {
+            error_log("Email sending failed: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
      * Send verification email
      */
-    public function sendVerificationEmail($to, $name, $token) {
+    public function sendVerificationEmail($to, $name, $token)
+    {
         try {
-            $this->mail->addAddress($to, $name);
-            $this->mail->Subject = 'Verify Your Email Address';
-            
+            $subject = 'Verify Your Email Address';
+
             // Email body
             $verificationUrl = "http://localhost/apsdreamhome/verify-email?token=" . $token;
             $message = file_get_contents(__DIR__ . '/../../resources/emails/verification.html');
@@ -40,12 +54,17 @@ class EmailService {
                 [$name, $verificationUrl],
                 $message
             );
-            
-            $this->mail->msgHTML($message);
-            $this->mail->send();
-            return true;
+
+            $headers = [
+                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=UTF-8'
+            ];
+
+            $result = mail($to, $subject, $message, implode("\r\n", $headers));
+            return $result;
         } catch (Exception $e) {
-            error_log("Email sending failed: " . $this->mail->ErrorInfo);
+            error_log("Email sending failed: " . $e->getMessage());
             return false;
         }
     }
@@ -53,18 +72,22 @@ class EmailService {
     /**
      * Send welcome email to new user
      */
-    public function sendWelcomeEmail($to, $name) {
+    public function sendWelcomeEmail($to, $name)
+    {
         try {
-            $this->mail->addAddress($to, $name);
-            $this->mail->Subject = 'Welcome to APS Dream Home - Your Account is Ready!';
-
+            $subject = 'Welcome to APS Dream Home - Your Account is Ready!';
             $message = $this->getWelcomeEmailTemplate($name);
 
-            $this->mail->msgHTML($message);
-            $this->mail->send();
-            return ['success' => true, 'message' => 'Welcome email sent successfully'];
+            $headers = [
+                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=UTF-8'
+            ];
+
+            $result = mail($to, $subject, $message, implode("\r\n", $headers));
+            return ['success' => $result, 'message' => $result ? 'Welcome email sent successfully' : 'Email sending failed'];
         } catch (Exception $e) {
-            error_log("Welcome email failed: " . $this->mail->ErrorInfo);
+            error_log("Welcome email failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -72,19 +95,24 @@ class EmailService {
     /**
      * Send property inquiry notification to admin
      */
-    public function sendPropertyInquiryNotification($inquiryData) {
+    public function sendPropertyInquiryNotification($inquiryData)
+    {
         try {
             $adminEmail = getenv('ADMIN_EMAIL') ?: 'admin@apsdreamhome.com';
-            $this->mail->addAddress($adminEmail, 'APS Dream Home Admin');
-            $this->mail->Subject = 'New Property Inquiry - ' . $inquiryData['property_title'];
+            $subject = 'New Property Inquiry - ' . $inquiryData['property_title'];
 
             $message = $this->getInquiryNotificationTemplate($inquiryData);
 
-            $this->mail->msgHTML($message);
-            $this->mail->send();
-            return ['success' => true, 'message' => 'Inquiry notification sent to admin'];
+            $headers = [
+                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=UTF-8'
+            ];
+
+            $result = mail($adminEmail, $subject, $message, implode("\r\n", $headers));
+            return ['success' => $result, 'message' => $result ? 'Inquiry notification sent to admin' : 'Email sending failed'];
         } catch (Exception $e) {
-            error_log("Inquiry notification failed: " . $this->mail->ErrorInfo);
+            error_log("Inquiry notification failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -92,18 +120,23 @@ class EmailService {
     /**
      * Send inquiry response to user
      */
-    public function sendInquiryResponse($userEmail, $userName, $propertyTitle, $response) {
+    public function sendInquiryResponse($userEmail, $userName, $propertyTitle, $response)
+    {
         try {
-            $this->mail->addAddress($userEmail, $userName);
-            $this->mail->Subject = 'Response to Your Property Inquiry - ' . $propertyTitle;
+            $subject = 'Response to Your Property Inquiry - ' . $propertyTitle;
 
             $message = $this->getInquiryResponseTemplate($userName, $propertyTitle, $response);
 
-            $this->mail->msgHTML($message);
-            $this->mail->send();
-            return ['success' => true, 'message' => 'Inquiry response sent to user'];
+            $headers = [
+                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=UTF-8'
+            ];
+
+            $result = mail($userEmail, $subject, $message, implode("\r\n", $headers));
+            return ['success' => $result, 'message' => $result ? 'Inquiry response sent to user' : 'Email sending failed'];
         } catch (Exception $e) {
-            error_log("Inquiry response failed: " . $this->mail->ErrorInfo);
+            error_log("Inquiry response failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -111,18 +144,23 @@ class EmailService {
     /**
      * Send newsletter subscription confirmation
      */
-    public function sendNewsletterConfirmation($userEmail, $userName) {
+    public function sendNewsletterConfirmation($userEmail, $userName)
+    {
         try {
-            $this->mail->addAddress($userEmail, $userName);
-            $this->mail->Subject = 'Welcome to APS Dream Home Newsletter';
+            $subject = 'Welcome to APS Dream Home Newsletter';
 
             $message = $this->getNewsletterConfirmationTemplate($userName);
 
-            $this->mail->msgHTML($message);
-            $this->mail->send();
-            return ['success' => true, 'message' => 'Newsletter confirmation sent'];
+            $headers = [
+                'From: ' . "{$this->config['from_name']} <{$this->config['from_address']}>",
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=UTF-8'
+            ];
+
+            $result = mail($userEmail, $subject, $message, implode("\r\n", $headers));
+            return ['success' => $result, 'message' => $result ? 'Newsletter confirmation sent' : 'Email sending failed'];
         } catch (Exception $e) {
-            error_log("Newsletter confirmation failed: " . $this->mail->ErrorInfo);
+            error_log("Newsletter confirmation failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -130,7 +168,8 @@ class EmailService {
     /**
      * Get welcome email template
      */
-    private function getWelcomeEmailTemplate($userName) {
+    private function getWelcomeEmailTemplate($userName)
+    {
         return "
         <!DOCTYPE html>
         <html>
@@ -184,7 +223,8 @@ class EmailService {
     /**
      * Get inquiry notification template for admin
      */
-    private function getInquiryNotificationTemplate($inquiryData) {
+    private function getInquiryNotificationTemplate($inquiryData)
+    {
         return "
         <!DOCTYPE html>
         <html>
@@ -246,7 +286,8 @@ class EmailService {
     /**
      * Get inquiry response template for user
      */
-    private function getInquiryResponseTemplate($userName, $propertyTitle, $response) {
+    private function getInquiryResponseTemplate($userName, $propertyTitle, $response)
+    {
         return "
         <!DOCTYPE html>
         <html>
@@ -294,7 +335,8 @@ class EmailService {
     /**
      * Get newsletter confirmation template
      */
-    private function getNewsletterConfirmationTemplate($userName) {
+    private function getNewsletterConfirmationTemplate($userName)
+    {
         return "
         <!DOCTYPE html>
         <html>
@@ -317,7 +359,7 @@ class EmailService {
                 </div>
                 <div class='content'>
                     <h2>Hello {$userName}!</h2>
-                    <p>Thank you for subscribing to the APS Dream Home newsletter! You're now part of our community and will receive regular updates about:</p>
+                    <p>Thank you for subscribing to APS Dream Home newsletter! You're now part of our community and will receive regular updates about:</p>
 
                     <ul>
                         <li>🏠 <strong>New Property Listings:</strong> Be the first to know about new properties in your preferred locations</li>
@@ -346,116 +388,3 @@ class EmailService {
         ";
     }
 }
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\EmailService.php
-
-function sendInquiryNotification($data) {
-        $subject = "New Property Inquiry: " . ($data['property_title'] ?? 'General');
-        $body = "
-            <h3>New Property Inquiry</h3>
-            <p><strong>Name:</strong> {$data['name']}
-function sendPaymentConfirmation($email, $order) {
-        $subject = "Payment Confirmation: Order #" . $order['order_id'];
-        $body = "
-            <h3>Payment Successful</h3>
-            <p>Dear {$order['user_name']}
-function sendPasswordResetEmail($email, $name, $reset_link) {
-        $subject = "Password Reset Request - APS Dream Homes";
-        $body = "
-            <h3>Password Reset Request</h3>
-            <p>Dear {$name}
-function sendAdminNotification($admin_email, $template, $data) {
-        $subject = "Admin Notification: " . ($data['type'] ?? 'System Alert');
-        $body = "
-            <h3>System Notification</h3>
-            <p><strong>Type:</strong> {$data['type']}
-function sendInquiryConfirmation($email, $property_title, $inquiry, $response_message) {
-        $subject = "Re: Inquiry for " . $property_title;
-        $body = "
-            <h3>Inquiry Response</h3>
-            <p>Dear Customer,</p>
-            <p>Thank you for your inquiry regarding <strong>{$property_title}
-function testEmailConfiguration() {
-        $subject = "Test Email Configuration";
-        $body = "This is a test email to verify your email configuration is working correctly.";
-        return $this->send($this->config['from_email'], $subject, $body);
-    }
-function sendLeadWelcomeEmail($leadId) {
-        try {
-            $lead = $this->db->fetch("SELECT * FROM leads WHERE id = ?", [$leadId]);
-
-            if (!$lead) return false;
-
-            return $this->sendTemplatedEmail($lead['email'], 'welcome', [
-                'lead_name' => $lead['name'] ?? (($lead['first_name'] ?? '') . ' ' . ($lead['last_name'] ?? '')),
-                'company_name' => $this->config['from_name']
-            ]);
-        }
-function sendTemplatedEmail($to, $template, $data = []) {
-        if (!isset($this->templates[$template])) {
-            return false;
-        }
-function loadConfiguration() {
-        // Priority: Environment Variables > Database Config > Default
-        $this->config['username'] = getenv('EMAIL_USERNAME') ?: $this->config['username'];
-        $this->config['password'] = getenv('EMAIL_PASSWORD') ?: $this->config['password'];
-
-        // Optionally load from database configuration
-        try {
-            $results = $this->db->fetchAll("SELECT `key`, `value` FROM email_config");
-            foreach ($results as $row) {
-                if (isset($this->config[$row['key']])) {
-                    $this->config[$row['key']] = $row['value'];
-                }
-function sendFromTemplate($template_name, $to, $template_data = []) {
-        try {
-            // Check if template exists
-            if (!isset($this->templates[$template_name])) {
-                throw new Exception("Email template not found: {$template_name}
-function queueEmail($to, $subject, $body, $options = []) {
-        try {
-            $status = 'pending';
-            $scheduled_at = $options['scheduled_at'] ?? date('Y-m-d H:i:s');
-
-            return $this->db->execute("
-                INSERT INTO email_queue 
-                (recipient, subject, body, status, scheduled_at, created_at) 
-                VALUES (?, ?, ?, ?, ?, NOW())
-            ", [$to, $subject, $body, $status, $scheduled_at]);
-        }
-function processEmailQueue() {
-        try {
-            // Fetch pending emails
-            $emails = $this->db->fetchAll("
-                SELECT id, recipient, subject, body 
-                FROM email_queue 
-                WHERE status = 'pending' AND scheduled_at <= NOW()
-                LIMIT 50
-            ");
-
-            foreach ($emails as $email) {
-                // Attempt to send email
-                $sent = $this->send(
-                    $email['recipient'], 
-                    $email['subject'], 
-                    $email['body']
-                );
-
-                // Update email status
-                $status = $sent ? 'sent' : 'failed';
-                $this->db->execute("
-                    UPDATE email_queue 
-                    SET status = ?, sent_at = NOW() 
-                    WHERE id = ?
-                ", [$status, $email['id']]);
-            }
-function getEmailService() {
-    // If a global container function exists, use it
-    if (function_exists('container')) {
-        try {
-            $container = container();
-            $logger = $container->resolve('logger');
-            $db = $container->resolve('db_connection');
-            return new EmailService($logger, $db);
-        }
