@@ -13,23 +13,18 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css" rel="stylesheet">
-    <?php
-    $site = \App\Services\SiteSettings::get();
-    $favicon = $site['favicon_url'] ?? '/assets/images/icons/icon-192x192.png';
-    ?>
-    <link rel="icon" type="image/png" href="<?php echo BASE_URL . $favicon; ?>">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/images/icons/icon-192x192.png">
 </head>
 
 <body>
-    <?php $site = $site ?? \App\Services\SiteSettings::get();
-    include __DIR__ . '/header.php'; ?>
+    <?php include __DIR__ . '/header.php'; ?>
 
     <main>
         <?php echo $content ?? ''; ?>
     </main>
 
-    <?php $site = $site ?? \App\Services\SiteSettings::get();
-    include __DIR__ . '/footer.php'; ?>
+    <?php include __DIR__ . '/footer.php'; ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
