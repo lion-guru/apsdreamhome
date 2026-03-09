@@ -2,13 +2,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
-                <?php
-                // Use hardcoded values for now to avoid dependency issues
-                $brand = 'APS Dream Home';
-                $logo = '/assets/images/logo/apslogo.png';
-                ?>
-                <img src="<?php echo BASE_URL . $logo; ?>" alt="<?php echo htmlspecialchars($brand); ?>" class="logo me-2" style="height:32px;">
-                <span class="brand-text"><?php echo htmlspecialchars($brand); ?></span>
+                <img src="https://via.placeholder.com/32x32/3498db/ffffff?text=APS"
+                    alt="APS Dream Home" class="logo me-2" style="height:32px;">
+                <span class="brand-text fw-bold">APS Dream Home</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
