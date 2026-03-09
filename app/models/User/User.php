@@ -221,10 +221,11 @@ class User extends Model
 
 // Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\User.php
 
-class calls to the modern Model.
+/**
+ * Legacy User class - redirects calls to the modern Model.
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use App\Models\User as ModernUser;
 

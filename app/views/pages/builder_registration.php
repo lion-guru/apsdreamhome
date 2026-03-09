@@ -6,7 +6,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError($errno = null, $errstr = null, $errfile = null, $errline = null) {
+function handleError($errno = null, $errstr = null, $errfile = null, $errline = null)
+{
     $message = date('Y-m-d H:i:s') . ' - ERROR: ' . $errstr;
     if ($errfile) $message .= ' in ' . $errfile;
     if ($errline) $message .= ' on line ' . $errline;
@@ -14,7 +15,8 @@ function handleError($errno = null, $errstr = null, $errfile = null, $errline = 
     return false;
 }
 
-function safeExecute($callback, $errorMessage = 'Operation failed') {
+function safeExecute($callback, $errorMessage = 'Operation failed')
+{
     try {
         return $callback();
     } catch (Exception $e) {
@@ -30,7 +32,7 @@ function safeExecute($callback, $errorMessage = 'Operation failed') {
  */
 
 session_start();
-require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../../includes/config.php';
 
 $config = AppConfig::getInstance();
 $conn = $config->getDatabaseConnection();
@@ -133,18 +135,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // WhatsApp notification function
-function sendWhatsAppNotification($mobile, $message) {
+function sendWhatsAppNotification($mobile, $message)
+{
     error_log("WhatsApp Notification to: " . $mobile . "\nMessage: " . $message);
     return true;
 }
 
 // Get states for dropdown
 $indian_states = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
-    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
-    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh',
-    'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu and Kashmir', 'Ladakh'
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Delhi',
+    'Jammu and Kashmir',
+    'Ladakh'
 ];
 
 // Get current year for established year dropdown
@@ -153,6 +182,7 @@ $current_year = date('Y');
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -165,19 +195,22 @@ $current_year = date('Y');
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .registration-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             max-width: 1000px;
         }
+
         .header-section {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
             padding: 3rem 2rem 2rem;
             text-align: center;
         }
+
         .logo-section {
             background: linear-gradient(45deg, #17a2b8, #007bff);
             color: white;
@@ -185,10 +218,12 @@ $current_year = date('Y');
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .form-control:focus {
             border-color: #28a745;
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         }
+
         .btn-register {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
@@ -198,11 +233,13 @@ $current_year = date('Y');
             font-weight: 600;
             transition: all 0.3s;
         }
+
         .btn-register:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             color: white;
         }
+
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -210,12 +247,14 @@ $current_year = date('Y');
             margin-bottom: 1rem;
             border-radius: 0 10px 10px 0;
         }
+
         .benefits-section {
             background: #f8f9fa;
             padding: 1.5rem;
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .partnership-info {
             background: #d4edda;
             border-left: 4px solid #28a745;
@@ -223,6 +262,7 @@ $current_year = date('Y');
             margin-bottom: 1rem;
             border-radius: 0 10px 10px 0;
         }
+
         .feature-icon {
             width: 50px;
             height: 50px;
@@ -237,6 +277,7 @@ $current_year = date('Y');
         }
     </style>
 </head>
+
 <body>
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -258,10 +299,10 @@ $current_year = date('Y');
                     <div class="p-4">
                         <!-- Messages -->
                         <?php if ($message): ?>
-                        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-                            <?php echo $message; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                            <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
+                                <?php echo $message; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                         <?php endif; ?>
 
                         <!-- Information Box -->
@@ -558,6 +599,7 @@ $current_year = date('Y');
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
 
 //

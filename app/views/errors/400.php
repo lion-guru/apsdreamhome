@@ -36,4 +36,4 @@ ob_start();
 $content = ob_get_clean();
 
 // Include the modern layout
-require __DIR__ . '/../layouts/modern.php';
+require_once __DIR__ . '/../../layouts/modern.php';

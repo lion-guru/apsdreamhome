@@ -6,7 +6,7 @@ namespace App\Services\AI\Legacy;
  * Run this from CLI: php includes/ai/worker.php
  */
 
-require_once __DIR__ . '/../../app/core/App.php';
+require_once __DIR__ . '/../../../app/core/App.php';
 require_once __DIR__ . '/JobManager.php';
 
 // Prevent multiple instances if possible (optional)

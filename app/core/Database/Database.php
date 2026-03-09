@@ -10,7 +10,7 @@ class Database
     private static $instance = null;
     protected $pdo;
     protected $config;
-    
+
     // Performance optimization features
     private $queryCount = 0;
     private $queryLog = [];
@@ -73,16 +73,16 @@ class Database
     public function query($sql, $params = [])
     {
         $startTime = microtime(true);
-        
+
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
-            
+
             $endTime = microtime(true);
             $executionTime = $endTime - $startTime;
-            
+
             $this->logQuery($sql, $params, $executionTime);
-            
+
             return $stmt;
         } catch (PDOException $e) {
             throw new \RuntimeException("Query failed: " . $e->getMessage());
@@ -168,21 +168,21 @@ class Database
     {
         return $this->pdo;
     }
-    
+
     /**
      * Log query performance
      */
-    private function logQuery($sql, $params, $executionTime)
+    private function logQuery($sql, $params = [], $executionTime = 0)
     {
         $this->queryCount++;
-        
+
         $this->queryLog[] = [
             'sql' => $sql,
             'params' => $params,
             'execution_time' => $executionTime,
             'timestamp' => date('Y-m-d H:i:s')
         ];
-        
+
         // Log slow queries
         if ($executionTime > $this->slowQueryThreshold) {
             $this->performanceLog[] = [
@@ -194,16 +194,48 @@ class Database
             ];
         }
     }
-    
+
+    /**
+     * Log query error
+     */
+    private function logError($sql, $errorMessage)
+    {
+        $this->performanceLog[] = [
+            'type' => 'error',
+            'sql' => $sql,
+            'error_message' => $errorMessage,
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+    }
+
     /**
      * Get query performance statistics
      */
+    public function prepare($sql)
+    {
+        $startTime = microtime(true);
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+
+            $this->logQuery($sql, $executionTime);
+
+            return $stmt;
+        } catch (PDOException $e) {
+            $this->logError($sql, $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getPerformanceStats()
     {
         return [
             'query_count' => $this->queryCount,
             'slow_queries' => count($this->performanceLog),
-            'average_time' => $this->queryCount > 0 ? 
+            'average_time' => $this->queryCount > 0 ?
                 array_sum(array_column($this->queryLog, 'execution_time')) / $this->queryCount : 0,
             'performance_log' => $this->performanceLog
         ];
@@ -213,53 +245,59 @@ class Database
 
 // Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Database.php
 
-function getConnection() {
-        return $this->db->getConnection();
-    }
-function rollback() {
-        return $this->db->rollBack();
-    }
-function prepare($sql) {
-        return $this->db->prepare($sql);
-    }
-function executeQuery($sql, $params = [], $types = '') {
-        // App\Core\Database::query handles both select and non-select
-        return $this->db->query($sql, $params);
-    }
-function affectedRows() {
-        return $this->db->affectedRows();
-    }
-function escapeString($value) {
-        return $this->db->escapeString($value);
-    }
+function getConnection()
+{
+    return $this->db->getConnection();
+}
+function rollback()
+{
+    return $this->db->rollBack();
+}
+function prepare($sql)
+{
+    return $this->db->prepare($sql);
+}
+function executeQuery($sql, $params = [], $types = '')
+{
+    // App\Core\Database::query handles both select and non-select
+    return $this->db->query($sql, $params);
+}
+function affectedRows()
+{
+    return $this->db->affectedRows();
+}
+function escapeString($value)
+{
+    return $this->db->escapeString($value);
+}
 
 // Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Models\Database.php
 
 function getId()
-    {
-        return $this->id;
-    }
+{
+    return $this->id;
+}
 function getName()
-    {
-        return $this->name;
-    }
+{
+    return $this->name;
+}
 function getHost()
-    {
-        return $this->host;
-    }
+{
+    return $this->host;
+}
 function getUsername()
-    {
-        return $this->username;
-    }
+{
+    return $this->username;
+}
 function getPassword()
-    {
-        return $this->password;
-    }
+{
+    return $this->password;
+}
 function getCreatedat()
-    {
-        return $this->created_at;
-    }
+{
+    return $this->created_at;
+}
 function getUpdatedat()
-    {
-        return $this->updated_at;
-    }
+{
+    return $this->updated_at;
+}

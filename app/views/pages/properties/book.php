@@ -1,11 +1,12 @@
 <?php
+
 /**
  * Enhanced Booking System with WhatsApp Notifications
  * APS Dream Homes - Customer Booking Management
  */
 
 session_start();
-require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../../includes/config.php';
 
 $config = AppConfig::getInstance();
 $conn = $config->getDatabaseConnection();
@@ -122,7 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // WhatsApp notification function (placeholder)
-function sendWhatsAppNotification($mobile, $message) {
+function sendWhatsAppNotification($mobile, $message)
+{
     // This is a placeholder - integrate with actual WhatsApp API
     // You can use services like Twilio, WhatsApp Business API, etc.
 
@@ -138,6 +140,7 @@ function sendWhatsAppNotification($mobile, $message) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -150,19 +153,22 @@ function sendWhatsAppNotification($mobile, $message) {
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .booking-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             max-width: 800px;
         }
+
         .header-section {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
             padding: 3rem 2rem 2rem;
             text-align: center;
         }
+
         .logo-section {
             background: linear-gradient(45deg, #17a2b8, #007bff);
             color: white;
@@ -170,6 +176,7 @@ function sendWhatsAppNotification($mobile, $message) {
             border-radius: 10px;
             margin-bottom: 1rem;
         }
+
         .property-card {
             background: #f8f9fa;
             border-radius: 15px;
@@ -177,10 +184,12 @@ function sendWhatsAppNotification($mobile, $message) {
             margin-bottom: 2rem;
             border-left: 5px solid #28a745;
         }
+
         .form-control:focus {
             border-color: #28a745;
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         }
+
         .btn-book {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             border: none;
@@ -190,11 +199,13 @@ function sendWhatsAppNotification($mobile, $message) {
             font-weight: 600;
             transition: all 0.3s;
         }
+
         .btn-book:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             color: white;
         }
+
         .info-box {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
@@ -202,6 +213,7 @@ function sendWhatsAppNotification($mobile, $message) {
             margin-bottom: 1rem;
             border-radius: 0 10px 10px 0;
         }
+
         .whatsapp-info {
             background: #d4edda;
             border-left: 4px solid #28a745;
@@ -211,6 +223,7 @@ function sendWhatsAppNotification($mobile, $message) {
         }
     </style>
 </head>
+
 <body>
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -232,31 +245,31 @@ function sendWhatsAppNotification($mobile, $message) {
                     <div class="p-4">
                         <!-- Messages -->
                         <?php if ($message): ?>
-                        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-                            <?php echo $message; ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                            <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
+                                <?php echo $message; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                         <?php endif; ?>
 
                         <!-- Property Details -->
                         <?php if ($property): ?>
-                        <div class="property-card">
-                            <h5 class="mb-3"><i class="fas fa-building me-2"></i>Property Details</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>Property ID:</strong> <?php echo htmlspecialchars($property['id']); ?><br>
-                                    <strong>Title:</strong> <?php echo htmlspecialchars($property['title']); ?><br>
-                                    <strong>Type:</strong> <?php echo htmlspecialchars($property['property_type']); ?><br>
-                                    <strong>Price:</strong> ₹<?php echo number_format($property['price']); ?>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Location:</strong> <?php echo htmlspecialchars($property['address']); ?><br>
-                                    <strong>Bedrooms:</strong> <?php echo $property['bedrooms']; ?><br>
-                                    <strong>Bathrooms:</strong> <?php echo $property['bathrooms']; ?><br>
-                                    <strong>Area:</strong> <?php echo number_format($property['area']); ?> sq.ft
+                            <div class="property-card">
+                                <h5 class="mb-3"><i class="fas fa-building me-2"></i>Property Details</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>Property ID:</strong> <?php echo htmlspecialchars($property['id']); ?><br>
+                                        <strong>Title:</strong> <?php echo htmlspecialchars($property['title']); ?><br>
+                                        <strong>Type:</strong> <?php echo htmlspecialchars($property['property_type']); ?><br>
+                                        <strong>Price:</strong> ₹<?php echo number_format($property['price']); ?>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Location:</strong> <?php echo htmlspecialchars($property['address']); ?><br>
+                                        <strong>Bedrooms:</strong> <?php echo $property['bedrooms']; ?><br>
+                                        <strong>Bathrooms:</strong> <?php echo $property['bathrooms']; ?><br>
+                                        <strong>Area:</strong> <?php echo number_format($property['area']); ?> sq.ft
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endif; ?>
 
                         <!-- Information Boxes -->
@@ -318,7 +331,7 @@ function sendWhatsAppNotification($mobile, $message) {
                                             <i class="fas fa-calendar me-1"></i>Preferred Visit Date *
                                         </label>
                                         <input type="date" class="form-control" name="visit_date"
-                                               min="<?php echo date('Y-m-d'); ?>" required>
+                                            min="<?php echo date('Y-m-d'); ?>" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -387,7 +400,7 @@ function sendWhatsAppNotification($mobile, $message) {
                                     <i class="fas fa-comments me-1"></i>Special Requirements (Optional)
                                 </label>
                                 <textarea class="form-control" name="special_requirements" rows="3"
-                                          placeholder="Any specific requirements or questions..."></textarea>
+                                    placeholder="Any specific requirements or questions..."></textarea>
                             </div>
 
                             <div class="d-grid">
@@ -432,4 +445,5 @@ function sendWhatsAppNotification($mobile, $message) {
         });
     </script>
 </body>
+
 </html>

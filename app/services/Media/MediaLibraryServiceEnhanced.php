@@ -23,8 +23,8 @@ class MediaLibraryServiceEnhanced
 
     public function __construct($database = null, $logger = null)
     {
-        $this->database = $database ?: Database::getInstance();
-        $this->logger = $logger ?: LoggingService::getInstance();
+        $this->database = $database ?: \App\Core\Database\Database::getInstance();
+        $this->logger = $logger ?: new \App\Services\LoggingService();
         $this->uploadDir = 'uploads/media/';
         $this->allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx'];
         $this->maxFileSize = 10 * 1024 * 1024; // 10MB
@@ -97,7 +97,6 @@ class MediaLibraryServiceEnhanced
                 'media_id' => $mediaId,
                 'filename' => $filename
             ];
-
         } catch (Exception $e) {
             $this->logger->log("File upload failed: " . $e->getMessage(), 'error', 'media');
             return ['success' => false, 'message' => $e->getMessage()];
@@ -222,7 +221,7 @@ class MediaLibraryServiceEnhanced
         }
 
         $sql = "SELECT * FROM media_library WHERE id = ?";
-        
+
         try {
             return $this->database->fetchOne($sql, [$id]);
         } catch (Exception $e) {
@@ -258,7 +257,6 @@ class MediaLibraryServiceEnhanced
 
             $this->logger->log("Media file deleted: $id", 'info', 'media');
             return ['success' => true, 'message' => 'File deleted successfully'];
-
         } catch (Exception $e) {
             $this->logger->log("Error deleting media file $id: " . $e->getMessage(), 'error', 'media');
             return ['success' => false, 'message' => 'Failed to delete file'];
@@ -275,7 +273,7 @@ class MediaLibraryServiceEnhanced
         }
 
         $sql = "UPDATE media_library SET title = ?, description = ?, category = ?, tags = ? WHERE id = ?";
-        
+
         $params = [
             $metadata['title'] ?? null,
             $metadata['description'] ?? null,
@@ -320,7 +318,6 @@ class MediaLibraryServiceEnhanced
             // Recent uploads
             $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM media_library WHERE upload_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
             $stats['recent_uploads'] = $result['recent'] ?? 0;
-
         } catch (Exception $e) {
             $this->logger->log("Error fetching media stats: " . $e->getMessage(), 'error', 'media');
         }

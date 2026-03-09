@@ -80,10 +80,13 @@ rm -rf resources/views
 ```
 app/
 ├── Http/Controllers/     # Web controllers
+├── Controllers/    #  MVC controllers (NO Laravel)
 ├── Models/             # Data models
-├── views/              # View files (.php only)
 ├── Services/           # Business logic
-└── Core/               # Framework core
+├── Services/Custom/    #  MVC services (NO Laravel)
+├── Core/               # Framework core
+├── views/              # View files (.php only)
+└── Legacy/             # Legacy files being migrated
 routes/
 ├── web.php            # Web routes
 └── api.php            # API routes
@@ -91,10 +94,22 @@ routes/
 
 ### Controller Rules:
 
+#### Standard Laravel Controllers:
+
 - ✅ Location: `app/Http/Controllers/NameController.php`
 - ✅ Namespace: `App\Http\Controllers`
 - ✅ Extend: `BaseController`
 - ✅ Render: `$this->render('pages/page-name', [...])`
+
+####  MVC Controllers:
+
+- ✅ Location: `app/Controllers/NameController.php`
+- ✅ Namespace: `App\Controllers\`
+- ✅ NO Laravel dependencies
+- ✅ Use services: `new \App\Services\ServiceName()`
+- ✅ Use  view renderer: `new \App\Core\ViewRenderer()`
+- ✅ Handle POST/GET with `$_POST`/`$_GET`
+- ✅ Custom redirect method
 
 ### Model Rules:
 
@@ -102,6 +117,17 @@ routes/
 - ✅ Namespace: `App\Models`
 - ✅ Database: Use prepared statements
 - ✅ Return: Data only, no HTML
+
+### MVC Service Rules:
+
+- ✅ Location: `app/Services/ServiceName.php`
+- ✅ Namespace: `App\Services\
+- ✅ NO Laravel dependencies
+- ✅ Use  database: `\App\Core\Database::getInstance()`
+- ✅ Use  logger: `new \App\Core\Logger()`
+- ✅ Use config: `\App\Core\Config::getInstance()`
+- ✅ Use  session: `new \App\Core\Session()`
+- ✅ Return format: `['success' => bool, 'data' => mixed, 'message' => string]`
 
 ### View Rules:
 
@@ -114,6 +140,16 @@ routes/
 - ✅ Web routes: `routes/web.php`
 - ✅ API routes: `routes/api.php`
 - ✅ Pattern: RESTful where applicable
+
+### Custom MVC Testing Rules:
+
+- ✅ Location: `tests/Feature/ServiceNameTest.php`
+- ✅ Namespace: `Tests\Feature\`
+- ✅ Extend: `PHPUnit\Framework\TestCase`
+- ✅ NO Laravel testing traits
+- ✅ Test all service methods
+- ✅ Clean up test data in tearDown()
+- ✅ Follow database patterns
 
 ## 📋 DEVELOPMENT CHECKLIST
 

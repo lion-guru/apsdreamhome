@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use PDO;
+
 /**
  * Configuration Service - APS Dream Home
  * Modern configuration management service
@@ -38,7 +40,7 @@ class ConfigService
     {
         // Load environment variables
         $this->loadEnvironmentVariables();
-        
+
         // Set default configuration
         $this->config = [
             'app' => [
@@ -105,15 +107,15 @@ class ConfigService
                 if (strpos($line, '#') === 0 || empty($line)) {
                     continue;
                 }
-                
+
                 if (strpos($line, '=') !== false) {
                     list($key, $value) = explode('=', $line, 2);
                     $key = trim($key);
                     $value = trim($value);
-                    
+
                     // Remove quotes if present
                     $value = trim($value, '"\'');
-                    
+
                     // Set environment variable
                     putenv("$key=$value");
                     $_ENV[$key] = $value;
@@ -129,14 +131,14 @@ class ConfigService
     {
         $keys = explode('.', $key);
         $value = $this->config;
-        
+
         foreach ($keys as $k) {
             if (!isset($value[$k])) {
                 return $default;
             }
             $value = $value[$k];
         }
-        
+
         return $value;
     }
 
@@ -147,14 +149,14 @@ class ConfigService
     {
         $keys = explode('.', $key);
         $config = &$this->config;
-        
+
         foreach ($keys as $k) {
             if (!isset($config[$k]) || !is_array($config[$k])) {
                 $config[$k] = [];
             }
             $config = &$config[$k];
         }
-        
+
         $config = $value;
     }
 

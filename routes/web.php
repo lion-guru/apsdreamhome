@@ -425,3 +425,62 @@ $router->get('/map/location-suggestions', 'MapController@getLocationSuggestions'
 $router->get('/mcp_dashboard', 'MCPController@dashboard');
 $router->get('/mcp_configuration_gui', 'MCPController@configuration');
 $router->get('/import_mcp_config', 'MCPController@import');
+
+// Associate routes (Modern MVC)
+$router->get('/associates', 'Associate\AssociateController@index');
+$router->get('/associates/dashboard', 'Associate\AssociateController@dashboard');
+$router->get('/associates/create', 'Associate\AssociateController@create');
+$router->post('/associates/store', 'Associate\AssociateController@store');
+$router->get('/associates/edit/{id}', 'Associate\AssociateController@edit');
+$router->post('/associates/update/{id}', 'Associate\AssociateController@update');
+$router->get('/associates/show/{id}', 'Associate\AssociateController@show');
+$router->get('/associates/metrics/{id}', 'Associate\AssociateController@metrics');
+$router->post('/associates/update-status/{id}', 'Associate\AssociateController@updateStatus');
+$router->get('/associates/delete/{id}', 'Associate\AssociateController@delete');
+
+// User routes (Modern MVC)
+$router->get('/users', 'User\UserController@index');
+$router->get('/users/dashboard', 'User\UserController@dashboard');
+$router->get('/users/create', 'User\UserController@create');
+$router->post('/users/store', 'User\UserController@store');
+$router->get('/users/edit/{id}', 'User\UserController@edit');
+$router->post('/users/update/{id}', 'User\UserController@update');
+$router->get('/users/show/{id}', 'User\UserController@show');
+$router->get('/users/profile/{id}', 'User\UserController@profile');
+$router->post('/users/update-profile/{id}', 'User\UserController@updateProfile');
+$router->get('/users/change-password/{id}', 'User\UserController@changePassword');
+$router->post('/users/update-password/{id}', 'User\UserController@updatePassword');
+$router->post('/users/update-status/{id}', 'User\UserController@updateStatus');
+$router->get('/users/delete/{id}', 'User\UserController@delete');
+$router->get('/users/by-role/{role}', 'User\UserController@byRole');
+
+// Report routes (Modern MVC)
+$router->get('/reports', 'Reports\ReportController@dashboard');
+$router->get('/reports/generate', 'Reports\ReportController@generate');
+$router->post('/reports/create', 'Reports\ReportController@create');
+$router->get('/reports/scheduled', 'Reports\ReportController@scheduled');
+$router->get('/reports/schedule', 'Reports\ReportController@schedule');
+$router->post('/reports/store-schedule', 'Reports\ReportController@storeSchedule');
+$router->get('/reports/sales', 'Reports\ReportController@sales');
+$router->get('/reports/property', 'Reports\ReportController@property');
+$router->get('/reports/associate', 'Reports\ReportController@associate');
+$router->get('/reports/customer', 'Reports\ReportController@customer');
+$router->get('/reports/financial', 'Reports\ReportController@financial');
+
+// Utility routes (Modern MVC)
+$router->get('/utils/file/upload', 'Utils\FileController@upload');
+$router->post('/utils/file/upload', 'Utils\FileController@processUpload');
+$router->get('/utils/files', 'Utils\FileController@index');
+$router->get('/utils/files/{category}', 'Utils\FileController@byCategory');
+$router->get('/utils/file/{id}', 'Utils\FileController@show');
+$router->post('/utils/file/{id}/delete', 'Utils\FileController@delete');
+$router->get('/utils/file/{id}/download', 'Utils\FileController@download');
+$router->post('/utils/file/batch', 'Utils\FileController@batchOperation');
+
+// Core Helper routes (Modern MVC)
+$router->get('/core/helpers/csrf', 'Core\HelperController@getCSRFToken');
+$router->post('/core/helpers/validate', 'Core\HelperController@validateInput');
+$router->post('/core/helpers/email', 'Core\HelperController@sendEmail');
+$router->get('/core/helpers/system-info', 'Core\HelperController@systemInfo');
+$router->post('/core/helpers/backup', 'Core\HelperController@createBackup');
+$router->post('/core/helpers/cleanup', 'Core\HelperController@cleanup');

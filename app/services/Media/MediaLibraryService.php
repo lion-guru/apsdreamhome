@@ -4,7 +4,7 @@ namespace App\Services\Media;
 
 use App\Core\Database\Database;
 use App\Services\LoggingService;
-use App\Core\Config;
+use App\Core\ConfigService;
 
 /**
  * Media Library Service - APS Dream Home
@@ -21,9 +21,9 @@ class MediaLibraryService
 
     public function __construct()
     {
-        $this->database = Database::getInstance();
-        $this->logger = LoggingService::getInstance();
-        $this->config = Config::getInstance();
+        $this->database = \App\Core\Database\Database::getInstance();
+        $this->logger = new LoggingService();
+        $this->config = ConfigService::getInstance();
 
         $this->uploadDir = STORAGE_PATH . '/uploads/media/';
         $this->allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx'];

@@ -53,8 +53,8 @@ class EventBusServiceEnhanced
 
     public function __construct($processingMode = self::MODE_ASYNC, $database = null, $logger = null)
     {
-        $this->database = $database ?: Database::getInstance();
-        $this->logger = $logger ?: LoggingService::getInstance();
+        $this->database = $database ?: \App\Core\Database\Database::getInstance();
+        $this->logger = $logger ?: new \App\Services\LoggingService();
         $this->eventProcessingMode = $processingMode;
         $this->createEventTables();
         $this->loadSubscriptions();
@@ -116,7 +116,6 @@ class EventBusServiceEnhanced
                 INDEX idx_event_history_processed_at (processed_at)
             )";
             $this->database->query($sql);
-
         } catch (Exception $e) {
             $this->logger->log("Error creating event tables: " . $e->getMessage(), 'error', 'events');
             throw new RuntimeException("Failed to create event tables: " . $e->getMessage());
@@ -184,7 +183,6 @@ class EventBusServiceEnhanced
 
             $this->logger->log("Event published: $eventName (ID: $eventId)", 'info', 'events');
             return $eventId;
-
         } catch (Exception $e) {
             $this->logger->log("Error publishing event $eventName: " . $e->getMessage(), 'error', 'events');
             throw new RuntimeException("Failed to publish event: " . $e->getMessage());
@@ -204,7 +202,7 @@ class EventBusServiceEnhanced
             // Store in database
             $sql = "INSERT INTO event_subscriptions (event_name, subscriber_type, subscriber_target, priority, filter_conditions)
                     VALUES (?, ?, ?, ?, ?)";
-            
+
             $this->database->execute($sql, [
                 $eventName,
                 $subscriberType,
@@ -223,7 +221,6 @@ class EventBusServiceEnhanced
 
             $this->logger->log("Subscription added: $subscriberTarget for event $eventName", 'info', 'events');
             return true;
-
         } catch (Exception $e) {
             $this->logger->log("Error adding subscription: " . $e->getMessage(), 'error', 'events');
             throw new RuntimeException("Failed to add subscription: " . $e->getMessage());
@@ -236,20 +233,19 @@ class EventBusServiceEnhanced
     private function processEventSync($event)
     {
         $startTime = microtime(true);
-        
+
         try {
             $this->updateEventStatus($event['id'], 'processing');
-            
+
             $subscribers = $this->getSubscribersForEvent($event['name']);
-            
+
             foreach ($subscribers as $subscriber) {
                 if ($this->shouldProcessEvent($event, $subscriber['filter'])) {
                     $this->dispatchEvent($event, $subscriber);
                 }
             }
-            
+
             $this->updateEventStatus($event['id'], 'completed');
-            
         } catch (Exception $e) {
             $this->updateEventStatus($event['id'], 'failed', $e->getMessage());
             throw $e;
@@ -264,7 +260,7 @@ class EventBusServiceEnhanced
         if (count($this->eventQueue) >= $this->maxEventQueueSize) {
             throw new RuntimeException('Event queue is full');
         }
-        
+
         $this->eventQueue[] = $event;
         $this->logger->log("Event queued: {$event['name']} (ID: {$event['id']})", 'info', 'events');
     }
@@ -275,10 +271,10 @@ class EventBusServiceEnhanced
     public function processQueuedEvents()
     {
         $processed = 0;
-        
+
         while (!empty($this->eventQueue) && $processed < 100) {
             $event = array_shift($this->eventQueue);
-            
+
             try {
                 $this->processEventSync($event);
                 $processed++;
@@ -286,7 +282,7 @@ class EventBusServiceEnhanced
                 $this->logger->log("Error processing queued event {$event['id']}: " . $e->getMessage(), 'error', 'events');
             }
         }
-        
+
         return $processed;
     }
 
@@ -296,19 +292,19 @@ class EventBusServiceEnhanced
     private function getSubscribersForEvent($eventName)
     {
         $subscribers = $this->eventSubscriptions[$eventName] ?? [];
-        
+
         // Check wildcard subscriptions
         foreach ($this->wildcardSubscriptions as $pattern => $wildcardSubs) {
             if ($this->matchesPattern($eventName, $pattern)) {
                 $subscribers = array_merge($subscribers, $wildcardSubs);
             }
         }
-        
+
         // Sort by priority
-        usort($subscribers, function($a, $b) {
+        usort($subscribers, function ($a, $b) {
             return $b['priority'] - $a['priority'];
         });
-        
+
         return $subscribers;
     }
 
@@ -320,13 +316,13 @@ class EventBusServiceEnhanced
         if (empty($filter)) {
             return true;
         }
-        
+
         foreach ($filter as $key => $value) {
             if (!isset($event['data'][$key]) || $event['data'][$key] !== $value) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -336,7 +332,7 @@ class EventBusServiceEnhanced
     private function dispatchEvent($event, $subscriber)
     {
         $startTime = microtime(true);
-        
+
         try {
             switch ($subscriber['type']) {
                 case 'class':
@@ -349,10 +345,9 @@ class EventBusServiceEnhanced
                     $this->dispatchToCallback($event, $subscriber['target']);
                     break;
             }
-            
+
             $processingTime = microtime(true) - $startTime;
             $this->logEventHistory($event['id'], $event['name'], $subscriber['target'], 'success', $processingTime);
-            
         } catch (Exception $e) {
             $processingTime = microtime(true) - $startTime;
             $this->logEventHistory($event['id'], $event['name'], $subscriber['target'], 'failed', $processingTime, $e->getMessage());
@@ -368,9 +363,9 @@ class EventBusServiceEnhanced
         if (!class_exists($className)) {
             throw new RuntimeException("Class $className not found");
         }
-        
+
         $instance = new $className();
-        
+
         if (method_exists($instance, 'handle')) {
             $instance->handle($event);
         } else {
@@ -386,13 +381,13 @@ class EventBusServiceEnhanced
         if (!strpos($methodTarget, '@')) {
             throw new RuntimeException("Method target must be in format 'Class@method'");
         }
-        
+
         list($className, $methodName) = explode('@', $methodTarget);
-        
+
         if (!class_exists($className) || !method_exists($className, $methodName)) {
             throw new RuntimeException("Method $className@$methodName not found");
         }
-        
+
         call_user_func([$className, $methodName], $event);
     }
 
@@ -404,8 +399,23 @@ class EventBusServiceEnhanced
         if (!is_callable($callback)) {
             throw new RuntimeException("Callback is not callable");
         }
-        
+
         call_user_func($callback, $event);
+    }
+
+    /**
+     * Publish event in distributed mode
+     */
+    private function publishDistributed($event)
+    {
+        // For distributed mode, we'll queue the event and mark it for distributed processing
+        $this->queueEvent($event);
+
+        // Mark event as distributed
+        $sql = "UPDATE events SET processing_mode = ?, distributed_at = NOW() WHERE event_id = ?";
+        $this->database->execute($sql, [self::MODE_DISTRIBUTED, $event['id']]);
+
+        $this->logger->log("Event queued for distributed processing: {$event['name']} (ID: {$event['id']})", 'info', 'events');
     }
 
     /**
@@ -415,7 +425,7 @@ class EventBusServiceEnhanced
     {
         $sql = "INSERT INTO events (event_id, event_type, event_name, event_data, event_source, priority, processing_mode, created_by)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $this->database->execute($sql, [
             $event['id'],
             $event['type'],
@@ -444,7 +454,7 @@ class EventBusServiceEnhanced
     {
         $sql = "INSERT INTO event_history (event_id, event_name, subscriber_target, processing_time, status, error_message)
                 VALUES (?, ?, ?, ?, ?, ?)";
-        
+
         $this->database->execute($sql, [
             $eventId,
             $eventName,
@@ -485,34 +495,33 @@ class EventBusServiceEnhanced
     public function getEventStats()
     {
         $stats = [];
-        
+
         try {
             // Total events
             $result = $this->database->fetchOne("SELECT COUNT(*) as total FROM events");
             $stats['total_events'] = $result['total'] ?? 0;
-            
+
             // By status
             $results = $this->database->fetchAll("SELECT status, COUNT(*) as count FROM events GROUP BY status");
             $stats['by_status'] = [];
             foreach ($results as $row) {
                 $stats['by_status'][$row['status']] = $row['count'];
             }
-            
+
             // Recent events
             $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM events WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
             $stats['recent_events'] = $result['recent'] ?? 0;
-            
+
             // Queue size
             $stats['queue_size'] = count($this->eventQueue);
-            
+
             // Active subscriptions
             $result = $this->database->fetchOne("SELECT COUNT(*) as total FROM event_subscriptions WHERE is_active = TRUE");
             $stats['active_subscriptions'] = $result['total'] ?? 0;
-            
         } catch (Exception $e) {
             $this->logger->log("Error fetching event stats: " . $e->getMessage(), 'error', 'events');
         }
-        
+
         return $stats;
     }
 
@@ -524,10 +533,10 @@ class EventBusServiceEnhanced
         try {
             $sql = "DELETE FROM events WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
             $this->database->execute($sql, [$this->eventRetentionDays]);
-            
+
             $sql = "DELETE FROM event_history WHERE processed_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
             $this->database->execute($sql, [$this->eventRetentionDays]);
-            
+
             $this->logger->log("Old events cleaned up", 'info', 'events');
             return true;
         } catch (Exception $e) {
