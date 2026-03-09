@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 require_once __DIR__ . '/../../Core/Controller.php';
+
 use App\Core\Controller as CoreController;
 use PDO;
 use Exception;
@@ -18,11 +19,11 @@ class BaseController extends CoreController
         parent::__construct();
         // Initialize data array
         $this->data = [];
-        
+
         // Temporarily disable security middleware to fix CSS/JS loading
         // $this->security = \App\Core\Security\SecurityMiddleware::getInstance();
         // $this->security->initialize();
-        
+
         // Optimized database configuration with connection pooling
         $dbConfig = [
             'host' => 'localhost',
@@ -50,17 +51,17 @@ class BaseController extends CoreController
         $this->db = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
         $this->loadModels();
         $this->getCsrfToken();
-        
+
         // Initialize session if not already started
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         // Initialize session manager if not set
         if (!$this->session) {
             $this->session = new \App\Core\Session\SessionManager();
         }
-        
+
         // Performance monitoring
         $this->startPerformanceMonitoring();
     }
@@ -263,7 +264,7 @@ class BaseController extends CoreController
         if (strpos($path, '/') !== 0) {
             $path = '/' . $path;
         }
-        header("Location: " . BASE_URL . ltrim($path, '/'), true, $statusCode);
+        header("Location: " . BASE_URL . $path, true, $statusCode);
         exit;
     }
 
@@ -276,7 +277,7 @@ class BaseController extends CoreController
         if (!defined('BASE_URL')) {
             define('BASE_URL', 'http://localhost/apsdreamhome/public');
         }
-        
+
         $data = array_merge($this->data, $data);
         $layout = $layout ?? $this->layout;
 
@@ -296,7 +297,7 @@ class BaseController extends CoreController
 
         if ($layout) {
             $layoutPath = $basePath . ltrim(str_replace('\\', '/', $layout), '/') . '.php';
-            
+
             if (file_exists($layoutPath)) {
                 // Pass content to layout - layout expects $content variable
                 $data['content'] = $content;
@@ -472,11 +473,11 @@ class BaseController extends CoreController
     protected function sanitizeInput($data, $type = 'string')
     {
         if (is_array($data)) {
-            return array_map(function($item) use ($type) {
+            return array_map(function ($item) use ($type) {
                 return $this->sanitizeInput($item, $type);
             }, $data);
         }
-        
+
         switch ($type) {
             case 'email':
                 return filter_var(trim($data), FILTER_SANITIZE_EMAIL);
@@ -622,7 +623,7 @@ class BaseController extends CoreController
             $end_time = microtime(true);
             $execution_time = $end_time - $this->performance_data['start_time'];
             $memory_used = memory_get_usage() - $this->performance_data['memory_start'];
-            
+
             // Log performance data for optimization
             error_log(sprintf(
                 "Performance: %.4fs | Memory: %s KB | Queries: %d | URI: %s",
@@ -631,7 +632,7 @@ class BaseController extends CoreController
                 $this->performance_data['queries'] ?? 0,
                 $_SERVER['REQUEST_URI'] ?? 'unknown'
             ));
-            
+
             // Alert on slow queries
             if ($execution_time > 2.0) {
                 error_log("SLOW REQUEST: " . $_SERVER['REQUEST_URI'] . " took " . $execution_time . "s");
@@ -646,35 +647,35 @@ class BaseController extends CoreController
     {
         $sanitized = [];
         $errors = [];
-        
+
         foreach ($rules as $field => $rule) {
             $value = $_POST[$field] ?? null;
-            
+
             if ($rule['required'] && empty($value)) {
                 $errors[$field] = ($rule['label'] ?? ucfirst($field)) . ' is required';
                 continue;
             }
-            
+
             if (!empty($value)) {
                 // Sanitize based on type
                 $type = $rule['type'] ?? 'string';
                 $sanitized[$field] = $this->sanitizeInput($value, $type);
-                
+
                 // Additional validations
                 if ($type === 'email' && !filter_var($sanitized[$field], FILTER_VALIDATE_EMAIL)) {
                     $errors[$field] = 'Please enter a valid email address';
                 }
-                
+
                 if (isset($rule['min_length']) && strlen($sanitized[$field]) < $rule['min_length']) {
                     $errors[$field] = ($rule['label'] ?? ucfirst($field)) . ' must be at least ' . $rule['min_length'] . ' characters';
                 }
-                
+
                 if (isset($rule['max_length']) && strlen($sanitized[$field]) > $rule['max_length']) {
                     $errors[$field] = ($rule['label'] ?? ucfirst($field)) . ' must not exceed ' . $rule['max_length'] . ' characters';
                 }
             }
         }
-        
+
         return ['data' => $sanitized, 'errors' => $errors];
     }
 

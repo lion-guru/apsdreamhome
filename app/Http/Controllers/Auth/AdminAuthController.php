@@ -32,20 +32,20 @@ class AdminAuthController extends BaseController
     /**
      * Display admin login page
      */
-    public function showLogin()
+    public function adminLogin()
     {
         if (AuthHelper::isLoggedIn('admin')) {
             $this->redirect('/admin/dashboard');
             return;
         }
 
-        $this->data['page_title'] = 'Admin Login - ' . APP_NAME;
+        $this->data['page_title'] = 'Admin Login - APS Dream Home';
         $this->data['error'] = $this->getFlash('error') ?? ($_GET['error'] ?? '');
         $this->data['success'] = $this->getFlash('success') ?? ($_GET['success'] ?? '');
 
         // Generate simple CAPTCHA
-        $num1 = SecurityHelper::secureRandomInt(1, 10);
-        $num2 = SecurityHelper::secureRandomInt(1, 10);
+        $num1 = rand(1, 10);
+        $num2 = rand(1, 10);
         $_SESSION['captcha_num1_admin'] = $num1;
         $_SESSION['captcha_num2_admin'] = $num2;
         $_SESSION['captcha_answer'] = $num1 + $num2;
@@ -53,7 +53,7 @@ class AdminAuthController extends BaseController
 
         // Generate CSRF token if not already in view
         if (!isset($this->data['csrf_token'])) {
-            $this->data['csrf_token'] = SecurityHelper::generateCsrfToken();
+            $this->data['csrf_token'] = bin2hex(random_bytes(32));
         }
 
         return $this->render('admin/login');
@@ -62,11 +62,11 @@ class AdminAuthController extends BaseController
     /**
      * Process admin login form submission
      */
-    public function processLogin()
+    public function authenticateAdmin()
     {
-        $username = trim(Security::sanitize($_POST['username']) ?? '');
-        $password = Security::sanitize($_POST['password']) ?? '';
-        $captcha = Security::sanitize($_POST['captcha_answer']) ?? '';
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $captcha = $_POST['captcha_answer'] ?? '';
 
         if (empty($username) || empty($password)) {
             $this->setFlash('error', 'Please fill in all fields');
