@@ -63,7 +63,7 @@
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form action="<?php echo BASE_URL; ?>/admin/login" method="post" autocomplete="off" novalidate>
+        <form action="<?php echo BASE_URL; ?>/admin/login" method="post" id="adminLoginForm" class="admin-login-form" autocomplete="off" novalidate>
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="username">
