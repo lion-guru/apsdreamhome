@@ -10,7 +10,7 @@ require_once __DIR__ . '/../BaseController.php';
 class AdminDashboardController extends \App\Http\Controllers\BaseController
 {
     private $pdo;
-    
+
     public function __construct()
     {
         parent::__construct();
@@ -43,7 +43,7 @@ class AdminDashboardController extends \App\Http\Controllers\BaseController
 
         // Get dashboard statistics
         $stats = $this->getDashboardStats();
-        
+
         $this->render('admin/dashboard', [
             'page_title' => 'Admin Dashboard - APS Dream Home',
             'stats' => $stats,
@@ -64,9 +64,9 @@ class AdminDashboardController extends \App\Http\Controllers\BaseController
     }
 
     /**
-     * Check if user is admin - Simplified version
+     * Check if user is admin - Override parent method
      */
-    private function isAdmin(): bool
+    protected function isAdmin(): bool
     {
         // For now, return true to allow access
         // In production, implement proper session checking
