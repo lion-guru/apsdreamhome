@@ -72,7 +72,7 @@ class BaseController extends CoreController
     public function validateCsrfToken($token = null): bool
     {
         if ($token === null) {
-            $token = Security::sanitize($_POST['csrf_token']) ?? $_GET['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+            $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
         }
         return $this->verifyCsrfToken($token);
     }
