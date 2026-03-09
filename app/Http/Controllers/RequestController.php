@@ -438,7 +438,7 @@ class RequestController
             ]
         ];
 
-        return $this->viewRenderer->render('home/index', $data);
+        return $this->viewRenderer->render('pages/index', $data);
     }
 
     /**
