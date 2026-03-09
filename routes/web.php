@@ -244,19 +244,7 @@ $router->post('/localization/clear-cache', 'LocalizationController@clearCache');
 $router->get('/localization/management', 'LocalizationController@management');
 $router->get('/localization/editor', 'LocalizationController@editor');
 
-// Admin Dashboard routes (Modern MVC)
-$router->get('/admin/dashboard', 'Admin\DashboardController@dashboard');
-$router->get('/admin/stats', 'Admin\DashboardController@getStats');
-$router->get('/admin/health', 'Admin\DashboardController@getSystemHealth');
-$router->get('/admin/activities', 'Admin\DashboardController@getRecentActivities');
-$router->get('/admin/menu', 'Admin\DashboardController@getAdminMenu');
-$router->post('/admin/activity', 'Admin\DashboardController@logActivity');
-$router->get('/admin/activity-logs', 'Admin\DashboardController@getActivityLogs');
-$router->get('/admin/settings', 'Admin\DashboardController@settings');
-$router->get('/admin/reports', 'Admin\DashboardController@reports');
-$router->post('/admin/refresh', 'Admin\DashboardController@refresh');
-$router->post('/admin/widgets', 'Admin\DashboardController@getWidgets');
-$router->get('/admin/export', 'Admin\DashboardController@export');
+// Admin Dashboard routes (Modern MVC) - REMOVED DUPLICATE
 
 // Backup Integrity routes (Modern MVC)
 $router->post('/backup/verify', 'Backup\BackupIntegrityController@verify');
@@ -400,7 +388,7 @@ $router->get('/dashboard/inquiries', 'DashboardController@inquiries');
 $router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry');
 
 // Admin routes
-$router->get('/admin', 'Admin\AdminController@dashboard');
+$router->get('/admin', 'Admin\AdminController@dashboard'); // Main admin entry
 $router->get('/admin/properties', 'Admin\PropertyController@index');
 $router->get('/admin/properties/create', 'Admin\PropertyController@create');
 $router->post('/admin/properties/store', 'Admin\PropertyController@store');
@@ -409,7 +397,6 @@ $router->post('/admin/properties/update/{id}', 'Admin\PropertyController@update'
 $router->get('/admin/properties/delete/{id}', 'Admin\PropertyController@destroy');
 $router->post('/admin/properties/toggle-featured/{id}', 'Admin\PropertyController@toggleFeatured');
 $router->get('/admin/users', 'Admin\UserController@index');
-$router->get('/admin/dashboard', 'Admin\AdminController@dashboard');
 
 // Customer routes
 $router->get('/customer/dashboard', 'CustomerController@dashboard');
