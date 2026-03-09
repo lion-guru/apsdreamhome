@@ -86,7 +86,7 @@ class AdminAuthController extends BaseController
         }
 
         try {
-            $adminModel = new Admin();
+            $adminModel = new \App\Models\System\Admin();
             // Fetch admin from database using email or username
             $admin = $adminModel->findByUsernameOrEmail($username);
 
@@ -94,62 +94,25 @@ class AdminAuthController extends BaseController
                 return $this->handleFailedLogin($username);
             }
 
-            // Verify password with support for multiple hash columns and legacy SHA1
-            $hash = $admin->apass ?? $admin->password;
-            $verified = false;
-
-            if ($hash && password_verify($password, $hash)) {
-                $verified = true;
-            } elseif ($hash && preg_match('/^[a-f0-9]{40}$/i', $hash) && sha1($password) === $hash) {
-                // Legacy SHA1 support
-                $verified = true;
-
-                // Rehash password to bcrypt and update database
-                $newHash = password_hash($password, PASSWORD_DEFAULT);
-                $admin->password = $newHash;
-
-                // If using apass column for legacy compatibility, update it too if it exists in fillable
-                if ($admin->apass) {
-                    $admin->apass = $newHash;
-                }
-
-                $admin->save();
-            }
+            // Verify password using Admin model method
+            $verified = $adminModel->verifyPassword($admin, $password);
 
             if (!$verified) {
                 return $this->handleFailedLogin($username);
             }
 
-            // Check admin status
-            if (isset($admin->status) && $admin->status !== 'active') {
-                $this->setFlash('error', 'Account is not active');
-                $this->redirect('/admin/login');
-            }
+            // Create admin session
+            $adminModel->createAdminSession($admin);
 
-            // Successful login
-            // Check if password needs rehash
-            if (password_needs_rehash($admin->apass, PASSWORD_DEFAULT)) {
-                $new_hash = password_hash($password, PASSWORD_DEFAULT);
-                $adminModel->update($admin->aid, ['apass' => $new_hash]);
-            }
+            // Clear failed login attempts
+            unset($_SESSION['admin_login_attempts'], $_SESSION['admin_login_blocked_until']);
 
-            // Set session using unified helper
-            // Note: the helper uses an array, so we convert the model object to array if needed
-            $userData = $admin->toArray();
-            // Use static method for unified session handling
-            SessionHelpers::setAuthSession($userData, 'admin', $admin->role ?? 'admin');
-
-            // Regenerate session ID for security
-            session_regenerate_id(true);
-
-            // Log success
-            error_log("[Admin Login Success] User: " . $admin->auser . " IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
-
-            $this->setFlash('success', 'Logged in successfully');
+            $this->setFlash('success', 'Welcome back, ' . ($admin['name'] ?? $admin['username'] ?? 'Admin') . '!');
             $this->redirect('/admin/dashboard');
+            return;
         } catch (Exception $e) {
             error_log("Admin login error: " . $e->getMessage());
-            $this->setFlash('error', 'An unexpected error occurred');
+            $this->setFlash('error', 'Login failed. Please try again.');
             $this->redirect('/admin/login');
         }
     }
