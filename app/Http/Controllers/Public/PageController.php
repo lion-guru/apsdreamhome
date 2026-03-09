@@ -102,9 +102,9 @@ class PageController extends BaseController
             ]
         ];
 
-        return $this->render('home/index', $data, 'layouts/base');
+        return $this->render('pages/index', $data, 'layouts/base');
     }
-    
+
     /**
      * About method
      * @return void
@@ -115,10 +115,10 @@ class PageController extends BaseController
         try {
             // Try to get data from database
             $pdo = new \PDO(
-                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
-                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
-                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
-                ";charset=utf8mb4",
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') .
+                    ";port=" . ($_ENV['DB_PORT'] ?? '3306') .
+                    ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') .
+                    ";charset=utf8mb4",
                 $_ENV['DB_USERNAME'] ?? 'root',
                 $_ENV['DB_PASSWORD'] ?? '',
                 [
@@ -177,7 +177,7 @@ class PageController extends BaseController
                         'Integrity',
                         'Innovation'
                     ],
-                    'team' => !empty($team_members_db) ? array_map(function($member) {
+                    'team' => !empty($team_members_db) ? array_map(function ($member) {
                         return (object)[
                             'name' => $member['name'],
                             'position' => $member['position'],
@@ -260,7 +260,7 @@ class PageController extends BaseController
                 ]
             ];
         }
-        
+
         return $this->render('pages/about', $data, 'layouts/base_new');
     }
 
@@ -296,7 +296,7 @@ class PageController extends BaseController
                 [
                     'name' => 'Branch Office - Lucknow',
                     'address' => 'Gomti Nagar, Vibhuti Khand',
-                    'city' => 'Lucknow', 
+                    'city' => 'Lucknow',
                     'state' => 'Uttar Pradesh',
                     'pincode' => '226010',
                     'phone' => '+91-9277121112',
@@ -994,10 +994,10 @@ class PageController extends BaseController
         try {
             // Try to get data from database
             $pdo = new \PDO(
-                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
-                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
-                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
-                ";charset=utf8mb4",
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') .
+                    ";port=" . ($_ENV['DB_PORT'] ?? '3306') .
+                    ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') .
+                    ";charset=utf8mb4",
                 $_ENV['DB_USERNAME'] ?? 'root',
                 $_ENV['DB_PASSWORD'] ?? '',
                 [
@@ -1013,7 +1013,7 @@ class PageController extends BaseController
 
             if (!empty($news_articles)) {
                 // Format database data
-                $featured_posts = array_map(function($article) {
+                $featured_posts = array_map(function ($article) {
                     return [
                         'id' => $article['id'],
                         'title' => $article['title'],
@@ -1035,7 +1035,7 @@ class PageController extends BaseController
                     ];
                 }, array_slice($news_articles, 0, 3));
 
-                $recent_posts = array_map(function($article) {
+                $recent_posts = array_map(function ($article) {
                     return [
                         'id' => $article['id'],
                         'title' => $article['title'],
@@ -1529,10 +1529,10 @@ class PageController extends BaseController
         try {
             // Try to get data from database
             $pdo = new \PDO(
-                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
-                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
-                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
-                ";charset=utf8mb4",
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') .
+                    ";port=" . ($_ENV['DB_PORT'] ?? '3306') .
+                    ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') .
+                    ";charset=utf8mb4",
                 $_ENV['DB_USERNAME'] ?? 'root',
                 $_ENV['DB_PASSWORD'] ?? '',
                 [
@@ -1552,18 +1552,18 @@ class PageController extends BaseController
 
             if (!empty($team_members)) {
                 // Format database data
-                $leadership_team = array_filter($team_members, function($member) {
+                $leadership_team = array_filter($team_members, function ($member) {
                     return ($member['category'] ?? '') === 'leadership';
                 });
-                
-                $department_heads = array_filter($team_members, function($member) {
+
+                $department_heads = array_filter($team_members, function ($member) {
                     return ($member['category'] ?? '') === 'department_head';
                 });
 
                 $data = [
                     'page_title' => 'Our Team - APS Dream Home',
                     'page_description' => 'Meet the dedicated professionals behind APS Dream Home. Our experienced team is committed to delivering excellence in real estate services.',
-                    'leadership_team' => array_map(function($member) {
+                    'leadership_team' => array_map(function ($member) {
                         return [
                             'id' => $member['id'],
                             'name' => $member['name'],
@@ -1578,7 +1578,7 @@ class PageController extends BaseController
                             'linkedin' => $member['linkedin'] ?? '#'
                         ];
                     }, $leadership_team),
-                    'department_heads' => array_map(function($member) {
+                    'department_heads' => array_map(function ($member) {
                         return [
                             'id' => $member['id'],
                             'name' => $member['name'],
@@ -1674,7 +1674,7 @@ class PageController extends BaseController
                 ]
             ];
 
-        return $this->render('team/index', $data, 'layouts/base');
+            return $this->render('team/index', $data, 'layouts/base');
         }
     }
 
@@ -1794,10 +1794,10 @@ class PageController extends BaseController
         try {
             // Try to get data from database
             $pdo = new \PDO(
-                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
-                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
-                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
-                ";charset=utf8mb4",
+                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') .
+                    ";port=" . ($_ENV['DB_PORT'] ?? '3306') .
+                    ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') .
+                    ";charset=utf8mb4",
                 $_ENV['DB_USERNAME'] ?? 'root',
                 $_ENV['DB_PASSWORD'] ?? '',
                 [
@@ -1813,7 +1813,7 @@ class PageController extends BaseController
 
             if (!empty($testimonials)) {
                 // Format database data
-                $customer_testimonials = array_map(function($testimonial) {
+                $customer_testimonials = array_map(function ($testimonial) {
                     return [
                         'id' => $testimonial['id'],
                         'name' => $testimonial['name'],
@@ -2506,7 +2506,7 @@ class PageController extends BaseController
                 if ($resume && $resume['error'] === UPLOAD_ERR_OK) {
                     $allowed_types = ['pdf', 'doc', 'docx'];
                     $file_ext = strtolower(pathinfo($resume['name'], PATHINFO_EXTENSION));
-                    
+
                     if (!in_array($file_ext, $allowed_types)) {
                         $_SESSION['error'] = 'Please upload PDF, DOC, or DOCX file only';
                         header('Location: ' . BASE_URL . 'careers/apply');
@@ -2520,7 +2520,7 @@ class PageController extends BaseController
 
                     $filename = time() . '_' . basename($resume['name']);
                     $resume_path = $upload_dir . $filename;
-                    
+
                     if (!move_uploaded_file($resume['tmp_name'], $resume_path)) {
                         $_SESSION['error'] = 'Failed to upload resume';
                         header('Location: ' . BASE_URL . 'careers/apply');
@@ -2566,7 +2566,6 @@ class PageController extends BaseController
                 $_SESSION['success'] = 'Your application has been submitted successfully!';
                 header('Location: ' . BASE_URL . 'careers');
                 exit;
-
             } catch (Exception $e) {
                 $_SESSION['error'] = 'An error occurred. Please try again.';
                 header('Location: ' . BASE_URL . 'careers/apply');
@@ -2574,7 +2573,6 @@ class PageController extends BaseController
             }
         }
     }
-
 }
 
 //
