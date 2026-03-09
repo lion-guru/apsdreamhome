@@ -20,9 +20,9 @@ class HomeController extends BaseController
         ];
 
         // Render view with data
-        $this->render('pages/home_new_version', $data);
+        $this->render('pages/index', $data);
     }
-    
+
     public function about()
     {
         $data = [
@@ -35,7 +35,7 @@ class HomeController extends BaseController
 
         $this->render('pages/about', $data);
     }
-    
+
     public function contact()
     {
         // Handle POST request (form submission)
@@ -54,7 +54,7 @@ class HomeController extends BaseController
                 $_SESSION['success'] = 'Thank you for your message! We will get back to you within 24 hours.';
                 error_log("Contact form submission: Name: $name, Email: $email, Subject: $subject");
             }
-            
+
             // Redirect back to contact page
             $this->redirect('contact');
             return;
@@ -70,7 +70,7 @@ class HomeController extends BaseController
         // Render view with data
         $this->render('pages/contact', $data);
     }
-    
+
     public function careers()
     {
         $data = [
@@ -80,7 +80,7 @@ class HomeController extends BaseController
 
         $this->render('pages/careers', $data);
     }
-    
+
     public function careerApply()
     {
         $data = [
@@ -90,7 +90,7 @@ class HomeController extends BaseController
 
         $this->render('pages/career_apply', $data);
     }
-    
+
     public function projects()
     {
         $data = [
@@ -101,7 +101,7 @@ class HomeController extends BaseController
 
         $this->render('pages/projects', $data);
     }
-    
+
     public function blog()
     {
         // Sample blog data
@@ -136,7 +136,7 @@ class HomeController extends BaseController
 
         $this->render('pages/blog', $data);
     }
-    
+
     public function faq()
     {
         $data = [
@@ -158,7 +158,7 @@ class HomeController extends BaseController
 
         $this->render('pages/faqs', $data);
     }
-    
+
     public function team()
     {
         $data = [
@@ -189,7 +189,7 @@ class HomeController extends BaseController
 
         $this->render('pages/resell', $data);
     }
-    
+
     private function loadFeaturedProperties()
     {
         return [
@@ -234,7 +234,7 @@ class HomeController extends BaseController
             ]
         ];
     }
-    
+
     private function loadProjects()
     {
         return [
@@ -260,7 +260,7 @@ class HomeController extends BaseController
             ]
         ];
     }
-    
+
     private function loadHeroStats()
     {
         return [
@@ -270,7 +270,7 @@ class HomeController extends BaseController
             'projects_completed' => '50+'
         ];
     }
-    
+
     private function loadPropertyTypes()
     {
         return [
@@ -296,7 +296,7 @@ class HomeController extends BaseController
             ]
         ];
     }
-    
+
     private function loadWhyChooseUs()
     {
         return [
@@ -322,7 +322,7 @@ class HomeController extends BaseController
             ]
         ];
     }
-    
+
     private function loadTestimonials()
     {
         return [
@@ -346,7 +346,7 @@ class HomeController extends BaseController
             ]
         ];
     }
-    
+
     private function loadOfficeLocations()
     {
         return [
