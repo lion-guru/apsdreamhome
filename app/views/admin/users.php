@@ -1,10 +1,8 @@
 <?php
-
-// TODO: Add proper error handling with try-catch blocks
-
-s('layouts.admin')
-@section('title', $title ?? 'Users Management - APS Dream Home')
-@section('content')
+$page_title = 'Users Management - APS Dream Home';
+$active_page = 'users';
+include APP_PATH . '/views/admin/layouts/header.php';
+?>
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -12,7 +10,7 @@ s('layouts.admin')
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4>Users Management</h4>
                 <div>
-                    <a href="{{ url('/admin/users/create') }}" class="btn btn-primary">
+                    <a href="<?php echo url('/admin/users/create'); ?>" class="btn btn-primary">
                         <i class="bi bi-person-plus me-2"></i>Add User
                     </a>
                     <button class="btn btn-outline-secondary ms-2">
@@ -27,34 +25,34 @@ s('layouts.admin')
                     <form method="GET" class="row g-3">
                         <div class="col-md-3">
                             <label class="form-label">Search</label>
-                            <input type="text" name="search" class="form-control" placeholder="Search users..." value="{{ Security::sanitize($_GET['search']) ?? '' }}">
+                            <input type="text" name="search" class="form-control" placeholder="Search users..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Role</label>
                             <select name="role" class="form-select">
                                 <option value="">All Roles</option>
-                                <option value="user" {{ (Security::sanitize($_GET['role']) ?? '') == 'user' ? 'selected' : '' }}>Users</option>
-                                <option value="agent" {{ (Security::sanitize($_GET['role']) ?? '') == 'agent' ? 'selected' : '' }}>Agents</option>
-                                <option value="admin" {{ (Security::sanitize($_GET['role']) ?? '') == 'admin' ? 'selected' : '' }}>Admins</option>
-                                <option value="employee" {{ (Security::sanitize($_GET['role']) ?? '') == 'employee' ? 'selected' : '' }}>Employees</option>
+                                <option value="user" <?php echo ($_GET['role'] ?? '') == 'user' ? 'selected' : ''; ?>>Users</option>
+                                <option value="agent" <?php echo ($_GET['role'] ?? '') == 'agent' ? 'selected' : ''; ?>>Agents</option>
+                                <option value="admin" <?php echo ($_GET['role'] ?? '') == 'admin' ? 'selected' : ''; ?>>Admins</option>
+                                <option value="employee" <?php echo ($_GET['role'] ?? '') == 'employee' ? 'selected' : ''; ?>>Employees</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="active" {{ (Security::sanitize($_GET['status']) ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="inactive" {{ (Security::sanitize($_GET['status']) ?? '') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                <option value="suspended" {{ (Security::sanitize($_GET['status']) ?? '') == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                                <option value="active" <?php echo ($_GET['status'] ?? '') == 'active' ? 'selected' : ''; ?>>Active</option>
+                                <option value="inactive" <?php echo ($_GET['status'] ?? '') == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
+                                <option value="suspended" <?php echo ($_GET['status'] ?? '') == 'suspended' ? 'selected' : ''; ?>>Suspended</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Registered</label>
                             <select name="date_range" class="form-select">
                                 <option value="">All Time</option>
-                                <option value="today" {{ (Security::sanitize($_GET['date_range']) ?? '') == 'today' ? 'selected' : '' }}>Today</option>
-                                <option value="week" {{ (Security::sanitize($_GET['date_range']) ?? '') == 'week' ? 'selected' : '' }}>This Week</option>
-                                <option value="month" {{ (Security::sanitize($_GET['date_range']) ?? '') == 'month' ? 'selected' : '' }}>This Month</option>
+                                <option value="today" <?php echo ($_GET['date_range'] ?? '') == 'today' ? 'selected' : ''; ?>>Today</option>
+                                <option value="week" <?php echo ($_GET['date_range'] ?? '') == 'week' ? 'selected' : ''; ?>>This Week</option>
+                                <option value="month" <?php echo ($_GET['date_range'] ?? '') == 'month' ? 'selected' : ''; ?>>This Month</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -63,7 +61,7 @@ s('layouts.admin')
                                 <button type="submit" class="btn btn-outline-primary">
                                     <i class="bi bi-search me-1"></i>Search
                                 </button>
-                                <a href="{{ url('/admin/users') }}" class="btn btn-outline-secondary">
+                                <a href="<?php echo url('/admin/users'); ?>" class="btn btn-outline-secondary">
                                     <i class="bi bi-arrow-clockwise me-1"></i>Reset
                                 </a>
                             </div>
@@ -90,27 +88,27 @@ s('layouts.admin')
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($users ?? [] as $user)
+                                <?php foreach($users ?? [] as $user): ?>
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white me-3" style="width: 40px; height: 40px; font-size: 14px;">
-                                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                <?php echo strtoupper(substr($user->name, 0, 1)); ?>
                                             </div>
                                             <div>
-                                                <h6 class="mb-0">{{ $user->name }}</h6>
-                                                <small class="text-muted">ID: #USR{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</small>
+                                                <h6 class="mb-0"><?php echo htmlspecialchars($user->name); ?></h6>
+                                                <small class="text-muted">ID: #USR<?php echo str_pad($user->id, 4, '0', STR_PAD_LEFT); ?></small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div>
-                                            <div><i class="bi bi-envelope me-1"></i>{{ $user->email }}</div>
-                                            <div><i class="bi bi-telephone me-1"></i>{{ $user->phone }}</div>
+                                            <div><i class="bi bi-envelope me-1"></i><?php echo htmlspecialchars($user->email); ?></div>
+                                            <div><i class="bi bi-telephone me-1"></i><?php echo htmlspecialchars($user->phone); ?></div>
                                         </div>
                                     </td>
                                     <td>
-                                        @php
+                                        <?php
                                             $roleClass = match($user->role) {
                                                 'admin' => 'danger',
                                                 'agent' => 'warning',
@@ -118,53 +116,53 @@ s('layouts.admin')
                                                 'user' => 'secondary',
                                                 default => 'secondary'
                                             };
-                                        @endphp
-                                        <span class="badge bg-{{ $roleClass }}">{{ ucfirst($user->role) }}</span>
+                                        ?>
+                                        <span class="badge bg-<?php echo $roleClass; ?>"><?php echo ucfirst($user->role); ?></span>
                                     </td>
                                     <td>
-                                        @php
+                                        <?php
                                             $statusClass = match($user->status) {
                                                 'active' => 'success',
                                                 'inactive' => 'secondary',
                                                 'suspended' => 'danger',
                                                 default => 'secondary'
                                             };
-                                        @endphp
-                                        <span class="badge bg-{{ $statusClass }}">{{ ucfirst($user->status) }}</span>
+                                        ?>
+                                        <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst($user->status); ?></span>
                                     </td>
                                     <td>
-                                        <small class="text-muted">{{ $user->properties_count ?? 0 }}</small>
+                                        <small class="text-muted"><?php echo $user->properties_count ?? 0; ?></small>
                                     </td>
                                     <td>
-                                        <small>{{ $user->created_at }}</small>
+                                        <small><?php echo $user->created_at; ?></small>
                                     </td>
                                     <td>
-                                        <small>{{ $user->last_active ?? 'Never' }}</small>
+                                        <small><?php echo $user->last_active ?? 'Never'; ?></small>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ url('/admin/users/' . $user->id) }}" class="btn btn-outline-primary" title="View">
+                                            <a href="<?php echo url('/admin/users/' . $user->id); ?>" class="btn btn-outline-primary" title="View">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="{{ url('/admin/users/' . $user->id . '/edit') }}" class="btn btn-outline-secondary" title="Edit">
+                                            <a href="<?php echo url('/admin/users/' . $user->id . '/edit'); ?>" class="btn btn-outline-secondary" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            @if($user->status == 'active')
-                                                <button class="btn btn-outline-warning" title="Suspend" onclick="updateStatus('{{ $user->id }}', 'suspended');"
+                                            <?php if($user->status == 'active'): ?>
+                                                <button class="btn btn-outline-warning" title="Suspend" onclick="updateStatus('<?php echo $user->id; ?>', 'suspended');">
                                                     <i class="bi bi-pause"></i>
                                                 </button>
-                                            @else
-                                                <button class="btn btn-outline-success" title="Activate" onclick="updateStatus('{{ $user->id }}', 'active');"
+                                            <?php else: ?>
+                                                <button class="btn btn-outline-success" title="Activate" onclick="updateStatus('<?php echo $user->id; ?>', 'active');">
                                                     <i class="bi bi-play"></i>
                                                 </button>
-                                            @endif
-                                            <button class="btn btn-outline-danger" title="Delete" onclick="confirmDelete('{{ $user->id }}');">
+                                            <?php endif; ?>
+                                            <button class="btn btn-outline-danger" title="Delete" onclick="confirmDelete('<?php echo $user->id; ?>');">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                @endforeach
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -247,4 +245,4 @@ function updateStatus(userId, status) {
 }
 </script>
 
-@endsection
+<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>

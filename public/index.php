@@ -16,8 +16,8 @@ define('APS_CONFIG', APS_ROOT . '/config');
 define('APS_STORAGE', APS_ROOT . '/storage');
 define('APS_LOGS', APS_ROOT . '/logs');
 
-// Define BASE_URL for XAMPP
-define('BASE_URL', 'http://localhost/apsdreamhome/public');
+// Define BASE_URL for local development server
+define('BASE_URL', 'http://localhost:8000');
 
 // Error reporting
 error_reporting(E_ALL);
@@ -51,18 +51,9 @@ spl_autoload_register(function ($class) {
 // Include required files
 require_once APS_ROOT . '/routes/web.php';
 
-// Get the requested URI
-$uri = $_GET['url'] ?? $_SERVER['REQUEST_URI'] ?? '/';
-
-// Remove query string
-$uri = parse_url($uri, PHP_URL_PATH);
-
-// Normalize URI
-$uri = rtrim($uri, '/');
-
-// Dispatch the router
+// Dispatch router
 try {
-    // Use the actual URI from server
+    // Use the actual REQUEST_URI for routing
     $router->dispatch();
 } catch (Exception $e) {
     // Log error
@@ -83,7 +74,7 @@ try {
 <body>
     <h1>404 - Page Not Found</h1>
     <p>The page you requested could not be found.</p>
-    <p>Debug Info: URI = " . htmlspecialchars($uri ?? 'not set') . "</p>
+    <p>Debug Info: URI = " . htmlspecialchars($_SERVER['REQUEST_URI'] ?? 'not set') . "</p>
     <p><a href='" . BASE_URL . "'>Go to Home</a></p>
 </body>
 </html>";

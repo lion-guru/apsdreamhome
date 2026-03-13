@@ -6,7 +6,12 @@
  */
 class Router
 {
-    private $routes = [];
+    public $routes = [];
+
+    public function __construct()
+    {
+        echo "Router initialized\n";
+    }
 
     public function get($path, $handler)
     {
@@ -36,9 +41,9 @@ class Router
         $this->routes['DELETE'][$path] = $handler;
     }
 
-    public function getRoutesCount()
+    public function getRoutes()
     {
-        return count($this->routes['GET'] ?? []);
+        return $this->routes;
     }
 
     public function dispatch($uri = null)
@@ -89,6 +94,11 @@ class Router
             if ($uri !== '/') {
                 $uri = ltrim($uri, '/');
             }
+        } else {
+            // For production, keep leading slash
+            if ($uri !== '/' && !str_starts_with($uri, '/')) {
+                $uri = '/' . $uri;
+            }
         }
 
         // If URI is empty, set to root
@@ -98,6 +108,8 @@ class Router
 
         // Remove .php extension if present (for direct file access)
         $uri = preg_replace('/\.php$/', '', $uri);
+
+        error_log("FINAL ROUTER URI: $uri");
 
         if (!isset($this->routes[$method][$uri])) {
             // Try to match dynamic routes with parameters
@@ -119,34 +131,39 @@ class Router
             call_user_func($handler);
         } elseif (is_string($handler)) {
             // Parse "Controller@method" format
-            list($controller, $method) = explode('@', $handler);
+            if (strpos($handler, '@') !== false) {
+                list($controller, $method) = explode('@', $handler);
 
-            // Handle different controller formats
-            if (strpos($controller, '\\') !== false) {
-                // Full namespace format: "Property\PropertyController"
-                $controllerClass = "App\\Http\\Controllers\\" . $controller;
-                $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
-            } else {
-                // Simple format: "HomeController"
-                $controllerClass = "App\\Http\\Controllers\\" . $controller;
-                $controllerFile = __DIR__ . '/../app/Http/Controllers/' . $controller . '.php';
-            }
-
-            // Debug logging
-            error_log("Loading controller: $controllerClass from $controllerFile");
-
-            if (file_exists($controllerFile)) {
-                require_once $controllerFile;
-                $controllerInstance = new $controllerClass();
-
-                // Call method with parameters
-                if (!empty($params)) {
-                    call_user_func_array([$controllerInstance, $method], $params);
+                // Handle different controller formats
+                if (strpos($controller, '\\') !== false) {
+                    // Full namespace format: "App\Http\Controllers\Auth\AdminAuthController"
+                    $controllerClass = $controller;
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
                 } else {
-                    $controllerInstance->$method();
+                    // Simple format: "HomeController"
+                    $controllerClass = "App\\Http\\Controllers\\" . $controller;
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/' . $controller . '.php';
+                }
+
+                // Debug logging
+                error_log("Loading controller: $controllerClass from $controllerFile");
+
+                if (file_exists($controllerFile)) {
+                    require_once $controllerFile;
+                    $controllerInstance = new $controllerClass();
+
+                    // Call method with parameters
+                    if (!empty($params)) {
+                        call_user_func_array([$controllerInstance, $method], $params);
+                    } else {
+                        $controllerInstance->$method();
+                    }
+                } else {
+                    echo "Controller not found: $controller (File: $controllerFile)";
                 }
             } else {
-                echo "Controller not found: $controller (File: $controllerFile)";
+                // Direct function call
+                call_user_func($handler);
             }
         }
     }
@@ -178,5 +195,3 @@ class Router
         return null;
     }
 }
-
-// Router class definition only - instance created in public/index.php

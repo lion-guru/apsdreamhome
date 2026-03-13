@@ -1,5 +1,5 @@
 <?php
-$heroImage = $media['hero'] ?? '/public/assets/images/projects/placeholder-hero.jpg';
+$heroImage = $media['hero'] ?? '/assets/images/projects/placeholder-hero.jpg';
 $palette = $theme['palette'] ?? ['primary' => '#4e73df', 'accent' => '#1cc88a'];
 ?>
 <section class="microsite-hero" style="--primary-color: <?php echo h($palette['primary']); ?>; --accent-color: <?php echo h($palette['accent']); ?>;">

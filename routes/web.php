@@ -7,328 +7,63 @@ require_once __DIR__ . '/router.php';
 // Initialize router
 $router = new Router();
 
-// Admin Dashboard routes (Modern MVC)
-$router->get('/admin/dashboard', 'Admin\AdminDashboardController@dashboard');
-$router->get('/admin/stats', 'Admin\AdminDashboardController@getStats');
+// Main routes - Public Pages
+$router->get('/', 'Public\\PageController@home');
+$router->get('/about', 'Public\\PageController@about');
+$router->get('/contact', 'Public\\PageController@contact');
+$router->post('/contact', 'Public\\PageController@submitContact');
 
-// Career/HR routes (Modern MVC)
-$router->get('/careers', 'HumanResources\CareerController@index');
-$router->get('/careers/apply', 'HumanResources\CareerController@apply');
-$router->post('/careers/apply', 'HumanResources\CareerController@submitApplication');
-$router->get('/careers/jobs', 'HumanResources\CareerController@jobs');
-$router->get('/careers/job/{id}', 'HumanResources\CareerController@jobDetails');
+// Customer Authentication
+$router->get('/register', 'Auth\CustomerAuthController@register');
+$router->post('/register', 'Auth\CustomerAuthController@handleRegister');
+$router->get('/login', 'Auth\CustomerAuthController@login');
+$router->post('/login', 'Auth\CustomerAuthController@authenticate');
 
-// Land/Plotting routes (Modern MVC)
-$router->get('/land/dashboard', 'Land\PlottingController@dashboard');
-$router->get('/land/plots', 'Land\PlottingController@plots');
-$router->get('/land/plot/{id}', 'Land\PlottingController@plotDetails');
-$router->post('/land/plot/book', 'Land\PlottingController@bookPlot');
-$router->get('/land/acquisitions', 'Land\PlottingController@acquisitions');
-$router->post('/land/acquisition/add', 'Land\PlottingController@addAcquisition');
+// Agent Authentication
+$router->get('/agent/register', 'Auth\AgentAuthController@register');
+$router->post('/agent/register', 'Auth\AgentAuthController@handleRegister');
+$router->get('/agent/login', 'AgentController@login');
+$router->post('/agent/login', 'AgentController@authenticate');
 
-// Media Library routes (Modern MVC)
-$router->get('/media/library', 'Media\MediaLibraryController@index');
-$router->get('/media/upload', 'Media\MediaLibraryController@upload');
-$router->post('/media/upload', 'Media\MediaLibraryController@handleUpload');
-$router->get('/media/file/{id}', 'Media\MediaLibraryController@viewFile');
-$router->post('/media/file/{id}/update', 'Media\MediaLibraryController@updateFile');
-$router->delete('/media/file/{id}', 'Media\MediaLibraryController@deleteFile');
-$router->get('/media/categories', 'Media\MediaLibraryController@categories');
-$router->get('/media/stats', 'Media\MediaLibraryController@getStats');
+// Associate Authentication
+$router->get('/associate/register', 'Auth\AssociateAuthController@associateRegister');
+$router->post('/associate/register', 'Auth\AssociateAuthController@handleAssociateRegister');
+$router->get('/associate/login', 'Auth\AssociateAuthController@associateLogin');
+$router->post('/associate/login', 'Auth\AssociateAuthController@authenticateAssociate');
 
-// Admin routes (Modern MVC)
-$router->get('/admin/stats', 'Admin\AdminController@getStats');
-$router->get('/admin/activities', 'Admin\AdminController@getRecentActivities');
-$router->get('/admin/analytics/properties', 'Admin\AdminController@propertyAnalytics');
-$router->get('/admin/analytics/users', 'Admin\AdminController@getUserManagementData');
-$router->get('/admin/analytics/leads', 'Admin\AdminController@getLeadManagementData');
-$router->get('/admin/analytics/bookings', 'Admin\AdminController@getBookingManagementData');
-$router->get('/admin/system/health', 'Admin\AdminController@getSystemHealthStatus');
-
-// Media routes (Modern MVC)
-$router->get('/media', 'Media\MediaController@index');
-$router->get('/media/templates', 'Media\MediaController@getMediaForTemplates');
-$router->get('/media/headers', 'Media\MediaController@getHeaderImages');
-$router->get('/media/team', 'Media\MediaController@getTeamPhotos');
-$router->get('/media/properties', 'Media\MediaController@propertyImages');
-$router->get('/media/projects', 'Media\MediaController@getProjectImages');
-$router->get('/media/documents', 'Media\MediaController@getDocuments');
-$router->get('/media/carousel', 'Media\MediaController@getCarouselImages');
-$router->post('/media/upload', 'Media\MediaController@upload');
-$router->get('/media/url/{id}', 'Media\MediaController@getMediaUrl');
-
-// Event routes (Modern MVC)
-$router->get('/events/dashboard', 'Event\EventController@dashboard');
-$router->post('/events/publish', 'Event\EventController@publish');
-$router->get('/events/stats', 'Event\EventController@getStats');
-$router->get('/events/recent', 'Event\EventController@getRecentEvents');
-$router->post('/events/process-queue', 'Event\EventController@processQueue');
-$router->post('/events/clear-logs', 'Event\EventController@clearOldLogs');
-$router->post('/events/subscribe', 'Event\EventController@subscribe');
-$router->get('/events/subscribers/{event}', 'Event\EventController@getSubscribers');
-$router->post('/events/create-tables', 'Event\EventController@createTables');
-
-// Performance routes (Modern MVC)
-$router->get('/performance/dashboard', 'Performance\PerformanceController@dashboard');
-$router->get('/performance/cache/{key}', 'Performance\PerformanceController@getCache');
-$router->post('/performance/cache', 'Performance\PerformanceController@setCache');
-$router->delete('/performance/cache/{key}', 'Performance\PerformanceController@deleteCache');
-$router->delete('/performance/cache', 'Performance\PerformanceController@clearCache');
-$router->get('/performance/stats', 'Performance\PerformanceController@getStats');
-$router->post('/performance/optimize', 'Performance\PerformanceController@optimize');
-
-// Marketing routes (Modern MVC)
-$router->get('/marketing/dashboard', 'Marketing\MarketingAutomationController@dashboard');
-$router->get('/marketing/leads', 'Marketing\MarketingAutomationController@leads');
-$router->get('/marketing/lead/{id}', 'Marketing\MarketingAutomationController@leadDetails');
-$router->get('/marketing/lead/capture', 'Marketing\MarketingAutomationController@captureLead');
-$router->post('/marketing/lead/capture', 'Marketing\MarketingAutomationController@handleCaptureLead');
-$router->post('/marketing/lead/{id}/status', 'Marketing\MarketingAutomationController@updateLeadStatus');
-$router->post('/marketing/lead/{id}/score', 'Marketing\MarketingAutomationController@assignLeadScore');
-$router->get('/marketing/campaigns', 'Marketing\MarketingAutomationController@campaigns');
-$router->get('/marketing/campaign/create', 'Marketing\MarketingAutomationController@createCampaign');
-$router->post('/marketing/campaign/create', 'Marketing\MarketingAutomationController@handleCreateCampaign');
-
-// AJAX Marketing routes
-$router->get('/api/marketing/leads', 'Marketing\MarketingAutomationController@getLeads');
-$router->get('/api/marketing/lead', 'Marketing\MarketingAutomationController@getLead');
-$router->get('/api/marketing/campaigns', 'Marketing\MarketingAutomationController@getCampaigns');
-$router->get('/api/marketing/dashboard', 'Marketing\MarketingAutomationController@getDashboardData');
-$router->get('/api/marketing/leads/stats', 'Marketing\MarketingAutomationController@getLeadStats');
-$router->post('/api/marketing/lead/capture', 'Marketing\MarketingAutomationController@captureLeadAjax');
-$router->post('/api/marketing/lead/status', 'Marketing\MarketingAutomationController@updateLeadStatusAjax');
-$router->post('/api/marketing/lead/score', 'Marketing\MarketingAutomationController@assignLeadScoreAjax');
-$router->post('/api/marketing/campaign/create', 'Marketing\MarketingAutomationController@createCampaignAjax');
-$router->post('/api/marketing/automation/trigger', 'Marketing\MarketingAutomationController@triggerAutomation');
-
-// Auth routes (Modern MVC)
-$router->get('/auth/login', 'Auth\AuthController@login');
-$router->post('/auth/login', 'Auth\AuthController@authenticate');
-$router->get('/auth/logout', 'Auth\AuthController@logout');
-$router->get('/auth/register', 'Auth\AuthController@register');
-$router->post('/auth/register', 'Auth\AuthController@createAccount');
-$router->get('/auth/forgot-password', 'Auth\AuthController@forgotPassword');
-$router->post('/auth/forgot-password', 'Auth\AuthController@sendPasswordReset');
-$router->get('/auth/reset-password', 'Auth\AuthController@resetPassword');
-$router->post('/auth/reset-password', 'Auth\AuthController@updatePassword');
-$router->get('/auth/profile', 'Auth\AuthController@profile');
-$router->post('/auth/profile', 'Auth\AuthController@updateProfile');
-$router->get('/auth/stats', 'Auth\AuthController@getStats');
-
-// Communication routes (Modern MVC)
-$router->get('/communication/media', 'Communication\MediaController@index');
-$router->post('/communication/media/upload', 'Communication\MediaController@upload');
-$router->get('/communication/media/{id}', 'Communication\MediaController@getMedia');
-$router->put('/communication/media/{id}', 'Communication\MediaController@updateMedia');
-$router->delete('/communication/media/{id}', 'Communication\MediaController@deleteMedia');
-$router->get('/communication/media/search', 'Communication\MediaController@search');
-$router->get('/communication/media/gallery/{id}', 'Communication\MediaController@getGallery');
-$router->post('/communication/media/gallery', 'Communication\MediaController@createGallery');
-$router->get('/communication/media/stats', 'Communication\MediaController@getStats');
-$router->post('/communication/sms/send', 'Communication\SmsController@send');
-$router->post('/communication/sms/bulk', 'Communication\SmsController@sendBulk');
-$router->post('/communication/sms/schedule', 'Communication\SmsController@schedule');
-$router->get('/communication/sms/status/{id}', 'Communication\SmsController@getStatus');
-$router->get('/communication/sms/stats', 'Communication\SmsController@getStats');
-
-// Utility routes (Modern MVC)
-$router->get('/utility/alerts', 'Utility\AlertController@index');
-$router->post('/utility/alerts', 'Utility\AlertController@createAlert');
-$router->get('/utility/alerts/{id}', 'Utility\AlertController@getAlert');
-$router->put('/utility/alerts/{id}', 'Utility\AlertController@updateAlert');
-$router->delete('/utility/alerts/{id}', 'Utility\AlertController@deleteAlert');
-$router->get('/utility/escalations', 'Utility\AlertController@getEscalations');
-$router->post('/utility/escalations/process', 'Utility\AlertController@processEscalations');
-$router->get('/utility/alerts/stats', 'Utility\AlertController@getStats');
-$router->post('/utility/alerts/acknowledge/{id}', 'Utility\AlertController@acknowledgeAlert');
-$router->post('/utility/alerts/dismiss/{id}', 'Utility\AlertController@dismissAlert');
-
-// Async routes (Modern MVC)
-$router->get('/async/tasks', 'Async\AsyncController@index');
-$router->post('/async/tasks', 'Async\AsyncController@createTask');
-$router->get('/async/tasks/{id}', 'Async\AsyncController@getTask');
-$router->post('/async/tasks/process', 'Async\AsyncController@processTasks');
-$router->post('/async/tasks/cancel/{id}', 'Async\AsyncController@cancelTask');
-$router->post('/async/tasks/retry', 'Async\AsyncController@retryFailedTasks');
-$router->get('/async/tasks/stats', 'Async\AsyncController@getTaskStats');
-$router->delete('/async/tasks/cleanup', 'Async\AsyncController@cleanOldTasks');
-
-// Security routes (Modern MVC)
-$router->get('/security/configuration', 'Security\SecurityController@getConfiguration');
-$router->post('/security/configuration', 'Security\SecurityController@setConfiguration');
-$router->post('/security/configuration/apply', 'Security\SecurityController@applyConfiguration');
-$router->get('/security/audit', 'Security\SecurityController@getAuditLog');
-$router->get('/security/stats', 'Security\SecurityController@getStats');
-$router->post('/security/harden', 'Security\SecurityController@applyHardening');
-$router->get('/security/status', 'Security\SecurityController@getSecurityStatus');
-$router->post('/security/block-ip', 'Security\SecurityController@blockIP');
-$router->post('/security/unblock-ip', 'Security\SecurityController@unblockIP');
-$router->post('/security/incident', 'Security\SecurityController@logIncident');
-$router->get('/security/policies', 'Security\SecurityController@getPolicies');
-$router->post('/security/policies', 'Security\SecurityController@createPolicy');
-$router->post('/security/policies/enforce', 'Security\SecurityController@enforcePolicies');
-$router->get('/security/compliance', 'Security\SecurityController@getComplianceReport');
-
-// Career routes (Modern MVC)
-$router->get('/careers', 'Career\CareerController@index');
-$router->get('/careers/dashboard', 'Career\CareerController@dashboard');
-$router->get('/careers/application/{id}', 'Career\CareerController@applicationDetails');
-$router->post('/careers/apply', 'Career\CareerController@submitApplication');
-$router->get('/careers/applications', 'Career\CareerController@getApplications');
-$router->get('/careers/application/{id}/details', 'Career\CareerController@getApplication');
-$router->post('/careers/application/{id}/status', 'Career\CareerController@updateStatus');
-$router->post('/careers/application/{id}/interview', 'Career\CareerController@scheduleInterview');
-$router->get('/careers/application/{id}/timeline', 'Career\CareerController@getTimeline');
-$router->post('/careers/application/{id}/note', 'Career\CareerController@addNote');
-$router->get('/careers/stats', 'Career\CareerController@getStats');
-$router->get('/careers/export', 'Career\CareerController@exportApplications');
-
-// Marketing routes (Modern MVC)
-$router->get('/marketing/dashboard', 'Marketing\MarketingController@dashboard');
-$router->post('/marketing/campaign', 'Marketing\MarketingController@createCampaign');
-$router->post('/marketing/campaign/{id}/execute', 'Marketing\MarketingController@executeCampaign');
-$router->post('/marketing/lead', 'Marketing\MarketingController@addLead');
-$router->get('/marketing/lead/{id}', 'Marketing\MarketingController@getLead');
-$router->post('/marketing/lead/{id}/status', 'Marketing\MarketingController@updateLeadStatus');
-$router->post('/marketing/workflows/process', 'Marketing\MarketingController@processWorkflows');
-$router->get('/marketing/analytics', 'Marketing\MarketingController@getAnalytics');
-$router->get('/marketing/leads', 'Marketing\MarketingController@getLeads');
-$router->get('/marketing/scoring', 'Marketing\MarketingController@getLeadScoring');
-$router->get('/marketing/export', 'Marketing\MarketingController@exportLeads');
-$router->get('/marketing/campaign/performance', 'Marketing\MarketingController@getCampaignPerformance');
-$router->get('/marketing/settings', 'Marketing\MarketingController@settings');
-
-// Farmer routes (Modern MVC)
-$router->get('/farmers/dashboard', 'Business\FarmerController@dashboard');
-$router->post('/farmers/register', 'Business\FarmerController@registerFarmer');
-$router->get('/farmers/{id}', 'Business\FarmerController@getFarmer');
-$router->get('/farmers', 'Business\FarmerController@getFarmers');
-$router->post('/farmers/{id}/status', 'Business\FarmerController@updateFarmerStatus');
-$router->post('/farmers/{id}/allocate-land', 'Business\FarmerController@allocateLand');
-$router->post('/farmers/{id}/commission', 'Business\FarmerController@generateCommission');
-$router->get('/farmers/stats', 'Business\FarmerController@getFarmerStats');
-$router->get('/farmers/export', 'Business\FarmerController@exportFarmers');
-
-// Land routes (Modern MVC)
-$router->get('/land/dashboard', 'Land\LandController@dashboard');
-$router->post('/land/project', 'Land\LandController@createProject');
-$router->post('/land/project/{id}/subdivide', 'Land\LandController@subdivideLand');
-$router->post('/land/project/{id}/plot', 'Land\LandController@createPlot');
-$router->post('/land/plot/{id}/reserve', 'Land\LandController@reservePlot');
-$router->post('/land/plot/{id}/sell', 'Land\LandController@sellPlot');
-$router->get('/land/project/{id}', 'Land\LandController@getProject');
-$router->get('/land/plot/{id}', 'Land\LandController@getPlot');
-$router->get('/land/projects', 'Land\LandController@getProjects');
-$router->get('/land/plots', 'Land\LandController@getPlots');
-$router->get('/land/stats', 'Land\LandController@getStats');
-$router->get('/land/project/{id}/details', 'Land\LandController@projectDetails');
-$router->get('/land/plot/{id}/details', 'Land\LandController@plotDetails');
-$router->get('/land/export/projects', 'Land\LandController@exportProjects');
-$router->get('/land/export/plots', 'Land\LandController@exportPlots');
-$router->get('/land/project/{id}/analytics', 'Land\LandController@getProjectAnalytics');
-$router->get('/land/market-insights', 'Land\LandController@getMarketInsights');
-$router->get('/land/settings', 'Land\LandController@settings');
-
-// Localization routes (Modern MVC)
-$router->post('/localization/set-locale', 'LocalizationController@setLocale');
-$router->get('/localization/current', 'LocalizationController@getCurrentLocale');
-$router->post('/localization/translate', 'LocalizationController@translate');
-$router->post('/localization/translation', 'LocalizationController@addTranslation');
-$router->get('/localization/translations', 'LocalizationController@getTranslations');
-$router->delete('/localization/translation', 'LocalizationController@deleteTranslation');
-$router->get('/localization/statistics', 'LocalizationController@getStatistics');
-$router->post('/localization/import', 'LocalizationController@importTranslations');
-$router->get('/localization/export', 'LocalizationController@exportTranslations');
-$router->post('/localization/locale', 'LocalizationController@addLocale');
-$router->post('/localization/clear-cache', 'LocalizationController@clearCache');
-$router->get('/localization/management', 'LocalizationController@management');
-$router->get('/localization/editor', 'LocalizationController@editor');
-
-// Admin Dashboard routes (Modern MVC) - REMOVED DUPLICATE
-
-// Backup Integrity routes (Modern MVC)
-$router->post('/backup/verify', 'Backup\BackupIntegrityController@verify');
-$router->get('/backup/history', 'Backup\BackupIntegrityController@getHistory');
-$router->get('/backup/statistics', 'Backup\BackupIntegrityController@getStatistics');
-$router->post('/backup/schedule', 'Backup\BackupIntegrityController@schedule');
-$router->get('/backup/scheduled', 'Backup\BackupIntegrityController@getScheduled');
-$router->post('/backup/export', 'Backup\BackupIntegrityController@export');
-$router->post('/backup/cleanup', 'Backup\BackupIntegrityController@cleanup');
-$router->get('/backup/management', 'Backup\BackupIntegrityController@management');
-$router->post('/backup/upload-verify', 'Backup\BackupIntegrityController@uploadAndVerify');
-$router->get('/backup/details', 'Backup\BackupIntegrityController@getDetails');
-$router->post('/backup/reverify', 'Backup\BackupIntegrityController@reverify');
-$router->delete('/backup/verification', 'Backup\BackupIntegrityController@delete');
-$router->get('/backup/dashboard', 'Backup\BackupIntegrityController@dashboard');
-
-// Payroll routes (Modern MVC)
-$router->post('/payroll/salary-structure', 'Payroll\SalaryController@createSalaryStructure');
-$router->put('/payroll/salary-structure', 'Payroll\SalaryController@updateSalaryStructure');
-$router->post('/payroll/process-salary', 'Payroll\SalaryController@processMonthlySalary');
-$router->get('/payroll/salary-history', 'Payroll\SalaryController@getSalaryHistory');
-$router->get('/payroll/statistics', 'Payroll\SalaryController@getPayrollStatistics');
-$router->get('/payroll/settings', 'Payroll\SalaryController@getPayrollSettings');
-$router->put('/payroll/settings', 'Payroll\SalaryController@updatePayrollSetting');
-$router->post('/payroll/bulk-process', 'Payroll\SalaryController@bulkProcessSalaries');
-$router->get('/payroll/salary-slip', 'Payroll\SalaryController@getSalarySlip');
-$router->get('/payroll/export', 'Payroll\SalaryController@exportSalaryReport');
-$router->get('/payroll/management', 'Payroll\SalaryController@management');
-$router->get('/payroll/structure', 'Payroll\SalaryController@salaryStructure');
-$router->get('/payroll/processing', 'Payroll\SalaryController@salaryProcessing');
-$router->get('/payroll/reports', 'Payroll\SalaryController@salaryReports');
-$router->post('/performance/cache-query', 'Performance\PerformanceController@cacheQuery');
-$router->post('/performance/cache-function', 'Performance\PerformanceController@cacheFunction');
-$router->post('/performance/test', 'Performance\PerformanceController@testPerformance');
-$router->get('/performance/metrics', 'Performance\PerformanceController@getMetrics');
-
-// Custom Features routes (Modern MVC)
-$router->get('/features/dashboard', 'CustomFeatures\CustomFeaturesController@dashboard');
-$router->post('/features/virtual-tour', 'CustomFeatures\CustomFeaturesController@createVirtualTour');
-$router->get('/features/virtual-tour/{propertyId}', 'CustomFeatures\CustomFeaturesController@getVirtualTour');
-$router->post('/features/compare', 'CustomFeatures\CustomFeaturesController@compareProperties');
-$router->get('/features/neighborhood/{propertyId}', 'CustomFeatures\CustomFeaturesController@getNeighborhoodAnalytics');
-$router->post('/features/investment', 'CustomFeatures\CustomFeaturesController@calculateInvestment');
-$router->post('/features/smart-search', 'CustomFeatures\CustomFeaturesController@smartSearch');
-$router->get('/features/stats', 'CustomFeatures\CustomFeaturesController@getStats');
-$router->get('/features/virtual-tours', 'CustomFeatures\CustomFeaturesController@virtualTours');
-$router->get('/features/comparison', 'CustomFeatures\CustomFeaturesController@propertyComparison');
-$router->get('/features/investment-calculator', 'CustomFeatures\CustomFeaturesController@investmentCalculator');
-$router->get('/features/smart-search-page', 'CustomFeatures\CustomFeaturesController@smartSearchPage');
-$router->get('/features/neighborhood/{propertyId}/analytics', 'CustomFeatures\CustomFeaturesController@neighborhoodAnalytics');
-$router->post('/features/save-comparison', 'CustomFeatures\CustomFeaturesController@saveComparison');
-$router->get('/features/saved-comparisons', 'CustomFeatures\CustomFeaturesController@getSavedComparisons');
-$router->get('/features/investment-history', 'CustomFeatures\CustomFeaturesController@getInvestmentHistory');
-$router->post('/features/export-comparison', 'CustomFeatures\CustomFeaturesController@exportComparison');
-$router->get('/features/suggestions/{propertyId}', 'CustomFeatures\CustomFeaturesController@getPropertySuggestions');
-
-// Security routes (Modern MVC)
-$router->post('/security/sanitize', 'Security\SecurityController@sanitize');
-$router->post('/security/validate', 'Security\SecurityController@validate');
-$router->post('/security/csrf-token', 'Security\SecurityController@generateCsrfToken');
-$router->post('/security/csrf-validate', 'Security\SecurityController@validateCsrfToken');
-$router->post('/security/rate-limit', 'Security\SecurityController@checkRateLimit');
-$router->post('/security/password-strength', 'Security\SecurityController@validatePasswordStrength');
-$router->post('/security/validate-file', 'Security\SecurityController@validateFileUpload');
-$router->post('/security/detect-sql', 'Security\SecurityController@detectSqlInjection');
-$router->post('/security/detect-xss', 'Security\SecurityController@detectXss');
-$router->post('/security/log-event', 'Security\SecurityController@logSecurityEvent');
-$router->get('/security/stats', 'Security\SecurityController@getSecurityStats');
+// Dashboard routes (protected)
+$router->get('/dashboard', 'DashboardController@index');
+$router->get('/dashboard/customer', 'DashboardController@customer');
+$router->get('/dashboard/profile', 'DashboardController@profile');
+$router->post('/dashboard/profile', 'DashboardController@updateProfile');
+$router->get('/dashboard/favorites', 'DashboardController@favorites');
+$router->post('/dashboard/favorites/add', 'DashboardController@addFavorite');
+$router->post('/dashboard/favorites/remove', 'DashboardController@removeFavorite');
+$router->get('/dashboard/inquiries', 'DashboardController@inquiries');
+$router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry');
+$router->get('/associate/dashboard', 'DashboardController@associate');
 
 // Property routes
 $router->get('/properties', 'Property\PropertyController@index');
 $router->get('/properties/{id}', 'Property\PropertyController@show');
 
-// General routes
-$router->get('/', 'HomeController@index');
-$router->get('/mlm-dashboard', 'MLMController@dashboard');
-$router->get('/monitoring', 'MonitoringController@dashboard');
-$router->get('/ai-valuation', 'AIValuationController@index');
+// Project routes
+$router->get('/projects', 'ProjectController@index');
+$router->get('/projects/{id}', 'ProjectController@detail');
+$router->get('/projects/suyoday-colony', 'Public\PageController@suyodayColony');
+$router->get('/projects/raghunat-nagri', 'Public\PageController@raghunatNagri');
+$router->get('/projects/braj-radha-nagri', 'Public\PageController@brajRadhaNagri');
+$router->get('/projects/budh-bihar-colony', 'Public\PageController@budhBiharColony');
+$router->get('/projects/awadhpuri', 'Public\PageController@awadhpuri');
 
-// General pages
-$router->get('/about', 'Public\PageController@about');
-$router->get('/contact', 'Public\PageController@contact');
-$router->post('/contact', 'Public\PageController@submitContact');
-$router->get('/careers', 'Public\PageController@careers');
+// Admin routes
+$router->get('/admin', 'App\Http\Controllers\AdminController@dashboard');
+$router->get('/admin/dashboard', 'App\Http\Controllers\AdminController@dashboard');
+$router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
+$router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
+$router->get('/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
+
+// Additional routes
 $router->get('/career', 'Public\PageController@careers');
 $router->get('/careers/apply', 'Public\PageController@careerApply');
 $router->post('/careers/apply', 'Public\PageController@submitCareerApplication');
@@ -338,136 +73,10 @@ $router->get('/blog/{slug}', 'Public\PageController@blogPost');
 $router->get('/faq', 'Public\PageController@faq');
 $router->get('/team', 'Public\PageController@team');
 $router->get('/testimonials', 'Public\PageController@testimonials');
-
-// Blog routes
-$router->get('/blog/category/{category}', 'BlogController@category');
-
-// Gallery routes
 $router->get('/gallery', 'GalleryController@index');
 $router->get('/gallery/project/{projectId}', 'GalleryController@project');
-
-// Project routes
-$router->get('/projects', 'ProjectController@index');
-$router->get('/projects/{id}', 'ProjectController@detail');
-
-// Resell routes
 $router->get('/resell', 'ResellController@index');
-
-// Authentication routes
-$router->get('/login', 'Auth\AdminAuthController@login');
-$router->post('/login', 'Auth\AdminAuthController@authenticate');
-$router->get('/employee/login', 'Auth\AdminAuthController@employeeLogin');
-$router->post('/employee/login', 'Auth\AdminAuthController@authenticateEmployee');
-$router->get('/associate/login', 'Auth\AdminAuthController@associateLogin');
-$router->post('/associate/login', 'Auth\AdminAuthController@authenticateAssociate');
-$router->get('/admin/login', 'Auth\AdminAuthController@adminLogin');
-$router->post('/admin/login', 'Auth\AdminAuthController@authenticateAdmin');
-$router->get('/register', 'Auth\AdminAuthController@register');
-$router->post('/register', 'Auth\AdminAuthController@handleRegister');
-$router->get('/associate/register', 'Auth\AdminAuthController@associateRegister');
-$router->post('/associate/register', 'Auth\AdminAuthController@handleAssociateRegister');
-$router->get('/logout', 'Auth\AdminAuthController@logout');
-
-// Agent authentication
-$router->get('/agent/login', 'AgentController@login');
-$router->post('/agent/login', 'AgentController@authenticate');
-
-// Dashboard routes (protected)
-$router->get('/dashboard', 'DashboardController@index');
-$router->get('/dashboard/profile', 'DashboardController@profile');
-$router->post('/dashboard/profile', 'DashboardController@updateProfile');
-$router->get('/dashboard/favorites', 'DashboardController@favorites');
-$router->get('/associate/dashboard', 'DashboardController@associate');
-$router->get('/admin/dashboard', 'Admin\AdminController@dashboard');
-
-// Agent routes
-$router->get('/agents/dashboard', 'AgentController@dashboard');
-$router->post('/dashboard/favorites/add', 'DashboardController@addFavorite');
-$router->post('/dashboard/favorites/remove', 'DashboardController@removeFavorite');
-$router->get('/dashboard/inquiries', 'DashboardController@inquiries');
-$router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry');
-
-// Admin routes
-$router->get('/admin', 'Admin\AdminController@dashboard'); // Main admin entry
-$router->get('/admin/properties', 'Admin\PropertyController@index');
-$router->get('/admin/properties/create', 'Admin\PropertyController@create');
-$router->post('/admin/properties/store', 'Admin\PropertyController@store');
-$router->get('/admin/properties/edit/{id}', 'Admin\PropertyController@edit');
-$router->post('/admin/properties/update/{id}', 'Admin\PropertyController@update');
-$router->get('/admin/properties/delete/{id}', 'Admin\PropertyController@destroy');
-$router->post('/admin/properties/toggle-featured/{id}', 'Admin\PropertyController@toggleFeatured');
-$router->get('/admin/users', 'Admin\UserController@index');
-
-// Customer routes
-$router->get('/customer/dashboard', 'CustomerController@dashboard');
-$router->get('/customers/dashboard', 'CustomerController@dashboard');
-
-// Map routes
 $router->get('/map', 'MapController@index');
 $router->get('/map/properties-data', 'MapController@getPropertiesData');
 $router->get('/map/search-bounds', 'MapController@searchByBounds');
 $router->get('/map/location-suggestions', 'MapController@getLocationSuggestions');
-
-// MCP routes
-$router->get('/mcp_dashboard', 'MCPController@dashboard');
-$router->get('/mcp_configuration_gui', 'MCPController@configuration');
-$router->get('/import_mcp_config', 'MCPController@import');
-
-// Associate routes (Modern MVC)
-$router->get('/associates', 'Associate\AssociateController@index');
-$router->get('/associates/dashboard', 'Associate\AssociateController@dashboard');
-$router->get('/associates/create', 'Associate\AssociateController@create');
-$router->post('/associates/store', 'Associate\AssociateController@store');
-$router->get('/associates/edit/{id}', 'Associate\AssociateController@edit');
-$router->post('/associates/update/{id}', 'Associate\AssociateController@update');
-$router->get('/associates/show/{id}', 'Associate\AssociateController@show');
-$router->get('/associates/metrics/{id}', 'Associate\AssociateController@metrics');
-$router->post('/associates/update-status/{id}', 'Associate\AssociateController@updateStatus');
-$router->get('/associates/delete/{id}', 'Associate\AssociateController@delete');
-
-// User routes (Modern MVC)
-$router->get('/users', 'User\UserController@index');
-$router->get('/users/dashboard', 'User\UserController@dashboard');
-$router->get('/users/create', 'User\UserController@create');
-$router->post('/users/store', 'User\UserController@store');
-$router->get('/users/edit/{id}', 'User\UserController@edit');
-$router->post('/users/update/{id}', 'User\UserController@update');
-$router->get('/users/show/{id}', 'User\UserController@show');
-$router->get('/users/profile/{id}', 'User\UserController@profile');
-$router->post('/users/update-profile/{id}', 'User\UserController@updateProfile');
-$router->get('/users/change-password/{id}', 'User\UserController@changePassword');
-$router->post('/users/update-password/{id}', 'User\UserController@updatePassword');
-$router->post('/users/update-status/{id}', 'User\UserController@updateStatus');
-$router->get('/users/delete/{id}', 'User\UserController@delete');
-$router->get('/users/by-role/{role}', 'User\UserController@byRole');
-
-// Report routes (Modern MVC)
-$router->get('/reports', 'Reports\ReportController@dashboard');
-$router->get('/reports/generate', 'Reports\ReportController@generate');
-$router->post('/reports/create', 'Reports\ReportController@create');
-$router->get('/reports/scheduled', 'Reports\ReportController@scheduled');
-$router->get('/reports/schedule', 'Reports\ReportController@schedule');
-$router->post('/reports/store-schedule', 'Reports\ReportController@storeSchedule');
-$router->get('/reports/sales', 'Reports\ReportController@sales');
-$router->get('/reports/property', 'Reports\ReportController@property');
-$router->get('/reports/associate', 'Reports\ReportController@associate');
-$router->get('/reports/customer', 'Reports\ReportController@customer');
-$router->get('/reports/financial', 'Reports\ReportController@financial');
-
-// Utility routes (Modern MVC)
-$router->get('/utils/file/upload', 'Utils\FileController@upload');
-$router->post('/utils/file/upload', 'Utils\FileController@processUpload');
-$router->get('/utils/files', 'Utils\FileController@index');
-$router->get('/utils/files/{category}', 'Utils\FileController@byCategory');
-$router->get('/utils/file/{id}', 'Utils\FileController@show');
-$router->post('/utils/file/{id}/delete', 'Utils\FileController@delete');
-$router->get('/utils/file/{id}/download', 'Utils\FileController@download');
-$router->post('/utils/file/batch', 'Utils\FileController@batchOperation');
-
-// Core Helper routes (Modern MVC)
-$router->get('/core/helpers/csrf', 'Core\HelperController@getCSRFToken');
-$router->post('/core/helpers/validate', 'Core\HelperController@validateInput');
-$router->post('/core/helpers/email', 'Core\HelperController@sendEmail');
-$router->get('/core/helpers/system-info', 'Core\HelperController@systemInfo');
-$router->post('/core/helpers/backup', 'Core\HelperController@createBackup');
-$router->post('/core/helpers/cleanup', 'Core\HelperController@cleanup');
