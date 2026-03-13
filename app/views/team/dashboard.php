@@ -839,7 +839,7 @@
             node.className = `hierarchy-node ${nodeClass}`;
 
             node.innerHTML = `
-                <img src="${member.avatar || '/public/assets/images/user/default-avatar.jpg'}"
+                <img src="${member.avatar || '/assets/images/user/default-avatar.jpg'}"
                      alt="${member.name}" class="node-avatar">
                 <div class="node-name">${member.name}</div>
                 <div class="node-type">${member.type || 'Member'}

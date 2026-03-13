@@ -1,10 +1,8 @@
 <?php
-
-// TODO: Add proper error handling with try-catch blocks
-
-s('layouts.admin')
-@section('title', $title ?? 'Properties Management - APS Dream Home')
-@section('content')
+$page_title = 'Properties Management - APS Dream Home';
+$active_page = 'properties';
+include APP_PATH . '/views/admin/layouts/header.php';
+?>
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -12,7 +10,7 @@ s('layouts.admin')
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4>Properties Management</h4>
                 <div>
-                    <a href="{{ url('/admin/properties/create') }}" class="btn btn-primary">
+                    <a href="<?php echo url('/admin/properties/create'); ?>" class="btn btn-primary">
                         <i class="bi bi-plus-circle me-2"></i>Add Property
                     </a>
                     <button class="btn btn-outline-secondary ms-2">
@@ -27,34 +25,34 @@ s('layouts.admin')
                     <form method="GET" class="row g-3">
                         <div class="col-md-3">
                             <label class="form-label">Search</label>
-                            <input type="text" name="search" class="form-control" placeholder="Search properties..." value="{{ Security::sanitize($_GET['search']) ?? '' }}">
+                            <input type="text" name="search" class="form-control" placeholder="Search properties..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Type</label>
                             <select name="type" class="form-select">
                                 <option value="">All Types</option>
-                                <option value="apartment" {{ (Security::sanitize($_GET['type']) ?? '') == 'apartment' ? 'selected' : '' }}>Apartments</option>
-                                <option value="villa" {{ (Security::sanitize($_GET['type']) ?? '') == 'villa' ? 'selected' : '' }}>Villas</option>
-                                <option value="commercial" {{ (Security::sanitize($_GET['type']) ?? '') == 'commercial' ? 'selected' : '' }}>Commercial</option>
-                                <option value="plots" {{ (Security::sanitize($_GET['type']) ?? '') == 'plots' ? 'selected' : '' }}>Plots</option>
+                                <option value="apartment" <?php echo ($_GET['type'] ?? '') == 'apartment' ? 'selected' : ''; ?>>Apartments</option>
+                                <option value="villa" <?php echo ($_GET['type'] ?? '') == 'villa' ? 'selected' : ''; ?>>Villas</option>
+                                <option value="commercial" <?php echo ($_GET['type'] ?? '') == 'commercial' ? 'selected' : ''; ?>>Commercial</option>
+                                <option value="plots" <?php echo ($_GET['type'] ?? '') == 'plots' ? 'selected' : ''; ?>>Plots</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
                                 <option value="">All Status</option>
-                                <option value="active" {{ (Security::sanitize($_GET['status']) ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="pending" {{ (Security::sanitize($_GET['status']) ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="sold" {{ (Security::sanitize($_GET['status']) ?? '') == 'sold' ? 'selected' : '' }}>Sold</option>
-                                <option value="inactive" {{ (Security::sanitize($_GET['status']) ?? '') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                <option value="active" <?php echo ($_GET['status'] ?? '') == 'active' ? 'selected' : ''; ?>>Active</option>
+                                <option value="pending" <?php echo ($_GET['status'] ?? '') == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                <option value="sold" <?php echo ($_GET['status'] ?? '') == 'sold' ? 'selected' : ''; ?>>Sold</option>
+                                <option value="inactive" <?php echo ($_GET['status'] ?? '') == 'inactive' ? 'selected' : ''; ?>>Inactive</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Featured</label>
                             <select name="featured" class="form-select">
                                 <option value="">All</option>
-                                <option value="1" {{ (Security::sanitize($_GET['featured']) ?? '') == '1' ? 'selected' : '' }}>Featured</option>
-                                <option value="0" {{ (Security::sanitize($_GET['featured']) ?? '') == '0' ? 'selected' : '' }}>Not Featured</option>
+                                <option value="1" <?php echo ($_GET['featured'] ?? '') == '1' ? 'selected' : ''; ?>>Featured</option>
+                                <option value="0" <?php echo ($_GET['featured'] ?? '') == '0' ? 'selected' : ''; ?>>Not Featured</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -63,7 +61,7 @@ s('layouts.admin')
                                 <button type="submit" class="btn btn-outline-primary">
                                     <i class="bi bi-search me-1"></i>Search
                                 </button>
-                                <a href="{{ url('/admin/properties') }}" class="btn btn-outline-secondary">
+                                <a href="<?php echo url('/admin/properties'); ?>" class="btn btn-outline-secondary">
                                     <i class="bi bi-arrow-clockwise me-1"></i>Reset
                                 </a>
                             </div>
@@ -92,36 +90,36 @@ s('layouts.admin')
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($properties ?? [] as $property)
+                                <?php foreach($properties ?? [] as $property): ?>
                                 <tr>
-                                    <td>{{ $property->id }}</td>
+                                    <td><?php echo $property->id; ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="bg-primary rounded d-flex align-items-center justify-content-center text-white me-3" style="width: 40px; height: 40px; font-size: 12px;">
-                                                {{ strtoupper(substr($property->type, 0, 1)) }}
+                                                <?php echo strtoupper(substr($property->type, 0, 1)); ?>
                                             </div>
                                             <div>
-                                                <h6 class="mb-0">{{ $property->title }}</h6>
-                                                <small class="text-muted">ID: #PROP{{ str_pad($property->id, 4, '0', STR_PAD_LEFT) }}</small>
+                                                <h6 class="mb-0"><?php echo htmlspecialchars($property->title); ?></h6>
+                                                <small class="text-muted">ID: #PROP<?php echo str_pad($property->id, 4, '0', STR_PAD_LEFT); ?></small>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $property->location }}</td>
+                                    <td><?php echo htmlspecialchars($property->location); ?></td>
                                     <td>
-                                        <span class="badge bg-secondary">{{ ucfirst($property->type) }}</span>
+                                        <span class="badge bg-secondary"><?php echo ucfirst($property->type); ?></span>
                                     </td>
                                     <td>
-                                        <strong>₹{{ number_format($property->price) }}</strong>
+                                        <strong>₹<?php echo number_format($property->price); ?></strong>
                                     </td>
                                     <td>
                                         <small class="text-muted">
-                                            {{ $property->bedrooms ?? 0 }} Beds<br>
-                                            {{ $property->bathrooms ?? 0 }} Baths<br>
-                                            {{ $property->area ?? 0 }} Sq.ft
+                                            <?php echo $property->bedrooms ?? 0; ?> Beds<br>
+                                            <?php echo $property->bathrooms ?? 0; ?> Baths<br>
+                                            <?php echo $property->area ?? 0; ?> Sq.ft
                                         </small>
                                     </td>
                                     <td>
-                                        @php
+                                        <?php
                                             $statusClass = match($property->status) {
                                                 'active' => 'success',
                                                 'pending' => 'warning',
@@ -129,36 +127,36 @@ s('layouts.admin')
                                                 'inactive' => 'secondary',
                                                 default => 'secondary'
                                             };
-                                        @endphp
-                                        <span class="badge bg-{{ $statusClass }}">{{ ucfirst($property->status) }}</span>
+                                        ?>
+                                        <span class="badge bg-<?php echo $statusClass; ?>"><?php echo ucfirst($property->status); ?></span>
                                     </td>
                                     <td>
-                                        @if($property->featured ?? false)
+                                        <?php if($property->featured ?? false): ?>
                                             <span class="badge bg-warning text-dark">
                                                 <i class="bi bi-star-fill me-1"></i>Featured
                                             </span>
-                                        @else
+                                        <?php else: ?>
                                             <span class="text-muted">-</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
                                     <td>
-                                        <small>{{ $property->created_at }}</small>
+                                        <small><?php echo $property->created_at; ?></small>
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ url('/admin/properties/' . $property->id) }}" class="btn btn-outline-primary" title="View">
+                                            <a href="<?php echo url('/admin/properties/' . $property->id); ?>" class="btn btn-outline-primary" title="View">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="{{ url('/admin/properties/' . $property->id . '/edit') }}" class="btn btn-outline-secondary" title="Edit">
+                                            <a href="<?php echo url('/admin/properties/' . $property->id . '/edit'); ?>" class="btn btn-outline-secondary" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <button class="btn btn-outline-danger" title="Delete" onclick="confirmDelete('{{ $property->id }}');">
+                                            <button class="btn btn-outline-danger" title="Delete" onclick="confirmDelete('<?php echo $property->id; ?>');">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                @endforeach
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -212,15 +210,4 @@ function confirmDelete(propertyId) {
 }
 </script>
 
-@endsection
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\customers\properties.php
-
-function toggleFavorite(propertyId) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/customer/toggle-favorite/' + propertyId;
-    document.body.appendChild(form);
-    form.submit();
-}
+<?php include APP_PATH . '/views/admin/layouts/footer.php'; ?>
