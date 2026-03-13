@@ -49,12 +49,12 @@ class AssociateController extends BaseController
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = Security::sanitize($_POST['name']) ?? '';
-            $email = Security::sanitize($_POST['email']) ?? '';
-            $phone = Security::sanitize($_POST['phone']) ?? '';
-            $password = Security::sanitize($_POST['password']) ?? '';
-            $experience = Security::sanitize($_POST['experience']) ?? '';
-            $commission_rate = Security::sanitize($_POST['commission_rate']) ?? '';
+            $name = $this->sanitize($_POST['name']) ?? '';
+            $email = $this->sanitize($_POST['email']) ?? '';
+            $phone = $this->sanitize($_POST['phone']) ?? '';
+            $password = $this->sanitize($_POST['password']) ?? '';
+            $experience = $this->sanitize($_POST['experience']) ?? '';
+            $commission_rate = $this->sanitize($_POST['commission_rate']) ?? '';
 
             // Basic validation
             if (empty($name) || empty($email) || empty($phone) || empty($password)) {
@@ -75,7 +75,7 @@ class AssociateController extends BaseController
     public function dashboard()
     {
         $this->requireAuth();
-        
+
         // Sample data
         $stats = [
             'total_properties' => 15,
