@@ -97,6 +97,24 @@ class AdminAuthController extends BaseController
     }
 
     /**
+     * Logout admin
+     */
+    public function logout()
+    {
+        // Start session if not started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Destroy session
+        session_destroy();
+
+        // Redirect to login
+        header('Location: ' . BASE_URL . '/admin/login');
+        exit;
+    }
+
+    /**
      * Check if admin is logged in
      */
     public function isLoggedIn(): bool
@@ -150,19 +168,6 @@ class AdminAuthController extends BaseController
             'question' => "$num1 + $num2 = ?",
             'result' => $result
         ];
-    }
-
-    /**
-     * Logout admin
-     */
-    public function logout()
-    {
-        // Clear session
-        session_destroy();
-
-        // Redirect to login
-        header('Location: ' . BASE_URL . '/admin/login');
-        exit;
     }
 
     /**

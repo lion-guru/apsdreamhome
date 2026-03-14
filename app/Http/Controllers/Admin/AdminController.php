@@ -247,6 +247,30 @@ class AdminController extends BaseController
     }
 
     /**
+     * Properties Management
+     */
+    public function properties()
+    {
+        // Start session if not started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Check if admin is logged in
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+            $_SESSION['error'] = 'Admin access required';
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
+
+        // Get properties list
+        $properties = $this->getPropertiesList();
+
+        // Load properties view
+        require_once APP_PATH . '/views/admin/properties.php';
+    }
+
+    /**
      * Get properties list
      */
     public function getPropertiesList()
