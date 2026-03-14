@@ -341,7 +341,7 @@ class ApiLeadController extends BaseController
                 'file_path' => 'leads/' . $lead->id . '/' . $filename,
                 'file_type' => $file['type'],
                 'file_size' => $file['size'],
-                'description' => Security::sanitize($_POST['description']) ?? '',
+                'description' => isset($_POST['description']) ? Security::sanitize($_POST['description']) : '',
                 'is_private' => isset($_POST['is_private']) ? Security::sanitize($_POST['is_private']) === 'true' : false,
                 'uploaded_by' => $currentUser->id,
             ];
