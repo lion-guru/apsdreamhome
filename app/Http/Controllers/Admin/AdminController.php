@@ -247,6 +247,30 @@ class AdminController extends BaseController
     }
 
     /**
+     * User Network Management
+     */
+    public function users()
+    {
+        // Start session if not started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Check if admin is logged in
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+            $_SESSION['error'] = 'Admin access required';
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
+
+        // Get users list
+        $users = $this->getUsersList();
+
+        // Load users view
+        require_once APP_PATH . '/views/admin/users.php';
+    }
+
+    /**
      * Properties Management
      */
     public function properties()
