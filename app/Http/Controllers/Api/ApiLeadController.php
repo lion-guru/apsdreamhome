@@ -626,7 +626,7 @@ class ApiLeadController extends BaseController
     }
 
     /**
-     * Get lookup data (statuses, sources, tags, users)
+     * Get lookup data for forms
      */
     public function getLookupData()
     {
@@ -657,11 +657,10 @@ class ApiLeadController extends BaseController
         // Apply search filter
         if ($search) {
             $leads = array_filter($leads, function ($lead) use ($search) {
-                return stripos($lead->first_name, $search) !== false ||
-                    stripos($lead->last_name, $search) !== false ||
-                    stripos($lead->email, $search) !== false ||
-                    stripos($lead->phone, $search) !== false ||
-                    stripos($lead->company, $search) !== false;
+                return stripos($lead->first_name ?? '', $search) !== false ||
+                    stripos($lead->last_name ?? '', $search) !== false ||
+                    stripos($lead->email ?? '', $search) !== false ||
+                    stripos($lead->phone ?? '', $search) !== false;
             });
         }
 
@@ -679,64 +678,46 @@ class ApiLeadController extends BaseController
             });
         }
 
-        // Apply assignment filter
+        // Apply assigned to filter
         if ($assignedTo) {
-            if ($assignedTo === 'me') {
-                $leads = array_filter($leads, function ($lead) use ($currentUser) {
-                    return $lead->assigned_to == $currentUser->id;
-                });
-            } elseif ($assignedTo === 'unassigned') {
-                $leads = array_filter($leads, function ($lead) {
-                    return empty($lead->assigned_to);
-                });
-            } else {
-                $leads = array_filter($leads, function ($lead) use ($assignedTo) {
-                    return $lead->assigned_to == $assignedTo;
-                });
-            }
-        }
-
-        // Apply tag filter
-        if ($tag) {
-            $leads = array_filter($leads, function ($lead) use ($tag) {
-                // This would need a more complex query to check tags
-                // For now, return all leads (simplified)
-                return true;
+            $leads = array_filter($leads, function ($lead) use ($assignedTo) {
+                return $lead->assigned_to == $assignedTo;
             });
         }
 
         // Apply date filters
         if ($dateFrom) {
             $leads = array_filter($leads, function ($lead) use ($dateFrom) {
-                return strtotime($lead->created_at ?? '2020-01-01') >= strtotime($dateFrom);
+                return ($lead->created_at ?? '') >= $dateFrom;
             });
         }
 
         if ($dateTo) {
             $leads = array_filter($leads, function ($lead) use ($dateTo) {
-                return strtotime($lead->created_at ?? '2020-01-01') <= strtotime($dateTo);
+                return ($lead->created_at ?? '') <= $dateTo;
             });
         }
 
         // Apply sorting
-        usort($leads, function ($a, $b) use ($sortField, $sortDirection) {
-            $valueA = $a->$sortField ?? '';
-            $valueB = $b->$sortField ?? '';
+        if ($sortField && $sortDirection) {
+            usort($leads, function ($a, $b) use ($sortField, $sortDirection) {
+                $valA = $a->$sortField ?? '';
+                $valB = $b->$sortField ?? '';
 
-            if ($sortDirection === 'desc') {
-                return $valueB <=> $valueA;
-            } else {
-                return $valueA <=> $valueB;
-            }
-        });
+                if ($sortDirection === 'desc') {
+                    return $valB <=> $valA;
+                }
+                return $valA <=> $valB;
+            });
+        }
 
-        return $leads;
+        return array_values($leads);
     }
 
     /**
      * Format lead data for API response
      */
-    private function formatLeadData($lead, $includeDetails = false)
+    private function formatLeadData($lead, $fullDetails = false)
     {
         $data = [
             'id' => $lead->id,
@@ -744,94 +725,31 @@ class ApiLeadController extends BaseController
             'last_name' => $lead->last_name,
             'email' => $lead->email,
             'phone' => $lead->phone,
-            'company' => $lead->company,
-            'source' => $lead->source,
             'status' => $lead->status,
+            'source' => $lead->source,
             'assigned_to' => $lead->assigned_to,
-            'created_by' => $lead->created_by,
-            'created_at' => $lead->created_at ?? date('Y-m-d H:i:s'),
-            'updated_at' => $lead->updated_at ?? date('Y-m-d H:i:s'),
+            'created_at' => $lead->created_at,
+            'updated_at' => $lead->updated_at,
         ];
 
-        if ($includeDetails) {
-            // Add related data for detailed view
-            $data['assigned_user'] = $lead->assignedTo() ? [
-                'id' => $lead->assignedTo()->id,
-                'name' => $lead->assignedTo()->first_name . ' ' . $lead->assignedTo()->last_name,
-            ] : null;
-
-            $data['created_user'] = $lead->createdBy() ? [
-                'id' => $lead->createdBy()->id,
-                'name' => $lead->createdBy()->first_name . ' ' . $lead->createdBy()->last_name,
-            ] : null;
-
-            $data['notes'] = $this->getLeadNotes($lead->id);
-            $data['activities'] = $this->getLeadActivities($lead->id);
-            $data['files'] = $this->getLeadFiles($lead->id);
-            $data['tags'] = $this->getLeadTags($lead->id);
+        if ($fullDetails) {
+            $data['company'] = $lead->company;
+            $data['job_title'] = $lead->job_title;
+            $data['website'] = $lead->website;
+            $data['address'] = $lead->address;
+            $data['city'] = $lead->city;
+            $data['state'] = $lead->state;
+            $data['postal_code'] = $lead->postal_code;
+            $data['country'] = $lead->country;
+            $data['description'] = $lead->description;
+            $data['estimated_value'] = $lead->estimated_value;
+            $data['rating'] = $lead->rating;
+            $data['last_contact_date'] = $lead->last_contact_date;
+            $data['next_followup_date'] = $lead->next_followup_date;
+            $data['custom_fields'] = $lead->custom_fields;
         }
 
         return $data;
-    }
-
-    /**
-     * Get lead notes
-     */
-    private function getLeadNotes($leadId)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM lead_notes WHERE lead_id = :lead_id ORDER BY created_at DESC");
-        $stmt->execute(['lead_id' => $leadId]);
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        $notes = [];
-        foreach ($results as $result) {
-            $notes[] = new LeadNote($result);
-        }
-
-        return $notes;
-    }
-
-    /**
-     * Get lead activities
-     */
-    private function getLeadActivities($leadId)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM lead_activities WHERE lead_id = :lead_id ORDER BY created_at DESC");
-        $stmt->execute(['lead_id' => $leadId]);
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        $activities = [];
-        foreach ($results as $result) {
-            $activities[] = new LeadActivity($result);
-        }
-
-        return $activities;
-    }
-
-    /**
-     * Get lead files
-     */
-    private function getLeadFiles($leadId)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM lead_files WHERE lead_id = :lead_id ORDER BY created_at DESC");
-        $stmt->execute(['lead_id' => $leadId]);
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        $files = [];
-        foreach ($results as $result) {
-            $files[] = new LeadFile($result);
-        }
-
-        return $files;
-    }
-
-    /**
-     * Get lead tags
-     */
-    private function getLeadTags($leadId)
-    {
-        // This would need a more complex query to get tags for a lead
-        return [];
     }
 
     /**
@@ -841,36 +759,6 @@ class ApiLeadController extends BaseController
     {
         // Implementation for tag synchronization
         // This is a simplified version
-    }
-
-    /**
-     * Log activity for a lead
-     */
-    private function logLeadActivity($leadId, $activityType, $description, $metadata = [])
-    {
-        $currentUser = $this->getCurrentUser();
-
-        $activityData = [
-            'lead_id' => $leadId,
-            'activity_type' => $activityType,
-            'description' => $description,
-            'metadata' => json_encode($metadata),
-            'user_id' => $currentUser->id,
-            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
-        ];
-
-        $activity = new LeadActivity($activityData);
-        $activity->save();
-    }
-
-    /**
-     * Get current authenticated user
-     */
-    private function getCurrentUser()
-    {
-        // This should be implemented based on your auth system
-        // For now, return a mock user
-        return (object)['id' => 1, 'first_name' => 'System', 'last_name' => 'User'];
     }
 
     /**
