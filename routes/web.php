@@ -61,6 +61,7 @@ $router->get('/projects/awadhpuri', 'Front\PageController@awadhpuri');
 // Admin routes
 $router->get('/admin', 'App\Http\Controllers\Admin\AdminController@dashboard');
 $router->get('/admin/dashboard', 'App\Http\Controllers\Admin\AdminController@dashboard');
+$router->get('/admin/enterprise_dashboard', 'App\Http\Controllers\Admin\AdminController@enterpriseDashboard');
 $router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
 $router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
 $router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');

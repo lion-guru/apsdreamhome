@@ -124,7 +124,7 @@ ob_start();
                                         <tr>
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
-                                                    <img src="<?= !empty($property['pimage']) ? BASE_URL . 'public/uploads/property/' . $property['pimage'] : BASE_URL . 'public/assets/images/property-placeholder.jpg' ?>"
+                                                    <img src="<?= !empty($property['pimage']) ? BASE_URL . 'public/uploads/property/' . $property['pimage'] : BASE_URL . '/assets/images/property-placeholder.jpg' ?>"
                                                         alt="Property" class="rounded-3 me-3" style="width: 50px; height: 50px; object-fit: cover;">
                                                     <div>
                                                         <h6 class="mb-0 fw-bold"><?= h($property['title']) ?></h6>

@@ -226,8 +226,8 @@ class MetaverseController extends BaseController
             sendJsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
         }
 
-        $space_id = Security::sanitize($_POST['space_id']) ?? '';
-        $user_avatar = Security::sanitize($_POST['avatar']) ?? 'default';
+        $space_id = isset($_POST['space_id']) ? Security::sanitize($_POST['space_id']) : '';
+        $user_avatar = isset($_POST['avatar']) ? Security::sanitize($_POST['avatar']) : 'default';
 
         if (empty($space_id)) {
             sendJsonResponse(['success' => false, 'error' => 'Space ID required'], 400);
@@ -821,7 +821,7 @@ class MetaverseController extends BaseController
                 'description' => Security::sanitize($_POST['description']) ?? '',
                 'max_participants' => Security::sanitize($_POST['max_participants']) ?? 10,
                 'environment' => Security::sanitize($_POST['environment']) ?? 'modern_office',
-                'is_public' => isset(Security::sanitize($_POST['is_public'])) ? 1 : 0
+                'is_public' => isset($_POST['is_public']) ? 1 : 0
             ];
 
             if (empty($space_data['name'])) {

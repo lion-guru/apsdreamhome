@@ -233,6 +233,17 @@ class QueryBuilder
     }
 
     /**
+     * Get the count of the total records for the current query.
+     */
+    public function count($columns = '*'): int
+    {
+        $sql = "SELECT COUNT({$columns}) as aggregate FROM (" . $this->toSql() . ") as temp";
+        $bindings = $this->getBindings();
+        $result = $this->db->fetch($sql, $bindings);
+        return (int)($result['aggregate'] ?? 0);
+    }
+
+    /**
      * Insert a new record into the database.
      */
     public function insert(array $values): bool

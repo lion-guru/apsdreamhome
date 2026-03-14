@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-amespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
 require_once __DIR__ . '/BaseController.php';
 

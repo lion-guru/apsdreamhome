@@ -2,8 +2,11 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-
 namespace App\Models;
+
+use App\Core\Database\Model;
+use App\Models\Lead\Lead;
+use App\Models\User\User;
 
 class LeadNote extends Model
 {

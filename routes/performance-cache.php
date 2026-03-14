@@ -7,63 +7,28 @@ use Illuminate\Support\Facades\Route;
  * Performance Cache Management Routes
  */
 
-Route::prefix('performance-cache')->group(function () {
-    
-    // Basic cache operations
-    Route::post('/set', [PerformanceCacheController::class, 'set'])
-        ->name('performance-cache.set');
-    
-    Route::get('/get', [PerformanceCacheController::class, 'get'])
-        ->name('performance-cache.get');
-    
-    Route::delete('/delete', [PerformanceCacheController::class, 'delete'])
-        ->name('performance-cache.delete');
-    
-    Route::delete('/clear', [PerformanceCacheController::class, 'clear'])
-        ->name('performance-cache.clear');
+// Basic cache operations
+$router->post('/api/performance-cache/set', 'PerformanceCacheController@set');
+$router->get('/api/performance-cache/get', 'PerformanceCacheController@get');
+$router->delete('/api/performance-cache/delete', 'PerformanceCacheController@delete');
+$router->delete('/api/performance-cache/clear', 'PerformanceCacheController@clear');
 
-    // Advanced cache operations
-    Route::post('/remember', [PerformanceCacheController::class, 'remember'])
-        ->name('performance-cache.remember');
-    
-    Route::post('/memoize', [PerformanceCacheController::class, 'memoize'])
-        ->name('performance-cache.memoize');
-    
-    Route::post('/cache-query', [PerformanceCacheController::class, 'cacheQuery'])
-        ->name('performance-cache.cache-query');
-    
-    Route::post('/cache-api-response', [PerformanceCacheController::class, 'cacheApiResponse'])
-        ->name('performance-cache.cache-api-response');
-    
-    Route::post('/cache-computed', [PerformanceCacheController::class, 'cacheComputed'])
-        ->name('performance-cache.cache-computed');
+// Advanced cache operations
+$router->post('/api/performance-cache/remember', 'PerformanceCacheController@remember');
+$router->post('/api/performance-cache/memoize', 'PerformanceCacheController@memoize');
+$router->post('/api/performance-cache/cache-query', 'PerformanceCacheController@cacheQuery');
+$router->post('/api/performance-cache/cache-api-response', 'PerformanceCacheController@cacheApiResponse');
+$router->post('/api/performance-cache/cache-computed', 'PerformanceCacheController@cacheComputed');
 
-    // Tag-based operations
-    Route::delete('/clear-by-tags', [PerformanceCacheController::class, 'clearByTags'])
-        ->name('performance-cache.clear-by-tags');
+// Tag-based operations
+$router->delete('/api/performance-cache/clear-by-tags', 'PerformanceCacheController@clearByTags');
 
-    // Cache management and monitoring
-    Route::get('/stats', [PerformanceCacheController::class, 'getStats'])
-        ->name('performance-cache.stats');
-    
-    Route::post('/reset-stats', [PerformanceCacheController::class, 'resetStats'])
-        ->name('performance-cache.reset-stats');
-    
-    Route::get('/info', [PerformanceCacheController::class, 'getCacheInfo'])
-        ->name('performance-cache.info');
-    
-    Route::get('/size', [PerformanceCacheController::class, 'getCacheSize'])
-        ->name('performance-cache.size');
-    
-    Route::post('/optimize', [PerformanceCacheController::class, 'optimize'])
-        ->name('performance-cache.optimize');
-    
-    Route::post('/warmup', [PerformanceCacheController::class, 'warmUp'])
-        ->name('performance-cache.warmup');
-    
-    Route::get('/report', [PerformanceCacheController::class, 'generateReport'])
-        ->name('performance-cache.report');
-    
-    Route::get('/dashboard', [PerformanceCacheController::class, 'getDashboard'])
-        ->name('performance-cache.dashboard');
-});
+// Cache management and monitoring
+$router->get('/api/performance-cache/stats', 'PerformanceCacheController@getStats');
+$router->post('/api/performance-cache/reset-stats', 'PerformanceCacheController@resetStats');
+$router->get('/api/performance-cache/info', 'PerformanceCacheController@getCacheInfo');
+$router->get('/api/performance-cache/size', 'PerformanceCacheController@getCacheSize');
+$router->post('/api/performance-cache/optimize', 'PerformanceCacheController@optimize');
+$router->post('/api/performance-cache/warmup', 'PerformanceCacheController@warmUp');
+$router->get('/api/performance-cache/report', 'PerformanceCacheController@generateReport');
+$router->get('/api/performance-cache/dashboard', 'PerformanceCacheController@getDashboard');

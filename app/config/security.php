@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-**
+/**
  * Security Configuration
  */
 
@@ -12,7 +12,7 @@ return [
     'session_lifetime' => 120, // minutes
     'session_encryption' => true,
     'password_min_length' => 8,
-    'PLACEHOLDER_SECRET_VALUErate_limiting' => [
+    'rate_limiting' => [
         'max_attempts' => 5,
         'decay_minutes' => 1,
     ],
@@ -24,11 +24,11 @@ return [
         'max_size' => 5242880, // 5MB
     ],
     'encryption' => [
-        'PLACEHOLDER_SECRET_VALUEcipher' => 'AES-256-CBC',
+        'cipher' => 'AES-256-CBC',
         'mode' => 'CBC',
     ],
     'jwt' => [
-        'PLACEHOLDER_SECRET_VALUEalgorithm' => 'HS256',
+        'algorithm' => 'HS256',
         'expire' => 60 * 60 * 24, // 24 hours
     ],
     'cors' => [
@@ -39,21 +39,36 @@ return [
     ],
 ];
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Helpers\security.php
-
-function csrf_token() {
+// Security helper functions
+if (!function_exists('csrf_token')) {
+    function csrf_token() {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
-function csrf_field() {
+        return $_SESSION['csrf_token'];
+    }
+}
+
+if (!function_exists('csrf_field')) {
+    function csrf_field() {
         return '<input type="hidden" name="_token" value="' . csrf_token() . '" />';
     }
-function validate_csrf_token($token) {
+}
+
+if (!function_exists('validate_csrf_token')) {
+    function validate_csrf_token($token) {
         if (empty($_SESSION['csrf_token']) || empty($token)) {
             return false;
         }
-function sanitize_input($data) {
+        return hash_equals($_SESSION['csrf_token'], $token);
+    }
+}
+
+if (!function_exists('sanitize_input')) {
+    function sanitize_input($data) {
         if (is_array($data)) {
             return array_map('sanitize_input', $data);
         }
+        return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+    }
+}

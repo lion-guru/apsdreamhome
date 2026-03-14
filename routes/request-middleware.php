@@ -7,39 +7,20 @@ use Illuminate\Support\Facades\Route;
  * Request Middleware Routes
  */
 
-Route::prefix('request-middleware')->group(function () {
-    
-    // Request information routes
-    Route::get('/metadata', [RequestMiddlewareController::class, 'getRequestMetadata'])
-        ->name('request-middleware.metadata');
-    
-    Route::get('/client-info', [RequestMiddlewareController::class, 'getClientInfo'])
-        ->name('request-middleware.client-info');
+// Request information routes
+$router->get('/api/request-middleware/metadata', 'RequestMiddlewareController@getRequestMetadata');
+$router->get('/api/request-middleware/client-info', 'RequestMiddlewareController@getClientInfo');
 
-    // Security and validation routes
-    Route::get('/detect-suspicious', [RequestMiddlewareController::class, 'detectSuspiciousActivity'])
-        ->name('request-middleware.detect-suspicious');
-    
-    Route::post('/validate-json', [RequestMiddlewareController::class, 'validateJsonRequest'])
-        ->name('request-middleware.validate-json');
-    
-    Route::post('/sanitize-input', [RequestMiddlewareController::class, 'sanitizeInput'])
-        ->name('request-middleware.sanitize-input');
+// Security and validation routes
+$router->get('/api/request-middleware/detect-suspicious', 'RequestMiddlewareController@detectSuspiciousActivity');
+$router->post('/api/request-middleware/validate-json', 'RequestMiddlewareController@validateJsonRequest');
+$router->post('/api/request-middleware/sanitize-input', 'RequestMiddlewareController@sanitizeInput');
 
-    // Middleware management routes
-    Route::get('/stats', [RequestMiddlewareController::class, 'getMiddlewareStats'])
-        ->name('request-middleware.stats');
-    
-    Route::get('/available', [RequestMiddlewareController::class, 'getAvailableMiddleware'])
-        ->name('request-middleware.available');
-    
-    Route::post('/register', [RequestMiddlewareController::class, 'registerMiddleware'])
-        ->name('request-middleware.register');
-    
-    Route::post('/apply', [RequestMiddlewareController::class, 'applyMiddleware'])
-        ->name('request-middleware.apply');
+// Middleware management routes
+$router->get('/api/request-middleware/stats', 'RequestMiddlewareController@getMiddlewareStats');
+$router->get('/api/request-middleware/available', 'RequestMiddlewareController@getAvailableMiddleware');
+$router->post('/api/request-middleware/register', 'RequestMiddlewareController@registerMiddleware');
+$router->post('/api/request-middleware/apply', 'RequestMiddlewareController@applyMiddleware');
 
-    // Testing route
-    Route::get('/test', [RequestMiddlewareController::class, 'testMiddleware'])
-        ->name('request-middleware.test');
-});
+// Testing route
+$router->get('/api/request-middleware/test', 'RequestMiddlewareController@testMiddleware');

@@ -584,45 +584,40 @@ class ProjectController extends AdminController
             ]);
         }
     }
-}
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\ProjectController.php
-
-function getFilteredProjects($type, $status, $city, $price_min, $price_max)
+    public function getFilteredProjects($type, $status, $city, $price_min, $price_max)
     {
         return $this->getSampleProjects();
     }
-function getProjectStats()
+    public function getProjectStats()
     {
         return $this->getSampleStats();
     }
-function getProjectById($id)
+    public function getProjectById($id)
     {
         return $this->getSampleProject($id);
     }
-function getRelatedProjects($id, $city, $limit)
+    public function getRelatedProjects($id, $city, $limit)
     {
         return array_slice($this->getSampleProjects(), 0, $limit);
     }
-function getProjectGallery($id)
+    public function getProjectGallery($id)
     {
         return $this->getSampleGallery();
     }
-function getProjectAmenities($id)
+    public function getProjectAmenities($id)
     {
         return $this->getSampleAmenities();
     }
-function getProjectSpecifications($id)
+    public function getProjectSpecifications($id)
     {
         return $this->getSampleSpecifications();
     }
-function sendEnquiryNotification($data)
+    public function sendEnquiryNotification($data)
     {
         // Implement email notification service
         error_log("Project enquiry notification: " . json_encode($data));
     }
-function getSampleProjects()
+    public function getSampleProjects()
     {
         return [
             [
@@ -681,12 +676,13 @@ function getSampleProjects()
             ]
         ];
     }
-function getSampleProject($id)
+
+    private function getSampleProject($id)
     {
         $projects = $this->getSampleProjects();
         return $projects[array_search($id, array_column($projects, 'id'))] ?? $projects[0];
     }
-function getSampleStats()
+    public function getSampleStats()
     {
         return [
             'total_projects' => 25,
@@ -697,7 +693,7 @@ function getSampleStats()
             'cities_served' => 6
         ];
     }
-function getSampleGallery()
+    public function getSampleGallery()
     {
         return [
             'projects/aps-gardenia-1.jpg',
@@ -707,7 +703,7 @@ function getSampleGallery()
             'projects/aps-gardenia-5.jpg'
         ];
     }
-function getSampleAmenities()
+    public function getSampleAmenities()
     {
         return [
             'Swimming Pool',
@@ -722,7 +718,7 @@ function getSampleAmenities()
             'Multipurpose Hall'
         ];
     }
-function getSampleSpecifications()
+    public function getSampleSpecifications()
     {
         return [
             'Structure' => 'RCC Framed Structure',
@@ -735,69 +731,4 @@ function getSampleSpecifications()
             'Electrical' => 'Concealed Copper Wiring'
         ];
     }
-class amenities and excellent connectivity.',
-                'total_units' => 120,
-                'available_units' => 45,
-                'possession_date' => '2024-12-31'
-            ],
-            [
-                'id' => 2,
-                'name' => 'APS Grand Plaza',
-                'type' => 'Commercial',
-                'category' => 'Office Space',
-                'status' => 'Completed',
-                'completion' => '100%',
-                'city' => 'Lucknow',
-                'location' => 'Hazratganj',
-                'price_range' => '₹45L - ₹2.5Cr',
-                'base_price' => 4500000,
-                'featured_image' => 'projects/aps-grand-plaza.jpg',
-                'short_description' => 'Premium commercial complex in heart of city',
-                'description' => 'State-of-the-art commercial complex with modern infrastructure and strategic location.',
-                'total_units' => 80,
-                'available_units' => 25,
-                'possession_date' => '2023-06-30'
-            ],
-            [
-                'id' => 3,
-                'name' => 'APS Greens',
-                'type' => 'Residential',
-                'category' => 'Villa',
-                'status' => 'Completed',
-                'completion' => '100%',
-                'city' => 'Lucknow',
-                'location' => 'Indira Nagar',
-                'price_range' => '₹65L - ₹1.2Cr',
-                'base_price' => 6500000,
-                'featured_image' => 'projects/aps-greens.jpg',
-                'short_description' => 'Eco-friendly residential project',
-                'description' => 'Sustainable living with green spaces and modern amenities.',
-                'total_units' => 60,
-                'available_units' => 15,
-                'possession_date' => '2023-12-31'
-            ]
-        ];
-    }
-
-    private function getSampleProject($id)
-    {
-        $projects = $this->getSampleProjects();
-        return $projects[array_search($id, array_column($projects, 'id'))] ?? $projects[0];
-    }
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 785 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//
+}

@@ -7,53 +7,28 @@ use Illuminate\Support\Facades\Route;
  * Event Bus Management Routes
  */
 
-Route::prefix('events')->group(function () {
-    
-    // Event subscription routes
-    Route::post('/subscribe', [EventControllerNew::class, 'subscribe'])
-        ->name('events.subscribe');
-    
-    Route::post('/subscribe-wildcard', [EventControllerNew::class, 'subscribeWildcard'])
-        ->name('events.subscribe-wildcard');
-    
-    Route::delete('/unsubscribe', [EventControllerNew::class, 'unsubscribe'])
-        ->name('events.unsubscribe');
-    
-    Route::delete('/unsubscribe-wildcard', [EventControllerNew::class, 'unsubscribeWildcard'])
-        ->name('events.unsubscribe-wildcard');
+// Event subscription routes
+$router->post('/api/events/subscribe', 'EventControllerNew@subscribe');
+$router->post('/api/events/subscribe-wildcard', 'EventControllerNew@subscribeWildcard');
+$router->delete('/api/events/unsubscribe', 'EventControllerNew@unsubscribe');
+$router->delete('/api/events/unsubscribe-wildcard', 'EventControllerNew@unsubscribeWildcard');
 
-    // Event publishing routes
-    Route::post('/publish', [EventControllerNew::class, 'publish'])
-        ->name('events.publish');
+// Event publishing routes
+$router->post('/api/events/publish', 'EventControllerNew@publish');
 
-    // Event transformation and middleware routes
-    Route::post('/add-transformer', [EventControllerNew::class, 'addTransformer'])
-        ->name('events.add-transformer');
-    
-    Route::post('/add-middleware', [EventControllerNew::class, 'addMiddleware'])
-        ->name('events.add-middleware');
+// Event transformation and middleware routes
+$router->post('/api/events/add-transformer', 'EventControllerNew@addTransformer');
+$router->post('/api/events/add-middleware', 'EventControllerNew@addMiddleware');
 
-    // Event management routes
-    Route::get('/history', [EventControllerNew::class, 'getHistory'])
-        ->name('events.history');
-    
-    Route::delete('/clear-history', [EventControllerNew::class, 'clearHistory'])
-        ->name('events.clear-history');
-    
-    Route::get('/subscriptions', [EventControllerNew::class, 'getSubscriptions'])
-        ->name('events.subscriptions');
+// Event management routes
+$router->get('/api/events/history', 'EventControllerNew@getHistory');
+$router->delete('/api/events/clear-history', 'EventControllerNew@clearHistory');
+$router->get('/api/events/subscriptions', 'EventControllerNew@getSubscriptions');
 
-    // Event reporting and analytics routes
-    Route::get('/report', [EventControllerNew::class, 'generateReport'])
-        ->name('events.report');
-    
-    Route::get('/dashboard', [EventControllerNew::class, 'getDashboard'])
-        ->name('events.dashboard');
-    
-    Route::get('/statistics', [EventControllerNew::class, 'getStatistics'])
-        ->name('events.statistics');
+// Event reporting and analytics routes
+$router->get('/api/events/report', 'EventControllerNew@generateReport');
+$router->get('/api/events/dashboard', 'EventControllerNew@getDashboard');
+$router->get('/api/events/statistics', 'EventControllerNew@getStatistics');
 
-    // Event demonstration route
-    Route::post('/demonstrate', [EventControllerNew::class, 'demonstrate'])
-        ->name('events.demonstrate');
-});
+// Event demonstration route
+$router->post('/api/events/demonstrate', 'EventControllerNew@demonstrate');

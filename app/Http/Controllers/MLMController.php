@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
+use PDO;
+use Exception;
+use Security;
 
 /**
  * MLM Controller
@@ -15,8 +18,7 @@ class MLMController extends BaseController
      */
     public function dashboard()
     {
-        // Temporarily disable login for testing
-        // $this->requireLogin();
+        $this->requireLogin();
         
         $userId = $_SESSION['user_id'] ?? 0;
         
@@ -55,11 +57,73 @@ class MLMController extends BaseController
     }
     
     /**
+     * MLM Genealogy Tree
+     */
+    public function genealogy()
+    {
+        $this->requireLogin();
+        $this->render('team/genealogy', [
+            'page_title' => 'Team Genealogy - APS Dream Home',
+            'page_description' => 'Explore your team network visually'
+        ]);
+    }
+    
+    /**
      * Get MLM dashboard data
      */
     private function getMLMDashboardData($userId)
     {
-        // Sample data - in real implementation, this would come from database
+        if (!$userId) {
+            return $this->getMockDashboardData();
+        }
+
+        $perfCalculator = new \App\Services\PerformanceRankCalculator();
+        $diffCalculator = new \App\Services\DifferentialCommissionCalculator();
+
+        $perfData = $perfCalculator->calculateRank($userId);
+        
+        // Get agent name and current rank from profile
+        $stmt = $this->db->prepare("SELECT name, current_level FROM mlm_profiles WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Get monthly commission
+        $stmt = $this->db->prepare("SELECT SUM(amount) FROM commissions WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+        $stmt->execute([$userId]);
+        $monthlyCommission = $stmt->fetchColumn() ?: 0;
+
+        return [
+            'current_level' => $profile['current_level'] ?? 'Associate',
+            'plan_name' => $perfData['rank'] ?? 'Starter',
+            'total_downline' => $perfData['team_size'] ?? 0,
+            'monthly_commission' => number_format($monthlyCommission),
+            'business_volume' => number_format($perfData['business_volume'] ?? 0),
+            'active_members' => $perfData['team_size'] ?? 0,
+            'binary_commission' => 0,
+            'unilevel_commission' => 0,
+            'matrix_commission' => 0,
+            'binary_amount' => '0',
+            'unilevel_amount' => '0',
+            'matrix_amount' => '0',
+            'next_rank' => $perfData['next_rank_info']['next_rank'] ?? 'Max',
+            'rank_progress' => $perfData['performance'] ?? 0,
+            'required_downline' => $perfData['next_rank_info']['required_members'] ?? 0,
+            'required_bv' => number_format($perfData['next_rank_info']['required_bv'] ?? 0),
+            'time_remaining' => 'N/A',
+            'associate_name' => $profile['name'] ?? 'Unknown',
+            'left_leg_name' => 'Left Team',
+            'left_leg_count' => 0,
+            'right_leg_name' => 'Right Team',
+            'right_leg_count' => 0,
+            'next_payout_date' => date('Y-m-d', strtotime('next month')),
+            'last_payout_date' => date('Y-m-d', strtotime('last month')),
+            'last_bonus' => '0'
+        ];
+    }
+
+    private function getMockDashboardData()
+    {
+        // Fallback or development mock
         return [
             'current_level' => 'Gold',
             'plan_name' => 'Premium Plan',
@@ -172,7 +236,8 @@ class MLMController extends BaseController
             $userId = $_SESSION['user_id'] ?? 0;
             $levels = $_GET['levels'] ?? 3;
             
-            $networkTree = $this->buildNetworkTree($userId, $levels);
+            $perfCalculator = new \App\Services\PerformanceRankCalculator();
+            $networkTree = $perfCalculator->getHierarchyTree($userId, $levels);
             
             echo json_encode([
                 'success' => true,
@@ -182,7 +247,7 @@ class MLMController extends BaseController
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
-                'error' => 'Failed to fetch network tree'
+                'error' => 'Failed to fetch network tree: ' . $e->getMessage()
             ]);
         }
     }
@@ -216,32 +281,6 @@ class MLMController extends BaseController
     /**
      * Helper methods
      */
-    private function buildNetworkTree($userId, $levels)
-    {
-        // Sample network tree structure
-        return [
-            'user' => [
-                'id' => $userId,
-                'name' => 'John Doe',
-                'level' => 'Gold',
-                'left_leg' => [
-                    'id' => 2,
-                    'name' => 'Jane Smith',
-                    'level' => 'Silver',
-                    'members' => 15
-                ],
-                'right_leg' => [
-                    'id' => 3,
-                    'name' => 'Bob Johnson',
-                    'level' => 'Silver',
-                    'members' => 18
-                ]
-            ],
-            'total_members' => 47,
-            'active_members' => 32
-        ];
-    }
-    
     private function getCommissionHistoryData($userId, $period)
     {
         // Sample commission history

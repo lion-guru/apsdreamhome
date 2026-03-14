@@ -2,7 +2,7 @@
 
 namespace App\Services\Payroll;
 
-use App\Core\Database;
+use App\Core\Database\Database;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -227,7 +227,7 @@ class SalaryService
                 ]
             );
 
-            $structureId = $this->db->getLastInsertId();
+            $structureId = (int)$this->db->lastInsertId();
 
             if ($structureId) {
                 $this->deactivatePreviousSalaryStructures($data['employee_id'], $data['effective_from']);
@@ -429,7 +429,7 @@ class SalaryService
                 ]
             );
 
-            return $this->db->getLastInsertId();
+            return (int)$this->db->lastInsertId();
         } catch (\Exception $e) {
             $this->logger->error("Failed to save monthly payment", ['error' => $e->getMessage()]);
             return 0;

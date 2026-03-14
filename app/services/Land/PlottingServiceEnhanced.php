@@ -22,7 +22,7 @@ class PlottingServiceEnhanced
     public function __construct($database = null, $logger = null)
     {
         $this->database = $database ?: Database::getInstance();
-        $this->logger = $logger ?: LoggingService::getInstance();
+        $this->logger = $logger ?: new LoggingService();
         $this->createPlottingTables();
     }
 
@@ -365,6 +365,11 @@ class PlottingServiceEnhanced
             // Update plot status
             $this->updatePlotStatus($data['plot_id'], 'booked');
 
+            // Calculate commissions if associate is involved
+            if (!empty($data['associate_id'])) {
+                $this->calculateCommissions($bookingId, $data['associate_id'], $data['total_amount'] ?? $data['booking_amount']);
+            }
+
             $this->logger->log("Plot booked: {$data['booking_number']} (ID: $bookingId)", 'info', 'plotting');
             return $bookingId;
         } catch (Exception $e) {
@@ -418,5 +423,39 @@ class PlottingServiceEnhanced
         }
 
         return $stats;
+    }
+
+    /**
+     * Calculate commissions
+     */
+    private function calculateCommissions($bookingId, $associateId, $totalAmount)
+    {
+        try {
+            // Use the new DifferentialCommissionCalculator for automated MLM distribution
+            $calculator = new \App\Services\DifferentialCommissionCalculator();
+            $result = $calculator->calculate($totalAmount, $associateId, $bookingId);
+
+            if ($result['success']) {
+                $this->logger->log('MLM Commissions distributed for booking', 'info', 'plotting', [
+                    'booking_id' => $bookingId,
+                    'total_distributed' => $result['total_distributed'],
+                    'recipients' => count($result['commissions'])
+                ]);
+                
+                // Also record a summary in commission_tracking for plotting-specific reports
+                $this->database->query(
+                    "INSERT INTO commission_tracking (
+                        booking_id, associate_id, commission_type, commission_level,
+                        commission_amount, commission_percentage, payment_status, remarks
+                    ) VALUES (?, ?, 'mlm_differential', 1, ?, ?, 'pending', 'Distributed via MLM Differential Logic')",
+                    [$bookingId, $associateId, $totalAmount * ($result['total_distributed'] / 100), $result['total_distributed']]
+                );
+            } else {
+                $this->logger->log('MLM Commission calculation skipped or failed: ' . ($result['message'] ?? 'Unknown error'), 'warning', 'plotting');
+            }
+            
+        } catch (Exception $e) {
+            $this->logger->log('Failed to calculate commissions: ' . $e->getMessage(), 'error', 'plotting');
+        }
     }
 }

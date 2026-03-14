@@ -1,9 +1,10 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
-
 namespace App\Models;
+
+use App\Core\Database\Model;
+use App\Models\Lead\Lead;
+use App\Models\LeadStatusHistory;
 
 class LeadStatus extends Model
 {
@@ -47,6 +48,8 @@ class LeadStatus extends Model
     }
 
     /**
+     * Get leads for this status.
+     */
     public function leads()
     {
         $db = \App\Core\Database::getInstance();

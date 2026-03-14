@@ -120,7 +120,7 @@ class SecurityHelper
         if (!isset($_SESSION['csrf'])) {
             $_SESSION['csrf'] = [
                 'token' => $_SESSION['csrf_token'],
-                'expires' => $_SESSION['csrf_token_expires']
+                'expires' => $_SESSION['csrf_token_expires'] ?? time() + 3600
             ];
         }
 

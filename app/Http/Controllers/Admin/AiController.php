@@ -323,13 +323,3 @@ class AiController extends AdminController
 }
 
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Api\AiController.php
-
-class AIController extends BaseApiController
-{
-    public function __construct()
-    {
-        parent::__construct();
-        $this->middleware('auth');
-        $this->middleware('role:associate', ['only' => ['generateDescription']]);
-    }

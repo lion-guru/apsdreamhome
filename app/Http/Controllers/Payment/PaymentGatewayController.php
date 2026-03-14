@@ -118,7 +118,7 @@ class PaymentGatewayController extends BaseController
      */
     public function processPayment()
     {
-        if (!isset(Security::sanitize($_POST['submit_payment']))) {
+        if (!isset($_POST['submit_payment'])) {
             $this->render('payment/payment_form', [
                 'page_title' => 'Payment Gateway - Secure Payment'
             ]);

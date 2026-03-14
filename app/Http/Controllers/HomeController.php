@@ -19,7 +19,7 @@ class HomeController extends BaseController
             'testimonials' => $this->loadTestimonials()
         ];
 
-        // Render view with data
+        // Render homepage with centralized base layout and fragments
         $this->render('pages/index', $data);
     }
 

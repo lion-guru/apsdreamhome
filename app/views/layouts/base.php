@@ -360,12 +360,15 @@
             observer.observe(counter);
         });
 
-        // Form submission
-        document.querySelector('form')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! We will get back to you soon.');
-            this.reset();
-        });
+        // Form submission - Skip admin, login, and enterprise admin forms
+        const form = document.querySelector('form');
+        if (form && !form.id.includes('adminLoginForm') && !form.classList.contains('admin-login-form') && !form.action.includes('/admin/login') && !form.action.includes('/admin/enterprise_dashboard')) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for your message! We will get back to you soon.');
+                this.reset();
+            });
+        }
     </script>
 </body>
 

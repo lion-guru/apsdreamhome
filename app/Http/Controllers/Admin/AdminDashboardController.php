@@ -56,12 +56,11 @@ class AdminDashboardController extends \App\Http\Controllers\BaseController
     public function getStats()
     {
         header('Content-Type: application/json');
-        echo json_encode($this->getDashboardStats());
-        exit;
+        return json_encode($this->getDashboardStats());
     }
 
     /**
-     * Check if user is admin - Override parent method
+     * Check if user is admin
      */
     protected function isAdmin(): bool
     {

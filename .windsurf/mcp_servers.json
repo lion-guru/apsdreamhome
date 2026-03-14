@@ -2,7 +2,16 @@
   "mcpServers": {
     "mysql": {
       "command": "mysql-mcp-server",
-      "args": ["--host", "localhost", "--port", "3306", "--user", "root", "--password", ""],
+      "args": [
+        "--host",
+        "localhost",
+        "--port",
+        "3306",
+        "--user",
+        "root",
+        "--password",
+        ""
+      ],
       "env": {
         "MYSQL_HOST": "localhost",
         "MYSQL_PORT": "3306",
@@ -13,26 +22,32 @@
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:\\xampp\\htdocs\\apsdreamhome"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\xampp\\htdocs\\apsdreamhome"
+      ]
     },
-    "github": {
+    "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_github_token_here"
-      }
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
     },
-    "playwright": {
+    "sqlite": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-playwright"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "--db-path",
+        "C:\\xampp\\htdocs\\apsdreamhome\\storage\\database\\project_memory.sqlite"
+      ]
     },
     "puppeteer": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
     },
-    "memory": {
+    "fetch": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
     }
   }
 }

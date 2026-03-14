@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-amespace App\Services;
+namespace App\Services;
 
 /**
  * Universal Service Wrapper for SMS, Email, and KYC

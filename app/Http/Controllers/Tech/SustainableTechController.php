@@ -1,4 +1,5 @@
 <?php
+namespace App\Controllers;
 //
 // ERROR HANDLING CONFIGURATION
 //
@@ -6,19 +7,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError(,  = null,  = null) {
-     = date('Y-m-d H:i:s') . ' - ERROR: ' . ;
-    if ()  .= ' in ' . ;
-    if ()  .= ' on line ' . ;
-    error_log();
+function handleError($message, $file = null, $line = null) {
+    $error_msg = date('Y-m-d H:i:s') . ' - ERROR: ' . $message;
+    if ($file) $error_msg .= ' in ' . $file;
+    if ($line) $error_msg .= ' on line ' . $line;
+    error_log($error_msg);
     return false;
 }
 
-function safeExecute(,  = 'Operation failed') {
+function safeExecute($callback, $errorMessage = 'Operation failed') {
     try {
-        return ();
-    } catch (Exception ) {
-        handleError( . ': ' . (), (), ());
+        return $callback();
+    } catch (\Exception $e) {
+        handleError($errorMessage . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
         return null;
     }
 }
@@ -29,7 +30,7 @@ function safeExecute(,  = 'Operation failed') {
  * Handles green technology, sustainability features, and environmental impact
  */
 
-namespace App\Controllers;
+
 
 class SustainableTechController extends BaseController {
 

@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Services\Security\Legacy {
+namespace App\Services\Security;
+
+use App\Core\Security;
+use App\Helpers\SecurityHelper;
 
 /**
  * Enhanced CSRF Protection System
  * Provides robust security against Cross-Site Request Forgery attacks
  */
-
 class CSRFProtection {
     private const TOKEN_LENGTH = 32;
     private const TOKEN_EXPIRY = 3600; // 1 hour
@@ -18,9 +20,15 @@ class CSRFProtection {
     public static function initializeSession() {
         if (session_status() === PHP_SESSION_NONE) {
             try {
-                require_once dirname(__DIR__) . '/session_helpers.php';
-                \ensureSessionStarted();
-            } catch (Exception $e) {
+                if (file_exists(dirname(__DIR__) . '/session_helpers.php')) {
+                    require_once dirname(__DIR__) . '/session_helpers.php';
+                    if (function_exists('ensureSessionStarted')) {
+                        \ensureSessionStarted();
+                    }
+                } else {
+                    @session_start();
+                }
+            } catch (\Exception $e) {
                 error_log('CSRF Session Initialization Error: ' . $e->getMessage());
             }
         }
@@ -37,8 +45,12 @@ class CSRFProtection {
             !isset($_SESSION['csrf_expires']) ||
             time() >= $_SESSION['csrf_expires']) {
 
-            $_SESSION['csrf_token'] = \bin2hex(\App\Helpers\SecurityHelper::secureRandomBytes(self::TOKEN_LENGTH));
-            $_SESSION['csrf_expires'] = \time() + self::TOKEN_EXPIRY;
+            if (class_exists('App\Helpers\SecurityHelper')) {
+                $_SESSION['csrf_token'] = bin2hex(SecurityHelper::secureRandomBytes(self::TOKEN_LENGTH));
+            } else {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(self::TOKEN_LENGTH));
+            }
+            $_SESSION['csrf_expires'] = time() + self::TOKEN_EXPIRY;
         }
 
         self::$token = $_SESSION['csrf_token'];
@@ -59,7 +71,7 @@ class CSRFProtection {
         self::initializeSession();
 
         if ($token === null) {
-            $token = Security::sanitize($_POST['csrf_token']) ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+            $token = Security::sanitize($_POST['csrf_token'] ?? '') ?: ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null);
         }
 
         if (!isset($_SESSION['csrf_token']) || !isset($_SESSION['csrf_expires'])) {
@@ -70,7 +82,7 @@ class CSRFProtection {
             return false;
         }
 
-        if (!hash_equals($_SESSION['csrf_token'], $token)) {
+        if (!$token || !hash_equals($_SESSION['csrf_token'], $token)) {
             return false;
         }
 
@@ -84,9 +96,10 @@ class CSRFProtection {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method === 'POST' || $method === 'PUT' || $method === 'DELETE') {
             if (!self::validateToken()) {
-                if (function_exists('log_security_event')) {
-                    log_security_event('CSRF token validation failed for ' . $method . ' request', 'warning');
-                }
+                Security::logSecurityEvent('CSRF token validation failed', [
+                    'method' => $method,
+                    'uri' => $_SERVER['REQUEST_URI']
+                ]);
                 http_response_code(403);
                 die('CSRF token validation failed');
             }
@@ -98,9 +111,10 @@ class CSRFProtection {
      */
     public static function hiddenField() {
         $token = self::generateToken();
+        $safeToken = htmlspecialchars($token, ENT_QUOTES, 'UTF-8');
         return sprintf(
             '<input type="hidden" name="csrf_token" value="%s">',
-            h($token)
+            $safeToken
         );
     }
 
@@ -121,53 +135,46 @@ class CSRFProtection {
     }
 }
 
-}
-
-/**
- * Functional wrappers for global accessibility
- */
-namespace {
-    use App\Services\Security\Legacy\CSRFProtection;
-
-    if (!function_exists('csrf_token')) {
-        function csrf_token() {
-            return CSRFProtection::generateToken();
-        }
-    }
-
-    if (!function_exists('csrf_validate')) {
-        function csrf_validate() {
-            return CSRFProtection::validateRequest();
-        }
-    }
-
-    if (!function_exists('csrf_field')) {
-        function csrf_field() {
-            return CSRFProtection::hiddenField();
-        }
-    }
-
-    if (!function_exists('csrf_check')) {
-        function csrf_check() {
-            return CSRFProtection::validateToken();
-        }
+// Global functions for easier access
+if (!function_exists('csrf_token')) {
+    function csrf_token() {
+        return CSRFProtection::generateToken();
     }
 }
-?>
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\CSRFProtection.php
-
-function generateCSRFToken() {
-    if (!isset($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(\App\Helpers\SecurityHelper::secureRandomBytes(32));
+if (!function_exists('csrf_validate')) {
+    function csrf_validate() {
+        return CSRFProtection::validateRequest();
     }
-function validateCSRFToken($token) {
-    if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-        http_response_code(403);
-        die('CSRF token validation failed');
+}
+
+if (!function_exists('csrf_field')) {
+    function csrf_field() {
+        return CSRFProtection::hiddenField();
     }
-function getCSRFTokenField() {
-    $token = generateCSRFToken();
-    return '<input type="hidden" name="csrf_token" value="' . h($token) . '">';
+}
+
+if (!function_exists('csrf_check')) {
+    function csrf_check() {
+        return CSRFProtection::validateToken();
+    }
+}
+
+// Compatibility legacy functions
+if (!function_exists('generateCSRFToken')) {
+    function generateCSRFToken() {
+        return CSRFProtection::generateToken();
+    }
+}
+
+if (!function_exists('validateCSRFToken')) {
+    function validateCSRFToken($token) {
+        return CSRFProtection::validateToken($token);
+    }
+}
+
+if (!function_exists('getCSRFTokenField')) {
+    function getCSRFTokenField() {
+        return CSRFProtection::hiddenField();
+    }
 }

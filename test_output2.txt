@@ -1,0 +1,8 @@
+=== TESTING ADMIN DASHBOARD ===
+✅ BaseController included
+✅ AdminController included
+✅ AdminController instantiated
+Output length: 53 bytes
+✅ dashboard method working
+First 200 characters:
+<script>window.location.href='/admin/login';</script>

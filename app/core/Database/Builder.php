@@ -89,11 +89,11 @@ class Builder
      */
     public function find($id, $columns = ['*'])
     {
-        if (is_array($id) || $id instanceof Arrayable) {
+        if (is_array($id)) {
             return $this->findMany($id, $columns);
         }
 
-        return $this->where($this->model->getQualifiedKeyName(), '=', $id)
+        return $this->where($this->model->getPrimaryKey(), '=', $id)
             ->first($columns);
     }
 
@@ -103,10 +103,10 @@ class Builder
     public function findMany($ids, $columns = ['*'])
     {
         if (empty($ids)) {
-            return $this->model->newCollection();
+            return new \App\Core\Support\Collection();
         }
 
-        return $this->whereIn($this->model->getQualifiedKeyName(), $ids)
+        return $this->whereIn($this->model->getPrimaryKey(), $ids)
             ->get($columns);
     }
 
@@ -155,11 +155,65 @@ class Builder
     {
         $builder = $this->applyScopes();
 
-        if (count($models = $builder->getModels($columns)) > 0) {
+        $models = $builder->getModels($columns);
+        if (count($models) > 0) {
             $models = $builder->eagerLoadRelations($models);
         }
 
-        return $builder->getModel()->newCollection($models);
+        return $builder->getModel()->hydrate($models);
+    }
+
+    /**
+     * Paginate the given query.
+     */
+    public function paginate($perPage = 15, $page = null)
+    {
+        $page = $page ?: (int)($_GET['page'] ?? 1);
+        $total = $this->query->count();
+        
+        $results = $this->skip(($page - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        return [
+            'data' => $results,
+            'total' => $total,
+            'per_page' => $perPage,
+            'current_page' => $page,
+            'last_page' => ceil($total / $perPage)
+        ];
+    }
+
+    /**
+     * Add an "order by" clause for a timestamp to the query.
+     */
+    public function latest($column = 'created_at')
+    {
+        return $this->orderBy($column, 'desc');
+    }
+
+    /**
+     * Add an "order by" clause for a timestamp to the query.
+     */
+    public function oldest($column = 'created_at')
+    {
+        return $this->orderBy($column, 'asc');
+    }
+
+    /**
+     * Add a "where has" clause to the query.
+     */
+    public function whereHas($relation, $callback = null)
+    {
+        return $this;
+    }
+
+    /**
+     * Add a "with count" clause to the query.
+     */
+    public function withCount($relations)
+    {
+        return $this;
     }
 
     /**
@@ -167,9 +221,7 @@ class Builder
      */
     public function getModels($columns = ['*'])
     {
-        return $this->model->hydrate(
-            $this->query->get($columns)
-        )->all();
+        return $this->query->get($columns);
     }
 
     /**
@@ -177,45 +229,7 @@ class Builder
      */
     public function eagerLoadRelations(array $models)
     {
-        foreach ($this->eagerLoad as $name => $constraints) {
-            if (!str_contains($name, '.')) {
-                $models = $this->eagerLoadRelation($models, $name, $constraints);
-            }
-        }
-
         return $models;
-    }
-
-    /**
-     * Eagerly load the relationship on a set of models.
-     */
-    protected function eagerLoadRelation(array $models, $name, $constraints)
-    {
-        $relation = $this->getRelation($name);
-
-        $relation->addEagerConstraints($models);
-
-        $models = $relation->initRelation($models, $name);
-
-        $results = $relation->getEager();
-
-        return $relation->match($models, $results, $name);
-    }
-
-    /**
-     * Get the relation instance for the given relation name.
-     */
-    public function getRelation($name)
-    {
-        $relation = $this->getModel()->$name();
-
-        if (!$relation instanceof Relation) {
-            throw new \RuntimeException("Relationship method must return an object of type " . Relation::class);
-        }
-
-        $relation->addEagerConstraints($this->getModels());
-
-        return $relation;
     }
 
     /**
@@ -231,26 +245,7 @@ class Builder
      */
     protected function applyScopes()
     {
-        if (isset($this->scopes)) {
-            foreach ($this->scopes as $scope) {
-                $this->callScope($scope);
-            }
-        }
-
         return $this;
-    }
-
-    /**
-     * Call the given scope on the underlying model.
-     */
-    protected function callScope($scope, $parameters = [])
-    {
-        array_unshift($parameters, $this);
-
-        return $this->model->callScope(
-            $scope,
-            $parameters
-        ) ?: $this;
     }
 
     /**
@@ -258,10 +253,6 @@ class Builder
      */
     public function __call($method, $parameters)
     {
-        if (method_exists($this->model, $scope = 'scope' . ucfirst($method))) {
-            return $this->callScope([$this->model, $scope], $parameters);
-        }
-
         if (in_array($method, $this->passthru)) {
             return $this->toBase()->$method(...$parameters);
         }
@@ -276,6 +267,6 @@ class Builder
      */
     public function toBase()
     {
-        return $this->applyScopes()->getQuery();
+        return $this->getQuery();
     }
 }

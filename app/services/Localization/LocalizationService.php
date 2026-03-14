@@ -2,7 +2,7 @@
 
 namespace App\Services\Localization;
 
-use App\Core\Database;
+use App\Core\Database\Database;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -41,6 +41,38 @@ class LocalizationService
     private string $storageType;
     private string $fallbackStrategy;
     private array $translationSources;
+
+    /**
+     * Singleton instance
+     */
+    private static ?self $instance = null;
+
+    /**
+     * Get singleton instance
+     */
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            $db = Database::getInstance();
+            // We need a logger, but since we don't have a global one easily available here 
+            // without a container, we'll use a simple error-log based logger or null logger for now
+            // For now, let's assume one is provided or we use a fallback.
+            // This is a minimal implementation to satisfy the BaseController.
+            throw new \RuntimeException("LocalizationService must be initialized with dependencies first using initialize()");
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Initialize the singleton instance
+     */
+    public static function initialize(Database $db, LoggerInterface $logger, string $locale = 'en_US'): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($db, $logger, $locale);
+        }
+        return self::$instance;
+    }
 
     public function __construct(
         Database $db,

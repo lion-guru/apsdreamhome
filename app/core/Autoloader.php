@@ -167,9 +167,9 @@ $autoloader->register();
 $autoloader->addNamespace('App', APP_ROOT . '/app');
 
 // Register common class mappings for legacy compatibility
-$autoloader->addClassMap('Database', APP_ROOT . '/app/core/Database.php');
-$autoloader->addClassMap('SessionManager', APP_ROOT . '/app/core/SessionManager.php');
-$autoloader->addClassMap('ErrorHandler', APP_ROOT . '/app/core/ErrorHandler.php');
+$autoloader->addClassMap('Database', APP_ROOT . '/app/Core/Database/Database.php');
+$autoloader->addClassMap('SessionManager', APP_ROOT . '/app/Core/Session/SessionManager.php');
+$autoloader->addClassMap('ErrorHandler', APP_ROOT . '/app/Core/ErrorHandler.php');
 
 // Register consolidated models for seamless migration
 $autoloader->addClassMap('ConsolidatedUser', APP_ROOT . '/app/Models/ConsolidatedUser.php');

@@ -5,6 +5,9 @@
 
 namespace App\Models;
 
+use App\Core\Database\Model;
+use App\Models\Lead\Lead;
+
 class LeadSource extends Model
 {
     protected static $table = 'lead_sources';

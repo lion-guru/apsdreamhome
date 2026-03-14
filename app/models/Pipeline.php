@@ -1,29 +1,4 @@
 <?php
-//
-// ERROR HANDLING CONFIGURATION
-//
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-
-function handleError(,  = null,  = null) {
-     = date('Y-m-d H:i:s') . ' - ERROR: ' . ;
-    if ()  .= ' in ' . ;
-    if ()  .= ' on line ' . ;
-    error_log();
-    return false;
-}
-
-function safeExecute(,  = 'Operation failed') {
-    try {
-        return ();
-    } catch (Exception ) {
-        handleError( . ': ' . (), (), ());
-        return null;
-    }
-}
-
-//
 
 namespace App\Models;
 

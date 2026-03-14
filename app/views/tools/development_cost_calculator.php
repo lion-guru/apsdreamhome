@@ -31,7 +31,7 @@ $hybrid_system = new HybridRealEstateCommission($conn);
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset(Security::sanitize($_POST['calculate_plot_rate']))) {
+    if (isset($_POST['calculate_plot_rate'])) {
         $result = calculatePlotRate($_POST);
         if ($result['success']) {
             $_SESSION['calculation_result'] = $result;
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if (isset(Security::sanitize($_POST['save_cost_breakdown']))) {
+    if (isset($_POST['save_cost_breakdown'])) {
         $result = saveCostBreakdown($_POST);
         if ($result['success']) {
             $_SESSION['success_message'] = $result['message'];

@@ -680,7 +680,7 @@ class Router
 
         if (!str_contains($class, '\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
-        } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\') || str_starts_with($class, 'Public\\')) {
+        } elseif (str_starts_with($class, 'Admin\\') || str_starts_with($class, 'Associate\\') || str_starts_with($class, 'Api\\') || str_starts_with($class, 'Front\\')) {
             $class = 'App\\Http\\Controllers\\' . $class;
         }
 

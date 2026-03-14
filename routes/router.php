@@ -7,38 +7,58 @@
 class Router
 {
     public $routes = [];
+    private $lastMethod;
+    private $lastPath;
 
     public function __construct()
     {
-        echo "Router initialized\n";
+        // Router initialized
     }
 
     public function get($path, $handler)
     {
-        // Normalize route path by removing leading slash, but preserve root
-        if ($path !== '/') {
-            $path = ltrim($path, '/');
-        }
-        $this->routes['GET'][$path] = $handler;
+        return $this->addRoute('GET', $path, $handler);
     }
 
     public function post($path, $handler)
     {
-        // Normalize route path by removing leading slash, but preserve root
-        if ($path !== '/') {
-            $path = ltrim($path, '/');
-        }
-        $this->routes['POST'][$path] = $handler;
+        return $this->addRoute('POST', $path, $handler);
     }
 
     public function put($path, $handler)
     {
-        $this->routes['PUT'][$path] = $handler;
+        return $this->addRoute('PUT', $path, $handler);
     }
 
     public function delete($path, $handler)
     {
-        $this->routes['DELETE'][$path] = $handler;
+        return $this->addRoute('DELETE', $path, $handler);
+    }
+
+    private function addRoute($method, $path, $handler)
+    {
+        // Normalize route path by removing leading slash, but preserve root
+        if ($path !== '/') {
+            $path = ltrim($path, '/');
+        }
+        
+        $this->routes[$method][$path] = [
+            'handler' => $handler,
+            'middleware' => []
+        ];
+        
+        $this->lastMethod = $method;
+        $this->lastPath = $path;
+        
+        return $this;
+    }
+
+    public function middleware($middleware)
+    {
+        if ($this->lastMethod && $this->lastPath) {
+            $this->routes[$this->lastMethod][$this->lastPath]['middleware'][] = $middleware;
+        }
+        return $this;
     }
 
     public function getRoutes()
@@ -115,7 +135,7 @@ class Router
             // Try to match dynamic routes with parameters
             $matchedRoute = $this->matchDynamicRoute($method, $uri);
             if ($matchedRoute) {
-                $handler = $matchedRoute['handler'];
+                $routeData = $matchedRoute['route_data'];
                 $params = $matchedRoute['params'];
             } else {
                 http_response_code(404);
@@ -123,8 +143,27 @@ class Router
                 return;
             }
         } else {
-            $handler = $this->routes[$method][$uri];
+            $routeData = $this->routes[$method][$uri];
             $params = [];
+        }
+
+        // Support both old structure (string handler) and new (array with middleware)
+        $handler = is_array($routeData) ? $routeData['handler'] : $routeData;
+        $middlewareList = is_array($routeData) ? ($routeData['middleware'] ?? []) : [];
+
+        // Execute Middleware
+        foreach ($middlewareList as $middlewareClass) {
+            if (class_exists($middlewareClass)) {
+                $middleware = new $middlewareClass();
+                // We need to pass Request object, but for simplicity in this custom router
+                // we'll use a basic handle call. 
+                // Actual implementation would involve a proper request/response stack.
+                if (method_exists($middleware, 'handle')) {
+                    // Create a mock request/response if needed, or just let middleware handle globals
+                    $request = new \App\Core\Http\Request();
+                    $middleware->handle($request, function($req) { return $req; });
+                }
+            }
         }
 
         if (is_callable($handler)) {
@@ -135,14 +174,16 @@ class Router
                 list($controller, $method) = explode('@', $handler);
 
                 // Handle different controller formats
-                if (strpos($controller, '\\') !== false) {
+                if (strpos($controller, 'App\\') === 0) {
                     // Full namespace format: "App\Http\Controllers\Auth\AdminAuthController"
                     $controllerClass = $controller;
-                    $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
+                    // Remove 'App\' prefix to get relative path from app/ directory
+                    $relativePath = substr($controller, 4);
+                    $controllerFile = __DIR__ . '/../app/' . str_replace('\\', '/', $relativePath) . '.php';
                 } else {
-                    // Simple format: "HomeController"
+                    // Simple or relative format: "HomeController" or "Front\PageController"
                     $controllerClass = "App\\Http\\Controllers\\" . $controller;
-                    $controllerFile = __DIR__ . '/../app/Http/Controllers/' . $controller . '.php';
+                    $controllerFile = __DIR__ . '/../app/Http/Controllers/' . str_replace('\\', '/', $controller) . '.php';
                 }
 
                 // Debug logging
@@ -186,7 +227,7 @@ class Router
                 // Remove full match, keep only parameters
                 array_shift($matches);
                 return [
-                    'handler' => $handler,
+                    'route_data' => $handler,
                     'params' => $matches
                 ];
             }

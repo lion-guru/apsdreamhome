@@ -1,5 +1,32 @@
 <?php
+/** @var Router $router */
 // API Routes
+$router->post('/api/v2/mobile/auth/login', 'Api\MobileApiController@login');
+$router->post('/api/v2/mobile/auth/logout', 'Api\MobileApiController@logout');
+$router->get('/api/v2/mobile/sync', 'Api\MobileApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/leads', 'Api\MobileApiController@batchSyncLeads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/properties', 'Api\MobileApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/summary', 'Api\MobileApiController@getMlmSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/payouts', 'Api\MobileApiController@getMlmPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/incentives', 'Api\MobileApiController@getMlmIncentives')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/upload-document', 'Api\MobileApiController@uploadDocument')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/documents', 'Api\MobileApiController@getDocuments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/site-visit/start', 'Api\MobileApiController@startSiteVisit')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/site-visit/update', 'Api\MobileApiController@updateSiteVisitLocation')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/site-visit/status', 'Api\MobileApiController@getSiteVisitStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/profile', 'Api\MobileApiController@getUserProfile')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/payouts/pending', 'Api\MobileApiController@getPendingPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/payouts/process', 'Api\MobileApiController@processPayouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/payouts/history', 'Api\MobileApiController@getPayoutHistory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/genealogy', 'Api\MobileApiController@getGenealogy')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/mlm/business-breakdown', 'Api\MobileApiController@getBusinessBreakdown')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/mlm/request-payout', 'Api\MobileApiController@requestPayout')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/customer/bookings', 'Api\MobileApiController@getCustomerBookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/customer/emi-schedule', 'Api\MobileApiController@getEmiSchedule')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/customer/pay-emi', 'Api\MobileApiController@makeEmiPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/properties/submit', 'Api\MobileApiController@submitProperty')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/properties/my-submissions', 'Api\MobileApiController@getSubmissions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 $router->get('/api/health', 'Api\SystemController@health');
 $router->get('/api/properties', 'Api\PropertyController@index');
 $router->post('/api/contact', 'Api\ApiEnquiryController@store');
@@ -8,6 +35,7 @@ $router->post('/api/property-inquiry', 'Api\ApiEnquiryController@propertyInquiry
 
 // AI Assistant API Routes
 $router->post('/api/ai/chat', 'AIAssistantController@chat');
+$router->post('/api/v2/mobile/ai/parse-lead', 'AIAssistantController@parseLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Dependency Injection Container Routes
 require_once __DIR__ . '/container.php';
@@ -65,6 +93,13 @@ $router->get('/api/mlm/network-tree', 'MLMController@getNetworkTree');
 $router->get('/api/mlm/commission-history', 'MLMController@getCommissionHistory');
 
 // AI Valuation API Routes
-$router->post('/api/ai-valuation/calculate', 'AIValuationController@calculateValuation');
+$router->post('/api/ai-valuation/calculator', 'AIValuationController@calculateValuation');
 $router->get('/api/ai-valuation/market-trends', 'AIValuationController@getMarketTrends');
 $router->post('/api/ai-valuation/investment-analysis', 'AIValuationController@getInvestmentAnalysis');
+
+// Legacy Mobile API Routes (Backward Compatibility)
+$router->get('/api/v1/mobile/properties', 'Api\MobileApiController@properties');
+$router->get('/api/v1/mobile/properties/{id}', 'Api\MobileApiController@property');
+$router->get('/api/v1/mobile/leads', 'Api\MobileApiController@leads');
+$router->post('/api/v1/mobile/leads', 'Api\MobileApiController@submitLead');
+$router->get('/api/v1/mobile/user/profile', 'Api\MobileApiController@userProfile');

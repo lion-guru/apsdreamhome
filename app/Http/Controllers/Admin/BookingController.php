@@ -235,10 +235,3 @@ class BookingController extends AdminController
 }
 
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Api\BookingController.php
-
-function book()
-    {
-        if ($this->request()->method() !== 'POST') {
-            return $this->jsonError('Method not allowed', 405);
-        }

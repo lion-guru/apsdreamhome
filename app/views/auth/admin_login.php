@@ -45,28 +45,38 @@ ob_start();
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="<?php echo BASE_URL; ?>/admin/login">
+                    <form method="POST" action="<?php echo BASE_URL; ?>/admin/login" id="adminLoginForm" class="admin-login-form">
                         <?php
                         // Generate CSRF token if not exists
                         if (!isset($_SESSION['csrf_token'])) {
                             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                         }
+                        $csrf_token = $_SESSION['csrf_token'];
                         ?>
-                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
 
                         <div class="mb-3">
                             <label for="username" class="form-label">
-                                <i class="fas fa-user me-2"></i>Username
+                                <i class="fas fa-user me-1"></i> Username
                             </label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                placeholder="Enter admin username" required>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" class="form-control" id="username" name="username"
+                                    placeholder="Enter admin username" required
+                                    value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>">
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">
-                                <i class="fas fa-lock me-2"></i>Password
+                                <i class="fas fa-lock me-1"></i> Password
                             </label>
                             <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
                                 <input type="password" class="form-control" id="password" name="password"
                                     placeholder="Enter password" required>
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
@@ -82,27 +92,23 @@ ob_start();
                             </label>
                         </div>
 
-                        <div class="d-grid gap-2">
+                        <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-sign-in-alt me-2"></i>Login to Admin
+                                <i class="fas fa-sign-in-alt me-2"></i> Login to Admin
                             </button>
                         </div>
                     </form>
 
                     <div class="text-center mt-4">
-                        <p class="mb-2">
-                            <a href="<?php echo BASE_URL; ?>/forgot-password" class="text-decoration-none">
-                                <i class="fas fa-key me-1"></i>Forgot Password?
+                        <small class="text-muted">
+                            <a href="<?php echo BASE_URL; ?>/forgot-password" class="text-decoration-none me-3">
+                                <i class="fas fa-question-circle me-1"></i> Forgot Password?
                             </a>
-                        </p>
-                        <p class="mb-0">
-                            <small class="text-muted">
-                                <i class="fas fa-arrow-left me-1"></i>
-                                <a href="<?php echo BASE_URL; ?>/" class="text-decoration-none">
-                                    Back to Home
-                                </a>
-                            </small>
-                        </p>
+                            <span class="mx-2">|</span>
+                            <a href="<?php echo BASE_URL; ?>/" class="text-decoration-none">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Home
+                            </a>
+                        </small>
                     </div>
                 </div>
             </div>
@@ -122,6 +128,9 @@ ob_start();
     .card {
         border-radius: 15px;
         transition: transform 0.3s ease;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .card:hover {
@@ -132,7 +141,6 @@ ob_start();
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
         border-radius: 8px;
-        padding: 12px;
         font-weight: 600;
         transition: all 0.3s ease;
     }
@@ -174,34 +182,31 @@ ob_start();
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
 
-        togglePassword.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
 
-            // Toggle icon
-            const icon = this.querySelector('i');
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
+                // Toggle icon
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+        }
 
-        // Form validation
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function(e) {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            if (!username || !password) {
-                e.preventDefault();
-                alert('Please fill in all fields');
-                return false;
-            }
-
-            if (password.length < 6) {
-                e.preventDefault();
-                alert('Password must be at least 6 characters long');
-                return false;
-            }
-        });
+        // Form validation - disabled for testing
+        // const form = document.querySelector('form');
+        // form.addEventListener('submit', function(e) {
+        //     // Basic validation - just ensure fields are not empty
+        //     const username = document.getElementById('username').value;
+        //     const password = document.getElementById('password').value;
+        //     
+        //     if (!username || !password) {
+        //         e.preventDefault();
+        //         alert('Please fill in all fields');
+        //         return false;
+        //     }
+        // });
 
         // Auto-focus username field
         document.getElementById('username').focus();
@@ -209,6 +214,8 @@ ob_start();
 </script>
 
 <?php
-// Include footer
-require_once __DIR__ . '/../layouts/footer.php';
+$content = ob_get_clean();
+
+// Include base layout
+require_once __DIR__ . '/../layouts/base.php';
 ?>

@@ -176,11 +176,8 @@ class ErrorHandler
     {
         self::render(401, $message);
     }
-}
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\ErrorHandler.php
-
-function handleError($errno, $errstr, $errfile, $errline) {
+    public static function handleError($errno, $errstr, $errfile, $errline) {
         // Error types mapping
         $errorTypes = [
             E_ERROR => 'Fatal Error',
@@ -202,13 +199,15 @@ function handleError($errno, $errstr, $errfile, $errline) {
 
         $type = $errorTypes[$errno] ?? 'Unknown Error';
 
-        // Log the error
-        AdminLogger::logError($errstr, [
-            'type' => $type,
-            'file' => $errfile,
-            'line' => $errline,
-            'errno' => $errno
-        ]);
+        // Log the error using the global AdminLogger or local fallback
+        if (class_exists('AdminLogger')) {
+            \AdminLogger::logError($errstr, [
+                'type' => $type,
+                'file' => $errfile,
+                'line' => $errline,
+                'errno' => $errno
+            ]);
+        }
 
         // Determine if error should be displayed
         if (ini_get('display_errors')) {
@@ -218,14 +217,18 @@ function handleError($errno, $errstr, $errfile, $errline) {
             echo "File: $errfile, Line: $errline";
             echo "</div>";
         }
-function handleException($exception) {
+    }
+
+    public static function handleException($exception) {
         // Log the exception
-        AdminLogger::logError($exception->getMessage(), [
-            'type' => get_class($exception),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTraceAsString()
-        ]);
+        if (class_exists('AdminLogger')) {
+            \AdminLogger::logError($exception->getMessage(), [
+                'type' => get_class($exception),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString()
+            ]);
+        }
 
         // Determine if exception should be displayed
         if (ini_get('display_errors')) {
@@ -236,7 +239,9 @@ function handleException($exception) {
             echo "<pre>" . $exception->getTraceAsString() . "</pre>";
             echo "</div>";
         }
-function initialize() {
+    }
+
+    public static function initialize() {
         // Set custom error handler
         set_error_handler([self::class, 'handleError']);
 
@@ -248,3 +253,5 @@ function initialize() {
             error_reporting(E_ALL);
             ini_set('display_errors', 1);
         }
+    }
+}

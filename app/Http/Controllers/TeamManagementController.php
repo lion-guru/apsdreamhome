@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-**
+/**
  * Team Management Controller
  * Comprehensive team management system with hierarchy, performance, and communication
  */

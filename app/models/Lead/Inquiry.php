@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Lead;
 
 use App\Core\UnifiedModel;
 

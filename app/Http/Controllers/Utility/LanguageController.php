@@ -83,7 +83,7 @@ class LanguageController extends BaseController
      */
     public function setLanguage()
     {
-        $lang_code = $_GET['lang'] ?? Security::sanitize($_POST['lang']) ?? '';
+        $lang_code = $_GET['lang'] ?? (isset($_POST['lang']) ? Security::sanitize($_POST['lang']) : '');
 
         if (empty($lang_code) || !isset($this->supported_languages[$lang_code])) {
             $lang_code = $this->detectLanguage();
@@ -518,8 +518,8 @@ class LanguageController extends BaseController
             $this->supported_languages[$language_code] = [
                 'name' => $language_name,
                 'native_name' => $native_name,
-                'flag' => Security::sanitize($_POST['flag']) ?? '🌐',
-                'rtl' => isset(Security::sanitize($_POST['rtl'])) ? true : false
+                'flag' => isset($_POST['flag']) ? Security::sanitize($_POST['flag']) : '🌐',
+                'rtl' => isset($_POST['rtl']) ? true : false
             ];
 
             // Create empty translation file based on English
