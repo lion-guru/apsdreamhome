@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lead;
-use App\Models\LeadActivity;
+use App\Models\Lead\Lead;
+use App\Models\Lead\LeadActivity;
 use App\Models\LeadNote;
 use App\Models\LeadFile;
 use App\Models\LeadTag;
 use App\Models\LeadStatus;
 use App\Models\LeadSource;
-use App\Models\User;
+use App\Models\User\User;
+use App\Core\Security;
 
 /**
  * API Lead Controller - Custom Framework Version
@@ -18,7 +19,12 @@ use App\Models\User;
  */
 class ApiLeadController extends Controller
 {
-    public function __construct() {}
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = \App\Core\Database::getInstance();
+    }
 
     /**
      * Get all leads with filtering and pagination
@@ -335,7 +341,7 @@ class ApiLeadController extends Controller
                 'file_type' => $file['type'],
                 'file_size' => $file['size'],
                 'description' => Security::sanitize($_POST['description']) ?? '',
-                'is_private' => isset(Security::sanitize($_POST['is_private'])) ? Security::sanitize($_POST['is_private']) === 'true' : false,
+                'is_private' => isset($_POST['is_private']) ? Security::sanitize($_POST['is_private']) === 'true' : false,
                 'uploaded_by' => $currentUser->id,
             ];
 
@@ -568,13 +574,13 @@ class ApiLeadController extends Controller
     {
         try {
             // Get total leads count
-            $totalLeads = count(Lead::all());
+            $totalLeads = count(Lead::all()->toArray());
 
             // Get leads by status
             $leadsByStatus = [];
             $statuses = LeadStatus::active();
             foreach ($statuses as $status) {
-                $count = count(array_filter(Lead::all(), function ($lead) use ($status) {
+                $count = count(array_filter(Lead::all()->toArray(), function ($lead) use ($status) {
                     return $lead->status === $status->name;
                 }));
                 if ($count > 0) {
@@ -586,7 +592,7 @@ class ApiLeadController extends Controller
             $leadsBySource = [];
             $sources = LeadSource::active();
             foreach ($sources as $source) {
-                $count = count(array_filter(Lead::all(), function ($lead) use ($source) {
+                $count = count(array_filter(Lead::all()->toArray(), function ($lead) use ($source) {
                     return $lead->source === $source->name;
                 }));
                 if ($count > 0) {
@@ -596,7 +602,7 @@ class ApiLeadController extends Controller
 
             // Get recent activities (last 10)
             $recentActivities = [];
-            $activities = LeadActivity::all();
+            $activities = LeadActivity::all()->toArray();
             usort($activities, function ($a, $b) {
                 return strtotime($b->created_at ?? '2020-01-01') - strtotime($a->created_at ?? '2020-01-01');
             });
@@ -645,7 +651,7 @@ class ApiLeadController extends Controller
      */
     private function buildLeadQuery($search, $status, $source, $assignedTo, $tag, $dateFrom, $dateTo, $sortField, $sortDirection, $currentUser)
     {
-        $leads = Lead::all();
+        $leads = Lead::all()->toArray();
 
         // Apply search filter
         if ($search) {
