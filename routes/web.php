@@ -8,10 +8,10 @@ require_once __DIR__ . '/router.php';
 $router = new Router();
 
 // Main routes - Public Pages
-$router->get('/', 'Public\\PageController@home');
-$router->get('/about', 'Public\\PageController@about');
-$router->get('/contact', 'Public\\PageController@contact');
-$router->post('/contact', 'Public\\PageController@submitContact');
+$router->get('/', 'Front\\PageController@home');
+$router->get('/about', 'Front\\PageController@about');
+$router->get('/contact', 'Front\\PageController@contact');
+$router->post('/contact', 'Front\\PageController@submitContact');
 
 // Customer Authentication
 $router->get('/register', 'Auth\CustomerAuthController@register');
@@ -42,41 +42,48 @@ $router->post('/dashboard/favorites/remove', 'DashboardController@removeFavorite
 $router->get('/dashboard/inquiries', 'DashboardController@inquiries');
 $router->post('/dashboard/inquiries/submit', 'DashboardController@submitInquiry');
 $router->get('/associate/dashboard', 'DashboardController@associate');
+$router->get('/team/genealogy', 'MLMController@genealogy');
+$router->get('/api/mlm/tree', 'MLMController@getNetworkTree');
 
 // Property routes
 $router->get('/properties', 'Property\PropertyController@index');
 $router->get('/properties/{id}', 'Property\PropertyController@show');
 
 // Project routes
-$router->get('/projects', 'ProjectController@index');
-$router->get('/projects/{id}', 'ProjectController@detail');
-$router->get('/projects/suyoday-colony', 'Public\PageController@suyodayColony');
-$router->get('/projects/raghunat-nagri', 'Public\PageController@raghunatNagri');
-$router->get('/projects/braj-radha-nagri', 'Public\PageController@brajRadhaNagri');
-$router->get('/projects/budh-bihar-colony', 'Public\PageController@budhBiharColony');
-$router->get('/projects/awadhpuri', 'Public\PageController@awadhpuri');
+$router->get('/projects', 'Admin\ProjectController@index');
+$router->get('/projects/{id}', 'Admin\ProjectController@detail');
+$router->get('/projects/suyoday-colony', 'Front\PageController@suyodayColony');
+$router->get('/projects/raghunat-nagri', 'Front\PageController@raghunatNagri');
+$router->get('/projects/braj-radha-nagri', 'Front\PageController@brajRadhaNagri');
+$router->get('/projects/budh-bihar-colony', 'Front\PageController@budhBiharColony');
+$router->get('/projects/awadhpuri', 'Front\PageController@awadhpuri');
 
 // Admin routes
-$router->get('/admin', 'App\Http\Controllers\AdminController@dashboard');
-$router->get('/admin/dashboard', 'App\Http\Controllers\AdminController@dashboard');
+$router->get('/admin', 'App\Http\Controllers\Admin\AdminController@dashboard');
+$router->get('/admin/dashboard', 'App\Http\Controllers\Admin\AdminController@dashboard');
 $router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
 $router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
 $router->get('/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
 
 // Additional routes
-$router->get('/career', 'Public\PageController@careers');
-$router->get('/careers/apply', 'Public\PageController@careerApply');
-$router->post('/careers/apply', 'Public\PageController@submitCareerApplication');
-$router->get('/company/projects', 'Public\PageController@projects');
-$router->get('/blog', 'Public\PageController@blog');
-$router->get('/blog/{slug}', 'Public\PageController@blogPost');
-$router->get('/faq', 'Public\PageController@faq');
-$router->get('/team', 'Public\PageController@team');
-$router->get('/testimonials', 'Public\PageController@testimonials');
+$router->get('/career', 'Front\PageController@careers');
+$router->get('/careers/apply', 'Front\PageController@careerApply');
+$router->post('/careers/apply', 'Front\PageController@submitCareerApplication');
+$router->get('/company/projects', 'Front\PageController@projects');
+$router->get('/blog', 'Front\PageController@blog');
+$router->get('/blog/{slug}', 'Front\PageController@blogPost');
+$router->get('/faq', 'Front\PageController@faq');
+$router->get('/team', 'Front\PageController@team');
+$router->get('/testimonials', 'Front\PageController@testimonials');
 $router->get('/gallery', 'GalleryController@index');
 $router->get('/gallery/project/{projectId}', 'GalleryController@project');
 $router->get('/resell', 'ResellController@index');
+
+// Map routes
 $router->get('/map', 'MapController@index');
 $router->get('/map/properties-data', 'MapController@getPropertiesData');
 $router->get('/map/search-bounds', 'MapController@searchByBounds');
 $router->get('/map/location-suggestions', 'MapController@getLocationSuggestions');
+
+// API Routes
+require_once __DIR__ . '/api.php';
