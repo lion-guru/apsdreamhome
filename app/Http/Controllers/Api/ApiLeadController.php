@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Models\Lead\Lead;
 use App\Models\Lead\LeadActivity;
 use App\Models\LeadNote;
@@ -17,12 +17,13 @@ use App\Core\Security;
  * API Lead Controller - Custom Framework Version
  * Handles all lead-related API endpoints
  */
-class ApiLeadController extends Controller
+class ApiLeadController extends BaseController
 {
     protected $db;
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = \App\Core\Database::getInstance();
     }
 
