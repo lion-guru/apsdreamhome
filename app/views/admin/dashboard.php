@@ -347,7 +347,7 @@ ob_start();
 </div>
 
 <style>
-    <style> :root {
+    :root {
         --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         --glass-bg: rgba(255, 255, 255, 0.9);
         --glass-border: rgba(255, 255, 255, 0.3);
