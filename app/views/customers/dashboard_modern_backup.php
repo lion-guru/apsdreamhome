@@ -1,29 +1,26 @@
 /**
- * dashboard_modern - APS Dream Home Component
- * 
- * @package APS Dream Home
- * @version 1.0.0
- * @author APS Dream Home Team
- * @copyright 2026 APS Dream Home
- * 
- * Description: Handles dashboard modern functionality
- * 
- * Features:
- * - Secure input validation
- * - Comprehensive error handling
- * - Performance optimization
- * - Database integration
- * - Session management
- * - CSRF protection
- * 
- * @see https://apsdreamhome.com/docs
- */
-<?php
-
-// TODO: Add proper error handling with try-catch blocks
-
-PE html>
+* dashboard_modern - APS Dream Home Component
+*
+* @package APS Dream Home
+* @version 1.0.0
+* @author APS Dream Home Team
+* @copyright 2026 APS Dream Home
+*
+* Description: Handles dashboard modern functionality
+*
+* Features:
+* - Secure input validation
+* - Comprehensive error handling
+* - Performance optimization
+* - Database integration
+* - Session management
+* - CSRF protection
+*
+* @see https://apsdreamhome.com/docs
+*/
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -622,17 +619,23 @@ PE html>
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Customer Header -->
     <header class="customer-header">
         <nav class="customer-nav">
             <a href="#" class="customer-logo">
-                <img src="/public/assets/images/logo/apslogo.png" alt="APS Dream Home">
+                <img src="/assets/images/logo/apslogo.png" alt="APS Dream Home">
                 <h3>APS Dream Home</h3>
             </a>
 
@@ -650,7 +653,7 @@ PE html>
                 </button>
 
                 <div class="user-profile">
-                    <img src="/public/assets/images/user/default-avatar.jpg" alt="User" class="user-avatar">
+                    <img src="/assets/images/user/default-avatar.jpg" alt="User" class="user-avatar">
                     <span>John Doe</span>
                     <i class="bi bi-chevron-down"></i>
                 </div>
@@ -665,7 +668,7 @@ PE html>
             <div class="hero-content">
                 <h1 class="hero-title">Find Your Dream Home</h1>
                 <p class="hero-subtitle">Discover the perfect property from our exclusive collection</p>
-                
+
                 <div class="hero-search">
                     <i class="bi bi-search"></i>
                     <input type="text" placeholder="Search by location, property type, or features...">
@@ -720,7 +723,7 @@ PE html>
                 <!-- Property Card 1 -->
                 <div class="property-card">
                     <div style="position: relative;">
-                        <img src="/public/assets/images/hero/luxury-home-1.jpg" alt="Property" class="property-image">
+                        <img src="/assets/images/hero/luxury-home-1.jpg" alt="Property" class="property-image">
                         <span class="property-badge">Featured</span>
                         <button class="property-favorite">
                             <i class="bi bi-heart"></i>
@@ -753,7 +756,7 @@ PE html>
                 <!-- Property Card 2 -->
                 <div class="property-card">
                     <div style="position: relative;">
-                        <img src="/public/assets/images/hero/luxury-home-2.jpg" alt="Property" class="property-image">
+                        <img src="/assets/images/hero/luxury-home-2.jpg" alt="Property" class="property-image">
                         <span class="property-badge">New</span>
                         <button class="property-favorite active">
                             <i class="bi bi-heart-fill"></i>
@@ -786,7 +789,7 @@ PE html>
                 <!-- Property Card 3 -->
                 <div class="property-card">
                     <div style="position: relative;">
-                        <img src="/public/assets/images/property-banner.jpg" alt="Property" class="property-image">
+                        <img src="/assets/images/property-banner.jpg" alt="Property" class="property-image">
                         <span class="property-badge">Hot Deal</span>
                         <button class="property-favorite">
                             <i class="bi bi-heart"></i>
@@ -929,9 +932,9 @@ PE html>
                 e.stopPropagation();
                 const btn = e.currentTarget;
                 const icon = btn.querySelector('i');
-                
+
                 btn.classList.toggle('active');
-                
+
                 if (btn.classList.contains('active')) {
                     icon.className = 'bi bi-heart-fill';
                     this.showNotification('Added to favorites', 'success');
@@ -945,7 +948,7 @@ PE html>
                 e.stopPropagation();
                 const btn = e.currentTarget;
                 const action = btn.textContent.trim();
-                
+
                 if (action === 'View Details') {
                     this.viewPropertyDetails(btn.closest('.property-card'));
                 } else if (action === 'Schedule Visit') {
@@ -971,7 +974,7 @@ PE html>
                 e.preventDefault();
                 const card = e.currentTarget;
                 const title = card.querySelector('.quick-action-title').textContent;
-                
+
                 console.log('Quick action:', title);
                 this.showNotification(`Opening ${title}`, 'info');
             }
@@ -979,7 +982,7 @@ PE html>
             setupSearch() {
                 const searchInput = document.querySelector('.hero-search input');
                 const searchBtn = document.querySelector('.hero-search button');
-                
+
                 if (searchInput && searchBtn) {
                     searchBtn.addEventListener('click', () => {
                         this.performSearch(searchInput.value);
@@ -1001,7 +1004,7 @@ PE html>
 
                 console.log('Searching for:', query);
                 this.showNotification(`Searching for "${query}"...`, 'info');
-                
+
                 // Simulate search
                 setTimeout(() => {
                     this.showNotification(`Found 12 properties matching "${query}"`, 'success');
@@ -1056,9 +1059,9 @@ PE html>
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 `;
-                
+
                 document.body.appendChild(notification);
-                
+
                 // Auto-hide after 3 seconds
                 setTimeout(() => {
                     notification.remove();
@@ -1094,15 +1097,16 @@ PE html>
         }
     </script>
 </body>
+
 </html>
 
 
 // Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\views\admin\dashboard_modern.php
 
 function updateStats() {
-            // This would connect to your backend API
-            console.log('Updating dashboard stats...');
-        }
+// This would connect to your backend API
+console.log('Updating dashboard stats...');
+}
 //
 // PERFORMANCE OPTIMIZATION GUIDELINES
 //

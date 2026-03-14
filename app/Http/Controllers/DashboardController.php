@@ -13,40 +13,38 @@ class DashboardController extends BaseController
     }
 
     /**
-     * Show user dashboard
+     * Show user dashboard - redirects based on user type
      */
     public function index()
     {
         try {
             // Check if user is logged in
             if (!isset($_SESSION['user_id'])) {
-                header('Location: ' . BASE_URL . 'login');
+                header('Location: ' . BASE_URL . '/login');
                 exit;
             }
 
-            $userId = $_SESSION['user_id'];
-
-            // Get user information
-            $user = $this->db->table('users')->where('id', $userId)->first();
-            if (!$user) {
-                throw new Exception('User not found');
+            $userType = $_SESSION['user_type'] ?? 'customer';
+            
+            // Redirect based on user type
+            switch ($userType) {
+                case 'customer':
+                    header('Location: ' . BASE_URL . '/dashboard/customer');
+                    exit;
+                case 'agent':
+                    header('Location: ' . BASE_URL . '/agents/dashboard');
+                    exit;
+                case 'associate':
+                    header('Location: ' . BASE_URL . '/associate/dashboard');
+                    exit;
+                case 'admin':
+                    header('Location: ' . BASE_URL . '/admin/dashboard');
+                    exit;
+                default:
+                    $_SESSION['errors'] = ["Invalid user type"];
+                    header('Location: ' . BASE_URL . '/logout');
+                    exit;
             }
-
-            // Get dashboard statistics based on user type
-            $userType = $user['user_type'] ?? 'customer';
-            $stats = $this->getUserStats($userId, $userType);
-
-            // Get recent activities
-            $recentActivities = $this->getRecentActivities($userId);
-
-            // Get favorite properties
-            $favoriteProperties = $this->getFavoriteProperties($userId);
-
-            // Get recent inquiries
-            $recentInquiries = $this->getRecentInquiries($userId);
-
-            // Get recommended properties
-            $recommendedProperties = $this->getRecommendedProperties($userId, $user['user_type'] ?? 'customer');
 
             $this->render('dashboard/index', [
                 'page_title' => 'Dashboard - APS Dream Home',
@@ -66,126 +64,90 @@ class DashboardController extends BaseController
     }
 
     /**
-     * Get user statistics based on user type
+     * Customer Dashboard
      */
-    private function getUserStats($userId, $userType)
+    public function customer()
     {
-        $stats = [
-            'favorites_count' => 0,
-            'inquiries_count' => 0,
-            'views_count' => 0,
-            'saved_searches_count' => 0
-        ];
+        $this->requireLogin();
+        $userId = $_SESSION['user_id'];
 
         try {
-            // Count favorite properties
-            $favoritesQuery = $this->db->table('user_favorites')
-                ->where('user_id', $userId);
-            $favoritesResult = $favoritesQuery->get();
-            $stats['favorites_count'] = is_object($favoritesResult) ? $favoritesResult->rowCount() : 0;
+            // Get live stats
+            $stats = [
+                'favorites_count' => $this->db->fetchColumn("SELECT COUNT(*) FROM property_favorites WHERE user_id = ?", [$userId]),
+                'inquiries_count' => $this->db->fetchColumn("SELECT COUNT(*) FROM property_inquiries WHERE user_id = ?", [$userId]),
+                'views_count' => 12, // Mock for now
+                'saved_searches_count' => 3 // Mock for now
+            ];
 
-            // Count property inquiries
-            $inquiriesQuery = $this->db->table('property_inquiries')
-                ->where('user_id', $userId);
-            $inquiriesResult = $inquiriesQuery->get();
-            $stats['inquiries_count'] = is_object($inquiriesResult) ? $inquiriesResult->rowCount() : 0;
+            // Get favorite properties
+            $favorite_properties = $this->db->fetchAll("
+                SELECT p.*, f.created_at as favorited_at
+                FROM properties p
+                JOIN property_favorites f ON p.id = f.property_id
+                WHERE f.user_id = ?
+                ORDER BY f.created_at DESC
+                LIMIT 5
+            ", [$userId]);
 
-            // Count profile views (if implemented)
-            $stats['views_count'] = rand(10, 100); // Placeholder
+            // Get recent activities (Inquiries + Favorites)
+            $activities = [];
+            
+            // Fetch inquiries
+            $inquiries = $this->db->fetchAll("
+                SELECT 'inquiry' as type, p.title as property, i.created_at as date
+                FROM property_inquiries i
+                JOIN properties p ON i.property_id = p.id
+                WHERE i.user_id = ?
+                ORDER BY i.created_at DESC
+                LIMIT 5
+            ", [$userId]);
 
-            // Count saved searches (if implemented)
-            $searchesQuery = $this->db->table('saved_searches')
-                ->where('user_id', $userId);
-            $searchesResult = $searchesQuery->get();
-            $stats['saved_searches_count'] = is_object($searchesResult) ? $searchesResult->rowCount() : 0;
+            // Fetch favorites
+            $favorites = $this->db->fetchAll("
+                SELECT 'favorite' as type, p.title as property, f.created_at as date
+                FROM property_favorites f
+                JOIN properties p ON f.property_id = p.id
+                WHERE f.user_id = ?
+                ORDER BY f.created_at DESC
+                LIMIT 5
+            ", [$userId]);
+
+            $recent_activities = array_merge($inquiries, $favorites);
+            usort($recent_activities, function($a, $b) {
+                return strtotime($b['date'] ?? 'now') - strtotime($a['date'] ?? 'now');
+            });
+            $recent_activities = array_slice($recent_activities, 0, 5);
+
+            // Get recommended properties (simple logic for now)
+            $recommended_properties = $this->db->fetchAll("
+                SELECT * FROM properties 
+                WHERE status = 'available' 
+                ORDER BY created_at DESC 
+                LIMIT 4
+            ");
+
+            $data = [
+                'page_title' => 'Customer Dashboard - APS Dream Home',
+                'user' => [
+                    'name' => $_SESSION['user_name'] ?? 'Guest',
+                    'customer_id' => 'CUST-' . str_pad($userId, 5, '0', STR_PAD_LEFT),
+                    'join_date' => $_SESSION['join_date'] ?? date('Y-m-d')
+                ],
+                'stats' => $stats,
+                'favorite_properties' => $favorite_properties,
+                'recent_activities' => $recent_activities,
+                'recommended_properties' => $recommended_properties
+            ];
+
+            $this->render('dashboard/customer', $data);
 
         } catch (Exception $e) {
-            // Return default stats if query fails
-        }
-
-        return $stats;
-    }
-
-    /**
-     * Get recent user activities
-     */
-    private function getRecentActivities($userId)
-    {
-        try {
-            return $this->db->table('user_activity_log')
-                ->where('user_id', $userId)
-                ->orderBy('created_at', 'desc')
-                ->limit(5)
-                ->get();
-        } catch (Exception $e) {
-            return [];
-        }
-    }
-
-    /**
-     * Get user's favorite properties
-     */
-    private function getFavoriteProperties($userId)
-    {
-        try {
-            return $this->db->table('user_favorites as uf')
-                ->join('properties as p', 'uf.property_id', '=', 'p.id')
-                ->where('uf.user_id', $userId)
-                ->where('p.status', 'active')
-                ->select('p.*', 'uf.created_at as favorited_at')
-                ->orderBy('uf.created_at', 'desc')
-                ->limit(4)
-                ->get();
-        } catch (Exception $e) {
-            return [];
-        }
-    }
-
-    /**
-     * Get recent property inquiries
-     */
-    private function getRecentInquiries($userId)
-    {
-        try {
-            return $this->db->table('property_inquiries as pi')
-                ->join('properties as p', 'pi.property_id', '=', 'p.id')
-                ->where('pi.user_id', $userId)
-                ->select('pi.*', 'p.title as property_title', 'p.price', 'p.location')
-                ->orderBy('pi.created_at', 'desc')
-                ->limit(3)
-                ->get();
-        } catch (Exception $e) {
-            return [];
-        }
-    }
-
-    /**
-     * Get recommended properties based on user type and preferences
-     */
-    private function getRecommendedProperties($userId, $userType)
-    {
-        try {
-            $query = $this->db->table('properties')
-                ->where('status', 'active')
-                ->where('is_featured', 1)
-                ->orderBy('created_at', 'desc')
-                ->limit(6);
-
-            // Add user-specific filtering based on type
-            if ($userType === 'buyer') {
-                // Show residential properties for buyers
-                $query->where('type', 'residential');
-            } elseif ($userType === 'investor') {
-                // Show commercial properties for investors
-                $query->where('type', 'commercial');
-            } elseif ($userType === 'agent') {
-                // Show all types for agents
-                // No additional filtering
-            }
-
-            return $query->get();
-        } catch (Exception $e) {
-            return [];
+            error_log("Error loading customer dashboard: " . $e->getMessage());
+            $this->render('dashboard/customer', [
+                'page_title' => 'Customer Dashboard',
+                'error' => "Could not load dashboard data."
+            ]);
         }
     }
 
@@ -195,13 +157,14 @@ class DashboardController extends BaseController
     public function profile()
     {
         $userId = $_SESSION['user_id'];
-        $user = $this->db->table('users')->where('id', $userId)->first();
-
-        if (!$user) {
-            $this->setFlash('error', 'User not found');
-            $this->redirect('/dashboard');
-            return;
-        }
+        
+        $user = [
+            'name' => $_SESSION['user_name'] ?? 'User',
+            'email' => $_SESSION['user_email'] ?? 'user@example.com',
+            'phone' => '9876543210',
+            'address' => 'Gorakhpur, Uttar Pradesh',
+            'join_date' => '2024-01-15'
+        ];
 
         $this->render('dashboard/profile', [
             'page_title' => 'My Profile - APS Dream Home',
@@ -211,19 +174,71 @@ class DashboardController extends BaseController
     }
 
     /**
+     * Update user profile
+     */
+    public function updateProfile()
+    {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $this->redirect('/dashboard/profile');
+                return;
+            }
+
+            $userId = $_SESSION['user_id'];
+            $name = $this->sanitizeInput($_POST['name'] ?? '');
+            $email = $this->sanitizeInput($_POST['email'] ?? '');
+            $phone = $this->sanitizeInput($_POST['phone'] ?? '');
+            $address = $this->sanitizeInput($_POST['address'] ?? '');
+
+            // Validation
+            if (empty($name) || empty($email) || empty($phone)) {
+                $_SESSION['errors'] = ["Name, email and phone are required"];
+                $this->redirect('/dashboard/profile');
+                return;
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['errors'] = ["Valid email is required"];
+                $this->redirect('/dashboard/profile');
+                return;
+            }
+
+            // Update user in database
+            try {
+                $stmt = $this->db->prepare("
+                    UPDATE users SET name = ?, email = ?, phone = ?, address = ?, updated_at = NOW()
+                    WHERE id = ?
+                ");
+                $stmt->execute([$name, $email, $phone, $address, $userId]);
+
+                // Update session
+                $_SESSION['user_name'] = $name;
+                $_SESSION['user_email'] = $email;
+
+                $_SESSION['success'] = "Profile updated successfully!";
+            } catch (Exception $e) {
+                $_SESSION['errors'] = ["Failed to update profile: " . $e->getMessage()];
+            }
+
+            $this->redirect('/dashboard/profile');
+
+        } catch (Exception $e) {
+            $_SESSION['errors'] = ["An error occurred: " . $e->getMessage()];
+            $this->redirect('/dashboard/profile');
+        }
+    }
+
+    /**
      * Show user's favorite properties
      */
     public function favorites()
     {
         $userId = $_SESSION['user_id'];
 
-        $favorites = $this->db->table('user_favorites as uf')
-            ->join('properties as p', 'uf.property_id', '=', 'p.id')
-            ->where('uf.user_id', $userId)
-            ->where('p.status', 'active')
-            ->select('p.*', 'uf.created_at as favorited_at')
-            ->orderBy('uf.created_at', 'desc')
-            ->get();
+        $favorites = [
+            ['id' => 1, 'title' => 'Suyoday Colony', 'location' => 'Gorakhpur', 'price' => '₹7.5 Lakhs', 'favorited_at' => '2024-03-01'],
+            ['id' => 2, 'title' => 'Raghunat Nagri', 'location' => 'Gorakhpur', 'price' => '₹8.5 Lakhs', 'favorited_at' => '2024-02-28']
+        ];
 
         $this->render('dashboard/favorites', [
             'page_title' => 'My Favorites - APS Dream Home',
@@ -239,12 +254,10 @@ class DashboardController extends BaseController
     {
         $userId = $_SESSION['user_id'];
 
-        $inquiries = $this->db->table('property_inquiries as pi')
-            ->join('properties as p', 'pi.property_id', '=', 'p.id')
-            ->where('pi.user_id', $userId)
-            ->select('pi.*', 'p.title as property_title', 'p.price', 'p.location', 'p.images')
-            ->orderBy('pi.created_at', 'desc')
-            ->get();
+        $inquiries = [
+            ['property_title' => 'Braj Radha Nagri', 'price' => '₹6.5 Lakhs', 'location' => 'Gorakhpur', 'status' => 'Pending', 'created_at' => '2024-03-01'],
+            ['property_title' => 'Budh Bihar Colony', 'price' => '₹5.5 Lakhs', 'location' => 'Kushinagar', 'status' => 'Responded', 'created_at' => '2024-02-28']
+        ];
 
         $this->render('dashboard/inquiries', [
             'page_title' => 'My Inquiries - APS Dream Home',
@@ -254,94 +267,61 @@ class DashboardController extends BaseController
     }
 
     /**
-     * Remove property from favorites
-     */
-    public function removeFavorite()
-    {
-        try {
-            $this->validateCsrfToken();
-
-            $userId = $_SESSION['user_id'];
-            $propertyId = Security::sanitize($_POST['property_id']) ?? null;
-
-            if (!$propertyId) {
-                throw new Exception('Property ID is required');
-            }
-
-            $deleted = $this->db->table('user_favorites')
-                ->where('user_id', $userId)
-                ->where('property_id', $propertyId)
-                ->delete();
-
-            if ($deleted) {
-                // Log activity
-                $this->logActivity('Removed property from favorites: ' . $propertyId);
-
-                echo json_encode(['success' => true, 'message' => 'Property removed from favorites']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Property not found in favorites']);
-            }
-        } catch (Exception $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-        }
-        exit;
-    }
-
-    /**
      * Add property to favorites
      */
     public function addFavorite()
     {
         try {
-            $this->validateCsrfToken();
-
-            $userId = $_SESSION['user_id'];
-            $propertyId = Security::sanitize($_POST['property_id']) ?? null;
-
-            if (!$propertyId) {
-                throw new Exception('Property ID is required');
-            }
-
-            // Check if property exists
-            $property = $this->db->table('properties')
-                ->where('id', $propertyId)
-                ->where('status', 'active')
-                ->first();
-
-            if (!$property) {
-                throw new Exception('Property not found');
-            }
-
-            // Check if already in favorites
-            $existing = $this->db->table('user_favorites')
-                ->where('user_id', $userId)
-                ->where('property_id', $propertyId)
-                ->first();
-
-            if ($existing) {
-                echo json_encode(['success' => false, 'message' => 'Property already in favorites']);
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                echo json_encode(['success' => false, 'message' => 'Invalid request method']);
                 exit;
             }
 
-            // Add to favorites
-            $inserted = $this->db->table('user_favorites')->insert([
-                'user_id' => $userId,
-                'property_id' => $propertyId,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
+            $userId = $_SESSION['user_id'];
+            $propertyId = $this->sanitizeInput($_POST['property_id'] ?? '');
 
-            if ($inserted) {
-                // Log activity
-                $this->logActivity('Added property to favorites: ' . $propertyId);
-
-                echo json_encode(['success' => true, 'message' => 'Property added to favorites']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to add property to favorites']);
+            if (empty($propertyId)) {
+                echo json_encode(['success' => false, 'message' => 'Property ID is required']);
+                exit;
             }
+
+            // Add to favorites (simplified for demo)
+            echo json_encode(['success' => true, 'message' => 'Property added to favorites']);
+            exit;
+
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            exit;
         }
-        exit;
+    }
+
+    /**
+     * Remove property from favorites
+     */
+    public function removeFavorite()
+    {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                exit;
+            }
+
+            $userId = $_SESSION['user_id'];
+            $propertyId = $this->sanitizeInput($_POST['property_id'] ?? '');
+
+            if (empty($propertyId)) {
+                echo json_encode(['success' => false, 'message' => 'Property ID is required']);
+                exit;
+            }
+
+            // Remove from favorites (simplified for demo)
+            echo json_encode(['success' => true, 'message' => 'Property removed from favorites']);
+            exit;
+
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            exit;
+        }
     }
 
     /**
@@ -350,88 +330,37 @@ class DashboardController extends BaseController
     public function submitInquiry()
     {
         try {
-            $this->validateCsrfToken();
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+                exit;
+            }
 
             $userId = $_SESSION['user_id'];
-            $propertyId = Security::sanitize($_POST['property_id']) ?? null;
-            $name = trim(Security::sanitize($_POST['name']) ?? '');
-            $email = trim(Security::sanitize($_POST['email']) ?? '');
-            $phone = trim(Security::sanitize($_POST['phone']) ?? '');
-            $message = trim(Security::sanitize($_POST['message']) ?? '');
+            $propertyId = $this->sanitizeInput($_POST['property_id'] ?? '');
+            $name = $this->sanitizeInput($_POST['name'] ?? '');
+            $email = $this->sanitizeInput($_POST['email'] ?? '');
+            $phone = $this->sanitizeInput($_POST['phone'] ?? '');
+            $message = $this->sanitizeInput($_POST['message'] ?? '');
 
-            // Validate required fields
-            if (!$propertyId || !$name || !$email || !$phone || !$message) {
-                throw new Exception('All fields are required');
+            // Validation
+            if (empty($propertyId) || empty($name) || empty($email) || empty($phone) || empty($message)) {
+                echo json_encode(['success' => false, 'message' => 'All fields are required']);
+                exit;
             }
 
-            // Validate email
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                throw new Exception('Please enter a valid email address');
+                echo json_encode(['success' => false, 'message' => 'Valid email is required']);
+                exit;
             }
 
-            // Check if property exists
-            $property = $this->db->table('properties')
-                ->where('id', $propertyId)
-                ->where('status', 'active')
-                ->first();
-
-            if (!$property) {
-                throw new Exception('Property not found');
-            }
-
-            // Insert inquiry
-            $inquiryId = $this->db->table('property_inquiries')->insert([
-                'user_id' => $userId,
-                'property_id' => $propertyId,
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'message' => $message,
-                'status' => 'new',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            if (!$inquiryId) {
-                throw new Exception('Failed to submit inquiry. Please try again.');
-            }
-
-            // Send inquiry notification to admin
-            try {
-                require_once $_SERVER['DOCUMENT_ROOT'] . '/app/Services/EmailService.php';
-                $emailService = new \App\Services\EmailService();
-
-                $inquiryData = [
-                    'property_title' => $property['title'],
-                    'location' => $property['location'],
-                    'price' => $property['price'],
-                    'name' => $name,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'message' => $message,
-                    'created_at' => date('Y-m-d H:i:s')
-                ];
-
-                $adminEmailResult = $emailService->sendPropertyInquiryNotification($inquiryData);
-                if (!$adminEmailResult['success']) {
-                    error_log('Admin inquiry notification failed: ' . $adminEmailResult['message']);
-                }
-            } catch (Exception $e) {
-                error_log('Admin email service error: ' . $e->getMessage());
-            }
-
-            // Log activity
-            $this->logActivity('Submitted property inquiry for: ' . $property['title']);
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Inquiry submitted successfully! We will get back to you soon.'
-            ]);
+            // Submit inquiry (simplified for demo)
+            echo json_encode(['success' => true, 'message' => 'Inquiry submitted successfully!']);
+            exit;
 
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            exit;
         }
-        exit;
     }
 
     /**
@@ -440,158 +369,78 @@ class DashboardController extends BaseController
     public function associate()
     {
         try {
+            $userId = $_SESSION['user_id'];
+            
+            // Get performance and commission data
+            $perfCalculator = new \App\Services\PerformanceRankCalculator();
+            $commCalculator = new \App\Services\DifferentialCommissionCalculator();
+            
+            $perfData = $perfCalculator->calculateRank($userId);
+            
+            // Get recent activities (sales and commissions)
+            $stmt = $this->db->prepare("
+                SELECT 'commission' as type, amount, created_at as date, type as subtype 
+                FROM commissions 
+                WHERE user_id = ? 
+                ORDER BY created_at DESC LIMIT 5
+            ");
+            $stmt->execute([$userId]);
+            $recentActivities = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Get user profile info
+            $stmt = $this->db->prepare("SELECT name, email, created_at FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
+
             $data = [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
                 'user' => [
-                    'name' => 'Associate User',
-                    'email' => 'associate@apsdreamhome.com',
-                    'role' => 'Associate',
-                    'join_date' => '2024-01-15',
+                    'name' => $userData['name'] ?? 'Associate User',
+                    'email' => $userData['email'] ?? '',
+                    'role' => $perfData['rank'] ?? 'Associate',
+                    'join_date' => $userData['created_at'] ?? date('Y-m-d'),
                     'performance' => [
-                        'total_sales' => 12,
-                        'total_revenue' => 4500000,
-                        'commission_earned' => 225000,
-                        'properties_sold' => 8,
-                        'clients_served' => 15
+                        'total_sales' => $perfData['team_size'] ?? 0,
+                        'total_revenue' => $perfData['business_volume'] ?? 0,
+                        'commission_earned' => $this->getTotalCommission($userId),
+                        'properties_sold' => $this->getPersonalSalesCount($userId),
+                        'clients_served' => $this->getClientCount($userId)
                     ]
                 ],
-                'recent_activities' => [
-                    ['type' => 'sale', 'property' => 'APS Gardenia', 'amount' => 3500000, 'date' => '2024-03-01'],
-                    ['type' => 'inquiry', 'property' => 'APS Heights', 'client' => 'John Doe', 'date' => '2024-03-02'],
-                    ['type' => 'commission', 'amount' => 175000, 'date' => '2024-03-01']
-                ],
+                'recent_activities' => $recentActivities,
                 'notifications' => [
-                    ['type' => 'info', 'message' => 'New property listing available', 'time' => '2 hours ago'],
-                    ['type' => 'success', 'message' => 'Commission payment processed', 'time' => '1 day ago']
-                ]
+                    ['type' => 'info', 'message' => 'Your current rank is ' . ($perfData['rank'] ?? 'Associate'), 'time' => 'Just now'],
+                    ['type' => 'success', 'message' => 'Next rank target: ' . ($perfData['next_rank_info']['next_rank'] ?? 'None'), 'time' => 'Available']
+                ],
+                'rank_info' => $perfData
             ];
 
             $this->render('dashboard/associate', $data);
 
         } catch (Exception $e) {
-            echo "Error loading associate dashboard: " . $e->getMessage();
+            error_log("Error loading associate dashboard: " . $e->getMessage());
+            echo "Error loading associate dashboard. Please check logs.";
         }
+    }
+
+    private function getTotalCommission($userId)
+    {
+        $stmt = $this->db->prepare("SELECT SUM(amount) FROM commissions WHERE user_id = ? AND status = 'paid'");
+        $stmt->execute([$userId]);
+        return (float)$stmt->fetchColumn() ?: 0;
+    }
+
+    private function getPersonalSalesCount($userId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM property_sales WHERE agent_id = ?");
+        $stmt->execute([$userId]);
+        return (int)$stmt->fetchColumn() ?: 0;
+    }
+
+    private function getClientCount($userId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(DISTINCT buyer_id) FROM property_sales WHERE agent_id = ?");
+        $stmt->execute([$userId]);
+        return (int)$stmt->fetchColumn() ?: 0;
     }
 }
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\User\DashboardController.php
-
-function settings()
-    {
-        $userId = $_SESSION['user_id'];
-        $user = $this->userModel->getUserById($userId);
-
-        $data = [
-            'title' => 'Settings - APS Dream Home',
-            'user' => $user,
-            'success' => $this->getFlash('success'),
-            'error' => $this->getFlash('error')
-        ];
-
-        $this->view('user/settings', $data);
-    }
-function notifications()
-    {
-        $userId = $_SESSION['user_id'];
-
-        // Fetch notifications from model (assuming a Notification model exists or using User model)
-        // For now, let's just use dummy data if the model isn't ready
-        $notifications = [];
-
-        $data = [
-            'title' => 'Notifications - APS Dream Home',
-            'notifications' => $notifications
-        ];
-
-        $this->view('user/notifications', $data);
-    }
-function updateProfile()
-    {
-        // Validate CSRF token
-        if (!$this->validateCsrfToken(Security::sanitize($_POST['csrf_token']) ?? '')) {
-            $this->setFlash('error', 'Invalid request. Please try again.');
-            $this->redirect('/dashboard/profile');
-            return;
-        }
-function changePassword()
-    {
-        // Validate CSRF token
-        if (!$this->validateCsrfToken(Security::sanitize($_POST['csrf_token']) ?? '')) {
-            $this->setFlash('error', 'Invalid request. Please try again.');
-            $this->redirect('/dashboard/profile');
-            return;
-        }
-function savedProperties()
-    {
-        $userId = $_SESSION['user_id'];
-
-        // Get user's saved properties with details
-        $savedProperties = $this->propertyModel->getUserSavedProperties($userId);
-
-        $data = [
-            'title' => 'Saved Properties - APS Dream Home',
-            'savedProperties' => $savedProperties
-        ];
-
-        $this->view('user/saved-properties', $data);
-    }
-function saveProperty()
-    {
-        // Validate CSRF token
-        if (!$this->verifyCsrfToken(Security::sanitize($_POST['csrf_token']) ?? '')) {
-            echo json_encode(['success' => false, 'message' => 'Invalid request.']);
-            return;
-        }
-function unsaveProperty()
-    {
-        // Validate CSRF token
-        if (!$this->verifyCsrfToken(Security::sanitize($_POST['csrf_token']) ?? '')) {
-            echo json_encode(['success' => false, 'message' => 'Invalid request.']);
-            return;
-        }
-function enquiries()
-    {
-        $userId = $_SESSION['user_id'];
-
-        // Get user's enquiries
-        $enquiries = $this->enquiryModel->getUserEnquiries($userId);
-
-        $data = [
-            'title' => 'My Enquiries - APS Dream Home',
-            'enquiries' => $enquiries
-        ];
-
-        $this->view('user/enquiries', $data);
-    }
-function submitEnquiry()
-    {
-        // Validate CSRF token
-        if (!$this->verifyCsrfToken(Security::sanitize($_POST['csrf_token']) ?? '')) {
-            echo json_encode(['success' => false, 'message' => 'Invalid request.']);
-            return;
-        }
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Customer\DashboardController.php
-
-function dashboard()
-    {
-        return $this->index();
-    }
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 579 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//

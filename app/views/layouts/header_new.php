@@ -1,21 +1,21 @@
-<?php
-/* Header */
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title ?? 'APS Dream Home'; ?></title>
-    <meta name="description" content="<?php echo $page_description ?? 'APS Dream Home - Premium Real Estate in Gorakhpur'; ?>">
-    <meta name="keywords" content="<?php echo $page_keywords ?? 'real estate, properties, gorakhpur, lucknow, up'; ?>">
-    
-    <!-- Bootstrap CSS -->
-    <link href="<?php echo BASE_URL; ?>public/assets/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link href="<?php echo BASE_URL; ?>public/assets/plugins/font-awesome/css/all.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link href="<?php echo BASE_URL; ?>public/css/style.css" rel="stylesheet">
-</head>
+<header class="premium-header fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
+                <?php $brand = $site['brand_name'] ?? 'APS Dream Home'; $logo = $site['logo_url'] ?? '/assets/images/logo/apslogo.png'; ?>
+                <img src="<?php echo BASE_URL . $logo; ?>" alt="<?php echo h($brand); ?>" class="logo me-2" style="height:32px;">
+                <span class="brand-text"><?php echo h($brand); ?></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <?php $items = json_decode($site['nav_json'] ?? '[]', true) ?: []; foreach ($items as $it): ?>
+                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL . rtrim('/' . ltrim($it['url'] ?? '#', '/'), ''); ?>"><?php echo h($it['label'] ?? ''); ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

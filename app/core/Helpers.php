@@ -1,12 +1,10 @@
 <?php
-
-// TODO: Add proper error handling with try-catch blocks
-
-
 /**
  * APS Dream Home - Helpers Class
  * Provides helper functions for views and controllers
  */
+
+namespace App\Core;
 
 class Helpers
 {
@@ -184,21 +182,26 @@ class Helpers
         
         return $links;
     }
-}
 
+    // Merged and Legacy Support Functions
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Helpers\Helpers.php
-
-function truncateText($text, $length = 100, $append = '...') {
+    public static function truncateText($text, $length = 100, $append = '...') {
         if (strlen($text) > $length) {
             $text = substr($text, 0, $length);
-            $text = substr($text, 0, strrpos($text, ' '));
+            $lastSpace = strrpos($text, ' ');
+            if ($lastSpace !== false) {
+                $text = substr($text, 0, $lastSpace);
+            }
             $text .= $append;
         }
-function sanitizeInput($input) {
+        return $text;
+    }
+
+    public static function sanitizeInput($input) {
         return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
     }
-function str_slug($str, $separator = '-') {
+
+    public static function str_slug($str, $separator = '-') {
         // Convert to lowercase
         $str = strtolower($str);
         
@@ -214,3 +217,4 @@ function str_slug($str, $separator = '-') {
         
         return $str;
     }
+}

@@ -2,8 +2,11 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-
 namespace App\Models;
+
+use App\Core\Database\Model;
+use App\Models\Lead\Lead;
+use App\Models\User\User;
 
 class LeadTag extends Model
 {
@@ -29,6 +32,24 @@ class LeadTag extends Model
     protected array $casts = [
         'is_system' => 'boolean',
     ];
+
+    /**
+     * Get all tags
+     */
+    public static function all()
+    {
+        $db = \App\Core\Database::getInstance();
+        $stmt = $db->prepare("SELECT * FROM lead_tags ORDER BY name ASC");
+        $stmt->execute();
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $tags = [];
+        foreach ($results as $result) {
+            $tags[] = new LeadTag($result);
+        }
+
+        return $tags;
+    }
 
     /**
      * Get leads that belong to this tag.

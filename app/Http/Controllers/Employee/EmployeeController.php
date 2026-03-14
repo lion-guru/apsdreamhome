@@ -1,4 +1,6 @@
 <?php
+
+namespace App\Http\Controllers\Employee;
 //
 // ERROR HANDLING CONFIGURATION
 //
@@ -6,30 +8,24 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError(,  = null,  = null) {
-     = date('Y-m-d H:i:s') . ' - ERROR: ' . ;
-    if ()  .= ' in ' . ;
-    if ()  .= ' on line ' . ;
-    error_log();
+function handleError($message, $file = null, $line = null) {
+    $error_msg = date('Y-m-d H:i:s') . ' - ERROR: ' . $message;
+    if ($file) $error_msg .= ' in ' . $file;
+    if ($line) $error_msg .= ' on line ' . $line;
+    error_log($error_msg);
     return false;
 }
 
-function safeExecute(,  = 'Operation failed') {
+function safeExecute($callback, $errorMessage = 'Operation failed') {
     try {
-        return ();
-    } catch (Exception ) {
-        handleError( . ': ' . (), (), ());
+        return $callback();
+    } catch (\Exception $e) {
+        handleError($errorMessage . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
         return null;
     }
 }
 
 //
-
-namespace App\Http\Controllers\Employee;
-
-use App\Http\Controllers\BaseController;
-use App\Models\Employee;
-use App\Models\Admin;
 use App\Models\EmployeeAttendance;
 use App\Models\Leave;
 use App\Models\Document;
@@ -1307,6 +1303,7 @@ function store()
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->back();
         }
+    }
 function show($id)
     {
         $employeeModel = $this->model('Employee');
@@ -1316,6 +1313,7 @@ function show($id)
             $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
             return $this->redirect('/admin/employees');
         }
+    }
 function edit($id)
     {
         $employeeModel = $this->model('Employee');
@@ -1325,20 +1323,21 @@ function edit($id)
             $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
             return $this->redirect('/admin/employees');
         }
+    }
 function destroy($id)
     {
         if ($this->request->method() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->back();
         }
+    }
 function offboard($id)
     {
         if ($this->request->method() !== 'POST') {
             $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
             return $this->back();
         }
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\EmployeeController.php
+    }
 
 function requireAuth()
     {
@@ -1346,20 +1345,4 @@ function requireAuth()
             $this->setFlash('error', 'Please login to access this page');
             $this->redirect('/login');
         }
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 1322 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//
+    }

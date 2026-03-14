@@ -2,9 +2,9 @@
 
 namespace App\Services\Land;
 
-use App\Core\Database;
-use App\Core\Logger;
-use App\Core\Config;
+use App\Core\Database\Database;
+use App\Services\SystemLogger as Logger;
+use App\Services\ConfigurationManager as Config;
 
 /**
  * Plotting Service - APS Dream Home
@@ -755,18 +755,35 @@ class PlottingService
     private function calculateCommissions($bookingId, $associateId, $totalAmount)
     {
         try {
-            // Direct commission for booking associate
-            $directCommission = $totalAmount * 0.02; // 2%
-            
-            $this->database->query(
-                "INSERT INTO commission_tracking (
-                    booking_id, associate_id, commission_type, commission_level,
-                    commission_amount, commission_percentage, payment_status, remarks
-                ) VALUES (?, ?, 'direct', 1, ?, ?, 'pending', 'Direct commission for plot booking')",
-                [$bookingId, $associateId, $directCommission, 2.0]
-            );
-            
-            // TODO: Implement MLM commission calculation for upline
+            // Fetch booking details to get the buyer (customer)
+            $booking = $this->database->selectOne("SELECT * FROM plot_bookings WHERE id = ?", [$bookingId]);
+            if (!$booking) return;
+
+            // Use the new DifferentialCommissionCalculator for automated MLM distribution
+            $calculator = new \App\Services\DifferentialCommissionCalculator();
+            $result = $calculator->calculate($totalAmount, $booking['customer_id'], $booking['plot_id']);
+
+            if ($result['success']) {
+                $this->logger->info('MLM Commissions distributed for booking', [
+                    'booking_id' => $bookingId,
+                    'total_distributed' => $result['total_distributed'],
+                    'recipients' => count($result['commissions'])
+                ]);
+                
+                // Also record a summary in commission_tracking for plotting-specific reports
+                $this->database->query(
+                    "INSERT INTO commission_tracking (
+                        booking_id, associate_id, commission_type, commission_level,
+                        commission_amount, commission_percentage, payment_status, remarks
+                    ) VALUES (?, ?, 'mlm_differential', 1, ?, ?, 'pending', 'Distributed via MLM Differential Logic')",
+                    [$bookingId, $associateId, $totalAmount * ($result['total_distributed'] / 100), $result['total_distributed']]
+                );
+            } else {
+                $this->logger->warning('MLM Commission calculation skipped or failed', [
+                    'booking_id' => $bookingId,
+                    'message' => $result['message'] ?? 'Unknown error'
+                ]);
+            }
             
         } catch (\Exception $e) {
             $this->logger->error('Failed to calculate commissions', [

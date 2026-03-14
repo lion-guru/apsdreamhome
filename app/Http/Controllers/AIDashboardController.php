@@ -270,19 +270,16 @@ class AIDashboardController extends BaseController
         $sql = "UPDATE ai_user_suggestions SET status = ? WHERE id = ?";
         return $this->db->execute($sql, [$status, $id]);
     }
-}
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\AI\AIDashboardController.php
-
-function getRecentWorkflows($limit = 5) {
+    public function getRecentWorkflows($limit = 5) {
         $sql = "SELECT e.*, w.name as workflow_name
                 FROM workflow_executions e
                 JOIN ai_workflows w ON e.workflow_id = w.id
                 ORDER BY e.created_at DESC LIMIT ?";
         return $this->db->fetchAll($sql, [$limit]);
     }
-function getUserProfilingStats() {
+
+    public function getUserProfilingStats() {
         $sql = "SELECT entity_type, entity_value, COUNT(*) as frequency
                 FROM ai_knowledge_graph
                 WHERE related_to_user IS NOT NULL
@@ -300,15 +297,20 @@ function getUserProfilingStats() {
         if ($resCount) {
             $stats['total_profiles'] = (int)($resCount['count'] ?? 0);
         }
-function getRecentChats($limit = 5) {
+        return $stats;
+    }
+
+    public function getRecentChats($limit = 5) {
         $sql = "SELECT * FROM ai_chat_history ORDER BY created_at DESC LIMIT ?";
         return $this->db->fetchAll($sql, [$limit]);
     }
-function getPendingSuggestions($limit = 5) {
+
+    public function getPendingSuggestions($limit = 5) {
         $sql = "SELECT * FROM ai_user_suggestions WHERE status = 'pending' ORDER BY created_at DESC LIMIT ?";
         return $this->db->fetchAll($sql, [$limit]);
     }
-function getAIInsights() {
+
+    public function getAIInsights() {
         require_once __DIR__ . '/modules/DataAnalyst.php';
         require_once __DIR__ . '/modules/NLPProcessor.php';
 
@@ -329,11 +331,16 @@ function getAIInsights() {
                 $name = $details['intent']['name'];
                 $intents[$name] = ($intents[$name] ?? 0) + 1;
             }
-function getRecentAuditLogs($limit = 10) {
+        }
+        return ['lead_insights' => $leadInsights, 'intents' => $intents];
+    }
+
+    public function getRecentAuditLogs($limit = 10) {
         $sql = "SELECT * FROM ai_audit_log ORDER BY created_at DESC LIMIT ?";
         return $this->db->fetchAll($sql, [$limit]);
     }
-function getQueueStats() {
+
+    public function getQueueStats() {
         $sql = "SELECT status, COUNT(*) as count FROM ai_jobs GROUP BY status";
         $stats = $this->db->fetchAll($sql);
 
@@ -341,3 +348,6 @@ function getQueueStats() {
         foreach ($stats as $row) {
             $formatted[$row['status']] = (int)$row['count'];
         }
+        return $formatted;
+    }
+}

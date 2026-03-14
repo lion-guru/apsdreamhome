@@ -37,6 +37,14 @@ class App
         return self::$instance;
     }
     
+    /**
+     * Get the database connection.
+     */
+    public static function database()
+    {
+        return \App\Core\Database\Database::getInstance();
+    }
+    
     private function loadConfig()
     {
         // Load configuration
@@ -74,7 +82,7 @@ class App
             // Route the request
             return $this->route($uri, $method);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->handleError($e);
         }
     }
@@ -162,7 +170,7 @@ class App
                         ]
                     ];
                     echo json_encode(['success' => true, 'data' => $properties]);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     http_response_code(500);
                     echo json_encode(['success' => false, 'error' => 'Database error']);
                 }
@@ -267,7 +275,7 @@ class App
                         ]
                     ];
                     echo json_encode(['success' => true, 'data' => $leads]);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     http_response_code(500);
                     echo json_encode(['success' => false, 'error' => 'Database error']);
                 }
@@ -317,7 +325,7 @@ class App
                         ]
                     ];
                     echo json_encode(['success' => true, 'data' => $analytics]);
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     http_response_code(500);
                     echo json_encode(['success' => false, 'error' => 'Analytics error']);
                 }
@@ -340,50 +348,50 @@ class App
         if ($uri === "" || $uri === "/") {
             return $this->loadController("HomeController", "index");
         } elseif ($uri === "/home") {
-            return $this->loadController("Public\\PageController", "home");
+            return $this->loadController("Front\\PageController", "home");
         } elseif ($uri === "/about") {
-            return $this->loadController("Public\\PageController", "about");
+            return $this->loadController("Front\\PageController", "about");
         } elseif ($uri === "/contact") {
-            return $this->loadController("Public\\PageController", "contact");
+            return $this->loadController("Front\\PageController", "contact");
         } elseif ($uri === "/resell") {
-            return $this->loadController("Public\\PageController", "resell");
+            return $this->loadController("Front\\PageController", "resell");
         } elseif ($uri === "/services") {
-            return $this->loadController("Public\\PageController", "services");
+            return $this->loadController("Front\\PageController", "services");
         } elseif ($uri === "/gallery") {
-            return $this->loadController("Public\\PageController", "gallery");
+            return $this->loadController("Front\\PageController", "gallery");
         } elseif ($uri === "/legal-services") {
-            return $this->loadController("Public\\PageController", "legalServices");
+            return $this->loadController("Front\\PageController", "legalServices");
         } elseif ($uri === "/blog") {
-            return $this->loadController("Public\\PageController", "blog");
+            return $this->loadController("Front\\PageController", "blog");
         } elseif ($uri === "/projects") {
-            return $this->loadController("Public\\PageController", "projects");
+            return $this->loadController("Front\\PageController", "projects");
         } elseif ($uri === "/careers") {
-            return $this->loadController("Public\\PageController", "careers");
+            return $this->loadController("Front\\PageController", "careers");
         } elseif ($uri === "/team") {
-            return $this->loadController("Public\\PageController", "team");
+            return $this->loadController("Front\\PageController", "team");
         } elseif ($uri === "/testimonials") {
-            return $this->loadController("Public\\PageController", "testimonials");
+            return $this->loadController("Front\\PageController", "testimonials");
         } elseif ($uri === "/faq") {
-            return $this->loadController("Public\\PageController", "faq");
+            return $this->loadController("Front\\PageController", "faq");
         } elseif ($uri === "/privacy") {
-            return $this->loadController("Public\\PageController", "privacy");
+            return $this->loadController("Front\\PageController", "privacy");
         } elseif ($uri === "/terms") {
-            return $this->loadController("Public\\PageController", "terms");
+            return $this->loadController("Front\\PageController", "terms");
         } elseif ($uri === "/sitemap") {
-            return $this->loadController("Public\\PageController", "sitemap");
+            return $this->loadController("Front\\PageController", "sitemap");
         }
         
         // Authentication routes
         elseif ($uri === "/login") {
-            return $this->loadController("Public\\AuthController", "login");
+            return $this->loadController("Front\\AuthController", "login");
         } elseif ($uri === "/login/process") {
-            return $this->loadController("Public\\AuthController", "processLogin");
+            return $this->loadController("Front\\AuthController", "processLogin");
         } elseif ($uri === "/register") {
-            return $this->loadController("Public\\AuthController", "register");
+            return $this->loadController("Front\\AuthController", "register");
         } elseif ($uri === "/register/process") {
-            return $this->loadController("Public\\AuthController", "processRegister");
+            return $this->loadController("Front\\AuthController", "processRegister");
         } elseif ($uri === "/logout") {
-            return $this->loadController("Public\\AuthController", "logout");
+            return $this->loadController("Front\\AuthController", "logout");
         }
         
         // Associate routes
@@ -610,38 +618,4 @@ class App
     {
         return $this->basePath . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '\\/') : '');
     }
-    
-    public static function database()
-    {
-        $host = '127.0.0.1';
-        $dbname = 'apsdreamhome';
-        $username = 'root';
-        $password = '';
-        
-        try {
-            $pdo = new \PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            return $pdo;
-        } catch (\PDOException $e) {
-            throw new \Exception("Database connection failed: " . $e->getMessage());
-        }
-    }
 }
-
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 629 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//

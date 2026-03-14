@@ -1,7 +1,23 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\User;
 
+use App\Core\Database\Model;
+
+/**
+ * @property int $id
+ * @property string $username
+ * @property string $email
+ * @property string $password
+ * @property string $mobile
+ * @property string $role
+ * @property string $status
+ * @property string $email_verified_at
+ * @property string $google_id
+ * @property string $last_login
+ * @property string $created_at
+ * @property string $updated_at
+ */
 class User extends Model
 {
     protected static $table = 'users';
@@ -216,20 +232,4 @@ class User extends Model
             return [];
         }
     }
-}
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\Classes\User.php
-
-/**
- * Legacy User class - redirects calls to the modern Model.
- */
-
-require_once __DIR__ . '/../../../vendor/autoload.php';
-
-use App\Models\User as ModernUser;
-
-class User extends ModernUser {
-    // This class now inherits from the modern Model
-    // and can be used as a drop-in replacement.
 }

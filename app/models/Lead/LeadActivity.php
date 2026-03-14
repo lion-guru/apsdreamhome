@@ -1,9 +1,9 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
+namespace App\Models\Lead;
 
-
-namespace App\Models;
+use App\Core\Database\Model;
+use App\Models\User\User;
 
 class LeadActivity extends Model
 {

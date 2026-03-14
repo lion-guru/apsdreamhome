@@ -31,6 +31,60 @@ class AdminController extends BaseController
     }
 
     /**
+     * Enterprise Dashboard
+     */
+    public function enterpriseDashboard()
+    {
+        // Start session if not started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Check if admin is logged in - use direct session check
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+            $_SESSION['error'] = 'Admin access required';
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
+
+        try {
+            // Get dashboard statistics
+            $stats = [
+                'total_users' => $this->getTotalUsers(),
+                'total_properties' => $this->getTotalProperties(),
+                'total_inquiries' => $this->getTotalInquiries(),
+                'total_revenue' => $this->getTotalRevenue(),
+                'active_properties' => $this->getActiveProperties(),
+                'new_users_today' => $this->getNewUsersToday(),
+                'pending_approvals' => $this->getPendingApprovals(),
+                'system_health' => $this->getSystemHealth()
+            ];
+
+            // Get recent activities
+            $recentActivities = $this->getRecentActivities();
+
+            // Get charts data
+            $chartsData = $this->getChartsData();
+
+            $this->data = array_merge($this->data, [
+                'stats' => $stats,
+                'recent_activities' => $recentActivities,
+                'charts_data' => $chartsData,
+                'page_title' => 'Enterprise Dashboard - ' . $this->getConfig('app_name'),
+                'page_description' => 'SuperAdmin Control Center'
+            ]);
+
+            return $this->render('admin/enterprise_dashboard', $this->data);
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Error loading enterprise dashboard: ' . $e->getMessage());
+            return $this->render('admin/enterprise_dashboard', [
+                'page_title' => 'Enterprise Dashboard - ' . $this->getConfig('app_name'),
+                'error' => true
+            ]);
+        }
+    }
+
+    /**
      * Admin Dashboard
      */
     public function dashboard()

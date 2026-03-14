@@ -7,55 +7,27 @@ use Illuminate\Support\Facades\Route;
  * Security Management Routes
  */
 
-Route::prefix('security')->group(function () {
-    
-    // Security testing routes
-    Route::get('/run-tests', [SecurityController::class, 'runTests'])
-        ->name('security.run-tests');
-    
-    Route::get('/score', [SecurityController::class, 'getScore'])
-        ->name('security.score');
-    
-    Route::post('/generate-report', [SecurityController::class, 'generateReport'])
-        ->name('security.generate-report');
-    
-    Route::get('/download-report/{filename}', [SecurityController::class, 'downloadReport'])
-        ->name('security.download-report');
+// Security testing routes
+$router->get('/api/security/run-tests', 'SecurityController@runTests');
+$router->get('/api/security/score', 'SecurityController@getScore');
+$router->post('/api/security/generate-report', 'SecurityController@generateReport');
+$router->get('/api/security/download-report/{filename}', 'SecurityController@downloadReport');
 
-    // Security validation routes
-    Route::post('/validate-input', [SecurityController::class, 'validateInput'])
-        ->name('security.validate-input');
-    
-    Route::post('/hash-password', [SecurityController::class, 'hashPassword'])
-        ->name('security.hash-password');
-    
-    Route::post('/verify-password', [SecurityController::class, 'verifyPassword'])
-        ->name('security.verify-password');
-    
-    Route::get('/csrf-token', [SecurityController::class, 'generateCsrfToken'])
-        ->name('security.csrf-token');
-    
-    Route::post('/validate-csrf', [SecurityController::class, 'validateCsrfToken'])
-        ->name('security.validate-csrf');
+// Security validation routes
+$router->post('/api/security/validate-input', 'SecurityController@validateInput');
+$router->post('/api/security/hash-password', 'SecurityController@hashPassword');
+$router->post('/api/security/verify-password', 'SecurityController@verifyPassword');
+$router->get('/api/security/csrf-token', 'SecurityController@generateCsrfToken');
+$router->post('/api/security/validate-csrf', 'SecurityController@validateCsrfToken');
 
-    // Security monitoring routes
-    Route::post('/check-rate-limit', [SecurityController::class, 'checkRateLimit'])
-        ->name('security.check-rate-limit');
-    
-    Route::post('/detect-suspicious', [SecurityController::class, 'detectSuspiciousActivity'])
-        ->name('security.detect-suspicious');
-    
-    Route::post('/log-event', [SecurityController::class, 'logSecurityEvent'])
-        ->name('security.log-event');
+// Security monitoring routes
+$router->post('/api/security/check-rate-limit', 'SecurityController@checkRateLimit');
+$router->post('/api/security/detect-suspicious', 'SecurityController@detectSuspiciousActivity');
+$router->post('/api/security/log-event', 'SecurityController@logSecurityEvent');
 
-    // Security dashboard and recommendations
-    Route::get('/dashboard', [SecurityController::class, 'getDashboard'])
-        ->name('security.dashboard');
-    
-    Route::get('/recommendations', [SecurityController::class, 'getRecommendations'])
-        ->name('security.recommendations');
+// Security dashboard and recommendations
+$router->get('/api/security/dashboard', 'SecurityController@getDashboard');
+$router->get('/api/security/recommendations', 'SecurityController@getRecommendations');
 
-    // Component testing
-    Route::post('/test-component', [SecurityController::class, 'testComponent'])
-        ->name('security.test-component');
-});
+// Component testing
+$router->post('/api/security/test-component', 'SecurityController@testComponent');

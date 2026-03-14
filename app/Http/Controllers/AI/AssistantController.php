@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
-
 use App\Http\Controllers\BaseController;
+use Security;
+use Exception;
 
 /**
  * AI Property Assistant Controller
@@ -23,31 +23,157 @@ class AIAssistantController extends BaseController
      */
     public function chat()
     {
-        header('Content-Type: application/json');
-        
-        $userMessage = Security::sanitize($_POST['message']) ?? '';
+        $this->setCorsHeaders();
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) $data = $_POST;
+
+        $userMessage = Security::sanitize($data['message']) ?? '';
+        $propertyId = Security::sanitize($data['property_id'] ?? null);
+        $context = Security::sanitize($data['context'] ?? 'general');
         
         if (empty($userMessage)) {
             echo json_encode(['error' => 'Message is required']);
             return;
         }
         
-        // Generate AI response based on message
-        $response = $this->generateAIResponse($userMessage);
+        // If propertyId is present, fetch property details for the AI context
+        $propertyContext = "";
+        if ($propertyId) {
+            $prop = $this->db->fetchOne("SELECT * FROM properties WHERE id = ?", [$propertyId]);
+            if ($prop) {
+                $propertyContext = " Context: Supporting sale for property '{$prop['title']}' located in {$prop['city']} priced at {$prop['price']}. ";
+            }
+        }
+
+        // Generate AI response based on message and property context
+        $response = $this->generateAIResponse($userMessage, $propertyContext);
+        
+        // Auto-detect if user wants to visit or buy to generate lead
+        $intent = $this->detectIntent($userMessage);
         
         echo json_encode([
             'success' => true,
             'response' => $response,
+            'intent_detected' => $intent,
             'timestamp' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    /**
+     * Simple intent detection for lead generation
+     */
+    private function detectIntent($message)
+    {
+        $m = strtolower($message);
+        if (preg_match('/(visit|buy|purchase|site visit|call me|book|interested|kharidna)/i', $m)) {
+            return 'lead_generation';
+        }
+        return 'informational';
+    }
+
+    /**
+     * Set CORS headers for API requests
+     */
+    protected function setCorsHeaders()
+    {
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit;
+        }
+    }
+
+    /**
+     * API endpoint to parse natural language text into a Lead object
+     */
+    public function parseLead()
+    {
+        $this->setCorsHeaders();
+        header('Content-Type: application/json');
+
+        $text = Security::sanitize($_POST['text']) ?? '';
+
+        if (empty($text)) {
+            echo json_encode(['success' => false, 'message' => 'Text is required']);
+            return;
+        }
+
+        $leadData = $this->extractLeadDetails($text);
+
+        echo json_encode([
+            'success' => true,
+            'data' => $leadData,
+            'message' => 'Lead details extracted successfully'
+        ]);
+    }
+
+    /**
+     * Extracts lead details from natural language using pattern matching
+     */
+    private function extractLeadDetails($text)
+    {
+        $data = [
+            'name' => '',
+            'phone' => '',
+            'location' => '',
+            'budget' => '',
+            'property_type' => 'residential',
+            'raw_text' => $text
+        ];
+
+        // 1. Extract Phone (10 digit number)
+        if (preg_match('/[0-9]{10}/', $text, $matches)) {
+            $data['phone'] = $matches[0];
+        }
+
+        // 2. Extract Name (Heuristic: "मेरा नाम है X" or "Name is X" or just looking for capitalized words after introductory words)
+        // Simplified Logic for Demo:
+        $textLower = strtolower($text);
+        $words = explode(' ', $text);
+        
+        // Simple search for "Rahul", "Amit", etc. following "name" or "hun"
+        if (preg_match('/(?:name\s+is|नाम\s+है|हूं|hu|hun)\s+([A-Z][a-z]+)/i', $text, $m)) {
+            $data['name'] = $m[1];
+        }
+
+        // 3. Extract Location
+        $locations = ['gomti nagar', 'hazratganj', 'lucknow', 'noida', 'kanpur', 'indira nagar', 'kisan path', 'deva road'];
+        foreach ($locations as $loc) {
+            if (strpos($textLower, $loc) !== false) {
+                $data['location'] = ucwords($loc);
+                break;
+            }
+        }
+
+        // 4. Extract Budget
+        if (preg_match('/([0-9]+)\s*(?:lakh|lakhs|laakh|l|cr|crore|crores)/i', $text, $m)) {
+            $data['budget'] = $m[0];
+        }
+
+        // 5. Property Type
+        if (strpos($textLower, 'plot') !== false || strpos($textLower, 'zameen') !== false) {
+            $data['property_type'] = 'plot';
+        } elseif (strpos($textLower, 'flat') !== false || strpos($textLower, 'apartment') !== false) {
+            $data['property_type'] = 'apartment';
+        }
+
+        return $data;
     }
     
     /**
      * Generate AI response based on user input
      */
-    private function generateAIResponse($message)
+    private function generateAIResponse($message, $propertyContext = "")
     {
         $message = strtolower($message);
+        
+        // Use property context if provided to act as a sales agent
+        if ($propertyContext) {
+            $prefix = "As your dedicated assistant for this property: ";
+            // Simplified logic: prepend context and use it to guide response if needed
+        }
         
         // Property type responses
         if (strpos($message, 'apartment') !== false || strpos($message, 'flat') !== false) {

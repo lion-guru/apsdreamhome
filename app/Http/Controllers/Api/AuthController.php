@@ -260,7 +260,7 @@ class AuthController extends BaseApiController
             // Get form data
             $email = trim(Security::sanitize($_POST['email']) ?? '');
             $password = Security::sanitize($_POST['password']) ?? '';
-            $remember = isset(Security::sanitize($_POST['remember']));
+            $remember = isset($_POST['remember']) && !empty($_POST['remember']);
 
             // Validate input
             if (empty($email) || empty($password)) {
@@ -360,8 +360,8 @@ class AuthController extends BaseApiController
             $password = Security::sanitize($_POST['password']) ?? '';
             $confirmPassword = Security::sanitize($_POST['confirm_password']) ?? '';
             $userType = Security::sanitize($_POST['user_type']) ?? '';
-            $agreeTerms = isset(Security::sanitize($_POST['agree_terms']));
-            $subscribeNewsletter = isset(Security::sanitize($_POST['subscribe_newsletter']));
+            $agreeTerms = isset($_POST['agree_terms']) && !empty($_POST['agree_terms']);
+            $subscribeNewsletter = isset($_POST['subscribe_newsletter']) && !empty($_POST['subscribe_newsletter']);
 
             // Validate required fields
             if (empty($firstName) || empty($lastName) || empty($email) || empty($phone) || empty($password) || empty($userType)) {
@@ -486,37 +486,40 @@ class AuthController extends BaseApiController
     {
         $this->processRegister();
     }
-}
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Public\AuthController.php
-
-function processRegister()
+    public function processRegister()
     {
-        // Check if it's a POST request
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect(BASE_URL . 'register');
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '/') . 'register');
             return;
         }
-function authenticateUser($email, $password)
+    }
+
+    public function authenticateUser($email, $password)
     {
         try {
-            if (!$this->db) {
-                return false;
-            }
-function registerUser($user_data)
+            if (!$this->db) { return false; }
+            return false; // Placeholder
+        } catch (\Exception $e) { return false; }
+    }
+
+    public function registerUser($user_data)
     {
         try {
-            if (!$this->db) {
-                return false;
-            }
-function emailExists($email)
+            if (!$this->db) { return false; }
+            return false; // Placeholder
+        } catch (\Exception $e) { return false; }
+    }
+
+    public function emailExists($email)
     {
         try {
-            if (!$this->db) {
-                return false;
-            }
-function hashPassword($password)
+            if (!$this->db) { return false; }
+            return false; // Placeholder
+        } catch (\Exception $e) { return false; }
+    }
+
+    public function hashPassword($password)
     {
         return password_hash($password, PASSWORD_ARGON2ID, [
             'memory_cost' => 65536,
@@ -524,34 +527,33 @@ function hashPassword($password)
             'threads' => 3
         ]);
     }
-function verifyPassword($password, $hash)
+
+    public function verifyPassword($password, $hash)
     {
         return password_verify($password, $hash);
     }
-function updateLastLogin($user_id)
+
+    public function updateLastLogin($user_id)
     {
         try {
-            if (!$this->db) {
-                return;
-            }
-function setRememberMeCookie($user_id)
+            if (!$this->db) { return; }
+            $this->db->table('users')->where('id', $user_id)->update(['last_login' => date('Y-m-d H:i:s')]);
+        } catch (\Exception $e) {}
+    }
+
+    public function setRememberMeCookie($user_id)
     {
         $token = bin2hex(random_bytes(32));
-        $expiry = time() + (30 * 24 * 3600); // 30 days
-
+        $expiry = time() + (30 * 24 * 3600);
         setcookie('remember_me', $token, $expiry, '/', '', true, true);
-
-        // In production, store this token in database for validation
-        // For now, we'll just set the cookie
     }
 
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\AuthController.php
-
-function requireGuest()
+    public function requireGuest()
     {
-        // This method is called in constructor, but we handle logged-in users in individual methods
+        // Handle in individual methods
     }
-function logUserActivity($userId, $action, $description)
+
+    public function logUserActivity($userId, $action, $description)
     {
         try {
             $this->db->table('user_activity_log')->insert([
@@ -562,27 +564,11 @@ function logUserActivity($userId, $action, $description)
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
                 'created_at' => date('Y-m-d H:i:s')
             ]);
-        }
-function sendVerificationEmail($email, $token)
+        } catch (\Exception $e) {}
+    }
+
+    public function sendVerificationEmail($email, $token)
     {
-        // TODO: Implement email verification
-        // You can integrate with services like SendGrid, Mailgun, etc.
         error_log("Verification email would be sent to $email with token $token");
     }
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 570 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//
+}

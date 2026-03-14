@@ -1,7 +1,40 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Lead;
 
+use App\Core\Database\Model;
+use App\Models\User\User;
+
+/**
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $email
+ * @property string $phone
+ * @property string $mobile
+ * @property string $company
+ * @property string $job_title
+ * @property string $website
+ * @property string $address
+ * @property string $city
+ * @property string $state
+ * @property string $postal_code
+ * @property string $country
+ * @property string $source
+ * @property string $status
+ * @property int $rating
+ * @property float $estimated_value
+ * @property string $description
+ * @property string $last_contact_date
+ * @property string $next_followup_date
+ * @property int $assigned_to
+ * @property int $created_by
+ * @property int $updated_by
+ * @property array $custom_fields
+ * @property bool $is_deleted
+ * @property string $created_at
+ * @property string $updated_at
+ */
 class Lead extends Model
 {
     protected static $table = 'leads';

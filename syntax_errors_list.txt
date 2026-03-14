@@ -1,0 +1,219 @@
+
+Parse error: syntax error, unexpected token "class", expecting identifier in C:\xampp\htdocs\apsdreamhome\app\Core\PaymentGateway.php on line 432
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Core\PaymentGateway.php
+
+Parse error: syntax error, unexpected token "function", expecting ")" in C:\xampp\htdocs\apsdreamhome\app\Core\Security\SecurityMiddleware.php on line 453
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Core\Security\SecurityMiddleware.php
+
+Parse error: Unclosed '{' on line 336 in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIDashboardController.php on line 343
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIDashboardController.php
+
+Parse error: Unclosed '{' on line 329 in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\AiController.php on line 335
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\AiController.php
+
+Parse error: Unclosed '{' on line 241 in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\BookingController.php on line 244
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\BookingController.php
+
+Parse error: Unclosed '{' on line 461 in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\PaymentController.php on line 548
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\PaymentController.php
+
+Parse error: syntax error, unexpected token "and", expecting "{" in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\ProjectController.php on line 738
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\ProjectController.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\PropertyController.php on line 149
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\PropertyController.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Api\ApiLeadController.php on line 338
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Api\ApiLeadController.php
+
+Parse error: Unclosed '{' on line 555 in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Api\AuthController.php on line 588
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Api\AuthController.php
+
+Parse error: Unclosed '{' on line 537 in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Api\PropertyController.php on line 561
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Api\PropertyController.php
+
+Parse error: syntax error, unexpected token ",", expecting variable in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Employee\EmployeeController.php on line 9
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Employee\EmployeeController.php
+
+Parse error: Unclosed '{' on line 8 in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Payment\PaymentController.php on line 98
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Payment\PaymentController.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Payment\PaymentGatewayController.php on line 121
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Payment\PaymentGatewayController.php
+
+Parse error: syntax error, unexpected token ",", expecting variable in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Tech\EdgeComputingController.php on line 9
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Tech\EdgeComputingController.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Tech\MetaverseController.php on line 824
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Tech\MetaverseController.php
+
+Parse error: syntax error, unexpected token ",", expecting variable in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Tech\SustainableTechController.php on line 9
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Tech\SustainableTechController.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Utility\LanguageController.php on line 522
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Utility\LanguageController.php
+
+Parse error: Unclosed '{' on line 311 in C:\xampp\htdocs\apsdreamhome\app\Http\Middleware\AuthMiddleware.php on line 317
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Middleware\AuthMiddleware.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Http\Middleware\Cors.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Http\Middleware\Cors.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\AgentReview.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\AgentReview.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\AIWorkflow.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\AIWorkflow.php
+
+Parse error: syntax error, unexpected token ",", expecting variable in C:\xampp\htdocs\apsdreamhome\app\Models\Gamification.php on line 9
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\Gamification.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\MobileDevice.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\MobileDevice.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\Notification.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\Notification.php
+
+Parse error: syntax error, unexpected token ",", expecting variable in C:\xampp\htdocs\apsdreamhome\app\Models\Pipeline.php on line 9
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\Pipeline.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\PropertyReview.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\PropertyReview.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\Referral.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\Referral.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\SeoMetadata.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\SeoMetadata.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\Property\Visit.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\Property\Visit.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\System\SystemAlert.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\System\SystemAlert.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Models\User\PublicCustomer.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Models\User\PublicCustomer.php
+
+Parse error: Unclosed '{' on line 311 in C:\xampp\htdocs\apsdreamhome\app\Services\AuthMiddleware.php on line 317
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\AuthMiddleware.php
+
+Parse error: syntax error, unexpected namespaced name "App\Services" in C:\xampp\htdocs\apsdreamhome\app\Services\UniversalServiceWrapper.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\UniversalServiceWrapper.php
+
+Parse error: Unclosed '{' on line 764 in C:\xampp\htdocs\apsdreamhome\app\Services\AI\LearningSystem.php on line 793
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\AI\LearningSystem.php
+
+Parse error: syntax error, unexpected identifier "a", expecting "{" in C:\xampp\htdocs\apsdreamhome\app\Services\AI\PropertyRecommendationEngine.php on line 431
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\AI\PropertyRecommendationEngine.php
+
+Parse error: Unclosed '{' on line 315 in C:\xampp\htdocs\apsdreamhome\app\Services\AI\WorkflowEngine.php on line 322
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\AI\WorkflowEngine.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\Services\Analytics\Reports\GoogleAnalytics.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\Analytics\Reports\GoogleAnalytics.php
+
+Fatal error: Cannot redeclare App\Services\Business\FarmerService::generateCommission() in C:\xampp\htdocs\apsdreamhome\app\Services\Business\FarmerService.php on line 778
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\Business\FarmerService.php
+
+Parse error: Unclosed '(' on line 594 in C:\xampp\htdocs\apsdreamhome\app\Services\Caching\CacheManager.php on line 645
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\Caching\CacheManager.php
+
+Parse error: syntax error, unexpected token ",", expecting variable in C:\xampp\htdocs\apsdreamhome\app\Services\Communication\WhatsAppManagerService.php on line 9
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\Communication\WhatsAppManagerService.php
+
+Parse error: Unclosed '{' on line 251 in C:\xampp\htdocs\apsdreamhome\app\Services\Payment\RazorpayGateway.php on line 260
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\Payment\RazorpayGateway.php
+
+Parse error: syntax error, unexpected token "function", expecting ")" in C:\xampp\htdocs\apsdreamhome\app\Services\Performance\MonitorService.php on line 445
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\Services\Performance\MonitorService.php
+
+Parse error: syntax error, unexpected token "=" in C:\xampp\htdocs\apsdreamhome\app\views\admin\ai\hub.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\admin\ai\hub.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\views\admin\ajax\save-content.php on line 39
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\admin\ajax\save-content.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\views\admin\assets\img\default-avatar.php on line 6
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\admin\assets\img\default-avatar.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\views\admin\commissions\payout.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\admin\commissions\payout.php
+
+Parse error: syntax error, unexpected identifier "Header" in C:\xampp\htdocs\apsdreamhome\app\views\admin\leads\reports.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\admin\leads\reports.php
+
+Parse error: syntax error, unexpected identifier "html" in C:\xampp\htdocs\apsdreamhome\app\views\auth\register.php on line 25
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\auth\register.php
+
+Parse error: syntax error, unexpected single-quoted string "../app/views/includes/header.php" in C:\xampp\htdocs\apsdreamhome\app\views\auth\reset_password.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\auth\reset_password.php
+
+Parse error: syntax error, unexpected identifier "Header" in C:\xampp\htdocs\apsdreamhome\app\views\commission\commission_calculator.php on line 25
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\commission\commission_calculator.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\views\commission\commission_plan_calculator.php on line 33
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\commission\commission_plan_calculator.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\views\commission\commission_plan_manager.php on line 28
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\commission\commission_plan_manager.php
+
+Parse error: syntax error, unexpected token "-", expecting "->" or "?->" or "{" or "[" in C:\xampp\htdocs\apsdreamhome\app\views\components\mobile-dashboard-card.php on line 1
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\components\mobile-dashboard-card.php
+
+Parse error: syntax error, unexpected token "**", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\views\components\mobile-header.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\components\mobile-header.php
+
+Parse error: syntax error, unexpected token "=" in C:\xampp\htdocs\apsdreamhome\app\views\customers\bookings.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\customers\bookings.php
+
+Parse error: syntax error, unexpected identifier "html" in C:\xampp\htdocs\apsdreamhome\app\views\customers\dashboard_modern_backup.php on line 25
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\customers\dashboard_modern_backup.php
+
+Parse error: syntax error, unexpected token "=" in C:\xampp\htdocs\apsdreamhome\app\views\customers\emi_calculator.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\customers\emi_calculator.php
+
+Parse error: syntax error, unexpected token "=" in C:\xampp\htdocs\apsdreamhome\app\views\dashboard\ai-dashboard.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\dashboard\ai-dashboard.php
+
+Parse error: syntax error, unexpected token "=" in C:\xampp\htdocs\apsdreamhome\app\views\employees\profile.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\employees\profile.php
+
+Parse error: syntax error, unexpected single-quoted string "app/views/layouts/header.php" in C:\xampp\htdocs\apsdreamhome\app\views\farmers\list.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\farmers\list.php
+
+Parse error: syntax error, unexpected single-quoted string "app/views/layouts/header.php" in C:\xampp\htdocs\apsdreamhome\app\views\farmers\search.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\farmers\search.php
+
+Parse error: syntax error, unexpected token ",", expecting variable in C:\xampp\htdocs\apsdreamhome\app\views\gallery\project.php on line 29
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\gallery\project.php
+
+Parse error: syntax error, unexpected single-quoted string "app/views/layouts/header.php" in C:\xampp\htdocs\apsdreamhome\app\views\leads\create.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\leads\create.php
+
+Parse error: syntax error, unexpected single-quoted string "app/views/layouts/header.php" in C:\xampp\htdocs\apsdreamhome\app\views\leads\edit.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\leads\edit.php
+
+Parse error: syntax error, unexpected single-quoted string "app/views/layouts/header.php" in C:\xampp\htdocs\apsdreamhome\app\views\leads\show.php on line 25
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\leads\show.php
+
+Parse error: syntax error, unexpected identifier "Header" in C:\xampp\htdocs\apsdreamhome\app\views\pages\bank.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\pages\bank.php
+
+Parse error: syntax error, unexpected token "/", expecting end of file in C:\xampp\htdocs\apsdreamhome\app\views\pages\careers.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\pages\careers.php
+
+Parse error: syntax error, unexpected identifier "html" in C:\xampp\htdocs\apsdreamhome\app\views\pages\coming_soon.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\pages\coming_soon.php
+
+Parse error: syntax error, unexpected token "=" in C:\xampp\htdocs\apsdreamhome\app\views\tools\ai-assistant.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\tools\ai-assistant.php
+
+Parse error: syntax error, unexpected token "=" in C:\xampp\htdocs\apsdreamhome\app\views\tools\ai-valuation.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\tools\ai-valuation.php
+
+Fatal error: Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\xampp\htdocs\apsdreamhome\app\views\tools\development_cost_calculator.php on line 34
+Errors parsing C:\xampp\htdocs\apsdreamhome\app\views\tools\development_cost_calculator.php
+
+Parse error: syntax error, unexpected token "__DIR__" in C:\xampp\htdocs\apsdreamhome\database\setup\tables.php on line 5
+Errors parsing C:\xampp\htdocs\apsdreamhome\database\setup\tables.php

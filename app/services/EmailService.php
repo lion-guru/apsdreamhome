@@ -387,4 +387,26 @@ class EmailService
         </html>
         ";
     }
+
+    /**
+     * Send welcome email to new lead
+     */
+    public function sendLeadWelcomeEmail($to, $name)
+    {
+        try {
+            $subject = 'Special Property Offers for You - APS Dream Home';
+            $message = "
+                <h2>Hello {$name}!</h2>
+                <p>Thank you for your interest in APS Dream Home. We have received your inquiry and our team will contact you shortly.</p>
+                <p>In the meantime, feel free to browse our latest properties.</p>
+                <br>
+                <p>Best regards,<br>Modern Real Estate Team</p>
+            ";
+
+            return $this->send($to, $subject, $message);
+        } catch (Exception $e) {
+            error_log("Lead welcome email failed: " . $e->getMessage());
+            return false;
+        }
+    }
 }

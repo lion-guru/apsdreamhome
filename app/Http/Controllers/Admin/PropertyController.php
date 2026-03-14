@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
+use App\Services\Business\PropertyService;
 use App\Core\Security;
 use Exception;
 
@@ -13,10 +14,13 @@ use Exception;
  */
 class PropertyController extends BaseController
 {
+    private $propertyService;
+
     public function __construct()
     {
         parent::__construct();
         $this->requireAdmin();
+        $this->propertyService = new PropertyService();
     }
 
     /**
@@ -27,95 +31,41 @@ class PropertyController extends BaseController
         try {
             // Get query parameters
             $page = (int)($_GET['page'] ?? 1);
-            $perPage = (int)($_GET['per_page'] ?? 10);
             $search = trim($_GET['search'] ?? '');
-            $status = $_GET['status'] ?? '';
-            $type = $_GET['type'] ?? '';
-            $sort = $_GET['sort'] ?? 'newest';
+            $filters = [
+                'type' => $_GET['type'] ?? '',
+                'status' => $_GET['status'] ?? '',
+                'category_id' => $_GET['category_id'] ?? '',
+                'min_price' => $_GET['min_price'] ?? '',
+                'max_price' => $_GET['max_price'] ?? '',
+                'location' => $_GET['location'] ?? ''
+            ];
 
-            // Calculate offset
-            $offset = ($page - 1) * $perPage;
+            // Use PropertyService to get properties
+            $result = $this->propertyService->getAllProperties($page, 10, $search, $filters);
 
-            // Build query
-            $query = $this->db->table('properties');
-            $countQuery = $this->db->table('properties');
+            // Get property categories for filter dropdown
+            $categories = $this->db->fetchAll("SELECT * FROM property_categories ORDER BY name");
 
-            // Apply filters
-            if (!empty($search)) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('title', 'LIKE', '%' . $search . '%')
-                        ->orWhere('description', 'LIKE', '%' . $search . '%')
-                        ->orWhere('location', 'LIKE', '%' . $search . '%');
-                });
-                $countQuery->where(function ($q) use ($search) {
-                    $q->where('title', 'LIKE', '%' . $search . '%')
-                        ->orWhere('description', 'LIKE', '%' . $search . '%')
-                        ->orWhere('location', 'LIKE', '%' . $search . '%');
-                });
-            }
-
-            if (!empty($status)) {
-                $query->where('status', $status);
-                $countQuery->where('status', $status);
-            }
-
-            if (!empty($type)) {
-                $query->where('type', $type);
-                $countQuery->where('type', $type);
-            }
-
-            // Apply sorting
-            switch ($sort) {
-                case 'oldest':
-                    $query->orderBy('created_at', 'asc');
-                    break;
-                case 'price_high':
-                    $query->orderBy('price', 'desc');
-                    break;
-                case 'price_low':
-                    $query->orderBy('price', 'asc');
-                    break;
-                case 'featured':
-                    $query->orderBy('featured', 'desc')->orderBy('created_at', 'desc');
-                    break;
-                default:
-                    $query->orderBy('created_at', 'desc');
-            }
-
-            // Get total count
-            $totalProperties = $countQuery->count();
-
-            // Get paginated results
-            $properties = $query->limit($perPage)->offset($offset)->get();
-
-            // Calculate pagination info
-            $totalPages = ceil($totalProperties / $perPage);
-
-            $this->render('admin/properties/index', [
-                'page_title' => 'Property Management - APS Dream Home Admin',
-                'page_description' => 'Manage all properties in the system',
-                'properties' => $properties,
-                'total_properties' => $totalProperties,
-                'current_page' => $page,
-                'total_pages' => $totalPages,
-                'per_page' => $perPage,
-                'filters' => [
-                    'search' => $search,
-                    'status' => $status,
-                    'type' => $type,
-                    'sort' => $sort
-                ]
-            ], 'layouts/base');
+            return $this->render('admin/properties', [
+                'properties' => $result['properties'],
+                'pagination' => [
+                    'current' => $result['page'],
+                    'total' => $result['total_pages'],
+                    'limit' => $result['limit'],
+                    'total_items' => $result['total']
+                ],
+                'filters' => $filters,
+                'search' => $search,
+                'categories' => $categories,
+                'page_title' => 'Properties Management - APS Dream Home'
+            ]);
         } catch (Exception $e) {
-            $this->setFlash('error', 'Failed to load properties: ' . $e->getMessage());
-            $this->render('admin/properties/index', [
-                'page_title' => 'Property Management - APS Dream Home Admin',
+            $this->setFlash('error', 'Failed to load properties');
+            return $this->render('admin/properties', [
                 'properties' => [],
-                'total_properties' => 0,
-                'current_page' => 1,
-                'total_pages' => 1,
-                'filters' => []
-            ], 'layouts/base');
+                'page_title' => 'Properties Management - APS Dream Home'
+            ]);
         }
     }
 
@@ -124,10 +74,22 @@ class PropertyController extends BaseController
      */
     public function create()
     {
-        $this->render('admin/properties/create', [
-            'page_title' => 'Add New Property - APS Dream Home Admin',
-            'page_description' => 'Create a new property listing'
-        ], 'layouts/base');
+        try {
+            // Get property categories
+            $categories = $this->db->fetchAll("SELECT * FROM property_categories ORDER BY name");
+
+            // Get active associates
+            $associates = $this->db->fetchAll("SELECT id, name, email FROM associates WHERE status = 'active' ORDER BY name");
+
+            return $this->render('admin/properties/create', [
+                'categories' => $categories,
+                'associates' => $associates,
+                'page_title' => 'Create Property - APS Dream Home'
+            ]);
+        } catch (Exception $e) {
+            $this->setFlash('error', 'Failed to load property creation form');
+            return $this->redirect('/admin/properties');
+        }
     }
 
     /**

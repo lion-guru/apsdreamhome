@@ -1,0 +1,8 @@
+=== TESTING ADMIN DASHBOARD WITH SESSION ===
+✅ BaseController included
+✅ AdminController included
+✅ AdminController instantiated
+Output length: 449 bytes
+✅ dashboard method working
+First 500 characters:
+<h1>Admin Dashboard</h1><h2>Statistics</h2><ul><li><strong>Total users:</strong> 150</li><li><strong>Total properties:</strong> 85</li><li><strong>Total bookings:</strong> 42</li><li><strong>Total revenue:</strong> ₹2,45,000</li></ul><h2>Recent Activities</h2><ul><li>John Doe - Registered (2 hours ago)</li><li>Jane Smith - Property Booking (3 hours ago)</li><li>Mike Wilson - Login (5 hours ago)</li></ul><p><a href='/admin/login'>Logout</a></p>

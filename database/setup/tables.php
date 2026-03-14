@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-equire_once __DIR__ . '/init.php';
+require_once __DIR__ . '/init.php';
 
 // Function to create table if it doesn't exist
 function createTableIfNotExists($conn, $tableName, $sql) {

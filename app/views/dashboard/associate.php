@@ -10,21 +10,24 @@ $notifications = $notifications ?? [];
 ?>
 
 <!-- Dashboard Header -->
-<div class="dashboard-header bg-gradient-primary text-white py-4 mb-4">
-    <div class="container">
+<div class="container animate-fade-in">
+    <div class="dashboard-header">
         <div class="row align-items-center">
-            <div class="col-md-6">
-                <h1 class="h3 mb-0">Associate Dashboard</h1>
-                <p class="mb-0 opacity-75">Welcome back, <?= htmlspecialchars($user['name'] ?? 'Associate') ?>!</p>
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-2">Associate Dashboard</h1>
+                <p class="mb-0 opacity-75">
+                    <i class="fas fa-user-circle me-2"></i>Welcome back, <?= htmlspecialchars($user['name'] ?? 'Associate') ?>!
+                    <span class="mx-2">|</span> 
+                    <i class="fas fa-calendar-alt me-2"></i>Member since <?= date('M Y', strtotime($user['join_date'] ?? '2024-01-01')) ?>
+                </p>
             </div>
-            <div class="col-md-6 text-md-end">
-                <div class="d-inline-flex align-items-center">
-                    <span class="badge bg-success me-2">Active</span>
-                    <span class="me-3">Member since: <?= date('M Y', strtotime($user['join_date'] ?? '2024-01-01')) ?></span>
-                    <button class="btn btn-light btn-sm">
-                        <i class="fas fa-cog"></i> Settings
-                    </button>
-                </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-medium shadow-sm">
+                    <i class="fas fa-check-circle me-1"></i>Active Status
+                </span>
+                <button class="btn btn-white bg-white text-primary rounded-pill ms-2 px-4 py-2 fw-medium shadow-sm transition-hover">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </button>
             </div>
         </div>
     </div>
@@ -34,60 +37,70 @@ $notifications = $notifications ?? [];
 <div class="container mb-4">
     <div class="row">
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card bg-primary text-white">
+            <div class="card glass-card bg-primary text-white border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="card-title">Total Sales</h6>
-                            <h3 class="mb-0"><?= number_format($user['performance']['total_sales'] ?? 0) ?></h3>
+                            <h6 class="card-title text-uppercase mb-2 small opacity-75">Team Size</h6>
+                            <h3 class="mb-0 fw-bold"><?= number_format($user['performance']['total_sales'] ?? 0) ?></h3>
                         </div>
                         <div class="align-self-center">
-                            <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                            <i class="fas fa-users fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <?php if (isset($rank_info['next_rank_info'])): ?>
+                        <div class="mt-3 small opacity-75">
+                            Next Target: <?= $rank_info['next_rank_info']['required_members'] ?> members
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card glass-card bg-success text-white border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-uppercase mb-2 small opacity-75">Team Revenue</h6>
+                            <h3 class="mb-0 fw-bold">₹<?= number_format($user['performance']['total_revenue'] ?? 0) ?></h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-chart-line fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <?php if (isset($rank_info['next_rank_info'])): ?>
+                        <div class="mt-3 small opacity-75">
+                            Target: ₹<?= number_format($rank_info['next_rank_info']['required_bv']) ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card glass-card bg-info text-white border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title text-uppercase mb-2 small opacity-75">Commission Paid</h6>
+                            <h3 class="mb-0 fw-bold">₹<?= number_format($user['performance']['commission_earned'] ?? 0) ?></h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-wallet fa-2x opacity-50"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card bg-success text-white">
+            <div class="card glass-card bg-warning text-white border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="card-title">Revenue</h6>
-                            <h3 class="mb-0">₹<?= number_format($user['performance']['total_revenue'] ?? 0) ?></h3>
+                            <h6 class="card-title text-uppercase mb-2 small opacity-75">Personal Sales</h6>
+                            <h3 class="mb-0 fw-bold"><?= $user['performance']['properties_sold'] ?? 0 ?></h3>
                         </div>
                         <div class="align-self-center">
-                            <i class="fas fa-rupee-sign fa-2x opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title">Commission</h6>
-                            <h3 class="mb-0">₹<?= number_format($user['performance']['commission_earned'] ?? 0) ?></h3>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-coins fa-2x opacity-75"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h6 class="card-title">Properties Sold</h6>
-                            <h3 class="mb-0"><?= $user['performance']['properties_sold'] ?? 0 ?></h3>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-home fa-2x opacity-75"></i>
+                            <i class="fas fa-user-check fa-2x opacity-50"></i>
                         </div>
                     </div>
                 </div>
@@ -96,53 +109,72 @@ $notifications = $notifications ?? [];
     </div>
 </div>
 
+<!-- Rank Progress -->
+<?php if (isset($rank_info)): ?>
+<div class="container mb-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Current Rank: <span class="text-primary"><?= $rank_info['rank'] ?></span></h5>
+                <span class="badge bg-light text-primary border"><?= $rank_info['performance'] ?>% Progress</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                     style="width: <?= $rank_info['performance'] ?>%" 
+                     aria-valuenow="<?= $rank_info['performance'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <?php if ($rank_info['next_rank_info']): ?>
+                <div class="mt-2 small text-muted">
+                    Need <?= $rank_info['next_rank_info']['members_needed'] ?> more members and 
+                    ₹<?= number_format($rank_info['next_rank_info']['bv_needed']) ?> BV to reach 
+                    <strong><?= $rank_info['next_rank_info']['next_rank'] ?></strong>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- Main Content -->
 <div class="container">
     <div class="row">
         <!-- Recent Activities -->
         <div class="col-lg-8 mb-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Recent Activities</h5>
-                    <button class="btn btn-sm btn-outline-primary">View All</button>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Recent Earnings</h5>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($recent_activities)): ?>
-                        <div class="activity-timeline">
-                            <?php foreach ($recent_activities as $activity): ?>
-                                <div class="activity-item d-flex mb-3">
-                                    <div class="activity-icon me-3">
-                                        <?php if ($activity['type'] === 'sale'): ?>
-                                            <i class="fas fa-shopping-cart text-success"></i>
-                                        <?php elseif ($activity['type'] === 'inquiry'): ?>
-                                            <i class="fas fa-question-circle text-info"></i>
-                                        <?php elseif ($activity['type'] === 'commission'): ?>
-                                            <i class="fas fa-coins text-warning"></i>
-                                        <?php else: ?>
-                                            <i class="fas fa-circle text-secondary"></i>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="activity-content flex-grow-1">
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <?php if ($activity['type'] === 'sale'): ?>
-                                                    <strong>Sale Completed:</strong> <?= htmlspecialchars($activity['property']) ?>
-                                                    <div class="text-muted">Amount: ₹<?= number_format($activity['amount']) ?></div>
-                                                <?php elseif ($activity['type'] === 'inquiry'): ?>
-                                                    <strong>New Inquiry:</strong> <?= htmlspecialchars($activity['property']) ?>
-                                                    <div class="text-muted">Client: <?= htmlspecialchars($activity['client']) ?></div>
-                                                <?php elseif ($activity['type'] === 'commission'): ?>
-                                                    <strong>Commission Earned:</strong> ₹<?= number_format($activity['amount']) ?>
-                                                <?php endif; ?>
-                                            </div>
-                                            <small class="text-muted"><?= date('M d, Y', strtotime($activity['date'])) ?></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($recent_activities as $activity): ?>
+                                        <tr>
+                                            <td><?= date('d M Y', strtotime($activity['date'])) ?></td>
+                                            <td>
+                                                <span class="text-capitalize"><?= $activity['subtype'] ?></span>
+                                            </td>
+                                            <td class="fw-bold text-success">₹<?= number_format($activity['amount']) ?></td>
+                                            <td><span class="badge bg-success">Paid</span></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
                     <?php else: ?>
-                        <p class="text-muted">No recent activities to display.</p>
+                        <div class="text-center py-4">
+                            <i class="fas fa-receipt fa-3x text-light mb-3"></i>
+                            <p class="text-muted">No recent commission records found.</p>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -210,55 +242,55 @@ $notifications = $notifications ?? [];
 </div>
 
 <style>
-.dashboard-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    }
 
-.activity-timeline {
-    position: relative;
-}
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: var(--glass-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-.activity-item {
-    position: relative;
-    padding-left: 20px;
-}
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+    }
 
-.activity-item::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 30px;
-    bottom: -20px;
-    width: 2px;
-    background: #e9ecef;
-}
+    .dashboard-header {
+        background: var(--primary-gradient);
+        border-radius: 24px;
+        padding: 2.5rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 20px rgba(118, 75, 162, 0.2);
+    }
 
-.activity-item:last-child::before {
-    display: none;
-}
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: white;
+        margin-bottom: 1rem;
+    }
 
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-}
+    .bg-gradient-blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .bg-gradient-green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+    .bg-gradient-orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .bg-gradient-purple { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); }
 
-.notification-item:hover {
-    background: #f8f9fa;
-}
-
-.card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    transition: box-shadow 0.15s ease-in-out;
-}
-
-.card:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
+    .card { border-radius: 20px; border: none; }
+    .progress { height: 12px; border-radius: 20px; background: rgba(0,0,0,0.05); }
+    .progress-bar { border-radius: 20px; }
 </style>

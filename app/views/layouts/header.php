@@ -1,8 +1,15 @@
+<?php
+// Define BASE_URL if not already defined
+if (!defined('BASE_URL')) {
+    define('BASE_URL', 'http://localhost:8000');
+}
+?>
 <header class="premium-header fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?php echo BASE_URL; ?>">
                 <img src="https://via.placeholder.com/40x40/2c3e50/ffffff?text=APS"
+                    <img src="https://via.placeholder.com/40x40/2c3e50/ffffff?text=APS"
                     alt="APS Dream Home" class="logo me-2" style="height:40px; border-radius:8px;">
                 <div>
                     <div class="brand-text fw-bold text-primary">APS Dream Home</div>
@@ -18,7 +25,7 @@
                     // Enhanced navigation with active state
                     $current_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
                     $base_path = parse_url(BASE_URL, PHP_URL_PATH);
-                    $current_path = str_replace($base_path, '', $current_path);
+                    $current_path = str_replace($base_path ?? '', '', $current_path);
                     $current_path = $current_path ?: '/';
 
                     $nav_items = [
@@ -37,6 +44,40 @@
                             </a>
                         </li>
                     <?php endforeach; ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-plus me-1"></i>
+                            Register
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/register">
+                                    <i class="fas fa-user me-2"></i>Customer Registration
+                                </a></li>
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/register">
+                                    <i class="fas fa-handshake me-2"></i>Associate Registration
+                                </a></li>
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/register">
+                                    <i class="fas fa-briefcase me-2"></i>Agent Registration
+                                </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            Login
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/login">
+                                    <i class="fas fa-user me-2"></i>Customer Login
+                                </a></li>
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/associate/login">
+                                    <i class="fas fa-handshake me-2"></i>Associate Login
+                                </a></li>
+                            <li><a class="dropdown-item" href="<?php echo BASE_URL; ?>/agent/login">
+                                    <i class="fas fa-briefcase me-2"></i>Agent Login
+                                </a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item ms-3">
                         <a href="<?php echo BASE_URL; ?>/admin/login" class="btn btn-primary btn-sm">
                             <i class="fas fa-user-lock me-1"></i>

@@ -7,57 +7,31 @@ use Illuminate\Support\Facades\Route;
  * Core Functions Routes
  */
 
-Route::prefix('core-functions')->group(function () {
-    
-    // Input validation routes
-    Route::post('/validate', [CoreFunctionsController::class, 'validateInput'])
-        ->name('core-functions.validate');
-    
-    Route::post('/validate-multiple', [CoreFunctionsController::class, 'validateInputs'])
-        ->name('core-functions.validate-multiple');
+// Input validation routes
+$router->post('/api/core-functions/validate', 'CoreFunctionsController@validateInput');
+$router->post('/api/core-functions/validate-multiple', 'CoreFunctionsController@validateInputs');
 
-    // Text processing routes
-    Route::post('/format-phone', [CoreFunctionsController::class, 'formatPhone'])
-        ->name('core-functions.format-phone');
-    
-    Route::post('/generate-slug', [CoreFunctionsController::class, 'generateSlug'])
-        ->name('core-functions.generate-slug');
-    
-    Route::post('/truncate-text', [CoreFunctionsController::class, 'truncateText'])
-        ->name('core-functions.truncate-text');
-    
-    Route::post('/generate-random', [CoreFunctionsController::class, 'generateRandomString'])
-        ->name('core-functions.generate-random');
+// Text processing routes
+$router->post('/api/core-functions/format-phone', 'CoreFunctionsController@formatPhone');
+$router->post('/api/core-functions/generate-slug', 'CoreFunctionsController@generateSlug');
+$router->post('/api/core-functions/truncate-text', 'CoreFunctionsController@truncateText');
+$router->post('/api/core-functions/generate-random', 'CoreFunctionsController@generateRandomString');
 
-    // Formatting routes
-    Route::post('/format-currency', [CoreFunctionsController::class, 'formatCurrency'])
-        ->name('core-functions.format-currency');
-    
-    Route::post('/format-date', [CoreFunctionsController::class, 'formatDate'])
-        ->name('core-functions.format-date');
+// Formatting routes
+$router->post('/api/core-functions/format-currency', 'CoreFunctionsController@formatCurrency');
+$router->post('/api/core-functions/format-date', 'CoreFunctionsController@formatDate');
 
-    // File handling routes
-    Route::post('/upload-image', [CoreFunctionsController::class, 'uploadImage'])
-        ->name('core-functions.upload-image');
-    
-    Route::get('/file-info', [CoreFunctionsController::class, 'getFileInfo'])
-        ->name('core-functions.file-info');
-    
-    Route::post('/extract-text', [CoreFunctionsController::class, 'extractText'])
-        ->name('core-functions.extract-text');
+// File handling routes
+$router->post('/api/core-functions/upload-image', 'CoreFunctionsController@uploadImage');
+$router->get('/api/core-functions/file-info', 'CoreFunctionsController@getFileInfo');
+$router->post('/api/core-functions/extract-text', 'CoreFunctionsController@extractText');
 
-    // Client information routes
-    Route::get('/client-info', [CoreFunctionsController::class, 'getClientInfo'])
-        ->name('core-functions.client-info');
-    
-    Route::get('/csrf-token', [CoreFunctionsController::class, 'getCsrfToken'])
-        ->name('core-functions.csrf-token');
+// Client information routes
+$router->get('/api/core-functions/client-info', 'CoreFunctionsController@getClientInfo');
+$router->get('/api/core-functions/csrf-token', 'CoreFunctionsController@getCsrfToken');
 
-    // Logging routes
-    Route::post('/log-action', [CoreFunctionsController::class, 'logAction'])
-        ->name('core-functions.log-action');
+// Logging routes
+$router->post('/api/core-functions/log-action', 'CoreFunctionsController@logAction');
 
-    // Testing route
-    Route::get('/test', [CoreFunctionsController::class, 'test'])
-        ->name('core-functions.test');
-});
+// Testing route
+$router->get('/api/core-functions/test', 'CoreFunctionsController@test');

@@ -16,8 +16,11 @@ define('APS_CONFIG', APS_ROOT . '/config');
 define('APS_STORAGE', APS_ROOT . '/storage');
 define('APS_LOGS', APS_ROOT . '/logs');
 
-// Define BASE_URL for local development server
-define('BASE_URL', 'http://localhost:8000');
+// Define BASE_URL dynamically
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$domainName = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$projectName = '/apsdreamhome';
+define('BASE_URL', $protocol . $domainName . $projectName);
 
 // Error reporting
 error_reporting(E_ALL);

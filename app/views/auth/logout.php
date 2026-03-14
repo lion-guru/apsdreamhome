@@ -1,8 +1,10 @@
-<?php include "layouts.base.php"; ?>
 
-@section('title', 'Logged Out - APS Dream Home')
+<?php
+$page_title = 'Logged Out - APS Dream Home';
+// Include public header
+include APP_PATH . '/views/layouts/header.php';
+?>
 
-<?php // Section: content ?>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-6">
@@ -27,7 +29,6 @@
     </div>
 </div>
 
-@push('styles')
 <style>
 .card {
     max-width: 500px;
@@ -56,6 +57,8 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.15);
 }
 </style>
-@endpush
-<?php // End Section ?>
 
+<?php
+// Include public footer
+include APP_PATH . '/views/layouts/footer.php';
+?>

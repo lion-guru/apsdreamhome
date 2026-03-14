@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Controllers;
+
 //
 // ERROR HANDLING CONFIGURATION
 //
@@ -6,31 +9,27 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError(,  = null,  = null) {
-     = date('Y-m-d H:i:s') . ' - ERROR: ' . ;
-    if ()  .= ' in ' . ;
-    if ()  .= ' on line ' . ;
-    error_log();
+function handleError_edge($message, $file = null, $line = null) {
+    $error_msg = date('Y-m-d H:i:s') . ' - ERROR: ' . $message;
+    if ($file) $error_msg .= ' in ' . $file;
+    if ($line) $error_msg .= ' on line ' . $line;
+    error_log($error_msg);
     return false;
 }
 
-function safeExecute(,  = 'Operation failed') {
+function safeExecute_edge($callback, $errorMessage = 'Operation failed') {
     try {
-        return ();
-    } catch (Exception ) {
-        handleError( . ': ' . (), (), ());
+        return $callback();
+    } catch (\Exception $e) {
+        handleError_edge($errorMessage . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
         return null;
     }
 }
 
-//
 /**
  * Edge Computing & 5G Integration Controller
  * Handles edge computing optimization and 5G network integration
  */
-
-namespace App\Controllers;
-
 class EdgeComputingController extends BaseController {
 
     /**

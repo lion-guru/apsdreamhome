@@ -1,9 +1,17 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
+    # Protect sensitive files
+    RewriteRule ^\.env$ - [F,L]
+    RewriteRule ^composer\.(json|lock)$ - [F,L]
+    RewriteRule ^database/.*$ - [F,L]
+
     # Specific redirect for publiccontact to contact page
     RewriteRule ^publiccontact$ /apsdreamhome/public/contact [R=301,L]
     
+    # Handle root path
+    RewriteRule ^$ public/index.php?url= [L,QSA]
+
     # Redirect to public folder, but allow access to public assets
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -19,8 +27,11 @@
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Hide .htaccess
+# Disable directory indexing
+Options -Indexes
+
+# Protect .htaccess
 <Files .htaccess>
-    Order allow,deny
+    Order Allow,Deny
     Deny from all
 </Files>

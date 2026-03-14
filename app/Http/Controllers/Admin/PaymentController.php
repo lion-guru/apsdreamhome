@@ -453,19 +453,17 @@ class PaymentController extends AdminController
             ]
         ]);
     }
-}
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Payment\PaymentController.php
-
-function success() {
+    public function success() {
         $paymentId = $_GET['payment_id'] ?? '';
         
         if (empty($paymentId)) {
             $this->redirect('/');
             return;
         }
-function savePaymentRecord(array $payment, int $propertyId) {
+    }
+
+    private function savePaymentRecord(array $payment, int $propertyId) {
         $query = "
             INSERT INTO payments (
                 payment_id, user_id, property_id, amount, 
@@ -493,7 +491,8 @@ function savePaymentRecord(array $payment, int $propertyId) {
         // Update property status to sold
         $this->propertyService->updateProperty($propertyId, ['status' => 'sold']);
     }
-function handlePaymentSucceeded(array $paymentIntent) {
+
+    private function handlePaymentSucceeded(array $paymentIntent) {
         $query = "
             UPDATE payments 
             SET status = 'succeeded',
@@ -512,7 +511,8 @@ function handlePaymentSucceeded(array $paymentIntent) {
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
     }
-function handlePaymentFailed(array $paymentIntent) {
+
+    private function handlePaymentFailed(array $paymentIntent) {
         $query = "
             UPDATE payments 
             SET status = 'failed',
@@ -529,20 +529,4 @@ function handlePaymentFailed(array $paymentIntent) {
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
     }
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 530 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//
+}

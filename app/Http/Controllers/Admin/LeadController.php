@@ -5,6 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\CleanLeadService;
 use App\Services\EmailService;
+use App\Models\Lead\Lead;
+use App\Models\Lead\LeadActivity;
+use App\Models\Lead\LeadNote;
+use App\Models\Lead\LeadFile;
+use App\Models\Lead\LeadStatus;
+use App\Models\Lead\LeadSource;
+use App\Models\Lead\LeadTag;
+use App\Models\User\User;
+use App\Models\Lead\LeadDeal;
+use App\Models\Lead\LeadCustomField;
+use App\Core\Security;
+use App\Core\Database\Database;
 
 class LeadController extends AdminController
 {
@@ -118,7 +130,7 @@ class LeadController extends AdminController
                 'source' => $this->request->post('source') ?? '',
                 'status' => $this->request->post('status') ?? 'new',
                 'priority' => $this->request->post('priority') ?? 'medium',
-                'budget' => !empty($this->request->post('budget')) ? (float)$this->request->post('budget') : null,
+                'budget' => ($budget = $this->request->post('budget')) && !empty($budget) ? (float)$budget : null,
                 'property_type' => $this->request->post('property_type') ?? '',
                 'location_preference' => $this->request->post('location_preference') ?? '',
                 'notes' => $this->request->post('notes') ?? '',
@@ -215,7 +227,7 @@ class LeadController extends AdminController
                 'source' => $this->request->post('source') ?? $lead['source'],
                 'status' => $this->request->post('status') ?? $lead['status'],
                 'priority' => $this->request->post('priority') ?? $lead['priority'],
-                'budget' => !empty($this->request->post('budget')) ? (float)$this->request->post('budget') : $lead['budget'],
+                'budget' => ($budget = $this->request->post('budget')) && !empty($budget) ? (float)$budget : $lead['budget'],
                 'property_type' => $this->request->post('property_type') ?? $lead['property_type'], // property_interest
                 'location_preference' => $this->request->post('location_preference') ?? $lead['location_preference'],
                 'notes' => $this->request->post('notes') ?? $lead['notes'],
@@ -269,7 +281,7 @@ class LeadController extends AdminController
                 'activity_type' => $this->request->post('activity_type') ?? '',
                 'description' => $this->request->post('description') ?? '',
                 'created_by' => $this->session->get('user_id'),
-                'metadata' => !empty($this->request->post('metadata')) ? json_encode($this->request->post('metadata')) : null
+                'metadata' => ($metadata = $this->request->post('metadata')) && !empty($metadata) ? json_encode($metadata) : null
             ];
 
             $activityId = $this->leadService->addActivity($data);
@@ -498,86 +510,65 @@ class LeadController extends AdminController
     {
         try {
             $lead = Lead::find($id);
-
             if (!$lead) {
                 $this->jsonError('Lead not found', 404);
+                return;
             }
 
-            // Check if file was uploaded
             if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-                $this->jsonError('No file uploaded or upload error', 422);
+                $this->jsonError('No file uploaded or upload error', 400);
+                return;
             }
 
             $file = $_FILES['file'];
-            $currentUser = $this->getCurrentUser();
-
-            // Generate unique filename
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = 'lead_' . $lead->id . '_' . time() . '_' . uniqid() . '.' . $extension;
-
-            // Create upload directory if it doesn't exist
             $uploadDir = __DIR__ . '/../../uploads/leads/' . $lead->id;
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
 
+            $filename = time() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "_", $file['name']);
             $filePath = $uploadDir . '/' . $filename;
 
-            // Move uploaded file
-            if (!move_uploaded_file($file['tmp_name'], $filePath)) {
-                $this->jsonError('Failed to save file', 500);
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                $leadFile = LeadFile::create([
+                    'lead_id' => $lead->id,
+                    'original_name' => $file['name'],
+                    'file_path' => 'uploads/leads/' . $lead->id . '/' . $filename,
+                    'file_type' => $file['type'],
+                    'file_size' => $file['size'],
+                    'uploaded_by' => $this->session->get('user_id')
+                ]);
+
+                $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'File uploaded successfully',
+                    'data' => [
+                        'id' => $leadFile->id,
+                        'original_name' => $leadFile->original_name,
+                        'file_path' => $leadFile->file_path
+                    ]
+                ]);
+            } else {
+                $this->jsonError('Failed to move uploaded file', 500);
             }
-
-            // Create file record
-            $fileData = [
-                'lead_id' => $lead->id,
-                'original_name' => $file['name'],
-                'file_path' => 'leads/' . $lead->id . '/' . $filename,
-                'file_type' => $file['type'],
-                'file_size' => $file['size'],
-                'description' => Security::sanitize($_POST['description']) ?? '',
-                'is_private' => isset(Security::sanitize($_POST['is_private'])) ? Security::sanitize($_POST['is_private']) === 'true' : false,
-                'uploaded_by' => $currentUser->id,
-            ];
-
-            $leadFile = new LeadFile($fileData);
-            $leadFile->save();
-
-            // Log activity
-            $this->logLeadActivity($lead->id, 'file_uploaded', 'File uploaded');
-
-            $response = [
-                'success' => true,
-                'message' => 'File uploaded successfully',
-                'data' => [
-                    'id' => $leadFile->id,
-                    'original_name' => $leadFile->original_name,
-                    'file_path' => $leadFile->file_path,
-                    'file_type' => $leadFile->file_type,
-                    'file_size' => $leadFile->file_size,
-                    'uploaded_by' => $leadFile->uploaded_by,
-                ],
-            ];
-
-            $this->jsonResponse($response);
         } catch (\Exception $e) {
-            $this->jsonError('Failed to upload file: ' . $e->getMessage(), 500);
+            $this->jsonError($e->getMessage(), 500);
         }
     }
 
     public function updateStatus($id)
     {
         try {
-            $lead = Lead::find($id);
-
-            if (!$lead) {
-                $this->jsonError('Lead not found', 404);
+            $data = json_decode(file_get_contents('php://input'), true);
+            if (!$data || !isset($data['status'])) {
+                $this->jsonError('Invalid status data', 400);
+                return;
             }
 
-            $data = json_decode(file_get_contents('php://input'), true);
-
-            if (empty($data['status'])) {
-                $this->jsonError('Status is required', 422);
+            $lead = Lead::find($id);
+            if (!$lead) {
+                $this->jsonError('Lead not found', 404);
+                return;
             }
 
             $oldStatus = $lead->status;
@@ -608,16 +599,28 @@ class LeadController extends AdminController
                 ]);
             }
 
-            $response = [
+            $this->jsonResponse([
                 'success' => true,
                 'message' => 'Status updated successfully',
                 'data' => $this->formatLeadData($lead),
-            ];
-
-            $this->jsonResponse($response);
+            ]);
         } catch (\Exception $e) {
             $this->jsonError('Failed to update status: ' . $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Format lead data for JSON response
+     */
+    private function formatLeadData($lead)
+    {
+        return [
+            'id' => $lead->id ?? $lead['id'],
+            'name' => $lead->name ?? $lead['name'],
+            'email' => $lead->email ?? $lead['email'],
+            'status' => $lead->status ?? $lead['status'],
+            'updated_at' => $lead->updated_at ?? $lead['updated_at'] ?? date('Y-m-d H:i:s')
+        ];
     }
 
     public function bulkAssign()
@@ -627,10 +630,12 @@ class LeadController extends AdminController
 
             if (empty($data['lead_ids']) || !is_array($data['lead_ids'])) {
                 $this->jsonError('Lead IDs array is required', 422);
+                return;
             }
 
             if (empty($data['user_id'])) {
                 $this->jsonError('User ID is required', 422);
+                return;
             }
 
             $leadIds = $data['lead_ids'];
@@ -682,7 +687,7 @@ class LeadController extends AdminController
                 }
             }
 
-            $response = [
+            $this->jsonResponse([
                 'success' => true,
                 'message' => "Successfully assigned $assignedCount out of " . count($leadIds) . " leads",
                 'data' => [
@@ -690,9 +695,7 @@ class LeadController extends AdminController
                     'total_requested' => count($leadIds),
                     'errors' => $errors,
                 ],
-            ];
-
-            $this->jsonResponse($response);
+            ]);
         } catch (\Exception $e) {
             $this->jsonError('Failed to bulk assign leads: ' . $e->getMessage(), 500);
         }
@@ -702,13 +705,13 @@ class LeadController extends AdminController
     {
         try {
             // Get total leads count
-            $totalLeads = count(Lead::all());
+            $totalLeads = count(Lead::all()->all());
 
             // Get leads by status
             $leadsByStatus = [];
             $statuses = LeadStatus::active();
             foreach ($statuses as $status) {
-                $count = count(array_filter(Lead::all(), function ($lead) use ($status) {
+                $count = count(array_filter(Lead::all()->all(), function ($lead) use ($status) {
                     return $lead->status === $status->name;
                 }));
                 if ($count > 0) {
@@ -720,7 +723,7 @@ class LeadController extends AdminController
             $leadsBySource = [];
             $sources = LeadSource::active();
             foreach ($sources as $source) {
-                $count = count(array_filter(Lead::all(), function ($lead) use ($source) {
+                $count = count(array_filter(Lead::all()->all(), function ($lead) use ($source) {
                     return $lead->source === $source->name;
                 }));
                 if ($count > 0) {
@@ -729,14 +732,13 @@ class LeadController extends AdminController
             }
 
             // Get recent activities (last 10)
-            $recentActivities = [];
-            $activities = LeadActivity::all();
+            $activities = LeadActivity::all()->all();
             usort($activities, function ($a, $b) {
                 return strtotime($b->created_at ?? '2020-01-01') - strtotime($a->created_at ?? '2020-01-01');
             });
             $recentActivities = array_slice($activities, 0, 10);
 
-            $response = [
+            $this->jsonResponse([
                 'success' => true,
                 'data' => [
                     'total_leads' => $totalLeads,
@@ -744,9 +746,7 @@ class LeadController extends AdminController
                     'leads_by_source' => $leadsBySource,
                     'recent_activities' => $recentActivities,
                 ],
-            ];
-
-            $this->jsonResponse($response);
+            ]);
         } catch (\Exception $e) {
             $this->jsonError('Failed to fetch statistics: ' . $e->getMessage(), 500);
         }
@@ -755,7 +755,7 @@ class LeadController extends AdminController
     public function getLookupData()
     {
         try {
-            $response = [
+            $this->jsonResponse([
                 'success' => true,
                 'data' => [
                     'statuses' => LeadStatus::active(),
@@ -763,9 +763,7 @@ class LeadController extends AdminController
                     'tags' => LeadTag::all(),
                     'users' => User::all(),
                 ],
-            ];
-
-            $this->jsonResponse($response);
+            ]);
         } catch (\Exception $e) {
             $this->jsonError('Failed to fetch lookup data: ' . $e->getMessage(), 500);
         }
@@ -779,44 +777,30 @@ class LeadController extends AdminController
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $notes,
         ]);
     }
 
-    public function updateNote(Request $request, $leadId, $noteId)
+    public function updateNote($leadId, $noteId)
     {
         $note = LeadNote::where('lead_id', $leadId)
             ->findOrFail($noteId);
 
         // Check if user has permission to update this note
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         if ($note->user_id !== $user->id && !$user->hasRole('admin')) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'You do not have permission to update this note',
             ], 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'content' => 'required|string',
-            'is_private' => 'boolean',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
-            $note->update([
-                'content' => $request->content,
-                'is_private' => $request->is_private ?? $note->is_private,
-            ]);
+            $note->content = $this->request->get('content');
+            $note->is_private = $this->request->get('is_private') ?? $note->is_private;
+            $note->save();
 
             // Log the activity
             $this->leadService->logActivity($note->lead, 'note_updated', [
@@ -825,13 +809,13 @@ class LeadController extends AdminController
                 'note_id' => $note->id,
             ]);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Note updated successfully',
                 'data' => $note->load('user'),
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update note',
                 'error' => $e->getMessage(),
@@ -845,9 +829,9 @@ class LeadController extends AdminController
             ->findOrFail($noteId);
 
         // Check if user has permission to delete this note
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         if ($note->user_id !== $user->id && !$user->hasRole('admin')) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'You do not have permission to delete this note',
             ], 403);
@@ -863,12 +847,12 @@ class LeadController extends AdminController
 
             $note->delete();
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Note deleted successfully',
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to delete note',
                 'error' => $e->getMessage(),
@@ -884,7 +868,7 @@ class LeadController extends AdminController
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $files,
         ]);
@@ -896,9 +880,9 @@ class LeadController extends AdminController
             ->findOrFail($fileId);
 
         // Check if user has permission to delete this file
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         if ($file->uploaded_by !== $user->id && !$user->hasRole('admin')) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'You do not have permission to delete this file',
             ], 403);
@@ -915,20 +899,21 @@ class LeadController extends AdminController
                 'file_name' => $file->file_name,
             ]);
 
+            // Delete the actual file
+            $fullPath = __DIR__ . '/../../' . $filePath;
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+
             // Delete the file record
             $file->delete();
 
-            // Delete the actual file
-            if (Storage::disk('public')->exists($filePath)) {
-                Storage::disk('public')->delete($filePath);
-            }
-
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'File deleted successfully',
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to delete file',
                 'error' => $e->getMessage(),
@@ -942,18 +927,18 @@ class LeadController extends AdminController
             ->findOrFail($fileId);
 
         // Check if user has permission to download this file
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         if ($file->is_private && $file->uploaded_by !== $user->id && !$user->hasRole('admin')) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'You do not have permission to download this file',
             ], 403);
         }
 
-        $filePath = storage_path('app/public/' . $file->file_path);
+        $filePath = __DIR__ . '/../../' . $file->file_path;
 
         if (!file_exists($filePath)) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'File not found',
             ], 404);
@@ -967,7 +952,15 @@ class LeadController extends AdminController
             'file_name' => $file->file_name,
         ]);
 
-        return response()->download($filePath, $file->file_name);
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . basename($file->original_name) . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
+        exit;
     }
 
     public function getActivities($id)
@@ -978,7 +971,7 @@ class LeadController extends AdminController
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $activities,
         ]);
@@ -989,58 +982,60 @@ class LeadController extends AdminController
         $lead = Lead::findOrFail($id);
         $tags = $lead->tags;
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $tags,
         ]);
     }
 
-    public function addTag(Request $request, $id)
+    public function addTag($id)
     {
         $lead = Lead::findOrFail($id);
+        $tagName = $this->request->get('name');
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:50',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
+        if (empty($tagName)) {
+            return $this->jsonResponse([
                 'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
+                'message' => 'Tag name is required',
             ], 422);
         }
 
         try {
             // Find or create the tag
-            $tag = LeadTag::firstOrCreate(
-                ['name' => $request->name],
-                [
-                    'color' => $this->generateRandomColor(),
-                    'created_by' => auth()->id(),
-                ]
-            );
-
-            // Attach the tag to the lead if not already attached
-            if (!$lead->tags->contains($tag->id)) {
-                $lead->tags()->attach($tag->id, ['created_by' => auth()->id()]);
-
-                // Log the activity
-                $this->leadService->logActivity($lead, 'tag_added', [
-                    'title' => 'Tag Added',
-                    'description' => 'A tag was added to the lead',
-                    'tag_id' => $tag->id,
-                    'tag_name' => $tag->name,
+            $tag = LeadTag::where('name', $tagName)->first();
+            if (!$tag) {
+                $tagId = LeadTag::insert([
+                    'name' => $tagName,
+                    'color' => '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT),
+                    'created_by' => $this->session->get('user_id'),
+                    'created_at' => date('Y-m-d H:i:s')
                 ]);
+                $tag = LeadTag::find($tagId);
             }
 
-            return response()->json([
+            // Attach the tag to the lead (manual pivot insert since we don't have attach() yet)
+            $this->db->query("INSERT INTO lead_tag_pivot (lead_id, tag_id, created_by, created_at) VALUES (?, ?, ?, ?)", [
+                $lead->id,
+                $tag->id,
+                $this->session->get('user_id'),
+                date('Y-m-d H:i:s')
+            ]);
+
+            // Log the activity
+            $this->leadService->logActivity($lead, 'tag_added', [
+                'title' => 'Tag Added',
+                'description' => 'A tag was added to the lead',
+                'tag_id' => $tag->id,
+                'tag_name' => $tag->name,
+            ]);
+
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Tag added successfully',
                 'data' => $tag,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to add tag',
                 'error' => $e->getMessage(),
@@ -1051,26 +1046,23 @@ class LeadController extends AdminController
     public function removeTag($leadId, $tagId)
     {
         $lead = Lead::findOrFail($leadId);
-        $tag = $lead->tags()->findOrFail($tagId);
 
         try {
             // Log the activity before detaching
+            $this->db->query("DELETE FROM lead_tag_pivot WHERE lead_id = ? AND tag_id = ?", [$leadId, $tagId]);
+
             $this->leadService->logActivity($lead, 'tag_removed', [
                 'title' => 'Tag Removed',
                 'description' => 'A tag was removed from the lead',
-                'tag_id' => $tag->id,
-                'tag_name' => $tag->name,
+                'tag_id' => $tagId,
             ]);
 
-            // Detach the tag
-            $lead->tags()->detach($tag->id);
-
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Tag removed successfully',
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to remove tag',
                 'error' => $e->getMessage(),
@@ -1081,30 +1073,39 @@ class LeadController extends AdminController
     public function getCustomFields($id)
     {
         $lead = Lead::findOrFail($id);
-        $customFields = LeadCustomField::with(['values' => function ($query) use ($id) {
-            $query->where('lead_id', $id);
-        }])->get();
+        $customFields = LeadCustomField::where('is_active', true)->get();
+        // Manual mapping of values since we don't have with() working perfectly for all relations
+        foreach ($customFields as &$field) {
+            $value = $this->db->fetchOne("SELECT value FROM lead_custom_field_values WHERE lead_id = ? AND field_id = ?", [$id, $field->id]);
+            $field->value = $value ? $value['value'] : null;
+        }
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $customFields,
         ]);
     }
 
-    public function updateCustomFields(Request $request, $id)
+    public function updateCustomFields($id)
     {
         $lead = Lead::findOrFail($id);
-        $customFields = $request->all();
+        $data = json_decode(file_get_contents('php://input'), true);
 
         try {
-            $this->leadService->updateCustomFields($lead, $customFields);
+            foreach ($data as $fieldId => $value) {
+                $this->db->query("
+                    INSERT INTO lead_custom_field_values (lead_id, field_id, value, updated_at) 
+                    VALUES (?, ?, ?, NOW()) 
+                    ON DUPLICATE KEY UPDATE value = VALUES(value), updated_at = NOW()
+                ", [$id, $fieldId, $value]);
+            }
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Custom fields updated successfully',
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update custom fields',
                 'error' => $e->getMessage(),
@@ -1115,53 +1116,38 @@ class LeadController extends AdminController
     public function getDeals($id)
     {
         $lead = Lead::findOrFail($id);
-        $deals = $lead->deals()
-            ->with(['createdBy', 'updatedBy'])
+        $deals = LeadDeal::where('lead_id', $id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $deals,
         ]);
     }
 
-    public function createDeal(Request $request, $id)
+    public function createDeal($id)
     {
         $lead = Lead::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'deal_name' => 'required|string|max:255',
-            'deal_value' => 'required|numeric|min:0',
-            'currency' => 'required|string|size:3',
-            'expected_close_date' => 'required|date',
-            'probability' => 'nullable|integer|min:0|max:100',
-            'deal_stage' => 'required|string|in:prospect,qualification,needs_analysis,proposal,negotiation,won,lost',
-            'description' => 'nullable|string',
-            'status' => 'nullable|string|in:open,in_progress,on_hold,closed,cancelled',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
+        $data = json_decode(file_get_contents('php://input'), true);
 
         try {
-            $deal = $this->leadService->createDeal($lead, array_merge(
-                $request->all(),
-                ['created_by' => auth()->id()]
-            ));
+            $dealData = array_merge($data, [
+                'lead_id' => $id,
+                'created_by' => $this->session->get('user_id'),
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+            
+            $dealId = LeadDeal::insert($dealData);
+            $deal = LeadDeal::find($dealId);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Deal created successfully',
-                'data' => $deal->load(['createdBy', 'updatedBy']),
+                'data' => $deal,
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to create deal',
                 'error' => $e->getMessage(),
@@ -1169,55 +1155,21 @@ class LeadController extends AdminController
         }
     }
 
-    public function updateDeal(Request $request, $leadId, $dealId)
+    public function updateDeal($leadId, $dealId)
     {
-        $deal = LeadDeal::where('lead_id', $leadId)
-            ->findOrFail($dealId);
-
-        $validator = Validator::make($request->all(), [
-            'deal_name' => 'sometimes|required|string|max:255',
-            'deal_value' => 'sometimes|required|numeric|min:0',
-            'currency' => 'sometimes|required|string|size:3',
-            'expected_close_date' => 'sometimes|required|date',
-            'probability' => 'nullable|integer|min:0|max:100',
-            'deal_stage' => 'sometimes|required|string|in:prospect,qualification,needs_analysis,proposal,negotiation,won,lost',
-            'description' => 'nullable|string',
-            'status' => 'nullable|string|in:open,in_progress,on_hold,closed,cancelled',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
+        $deal = LeadDeal::where('lead_id', $leadId)->findOrFail($dealId);
+        $data = json_decode(file_get_contents('php://input'), true);
 
         try {
-            $originalData = $deal->getOriginal();
-            $deal->fill($request->all());
-            $deal->updated_by = auth()->id();
-            $deal->save();
+            $deal->update($data);
 
-            // Log the activity if any changes were made
-            if ($deal->wasChanged()) {
-                $changes = $deal->getChanges();
-                
-                $this->leadService->logActivity($deal->lead, 'deal_updated', [
-                    'title' => 'Deal Updated',
-                    'description' => 'A deal was updated',
-                    'deal_id' => $deal->id,
-                    'changes' => $this->formatDealChanges($originalData, $changes),
-                ]);
-            }
-
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Deal updated successfully',
-                'data' => $deal->load(['createdBy', 'updatedBy']),
+                'data' => $deal,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update deal',
                 'error' => $e->getMessage(),
@@ -1227,35 +1179,16 @@ class LeadController extends AdminController
 
     public function deleteDeal($leadId, $dealId)
     {
-        $deal = LeadDeal::where('lead_id', $leadId)
-            ->findOrFail($dealId);
-
-        // Check if user has permission to delete this deal
-        $user = auth()->user();
-        if ($deal->created_by !== $user->id && !$user->hasRole('admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You do not have permission to delete this deal',
-            ], 403);
-        }
+        $deal = LeadDeal::where('lead_id', $leadId)->findOrFail($dealId);
 
         try {
-            // Log the activity before deleting
-            $this->leadService->logActivity($deal->lead, 'deal_deleted', [
-                'title' => 'Deal Deleted',
-                'description' => 'A deal was deleted',
-                'deal_id' => $deal->id,
-                'deal_name' => $deal->deal_name,
-            ]);
-
             $deal->delete();
-
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Deal deleted successfully',
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to delete deal',
                 'error' => $e->getMessage(),
@@ -1265,26 +1198,28 @@ class LeadController extends AdminController
 
     public function getOverviewStats()
     {
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         
         $query = Lead::query();
-        
-        // If user is not admin, only show their assigned leads
         if (!$user->hasRole('admin')) {
             $query->where('assigned_to', $user->id);
         }
         
         $totalLeads = $query->count();
-        $newLeads = $query->where('created_at', '>=', now()->subDays(7))->count();
-        $convertedLeads = $query->whereHas('deals', function ($q) {
-            $q->where('deal_stage', 'won');
-        })->count();
+        $newLeads = $query->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-7 days')))->count();
+        
+        // Manual count for converted leads since we don't have whereHas fully working for count
+        $sql = "SELECT COUNT(DISTINCT lead_id) as count FROM lead_deals WHERE deal_stage = 'won'";
+        if (!$user->hasRole('admin')) {
+            $sql .= " AND lead_id IN (SELECT id FROM leads WHERE assigned_to = " . (int)$user->id . ")";
+        }
+        $convertedLeads = $this->db->fetchOne($sql)['count'];
         
         $conversionRate = $totalLeads > 0 
             ? round(($convertedLeads / $totalLeads) * 100, 2) 
             : 0;
         
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => [
                 'total_leads' => $totalLeads,
@@ -1297,17 +1232,15 @@ class LeadController extends AdminController
 
     public function getStatusStats()
     {
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         
-        $query = LeadStatus::withCount(['leads' => function ($q) use ($user) {
-            if (!$user->hasRole('admin')) {
-                $q->where('assigned_to', $user->id);
-            }
-        }])->where('is_active', true);
+        $statuses = $this->db->fetchAll("
+            SELECT s.*, (SELECT COUNT(*) FROM leads l WHERE l.status_id = s.id" . ($user->hasRole('admin') ? "" : " AND l.assigned_to = " . (int)$user->id) . ") as leads_count
+            FROM lead_statuses s
+            WHERE s.is_active = 1
+        ");
         
-        $statuses = $query->get();
-        
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $statuses,
         ]);
@@ -1315,303 +1248,108 @@ class LeadController extends AdminController
 
     public function getSourceStats()
     {
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         
-        $query = LeadSource::withCount(['leads' => function ($q) use ($user) {
-            if (!$user->hasRole('admin')) {
-                $q->where('assigned_to', $user->id);
-            }
-        }])->where('is_active', true);
+        $sources = $this->db->fetchAll("
+            SELECT s.*, (SELECT COUNT(*) FROM leads l WHERE l.source_id = s.id" . ($user->hasRole('admin') ? "" : " AND l.assigned_to = " . (int)$user->id) . ") as leads_count
+            FROM lead_sources s
+            WHERE s.is_active = 1
+        ");
         
-        $sources = $query->get();
-        
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $sources,
         ]);
     }
 
-    public function getAssignedToStats()
-    {
-        $user = auth()->user();
-        
-        // Only admins can see stats for all users
-        if (!$user->hasRole('admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-            ], 403);
-        }
-        
-        $users = User::withCount('assignedLeads')
-            ->whereHas('assignedLeads')
-            ->orderBy('name')
-            ->get();
-        
-        return response()->json([
-            'success' => true,
-            'data' => $users,
-        ]);
-    }
-
-    public function getCreatedByStats()
-    {
-        $user = auth()->user();
-        
-        // Only admins can see stats for all users
-        if (!$user->hasRole('admin')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-            ], 403);
-        }
-        
-        $users = User::withCount('createdLeads')
-            ->whereHas('createdLeads')
-            ->orderBy('name')
-            ->get();
-        
-        return response()->json([
-            'success' => true,
-            'data' => $users,
-        ]);
-    }
-
     public function getTimelineStats()
     {
-        $user = auth()->user();
+        $user = $this->getCurrentUser();
         
-        $query = Lead::query();
+        $sql = "SELECT YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count FROM leads";
+        $params = [];
         
-        // If user is not admin, only show their assigned leads
         if (!$user->hasRole('admin')) {
-            $query->where('assigned_to', $user->id);
+            $sql .= " WHERE assigned_to = ?";
+            $params[] = $user->id;
+            $sql .= " AND created_at >= ?";
+        } else {
+            $sql .= " WHERE created_at >= ?";
         }
+        $params[] = date('Y-m-d H:i:s', strtotime('-12 months'));
+        $sql .= " GROUP BY year, month ORDER BY year, month";
         
-        // Get leads created in the last 12 months by month
-        $leadsByMonth = $query->select(
-            DB::raw('YEAR(created_at) as year'),
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('COUNT(*) as count')
-        )
-        ->where('created_at', '>=', now()->subMonths(12))
-        ->groupBy('year', 'month')
-        ->orderBy('year')
-        ->orderBy('month')
-        ->get();
+        $leadsByMonth = $this->db->fetchAll($sql, $params);
         
-        // Format the data for the chart
         $labels = [];
         $data = [];
-        
         for ($i = 11; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $year = $date->year;
-            $month = $date->month;
-            $monthName = $date->format('M Y');
+            $timestamp = strtotime("-" . $i . " months");
+            $year = date('Y', $timestamp);
+            $month = date('n', $timestamp);
+            $labels[] = date('M Y', $timestamp);
             
-            $count = $leadsByMonth->first(function ($item) use ($year, $month) {
-                return $item->year == $year && $item->month == $month;
-            });
-            
-            $labels[] = $monthName;
-            $data[] = $count ? $count->count : 0;
+            $count = 0;
+            foreach ($leadsByMonth as $item) {
+                if ($item['year'] == $year && $item['month'] == $month) {
+                    $count = (int)$item['count'];
+                    break;
+                }
+            }
+            $data[] = $count;
         }
         
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => [
                 'labels' => $labels,
-                'datasets' => [
-                    [
-                        'label' => 'Leads',
-                        'data' => $data,
-                        'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
-                        'borderColor' => 'rgba(54, 162, 235, 1)',
-                        'borderWidth' => 1,
-                    ],
-                ],
+                'datasets' => [['label' => 'Leads', 'data' => $data]]
             ],
-        ]);
-    }
-
-    public function getAllTags()
-    {
-        $tags = LeadTag::orderBy('name')
-            ->get();
-            
-        return response()->json([
-            'success' => true,
-            'data' => $tags,
         ]);
     }
 
     public function getUsers()
     {
-        $users = User::orderBy('name')
-            ->get();
-            
-        return response()->json([
-            'success' => true,
-            'data' => $users,
-        ]);
+        $users = User::orderBy('name')->get();
+        return $this->jsonResponse(['success' => true, 'data' => $users]);
     }
 
     public function getCustomFieldDefinitions()
     {
-        $fields = LeadCustomField::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
-            
-        return response()->json([
-            'success' => true,
-            'data' => $fields,
-        ]);
-    }
-
-    public function getDealStages()
-    {
-        $stages = LeadDeal::getDealStages();
-            
-        return response()->json([
-            'success' => true,
-            'data' => $stages,
-        ]);
+        $fields = LeadCustomField::where('is_active', true)->orderBy('sort_order')->get();
+        return $this->jsonResponse(['success' => true, 'data' => $fields]);
     }
 
     public function storeQuick()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['status' => 'error', 'message' => 'Invalid request method'], 405);
-            return;
-        }
-
-        $name = trim(Security::sanitize($_POST['name']) ?? '');
-        $phone = trim(Security::sanitize($_POST['phone']) ?? '');
-        $source = trim(Security::sanitize($_POST['source']) ?? 'website_quick_register');
+        $name = trim(Security::sanitize($_POST['name'] ?? ''));
+        $phone = trim(Security::sanitize($_POST['phone'] ?? ''));
+        $source = trim(Security::sanitize($_POST['source'] ?? 'website_quick_register'));
 
         if (empty($name) || empty($phone)) {
             $this->jsonResponse(['status' => 'error', 'message' => 'Name and Phone are required'], 400);
             return;
         }
 
-        // Check if lead already exists
         $existingLead = Lead::where('phone', $phone)->first();
-
         if ($existingLead) {
-            // Update source if needed or just return success
-            // We might want to update the 'last_contacted' or similar
-            $this->jsonResponse([
-                'status' => 'success',
-                'message' => 'Welcome back! We have your details.',
-                'lead_id' => $existingLead['id'],
-                'is_new' => false
-            ]);
+            $this->jsonResponse(['status' => 'success', 'message' => 'Welcome back!', 'lead_id' => $existingLead['id'], 'is_new' => false]);
             return;
         }
 
         try {
-            // Create new lead
-            $leadId = Lead::create([
+            $leadId = Lead::insert([
                 'first_name' => $name,
-                'last_name' => '', // Split name if needed
                 'phone' => $phone,
-                'source' => $source,
-                'status' => 'new',
+                'source_id' => 1, // Default source or lookup
+                'status_id' => 1, // Default status
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
-            // Set a cookie to track this lead
-            setcookie('visitor_lead_id', $leadId, time() + (86400 * 30), "/"); // 30 days
-
-            $this->jsonResponse([
-                'status' => 'success',
-                'message' => 'Thank you! We will contact you shortly.',
-                'lead_id' => $leadId,
-                'is_new' => true
-            ]);
+            setcookie('visitor_lead_id', $leadId, time() + (86400 * 30), "/");
+            $this->jsonResponse(['status' => 'success', 'message' => 'Thank you!', 'lead_id' => $leadId, 'is_new' => true]);
         } catch (\Exception $e) {
-            error_log("Error creating quick lead: " . $e->getMessage());
-            $this->jsonResponse(['status' => 'error', 'message' => 'Something went wrong. Please try again.'], 500);
-        }
-    }
-
-    public function updateProgressive()
-    {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->jsonResponse(['status' => 'error', 'message' => 'Invalid request method'], 405);
-            return;
-        }
-
-        $leadId = Security::sanitize($_POST['lead_id']) ?? $_COOKIE['visitor_lead_id'] ?? null;
-
-        if (!$leadId) {
-            $this->jsonResponse(['status' => 'error', 'message' => 'Lead not identified'], 400);
-            return;
-        }
-
-        $data = [];
-        if (!empty(Security::sanitize($_POST['email']))) $data['email'] = Security::sanitize($_POST['email']);
-        if (!empty(Security::sanitize($_POST['property_type']))) $data['property_interest'] = Security::sanitize($_POST['property_type']);
-        if (!empty(Security::sanitize($_POST['budget']))) $data['budget_range'] = Security::sanitize($_POST['budget']);
-        if (!empty(Security::sanitize($_POST['location']))) $data['preferred_location'] = Security::sanitize($_POST['location']);
-        if (!empty(Security::sanitize($_POST['role']))) $data['type'] = Security::sanitize($_POST['role']); // Buyer/Seller
-
-        if (empty($data)) {
-            $this->jsonResponse(['status' => 'success', 'message' => 'No new data to update']);
-            return;
-        }
-
-        try {
-            Lead::update($leadId, $data);
-
-            // If email is provided and they want to register as User
-            if (!empty(Security::sanitize($_POST['create_account'])) && !empty(Security::sanitize($_POST['email']))) {
-                // Check if user exists
-                $existingUser = User::where('email', Security::sanitize($_POST['email']))->orWhere('phone', Security::sanitize($_POST['phone']))->first();
-                if (!$existingUser) {
-                    // We can't create a user without password easily in standard auth, 
-                    // but we can prompt them to complete registration on the next screen.
-                    // For now, just return success.
-                }
-            }
-
-            $this->jsonResponse(['status' => 'success', 'message' => 'Details updated successfully']);
-        } catch (\Exception $e) {
-            logger()->error("Error updating lead: " . $e->getMessage());
-            $this->jsonResponse(['status' => 'error', 'message' => 'Update failed'], 500);
+            $this->jsonResponse(['status' => 'error', 'message' => 'Something went wrong.'], 500);
         }
     }
 }
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Api\LeadController.php
-
-function getSources()
-    {
-        $sources = LeadSource::where('is_active', true)
-            ->orderBy('name')
-            ->get();
-            
-        return response()->json([
-            'success' => true,
-            'data' => $sources,
-        ]);
-    }
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 1599 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//

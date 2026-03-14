@@ -1,4 +1,7 @@
 <?php
+
+namespace App\Core;
+
 /**
  * APS Dream Home - Security Helper Class
  * Centralized security functions for input sanitization and validation
@@ -30,14 +33,20 @@ class Security
             case 'html':
                 return htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
             case 'sql':
-                return self::escapeSql($input);
+                /**
+                 * [STRICTLY DEPRECATED] Use PDO prepared statements.
+                 * This method now logs a warning and returns the input unchanged to prevent false sense of security.
+                 */
+                error_log("CRITICAL SECURITY WARNING: Security::sanitize('sql') called. Replace with PDO prepared statements.");
+                return $input;
             default:
                 return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
         }
     }
     
     /**
-     * Escape SQL input
+     * [DEPRECATED] Escape SQL input
+     * @deprecated Use PDO prepared statements instead. This method is kept only for legacy compatibility.
      */
     private static function escapeSql($value)
     {
@@ -148,20 +157,12 @@ class Security
             
             // Add to database if available
             try {
-                $db = new PDO(
-                    "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
-                    ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
-                    ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
-                    ";charset=utf8mb4",
-                    $_ENV['DB_USERNAME'] ?? 'root',
-                    $_ENV['DB_PASSWORD'] ?? '',
-                    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-                );
+                $db = \App\Core\Database\Database::getInstance()->getConnection();
                 
                 $stmt = $db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_at) VALUES (?, ?, NOW())");
                 $stmt->execute([$ip, $reason]);
                 
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Database not available, just log it
             }
         }
@@ -353,20 +354,12 @@ class Security
         
         // Store in database if available
         try {
-            $db = new PDO(
-                "mysql:host=" . ($_ENV['DB_HOST'] ?? '127.0.0.1') . 
-                ";port=" . ($_ENV['DB_PORT'] ?? '3306') . 
-                ";dbname=" . ($_ENV['DB_DATABASE'] ?? 'apsdreamhome') . 
-                ";charset=utf8mb4",
-                $_ENV['DB_USERNAME'] ?? 'root',
-                $_ENV['DB_PASSWORD'] ?? '',
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-            );
+            $db = \App\Core\Database\Database::getInstance()->getConnection();
             
             $stmt = $db->prepare("INSERT INTO security_logs (event, ip_address, user_agent, details, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->execute([$event, $logEntry['ip'], $logEntry['user_agent'], json_encode($details)]);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Database not available, just log to error log
         }
     }
