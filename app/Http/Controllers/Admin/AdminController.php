@@ -25,7 +25,7 @@ class AdminController extends BaseController
         parent::__construct();
         // Set admin layout
         $this->layout = 'layouts/admin';
-        
+
         // Initialize data array for view rendering
         $this->data = [];
     }
@@ -35,10 +35,16 @@ class AdminController extends BaseController
      */
     public function dashboard()
     {
+        // Start session if not started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         // Check if admin is logged in
-        if (!$this->isLoggedIn() || ($_SESSION['user_role'] ?? '') !== 'admin') {
-            $this->setFlash('error', 'Admin access required');
-            return $this->redirect('/admin/login');
+        if (!$this->isLoggedIn() || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+            $_SESSION['error'] = 'Admin access required';
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
         }
 
         try {
@@ -69,7 +75,6 @@ class AdminController extends BaseController
             ]);
 
             return $this->render('admin/dashboard', $this->data);
-
         } catch (Exception $e) {
             $this->setFlash('error', 'Error loading dashboard: ' . $e->getMessage());
             return $this->render('admin/dashboard', [
@@ -221,7 +226,7 @@ class AdminController extends BaseController
     public function reports()
     {
         $reports = $this->getChartsData();
-        
+
         return $this->render('admin/reports', [
             'page_title' => 'Reports & Analytics - APS Dream Home',
             'page_description' => 'View system reports and analytics',
