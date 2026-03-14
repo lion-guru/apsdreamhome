@@ -40,8 +40,8 @@ class AdminController extends BaseController
             session_start();
         }
 
-        // Check if admin is logged in
-        if (!$this->isLoggedIn() || ($_SESSION['admin_role'] ?? '') !== 'admin') {
+        // Check if admin is logged in - use direct session check
+        if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || ($_SESSION['admin_role'] ?? '') !== 'admin') {
             $_SESSION['error'] = 'Admin access required';
             header('Location: ' . BASE_URL . '/admin/login');
             exit;
