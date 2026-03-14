@@ -4,8 +4,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Include header
-require_once __DIR__ . '/../layouts/header.php';
+// Set page variables
+$page_title = 'Admin Login - APS Dream Home';
+$page_description = 'Secure admin access to APS Dream Home dashboard';
+
+// Content for base layout
+ob_start();
 ?>
 
 <main class="container my-5">

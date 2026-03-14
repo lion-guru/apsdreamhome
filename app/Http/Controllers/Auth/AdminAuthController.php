@@ -101,6 +101,11 @@ class AdminAuthController extends BaseController
      */
     public function isLoggedIn(): bool
     {
+        // Start session if not started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         return isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);
     }
 
