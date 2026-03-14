@@ -65,6 +65,7 @@ $router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@admi
 $router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
 $router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
 $router->get('/admin/properties', 'App\Http\Controllers\Admin\AdminController@properties');
+$router->get('/admin/users', 'App\Http\Controllers\Admin\AdminController@users');
 
 // Additional routes
 $router->get('/career', 'Front\PageController@careers');
