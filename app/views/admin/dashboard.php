@@ -157,13 +157,13 @@ $pending_tasks = $pending_tasks ?? [];
                         <small class="text-muted">ADMIN PANEL</small>
                     </div>
                     <nav class="nav flex-column">
-                        <a href="/admin/dashboard" class="nav-link active"><i class="fas fa-grid-2 me-2"></i> Dashboard</a>
-                        <a href="/admin/properties" class="nav-link"><i class="fas fa-home me-2"></i> Properties</a>
-                        <a href="/admin/users" class="nav-link"><i class="fas fa-users me-2"></i> User Network</a>
-                        <a href="/admin/reports" class="nav-link"><i class="fas fa-chart-pie me-2"></i> Analytics</a>
-                        <a href="/admin/settings" class="nav-link"><i class="fas fa-sliders me-2"></i> Settings</a>
+                        <a href="<?php echo BASE_URL; ?>/admin/dashboard" class="nav-link active"><i class="fas fa-grid-2 me-2"></i> Dashboard</a>
+                        <a href="<?php echo BASE_URL; ?>/admin/properties" class="nav-link"><i class="fas fa-home me-2"></i> Properties</a>
+                        <a href="<?php echo BASE_URL; ?>/admin/users" class="nav-link"><i class="fas fa-users me-2"></i> User Network</a>
+                        <a href="<?php echo BASE_URL; ?>/admin/reports" class="nav-link"><i class="fas fa-chart-pie me-2"></i> Analytics</a>
+                        <a href="<?php echo BASE_URL; ?>/admin/settings" class="nav-link"><i class="fas fa-sliders me-2"></i> Settings</a>
                         <hr class="border-secondary opacity-25">
-                        <a href="/" class="nav-link"><i class="fas fa-external-link-alt me-2"></i> Public View</a>
+                        <a href="<?php echo BASE_URL; ?>/" class="nav-link"><i class="fas fa-external-link-alt me-2"></i> Public View</a>
                     </nav>
                 </div>
             </div>
@@ -177,9 +177,20 @@ $pending_tasks = $pending_tasks ?? [];
                             <p class="mb-0 opacity-75">Visualizing property metrics and user growth in real-time.</p>
                         </div>
                         <div class="text-end">
-                            <div class="d-flex align-items-center bg-white bg-opacity-10 rounded-pill px-3 py-2 border border-white border-opacity-10">
-                                <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="rounded-circle me-2" width="32">
-                                <span class="fw-medium">Super Admin</span>
+                            <div class="dropdown">
+                                <div class="d-flex align-items-center bg-white bg-opacity-10 rounded-pill px-3 py-2 border border-white border-opacity-10" data-bs-toggle="dropdown" style="cursor: pointer;">
+                                    <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="rounded-circle me-2" width="32">
+                                    <span class="fw-medium">Super Admin</span>
+                                    <i class="fas fa-chevron-down ms-2"></i>
+                                </div>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="<?php echo BASE_URL; ?>/admin/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>

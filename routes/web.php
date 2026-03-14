@@ -63,7 +63,8 @@ $router->get('/admin', 'App\Http\Controllers\Admin\AdminController@dashboard');
 $router->get('/admin/dashboard', 'App\Http\Controllers\Admin\AdminController@dashboard');
 $router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
 $router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
-$router->get('/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
+$router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
+$router->get('/admin/properties', 'App\Http\Controllers\Admin\AdminController@properties');
 
 // Additional routes
 $router->get('/career', 'Front\PageController@careers');
