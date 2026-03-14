@@ -1,4 +1,9 @@
 <?php
+// Start session if not started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Include header
 require_once __DIR__ . '/../layouts/header.php';
 ?>
@@ -18,7 +23,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
                     <?php if (isset($_SESSION['error'])): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <?php 
+                            <?php
                             echo htmlspecialchars($_SESSION['error']);
                             unset($_SESSION['error']);
                             ?>
@@ -28,7 +33,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
                     <?php if (isset($_SESSION['success'])): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <?php 
+                            <?php
                             echo htmlspecialchars($_SESSION['success']);
                             unset($_SESSION['success']);
                             ?>
@@ -49,8 +54,8 @@ require_once __DIR__ . '/../layouts/header.php';
                             <label for="username" class="form-label">
                                 <i class="fas fa-user me-2"></i>Username
                             </label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   placeholder="Enter admin username" required>
+                            <input type="text" class="form-control" id="username" name="username"
+                                placeholder="Enter admin username" required>
                         </div>
 
                         <div class="mb-3">
@@ -58,8 +63,8 @@ require_once __DIR__ . '/../layouts/header.php';
                                 <i class="fas fa-lock me-2"></i>Password
                             </label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password" 
-                                       placeholder="Enter password" required>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Enter password" required>
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -110,93 +115,93 @@ require_once __DIR__ . '/../layouts/header.php';
 </main>
 
 <style>
-.card {
-    border-radius: 15px;
-    transition: transform 0.3s ease;
-}
+    .card {
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+    }
 
-.card:hover {
-    transform: translateY(-5px);
-}
+    .card:hover {
+        transform: translateY(-5px);
+    }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-}
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
 
-.form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
 
-.input-group .btn {
-    border-color: #ced4da;
-}
+    .input-group .btn {
+        border-color: #ced4da;
+    }
 
-.input-group .btn:hover {
-    border-color: #667eea;
-    background-color: #f8f9fa;
-}
+    .input-group .btn:hover {
+        border-color: #667eea;
+        background-color: #f8f9fa;
+    }
 
-.fa-3x {
-    color: #667eea;
-    margin-bottom: 1rem;
-}
+    .fa-3x {
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
 
-.alert {
-    border-radius: 8px;
-    border: none;
-}
+    .alert {
+        border-radius: 8px;
+        border: none;
+    }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Toggle password visibility
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('password');
-    
-    togglePassword.addEventListener('click', function() {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        
-        // Toggle icon
-        const icon = this.querySelector('i');
-        icon.classList.toggle('fa-eye');
-        icon.classList.toggle('fa-eye-slash');
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
 
-    // Form validation
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-        
-        if (!username || !password) {
-            e.preventDefault();
-            alert('Please fill in all fields');
-            return false;
-        }
-        
-        if (password.length < 6) {
-            e.preventDefault();
-            alert('Password must be at least 6 characters long');
-            return false;
-        }
-    });
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
 
-    // Auto-focus username field
-    document.getElementById('username').focus();
-});
+            // Toggle icon
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                e.preventDefault();
+                alert('Please fill in all fields');
+                return false;
+            }
+
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Password must be at least 6 characters long');
+                return false;
+            }
+        });
+
+        // Auto-focus username field
+        document.getElementById('username').focus();
+    });
 </script>
 
 <?php
