@@ -147,7 +147,7 @@ class MediaController extends BaseController
     {
         try {
             if (!isset($_FILES['media_file']) || !$_FILES['media_file']['name']) {
-                return $this->jsonResponse()->json(['success' => false, 'message' => 'No file uploaded']);
+                return $this->jsonResponse(['success' => false, 'message' => 'No file uploaded']);
             }
 
             $file = $_FILES['media_file'] ?? null;
@@ -156,9 +156,9 @@ class MediaController extends BaseController
             $category = $_REQUEST['category'] ?? '';
 
             if ($this->mediaService->uploadMedia($file, $metadata)) {
-                return $this->jsonResponse()->json(['success' => true, 'message' => 'File uploaded successfully']);
+                return $this->jsonResponse(['success' => true, 'message' => 'File uploaded successfully']);
             } else {
-                return $this->jsonResponse()->json(['success' => false, 'message' => 'Failed to upload file']);
+                return $this->jsonResponse(['success' => false, 'message' => 'Failed to upload file']);
             }
         } catch (\Exception $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
@@ -174,9 +174,9 @@ class MediaController extends BaseController
             $url = $this->mediaService->getMediaUrl($id);
 
             if ($url) {
-                return $this->jsonResponse()->json(['success' => true, 'url' => $url]);
+                return $this->jsonResponse(['success' => true, 'url' => $url]);
             } else {
-                return $this->jsonResponse()->json(['success' => false, 'message' => 'Media not found']);
+                return $this->jsonResponse(['success' => false, 'message' => 'Media not found']);
             }
         } catch (\Exception $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
