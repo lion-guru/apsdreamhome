@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Database;
 use App\Services\RequestService;
 
 /**
@@ -9,15 +10,13 @@ use App\Services\RequestService;
  * Custom MVC implementation without Laravel dependencies
  * Following APS Dream Home custom architecture patterns
  */
-class RequestController
+class RequestController extends BaseController
 {
     private $requestService;
-    private $viewRenderer;
 
     public function __construct()
     {
         $this->requestService = new RequestService();
-        $this->viewRenderer = new \App\Core\View();
     }
 
     /**
@@ -28,454 +27,417 @@ class RequestController
         // Add built-in middleware
         $this->requestService->addSecurityMiddleware();
         $this->requestService->addRateLimitingMiddleware(100, 3600); // 100 requests per hour
-        $this->requestService->addLoggingMiddleware();
+        $this->requestService->addCorsMiddleware();
 
-        // Register default routes
-        $this->registerDefaultRoutes();
-
-        // Handle CORS
-        $this->requestService->handleCors();
-
-        // Process the request
-        return $this->requestService->processRequest();
+        return $this->jsonResponse([
+            'success' => true,
+            'message' => 'Request processing system initialized',
+            'middleware' => $this->requestService->getMiddlewareStack()
+        ]);
     }
 
     /**
-     * Register default application routes
+     * Process incoming request
      */
-    private function registerDefaultRoutes()
+    public function processRequest()
     {
-        // Authentication routes
-        $this->requestService->registerRoute('GET', '/login', [$this, 'showLogin']);
-        $this->requestService->registerRoute('POST', '/login', [$this, 'processLogin'], ['auth']);
-        $this->requestService->registerRoute('GET', '/register', [$this, 'showRegister']);
-        $this->requestService->registerRoute('POST', '/register', [$this, 'processRegister'], ['auth']);
-        $this->requestService->registerRoute('POST', '/logout', [$this, 'processLogout'], ['auth']);
-
-        // Dashboard routes
-        $this->requestService->registerRoute('GET', '/dashboard', [$this, 'showDashboard'], ['auth']);
-        $this->requestService->registerRoute('GET', '/admin/dashboard', [$this, 'showAdminDashboard'], ['auth', 'admin']);
-
-        // API routes
-        $this->requestService->registerRoute('GET', '/api/health', [$this, 'apiHealth']);
-        $this->requestService->registerRoute('GET', '/api/info', [$this, 'apiInfo']);
-        $this->requestService->registerRoute('POST', '/api/echo', [$this, 'apiEcho']);
-
-        // User management routes
-        $this->requestService->registerRoute('GET', '/profile', [$this, 'showProfile'], ['auth']);
-        $this->requestService->registerRoute('POST', '/profile', [$this, 'updateProfile'], ['auth']);
-
-        // Error handling routes
-        $this->requestService->registerRoute('GET', '/404', [$this, 'show404']);
-        $this->requestService->registerRoute('GET', '/500', [$this, 'show500']);
-
-        // Home route
-        $this->requestService->registerRoute('GET', '/', [$this, 'showHome']);
-    }
-
-    /**
-     * Show login page
-     */
-    public function showLogin($request)
-    {
-        // If already authenticated, redirect to dashboard
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if ($authService->isAuthenticated()) {
-            $this->redirect('/dashboard');
-            return;
-        }
-
-        $data = [
-            'title' => 'Login - APS Dream Home',
-            'errors' => $_SESSION['errors'] ?? [],
-            'old' => $_SESSION['old'] ?? []
-        ];
-
-        unset($_SESSION['errors'], $_SESSION['old']);
-
-        return $this->viewRenderer->render('auth/login', $data);
-    }
-
-    /**
-     * Process login
-     */
-    public function processLogin($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-
-        $email = $request['post']['email'] ?? '';
-        $password = $request['post']['password'] ?? '';
-        $remember = isset($request['post']['remember']);
-
-        $result = $authService->login($email, $password, $remember);
-
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-            $this->redirect($result['redirect']);
-        } else {
-            $_SESSION['errors'] = [$result['message']];
-            $_SESSION['old'] = $request['post'];
-            $this->redirect('/login');
-        }
-    }
-
-    /**
-     * Show registration page
-     */
-    public function showRegister($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if ($authService->isAuthenticated()) {
-            $this->redirect('/dashboard');
-            return;
-        }
-
-        $data = [
-            'title' => 'Register - APS Dream Home',
-            'errors' => $_SESSION['errors'] ?? [],
-            'old' => $_SESSION['old'] ?? [],
-            'roles' => ['user' => 'User', 'associate' => 'Associate']
-        ];
-
-        unset($_SESSION['errors'], $_SESSION['old']);
-
-        return $this->viewRenderer->render('auth/register', $data);
-    }
-
-    /**
-     * Process registration
-     */
-    public function processRegister($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-
-        $userData = [
-            'name' => $request['post']['name'] ?? '',
-            'email' => $request['post']['email'] ?? '',
-            'password' => $request['post']['password'] ?? '',
-            'password_confirmation' => $request['post']['password_confirmation'] ?? '',
-            'role' => $request['post']['role'] ?? 'user'
-        ];
-
-        if ($userData['password'] !== $userData['password_confirmation']) {
-            $_SESSION['errors'] = ['Password confirmation does not match'];
-            $_SESSION['old'] = $request['post'];
-            $this->redirect('/register');
-            return;
-        }
-
-        unset($userData['password_confirmation']);
-
-        $result = $authService->register($userData);
-
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-            $this->redirect('/login');
-        } else {
-            $_SESSION['errors'] = [$result['message']];
-            $_SESSION['old'] = $request['post'];
-            $this->redirect('/register');
-        }
-    }
-
-    /**
-     * Process logout
-     */
-    public function processLogout($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-        $result = $authService->logout();
-
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-        } else {
-            $_SESSION['errors'] = [$result['message']];
-        }
-
-        $this->redirect('/login');
-    }
-
-    /**
-     * Show dashboard
-     */
-    public function showDashboard($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated()) {
-            $_SESSION['intended_url'] = $_SERVER['REQUEST_URI'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $user = $authService->getCurrentUser();
-
-        $data = [
-            'title' => 'Dashboard - APS Dream Home',
-            'user' => $user,
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors']);
-
-        return $this->viewRenderer->render('dashboard/index', $data);
-    }
-
-    /**
-     * Show admin dashboard
-     */
-    public function showAdminDashboard($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated() || !$authService->hasPermission('admin_access')) {
-            $_SESSION['errors'] = ['Access denied'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $user = $authService->getCurrentUser();
-
-        // Get system statistics
-        $database = \App\Core\Database::getInstance();
-        $stats = [
-            'total_users' => $database->selectOne("SELECT COUNT(*) as count FROM users WHERE deleted_at IS NULL")['count'],
-            'active_sessions' => $database->selectOne("SELECT COUNT(DISTINCT user_id) as count FROM login_logs WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)")['count'],
-            'total_requests' => $database->selectOne("SELECT COUNT(*) as count FROM api_logs WHERE created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)")['count']
-        ];
-
-        $data = [
-            'title' => 'Admin Dashboard - APS Dream Home',
-            'user' => $user,
-            'stats' => $stats,
-            'success' => $_SESSION['success'] ?? '',
-            'errors' => $_SESSION['errors'] ?? []
-        ];
-
-        unset($_SESSION['success'], $_SESSION['errors']);
-
-        return $this->viewRenderer->render('admin/dashboard', $data);
-    }
-
-    /**
-     * API Health check
-     */
-    public function apiHealth($request)
-    {
-        $database = \App\Core\Database::getInstance();
-
         try {
-            $database->query("SELECT 1");
-            $databaseStatus = 'connected';
-        } catch (Exception $e) {
-            $databaseStatus = 'error';
-        }
+            // Get request data
+            $requestData = $this->getRequestData();
 
-        return [
-            'success' => true,
-            'status' => 'healthy',
-            'timestamp' => date('Y-m-d H:i:s'),
-            'database' => $databaseStatus,
-            'memory_usage' => memory_get_usage(true),
-            'peak_memory' => memory_get_peak_usage(true),
-            'uptime' => time() - ($_SERVER['REQUEST_TIME'] ?? time())
-        ];
-    }
-
-    /**
-     * API Info endpoint
-     */
-    public function apiInfo($request)
-    {
-        return [
-            'success' => true,
-            'application' => 'APS Dream Home',
-            'version' => '1.0.0',
-            'architecture' => 'Custom MVC',
-            'php_version' => PHP_VERSION,
-            'server' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
-            'timestamp' => date('Y-m-d H:i:s'),
-            'request_info' => [
-                'method' => $request['method'],
-                'uri' => $request['uri'],
-                'ip' => $request['ip'],
-                'user_agent' => $request['user_agent']
-            ]
-        ];
-    }
-
-    /**
-     * API Echo endpoint for testing
-     */
-    public function apiEcho($request)
-    {
-        return [
-            'success' => true,
-            'message' => 'Echo successful',
-            'received_data' => [
-                'method' => $request['method'],
-                'get' => $request['get'],
-                'post' => $request['post'],
-                'json' => $request['json'] ?? null,
-                'headers' => $request['headers']
-            ],
-            'timestamp' => date('Y-m-d H:i:s')
-        ];
-    }
-
-    /**
-     * Show profile page
-     */
-    public function showProfile($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated()) {
-            $_SESSION['intended_url'] = $_SERVER['REQUEST_URI'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $user = $authService->getCurrentUser();
-
-        $data = [
-            'title' => 'Profile - APS Dream Home',
-            'user' => $user,
-            'errors' => $_SESSION['errors'] ?? [],
-            'success' => $_SESSION['success'] ?? ''
-        ];
-
-        unset($_SESSION['errors'], $_SESSION['success']);
-
-        return $this->viewRenderer->render('profile/index', $data);
-    }
-
-    /**
-     * Update profile
-     */
-    public function updateProfile($request)
-    {
-        $authService = new \App\Services\Auth\AuthenticationService();
-        if (!$authService->isAuthenticated()) {
-            $_SESSION['errors'] = ['Authentication required'];
-            $this->redirect('/login');
-            return;
-        }
-
-        $user = $authService->getCurrentUser();
-        $database = \App\Core\Database::getInstance();
-
-        $updateData = [
-            'name' => $request['post']['name'] ?? $user['name'],
-            'email' => $request['post']['email'] ?? $user['email'],
-            'phone' => $request['post']['phone'] ?? $user['phone'],
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-
-        // Validate email if changed
-        if ($updateData['email'] !== $user['email']) {
-            $existingUser = $database->selectOne("SELECT id FROM users WHERE email = ? AND id != ?", [$updateData['email'], $user['id']]);
-            if ($existingUser) {
-                $_SESSION['errors'] = ['Email already exists'];
-                $_SESSION['old'] = $request['post'];
-                $this->redirect('/profile');
-                return;
+            // Validate request
+            $validation = $this->requestService->validateRequest($requestData);
+            if (!$validation['valid']) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Request validation failed',
+                    'errors' => $validation['errors']
+                ], 400);
             }
-        }
 
-        $result = $database->update('users', $updateData, 'id = ?', [$user['id']]);
+            // Process request based on type
+            $result = $this->requestService->process($requestData);
 
-        if ($result) {
-            $_SESSION['success'] = 'Profile updated successfully';
-        } else {
-            $_SESSION['errors'] = ['Failed to update profile'];
-        }
-
-        $this->redirect('/profile');
-    }
-
-    /**
-     * Show 404 page
-     */
-    public function show404($request)
-    {
-        http_response_code(404);
-
-        $data = [
-            'title' => 'Page Not Found - APS Dream Home',
-            'requested_url' => $request['uri']
-        ];
-
-        return $this->viewRenderer->render('errors/404', $data);
-    }
-
-    /**
-     * Show 500 page
-     */
-    public function show500($request)
-    {
-        http_response_code(500);
-
-        $data = [
-            'title' => 'Server Error - APS Dream Home',
-            'error_id' => uniqid('error_')
-        ];
-
-        return $this->viewRenderer->render('errors/500', $data);
-    }
-
-    /**
-     * Show home page
-     */
-    public function showHome($request)
-    {
-        $data = [
-            'title' => 'Welcome to APS Dream Home',
-            'features' => [
-                'Farmer Management',
-                'Security System',
-                'Performance Optimization',
-                'Event Management',
-                'Custom MVC Architecture'
-            ]
-        ];
-
-        return $this->viewRenderer->render('pages/index', $data);
-    }
-
-    /**
-     * Redirect helper
-     */
-    private function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: $url");
-            exit;
-        } else {
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit;
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Request processed successfully',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Request processing failed: ' . $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Get request service instance
+     * Get request data from various sources
      */
-    public function getRequestService()
+    private function getRequestData(): array
     {
-        return $this->requestService;
-    }
+        $data = [];
 
-    /**
-     * Add custom route
-     */
-    public function addRoute($method, $path, $handler, $middleware = [])
-    {
-        return $this->requestService->registerRoute($method, $path, $handler, $middleware);
+        // Get JSON data
+        $input = file_get_contents('php://input');
+        if (!empty($input)) {
+            $data = json_decode($input, true) ?: [];
+        }
+
+        // Merge with POST data
+        if (!empty($_POST)) {
+            $data = array_merge($data, $_POST);
+        }
+
+        // Merge with GET data
+        if (!empty($_GET)) {
+            $data = array_merge($data, $_GET);
+        }
+
+        return $data;
     }
 
     /**
      * Add custom middleware
      */
-    public function addMiddleware($stage, $handler)
+    public function addMiddleware()
     {
-        return $this->requestService->registerMiddleware($stage, $handler);
+        $middlewareType = $_POST['middleware_type'] ?? '';
+        $config = $_POST['config'] ?? [];
+
+        try {
+            switch ($middlewareType) {
+                case 'security':
+                    $this->requestService->addSecurityMiddleware();
+                    break;
+
+                case 'rate_limit':
+                    $limit = $config['limit'] ?? 100;
+                    $window = $config['window'] ?? 3600;
+                    $this->requestService->addRateLimitingMiddleware($limit, $window);
+                    break;
+
+                case 'cors':
+                    $this->requestService->addCorsMiddleware($config);
+                    break;
+
+                case 'auth':
+                    $this->requestService->addAuthenticationMiddleware($config);
+                    break;
+
+                default:
+                    return $this->jsonResponse([
+                        'success' => false,
+                        'message' => 'Unknown middleware type: ' . $middlewareType
+                    ], 400);
+            }
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Middleware added successfully',
+                'type' => $middlewareType
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to add middleware: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get middleware stack
+     */
+    public function getMiddlewareStack()
+    {
+        try {
+            $stack = $this->requestService->getMiddlewareStack();
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => [
+                    'middleware_count' => count($stack),
+                    'middleware_stack' => $stack
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get middleware stack: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Clear middleware stack
+     */
+    public function clearMiddleware()
+    {
+        try {
+            $this->requestService->clearMiddleware();
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Middleware stack cleared'
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to clear middleware: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get request statistics
+     */
+    public function getRequestStats()
+    {
+        try {
+            $db = Database::getInstance();
+
+            // Total requests
+            $totalRequests = $db->fetchOne("SELECT COUNT(*) as count FROM request_logs");
+
+            // Today's requests
+            $todayRequests = $db->fetchOne(
+                "SELECT COUNT(*) as count FROM request_logs WHERE DATE(created_at) = CURDATE()"
+            );
+
+            // Failed requests
+            $failedRequests = $db->fetchOne(
+                "SELECT COUNT(*) as count FROM request_logs WHERE status = 'failed'"
+            );
+
+            // Average response time
+            $avgResponseTime = $db->fetchOne(
+                "SELECT AVG(response_time) as avg_time FROM request_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
+            );
+
+            $successRate = 0;
+            if ($totalRequests['count'] > 0) {
+                $rate = ($totalRequests['count'] - $failedRequests['count']) / $totalRequests['count'];
+                $successRate = round($rate * 100, 2);
+            }
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => [
+                    'total_requests' => $totalRequests['count'],
+                    'today_requests' => $todayRequests['count'],
+                    'failed_requests' => $failedRequests['count'],
+                    'average_response_time' => round($avgResponseTime['avg_time'], 2),
+                    'success_rate' => $successRate
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get request stats: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Log request manually
+     */
+    public function logRequest()
+    {
+        try {
+            $requestData = $this->getRequestData();
+
+            $db = Database::getInstance();
+
+            $db->execute(
+                "INSERT INTO request_logs (method, url, ip_address, user_agent, response_time, status, created_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
+                [
+                    $requestData['method'] ?? $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                    $requestData['url'] ?? $_SERVER['REQUEST_URI'] ?? '/',
+                    $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+                    $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown',
+                    $requestData['response_time'] ?? 0,
+                    $requestData['status'] ?? 'success'
+                ]
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Request logged successfully'
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to log request: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get request logs
+     */
+    public function getRequestLogs()
+    {
+        try {
+            $page = max(1, intval($_GET['page'] ?? 1));
+            $limit = min(100, max(10, intval($_GET['limit'] ?? 20)));
+            $offset = ($page - 1) * $limit;
+
+            $db = Database::getInstance();
+
+            // Get logs with pagination
+            $logs = $db->fetchAll(
+                "SELECT * FROM request_logs 
+                 ORDER BY created_at DESC 
+                 LIMIT ? OFFSET ?",
+                [$limit, $offset]
+            );
+
+            // Get total count
+            $total = $db->fetchOne("SELECT COUNT(*) as count FROM request_logs");
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => [
+                    'logs' => $logs,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $limit,
+                        'total' => $total['count'],
+                        'last_page' => ceil($total['count'] / $limit)
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get request logs: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Clear request logs
+     */
+    public function clearRequestLogs()
+    {
+        try {
+            $db = Database::getInstance();
+
+            $db->execute("DELETE FROM request_logs");
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Request logs cleared successfully'
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to clear request logs: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Export request logs
+     */
+    public function exportRequestLogs()
+    {
+        try {
+            $db = Database::getInstance();
+
+            $logs = $db->fetchAll(
+                "SELECT * FROM request_logs ORDER BY created_at DESC LIMIT 1000"
+            );
+
+            // Convert to CSV
+            $csv = "ID,Method,URL,IP Address,User Agent,Response Time,Status,Created At\n";
+
+            foreach ($logs as $log) {
+                $csv .= "{$log['id']},\"{$log['method']}\",\"{$log['url']}\",\"{$log['ip_address']}\",\"{$log['user_agent']}\",{$log['response_time']},\"{$log['status']}\",\"{$log['created_at']}\"\n";
+            }
+
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="request_logs.csv"');
+            echo $csv;
+            exit;
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Export failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Test request processing
+     */
+    public function testRequest()
+    {
+        try {
+            $testData = [
+                'method' => 'GET',
+                'url' => '/api/test',
+                'data' => ['test' => true],
+                'timestamp' => time()
+            ];
+
+            $result = $this->requestService->process($testData);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Test request processed successfully',
+                'test_data' => $testData,
+                'result' => $result
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Test request failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get request configuration
+     */
+    public function getRequestConfig()
+    {
+        try {
+            $config = [
+                'middleware_enabled' => true,
+                'rate_limiting' => [
+                    'enabled' => true,
+                    'default_limit' => 100,
+                    'default_window' => 3600
+                ],
+                'security' => [
+                    'enabled' => true,
+                    'input_validation' => true,
+                    'xss_protection' => true
+                ],
+                'cors' => [
+                    'enabled' => true,
+                    'allowed_origins' => ['*'],
+                    'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
+                    'allowed_headers' => ['Content-Type', 'Authorization']
+                ],
+                'logging' => [
+                    'enabled' => true,
+                    'auto_log' => true,
+                    'max_logs' => 10000
+                ]
+            ];
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $config
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get request config: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
