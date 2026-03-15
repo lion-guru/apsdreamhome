@@ -649,7 +649,7 @@ class BlockchainController extends BaseController
         $verification = $this->getPropertyVerification($property_id);
 
         if (!$verification) {
-            $this->setFlashMessage('error', 'Property verification not found');
+            $this->setFlash('error', 'Property verification not found');
             $this->redirect(BASE_URL . 'properties');
             return;
         }
