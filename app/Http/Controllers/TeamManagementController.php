@@ -16,7 +16,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
-use App\Core\Database;
+use App\Core\Database\Database;
 use App\Core\Security;
 use Exception;
 
