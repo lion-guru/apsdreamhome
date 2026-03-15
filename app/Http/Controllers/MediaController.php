@@ -61,7 +61,7 @@ class MediaController extends BaseController
     public function getHeaderImages()
     {
         try {
-            $limit = request('limit', 10);
+            $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getHeaderImages($limit);
             return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
@@ -75,7 +75,7 @@ class MediaController extends BaseController
     public function getTeamPhotos()
     {
         try {
-            $limit = request('limit', 10);
+            $limit = (int)($_REQUEST['limit'] ?? 10);
             $photos = $this->mediaService->getTeamPhotos($limit);
             return $this->jsonResponse()->json(['success' => true, 'data' => $photos]);
         } catch (\Exception $e) {
@@ -89,7 +89,7 @@ class MediaController extends BaseController
     public function getPropertyImages()
     {
         try {
-            $limit = request('limit', 10);
+            $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getPropertyImages($limit);
             return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
@@ -103,7 +103,7 @@ class MediaController extends BaseController
     public function getProjectImages()
     {
         try {
-            $limit = request('limit', 10);
+            $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getProjectImages($limit);
             return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
@@ -146,7 +146,7 @@ class MediaController extends BaseController
     public function upload()
     {
         try {
-            if (!request()->hasFile('media_file')) {
+            if (!isset($_FILES['media_file']) || !$_FILES['media_file']['name']) {
                 return $this->jsonResponse()->json(['success' => false, 'message' => 'No file uploaded']);
             }
 
