@@ -4,6 +4,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Security;
+
 require_once __DIR__ . '/BaseController.php';
 
 /**
@@ -21,7 +23,7 @@ class GalleryController extends BaseController
     public function index()
     {
         $category = Security::sanitize($_GET['category']) ?? 'all';
-        
+
         // Sample gallery data with Google Images/YouTube
         $gallery_items = [
             [
@@ -82,7 +84,7 @@ class GalleryController extends BaseController
 
         // Filter by category
         if ($category !== 'all') {
-            $gallery_items = array_filter($gallery_items, function($item) use ($category) {
+            $gallery_items = array_filter($gallery_items, function ($item) use ($category) {
                 return $item['category'] === $category;
             });
         }

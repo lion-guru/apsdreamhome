@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\Features\CustomFeaturesService;
+use App\Core\Database\Database;
 
 /**
  * Custom Features Controller
@@ -15,7 +16,11 @@ class CustomFeaturesController extends BaseController
     public function __construct(CustomFeaturesService $customFeaturesService = null)
     {
         parent::__construct();
-        $this->customFeaturesService = $customFeaturesService ?: new CustomFeaturesService($this->db);
+        if ($customFeaturesService) {
+            $this->customFeaturesService = $customFeaturesService;
+        } else {
+            $this->customFeaturesService = new CustomFeaturesService(Database::getInstance());
+        }
     }
 
     /**
