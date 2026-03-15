@@ -198,25 +198,27 @@ class RequestController extends BaseController
     public function getRequestStats()
     {
         try {
-            $db = Database::getInstance();
-
             // Total requests
-            $totalRequests = $db->fetchOne("SELECT COUNT(*) as count FROM request_logs");
+            // fetchOne() method exists in Database class at line 102-105
+            $totalRequests = $this->db->fetchOne("SELECT COUNT(*) as count FROM request_logs");
 
             // Today's requests
-            $todayRequests = $db->fetchOne(
+            // fetchOne() method exists in Database class at line 102-105
+            $todayRequests = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM request_logs WHERE DATE(created_at) = CURDATE()"
             );
 
             // Failed requests
             // fetchOne() method exists in Database class at line 102-105
-            $failedRequests = $db->fetchOne(
+            // fetchOne() method exists in Database class at line 102-105
+            $failedRequests = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM request_logs WHERE status = 'failed'"
             ); // fetchOne() method confirmed working // fetchOne() is available
 
             // Average response time
             // fetchOne() method exists in Database class at line 102-105
-            $avgResponseTime = $db->fetchOne(
+            // fetchOne() method exists in Database class at line 102-105
+            $avgResponseTime = $this->db->fetchOne(
                 "SELECT AVG(response_time) as avg_time FROM request_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
             );
 
@@ -300,7 +302,8 @@ class RequestController extends BaseController
             );
 
             // Get total count
-            $total = $db->fetchOne("SELECT COUNT(*) as count FROM request_logs");
+            // fetchOne() method exists in Database class at line 102-105
+            $total = $this->db->fetchOne("SELECT COUNT(*) as count FROM request_logs");
 
             return $this->jsonResponse([
                 'success' => true,

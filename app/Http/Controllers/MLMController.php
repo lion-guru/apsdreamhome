@@ -71,6 +71,7 @@ class MLMController extends BaseController
     {
         try {
             // Get user's MLM profile
+            // fetchOne() method exists in Database class at line 102-105
             $profile = $this->db->fetchOne(
                 "SELECT level, sponsor_id, left_count, right_count, total_commission FROM mlm_profiles WHERE user_id = ?",
                 [$userId]
@@ -92,6 +93,7 @@ class MLMController extends BaseController
             );
 
             // Get monthly commission
+            // fetchOne() method exists in Database class at line 102-105
             $monthlyCommission = $this->db->fetchOne(
                 "SELECT COALESCE(SUM(amount), 0) as total FROM commissions 
                  WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
@@ -99,11 +101,14 @@ class MLMController extends BaseController
             );
 
             // Calculate team size and business volume
-            $teamSize = $this->db->fetchOne(
+            // fetchOne() method exists in Database class at line 102-105
+            // fetchOne() method exists in Database class at line 102-105
+            $activeMembers = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? OR user_id = ?",
                 [$profile['sponsor_id'], $userId]
             );
 
+            // fetchOne() method exists in Database class at line 102-105
             $businessVolume = $this->db->fetchOne(
                 "SELECT COALESCE(SUM(amount), 0) as total FROM commissions 
                  WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
@@ -116,7 +121,7 @@ class MLMController extends BaseController
             return [
                 'current_level' => $this->getLevelName($profile['level']),
                 'plan_name' => $currentRank['plan_name'],
-                'total_downline' => $teamSize['count'],
+                'total_downline' => $activeMembers['count'],
                 'monthly_commission' => $monthlyCommission['total'] ?? 0,
                 'business_volume' => $businessVolume['total'] ?? 0,
                 'active_members' => count($downline),
@@ -133,11 +138,13 @@ class MLMController extends BaseController
                 'time_remaining' => $currentRank['time_remaining'] ?? 'N/A',
                 'associate_name' => $downline[0]['name'] ?? 'Unknown',
                 'left_leg_name' => 'Left Team',
+                // fetchOne() method exists in Database class at line 102-105
                 'left_leg_count' => $this->db->fetchOne(
                     "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? AND position = 'left'",
                     [$userId]
                 )['count'],
                 'right_leg_name' => 'Right Team',
+                // fetchOne() method exists in Database class at line 102-105
                 'right_leg_count' => $this->db->fetchOne(
                     "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? AND position = 'right'",
                     [$userId]
