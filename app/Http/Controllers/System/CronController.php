@@ -1,20 +1,18 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 namespace App\Http\Controllers\System;
 
-use App\Http\Controllers\Controller;
-use App\Services\EMIAutomationService;
+use App\Http\Controllers\BaseController;
+use App\Services\Marketing\MarketingAutomationService;
 
-class CronController extends Controller
+class CronController extends BaseController
 {
-    protected $emiAutomationService;
+    protected $marketingAutomationService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->emiAutomationService = new EMIAutomationService();
+        $this->marketingAutomationService = new MarketingAutomationService();
     }
 
     /**

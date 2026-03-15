@@ -8,11 +8,17 @@
 namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Database\Database;
+use App\Services\SystemLogger;
 use PDO;
 use Exception;
 
 class AdvancedAIController extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * AI-powered property price prediction
@@ -25,18 +31,18 @@ class AdvancedAIController extends BaseController
             $prediction_data = json_decode(file_get_contents('php://input'), true);
 
             if (!$prediction_data) {
-                sendJsonResponse(['success' => false, 'error' => 'Invalid prediction data'], 400);
+                $this->sendJsonResponse(['success' => false, 'error' => 'Invalid prediction data'], 400);
             }
 
             $prediction_result = $this->predictPropertyPrice($prediction_data);
 
-            sendJsonResponse([
+            $this->sendJsonResponse([
                 'success' => true,
                 'data' => $prediction_result
             ]);
         }
 
-        $this->data['page_title'] = 'AI Price Prediction - ' . APP_NAME;
+        $this->data['page_title'] = 'AI Price Prediction - APS Dream Home';
 
         if ($property_id) {
             $property = $this->getPropertyDetails($property_id);
@@ -49,7 +55,7 @@ class AdvancedAIController extends BaseController
         $this->data['market_trends'] = $this->getMarketTrends();
         $this->data['prediction_accuracy'] = $this->getPredictionAccuracy();
 
-        $this->render('ai/price_prediction');
+        return $this->renderView('ai/price_prediction', $this->data);
     }
 
     /**
@@ -61,7 +67,7 @@ class AdvancedAIController extends BaseController
 
         if (!$property) {
             $this->setFlashMessage('error', 'Property not found');
-            $this->redirect(BASE_URL . 'properties');
+            header('Location: /properties');
             return;
         }
 
@@ -71,7 +77,7 @@ class AdvancedAIController extends BaseController
         $this->data['property'] = $property;
         $this->data['valuation_data'] = $valuation_data;
 
-        $this->render('ai/automated_valuation');
+        return $this->renderView('ai/automated_valuation', $this->data);
     }
 
     /**
@@ -80,18 +86,18 @@ class AdvancedAIController extends BaseController
     public function smartRecommendations()
     {
         if (!$this->isLoggedIn()) {
-            $this->redirect(BASE_URL . 'login');
+            header('Location: /login');
             return;
         }
 
         $user_id = $_SESSION['user_id'];
         $recommendations = $this->generateSmartRecommendations($user_id);
 
-        $this->data['page_title'] = 'Smart Property Recommendations - ' . APP_NAME;
+        $this->data['page_title'] = 'Smart Property Recommendations - APS Dream Home';
         $this->data['recommendations'] = $recommendations;
         $this->data['recommendation_engine'] = $this->getRecommendationEngine();
 
-        $this->render('ai/smart_recommendations');
+        return $this->renderView('ai/smart_recommendations', $this->data);
     }
 
     /**
@@ -100,7 +106,7 @@ class AdvancedAIController extends BaseController
     public function marketAnalysis()
     {
         if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+            header('Location: /login');
             return;
         }
 
@@ -111,10 +117,10 @@ class AdvancedAIController extends BaseController
             'risk_assessment' => $this->assessMarketRisks()
         ];
 
-        $this->data['page_title'] = 'AI Market Analysis - ' . APP_NAME;
+        $this->data['page_title'] = 'AI Market Analysis - APS Dream Home';
         $this->data['market_data'] = $market_data;
 
-        $this->render('admin/ai_market_analysis');
+        return $this->renderView('admin/ai_market_analysis', $this->data);
     }
 
     /**
@@ -123,7 +129,7 @@ class AdvancedAIController extends BaseController
     public function modelTraining()
     {
         if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
+            header('Location: /login');
             return;
         }
 
@@ -136,15 +142,15 @@ class AdvancedAIController extends BaseController
                 $this->setFlashMessage('error', $training_result['error']);
             }
 
-            $this->redirect(BASE_URL . 'admin/ai/model-training');
+            header('Location: /admin/ai/model-training');
         }
 
         $model_stats = $this->getModelStatistics();
 
-        $this->data['page_title'] = 'AI Model Training - ' . APP_NAME;
+        $this->data['page_title'] = 'AI Model Training - APS Dream Home';
         $this->data['model_stats'] = $model_stats;
 
-        $this->render('admin/model_training');
+        return $this->renderView('admin/model_training', $this->data);
     }
 
     /**
@@ -468,17 +474,11 @@ class AdvancedAIController extends BaseController
     private function getUserPreferences($user_id)
     {
         try {
-            if (!$this->db) {
-                return [];
-            }
-
-            $sql = "SELECT * FROM user_preferences WHERE user_id = :userId";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute(['userId' => $user_id]);
-
-            return $stmt->fetch();
+            $sql = "SELECT * FROM user_preferences WHERE user_id = ?";
+            return $this->db->fetchOne($sql, [$user_id]);
         } catch (Exception $e) {
-            logger()->error('Get user preferences error: ' . $e->getMessage());
+            $logger = new SystemLogger();
+            $logger->error('Get user preferences error: ' . $e->getMessage());
             return [];
         }
     }
@@ -489,10 +489,6 @@ class AdvancedAIController extends BaseController
     private function analyzeUserBehavior($user_id)
     {
         try {
-            if (!$this->db) {
-                return [];
-            }
-
             // Analyze user's property views, searches, and interactions
             $sql = "SELECT
                         COUNT(*) as total_views,
@@ -501,12 +497,9 @@ class AdvancedAIController extends BaseController
                         GROUP_CONCAT(DISTINCT property_type) as viewed_types
                     FROM property_views pv
                     LEFT JOIN properties p ON pv.property_id = p.id
-                    WHERE pv.user_id = :userId AND pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+                    WHERE pv.user_id = ? AND pv.view_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute(['userId' => $user_id]);
-
-            return $stmt->fetch();
+            return $this->db->fetchOne($sql, [$user_id]);
         } catch (Exception $e) {
             error_log('Analyze user behavior error: ' . $e->getMessage());
             return [];
@@ -519,23 +512,15 @@ class AdvancedAIController extends BaseController
     private function findMatchingProperties($preferences, $behavior)
     {
         try {
-            if (!$this->db) {
-                return [];
-            }
-
             $where_conditions = ["p.status = 'available'"];
             $params = [];
 
             // Filter by user's preferred cities
             if (!empty($behavior['viewed_cities'])) {
                 $cities = explode(',', $behavior['viewed_cities']);
-                $city_placeholders = [];
-                foreach ($cities as $index => $city) {
-                    $placeholder = "city" . $index;
-                    $city_placeholders[] = ":" . $placeholder;
-                    $params[$placeholder] = $city;
-                }
-                $where_conditions[] = "p.city IN (" . implode(',', $city_placeholders) . ")";
+                $placeholders = str_repeat('?,', count($cities) - 1) . '?';
+                $where_conditions[] = "p.city IN ($placeholders)";
+                $params = array_merge($params, $cities);
             }
 
             // Filter by price range
@@ -543,9 +528,9 @@ class AdvancedAIController extends BaseController
                 $price_range = $behavior['avg_viewed_price'];
                 $min_price = $price_range * 0.7;
                 $max_price = $price_range * 1.3;
-                $where_conditions[] = "p.price BETWEEN :minPrice AND :maxPrice";
-                $params['minPrice'] = $min_price;
-                $params['maxPrice'] = $max_price;
+                $where_conditions[] = "p.price BETWEEN ? AND ?";
+                $params[] = $min_price;
+                $params[] = $max_price;
             }
 
             $where_clause = implode(' AND ', $where_conditions);
@@ -553,16 +538,14 @@ class AdvancedAIController extends BaseController
             $sql = "SELECT p.*, pt.name as property_type_name
                     FROM properties p
                     LEFT JOIN property_types pt ON p.property_type_id = pt.id
-                    WHERE {$where_clause}
+                    WHERE $where_clause
                     ORDER BY p.featured DESC, p.created_at DESC
                     LIMIT 50";
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-
-            return $stmt->fetchAll();
+            return $this->db->fetchAll($sql, $params);
         } catch (Exception $e) {
-            logger()->error('Find matching properties error: ' . $e->getMessage());
+            $logger = new SystemLogger();
+            $logger->error('Find matching properties error: ' . $e->getMessage());
             return [];
         }
     }
@@ -895,12 +878,7 @@ class AdvancedAIController extends BaseController
     private function getPropertyDetails($property_id)
     {
         try {
-            if (!$this->db) {
-                return null;
-            }
-            $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :propertyId");
-            $stmt->execute(['propertyId' => $property_id]);
-            return $stmt->fetch();
+            return $this->db->fetchOne("SELECT * FROM properties WHERE id = ?", [$property_id]);
         } catch (Exception $e) {
             error_log('Get property details error: ' . $e->getMessage());
             return null;
@@ -913,22 +891,16 @@ class AdvancedAIController extends BaseController
     private function getPropertyPrediction($property_id)
     {
         try {
-            if (!$this->db) {
-                return null;
-            }
-
-            $sql = "SELECT * FROM ai_predictions WHERE property_id = :propertyId ORDER BY created_at DESC LIMIT 1";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute(['propertyId' => $property_id]);
-
-            return $stmt->fetch();
+            $sql = "SELECT * FROM ai_predictions WHERE property_id = ? ORDER BY created_at DESC LIMIT 1";
+            return $this->db->fetchOne($sql, [$property_id]);
         } catch (Exception $e) {
-            logger()->error('Get property prediction error: ' . $e->getMessage());
+            error_log('Get property prediction error: ' . $e->getMessage());
             return null;
         }
     }
 
     /**
+     * Get recommendation engine
      * Get recommendation engine details
      */
     private function getRecommendationEngine()
@@ -939,6 +911,43 @@ class AdvancedAIController extends BaseController
             'update_frequency' => 'Real-time',
             'accuracy' => 91.2,
             'personalization_level' => 'High'
+        ];
+    }
+
+    /**
+     * Send JSON response
+     */
+    private function sendJsonResponse($data, $statusCode = 200)
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+
+    /**
+     * Render view
+     */
+    private function renderView($view, $data = [])
+    {
+        extract($data);
+        $viewPath = __DIR__ . '/../../../views/' . str_replace('.', '/', $view) . '.php';
+
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            echo "<h1>View not found: $view</h1>";
+        }
+    }
+
+    /**
+     * Set flash message
+     */
+    private function setFlashMessage($type, $message)
+    {
+        $_SESSION['flash_message'] = [
+            'type' => $type,
+            'message' => $message
         ];
     }
 }

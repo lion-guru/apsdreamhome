@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\BaseController;
 use PDO;
 use Exception;
-use Security;
+use App\Core\Security;
 
 /**
  * MLM Controller
@@ -19,12 +19,12 @@ class MLMController extends BaseController
     public function dashboard()
     {
         $this->requireLogin();
-        
+
         $userId = $_SESSION['user_id'] ?? 0;
-        
+
         // Get MLM dashboard data
         $dashboardData = $this->getMLMDashboardData($userId);
-        
+
         $this->render('pages/mlm-dashboard', [
             'page_title' => 'MLM Dashboard - APS Dream Home',
             'page_description' => 'Build your network and grow your business',
@@ -55,7 +55,7 @@ class MLMController extends BaseController
             'last_bonus' => $dashboardData['last_bonus']
         ]);
     }
-    
+
     /**
      * MLM Genealogy Tree
      */
@@ -67,7 +67,7 @@ class MLMController extends BaseController
             'page_description' => 'Explore your team network visually'
         ]);
     }
-    
+
     /**
      * Get MLM dashboard data
      */
@@ -81,7 +81,7 @@ class MLMController extends BaseController
         $diffCalculator = new \App\Services\DifferentialCommissionCalculator();
 
         $perfData = $perfCalculator->calculateRank($userId);
-        
+
         // Get agent name and current rank from profile
         $stmt = $this->db->prepare("SELECT name, current_level FROM mlm_profiles WHERE user_id = ?");
         $stmt->execute([$userId]);
@@ -152,14 +152,14 @@ class MLMController extends BaseController
             'last_bonus' => '3,000'
         ];
     }
-    
+
     /**
      * Get MLM analytics
      */
     public function getAnalytics()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $analytics = [
                 'network_growth' => [
@@ -180,12 +180,11 @@ class MLMController extends BaseController
                     'progress_percentage' => 75
                 ]
             ];
-            
+
             echo json_encode([
                 'success' => true,
                 'analytics' => $analytics
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -193,30 +192,29 @@ class MLMController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Calculate commission
      */
     public function calculateCommission()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $businessVolume = Security::sanitize($_POST['business_volume']) ?? 0;
             $planId = Security::sanitize($_POST['plan_id']) ?? 'starter';
-            
+
             $commission = [
                 'binary_commission' => $businessVolume * 0.12,
                 'unilevel_commission' => $businessVolume * 0.10,
                 'matrix_commission' => $businessVolume * 0.08,
                 'total_commission' => $businessVolume * 0.30
             ];
-            
+
             echo json_encode([
                 'success' => true,
                 'commission' => $commission
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -224,26 +222,25 @@ class MLMController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Get network tree
      */
     public function getNetworkTree()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $userId = $_SESSION['user_id'] ?? 0;
             $levels = $_GET['levels'] ?? 3;
-            
+
             $perfCalculator = new \App\Services\PerformanceRankCalculator();
             $networkTree = $perfCalculator->getHierarchyTree($userId, $levels);
-            
+
             echo json_encode([
                 'success' => true,
                 'network_tree' => $networkTree
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -251,25 +248,24 @@ class MLMController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Get commission history
      */
     public function getCommissionHistory()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $userId = $_SESSION['user_id'] ?? 0;
             $period = $_GET['period'] ?? 'monthly';
-            
+
             $history = $this->getCommissionHistoryData($userId, $period);
-            
+
             echo json_encode([
                 'success' => true,
                 'history' => $history
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -277,7 +273,7 @@ class MLMController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Helper methods
      */

@@ -4869,3 +4869,318 @@ Stack trace:
 [14-Mar-2026 21:31:17 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
 [14-Mar-2026 21:31:17 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
 [14-Mar-2026 21:31:17 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[14-Mar-2026 21:52:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/properties
+[14-Mar-2026 21:52:53 Europe/Berlin] FINAL ROUTER URI: admin/properties
+[14-Mar-2026 21:52:53 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminController.php
+[14-Mar-2026 21:52:53 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[14-Mar-2026 21:52:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[14-Mar-2026 21:52:53 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[14-Mar-2026 21:52:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[14-Mar-2026 21:52:53 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[14-Mar-2026 21:52:54 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[14-Mar-2026 21:52:54 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[14-Mar-2026 21:53:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[14-Mar-2026 21:53:02 Europe/Berlin] FINAL ROUTER URI: /
+[14-Mar-2026 21:53:02 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[14-Mar-2026 21:53:02 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[14-Mar-2026 21:53:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[14-Mar-2026 21:53:03 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[14-Mar-2026 22:30:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[14-Mar-2026 22:30:19 Europe/Berlin] FINAL ROUTER URI: /
+[14-Mar-2026 22:30:19 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[14-Mar-2026 22:30:20 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[14-Mar-2026 22:30:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[14-Mar-2026 22:30:20 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[14-Mar-2026 22:30:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[14-Mar-2026 22:30:23 Europe/Berlin] FINAL ROUTER URI: admin/login
+[14-Mar-2026 22:30:23 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[14-Mar-2026 22:30:23 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[14-Mar-2026 22:30:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[14-Mar-2026 22:30:23 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[14-Mar-2026 22:30:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[14-Mar-2026 22:30:23 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[14-Mar-2026 22:30:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[14-Mar-2026 22:30:23 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[14-Mar-2026 22:30:32 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/apple-touch-icon.png
+[14-Mar-2026 22:30:32 Europe/Berlin] FINAL ROUTER URI: assets/images/apple-touch-icon.png
+[15-Mar-2026 08:11:52 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 08:11:52 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 08:11:52 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:11:52 Europe/Berlin] PHP Fatal error:  Cannot redeclare App\Http\Controllers\BaseController::response() in C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\BaseController.php on line 322
+[15-Mar-2026 08:12:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 08:12:21 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 08:12:21 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:12:21 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:12:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:12:22 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:12:23 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 08:12:23 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/projects/suyoday-colony
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: projects/suyoday-colony
+[15-Mar-2026 08:12:35 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:12:35 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday2.jpeg
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday2.jpeg
+[15-Mar-2026 08:12:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/apple-touch-icon.png
+[15-Mar-2026 08:12:35 Europe/Berlin] FINAL ROUTER URI: assets/images/apple-touch-icon.png
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 08:13:19 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:13:19 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 08:13:19 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[15-Mar-2026 08:13:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/projects/raghunat-nagri
+[15-Mar-2026 08:13:22 Europe/Berlin] FINAL ROUTER URI: projects/raghunat-nagri
+[15-Mar-2026 08:13:22 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:13:22 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:13:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:13:22 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:13:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:13:22 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:13:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:13:22 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 08:13:33 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:13:33 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:13:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 08:13:33 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[15-Mar-2026 08:13:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/projects/braj-radha-nagri
+[15-Mar-2026 08:13:35 Europe/Berlin] FINAL ROUTER URI: projects/braj-radha-nagri
+[15-Mar-2026 08:13:35 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:13:35 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:13:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:13:35 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:13:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:13:35 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:13:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:13:35 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:13:37 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 08:13:38 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:13:38 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 08:13:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 08:13:38 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[15-Mar-2026 08:13:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/projects/budh-bihar-colony
+[15-Mar-2026 08:13:41 Europe/Berlin] FINAL ROUTER URI: projects/budh-bihar-colony
+[15-Mar-2026 08:13:41 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:13:41 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:13:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:13:41 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:13:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:13:41 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:13:41 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:13:41 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 08:13:44 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:13:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:13:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 08:13:44 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[15-Mar-2026 08:14:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:14:24 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:14:24 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:14:24 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:14:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:14:24 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:14:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:14:24 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:14:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:14:24 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:14:30 Europe/Berlin] ROUTER DEBUG: Method: POST, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:14:30 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:14:30 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:14:30 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:14:30 Europe/Berlin] Admin Login Attempt: {"email":"","success":false,"message":"Invalid username or password","ip":"::1","user_agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Safari\/537.36 Edg\/145.0.0.0","timestamp":"2026-03-15 08:14:30"}
+[15-Mar-2026 08:14:30 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:14:30 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:14:30 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:14:30 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:14:30 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:14:30 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:14:30 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:14:30 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:14:30 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:14:30 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:14:46 Europe/Berlin] ROUTER DEBUG: Method: POST, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:14:46 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:14:46 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:14:46 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:14:46 Europe/Berlin] Admin Login Attempt: {"email":"","success":false,"message":"Invalid username or password","ip":"::1","user_agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Safari\/537.36 Edg\/145.0.0.0","timestamp":"2026-03-15 08:14:46"}
+[15-Mar-2026 08:14:46 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:14:46 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:14:46 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:14:46 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:14:46 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:14:46 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:14:47 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:14:47 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:14:47 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:14:47 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:14:48 Europe/Berlin] ROUTER DEBUG: Method: POST, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:14:48 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:14:48 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:14:48 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:14:48 Europe/Berlin] Admin Login Attempt: {"email":"","success":false,"message":"Invalid username or password","ip":"::1","user_agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Safari\/537.36 Edg\/145.0.0.0","timestamp":"2026-03-15 08:14:48"}
+[15-Mar-2026 08:14:48 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:14:48 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:14:48 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:14:48 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:14:48 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:14:48 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:14:48 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:14:48 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:14:48 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:14:48 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:37:08 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[15-Mar-2026 08:37:08 Europe/Berlin] FINAL ROUTER URI: admin/login
+[15-Mar-2026 08:37:08 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[15-Mar-2026 08:37:08 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:37:08 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:37:08 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:37:08 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:37:08 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:37:09 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:37:09 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 08:37:10 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 08:37:10 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 08:37:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 08:37:10 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 08:37:11 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 08:37:11 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 08:37:11 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 08:37:11 Europe/Berlin] FINAL ROUTER URI: api/properties/featured

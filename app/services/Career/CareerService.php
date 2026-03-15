@@ -2,7 +2,7 @@
 
 namespace App\Services\Career;
 
-use App\Core\Database;
+use App\Core\Database\Database;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -37,7 +37,7 @@ class CareerService
             'interview_reminder_hours' => 24,
             'application_retention_days' => 365
         ], $config);
-        
+
         $this->initializeCareerTables();
         $this->ensureStorageDirectory();
     }
@@ -96,7 +96,6 @@ class CareerService
                 'message' => 'Application submitted successfully',
                 'application_id' => $applicationId
             ];
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to submit application", [
                 'email' => $data['email'] ?? 'unknown',
@@ -120,17 +119,16 @@ class CareerService
                     FROM job_applications a 
                     LEFT JOIN job_postings j ON a.job_id = j.id 
                     WHERE a.id = ?";
-            
+
             $application = $this->db->fetchOne($sql, [$id]);
-            
+
             if ($application) {
                 $application['attachments'] = $this->getApplicationAttachments($id);
                 $application['interviews'] = $this->getApplicationInterviews($id);
                 $application['notes'] = $this->getApplicationNotes($id);
             }
-            
-            return $application;
 
+            return $application;
         } catch (\Exception $e) {
             $this->logger->error("Failed to get application", [
                 'id' => $id,
@@ -194,14 +192,13 @@ class CareerService
             }
 
             $applications = $this->db->fetchAll($sql, $params);
-            
+
             foreach ($applications as &$app) {
                 $app['attachments'] = $this->getApplicationAttachments($app['id']);
                 $app['interviews'] = $this->getApplicationInterviews($app['id']);
             }
-            
-            return $applications;
 
+            return $applications;
         } catch (\Exception $e) {
             $this->logger->error("Failed to get applications", ['error' => $e->getMessage()]);
             return [];
@@ -235,7 +232,7 @@ class CareerService
             $sql = "UPDATE job_applications 
                     SET status = ?, status_reason = ?, updated_at = NOW() 
                     WHERE id = ?";
-            
+
             $this->db->execute($sql, [$status, $reason, $id]);
 
             // Send status update notification
@@ -255,7 +252,6 @@ class CareerService
                 'success' => true,
                 'message' => 'Application status updated successfully'
             ];
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to update application status", [
                 'id' => $id,
@@ -306,7 +302,6 @@ class CareerService
                 'message' => 'Interview scheduled successfully',
                 'interview_id' => $interviewId
             ];
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to schedule interview", [
                 'application_id' => $applicationId,
@@ -331,25 +326,25 @@ class CareerService
             // Total applications
             $sql = "SELECT COUNT(*) as total FROM job_applications";
             $params = [];
-            
+
             if (!empty($filters['date_from'])) {
                 $sql .= " WHERE created_at >= ?";
                 $params[] = $filters['date_from'];
             }
-            
+
             $stats['total_applications'] = $this->db->fetchOne($sql, $params) ?? 0;
 
             // Applications by status
             $statusSql = "SELECT status, COUNT(*) as count FROM job_applications";
             $statusParams = [];
-            
+
             if (!empty($filters['date_from'])) {
                 $statusSql .= " WHERE created_at >= ?";
                 $statusParams[] = $filters['date_from'];
             }
-            
+
             $statusSql .= " GROUP BY status";
-            
+
             $statusStats = $this->db->fetchAll($statusSql, $statusParams);
             $stats['by_status'] = [];
             foreach ($statusStats as $stat) {
@@ -361,14 +356,14 @@ class CareerService
                        FROM job_applications a 
                        LEFT JOIN job_postings j ON a.job_id = j.id";
             $deptParams = [];
-            
+
             if (!empty($filters['date_from'])) {
                 $deptSql .= " WHERE a.created_at >= ?";
                 $deptParams[] = $filters['date_from'];
             }
-            
+
             $deptSql .= " GROUP BY j.department";
-            
+
             $deptStats = $this->db->fetchAll($deptSql, $deptParams);
             $stats['by_department'] = [];
             foreach ($deptStats as $stat) {
@@ -379,7 +374,6 @@ class CareerService
             $stats['recent_applications'] = $this->getApplications(['limit' => 10]);
 
             return $stats;
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get career stats", ['error' => $e->getMessage()]);
             return [];
@@ -409,7 +403,7 @@ class CareerService
                 INDEX idx_job_id (job_id),
                 INDEX idx_created_at (created_at)
             )",
-            
+
             "CREATE TABLE IF NOT EXISTS application_interviews (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 application_id INT NOT NULL,
@@ -426,7 +420,7 @@ class CareerService
                 INDEX idx_application_id (application_id),
                 INDEX idx_scheduled_date (scheduled_date)
             )",
-            
+
             "CREATE TABLE IF NOT EXISTS application_notes (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 application_id INT NOT NULL,
@@ -478,12 +472,12 @@ class CareerService
         $sql = "SELECT COUNT(*) as count FROM job_applications 
                 WHERE email = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
         $params = [$email];
-        
+
         if ($jobId) {
             $sql .= " AND job_id = ?";
             $params[] = $jobId;
         }
-        
+
         $count = $this->db->fetchOne($sql, $params) ?? 0;
         return $count > 0;
     }
@@ -532,7 +526,6 @@ class CareerService
                 'file_path' => $filepath,
                 'filename' => $filename
             ];
-
         } catch (\Exception $e) {
             return [
                 'success' => false,
@@ -546,7 +539,7 @@ class CareerService
         $sql = "INSERT INTO job_applications 
                 (job_id, full_name, email, phone, cover_letter, resume_path, status, created_at) 
                 VALUES (?, ?, ?, ?, ?, ?, 'received', NOW())";
-        
+
         $this->db->execute($sql, [
             $data['job_id'] ?? null,
             $data['full_name'],
@@ -555,7 +548,7 @@ class CareerService
             $data['cover_letter'] ?? null,
             $resumePath
         ]);
-        
+
         return $this->db->lastInsertId();
     }
 
@@ -641,7 +634,7 @@ class CareerService
         $sql = "INSERT INTO application_interviews 
                 (application_id, type, scheduled_date, duration_minutes, interviewer_name, interviewer_email, meeting_link, notes, created_at) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-        
+
         $this->db->execute($sql, [
             $applicationId,
             $interviewData['type'],
@@ -652,7 +645,7 @@ class CareerService
             $interviewData['meeting_link'] ?? null,
             $interviewData['notes'] ?? null
         ]);
-        
+
         return $this->db->lastInsertId();
     }
 

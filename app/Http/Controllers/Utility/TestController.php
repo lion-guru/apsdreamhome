@@ -3,21 +3,27 @@
 // TODO: Add proper error handling with try-catch blocks
 
 
-namespace App\Controllers;
+namespace App\Http\Controllers\Utility;
 
-use App\Core\Http\Response;
+use App\Http\Controllers\BaseController;
 
-class TestController
+class TestController extends BaseController
 {
     public function downloadFile()
     {
-        $filePath = ROOT . '/public/test-download.pdf';
-        return Response::download($filePath, 'test-document.pdf');
+        $filePath = BASE_URL . '/public/test-download.pdf';
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="test-document.pdf"');
+        readfile($filePath);
+        exit;
     }
 
     public function viewFile()
     {
-        $filePath = ROOT . '/public/test-download.pdf';
-        return Response::file($filePath, 'test-document.pdf');
+        $filePath = BASE_URL . '/public/test-download.pdf';
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="test-document.pdf"');
+        readfile($filePath);
+        exit;
     }
 }

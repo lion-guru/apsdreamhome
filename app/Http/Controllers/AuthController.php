@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Services\Auth\AuthService;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 
 /**
  * Authentication Controller
  * Handles all authentication operations
  */
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     private AuthService $authService;
 
     public function __construct(AuthService $authService)
     {
+        parent::__construct();
         $this->authService = $authService;
     }
 
@@ -26,8 +27,8 @@ class AuthController extends Controller
         if ($this->authService->isLoggedIn()) {
             return $this->redirect('/dashboard');
         }
-        
-        return view('auth.login');
+
+        return $this->view('auth.login');
     }
 
     /**
@@ -38,8 +39,8 @@ class AuthController extends Controller
         if ($this->authService->isLoggedIn()) {
             return $this->redirect('/dashboard');
         }
-        
-        return view('auth.register');
+
+        return $this->view('auth.register');
     }
 
     /**
@@ -50,8 +51,8 @@ class AuthController extends Controller
         if ($this->authService->isLoggedIn()) {
             return $this->redirect('/dashboard');
         }
-        
-        return view('auth.forgot-password');
+
+        return $this->view('auth.forgot-password');
     }
 
     /**
@@ -62,8 +63,8 @@ class AuthController extends Controller
         if ($this->authService->isLoggedIn()) {
             return $this->redirect('/dashboard');
         }
-        
-        return view('auth.reset-password', ['token' => $token]);
+
+        return $this->view('auth.reset-password', ['token' => $token]);
     }
 
     /**
@@ -71,15 +72,15 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $email = request('email');
-        $password = request('password');
-        $remember = request('remember', false);
+        $email = $this->request('email');
+        $password = $this->request('password');
+        $remember = $this->request('remember', false);
 
         $result = $this->authService->login($email, $password, $remember);
 
         if ($result['success']) {
             if ($result['locked']) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => $result['message'],
                     'locked' => true
@@ -96,14 +97,14 @@ class AuthController extends Controller
                 $redirectUrl = '/agent/dashboard';
             }
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => $result['message'],
                 'redirect' => $redirectUrl
             ]);
         }
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => false,
             'message' => $result['message'],
             'locked' => $result['locked'] ?? false
@@ -115,13 +116,17 @@ class AuthController extends Controller
      */
     public function register()
     {
-        $userData = request()->only([
-            'name', 'email', 'password', 'phone', 'confirm_password'
+        $userData = $this->request()->only([
+            'name',
+            'email',
+            'password',
+            'phone',
+            'confirm_password'
         ]);
 
         // Validate password confirmation
         if ($userData['password'] !== $userData['confirm_password']) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Passwords do not match'
             ]);
@@ -132,14 +137,14 @@ class AuthController extends Controller
         $result = $this->authService->register($userData);
 
         if ($result['success']) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => $result['message'],
                 'redirect' => '/dashboard'
             ]);
         }
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => false,
             'message' => $result['message'],
             'errors' => $result['errors'] ?? []
@@ -152,8 +157,8 @@ class AuthController extends Controller
     public function logout()
     {
         $this->authService->logout();
-        
-        return response()->json([
+
+        return $this->jsonResponse([
             'success' => true,
             'message' => 'Logged out successfully',
             'redirect' => '/login'
@@ -165,11 +170,11 @@ class AuthController extends Controller
      */
     public function requestPasswordReset()
     {
-        $email = request('email');
+        $email = $this->request('email');
 
         $result = $this->authService->requestPasswordReset($email);
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => $result['success'],
             'message' => $result['message']
         ]);
@@ -180,13 +185,13 @@ class AuthController extends Controller
      */
     public function resetPassword()
     {
-        $token = request('token');
-        $newPassword = request('password');
-        $confirmPassword = request('confirm_password');
+        $token = $this->request('token');
+        $newPassword = $this->request('password');
+        $confirmPassword = $this->request('confirm_password');
 
         // Validate password confirmation
         if ($newPassword !== $confirmPassword) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Passwords do not match'
             ]);
@@ -194,7 +199,7 @@ class AuthController extends Controller
 
         $result = $this->authService->resetPassword($token, $newPassword);
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => $result['success'],
             'message' => $result['message']
         ]);
@@ -205,13 +210,13 @@ class AuthController extends Controller
      */
     public function changePassword()
     {
-        $currentPassword = request('current_password');
-        $newPassword = request('new_password');
-        $confirmPassword = request('confirm_password');
+        $currentPassword = $this->request('current_password');
+        $newPassword = $this->request('new_password');
+        $confirmPassword = $this->request('confirm_password');
 
         // Validate password confirmation
         if ($newPassword !== $confirmPassword) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'New passwords do not match'
             ]);
@@ -219,7 +224,7 @@ class AuthController extends Controller
 
         $result = $this->authService->changePassword($currentPassword, $newPassword);
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => $result['success'],
             'message' => $result['message']
         ]);
@@ -233,13 +238,13 @@ class AuthController extends Controller
         $user = $this->authService->getCurrentUser();
 
         if ($user) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'user' => $user
             ]);
         }
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => false,
             'message' => 'User not logged in'
         ]);
@@ -253,7 +258,7 @@ class AuthController extends Controller
         $isLoggedIn = $this->authService->isLoggedIn();
         $user = $isLoggedIn ? $this->authService->getCurrentUser() : null;
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'authenticated' => $isLoggedIn,
             'user' => $user,
@@ -269,7 +274,7 @@ class AuthController extends Controller
     public function getAuthStats()
     {
         if (!$this->authService->isAdmin()) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Access denied'
             ]);
@@ -277,7 +282,7 @@ class AuthController extends Controller
 
         $stats = $this->authService->getAuthStats();
 
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => $stats
         ]);
@@ -289,8 +294,8 @@ class AuthController extends Controller
     public function showProfile()
     {
         $user = $this->authService->requireAuth();
-        
-        return view('auth.profile', ['user' => $user]);
+
+        return $this->view('auth.profile', ['user' => $user]);
     }
 
     /**
@@ -300,11 +305,11 @@ class AuthController extends Controller
     {
         $user = $this->authService->requireAuth();
 
-        $data = request()->only(['name', 'phone']);
+        $data = $this->request()->only(['name', 'phone']);
 
         // Validate required fields
         if (empty($data['name']) || empty($data['phone'])) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Name and phone are required'
             ]);
@@ -315,13 +320,12 @@ class AuthController extends Controller
             $sql = "UPDATE users SET name = ?, phone = ?, updated_at = NOW() WHERE id = ?";
             $this->db->execute($sql, [$data['name'], $data['phone'], $user['id']]);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Profile updated successfully'
             ]);
-
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update profile'
             ]);
@@ -334,8 +338,8 @@ class AuthController extends Controller
     public function showChangePassword()
     {
         $this->authService->requireAuth();
-        
-        return view('auth.change-password');
+
+        return $this->view('auth.change-password');
     }
 
     /**
@@ -344,7 +348,7 @@ class AuthController extends Controller
     public function verifyEmail($token)
     {
         // TODO: Implement email verification logic
-        return view('auth.email-verified', ['success' => true]);
+        return $this->view('auth.email-verified', ['success' => true]);
     }
 
     /**
@@ -355,7 +359,7 @@ class AuthController extends Controller
         $user = $this->authService->requireAuth();
 
         // TODO: Implement email resend logic
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'message' => 'Verification email sent'
         ]);
@@ -369,7 +373,7 @@ class AuthController extends Controller
         $user = $this->authService->requireAuth();
 
         // TODO: Implement 2FA setup
-        return response()->json([
+        return $this->jsonResponse([
             'success' => false,
             'message' => '2FA not yet implemented'
         ]);
@@ -383,7 +387,7 @@ class AuthController extends Controller
         $user = $this->authService->requireAuth();
 
         // TODO: Implement 2FA disable
-        return response()->json([
+        return $this->jsonResponse([
             'success' => false,
             'message' => '2FA not yet implemented'
         ]);
@@ -401,16 +405,15 @@ class AuthController extends Controller
                     WHERE email = ? 
                     ORDER BY created_at DESC 
                     LIMIT 20";
-            
+
             $history = $this->db->fetchAll($sql, [$user['email']]);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'data' => $history
             ]);
-
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get login history'
             ]);
@@ -428,13 +431,12 @@ class AuthController extends Controller
             $sql = "DELETE FROM login_attempts WHERE email = ?";
             $this->db->execute($sql, [$user['email']]);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Login history cleared'
             ]);
-
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to clear login history'
             ]);
@@ -449,7 +451,7 @@ class AuthController extends Controller
         $user = $this->authService->requireAuth();
 
         // TODO: Implement session management
-        return response()->json([
+        return $this->jsonResponse([
             'success' => true,
             'data' => [
                 [
@@ -472,9 +474,20 @@ class AuthController extends Controller
         $user = $this->authService->requireAuth();
 
         // TODO: Implement session revocation
-        return response()->json([
+        return $this->jsonResponse([
             'success' => false,
             'message' => 'Session management not yet implemented'
         ]);
+    }
+
+    /**
+     * Get request input
+     */
+    private function request($key = null)
+    {
+        if ($key === null) {
+            return $_REQUEST;
+        }
+        return $_REQUEST[$key] ?? null;
     }
 }

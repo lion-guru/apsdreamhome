@@ -99,6 +99,11 @@ if (file_exists(CONFIG_PATH . '/security.php')) {
     }
 }
 
+// Include vendor autoloader for PSR interfaces FIRST
+if (file_exists(APP_ROOT . '/vendor/autoload.php')) {
+    require_once APP_ROOT . '/vendor/autoload.php';
+}
+
 // Include core system files
 require_once CORE_PATH . '/Autoloader.php';
 // Register autoloader

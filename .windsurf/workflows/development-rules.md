@@ -34,12 +34,57 @@ include __DIR__ . '/../layouts/base.php';
 
 <!-- HTML Content -->
 
-// ❌ NEVER USE:
-@extends('layouts/base')
-@section('content')
+//# ❌ NEVER USE:
+//@extends('layouts/base')
+//@section('content')
 ```
 
-### 3. 🎯 CONTROLLER RENDERING
+### 3. 🔍 DUPLICATE FILE ANALYSIS RULE (CRITICAL)
+
+**Before deleting ANY duplicate file, ALWAYS follow this protocol:**
+
+#### **Phase 1: COMPLETE ANALYSIS**
+
+```bash
+# Compare both files line-by-line
+# Identify unique features in each file
+# Document differences and advantages
+```
+
+#### **Phase 2: FEATURE EXTRACTION**
+
+```bash
+# Extract all unique/valuable features from duplicate
+# Identify which version has superior implementation
+# Note any Laravel/external dependencies
+```
+
+#### **Phase 3: SMART MERGE**
+
+```bash
+# Merge important features into main file
+# Remove Laravel/external dependencies
+# Maintain Custom MVC pattern
+# Preserve ALL functionality
+```
+
+#### **Phase 4: CLEANUP**
+
+```bash
+# Remove duplicate file only after successful merge
+# Test all merged functionality
+# Document the merge process
+```
+
+**📋 EXAMPLE CASE STUDY: CoreFunctionsController**
+
+- Original: 14 basic methods
+- Duplicate: 35+ advanced methods with Laravel dependencies
+- Solution: Merged 23+ methods into single file without dependencies
+
+**🎯 GOLDEN RULE: "Duplicate files are not mistakes - they're evolution stages with unique value!"**
+
+### 4. 🎯 CONTROLLER RENDERING
 
 ```php
 // ✅ ALWAYS USE:
@@ -101,13 +146,13 @@ routes/
 - ✅ Extend: `BaseController`
 - ✅ Render: `$this->render('pages/page-name', [...])`
 
-####  MVC Controllers:
+#### MVC Controllers:
 
 - ✅ Location: `app/Controllers/NameController.php`
 - ✅ Namespace: `App\Controllers\`
 - ✅ NO Laravel dependencies
 - ✅ Use services: `new \App\Services\ServiceName()`
-- ✅ Use  view renderer: `new \App\Core\ViewRenderer()`
+- ✅ Use view renderer: `new \App\Core\ViewRenderer()`
 - ✅ Handle POST/GET with `$_POST`/`$_GET`
 - ✅ Custom redirect method
 
@@ -123,10 +168,10 @@ routes/
 - ✅ Location: `app/Services/ServiceName.php`
 - ✅ Namespace: `App\Services\
 - ✅ NO Laravel dependencies
-- ✅ Use  database: `\App\Core\Database::getInstance()`
-- ✅ Use  logger: `new \App\Core\Logger()`
+- ✅ Use database: `\App\Core\Database::getInstance()`
+- ✅ Use logger: `new \App\Core\Logger()`
 - ✅ Use config: `\App\Core\Config::getInstance()`
-- ✅ Use  session: `new \App\Core\Session()`
+- ✅ Use session: `new \App\Core\Session()`
 - ✅ Return format: `['success' => bool, 'data' => mixed, 'message' => string]`
 
 ### View Rules:

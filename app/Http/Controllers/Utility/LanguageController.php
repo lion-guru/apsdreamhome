@@ -8,11 +8,11 @@
 namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use Exception;
 
 class LanguageController extends BaseController
 {
-
     private $supported_languages = [
         'en' => [
             'name' => 'English',
@@ -172,13 +172,13 @@ class LanguageController extends BaseController
             return $translations[$language];
         }
 
-        $translation_file = __DIR__ . '/../languages/' . $language . '.php';
+        $translation_file = __DIR__ . '/../../../views/languages/' . $language . '.php';
 
         if (file_exists($translation_file)) {
             $translations[$language] = include $translation_file;
         } else {
             // Fallback to English
-            $translation_file = __DIR__ . '/../languages/en.php';
+            $translation_file = __DIR__ . '/../../../views/languages/en.php';
             $translations[$language] = file_exists($translation_file) ? include $translation_file : [];
         }
 
@@ -190,11 +190,11 @@ class LanguageController extends BaseController
      */
     public function languageSelector()
     {
-        $this->data['page_title'] = 'Select Language - ' . APP_NAME;
+        $this->data['page_title'] = 'Select Language - APS Dream Home';
         $this->data['supported_languages'] = $this->supported_languages;
         $this->data['current_language'] = $this->getCurrentLanguage();
 
-        $this->render('language/selector');
+        return $this->renderView('language/selector', $this->data);
     }
 
     /**
@@ -214,134 +214,12 @@ class LanguageController extends BaseController
         $languages = $this->getAvailableLanguages();
         $translation_stats = $this->getTranslationStats();
 
-        $this->data['page_title'] = 'Translation Management - ' . APP_NAME;
+        $this->data['page_title'] = 'Translation Management - APS Dream Home';
         $this->data['languages'] = $languages;
         $this->data['translation_stats'] = $translation_stats;
         $this->data['supported_languages'] = $this->supported_languages;
 
-        $this->render('admin/translation_management');
-    }
-
-    /**
-     * Export translations for editing
-     */
-    public function exportTranslations()
-    {
-        if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        $language = $_GET['lang'] ?? 'en';
-
-        if (!isset($this->supported_languages[$language])) {
-            $this->setFlashMessage('error', 'Invalid language');
-            $this->redirect(BASE_URL . 'admin/translations');
-            return;
-        }
-
-        $translations = $this->loadTranslations($language);
-
-        if ($language === 'en') {
-            // Export English as template for new languages
-            $export_data = $translations;
-        } else {
-            // Export with English keys for reference
-            $english_translations = $this->loadTranslations('en');
-            $export_data = [];
-
-            foreach ($english_translations as $key => $english_text) {
-                $export_data[$key] = [
-                    'english' => $english_text,
-                    'translated' => $translations[$key] ?? $english_text
-                ];
-            }
-        }
-
-        $filename = 'translations_' . $language . '_' . date('Y-m-d') . '.json';
-        header('Content-Type: application/json');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        echo json_encode($export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
-    /**
-     * Import translations from file
-     */
-    public function importTranslations()
-    {
-        if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['translation_file'])) {
-            $this->setFlashMessage('error', 'Please select a translation file');
-            $this->redirect(BASE_URL . 'admin/translations');
-            return;
-        }
-
-        $file = $_FILES['translation_file'];
-        $language = Security::sanitize($_POST['language']) ?? '';
-
-        if (empty($language) || !isset($this->supported_languages[$language])) {
-            $this->setFlashMessage('error', 'Please select a valid language');
-            $this->redirect(BASE_URL . 'admin/translations');
-            return;
-        }
-
-        try {
-            $content = file_get_contents($file['tmp_name']);
-            $translations = json_decode($content, true);
-
-            if (!$translations) {
-                throw new \Exception('Invalid JSON file');
-            }
-
-            $imported_count = 0;
-            foreach ($translations as $key => $translation) {
-                if (is_array($translation)) {
-                    // Handle format with English reference
-                    $this->saveTranslation($language, $key, $translation['translated']);
-                } else {
-                    // Handle direct translation format
-                    $this->saveTranslation($language, $key, $translation);
-                }
-                $imported_count++;
-            }
-
-            $this->setFlashMessage('success', "Successfully imported {$imported_count} translations");
-            $this->redirect(BASE_URL . 'admin/translations');
-        } catch (\Exception $e) {
-            $this->setFlashMessage('error', 'Import failed: ' . $e->getMessage());
-            $this->redirect(BASE_URL . 'admin/translations');
-        }
-    }
-
-    /**
-     * Save individual translation
-     */
-    private function saveTranslation($language, $key, $translation)
-    {
-        try {
-            $translation_file = __DIR__ . '/../languages/' . $language . '.php';
-
-            // Load existing translations
-            $translations = [];
-            if (file_exists($translation_file)) {
-                $translations = include $translation_file;
-            }
-
-            // Update translation
-            $translations[$key] = $translation;
-
-            // Save back to file
-            $php_content = "<?php\nreturn " . var_export($translations, true) . ";\n";
-            return file_put_contents($translation_file, $php_content) !== false;
-        } catch (\Exception $e) {
-            error_log('Translation save error: ' . $e->getMessage());
-            return false;
-        }
+        return $this->renderView('admin/translations', $this->data);
     }
 
     /**
@@ -352,7 +230,7 @@ class LanguageController extends BaseController
         $languages = [];
 
         foreach ($this->supported_languages as $code => $info) {
-            $translation_file = __DIR__ . '/../languages/' . $code . '.php';
+            $translation_file = __DIR__ . '/../../../views/languages/' . $code . '.php';
 
             if (file_exists($translation_file)) {
                 $translations = include $translation_file;
@@ -413,342 +291,65 @@ class LanguageController extends BaseController
     }
 
     /**
-     * Generate missing translations report
+     * Save individual translation
      */
-    public function missingTranslations()
-    {
-        if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        $language = $_GET['lang'] ?? '';
-        $english_translations = $this->loadTranslations('en');
-
-        if (empty($language) || !isset($this->supported_languages[$language])) {
-            $this->setFlashMessage('error', 'Please select a valid language');
-            $this->redirect(BASE_URL . 'admin/translations');
-            return;
-        }
-
-        $target_translations = $this->loadTranslations($language);
-        $missing_translations = [];
-
-        foreach ($english_translations as $key => $english_text) {
-            if (empty($target_translations[$key]) || $target_translations[$key] === $english_text) {
-                $missing_translations[$key] = $english_text;
-            }
-        }
-
-        $this->data['page_title'] = 'Missing Translations - ' . APP_NAME;
-        $this->data['language'] = $this->supported_languages[$language];
-        $this->data['missing_translations'] = $missing_translations;
-
-        $this->render('admin/missing_translations');
-    }
-
-    /**
-     * Auto-translate using external service (placeholder)
-     */
-    public function autoTranslate()
-    {
-        if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        header('Content-Type: application/json');
-
-        $target_language = Security::sanitize($_POST['language']) ?? '';
-        $text_to_translate = Security::sanitize($_POST['text']) ?? '';
-
-        if (empty($target_language) || empty($text_to_translate)) {
-            sendJsonResponse(['success' => false, 'error' => 'Language and text are required'], 400);
-        }
-
-        // In production, integrate with Google Translate API or similar service
-        // For now, return placeholder
-        $translated_text = "[AUTO-TRANSLATED] " . $text_to_translate;
-
-        sendJsonResponse([
-            'success' => true,
-            'translated_text' => $translated_text
-        ]);
-    }
-
-    /**
-     * Language pack management
-     */
-    public function languagePacks()
-    {
-        if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        $this->data['page_title'] = 'Language Packs - ' . APP_NAME;
-        $this->data['supported_languages'] = $this->supported_languages;
-        $this->data['language_stats'] = $this->getAvailableLanguages();
-
-        $this->render('admin/language_packs');
-    }
-
-    /**
-     * Create new language pack
-     */
-    public function createLanguagePack()
-    {
-        if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $language_code = Security::sanitize($_POST['language_code']) ?? '';
-            $language_name = Security::sanitize($_POST['language_name']) ?? '';
-            $native_name = Security::sanitize($_POST['native_name']) ?? '';
-
-            if (empty($language_code) || empty($language_name)) {
-                $this->setFlashMessage('error', 'Language code and name are required');
-                $this->redirect(BASE_URL . 'admin/language-packs');
-                return;
-            }
-
-            // Add to supported languages
-            $this->supported_languages[$language_code] = [
-                'name' => $language_name,
-                'native_name' => $native_name,
-                'flag' => isset($_POST['flag']) ? Security::sanitize($_POST['flag']) : '🌐',
-                'rtl' => isset($_POST['rtl']) ? true : false
-            ];
-
-            // Create empty translation file based on English
-            $english_translations = $this->loadTranslations('en');
-            $empty_translations = [];
-
-            foreach ($english_translations as $key => $value) {
-                $empty_translations[$key] = ''; // Empty for translation
-            }
-
-            $translation_file = __DIR__ . '/../languages/' . $language_code . '.php';
-            $php_content = "<?php\nreturn " . var_export($empty_translations, true) . ";\n";
-            file_put_contents($translation_file, $php_content);
-
-            $this->setFlashMessage('success', 'Language pack created successfully');
-            $this->redirect(BASE_URL . 'admin/language-packs');
-        }
-
-        $this->data['page_title'] = 'Create Language Pack - ' . APP_NAME;
-        $this->render('admin/create_language_pack');
-    }
-
-    /**
-     * Delete language pack
-     */
-    public function deleteLanguagePack()
-    {
-        if (!$this->isAdmin()) {
-            $this->redirect(BASE_URL . 'login');
-            return;
-        }
-
-        $language = $_GET['lang'] ?? '';
-
-        if (empty($language) || !isset($this->supported_languages[$language]) || $language === 'en') {
-            $this->setFlashMessage('error', 'Cannot delete this language');
-            $this->redirect(BASE_URL . 'admin/language-packs');
-            return;
-        }
-
-        // Remove from supported languages array (in production, save to config file)
-        unset($this->supported_languages[$language]);
-
-        // Delete translation file
-        $translation_file = __DIR__ . '/../languages/' . $language . '.php';
-        if (file_exists($translation_file)) {
-            unlink($translation_file);
-        }
-
-        $this->setFlashMessage('success', 'Language pack deleted successfully');
-        $this->redirect(BASE_URL . 'admin/language-packs');
-    }
-
-    /**
-     * Get language-specific content
-     */
-    public function getLocalizedContent()
-    {
-        header('Content-Type: application/json');
-
-        $content_type = $_GET['type'] ?? '';
-        $language = $this->getCurrentLanguage();
-
-        switch ($content_type) {
-            case 'navigation':
-                $content = $this->getLocalizedNavigation($language);
-                break;
-            case 'footer':
-                $content = $this->getLocalizedFooter($language);
-                break;
-            case 'forms':
-                $content = $this->getLocalizedForms($language);
-                break;
-            default:
-                $content = [];
-        }
-
-        sendJsonResponse([
-            'success' => true,
-            'language' => $language,
-            'content' => $content
-        ]);
-    }
-
-    /**
-     * Get localized navigation
-     */
-    private function getLocalizedNavigation($language)
-    {
-        return [
-            'home' => $this->translate('nav_home'),
-            'properties' => $this->translate('nav_properties'),
-            'about' => $this->translate('nav_about'),
-            'contact' => $this->translate('nav_contact'),
-            'login' => $this->translate('nav_login'),
-            'register' => $this->translate('nav_register')
-        ];
-    }
-
-    /**
-     * Get localized footer content
-     */
-    private function getLocalizedFooter($language)
-    {
-        return [
-            'company_info' => $this->translate('footer_company_info'),
-            'quick_links' => $this->translate('footer_quick_links'),
-            'contact_info' => $this->translate('footer_contact_info'),
-            'social_media' => $this->translate('footer_social_media')
-        ];
-    }
-
-    /**
-     * Get localized form labels
-     */
-    private function getLocalizedForms($language)
-    {
-        return [
-            'name' => $this->translate('form_name'),
-            'email' => $this->translate('form_email'),
-            'phone' => $this->translate('form_phone'),
-            'message' => $this->translate('form_message'),
-            'submit' => $this->translate('form_submit')
-        ];
-    }
-
-    /**
-     * Language detection and redirection
-     */
-    public function detectAndRedirect()
-    {
-        $detected_language = $this->detectLanguage();
-
-        if ($detected_language !== $this->default_language) {
-            $this->updateLanguageSessionAndCookie($detected_language);
-        }
-
-        $this->redirect(BASE_URL);
-    }
-
-    /**
-     * Get language statistics for analytics
-     */
-    public function getLanguageStats()
-    {
-        header('Content-Type: application/json');
-
-        $stats = [];
-
-        foreach ($this->supported_languages as $code => $info) {
-            $stats[$code] = [
-                'name' => $info['name'],
-                'users' => $this->getLanguageUsageCount($code),
-                'completion' => $this->getLanguageCompletion($code)
-            ];
-        }
-
-        sendJsonResponse([
-            'success' => true,
-            'data' => $stats
-        ]);
-    }
-
-    /**
-     * Get language usage count
-     */
-    private function getLanguageUsageCount($language)
+    private function saveTranslation($language, $key, $translation)
     {
         try {
-            if (!$this->db) {
-                return 0;
+            $translation_file = __DIR__ . '/../../../views/languages/' . $language . '.php';
+
+            // Load existing translations
+            $translations = [];
+            if (file_exists($translation_file)) {
+                $translations = include $translation_file;
             }
 
-            $sql = "SELECT COUNT(*) as count FROM user_language_preferences WHERE language_code = :lang";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute(['lang' => $language]);
+            // Update translation
+            $translations[$key] = $translation;
 
-            $result = $stmt->fetch();
-            return $result ? (int)$result['count'] : 0;
+            // Save back to file
+            $php_content = "<?php\nreturn " . var_export($translations, true) . ";\n";
+            return file_put_contents($translation_file, $php_content) !== false;
         } catch (Exception $e) {
-            logger()->error('Get language usage count error: ' . $e->getMessage());
-            return 0;
+            error_log('Translation save error: ' . $e->getMessage());
+            return false;
         }
     }
 
     /**
-     * Get language completion percentage
+     * Send JSON response
      */
-    private function getLanguageCompletion($language)
+    private function sendJsonResponse($data, $statusCode = 200)
     {
-        $english_translations = $this->loadTranslations('en');
-        $target_translations = $this->loadTranslations($language);
-
-        $total_keys = count($english_translations);
-        $translated_keys = 0;
-
-        foreach ($english_translations as $key => $english_text) {
-            if (!empty($target_translations[$key]) && $target_translations[$key] !== $english_text) {
-                $translated_keys++;
-            }
-        }
-
-        return $total_keys > 0 ? round(($translated_keys / $total_keys) * 100, 1) : 0;
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 
     /**
-     * Set language in session and cookie (helper method)
+     * Set flash message
      */
-    private function updateLanguageSessionAndCookie($lang_code)
+    private function setFlashMessage($type, $message)
     {
-        $_SESSION['user_language'] = $lang_code;
-        setcookie('user_language', $lang_code, time() + (30 * 24 * 60 * 60), '/');
+        $_SESSION['flash_message'] = [
+            'type' => $type,
+            'message' => $message
+        ];
+    }
+
+    /**
+     * Render view
+     */
+    private function renderView($view, $data = [])
+    {
+        extract($data);
+        $viewPath = __DIR__ . '/../../../views/' . str_replace('.', '/', $view) . '.php';
+        
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            echo "<h1>View not found: $view</h1>";
+        }
     }
 }
-
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 736 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//

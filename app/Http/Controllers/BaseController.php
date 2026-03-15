@@ -32,7 +32,7 @@ class BaseController
     /**
      * Alias for render()
      */
-    protected function view($view, $data = [])
+    public function view($view, $data = [])
     {
         return $this->render($view, $data);
     }
@@ -74,6 +74,30 @@ class BaseController
                 exit;
             }
         }
+    }
+
+    /**
+     * Public method to get request object
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Public method to get database object
+     */
+    public function getDatabase()
+    {
+        return $this->db;
+    }
+
+    /**
+     * Public method to get session object
+     */
+    public function getSession()
+    {
+        return $this->session;
     }
 
     /**
@@ -261,7 +285,7 @@ class BaseController
             'app_url' => defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome',
             'timezone' => 'Asia/Kolkata'
         ];
-        
+
         return $config[$key] ?? $default;
     }
 
@@ -284,12 +308,20 @@ class BaseController
     /**
      * Return a JSON response
      */
-    protected function jsonResponse($data, $status = 200)
+    public function response($data, int $status = 200)
     {
         header('Content-Type: application/json');
         http_response_code($status);
         echo json_encode($data);
         exit;
+    }
+
+    /**
+     * Return a JSON response (alias for consistency)
+     */
+    public function jsonResponse($data, int $status = 200)
+    {
+        return $this->response($data, $status);
     }
 
     /**
@@ -308,7 +340,7 @@ class BaseController
         if ($this->request->isAjax() || strpos($_SERVER['REQUEST_URI'], '/api/') !== false) {
             return $this->jsonError($message, 404);
         }
-        
+
         http_response_code(404);
         return $this->render('errors/404', ['message' => $message, 'page_title' => '404 Not Found']);
     }
@@ -321,7 +353,7 @@ class BaseController
         if ($this->request->isAjax() || strpos($_SERVER['REQUEST_URI'], '/api/') !== false) {
             return $this->jsonError($message, 403);
         }
-        
+
         http_response_code(403);
         return $this->render('errors/403', ['message' => $message, 'page_title' => '403 Forbidden']);
     }
@@ -358,10 +390,10 @@ class BaseController
             $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, metadata, created_by, created_at) 
                     VALUES (?, ?, ?, ?, ?, NOW())";
             $db->execute($sql, [
-                $leadId, 
-                $type, 
-                $description, 
-                json_encode($metadata), 
+                $leadId,
+                $type,
+                $description,
+                json_encode($metadata),
                 $_SESSION['user_id'] ?? null
             ]);
             return true;
