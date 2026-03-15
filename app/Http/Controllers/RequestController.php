@@ -212,7 +212,7 @@ class RequestController extends BaseController
             // fetchOne() method exists in Database class at line 102-105
             $failedRequests = $db->fetchOne(
                 "SELECT COUNT(*) as count FROM request_logs WHERE status = 'failed'"
-            );
+            ); // fetchOne() is available
 
             // Average response time
             // fetchOne() method exists in Database class at line 102-105
