@@ -8,7 +8,7 @@
 namespace App\Http\Controllers;
 
 use App\Core\Security;
-use App\Core\Database;
+use App\Core\Database\Database as DB;
 use App\Services\ReferralService;
 use App\Services\EmailService;
 
@@ -111,7 +111,7 @@ class RegistrationController extends BaseController
                 ], 400);
             }
 
-            $db = Database::getInstance();
+            $db = DB::getInstance();
 
             // Check if email already exists
             $existingUser = $db->fetchOne(
@@ -309,7 +309,7 @@ class RegistrationController extends BaseController
      */
     private function processReferral(int $userId, string $referralCode): void
     {
-        $db = Database::getInstance();
+        $db = DB::getInstance();
 
         // Get referrer information
         // fetchOne() method exists in Database class at line 102-105
@@ -345,7 +345,7 @@ class RegistrationController extends BaseController
      */
     private function addToNetworkTree(int $sponsorId, int $userId): void
     {
-        $db = Database::getInstance();
+        $db = DB::getInstance();
 
         // Get user's MLM profile
         $userProfile = $db->fetchOne(
@@ -371,7 +371,7 @@ class RegistrationController extends BaseController
      */
     private function findAvailablePosition(int $sponsorId): string
     {
-        $db = Database::getInstance();
+        $db = DB::getInstance();
 
         // Check left position first
         $leftPosition = $db->fetchOne(
@@ -402,7 +402,7 @@ class RegistrationController extends BaseController
      */
     private function findDeepAvailablePosition(int $sponsorId): string
     {
-        $db = Database::getInstance();
+        $db = DB::getInstance();
 
         // Get sponsor's left leg
         $leftLeg = $db->fetchAll(
@@ -442,7 +442,7 @@ class RegistrationController extends BaseController
      */
     private function checkMemberHasSpace(int $memberId): array
     {
-        $db = Database::getInstance();
+        $db = DB::getInstance();
 
         $leftCount = $db->fetchOne(
             "SELECT COUNT(*) as count FROM mlm_network_tree WHERE sponsor_id = ? AND position = 'left'",
@@ -479,7 +479,7 @@ class RegistrationController extends BaseController
             ]);
         }
 
-        $db = Database::getInstance();
+        $db = DB::getInstance();
         $referrer = $db->fetchOne(
             "SELECT u.name, u.email, m.level, m.total_referrals 
              FROM users u 
@@ -508,7 +508,7 @@ class RegistrationController extends BaseController
     public function getRegistrationStats()
     {
         try {
-            $db = Database::getInstance();
+            $db = DB::getInstance();
 
             // Total registrations
             $totalUsers = $db->fetchOne("SELECT COUNT(*) as count FROM users");
@@ -554,7 +554,7 @@ class RegistrationController extends BaseController
     public function exportRegistrations()
     {
         try {
-            $db = Database::getInstance();
+            $db = DB::getInstance();
 
             $registrations = $db->fetchAll(
                 "SELECT u.id, u.name, u.email, u.phone, u.city, u.state, u.created_at,
