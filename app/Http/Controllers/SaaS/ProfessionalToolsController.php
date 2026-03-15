@@ -10,6 +10,8 @@ use Exception;
 
 class ProfessionalToolsController extends BaseController
 {
+    protected $auth;
+
     public function __construct()
     {
         parent::__construct();
