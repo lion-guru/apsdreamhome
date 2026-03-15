@@ -8,10 +8,27 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use Exception;
 
 class VirtualTourController extends BaseController
 {
+
+    // Define constants
+    const UPLOADS_PATH = __DIR__ . '/../../../public/uploads/virtual_tours/';
+    const BASE_URL = 'https://example.com'; // Replace with your base URL
+    const APP_NAME = 'APSDreamHome'; // Replace with your app name
+
+    /**
+     * Send JSON response
+     */
+    private function sendJsonResponse($data, $statusCode = 200)
+    {
+        header('Content-Type: application/json');
+        http_response_code($statusCode);
+        echo json_encode($data);
+        exit;
+    }
 
     /**
      * Display virtual tour interface
