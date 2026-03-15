@@ -7,11 +7,22 @@
 
 namespace App\Http\Controllers\Tech;
 
-use App\Controllers\BaseController;
+use App\Http\Controllers\BaseController;
+use App\Core\Security;
+use App\Core\Database;
 use Exception;
 
 class BlockchainController extends BaseController
 {
+    protected $data;
+    protected $db;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->data = [];
+        $this->db = Database::getInstance();
+    }
 
     private $blockchain_config = [
         'network' => 'polygon', // Polygon for lower fees
@@ -139,7 +150,7 @@ class BlockchainController extends BaseController
 
         $verification = $this->getPropertyVerification($property_id);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $verification,
             'blockchain_hash' => $verification['blockchain_hash'] ?? null
@@ -157,12 +168,12 @@ class BlockchainController extends BaseController
         $property_id = Security::sanitize($_POST['property_id']) ?? '';
 
         if (empty($document_hash)) {
-            sendJsonResponse(['success' => false, 'error' => 'Document hash required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Document hash required'], 400);
         }
 
         $verification_result = $this->verifyDocumentOnBlockchain($document_hash, $property_id);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $verification_result
         ]);
@@ -1002,13 +1013,13 @@ class BlockchainController extends BaseController
         $document_hashes = json_decode(Security::sanitize($_POST['document_hashes']) ?? '[]', true);
 
         if (empty($property_id) || empty($document_hashes)) {
-            sendJsonResponse(['success' => false, 'error' => 'Property ID and document hashes required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Property ID and document hashes required'], 400);
         }
 
         // Store document hashes for blockchain verification
         $success = $this->storeDocumentHashes($property_id, $document_hashes);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $success,
             'message' => $success ? 'Documents submitted for verification' : 'Submission failed'
         ]);
