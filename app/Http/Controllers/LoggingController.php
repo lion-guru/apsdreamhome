@@ -440,7 +440,7 @@ class LoggingController extends BaseController
 
         // Get recent logs
         $database = \App\Core\Database::getInstance();
-        $logs = $database->select(
+        $logs = Database::getInstance()->fetchAll(
             "SELECT * FROM system_logs 
              WHERE category = ? AND id > ? 
              ORDER BY created_at DESC 
@@ -453,19 +453,5 @@ class LoggingController extends BaseController
             'data' => $logs,
             'last_id' => $lastId
         ];
-    }
-
-    /**
-     * Redirect helper
-     */
-    private function redirect($url)
-    {
-        if (!headers_sent()) {
-            header("Location: $url");
-            exit;
-        } else {
-            echo '<script>window.location.href = "' . $url . '";</script>';
-            exit;
-        }
     }
 }
