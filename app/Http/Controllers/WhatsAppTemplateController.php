@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 
 /**
  * WhatsApp Template Manager Controller
@@ -14,11 +15,11 @@ class WhatsAppTemplateController extends BaseController
     {
         // Temporarily disable login for testing
         // $this->requireLogin();
-        
+
         $templates = $this->getTemplates();
         $categories = $this->getCategories();
         $analytics = $this->getTemplateAnalytics();
-        
+
         $this->render('pages/whatsapp-templates', [
             'page_title' => 'WhatsApp Templates - APS Dream Home',
             'page_description' => 'Create and manage WhatsApp message templates',
@@ -27,7 +28,7 @@ class WhatsAppTemplateController extends BaseController
             'analytics' => $analytics
         ]);
     }
-    
+
     /**
      * Get all templates
      */
@@ -80,7 +81,7 @@ class WhatsAppTemplateController extends BaseController
             ]
         ];
     }
-    
+
     /**
      * Get template categories
      */
@@ -96,7 +97,7 @@ class WhatsAppTemplateController extends BaseController
             'system' => 'System Notifications'
         ];
     }
-    
+
     /**
      * Get template analytics
      */
@@ -114,14 +115,14 @@ class WhatsAppTemplateController extends BaseController
             ]
         ];
     }
-    
+
     /**
      * Create new template
      */
     public function createTemplate()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $templateData = [
                 'id' => uniqid('template_'),
@@ -132,13 +133,12 @@ class WhatsAppTemplateController extends BaseController
                 'created_at' => date('Y-m-d H:i:s'),
                 'status' => 'active'
             ];
-            
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Template created successfully',
                 'template' => $templateData
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -146,14 +146,14 @@ class WhatsAppTemplateController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Update template
      */
     public function updateTemplate($templateId)
     {
         header('Content-Type: application/json');
-        
+
         try {
             $templateData = [
                 'name' => Security::sanitize($_POST['templateName']) ?? '',
@@ -162,13 +162,12 @@ class WhatsAppTemplateController extends BaseController
                 'description' => Security::sanitize($_POST['templateDescription']) ?? '',
                 'updated_at' => date('Y-m-d H:i:s')
             ];
-            
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Template updated successfully',
                 'template' => $templateData
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -176,20 +175,19 @@ class WhatsAppTemplateController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Delete template
      */
     public function deleteTemplate($templateId)
     {
         header('Content-Type: application/json');
-        
+
         try {
             echo json_encode([
                 'success' => true,
                 'message' => 'Template deleted successfully'
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -197,18 +195,18 @@ class WhatsAppTemplateController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Send test message
      */
     public function sendTestMessage()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $templateId = Security::sanitize($_POST['templateId']) ?? '';
             $testNumber = Security::sanitize($_POST['testNumber']) ?? '';
-            
+
             // Simulate sending test message
             echo json_encode([
                 'success' => true,
@@ -217,7 +215,6 @@ class WhatsAppTemplateController extends BaseController
                 'test_number' => $testNumber,
                 'sent_at' => date('Y-m-d H:i:s')
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -225,14 +222,14 @@ class WhatsAppTemplateController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Get template usage statistics
      */
     public function getUsageStats()
     {
         header('Content-Type: application/json');
-        
+
         try {
             $stats = [
                 'daily_usage' => [
@@ -255,12 +252,11 @@ class WhatsAppTemplateController extends BaseController
                     'avg_response_time' => '2.3 minutes'
                 ]
             ];
-            
+
             echo json_encode([
                 'success' => true,
                 'stats' => $stats
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -268,14 +264,14 @@ class WhatsAppTemplateController extends BaseController
             ]);
         }
     }
-    
+
     /**
      * Preview template with sample data
      */
     public function previewTemplate($templateId)
     {
         header('Content-Type: application/json');
-        
+
         try {
             $sampleData = [
                 'customer_name' => 'John Doe',
@@ -290,10 +286,10 @@ class WhatsAppTemplateController extends BaseController
                 'booking_id' => 'BK123456',
                 'amount' => '50,000'
             ];
-            
+
             $templates = $this->getTemplates();
             $templateContent = '';
-            
+
             foreach ($templates as $category) {
                 foreach ($category as $template) {
                     if ($template['id'] === $templateId) {
@@ -302,18 +298,17 @@ class WhatsAppTemplateController extends BaseController
                     }
                 }
             }
-            
+
             // Replace variables with sample data
             foreach ($sampleData as $key => $value) {
                 $templateContent = str_replace('{{' . $key . '}}', $value, $templateContent);
             }
-            
+
             echo json_encode([
                 'success' => true,
                 'preview' => $templateContent,
                 'variables' => array_keys($sampleData)
             ]);
-            
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
