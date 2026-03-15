@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Add proper error handling with try-catch blocks
-
 /**
  * Team Management Controller
  * Comprehensive team management system with hierarchy, performance, and communication
@@ -9,603 +7,450 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Associate;
-use App\Models\Agent;
-use App\Models\MLMProfile;
-use App\Models\MLMNetworkTree;
-use App\Models\TeamMessage;
-use App\Models\TeamPerformance;
-use App\Models\TeamIncentive;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\BaseController;
+use App\Core\Database;
+use App\Core\Security;
+use Exception;
 
-class TeamManagementController extends Controller
+class TeamManagementController extends BaseController
 {
+    private $db;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->db = Database::getInstance();
+    }
+
     /**
      * Display team overview dashboard
      */
     public function index()
     {
-        $user = Auth::user();
-        $userId = $user->id;
-
-        // Get user's team information
-        $teamInfo = $this->getTeamOverview($userId);
-
-        // Get team hierarchy data for visualization
-        $hierarchyData = $this->getTeamHierarchy($userId);
-
-        // Get team performance metrics
-        $performanceData = $this->getTeamPerformance($userId);
-
-        // Get recent team activities
-        $recentActivities = $this->getTeamActivities($userId);
-
-        // Get team communication/messages
-        $teamMessages = $this->getTeamMessages($userId);
-
-        // Get team incentives and rewards
-        $teamIncentives = $this->getTeamIncentives($userId);
-
-        return view('team.dashboard', compact(
-            'teamInfo',
-            'hierarchyData',
-            'performanceData',
-            'recentActivities',
-            'teamMessages',
-            'teamIncentives'
-        ));
+        $this->requireLogin();
+        
+        $userId = $_SESSION['user_id'] ?? 0;
+        
+        try {
+            // Get team statistics
+            $teamStats = $this->getTeamStatistics($userId);
+            
+            // Get recent team activities
+            $recentActivities = $this->getRecentTeamActivities($userId);
+            
+            // Get top performers
+            $topPerformers = $this->getTopPerformers($userId);
+            
+            $this->render('pages/team-management', [
+                'page_title' => 'Team Management - APS Dream Home',
+                'page_description' => 'Manage your team members and track performance',
+                'team_stats' => $teamStats,
+                'recent_activities' => $recentActivities,
+                'top_performers' => $topPerformers
+            ]);
+            
+        } catch (Exception $e) {
+            error_log("Team Management Error: " . $e->getMessage());
+            $this->render('pages/team-management', [
+                'page_title' => 'Team Management - APS Dream Home',
+                'page_description' => 'Manage your team members and track performance',
+                'error' => 'Failed to load team data'
+            ]);
+        }
     }
 
     /**
-     * Get comprehensive team overview
+     * Get team statistics
      */
-    protected function getTeamOverview($userId)
+    private function getTeamStatistics($userId)
     {
-        $user = User::find($userId);
-        $mlmProfile = MLMProfile::where('user_id', $userId)->first();
+        try {
+            // Get total team members
+            $totalMembers = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? OR user_id = ?",
+                [$userId, $userId]
+            );
 
-        if (!$mlmProfile) {
+            // Get active members (last 30 days)
+            $activeMembers = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM users u 
+                 JOIN mlm_profiles m ON u.id = m.user_id 
+                 WHERE (m.sponsor_id = ? OR u.id = ?) AND u.last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)",
+                [$userId, $userId]
+            );
+
+            // Get new members this month
+            $newMembers = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM mlm_profiles 
+                 WHERE sponsor_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
+                [$userId]
+            );
+
+            // Get team performance metrics
+            $totalCommission = $this->db->fetchOne(
+                "SELECT COALESCE(SUM(c.amount), 0) as total FROM commissions c 
+                 JOIN mlm_profiles m ON c.user_id = m.user_id 
+                 WHERE m.sponsor_id = ? OR m.user_id = ?",
+                [$userId, $userId]
+            );
+
+            // Get team levels distribution
+            $levelDistribution = $this->db->fetchAll(
+                "SELECT level, COUNT(*) as count FROM mlm_profiles 
+                 WHERE sponsor_id = ? OR user_id = ? 
+                 GROUP BY level 
+                 ORDER BY level",
+                [$userId, $userId]
+            );
+
+            return [
+                'total_members' => $totalMembers['count'] ?? 0,
+                'active_members' => $activeMembers['count'] ?? 0,
+                'new_members' => $newMembers['count'] ?? 0,
+                'total_commission' => number_format($totalCommission['total'] ?? 0),
+                'level_distribution' => $levelDistribution,
+                'growth_rate' => $totalMembers['count'] > 0 ? round(($newMembers['count'] / $totalMembers['count']) * 100, 2) : 0
+            ];
+
+        } catch (Exception $e) {
+            error_log("Team Statistics Error: " . $e->getMessage());
             return [
                 'total_members' => 0,
                 'active_members' => 0,
-                'inactive_members' => 0,
-                'direct_reports' => 0,
-                'team_levels' => 0,
-                'total_earnings' => 0,
-                'avg_performance' => 0,
-                'team_rank' => 'N/A'
+                'new_members' => 0,
+                'total_commission' => 0,
+                'level_distribution' => [],
+                'growth_rate' => 0
             ];
         }
-
-        // Get all downline members
-        $allMembers = $this->getAllDownlineMembers($userId);
-
-        // Count active vs inactive
-        $activeCount = 0;
-        $inactiveCount = 0;
-
-        foreach ($allMembers as $member) {
-            $memberUser = User::find($member['user_id']);
-            if ($memberUser && $memberUser->status === 'active') {
-                $activeCount++;
-            } else {
-                $inactiveCount++;
-            }
-        }
-
-        // Get direct reports
-        $directReports = MLMProfile::where('sponsor_user_id', $userId)->count();
-
-        // Calculate team levels
-        $maxLevel = 0;
-        foreach ($allMembers as $member) {
-            $maxLevel = max($maxLevel, $member['level']);
-        }
-
-        // Calculate total team earnings
-        $totalEarnings = 0;
-        $performanceScores = [];
-
-        foreach ($allMembers as $member) {
-            // Get member's earnings (simplified calculation)
-            $memberEarnings = DB::table('commissions')
-                ->where('associate_id', $member['user_id'])
-                ->where('status', 'paid')
-                ->sum('amount');
-
-            $totalEarnings += $memberEarnings ?? 0;
-
-            // Calculate performance score for member
-            $memberCommissions = DB::table('commissions')
-                ->where('associate_id', $member['user_id'])
-                ->count();
-
-            $performanceScores[] = min(100, $memberCommissions * 10); // Simple scoring
-        }
-
-        $avgPerformance = count($performanceScores) > 0 ? array_sum($performanceScores) / count($performanceScores) : 0;
-
-        // Determine team rank based on size and performance
-        $teamRank = $this->calculateTeamRank(count($allMembers), $avgPerformance);
-
-        return [
-            'total_members' => count($allMembers),
-            'active_members' => $activeCount,
-            'inactive_members' => $inactiveCount,
-            'direct_reports' => $directReports,
-            'team_levels' => $maxLevel,
-            'total_earnings' => $totalEarnings,
-            'avg_performance' => round($avgPerformance, 1),
-            'team_rank' => $teamRank
-        ];
-    }
-
-    /**
-     * Get team hierarchy data for visualization
-     */
-    protected function getTeamHierarchy($userId, $maxDepth = 4)
-    {
-        $hierarchy = [
-            'root' => $this->getUserNode($userId),
-            'levels' => []
-        ];
-
-        for ($level = 1; $level <= $maxDepth; $level++) {
-            $hierarchy['levels'][$level] = $this->getLevelMembers($userId, $level);
-        }
-
-        return $hierarchy;
-    }
-
-    /**
-     * Get user node for hierarchy
-     */
-    protected function getUserNode($userId)
-    {
-        $user = User::find($userId);
-        $mlmProfile = MLMProfile::where('user_id', $userId)->first();
-
-        return [
-            'id' => $user->id,
-            'name' => $user->name,
-            'type' => $user->type,
-            'avatar' => $user->profile_image ?? 'default-avatar.jpg',
-            'status' => $user->status,
-            'join_date' => $user->created_at->format('M Y'),
-            'referral_code' => $mlmProfile ? $mlmProfile->referral_code : null
-        ];
-    }
-
-    /**
-     * Get members at specific level
-     */
-    protected function getLevelMembers($rootUserId, $targetLevel)
-    {
-        $members = [];
-        $this->collectLevelMembers($rootUserId, $targetLevel, 1, $members);
-        return $members;
-    }
-
-    /**
-     * Recursively collect members at target level
-     */
-    protected function collectLevelMembers($userId, $targetLevel, $currentLevel, &$members)
-    {
-        if ($currentLevel >= $targetLevel) {
-            if ($currentLevel === $targetLevel) {
-                $userNode = $this->getUserNode($userId);
-                if ($userNode) {
-                    $members[] = $userNode;
-                }
-            }
-            return;
-        }
-
-        $directMembers = MLMProfile::where('sponsor_user_id', $userId)
-            ->pluck('user_id')
-            ->toArray();
-
-        foreach ($directMembers as $memberId) {
-            $this->collectLevelMembers($memberId, $targetLevel, $currentLevel + 1, $members);
-        }
-    }
-
-    /**
-     * Get all downline members recursively
-     */
-    protected function getAllDownlineMembers($userId, $maxLevel = 10, $currentLevel = 1)
-    {
-        if ($currentLevel > $maxLevel) {
-            return [];
-        }
-
-        $directMembers = MLMProfile::where('sponsor_user_id', $userId)->get();
-        $allMembers = [];
-
-        foreach ($directMembers as $member) {
-            $allMembers[] = [
-                'user_id' => $member->user_id,
-                'level' => $currentLevel,
-                'mlm_profile' => $member
-            ];
-
-            // Get deeper levels
-            $deeperMembers = $this->getAllDownlineMembers($member->user_id, $maxLevel, $currentLevel + 1);
-            $allMembers = array_merge($allMembers, $deeperMembers);
-        }
-
-        return $allMembers;
-    }
-
-    /**
-     * Get team performance metrics
-     */
-    protected function getTeamPerformance($userId)
-    {
-        $teamMembers = $this->getAllDownlineMembers($userId);
-
-        $performance = [
-            'monthly_earnings' => [],
-            'member_growth' => [],
-            'top_performers' => [],
-            'underperformers' => []
-        ];
-
-        // Monthly earnings trend
-        for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i)->format('Y-m');
-            $monthlyTotal = 0;
-
-            foreach ($teamMembers as $member) {
-                $memberEarnings = DB::table('commissions')
-                    ->where('associate_id', $member['user_id'])
-                    ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") = ?', [$month])
-                    ->sum('amount');
-
-                $monthlyTotal += $memberEarnings ?? 0;
-            }
-
-            $performance['monthly_earnings'][] = [
-                'month' => now()->subMonths($i)->format('M Y'),
-                'earnings' => $monthlyTotal
-            ];
-        }
-
-        // Top performers (by earnings)
-        $topPerformers = [];
-        foreach ($teamMembers as $member) {
-            $earnings = DB::table('commissions')
-                ->where('associate_id', $member['user_id'])
-                ->where('status', 'paid')
-                ->sum('amount');
-
-            $user = User::find($member['user_id']);
-            if ($user) {
-                $topPerformers[] = [
-                    'name' => $user->name,
-                    'earnings' => $earnings ?? 0,
-                    'level' => $member['level']
-                ];
-            }
-        }
-
-        // Sort by earnings and get top 5
-        usort($topPerformers, function($a, $b) {
-            return $b['earnings'] <=> $a['earnings'];
-        });
-
-        $performance['top_performers'] = array_slice($topPerformers, 0, 5);
-
-        return $performance;
     }
 
     /**
      * Get recent team activities
      */
-    protected function getTeamActivities($userId)
+    private function getRecentTeamActivities($userId)
     {
-        $teamMembers = $this->getAllDownlineMembers($userId);
-        $memberIds = array_column($teamMembers, 'user_id');
-        $memberIds[] = $userId; // Include team leader
+        try {
+            $activities = $this->db->fetchAll(
+                "SELECT 
+                    u.name as user_name,
+                    u.email,
+                    m.action,
+                    m.description,
+                    m.created_at
+                 FROM user_activities m 
+                 JOIN users u ON m.user_id = u.id 
+                 WHERE m.user_id = ? OR m.related_user_id = ?
+                 ORDER BY m.created_at DESC 
+                 LIMIT 10",
+                [$userId, $userId]
+            );
 
-        $activities = [];
+            return $activities;
 
-        // Recent registrations
-        $recentRegistrations = User::whereIn('id', $memberIds)
-            ->where('created_at', '>=', now()->subDays(30))
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
-
-        foreach ($recentRegistrations as $user) {
-            $activities[] = [
-                'type' => 'registration',
-                'title' => 'New Team Member',
-                'description' => $user->name . ' joined the team',
-                'date' => $user->created_at,
-                'icon' => 'user-plus',
-                'color' => 'success'
-            ];
+        } catch (Exception $e) {
+            error_log("Recent Activities Error: " . $e->getMessage());
+            return [];
         }
+    }
 
-        // Recent commissions
-        $recentCommissions = DB::table('commissions')
-            ->whereIn('associate_id', $memberIds)
-            ->where('status', 'paid')
-            ->orderBy('paid_at', 'desc')
-            ->limit(5)
-            ->get();
+    /**
+     * Get top performers
+     */
+    private function getTopPerformers($userId)
+    {
+        try {
+            $performers = $this->db->fetchAll(
+                "SELECT 
+                    u.name,
+                    u.email,
+                    m.level,
+                    (SELECT COALESCE(SUM(c.amount), 0) FROM commissions c WHERE c.user_id = u.id) as commission,
+                    (SELECT COUNT(*) FROM mlm_profiles WHERE sponsor_id = u.id) as team_size
+                 FROM users u 
+                 JOIN mlm_profiles m ON u.id = m.user_id 
+                 WHERE m.sponsor_id = ? OR u.id = ?
+                 ORDER BY commission DESC, team_size DESC 
+                 LIMIT 5",
+                [$userId, $userId]
+            );
 
-        foreach ($recentCommissions as $commission) {
-            $user = User::find($commission->associate_id);
-            $activities[] = [
-                'type' => 'commission',
-                'title' => 'Commission Earned',
-                'description' => ($user ? $user->name : 'Team Member') . ' earned ₹' . number_format($commission->amount, 0),
-                'date' => $commission->paid_at,
-                'icon' => 'money-bill-wave',
-                'color' => 'warning'
-            ];
+            return $performers;
+
+        } catch (Exception $e) {
+            error_log("Top Performers Error: " . $e->getMessage());
+            return [];
         }
-
-        // Sort by date
-        usort($activities, function($a, $b) {
-            return strtotime($b['date']) - strtotime($a['date']);
-        });
-
-        return array_slice($activities, 0, 10);
     }
 
     /**
-     * Get team messages/communication
+     * Add team member
      */
-    protected function getTeamMessages($userId)
+    public function addTeamMember()
     {
-        // This would integrate with a messaging system
-        // For now, return mock data based on team structure
-
-        $messages = [
-            [
-                'id' => 1,
-                'sender' => 'System',
-                'subject' => 'Welcome to Team Management',
-                'message' => 'Your team management dashboard is now active.',
-                'date' => now()->subHours(2),
-                'read' => false
-            ],
-            [
-                'id' => 2,
-                'sender' => 'Leadership',
-                'subject' => 'Monthly Team Meeting',
-                'message' => 'Reminder: Monthly team meeting scheduled for next week.',
-                'date' => now()->subHours(5),
-                'read' => true
-            ]
-        ];
-
-        return $messages;
-    }
-
-    /**
-     * Get team incentives and rewards
-     */
-    protected function getTeamIncentives($userId)
-    {
-        $teamInfo = $this->getTeamOverview($userId);
-
-        $incentives = [];
-
-        // Team size based incentives
-        if ($teamInfo['total_members'] >= 50) {
-            $incentives[] = [
-                'title' => 'Large Team Bonus',
-                'description' => 'Bonus for managing 50+ team members',
-                'amount' => 10000,
-                'status' => 'achieved'
+        $this->requireLogin();
+        
+        try {
+            $data = $this->getRequestData();
+            
+            $memberData = [
+                'user_id' => Security::sanitize($data['user_id'] ?? 0),
+                'name' => Security::sanitize($data['name'] ?? ''),
+                'email' => Security::sanitize($data['email'] ?? ''),
+                'phone' => Security::sanitize($data['phone'] ?? ''),
+                'position' => Security::sanitize($data['position'] ?? 'left'),
+                'level' => 1,
+                'sponsor_id' => $_SESSION['user_id'],
+                'created_at' => date('Y-m-d H:i:s')
             ];
-        } elseif ($teamInfo['total_members'] >= 25) {
-            $incentives[] = [
-                'title' => 'Growing Team Incentive',
-                'description' => 'Incentive for 25+ team members',
-                'amount' => 5000,
-                'status' => 'achieved'
-            ];
+
+            // Insert user
+            $this->db->execute(
+                "INSERT INTO users (name, email, phone, created_at) VALUES (?, ?, ?)",
+                [$memberData['name'], $memberData['email'], $memberData['phone'], $memberData['created_at']]
+            );
+
+            $newUserId = $this->db->lastInsertId();
+
+            // Insert MLM profile
+            $this->db->execute(
+                "INSERT INTO mlm_profiles (user_id, sponsor_id, level, position, created_at) VALUES (?, ?, ?, ?, ?)",
+                [$newUserId, $memberData['sponsor_id'], $memberData['level'], $memberData['position'], $memberData['created_at']]
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Team member added successfully',
+                'member' => $memberData
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to add team member: ' . $e->getMessage()
+            ], 500);
         }
+    }
 
-        // Performance based incentives
-        if ($teamInfo['avg_performance'] >= 80) {
-            $incentives[] = [
-                'title' => 'High Performance Team',
-                'description' => 'Bonus for team average performance ≥80%',
-                'amount' => 15000,
-                'status' => 'achieved'
-            ];
+    /**
+     * Get team member details
+     */
+    public function getTeamMember($memberId)
+    {
+        $this->requireLogin();
+        
+        try {
+            $member = $this->db->fetchOne(
+                "SELECT 
+                    u.id,
+                    u.name,
+                    u.email,
+                    u.phone,
+                    u.created_at,
+                    m.level,
+                    m.position,
+                    m.sponsor_id,
+                    sp.name as sponsor_name
+                 FROM users u 
+                 JOIN mlm_profiles m ON u.id = m.user_id 
+                 LEFT JOIN users sp ON sp.id = m.sponsor_id 
+                 WHERE u.id = ?",
+                [$memberId]
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'member' => $member
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get team member: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Upcoming incentives
-        $incentives[] = [
-            'title' => 'Century Club',
-            'description' => 'Reach 100 team members',
-            'amount' => 25000,
-            'status' => 'pending',
-            'progress' => min(100, ($teamInfo['total_members'] / 100) * 100)
-        ];
-
-        return $incentives;
     }
 
     /**
-     * Calculate team rank
+     * Update team member
      */
-    protected function calculateTeamRank($teamSize, $avgPerformance)
+    public function updateTeamMember($memberId)
     {
-        if ($teamSize >= 100 && $avgPerformance >= 90) return 'Platinum Team';
-        if ($teamSize >= 50 && $avgPerformance >= 80) return 'Gold Team';
-        if ($teamSize >= 25 && $avgPerformance >= 70) return 'Silver Team';
-        if ($teamSize >= 10 && $avgPerformance >= 60) return 'Bronze Team';
-        return 'Starter Team';
-    }
-
-    /**
-     * Display team member details
-     */
-    public function showMember($memberId)
-    {
-        $member = User::findOrFail($memberId);
-        $mlmProfile = MLMProfile::where('user_id', $memberId)->first();
-
-        // Get member's performance data
-        $performance = $this->getMemberPerformance($memberId);
-
-        // Get member's downline
-        $downline = $this->getAllDownlineMembers($memberId, 3); // 3 levels deep
-
-        return view('team.member-detail', compact('member', 'mlmProfile', 'performance', 'downline'));
-    }
-
-    /**
-     * Get member performance data
-     */
-    protected function getMemberPerformance($memberId)
-    {
-        $earnings = DB::table('commissions')
-            ->where('associate_id', $memberId)
-            ->where('status', 'paid')
-            ->sum('amount');
-
-        $monthlyEarnings = DB::table('commissions')
-            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(amount) as earnings')
-            ->where('associate_id', $memberId)
-            ->where('status', 'paid')
-            ->where('created_at', '>=', now()->subMonths(6))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('earnings', 'month');
-
-        $referrals = MLMProfile::where('sponsor_user_id', $memberId)->count();
-
-        return [
-            'total_earnings' => $earnings ?? 0,
-            'monthly_earnings' => $monthlyEarnings,
-            'total_referrals' => $referrals,
-            'performance_score' => $this->calculateMemberPerformanceScore($memberId)
-        ];
-    }
-
-    /**
-     * Calculate member performance score
-     */
-    protected function calculateMemberPerformanceScore($memberId)
-    {
-        $commissions = DB::table('commissions')
-            ->where('associate_id', $memberId)
-            ->count();
-
-        $referrals = MLMProfile::where('sponsor_user_id', $memberId)->count();
-
-        $earnings = DB::table('commissions')
-            ->where('associate_id', $memberId)
-            ->where('status', 'paid')
-            ->sum('amount') ?? 0;
-
-        // Simple scoring algorithm
-        $score = 0;
-        $score += min(40, $commissions * 2); // Max 40 for commissions
-        $score += min(30, $referrals * 5); // Max 30 for referrals
-        $score += min(30, ($earnings / 10000) * 30); // Max 30 for earnings
-
-        return min(100, $score);
-    }
-
-    /**
-     * Send message to team
-     */
-    public function sendTeamMessage(Request $request)
-    {
-        $request->validate([
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string',
-            'recipients' => 'required|array'
-        ]);
-
-        $user = Auth::user();
-
-        // This would create team messages in database
-        // Implementation depends on messaging system
-
-        return back()->with('success', 'Team message sent successfully!');
-    }
-
-    /**
-     * Export team data
-     */
-    public function exportTeam()
-    {
-        $user = Auth::user();
-        $teamMembers = $this->getAllDownlineMembers($user->id);
-
-        $exportData = [];
-        foreach ($teamMembers as $member) {
-            $user = User::find($member['user_id']);
-            $earnings = DB::table('commissions')
-                ->where('associate_id', $member['user_id'])
-                ->where('status', 'paid')
-                ->sum('amount');
-
-            $exportData[] = [
-                'Name' => $user ? $user->name : 'Unknown',
-                'Email' => $user ? $user->email : 'Unknown',
-                'Level' => $member['level'],
-                'Join Date' => $user ? $user->created_at->format('Y-m-d') : 'Unknown',
-                'Total Earnings' => $earnings ?? 0,
-                'Status' => $user ? $user->status : 'Unknown'
+        $this->requireLogin();
+        
+        try {
+            $data = $this->getRequestData();
+            
+            $updateData = [
+                'name' => Security::sanitize($data['name'] ?? ''),
+                'email' => Security::sanitize($data['email'] ?? ''),
+                'phone' => Security::sanitize($data['phone'] ?? ''),
+                'position' => Security::sanitize($data['position'] ?? 'left'),
+                'updated_at' => date('Y-m-d H:i:s')
             ];
+
+            // Update user
+            $this->db->execute(
+                "UPDATE users SET name = ?, email = ?, phone = ?, updated_at = ? WHERE id = ?",
+                [$updateData['name'], $updateData['email'], $updateData['phone'], $updateData['updated_at'], $memberId]
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Team member updated successfully',
+                'member' => $updateData
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to update team member: ' . $e->getMessage()
+            ], 500);
         }
+    }
 
-        // Generate CSV
-        $filename = 'team_export_' . date('Y-m-d') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
-        ];
-
-        $callback = function() use ($exportData) {
-            $file = fopen('php://output', 'w');
-
-            // Add headers
-            if (!empty($exportData)) {
-                fputcsv($file, array_keys($exportData[0]));
+    /**
+     * Delete team member
+     */
+    public function deleteTeamMember($memberId)
+    {
+        $this->requireLogin();
+        
+        try {
+            // Check if member is not the current user
+            if ($memberId == $_SESSION['user_id']) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Cannot delete your own account'
+                ], 400);
             }
 
-            // Add data
-            foreach ($exportData as $row) {
-                fputcsv($file, $row);
-            }
+            // Delete MLM profile first
+            $this->db->execute(
+                "DELETE FROM mlm_profiles WHERE user_id = ?",
+                [$memberId]
+            );
 
-            fclose($file);
-        };
+            // Delete user
+            $this->db->execute(
+                "DELETE FROM users WHERE id = ?",
+                [$memberId]
+            );
 
-        return response()->stream($callback, 200, $headers);
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Team member deleted successfully'
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to delete team member: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Send team message
+     */
+    public function sendTeamMessage()
+    {
+        $this->requireLogin();
+        
+        try {
+            $data = $this->getRequestData();
+            
+            $messageData = [
+                'sender_id' => $_SESSION['user_id'],
+                'message' => Security::sanitize($data['message'] ?? ''),
+                'type' => Security::sanitize($data['type'] ?? 'announcement'),
+                'recipients' => Security::sanitize($data['recipients'] ?? 'all'),
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            // Insert team message
+            $this->db->execute(
+                "INSERT INTO team_messages (sender_id, message, type, recipients, created_at) VALUES (?, ?, ?, ?, ?)",
+                [
+                    $messageData['sender_id'],
+                    $messageData['message'],
+                    $messageData['type'],
+                    $messageData['recipients'],
+                    $messageData['created_at']
+                ]
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Team message sent successfully',
+                'message_data' => $messageData
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to send team message: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get team messages
+     */
+    public function getTeamMessages()
+    {
+        $this->requireLogin();
+        
+        try {
+            $messages = $this->db->fetchAll(
+                "SELECT 
+                    tm.message,
+                    tm.type,
+                    tm.recipients,
+                    tm.created_at,
+                    u.name as sender_name
+                 FROM team_messages tm 
+                 JOIN users u ON tm.sender_id = u.id 
+                 ORDER BY tm.created_at DESC 
+                 LIMIT 50"
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'messages' => $messages
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get team messages: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get request data from various sources
+     */
+    private function getRequestData(): array
+    {
+        $data = [];
+        
+        // Get JSON data
+        $input = file_get_contents('php://input');
+        if (!empty($input)) {
+            $data = json_decode($input, true) ?: [];
+        }
+        
+        // Merge with POST data
+        if (!empty($_POST)) {
+            $data = array_merge($data, $_POST);
+        }
+        
+        // Merge with GET data
+        if (!empty($_GET)) {
+            $data = array_merge($data, $_GET);
+        }
+        
+        return $data;
     }
 }
-
-//
-// PERFORMANCE OPTIMIZATION GUIDELINES
-//
-// This file contains 593 lines. Consider optimizations:
-//
-// 1. Use database indexing
-// 2. Implement caching
-// 3. Use prepared statements
-// 4. Optimize loops
-// 5. Use lazy loading
-// 6. Implement pagination
-// 7. Use connection pooling
-// 8. Consider Redis for sessions
-// 9. Implement output buffering
-// 10. Use gzip compression
-//
-//
