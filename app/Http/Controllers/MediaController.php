@@ -49,9 +49,9 @@ class MediaController extends BaseController
             $limit = (int)($_REQUEST['limit'] ?? 10);
 
             $media = $this->mediaService->getMediaForTemplates($category, $limit);
-            return $this->jsonResponse()->json(['success' => true, 'data' => $media]);
+            return $this->jsonResponse(['success' => true, 'data' => $media]);
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -63,9 +63,9 @@ class MediaController extends BaseController
         try {
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getHeaderImages($limit);
-            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -77,9 +77,9 @@ class MediaController extends BaseController
         try {
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $photos = $this->mediaService->getTeamPhotos($limit);
-            return $this->jsonResponse()->json(['success' => true, 'data' => $photos]);
+            return $this->jsonResponse(['success' => true, 'data' => $photos]);
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -91,9 +91,9 @@ class MediaController extends BaseController
         try {
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getPropertyImages($limit);
-            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -105,9 +105,9 @@ class MediaController extends BaseController
         try {
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getProjectImages($limit);
-            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -122,7 +122,7 @@ class MediaController extends BaseController
             $documents = $this->mediaService->getDocuments($category, $limit);
             return $this->jsonResponse()->json(['success' => true, 'data' => $documents]);
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -132,11 +132,11 @@ class MediaController extends BaseController
     public function getCarouselImages()
     {
         try {
-            $limit = request('limit', 5);
+            $limit = (int)($_REQUEST['limit'] ?? 5);
             $images = $this->mediaService->getCarouselImages($limit);
-            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -161,7 +161,7 @@ class MediaController extends BaseController
                 return $this->jsonResponse()->json(['success' => false, 'message' => 'Failed to upload file']);
             }
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -179,7 +179,7 @@ class MediaController extends BaseController
                 return $this->jsonResponse()->json(['success' => false, 'message' => 'Media not found']);
             }
         } catch (\Exception $e) {
-            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 }
