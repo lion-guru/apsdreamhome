@@ -1,382 +1,42 @@
 <?php
 
-namespace App\Http\Controllers;
-
-use App\Services\SecurityServiceNew;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-
 /**
  * Controller for Security Management operations
  */
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\BaseController;
+use App\Services\SecurityServiceNew;
+use Exception;
+
 class SecurityController extends BaseController
 {
-    private SecurityServiceNew $securityService;
+    private $securityService;
 
-    public function __construct(SecurityServiceNew $securityService)
+    public function __construct()
     {
-        $this->securityService = $securityService;
+        parent::__construct();
+        $this->securityService = new SecurityServiceNew();
     }
 
     /**
      * Run comprehensive security tests
      */
-    public function runTests(): JsonResponse
+    public function runTests()
     {
         try {
             $results = $this->securityService->runSecurityTests();
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
-                'message' => 'Security tests completed successfully',
-                'data' => $results
+                'results' => $results
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
                 'success' => false,
-                'message' => 'Failed to run security tests',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Get security score
-     */
-    public function getScore(): JsonResponse
-    {
-        try {
-            $score = $this->securityService->getSecurityScore();
-
-            return response()->json([
-                'success' => true,
-                'data' => $score
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get security score',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Generate and download HTML security report
-     */
-    public function generateReport(): JsonResponse
-    {
-        try {
-            $htmlReport = $this->securityService->generateHtmlReport();
-            
-            // Save report to file
-            $reportPath = storage_path('app/security_reports/security_test_report_' . now()->format('Y-m-d_H-i-s') . '.html');
-            $this->ensureReportDirectory();
-            file_put_contents($reportPath, $htmlReport);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Security report generated successfully',
-                'data' => [
-                    'report_path' => $reportPath,
-                    'download_url' => route('security.download-report', basename($reportPath))
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to generate security report',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Download security report
-     */
-    public function downloadReport(string $filename): JsonResponse
-    {
-        try {
-            $reportPath = storage_path('app/security_reports/' . $filename);
-            
-            if (!file_exists($reportPath)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Report file not found'
-                ], 404);
-            }
-
-            return response()->download($reportPath, $filename, [
-                'Content-Type' => 'text/html'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to download report',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Validate input data
-     */
-    public function validateInput(Request $request): JsonResponse
-    {
-        try {
-            $validated = $request->validate([
-                'input' => 'required|string',
-                'type' => 'in:email,phone,general'
-            ]);
-
-            $input = $validated['input'];
-            $type = $validated['type'] ?? 'general';
-
-            $result = [
-                'original' => $input,
-                'sanitized' => $this->securityService->sanitizeInput($input),
-                'is_valid' => true
-            ];
-
-            // Type-specific validation
-            switch ($type) {
-                case 'email':
-                    $result['is_valid'] = $this->securityService->validateEmail($input);
-                    break;
-                case 'phone':
-                    $result['is_valid'] = $this->securityService->validatePhone($input);
-                    break;
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $result
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Input validation failed',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Hash password
-     */
-    public function hashPassword(Request $request): JsonResponse
-    {
-        try {
-            $validated = $request->validate([
-                'password' => 'required|string|min:8'
-            ]);
-
-            $hashedPassword = $this->securityService->hashPassword($validated['password']);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Password hashed successfully',
-                'data' => [
-                    'hashed_password' => $hashedPassword
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Password hashing failed',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Verify password
-     */
-    public function verifyPassword(Request $request): JsonResponse
-    {
-        try {
-            $validated = $request->validate([
-                'password' => 'required|string',
-                'hash' => 'required|string'
-            ]);
-
-            $isValid = $this->securityService->verifyPassword(
-                $validated['password'],
-                $validated['hash']
-            );
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'is_valid' => $isValid
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Password verification failed',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Generate CSRF token
-     */
-    public function generateCsrfToken(): JsonResponse
-    {
-        try {
-            $token = $this->securityService->generateCsrfToken();
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'csrf_token' => $token
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'CSRF token generation failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Validate CSRF token
-     */
-    public function validateCsrfToken(Request $request): JsonResponse
-    {
-        try {
-            $validated = $request->validate([
-                'token' => 'required|string'
-            ]);
-
-            $isValid = $this->securityService->validateCsrfToken($validated['token']);
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'is_valid' => $isValid
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'CSRF token validation failed',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Check rate limit
-     */
-    public function checkRateLimit(Request $request): JsonResponse
-    {
-        try {
-            $validated = $request->validate([
-                'key' => 'required|string',
-                'max_attempts' => 'nullable|integer|min:1',
-                'time_window' => 'nullable|integer|min:60'
-            ]);
-
-            $key = $validated['key'];
-            $maxAttempts = $validated['max_attempts'] ?? 60;
-            $timeWindow = $validated['time_window'] ?? 300;
-
-            $isAllowed = $this->securityService->checkRateLimit($key, $maxAttempts, $timeWindow);
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'is_allowed' => $isAllowed,
-                    'key' => $key,
-                    'max_attempts' => $maxAttempts,
-                    'time_window' => $timeWindow
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Rate limit check failed',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Detect suspicious activity
-     */
-    public function detectSuspiciousActivity(Request $request): JsonResponse
-    {
-        try {
-            $suspicious = $this->securityService->detectSuspiciousActivity($request);
-
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'suspicious_activity' => $suspicious,
-                    'is_suspicious' => !empty($suspicious),
-                    'risk_level' => $this->calculateRiskLevel($suspicious)
-                ]
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Suspicious activity detection failed',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Log security event
-     */
-    public function logSecurityEvent(Request $request): JsonResponse
-    {
-        try {
-            $validated = $request->validate([
-                'event' => 'required|string',
-                'context' => 'nullable|array'
-            ]);
-
-            $this->securityService->logSecurityEvent(
-                $validated['event'],
-                $validated['context'] ?? []
-            );
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Security event logged successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to log security event',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Get security recommendations
-     */
-    public function getRecommendations(): JsonResponse
-    {
-        try {
-            $recommendations = $this->securityService->getSecurityRecommendations();
-
-            return response()->json([
-                'success' => true,
-                'data' => $recommendations
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get security recommendations',
-                'error' => $e->getMessage()
+                'message' => 'Failed to run security tests: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -384,130 +44,280 @@ class SecurityController extends BaseController
     /**
      * Get security dashboard
      */
-    public function getDashboard(): JsonResponse
+    public function dashboard()
+    {
+        $this->requireLogin();
+
+        try {
+            // Get security statistics
+            $securityStats = $this->getSecurityStatistics();
+
+            // Get recent security events
+            $recentEvents = $this->getRecentSecurityEvents();
+
+            // Get system vulnerabilities
+            $vulnerabilities = $this->getSystemVulnerabilities();
+
+            $this->render('pages/security-dashboard', [
+                'page_title' => 'Security Dashboard - APS Dream Home',
+                'page_description' => 'Monitor and manage system security',
+                'security_stats' => $securityStats,
+                'recent_events' => $recentEvents,
+                'vulnerabilities' => $vulnerabilities
+            ]);
+
+        } catch (Exception $e) {
+            error_log("Security Dashboard Error: " . $e->getMessage());
+            $this->render('pages/security-dashboard', [
+                'page_title' => 'Security Dashboard - APS Dream Home',
+                'page_description' => 'Monitor and manage system security',
+                'error' => 'Failed to load security data'
+            ]);
+        }
+    }
+
+    /**
+     * Get security statistics
+     */
+    private function getSecurityStatistics()
     {
         try {
-            $score = $this->securityService->getSecurityScore();
-            $recommendations = $this->securityService->getSecurityRecommendations();
+            // Get total security events
+            $totalEvents = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM security_events WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+            );
 
-            $dashboard = [
-                'security_score' => $score,
-                'recommendations' => $recommendations,
-                'last_tested' => $score['last_tested'],
-                'status' => $score['status'],
-                'summary' => [
-                    'total_tests' => $score['total_tests'],
-                    'passed_tests' => $score['passed_tests'],
-                    'failed_tests' => $score['failed_tests'],
-                    'score_percentage' => $score['score']
-                ]
+            // Get blocked attempts
+            $blockedAttempts = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM security_events WHERE action = 'blocked' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+            );
+
+            // Get failed logins
+            $failedLogins = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM security_events WHERE action = 'login_failed' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+            );
+
+            // Get suspicious activities
+            $suspiciousActivities = $this->db->fetchOne(
+                "SELECT COUNT(*) as count FROM security_events WHERE severity = 'high' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+            );
+
+            return [
+                'total_events' => $totalEvents['count'] ?? 0,
+                'blocked_attempts' => $blockedAttempts['count'] ?? 0,
+                'failed_logins' => $failedLogins['count'] ?? 0,
+                'suspicious_activities' => $suspiciousActivities['count'] ?? 0,
+                'security_score' => $this->calculateSecurityScore($totalEvents['count'] ?? 0, $blockedAttempts['count'] ?? 0, $failedLogins['count'] ?? 0)
             ];
 
-            return response()->json([
-                'success' => true,
-                'data' => $dashboard
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get security dashboard',
-                'error' => $e->getMessage()
-            ], 500);
+        } catch (Exception $e) {
+            error_log("Security Statistics Error: " . $e->getMessage());
+            return [
+                'total_events' => 0,
+                'blocked_attempts' => 0,
+                'failed_logins' => 0,
+                'suspicious_activities' => 0,
+                'security_score' => 0
+            ];
         }
     }
 
     /**
-     * Test specific security component
+     * Get recent security events
      */
-    public function testComponent(Request $request): JsonResponse
+    private function getRecentSecurityEvents()
     {
         try {
-            $validated = $request->validate([
-                'component' => 'required|in:https,headers,input,session,database,upload,api,rate_limit,csrf,auth'
-            ]);
+            $events = $this->db->fetchAll(
+                "SELECT 
+                    se.action,
+                    se.description,
+                    se.ip_address,
+                    se.user_agent,
+                    se.severity,
+                    se.created_at
+                 FROM security_events se 
+                 ORDER BY se.created_at DESC 
+                 LIMIT 20"
+            );
 
-            $component = $validated['component'];
-            $result = ['component' => $component, 'status' => 'tested'];
+            return $events;
 
-            // Run specific component test
-            switch ($component) {
-                case 'https':
-                    $this->securityService->testHttpsSecurity();
-                    $result['message'] = 'HTTPS security test completed';
-                    break;
-                case 'headers':
-                    $this->securityService->testSecurityHeaders();
-                    $result['message'] = 'Security headers test completed';
-                    break;
-                case 'input':
-                    $this->securityService->testInputValidation();
-                    $result['message'] = 'Input validation test completed';
-                    break;
-                case 'session':
-                    $this->securityService->testSessionSecurity();
-                    $result['message'] = 'Session security test completed';
-                    break;
-                case 'database':
-                    $this->securityService->testDatabaseSecurity();
-                    $result['message'] = 'Database security test completed';
-                    break;
-                case 'upload':
-                    $this->securityService->testFileUploadSecurity();
-                    $result['message'] = 'File upload security test completed';
-                    break;
-                case 'api':
-                    $this->securityService->testApiSecurity();
-                    $result['message'] = 'API security test completed';
-                    break;
-                case 'rate_limit':
-                    $this->securityService->testRateLimiting();
-                    $result['message'] = 'Rate limiting test completed';
-                    break;
-                case 'csrf':
-                    $this->securityService->testCsrfProtection();
-                    $result['message'] = 'CSRF protection test completed';
-                    break;
-                case 'auth':
-                    $this->securityService->testAuthenticationSecurity();
-                    $result['message'] = 'Authentication security test completed';
-                    break;
-            }
+        } catch (Exception $e) {
+            error_log("Recent Security Events Error: " . $e->getMessage());
+            return [];
+        }
+    }
 
-            return response()->json([
+    /**
+     * Get system vulnerabilities
+     */
+    private function getSystemVulnerabilities()
+    {
+        try {
+            $vulnerabilities = $this->db->fetchAll(
+                "SELECT 
+                    v.type,
+                    v.description,
+                    v.severity,
+                    v.status,
+                    v.created_at
+                 FROM vulnerabilities v 
+                 WHERE v.status = 'open' 
+                 ORDER BY v.severity DESC, v.created_at DESC 
+                 LIMIT 10"
+            );
+
+            return $vulnerabilities;
+
+        } catch (Exception $e) {
+            error_log("System Vulnerabilities Error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Calculate security score
+     */
+    private function calculateSecurityScore($totalEvents, $blockedAttempts, $failedLogins)
+    {
+        // Base score
+        $score = 100;
+
+        // Deduct points for security issues
+        $score -= min($failedLogins * 5, 50); // Max 50 points for failed logins
+        $score -= min($blockedAttempts * 2, 30); // Max 30 points for blocked attempts
+        $score -= min($totalEvents * 0.5, 20); // Max 20 points for total events
+
+        return max($score, 0);
+    }
+
+    /**
+     * Block IP address
+     */
+    public function blockIP()
+    {
+        $this->requireLogin();
+
+        try {
+            $data = $this->getRequestData();
+
+            $blockData = [
+                'ip_address' => Security::sanitize($data['ip_address'] ?? ''),
+                'reason' => Security::sanitize($data['reason'] ?? 'Manual block'),
+                'duration' => intval($data['duration'] ?? 24),
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            // Add to blocked IPs
+            $this->db->execute(
+                "INSERT INTO blocked_ips (ip_address, reason, duration, created_at) VALUES (?, ?, ?)",
+                [
+                    $blockData['ip_address'],
+                    $blockData['reason'],
+                    $blockData['duration'],
+                    $blockData['created_at']
+                ]
+            );
+
+            return $this->jsonResponse([
                 'success' => true,
-                'message' => $result['message'],
-                'data' => $result
+                'message' => 'IP address blocked successfully',
+                'block_data' => $blockData
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
                 'success' => false,
-                'message' => 'Component test failed',
-                'error' => $e->getMessage()
+                'message' => 'Failed to block IP address: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Calculate risk level based on suspicious activities
+     * Unblock IP address
      */
-    private function calculateRiskLevel(array $suspicious): string
+    public function unblockIP()
     {
-        $count = count($suspicious);
-        
-        if ($count === 0) return 'low';
-        if ($count <= 2) return 'medium';
-        if ($count <= 4) return 'high';
-        return 'critical';
+        $this->requireLogin();
+
+        try {
+            $data = $this->getRequestData();
+
+            // Remove from blocked IPs
+            $this->db->execute(
+                "DELETE FROM blocked_ips WHERE ip_address = ?",
+                [Security::sanitize($data['ip_address'] ?? '')]
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'IP address unblocked successfully'
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to unblock IP address: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Ensure report directory exists
+     * Get blocked IPs
      */
-    private function ensureReportDirectory(): void
+    public function getBlockedIPs()
     {
-        $reportDir = storage_path('app/security_reports');
-        if (!is_dir($reportDir)) {
-            mkdir($reportDir, 0755, true);
+        $this->requireLogin();
+
+        try {
+            $blockedIPs = $this->db->fetchAll(
+                "SELECT 
+                    bi.ip_address,
+                    bi.reason,
+                    bi.duration,
+                    bi.created_at
+                 FROM blocked_ips bi 
+                 ORDER BY bi.created_at DESC 
+                 LIMIT 50"
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'blocked_ips' => $blockedIPs
+            ]);
+
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get blocked IPs: ' . $e->getMessage()
+            ], 500);
         }
+    }
+
+    /**
+     * Get request data from various sources
+     */
+    private function getRequestData(): array
+    {
+        $data = [];
+        
+        // Get JSON data
+        $input = file_get_contents('php://input');
+        if (!empty($input)) {
+            $data = json_decode($input, true) ?: [];
+        }
+        
+        // Merge with POST data
+        if (!empty($_POST)) {
+            $data = array_merge($data, $_POST);
+        }
+        
+        // Merge with GET data
+        if (!empty($_GET)) {
+            $data = array_merge($data, $_GET);
+        }
+        
+        return $data;
     }
 }
