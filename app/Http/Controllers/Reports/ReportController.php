@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Reports;
 
 use App\Services\Reports\ReportService;
 use App\Http\Controllers\BaseController;
+use Exception;
 
 /**
  * Report Controller - APS Dream Home
@@ -28,7 +29,7 @@ class ReportController extends BaseController
             $scheduledReports = $this->reportService->getScheduledReports();
             $availableReports = $this->reportService->getAvailableReports();
             $availableFormats = $this->reportService->getAvailableFormats();
-            
+
             $data = [
                 'page_title' => 'Report Dashboard - APS Dream Home',
                 'scheduled_reports' => $scheduledReports,
@@ -36,10 +37,11 @@ class ReportController extends BaseController
                 'available_formats' => $availableFormats,
                 'total_scheduled' => count($scheduledReports)
             ];
-            
+
             $this->render('reports/dashboard', $data);
         } catch (Exception $e) {
-            $this->renderError('Error loading report dashboard', $e->getMessage());
+            $this->setFlash('error', 'Error loading report dashboard: ' . $e->getMessage());
+            $this->redirect(BASE_URL . 'reports/dashboard');
         }
     }
 
@@ -51,14 +53,14 @@ class ReportController extends BaseController
         try {
             $availableReports = $this->reportService->getAvailableReports();
             $availableFormats = $this->reportService->getAvailableFormats();
-            
+
             $data = [
                 'page_title' => 'Generate Report - APS Dream Home',
                 'available_reports' => $availableReports,
                 'available_formats' => $availableFormats,
                 'action' => '/reports/create'
             ];
-            
+
             $this->render('reports/generate', $data);
         } catch (Exception $e) {
             $this->renderError('Error loading report generation form', $e->getMessage());
@@ -77,34 +79,34 @@ class ReportController extends BaseController
                 $startDate = $_POST['start_date'] ?? date('Y-m-01');
                 $endDate = $_POST['end_date'] ?? date('Y-m-t');
                 $status = $_POST['status'] ?? null;
-                
+
                 $report = null;
-                
+
                 switch ($reportType) {
                     case 'sales':
                         $report = $this->reportService->generateSalesReport($startDate, $endDate, $format);
                         break;
-                    
+
                     case 'property':
                         $report = $this->reportService->generatePropertyReport($status, $format);
                         break;
-                    
+
                     case 'associate':
                         $report = $this->reportService->generateAssociateReport($startDate, $endDate, $format);
                         break;
-                    
+
                     case 'customer':
                         $report = $this->reportService->generateCustomerReport($startDate, $endDate, $format);
                         break;
-                    
+
                     case 'financial':
                         $report = $this->reportService->generateFinancialReport($startDate, $endDate, $format);
                         break;
-                    
+
                     default:
                         throw new Exception('Invalid report type');
                 }
-                
+
                 if ($report) {
                     $data = [
                         'page_title' => ucfirst($reportType) . ' Report - APS Dream Home',
@@ -117,7 +119,7 @@ class ReportController extends BaseController
                             'status' => $status
                         ]
                     ];
-                    
+
                     if ($format === 'json' || $format === 'csv' || $format === 'excel' || $format === 'pdf') {
                         // For downloadable formats, set appropriate headers
                         $this->downloadReport($report, $reportType, $format);
@@ -140,29 +142,29 @@ class ReportController extends BaseController
     private function downloadReport($report, $reportType, $format)
     {
         $filename = $reportType . '_report_' . date('Y-m-d_H-i-s');
-        
+
         switch ($format) {
             case 'json':
                 header('Content-Type: application/json');
                 header('Content-Disposition: attachment; filename="' . $filename . '.json"');
                 break;
-            
+
             case 'csv':
                 header('Content-Type: text/csv');
                 header('Content-Disposition: attachment; filename="' . $filename . '.csv"');
                 break;
-            
+
             case 'excel':
                 header('Content-Type: application/vnd.ms-excel');
                 header('Content-Disposition: attachment; filename="' . $filename . '.xls"');
                 break;
-            
+
             case 'pdf':
                 header('Content-Type: application/pdf');
                 header('Content-Disposition: attachment; filename="' . $filename . '.pdf"');
                 break;
         }
-        
+
         echo $report;
         exit;
     }
@@ -174,13 +176,13 @@ class ReportController extends BaseController
     {
         try {
             $scheduledReports = $this->reportService->getScheduledReports();
-            
+
             $data = [
                 'page_title' => 'Scheduled Reports - APS Dream Home',
                 'scheduled_reports' => $scheduledReports,
                 'total_reports' => count($scheduledReports)
             ];
-            
+
             $this->render('reports/scheduled', $data);
         } catch (Exception $e) {
             $this->renderError('Error loading scheduled reports', $e->getMessage());
@@ -194,13 +196,13 @@ class ReportController extends BaseController
     {
         try {
             $availableReports = $this->reportService->getAvailableReports();
-            
+
             $data = [
                 'page_title' => 'Schedule Report - APS Dream Home',
                 'available_reports' => $availableReports,
                 'action' => '/reports/store-schedule'
             ];
-            
+
             $this->render('reports/schedule', $data);
         } catch (Exception $e) {
             $this->renderError('Error loading schedule form', $e->getMessage());
@@ -223,9 +225,9 @@ class ReportController extends BaseController
                     'status' => $_POST['status'] ?? null,
                     'format' => $_POST['format'] ?? 'array'
                 ];
-                
+
                 $result = $this->reportService->scheduleReport($reportType, $parameters, $schedule, $recipients);
-                
+
                 if ($result) {
                     header('Location: /reports/scheduled');
                     exit;
@@ -247,9 +249,9 @@ class ReportController extends BaseController
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');
             $format = $_GET['format'] ?? 'array';
-            
+
             $report = $this->reportService->generateSalesReport($startDate, $endDate, $format);
-            
+
             if ($report) {
                 $data = [
                     'page_title' => 'Sales Report - APS Dream Home',
@@ -259,7 +261,7 @@ class ReportController extends BaseController
                         'end_date' => $endDate
                     ]
                 ];
-                
+
                 $this->render('reports/sales', $data);
             } else {
                 throw new Exception('Failed to generate sales report');
@@ -277,9 +279,9 @@ class ReportController extends BaseController
         try {
             $status = $_GET['status'] ?? null;
             $format = $_GET['format'] ?? 'array';
-            
+
             $report = $this->reportService->generatePropertyReport($status, $format);
-            
+
             if ($report) {
                 $data = [
                     'page_title' => 'Property Report - APS Dream Home',
@@ -288,7 +290,7 @@ class ReportController extends BaseController
                         'status' => $status
                     ]
                 ];
-                
+
                 $this->render('reports/property', $data);
             } else {
                 throw new Exception('Failed to generate property report');
@@ -307,9 +309,9 @@ class ReportController extends BaseController
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');
             $format = $_GET['format'] ?? 'array';
-            
+
             $report = $this->reportService->generateAssociateReport($startDate, $endDate, $format);
-            
+
             if ($report) {
                 $data = [
                     'page_title' => 'Associate Performance Report - APS Dream Home',
@@ -319,7 +321,7 @@ class ReportController extends BaseController
                         'end_date' => $endDate
                     ]
                 ];
-                
+
                 $this->render('reports/associate', $data);
             } else {
                 throw new Exception('Failed to generate associate report');
@@ -338,9 +340,9 @@ class ReportController extends BaseController
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');
             $format = $_GET['format'] ?? 'array';
-            
+
             $report = $this->reportService->generateCustomerReport($startDate, $endDate, $format);
-            
+
             if ($report) {
                 $data = [
                     'page_title' => 'Customer Report - APS Dream Home',
@@ -350,7 +352,7 @@ class ReportController extends BaseController
                         'end_date' => $endDate
                     ]
                 ];
-                
+
                 $this->render('reports/customer', $data);
             } else {
                 throw new Exception('Failed to generate customer report');
@@ -369,9 +371,9 @@ class ReportController extends BaseController
             $startDate = $_GET['start_date'] ?? date('Y-m-01');
             $endDate = $_GET['end_date'] ?? date('Y-m-t');
             $format = $_GET['format'] ?? 'array';
-            
+
             $report = $this->reportService->generateFinancialReport($startDate, $endDate, $format);
-            
+
             if ($report) {
                 $data = [
                     'page_title' => 'Financial Summary Report - APS Dream Home',
@@ -381,7 +383,7 @@ class ReportController extends BaseController
                         'end_date' => $endDate
                     ]
                 ];
-                
+
                 $this->render('reports/financial', $data);
             } else {
                 throw new Exception('Failed to generate financial report');
