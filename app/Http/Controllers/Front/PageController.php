@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Front;
 
-require_once __DIR__ . '/../BaseController.php';
-
 use App\Http\Controllers\BaseController;
+use App\Core\Database;
+use Exception;
 
 /**
  * PageController - Handles public-facing pages

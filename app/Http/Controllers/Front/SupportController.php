@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Support Controller
  * Handles customer support inquiries and tickets
@@ -7,6 +8,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use PDO;
 use Exception;
 
@@ -68,11 +70,6 @@ class SupportController extends BaseController
                 ]);
 
                 if ($inquiry) {
-                    // Invalidate dashboard cache
-                    if (function_exists('getPerformanceManager')) {
-                        getPerformanceManager()->clearCache('query_');
-                    }
-
                     $this->setFlash('success', 'Your support ticket has been submitted successfully. We will get back to you soon.');
                 } else {
                     $this->setFlash('error', 'Failed to submit support ticket. Please try again.');
@@ -89,16 +86,17 @@ class SupportController extends BaseController
 
     public function createSupportTicket()
     {
-        return $this->json([
-            "success" => true,
-            "data" => [
-                "ticket_id" => "TKT_" . uniqid(),
-                "subject" => Security::sanitize($_POST["subject"]) ?? "General Inquiry",
-                "message" => Security::sanitize($_POST["message"]) ?? "Need assistance",
-                "priority" => Security::sanitize($_POST["priority"]) ?? "medium",
-                "user_id" => 1,
-                "status" => "open",
-                "created_at" => date("Y-m-d H:i:s")
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'ticket_id' => 'TKT_' . uniqid(),
+                'subject' => Security::sanitize($_POST['subject']) ?? 'General Inquiry',
+                'message' => Security::sanitize($_POST['message']) ?? 'Need assistance',
+                'priority' => Security::sanitize($_POST['priority']) ?? 'medium',
+                'user_id' => 1,
+                'status' => 'open',
+                'created_at' => date('Y-m-d H:i:s')
             ]
         ]);
     }
