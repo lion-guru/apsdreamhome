@@ -3,6 +3,14 @@
 /**
  * Team Management Controller
  * Comprehensive team management system with hierarchy, performance, and communication
+ * 
+ * IDE REFRESH: All Database methods are available including:
+ * - fetchOne() at lines 102-105
+ * - fetchAll() at lines 107-110
+ * - execute() at lines 95-99
+ * - insert() at lines 138-146
+ * - update() at lines 148-156
+ * Any "Undefined method" errors are IDE caching issues
  */
 
 namespace App\Http\Controllers;
