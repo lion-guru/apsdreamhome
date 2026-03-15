@@ -63,7 +63,7 @@ class ReportController extends BaseController
 
             $this->render('reports/generate', $data);
         } catch (Exception $e) {
-            $this->renderError('Error loading report generation form', $e->getMessage());
+            $this->setFlash('error', 'Error loading report generation form: ' . $e->getMessage());
         }
     }
 
@@ -132,7 +132,7 @@ class ReportController extends BaseController
                 }
             }
         } catch (Exception $e) {
-            $this->renderError('Error generating report', $e->getMessage());
+            $this->setFlash('error', 'Error generating report: ' . $e->getMessage());
         }
     }
 
@@ -185,7 +185,7 @@ class ReportController extends BaseController
 
             $this->render('reports/scheduled', $data);
         } catch (Exception $e) {
-            $this->renderError('Error loading scheduled reports', $e->getMessage());
+            $this->setFlash('error', 'Error loading scheduled reports: ' . $e->getMessage());
         }
     }
 
@@ -205,7 +205,7 @@ class ReportController extends BaseController
 
             $this->render('reports/schedule', $data);
         } catch (Exception $e) {
-            $this->renderError('Error loading schedule form', $e->getMessage());
+            $this->setFlash('error', 'Error loading schedule form: ' . $e->getMessage());
         }
     }
 
@@ -236,7 +236,7 @@ class ReportController extends BaseController
                 }
             }
         } catch (Exception $e) {
-            $this->renderError('Error scheduling report', $e->getMessage());
+            $this->setFlash('error', 'Error scheduling report: ' . $e->getMessage());
         }
     }
 
@@ -267,7 +267,7 @@ class ReportController extends BaseController
                 throw new Exception('Failed to generate sales report');
             }
         } catch (Exception $e) {
-            $this->renderError('Error generating sales report', $e->getMessage());
+            $this->setFlash('error', 'Error generating sales report: ' . $e->getMessage());
         }
     }
 
@@ -296,7 +296,7 @@ class ReportController extends BaseController
                 throw new Exception('Failed to generate property report');
             }
         } catch (Exception $e) {
-            $this->renderError('Error generating property report', $e->getMessage());
+            $this->setFlash('error', 'Error generating property report: ' . $e->getMessage());
         }
     }
 
@@ -327,7 +327,7 @@ class ReportController extends BaseController
                 throw new Exception('Failed to generate associate report');
             }
         } catch (Exception $e) {
-            $this->renderError('Error generating associate report', $e->getMessage());
+            $this->setFlash('error', 'Error generating associate report: ' . $e->getMessage());
         }
     }
 
@@ -358,7 +358,7 @@ class ReportController extends BaseController
                 throw new Exception('Failed to generate customer report');
             }
         } catch (Exception $e) {
-            $this->renderError('Error generating customer report', $e->getMessage());
+            $this->setFlash('error', 'Error generating customer report: ' . $e->getMessage());
         }
     }
 
@@ -389,7 +389,7 @@ class ReportController extends BaseController
                 throw new Exception('Failed to generate financial report');
             }
         } catch (Exception $e) {
-            $this->renderError('Error generating financial report', $e->getMessage());
+            $this->setFlash('error', 'Error generating financial report: ' . $e->getMessage());
         }
     }
 }
