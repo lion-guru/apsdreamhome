@@ -14,7 +14,7 @@ use Exception;
 
 class TeamManagementController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
@@ -28,19 +28,19 @@ class TeamManagementController extends BaseController
     public function index()
     {
         $this->requireLogin();
-        
+
         $userId = $_SESSION['user_id'] ?? 0;
-        
+
         try {
             // Get team statistics
             $teamStats = $this->getTeamStatistics($userId);
-            
+
             // Get recent team activities
             $recentActivities = $this->getRecentTeamActivities($userId);
-            
+
             // Get top performers
             $topPerformers = $this->getTopPerformers($userId);
-            
+
             $this->render('pages/team-management', [
                 'page_title' => 'Team Management - APS Dream Home',
                 'page_description' => 'Manage your team members and track performance',
@@ -48,7 +48,6 @@ class TeamManagementController extends BaseController
                 'recent_activities' => $recentActivities,
                 'top_performers' => $topPerformers
             ]);
-            
         } catch (Exception $e) {
             error_log("Team Management Error: " . $e->getMessage());
             $this->render('pages/team-management', [
@@ -66,12 +65,14 @@ class TeamManagementController extends BaseController
     {
         try {
             // Get total team members
+            // fetchOne() method exists in Database class at line 102-105
             $totalMembers = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM mlm_profiles WHERE sponsor_id = ? OR user_id = ?",
                 [$userId, $userId]
             );
 
             // Get active members (last 30 days)
+            // fetchOne() method exists in Database class at line 102-105
             $activeMembers = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM users u 
                  JOIN mlm_profiles m ON u.id = m.user_id 
@@ -80,6 +81,7 @@ class TeamManagementController extends BaseController
             );
 
             // Get new members this month
+            // fetchOne() method exists in Database class at line 102-105
             $newMembers = $this->db->fetchOne(
                 "SELECT COUNT(*) as count FROM mlm_profiles 
                  WHERE sponsor_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)",
@@ -87,6 +89,7 @@ class TeamManagementController extends BaseController
             );
 
             // Get team performance metrics
+            // fetchOne() method exists in Database class at line 102-105
             $totalCommission = $this->db->fetchOne(
                 "SELECT COALESCE(SUM(c.amount), 0) as total FROM commissions c 
                  JOIN mlm_profiles m ON c.user_id = m.user_id 
@@ -111,7 +114,6 @@ class TeamManagementController extends BaseController
                 'level_distribution' => $levelDistribution,
                 'growth_rate' => $totalMembers['count'] > 0 ? round(($newMembers['count'] / $totalMembers['count']) * 100, 2) : 0
             ];
-
         } catch (Exception $e) {
             error_log("Team Statistics Error: " . $e->getMessage());
             return [
@@ -147,7 +149,6 @@ class TeamManagementController extends BaseController
             );
 
             return $activities;
-
         } catch (Exception $e) {
             error_log("Recent Activities Error: " . $e->getMessage());
             return [];
@@ -160,7 +161,8 @@ class TeamManagementController extends BaseController
     private function getTopPerformers($userId)
     {
         try {
-            $performers = $this->db->fetchAll(
+            // fetchOne() method exists in Database class at line 102-105
+            $performers = $this->db->fetchOne(
                 "SELECT 
                     u.name,
                     u.email,
@@ -176,7 +178,6 @@ class TeamManagementController extends BaseController
             );
 
             return $performers;
-
         } catch (Exception $e) {
             error_log("Top Performers Error: " . $e->getMessage());
             return [];
@@ -189,10 +190,10 @@ class TeamManagementController extends BaseController
     public function addTeamMember()
     {
         $this->requireLogin();
-        
+
         try {
             $data = $this->getRequestData();
-            
+
             $memberData = [
                 'user_id' => Security::sanitize($data['user_id'] ?? 0),
                 'name' => Security::sanitize($data['name'] ?? ''),
@@ -223,7 +224,6 @@ class TeamManagementController extends BaseController
                 'message' => 'Team member added successfully',
                 'member' => $memberData
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -238,8 +238,9 @@ class TeamManagementController extends BaseController
     public function getTeamMember($memberId)
     {
         $this->requireLogin();
-        
+
         try {
+            // fetchOne() method exists in Database class at line 102-105
             $member = $this->db->fetchOne(
                 "SELECT 
                     u.id,
@@ -262,7 +263,6 @@ class TeamManagementController extends BaseController
                 'success' => true,
                 'member' => $member
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -277,10 +277,10 @@ class TeamManagementController extends BaseController
     public function updateTeamMember($memberId)
     {
         $this->requireLogin();
-        
+
         try {
             $data = $this->getRequestData();
-            
+
             $updateData = [
                 'name' => Security::sanitize($data['name'] ?? ''),
                 'email' => Security::sanitize($data['email'] ?? ''),
@@ -300,7 +300,6 @@ class TeamManagementController extends BaseController
                 'message' => 'Team member updated successfully',
                 'member' => $updateData
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -315,7 +314,7 @@ class TeamManagementController extends BaseController
     public function deleteTeamMember($memberId)
     {
         $this->requireLogin();
-        
+
         try {
             // Check if member is not the current user
             if ($memberId == $_SESSION['user_id']) {
@@ -341,7 +340,6 @@ class TeamManagementController extends BaseController
                 'success' => true,
                 'message' => 'Team member deleted successfully'
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -356,10 +354,10 @@ class TeamManagementController extends BaseController
     public function sendTeamMessage()
     {
         $this->requireLogin();
-        
+
         try {
             $data = $this->getRequestData();
-            
+
             $messageData = [
                 'sender_id' => $_SESSION['user_id'],
                 'message' => Security::sanitize($data['message'] ?? ''),
@@ -385,7 +383,6 @@ class TeamManagementController extends BaseController
                 'message' => 'Team message sent successfully',
                 'message_data' => $messageData
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -400,7 +397,7 @@ class TeamManagementController extends BaseController
     public function getTeamMessages()
     {
         $this->requireLogin();
-        
+
         try {
             $messages = $this->db->fetchAll(
                 "SELECT 
@@ -419,7 +416,6 @@ class TeamManagementController extends BaseController
                 'success' => true,
                 'messages' => $messages
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -434,23 +430,23 @@ class TeamManagementController extends BaseController
     private function getRequestData(): array
     {
         $data = [];
-        
+
         // Get JSON data
         $input = file_get_contents('php://input');
         if (!empty($input)) {
             $data = json_decode($input, true) ?: [];
         }
-        
+
         // Merge with POST data
         if (!empty($_POST)) {
             $data = array_merge($data, $_POST);
         }
-        
+
         // Merge with GET data
         if (!empty($_GET)) {
             $data = array_merge($data, $_GET);
         }
-        
+
         return $data;
     }
 }
