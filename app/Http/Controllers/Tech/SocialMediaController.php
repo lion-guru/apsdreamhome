@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use Exception;
 
 class SocialMediaController extends BaseController
@@ -54,12 +55,12 @@ class SocialMediaController extends BaseController
         $platform = Security::sanitize($_POST['platform']) ?? '';
 
         if (empty($post_type) || empty($platform)) {
-            sendJsonResponse(['success' => false, 'error' => 'Post type and platform required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Post type and platform required'], 400);
         }
 
         $post_content = $this->generateSocialPost($post_type, $platform);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $post_content
         ]);
