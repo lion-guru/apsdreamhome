@@ -3,61 +3,59 @@
 namespace App\Http\Controllers;
 
 use App\Services\Localization\LocalizationService;
-use Psr\Log\LoggerInterface;
+use App\Services\SystemLogger as Logger;
 
-class LocalizationController
+/**
+ * Controller for Localization operations
+ */
+class LocalizationController extends BaseController
 {
     private LocalizationService $localizationService;
-    private LoggerInterface $logger;
+    private $logger;
 
-    public function __construct(LocalizationService $localizationService, LoggerInterface $logger)
+    public function __construct(LocalizationService $localizationService, Logger $logger)
     {
+        parent::__construct();
         $this->localizationService = $localizationService;
         $this->logger = $logger;
     }
 
     /**
-     * Set locale for current session
+     * Set locale
      */
     public function setLocale()
     {
         try {
-            $locale = request()->input('locale');
-            
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
+
             if (!$locale) {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => 'Locale parameter is required'
+                    'message' => 'Locale is required'
                 ], 400);
             }
 
             if (!$this->localizationService->isValidLocale($locale)) {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => 'Invalid locale format'
+                    'message' => 'Invalid locale'
                 ], 400);
             }
 
             if ($this->localizationService->setLocale($locale)) {
-                // Store in session
-                session(['locale' => $locale]);
-                
-                return response()->json([
+                return $this->response([
                     'success' => true,
-                    'message' => 'Locale changed successfully',
-                    'locale' => $locale,
-                    'display_name' => $this->localizationService->getLocaleDisplayName($locale)
+                    'message' => 'Locale set successfully'
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => 'Failed to change locale'
+                    'message' => 'Failed to set locale'
                 ], 500);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to set locale", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to set locale'
             ], 500);
@@ -65,105 +63,108 @@ class LocalizationController
     }
 
     /**
-     * Get current locale information
+     * Get current locale
      */
     public function getCurrentLocale()
     {
         try {
-            return response()->json([
-                'success' => true,
-                'current_locale' => $this->localizationService->getCurrentLocale(),
-                'supported_locales' => $this->localizationService->getSupportedLocales(),
-                'locale_display_names' => array_map(
-                    fn($locale) => $this->localizationService->getLocaleDisplayName($locale),
-                    $this->localizationService->getSupportedLocales()
-                )
-            ]);
+            $locale = $this->localizationService->getCurrentLocale();
 
+            return $this->response([
+                'success' => true,
+                'locale' => $locale
+            ]);
         } catch (\Exception $e) {
             $this->logger->error("Failed to get current locale", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
-                'message' => 'Failed to get locale information'
+                'message' => 'Failed to get current locale'
             ], 500);
         }
     }
 
     /**
-     * Translate a key
+     * Get supported locales
      */
-    public function translate()
+    public function getSupportedLocales()
     {
         try {
-            $key = request()->input('key');
-            $params = request()->input('params', []);
-            $locale = request()->input('locale');
+            $locales = $this->localizationService->getSupportedLocales();
 
-            if (!$key) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Key parameter is required'
-                ], 400);
-            }
-
-            $translation = $this->localizationService->translate($key, $params, $locale);
-
-            return response()->json([
+            return $this->response([
                 'success' => true,
-                'translation' => $translation,
-                'key' => $key,
-                'locale' => $locale ?: $this->localizationService->getCurrentLocale()
+                'locales' => $locales
             ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to translate", ['error' => $e->getMessage()]);
-            return response()->json([
+            $this->logger->error("Failed to get supported locales", ['error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
-                'message' => 'Failed to translate'
+                'message' => 'Failed to get supported locales'
             ], 500);
         }
     }
 
     /**
-     * Add or update translation
+     * Get translations
+     */
+    public function getTranslations()
+    {
+        try {
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : $this->localizationService->getCurrentLocale();
+            $translations = $this->localizationService->getAllTranslations($locale);
+
+            return $this->response([
+                'success' => true,
+                'translations' => $translations,
+                'locale' => $locale
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to get translations", ['error' => $e->getMessage()]);
+            return $this->response([
+                'success' => false,
+                'message' => 'Failed to get translations'
+            ], 500);
+        }
+    }
+
+    /**
+     * Add translation
      */
     public function addTranslation()
     {
         try {
-            $key = request()->input('key');
-            $translation = request()->input('translation');
-            $locale = request()->input('locale');
-            $context = request()->input('context');
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
+            $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
+            $value = isset($_REQUEST['value']) ? $_REQUEST['value'] : null;
 
-            if (!$key || !$translation || !$locale) {
-                return response()->json([
+            if (!$locale || !$key || !$value) {
+                return $this->response([
                     'success' => false,
-                    'message' => 'Key, translation, and locale are required'
+                    'message' => 'Locale, key, and value are required'
                 ], 400);
             }
 
             if (!$this->localizationService->isValidLocale($locale)) {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => 'Invalid locale format'
+                    'message' => 'Invalid locale'
                 ], 400);
             }
 
-            if ($this->localizationService->addTranslation($key, $translation, $locale, $context)) {
-                return response()->json([
+            if ($this->localizationService->addTranslation($locale, $key, $value)) {
+                return $this->response([
                     'success' => true,
                     'message' => 'Translation added successfully'
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => 'Failed to add translation'
                 ], 500);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to add translation", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to add translation'
             ], 500);
@@ -171,34 +172,45 @@ class LocalizationController
     }
 
     /**
-     * Get all translations for a locale
+     * Update translation
      */
-    public function getTranslations()
+    public function updateTranslation()
     {
         try {
-            $locale = request()->input('locale', $this->localizationService->getCurrentLocale());
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
+            $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
+            $value = isset($_REQUEST['value']) ? $_REQUEST['value'] : null;
 
-            if (!$this->localizationService->isValidLocale($locale)) {
-                return response()->json([
+            if (!$locale || !$key || !$value) {
+                return $this->response([
                     'success' => false,
-                    'message' => 'Invalid locale format'
+                    'message' => 'Locale, key, and value are required'
                 ], 400);
             }
 
-            $translations = $this->localizationService->getAllTranslations($locale);
+            if (!$this->localizationService->isValidLocale($locale)) {
+                return $this->response([
+                    'success' => false,
+                    'message' => 'Invalid locale'
+                ], 400);
+            }
 
-            return response()->json([
-                'success' => true,
-                'translations' => $translations,
-                'locale' => $locale,
-                'total' => count($translations)
-            ]);
-
+            if ($result = $this->localizationService->addTranslation($key, $value, $locale)) {
+                return $this->response([
+                    'success' => true,
+                    'message' => 'Translation updated successfully'
+                ]);
+            } else {
+                return $this->response([
+                    'success' => false,
+                    'message' => 'Failed to update translation'
+                ], 500);
+            }
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get translations", ['error' => $e->getMessage()]);
-            return response()->json([
+            $this->logger->error("Failed to update translation", ['error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
-                'message' => 'Failed to get translations'
+                'message' => 'Failed to update translation'
             ], 500);
         }
     }
@@ -209,114 +221,39 @@ class LocalizationController
     public function deleteTranslation()
     {
         try {
-            $key = request()->input('key');
-            $locale = request()->input('locale');
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
+            $key = isset($_REQUEST['key']) ? $_REQUEST['key'] : null;
 
-            if (!$key || !$locale) {
-                return response()->json([
+            if (!$locale || !$key) {
+                return $this->response([
                     'success' => false,
-                    'message' => 'Key and locale are required'
+                    'message' => 'Locale and key are required'
                 ], 400);
             }
 
             if (!$this->localizationService->isValidLocale($locale)) {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => 'Invalid locale format'
+                    'message' => 'Invalid locale'
                 ], 400);
             }
 
-            if ($this->localizationService->deleteTranslation($key, $locale)) {
-                return response()->json([
+            if ($this->localizationService->deleteTranslation($locale, $key)) {
+                return $this->response([
                     'success' => true,
                     'message' => 'Translation deleted successfully'
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => 'Failed to delete translation'
                 ], 500);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to delete translation", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to delete translation'
-            ], 500);
-        }
-    }
-
-    /**
-     * Get localization statistics
-     */
-    public function getStatistics()
-    {
-        try {
-            $stats = $this->localizationService->getStatistics();
-
-            return response()->json([
-                'success' => true,
-                'statistics' => $stats
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get localization statistics", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get statistics'
-            ], 500);
-        }
-    }
-
-    /**
-     * Import translations
-     */
-    public function importTranslations()
-    {
-        try {
-            $locale = request()->input('locale');
-            $translations = request()->input('translations', []);
-
-            if (!$locale) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Locale parameter is required'
-                ], 400);
-            }
-
-            if (!$this->localizationService->isValidLocale($locale)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid locale format'
-                ], 400);
-            }
-
-            if (!is_array($translations)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Translations must be an array'
-                ], 400);
-            }
-
-            if ($this->localizationService->importTranslations($translations, $locale)) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Translations imported successfully',
-                    'count' => count($translations)
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Some translations failed to import'
-                ], 500);
-            }
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to import translations", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to import translations'
             ], 500);
         }
     }
@@ -327,10 +264,10 @@ class LocalizationController
     public function exportTranslations()
     {
         try {
-            $locale = request()->input('locale', $this->localizationService->getCurrentLocale());
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : $this->localizationService->getCurrentLocale();
 
             if (!$this->localizationService->isValidLocale($locale)) {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => 'Invalid locale format'
                 ], 400);
@@ -344,12 +281,62 @@ class LocalizationController
 
             echo json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             exit;
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to export translations", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to export translations'
+            ], 500);
+        }
+    }
+
+    /**
+     * Import translations
+     */
+    public function importTranslations()
+    {
+        try {
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
+            $translations = isset($_REQUEST['translations']) ? $_REQUEST['translations'] : null;
+
+            if (!$locale) {
+                return $this->response([
+                    'success' => false,
+                    'message' => 'Locale parameter is required'
+                ], 400);
+            }
+
+            if (!$this->localizationService->isValidLocale($locale)) {
+                return $this->response([
+                    'success' => false,
+                    'message' => 'Invalid locale format'
+                ], 400);
+            }
+
+            if (!is_array($translations)) {
+                return $this->response([
+                    'success' => false,
+                    'message' => 'Translations must be an array'
+                ], 400);
+            }
+
+            if ($this->localizationService->importTranslations($translations, $locale)) {
+                return $this->response([
+                    'success' => true,
+                    'message' => 'Translations imported successfully',
+                    'count' => count($translations)
+                ]);
+            } else {
+                return $this->response([
+                    'success' => false,
+                    'message' => 'Some translations failed to import'
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to import translations", ['error' => $e->getMessage()]);
+            return $this->response([
+                'success' => false,
+                'message' => 'Failed to import translations'
             ], 500);
         }
     }
@@ -360,63 +347,38 @@ class LocalizationController
     public function addLocale()
     {
         try {
-            $locale = request()->input('locale');
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : null;
 
             if (!$locale) {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => 'Locale parameter is required'
                 ], 400);
             }
 
             if (!$this->localizationService->isValidLocale($locale)) {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => 'Invalid locale format'
                 ], 400);
             }
 
             if ($this->localizationService->addSupportedLocale($locale)) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
-                    'message' => 'Locale added successfully',
-                    'locale' => $locale,
-                    'display_name' => $this->localizationService->getLocaleDisplayName($locale)
+                    'message' => 'Locale added successfully'
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => 'Failed to add locale'
                 ], 500);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to add locale", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to add locale'
-            ], 500);
-        }
-    }
-
-    /**
-     * Clear translation cache
-     */
-    public function clearCache()
-    {
-        try {
-            $this->localizationService->clearAllCache();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Translation cache cleared successfully'
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to clear cache", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to clear cache'
             ], 500);
         }
     }
@@ -428,17 +390,16 @@ class LocalizationController
     {
         try {
             $stats = $this->localizationService->getStatistics();
-            
-            return view('localization.management', [
+
+            return $this->view('localization.management', [
                 'stats' => $stats,
                 'current_locale' => $this->localizationService->getCurrentLocale(),
                 'supported_locales' => $this->localizationService->getSupportedLocales(),
                 'page_title' => 'Localization Management - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to load localization management", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->view('errors.500');
         }
     }
 
@@ -448,19 +409,18 @@ class LocalizationController
     public function editor()
     {
         try {
-            $locale = request()->input('locale', $this->localizationService->getCurrentLocale());
+            $locale = isset($_REQUEST['locale']) ? $_REQUEST['locale'] : $this->localizationService->getCurrentLocale();
             $translations = $this->localizationService->getAllTranslations($locale);
-            
-            return view('localization.editor', [
+
+            return $this->view('localization.editor', [
                 'translations' => $translations,
                 'locale' => $locale,
                 'supported_locales' => $this->localizationService->getSupportedLocales(),
                 'page_title' => 'Translation Editor - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to load translation editor", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->view('errors.500');
         }
     }
 }

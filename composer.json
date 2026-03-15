@@ -1,0 +1,18 @@
+{
+    "name": "aps/dream-home",
+    "description": "APS Dream Home Real Estate Platform",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "psr/log": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Psr\\Log\\": "vendor/psr/log/src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    }
+}
