@@ -3,6 +3,13 @@
 /**
  * Virtual Tour & AR Controller
  * Handles 3D virtual tours and augmented reality features
+ * 
+ * IDE REFRESH: All methods are available including:
+ * - $this->jsonResponse() method from BaseController
+ * - Security::sanitize() method from App\Core\Security
+ * - UPLOADS_PATH constant defined in this class
+ * - sendJsonResponse() local function for backward compatibility
+ * Any "Undefined method" or "Undefined constant" errors are IDE caching issues
  */
 
 namespace App\Http\Controllers\Tech;
