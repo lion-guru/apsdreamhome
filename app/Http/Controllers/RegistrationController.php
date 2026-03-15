@@ -44,42 +44,13 @@ class RegistrationController extends BaseController
 
         // Get form data for Indian states
         $indianStates = [
-            'Andhra Pradesh',
-            'Arunachal Pradesh',
-            'Assam',
-            'Bihar',
-            'Chhattisgarh',
-            'Goa',
-            'Gujarat',
-            'Haryana',
-            'Himachal Pradesh',
-            'Jharkhand',
-            'Karnataka',
-            'Kerala',
-            'Madhya Pradesh',
-            'Maharashtra',
-            'Manipur',
-            'Meghalaya',
-            'Mizoram',
-            'Nagaland',
-            'Odisha',
-            'Punjab',
-            'Rajasthan',
-            'Sikkim',
-            'Tamil Nadu',
-            'Telangana',
-            'Tripura',
-            'Uttar Pradesh',
-            'Uttarakhand',
-            'West Bengal',
-            'Andaman and Nicobar Islands',
-            'Chandigarh',
-            'Dadra and Nagar Haveli and Daman and Diu',
-            'Delhi',
-            'Jammu and Kashmir',
-            'Ladakh',
-            'Lakshadweep',
-            'Puducherry'
+            'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+            'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+            'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+            'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+            'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+            'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+            'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
         ];
 
         return $this->render('registration/unified-form', compact('referralCode', 'referrerInfo', 'indianStates'));
@@ -189,10 +160,12 @@ class RegistrationController extends BaseController
                     'user_id' => $userId,
                     'mlm_profile_id' => $mlmProfileId
                 ]);
+
             } catch (\Exception $e) {
                 $db->rollback();
                 throw $e;
             }
+
         } catch (\Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -537,6 +510,7 @@ class RegistrationController extends BaseController
                     'active_referrals' => $activeReferrals['count']
                 ]
             ]);
+
         } catch (\Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -563,7 +537,7 @@ class RegistrationController extends BaseController
 
             // Convert to CSV
             $csv = "ID,Name,Email,Phone,City,State,Registration Date,MLM Level,Total Referrals\n";
-
+            
             foreach ($registrations as $reg) {
                 $csv .= "{$reg['id']},\"{$reg['name']}\",\"{$reg['email']}\",\"{$reg['phone']}\",\"{$reg['city']}\",\"{$reg['state']}\",\"{$reg['created_at']}\",{$reg['level']},{$reg['total_referrals']}\n";
             }
@@ -572,6 +546,7 @@ class RegistrationController extends BaseController
             header('Content-Disposition: attachment; filename="registrations.csv"');
             echo $csv;
             exit;
+
         } catch (\Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
