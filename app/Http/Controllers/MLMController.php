@@ -13,7 +13,7 @@ use Exception;
  */
 class MLMController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
@@ -146,7 +146,6 @@ class MLMController extends BaseController
                 'last_payout_date' => date('Y-m-d', strtotime('last month')),
                 'last_bonus' => 0
             ];
-
         } catch (Exception $e) {
             error_log("MLM Dashboard Error: " . $e->getMessage());
             return $this->getMockDashboardData();
@@ -217,7 +216,6 @@ class MLMController extends BaseController
                 'progress' => $progress,
                 'time_remaining' => $timeRemaining
             ];
-
         } catch (Exception $e) {
             error_log("Rank Calculation Error: " . $e->getMessage());
             return [
@@ -312,7 +310,6 @@ class MLMController extends BaseController
                 'success' => true,
                 'network' => $network
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -351,7 +348,6 @@ class MLMController extends BaseController
                 'success' => true,
                 'commissions' => $commissions
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -394,7 +390,6 @@ class MLMController extends BaseController
                 'message' => 'Commission added successfully',
                 'commission' => $commission
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -409,23 +404,23 @@ class MLMController extends BaseController
     private function getRequestData(): array
     {
         $data = [];
-        
+
         // Get JSON data
         $input = file_get_contents('php://input');
         if (!empty($input)) {
             $data = json_decode($input, true) ?: [];
         }
-        
+
         // Merge with POST data
         if (!empty($_POST)) {
             $data = array_merge($data, $_POST);
         }
-        
+
         // Merge with GET data
         if (!empty($_GET)) {
             $data = array_merge($data, $_GET);
         }
-        
+
         return $data;
     }
 }
