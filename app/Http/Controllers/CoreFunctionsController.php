@@ -26,7 +26,7 @@ class CoreFunctionsController extends BaseController
     public function validateInput()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['input']) || empty($data['type'])) {
@@ -65,7 +65,7 @@ class CoreFunctionsController extends BaseController
     public function validateMultiple()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['inputs']) || empty($data['rules'])) {
@@ -96,7 +96,7 @@ class CoreFunctionsController extends BaseController
     public function sanitizeString()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['input']) || empty($data['type'])) {
@@ -127,7 +127,7 @@ class CoreFunctionsController extends BaseController
     public function formatPhone()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['phone'])) {
@@ -161,7 +161,7 @@ class CoreFunctionsController extends BaseController
     public function hashPassword()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['password'])) {
@@ -195,7 +195,7 @@ class CoreFunctionsController extends BaseController
     public function generateRandomString()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $length = (int)($data['length'] ?? 16);
 
             if ($length < 1 || $length > 100) {
@@ -229,7 +229,7 @@ class CoreFunctionsController extends BaseController
     public function generateSecureTokenApi()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $length = (int)($data['length'] ?? 16);
 
             if ($length < 1 || $length > 100) {
@@ -263,7 +263,7 @@ class CoreFunctionsController extends BaseController
     public function uploadImage()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation for image upload
             if (empty($_FILES['image'])) {
@@ -338,7 +338,7 @@ class CoreFunctionsController extends BaseController
     public function calculateAge()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['date_of_birth'])) {
@@ -371,7 +371,7 @@ class CoreFunctionsController extends BaseController
     public function extractText()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['filepath'])) {
@@ -456,7 +456,7 @@ class CoreFunctionsController extends BaseController
     public function logAdminAction()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['action'])) {
@@ -533,7 +533,7 @@ class CoreFunctionsController extends BaseController
     public function verifyPasswordHash()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $password = $data['password'] ?? '';
             $hash = $data['hash'] ?? '';
 
@@ -631,7 +631,7 @@ class CoreFunctionsController extends BaseController
     public function checkPermission()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $permission = $data['permission'] ?? '';
 
             // Basic permission check logic
@@ -667,7 +667,7 @@ class CoreFunctionsController extends BaseController
     public function checkRateLimit()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $key = $data['key'] ?? 'default';
             $maxAttempts = (int)($data['max_attempts'] ?? 5);
             $timeWindow = (int)($data['time_window'] ?? 300);
@@ -710,7 +710,7 @@ class CoreFunctionsController extends BaseController
     public function formatCurrency()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $amount = (float)($data['amount'] ?? 0);
             $currency = $data['currency'] ?? '₹';
 
@@ -739,7 +739,7 @@ class CoreFunctionsController extends BaseController
     public function formatDate()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $date = $data['date'] ?? '';
             $format = $data['format'] ?? 'Y-m-d H:i:s';
 
@@ -769,7 +769,7 @@ class CoreFunctionsController extends BaseController
     public function generateSlug()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $string = $data['string'] ?? '';
 
             $slug = strtolower($string);
@@ -798,7 +798,7 @@ class CoreFunctionsController extends BaseController
     public function truncateText()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $text = $data['text'] ?? '';
             $length = (int)($data['length'] ?? 100);
             $suffix = $data['suffix'] ?? '...';
