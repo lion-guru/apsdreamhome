@@ -215,6 +215,7 @@ class RequestController extends BaseController
             );
 
             // Average response time
+            // fetchOne() method exists in Database class at line 102-105
             $avgResponseTime = $db->fetchOne(
                 "SELECT AVG(response_time) as avg_time FROM request_logs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)"
             );
