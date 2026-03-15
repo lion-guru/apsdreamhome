@@ -1,24 +1,21 @@
 <?php
 /**
  * Unified Registration Controller with MLM Referral System
- * Modern implementation of the legacy registration system
+ * Modern implementation of legacy registration system
  */
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\MLMProfile;
-use App\Models\MLMReferral;
-use App\Models\MLMNetworkTree;
+use App\Core\Security;
+use App\Core\Database;
 use App\Services\MLMReferralService;
 use App\Services\EmailService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
-class RegistrationController extends Controller
+/**
+ * Registration Controller
+ * Handles user registration with MLM referral system
+ */
+class RegistrationController extends BaseController
 {
     protected $mlmReferralService;
     protected $emailService;
@@ -32,11 +29,11 @@ class RegistrationController extends Controller
     }
 
     /**
-     * Show the unified registration form
+     * Show unified registration form
      */
-    public function showRegistrationForm(Request $request)
+    public function showRegistrationForm()
     {
-        $referralCode = $request->get('ref');
+        $referralCode = $_GET['ref'] ?? null;
         $referrerInfo = null;
 
         // Validate and get referrer information
@@ -48,358 +45,512 @@ class RegistrationController extends Controller
         $indianStates = [
             'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
             'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
-            'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
-            'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim',
-            'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand',
-            'West Bengal', 'Delhi', 'Jammu and Kashmir', 'Ladakh'
+            'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+            'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+            'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+            'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+            'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
         ];
 
-        // User types configuration
-        $userTypes = [
-            'customer' => [
-                'label' => 'Customer (Property Buyer)',
-                'description' => 'Buy properties and earn referral rewards',
-                'icon' => 'user'
-            ],
-            'agent' => [
-                'label' => 'Real Estate Agent',
-                'description' => 'Sell properties and earn commissions',
-                'icon' => 'user-tie'
-            ],
-            'associate' => [
-                'label' => 'MLM Associate',
-                'description' => 'Build network and earn multi-level commissions',
-                'icon' => 'users'
-            ],
-            'builder' => [
-                'label' => 'Property Builder',
-                'description' => 'List properties and manage sales',
-                'icon' => 'building'
-            ],
-            'investor' => [
-                'label' => 'Property Investor',
-                'description' => 'Invest in properties and earn returns',
-                'icon' => 'chart-line'
+        return $this->render('registration/unified-form', compact('referralCode', 'referrerInfo', 'indianStates'));
+    }
+
+    /**
+     * Process unified registration
+     */
+    public function register()
+    {
+        try {
+            // Validate input
+            $validation = $this->validateRegistration($_POST);
+            if (!$validation['valid']) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validation['errors']
+                ], 400);
+            }
+
+            // Verify reCAPTCHA
+            if (!$this->verifyRecaptcha($_POST['g-recaptcha-response'] ?? '')) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'reCAPTCHA verification failed'
+                ], 400);
+            }
+
+            $db = Database::getInstance();
+
+            // Check if email already exists
+            $existingUser = $db->fetchOne(
+                "SELECT id FROM users WHERE email = ?",
+                [$_POST['email']]
+            );
+
+            if ($existingUser) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Email already registered'
+                ], 400);
+            }
+
+            // Check if phone already exists
+            $existingPhone = $db->fetchOne(
+                "SELECT id FROM users WHERE phone = ?",
+                [$_POST['phone']]
+            );
+
+            if ($existingPhone) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Phone number already registered'
+                ], 400);
+            }
+
+            // Start transaction
+            $db->beginTransaction();
+
+            try {
+                // Create user account
+                $userId = $db->execute(
+                    "INSERT INTO users (name, email, phone, password, address, city, state, pincode, country, created_at, updated_at) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+                    [
+                        $_POST['name'],
+                        $_POST['email'],
+                        $_POST['phone'],
+                        password_hash($_POST['password'], PASSWORD_ARGON2ID),
+                        $_POST['address'] ?? '',
+                        $_POST['city'] ?? '',
+                        $_POST['state'] ?? '',
+                        $_POST['pincode'] ?? '',
+                        $_POST['country'] ?? 'India'
+                    ]
+                );
+
+                // Create MLM profile
+                $mlmProfileId = $db->execute(
+                    "INSERT INTO mlm_profiles (user_id, sponsor_id, placement_id, position, level, created_at, updated_at) 
+                     VALUES (?, ?, ?, ?, ?, NOW(), NOW())",
+                    [
+                        $userId,
+                        $_POST['sponsor_id'] ?? null,
+                        $_POST['placement_id'] ?? null,
+                        $_POST['position'] ?? 'left',
+                        1
+                    ]
+                );
+
+                // Process referral if provided
+                $referralCode = $_POST['referral_code'] ?? null;
+                if ($referralCode) {
+                    $this->processReferral($userId, $referralCode);
+                }
+
+                // Send welcome email
+                $this->emailService->sendWelcomeEmail($_POST['email'], $_POST['name']);
+
+                // Commit transaction
+                $db->commit();
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Registration successful',
+                    'user_id' => $userId,
+                    'mlm_profile_id' => $mlmProfileId
+                ]);
+
+            } catch (\Exception $e) {
+                $db->rollback();
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Registration failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Validate registration data
+     */
+    private function validateRegistration(array $data): array
+    {
+        $errors = [];
+
+        // Name validation
+        if (empty($data['name'])) {
+            $errors['name'] = 'Name is required';
+        } elseif (strlen($data['name']) < 3) {
+            $errors['name'] = 'Name must be at least 3 characters';
+        }
+
+        // Email validation
+        if (empty($data['email'])) {
+            $errors['email'] = 'Email is required';
+        } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Invalid email format';
+        }
+
+        // Phone validation
+        if (empty($data['phone'])) {
+            $errors['phone'] = 'Phone number is required';
+        } elseif (!preg_match('/^[6-9]\d{9}$/', $data['phone'])) {
+            $errors['phone'] = 'Invalid Indian phone number format';
+        }
+
+        // Password validation
+        if (empty($data['password'])) {
+            $errors['password'] = 'Password is required';
+        } elseif (strlen($data['password']) < 8) {
+            $errors['password'] = 'Password must be at least 8 characters';
+        } elseif ($data['password'] !== ($data['password_confirmation'] ?? '')) {
+            $errors['password_confirmation'] = 'Passwords do not match';
+        }
+
+        // Address validation
+        if (empty($data['address'])) {
+            $errors['address'] = 'Address is required';
+        }
+
+        // City validation
+        if (empty($data['city'])) {
+            $errors['city'] = 'City is required';
+        }
+
+        // State validation
+        if (empty($data['state'])) {
+            $errors['state'] = 'State is required';
+        }
+
+        // Pincode validation
+        if (empty($data['pincode'])) {
+            $errors['pincode'] = 'Pincode is required';
+        } elseif (!preg_match('/^\d{6}$/', $data['pincode'])) {
+            $errors['pincode'] = 'Invalid Indian pincode format';
+        }
+
+        // Terms validation
+        if (!isset($data['terms']) || !$data['terms']) {
+            $errors['terms'] = 'You must agree to the terms and conditions';
+        }
+
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors
+        ];
+    }
+
+    /**
+     * Verify reCAPTCHA response
+     */
+    private function verifyRecaptcha(string $response): bool
+    {
+        if (empty($response)) {
+            return false;
+        }
+
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $data = [
+            'secret' => $this->recaptchaSecret,
+            'response' => $response,
+            'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
+        ];
+
+        $options = [
+            'http' => [
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data)
             ]
         ];
 
-        return view('auth.register', compact('referralCode', 'referrerInfo', 'indianStates', 'userTypes'));
+        $context = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
+        $resultJson = json_decode($result, true);
+
+        return $resultJson['success'] ?? false;
     }
 
     /**
-     * Process the unified registration
+     * Process referral
      */
-    public function register(Request $request)
+    private function processReferral(int $userId, string $referralCode): void
     {
-        // Validate input data
-        $validator = Validator::make($request->all(), [
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'mobile' => 'required|string|size:10|regex:/^[0-9]+$/|unique:users,mobile',
-            'password' => 'required|string|min:6|confirmed',
-            'user_type' => 'required|in:customer,agent,associate,builder,investor',
-            'referrer_code' => 'nullable|string',
-            'terms' => 'required|accepted'
-        ]);
+        $db = Database::getInstance();
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+        // Get referrer information
+        $referrer = $db->fetchOne(
+            "SELECT u.id, m.id as mlm_profile_id 
+             FROM users u 
+             JOIN mlm_profiles m ON u.id = m.user_id 
+             WHERE u.referral_code = ?",
+            [$referralCode]
+        );
+
+        if ($referrer) {
+            // Create referral record
+            $db->execute(
+                "INSERT INTO mlm_referrals (referrer_id, referred_id, referral_code, status, created_at) 
+                 VALUES (?, ?, ?, 'active', NOW())",
+                [$referrer['id'], $userId, $referralCode]
+            );
+
+            // Update referrer's MLM profile
+            $db->execute(
+                "UPDATE mlm_profiles SET total_referrals = total_referrals + 1 WHERE id = ?",
+                [$referrer['mlm_profile_id']]
+            );
+
+            // Add to network tree
+            $this->addToNetworkTree($referrer['mlm_profile_id'], $userId);
+        }
+    }
+
+    /**
+     * Add user to MLM network tree
+     */
+    private function addToNetworkTree(int $sponsorId, int $userId): void
+    {
+        $db = Database::getInstance();
+
+        // Get user's MLM profile
+        $userProfile = $db->fetchOne(
+            "SELECT id FROM mlm_profiles WHERE user_id = ?",
+            [$userId]
+        );
+
+        if ($userProfile) {
+            // Find appropriate position in sponsor's downline
+            $position = $this->findAvailablePosition($sponsorId);
+
+            // Add to network tree
+            $db->execute(
+                "INSERT INTO mlm_network_tree (sponsor_id, member_id, position, level, created_at) 
+                 VALUES (?, ?, ?, ?, NOW())",
+                [$sponsorId, $userProfile['id'], $position, 1]
+            );
+        }
+    }
+
+    /**
+     * Find available position in sponsor's downline
+     */
+    private function findAvailablePosition(int $sponsorId): string
+    {
+        $db = Database::getInstance();
+
+        // Check left position first
+        $leftPosition = $db->fetchOne(
+            "SELECT id FROM mlm_network_tree WHERE sponsor_id = ? AND position = 'left'",
+            [$sponsorId]
+        );
+
+        if (!$leftPosition) {
+            return 'left';
         }
 
-        DB::beginTransaction();
-        try {
-            // Check if email/mobile already exists
-            $existingUser = User::where('email', $request->email)
-                               ->orWhere('mobile', $request->mobile)
-                               ->first();
+        // Check right position
+        $rightPosition = $db->fetchOne(
+            "SELECT id FROM mlm_network_tree WHERE sponsor_id = ? AND position = 'right'",
+            [$sponsorId]
+        );
 
-            if ($existingUser) {
-                return back()->withErrors([
-                    'email' => 'Email or mobile number already registered.'
-                ])->withInput();
+        if (!$rightPosition) {
+            return 'right';
+        }
+
+        // Both positions filled, find first available in downline
+        return $this->findDeepAvailablePosition($sponsorId);
+    }
+
+    /**
+     * Find deep available position in network tree
+     */
+    private function findDeepAvailablePosition(int $sponsorId): string
+    {
+        $db = Database::getInstance();
+
+        // Get sponsor's left leg
+        $leftLeg = $db->fetchAll(
+            "SELECT member_id, position FROM mlm_network_tree 
+             WHERE sponsor_id = ? AND position = 'left' 
+             ORDER BY created_at ASC",
+            [$sponsorId]
+        );
+
+        foreach ($leftLeg as $member) {
+            $hasSpace = $this->checkMemberHasSpace($member['member_id']);
+            if ($hasSpace['has_space']) {
+                return $hasSpace['position'];
             }
+        }
 
-            // Validate referrer code if provided
-            $sponsorId = null;
-            $sponsorCode = null;
+        // Get sponsor's right leg
+        $rightLeg = $db->fetchAll(
+            "SELECT member_id, position FROM mlm_network_tree 
+             WHERE sponsor_id = ? AND position = 'right' 
+             ORDER BY created_at ASC",
+            [$sponsorId]
+        );
 
-            if ($request->referrer_code) {
-                $referrerInfo = $this->mlmReferralService->validateReferralCode($request->referrer_code);
-                if (!$referrerInfo) {
-                    return back()->withErrors([
-                        'referrer_code' => 'Invalid referrer code.'
-                    ])->withInput();
-                }
-                $sponsorId = $referrerInfo['user_id'];
-                $sponsorCode = $request->referrer_code;
+        foreach ($rightLeg as $member) {
+            $hasSpace = $this->checkMemberHasSpace($member['member_id']);
+            if ($hasSpace['has_space']) {
+                return $hasSpace['position'];
             }
+        }
 
-            // Generate unique referral code
-            $referralCode = $this->generateReferralCode($request->full_name, $request->email);
+        return 'left'; // Default
+    }
 
-            // Create user
-            $user = User::create([
-                'name' => $request->full_name,
-                'email' => $request->email,
-                'mobile' => $request->mobile,
-                'password' => Hash::make($request->password),
-                'type' => $request->user_type,
-                'status' => 'active',
-                'email_verified_at' => now()
+    /**
+     * Check if member has space in their downline
+     */
+    private function checkMemberHasSpace(int $memberId): array
+    {
+        $db = Database::getInstance();
+
+        $leftCount = $db->fetchOne(
+            "SELECT COUNT(*) as count FROM mlm_network_tree WHERE sponsor_id = ? AND position = 'left'",
+            [$memberId]
+        );
+
+        $rightCount = $db->fetchOne(
+            "SELECT COUNT(*) as count FROM mlm_network_tree WHERE sponsor_id = ? AND position = 'right'",
+            [$memberId]
+        );
+
+        if ($leftCount['count'] == 0) {
+            return ['has_space' => true, 'position' => 'left'];
+        }
+
+        if ($rightCount['count'] == 0) {
+            return ['has_space' => true, 'position' => 'right'];
+        }
+
+        return ['has_space' => false, 'position' => null];
+    }
+
+    /**
+     * Check referral code validity
+     */
+    public function validateReferralCode()
+    {
+        $referralCode = $_POST['referral_code'] ?? '';
+
+        if (empty($referralCode)) {
+            return $this->jsonResponse([
+                'valid' => false,
+                'message' => 'Referral code is required'
             ]);
+        }
 
-            // Create MLM profile
-            $mlmProfile = MLMProfile::create([
-                'user_id' => $user->id,
-                'referral_code' => $referralCode,
-                'sponsor_user_id' => $sponsorId,
-                'sponsor_code' => $sponsorCode,
-                'user_type' => $request->user_type,
-                'verification_status' => 'verified',
-                'status' => 'active'
+        $db = Database::getInstance();
+        $referrer = $db->fetchOne(
+            "SELECT u.name, u.email, m.level, m.total_referrals 
+             FROM users u 
+             JOIN mlm_profiles m ON u.id = m.user_id 
+             WHERE u.referral_code = ? AND u.status = 'active'",
+            [$referralCode]
+        );
+
+        if ($referrer) {
+            return $this->jsonResponse([
+                'valid' => true,
+                'referrer' => $referrer,
+                'message' => 'Valid referral code'
             ]);
-
-            // Handle referral and network building
-            if ($sponsorId) {
-                $this->processReferral($user->id, $sponsorId, $request->user_type);
-            }
-
-            // Create role-specific profile
-            $this->createRoleSpecificProfile($user, $request);
-
-            DB::commit();
-
-            // Send welcome email
-            $this->sendWelcomeEmail($user, $referralCode);
-
-            // Auto-login user
-            auth()->login($user);
-
-            // Redirect based on user type
-            return $this->redirectBasedOnRole($user);
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return back()->withErrors([
-                'registration' => 'Registration failed. Please try again.'
-            ])->withInput();
-        }
-    }
-
-    /**
-     * Generate unique referral code
-     */
-    protected function generateReferralCode($name, $email)
-    {
-        $prefix = strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $name), 0, 3));
-        $suffix = strtoupper(substr(md5($email . time()), 0, 4));
-        $code = $prefix . $suffix;
-
-        // Ensure uniqueness
-        while (MLMProfile::where('referral_code', $code)->exists()) {
-            $suffix = strtoupper(substr(md5($email . time() . rand()), 0, 4));
-            $code = $prefix . $suffix;
         }
 
-        return $code;
-    }
-
-    /**
-     * Process referral and build network tree
-     */
-    protected function processReferral($userId, $sponsorId, $userType)
-    {
-        // Create referral record
-        MLMReferral::create([
-            'referrer_user_id' => $sponsorId,
-            'referred_user_id' => $userId,
-            'referral_type' => $userType,
-            'status' => 'active'
+        return $this->jsonResponse([
+            'valid' => false,
+            'message' => 'Invalid or expired referral code'
         ]);
-
-        // Update sponsor's direct referrals count
-        $sponsorProfile = MLMProfile::where('user_id', $sponsorId)->first();
-        if ($sponsorProfile) {
-            $sponsorProfile->increment('direct_referrals');
-        }
-
-        // Build network tree
-        $this->buildNetworkTree($userId, $sponsorId);
     }
 
     /**
-     * Build the MLM network tree
+     * Get registration statistics
      */
-    protected function buildNetworkTree($userId, $sponsorId, $level = 1, $maxLevel = 10)
-    {
-        if ($level > $maxLevel) {
-            return;
-        }
-
-        // Add current sponsor to network tree
-        MLMNetworkTree::create([
-            'ancestor_user_id' => $sponsorId,
-            'descendant_user_id' => $userId,
-            'level' => $level
-        ]);
-
-        // Get sponsor's sponsor (go up the tree)
-        $sponsorProfile = MLMProfile::where('user_id', $sponsorId)->first();
-        if ($sponsorProfile && $sponsorProfile->sponsor_user_id) {
-            $this->buildNetworkTree($userId, $sponsorProfile->sponsor_user_id, $level + 1, $maxLevel);
-        }
-    }
-
-    /**
-     * Create role-specific profile
-     */
-    protected function createRoleSpecificProfile($user, $request)
-    {
-        switch ($request->user_type) {
-            case 'agent':
-                // Create agent profile
-                DB::table('agents')->insert([
-                    'user_id' => $user->id,
-                    'license_number' => $request->license_number,
-                    'experience_years' => $request->experience,
-                    'status' => 'active',
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-                break;
-
-            case 'associate':
-                // Create associate profile
-                DB::table('associates')->insert([
-                    'user_id' => $user->id,
-                    'pan_number' => strtoupper($request->pan_number),
-                    'aadhar_number' => $request->aadhar_number,
-                    'status' => 'active',
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-                break;
-
-            case 'builder':
-                // Create builder profile
-                DB::table('builders')->insert([
-                    'user_id' => $user->id,
-                    'company_name' => $request->company_name,
-                    'rera_registration' => $request->rera_registration,
-                    'status' => 'active',
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-                break;
-
-            case 'investor':
-                // Create investor profile
-                DB::table('investors')->insert([
-                    'user_id' => $user->id,
-                    'investment_range' => $request->investment_range,
-                    'investment_type' => $request->investment_type,
-                    'status' => 'active',
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-                break;
-
-            case 'customer':
-            default:
-                // Create customer profile
-                DB::table('customers')->insert([
-                    'user_id' => $user->id,
-                    'budget_range' => $request->budget_range,
-                    'property_type' => $request->property_type,
-                    'status' => 'active',
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-                break;
-        }
-    }
-
-    /**
-     * Send welcome email
-     */
-    protected function sendWelcomeEmail($user, $referralCode)
+    public function getRegistrationStats()
     {
         try {
-            $this->emailService->sendWelcomeEmail($user, $referralCode);
+            $db = Database::getInstance();
+
+            // Total registrations
+            $totalUsers = $db->fetchOne("SELECT COUNT(*) as count FROM users");
+
+            // Today's registrations
+            $todayUsers = $db->fetchOne(
+                "SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE()"
+            );
+
+            // This month's registrations
+            $monthUsers = $db->fetchOne(
+                "SELECT COUNT(*) as count FROM users WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())"
+            );
+
+            // MLM statistics
+            $totalProfiles = $db->fetchOne("SELECT COUNT(*) as count FROM mlm_profiles");
+
+            $activeReferrals = $db->fetchOne(
+                "SELECT COUNT(*) as count FROM mlm_referrals WHERE status = 'active'"
+            );
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => [
+                    'total_users' => $totalUsers['count'],
+                    'today_registrations' => $todayUsers['count'],
+                    'month_registrations' => $monthUsers['count'],
+                    'total_mlm_profiles' => $totalProfiles['count'],
+                    'active_referrals' => $activeReferrals['count']
+                ]
+            ]);
+
         } catch (\Exception $e) {
-            // Log error but don't fail registration
-            error_log('Welcome email failed: ' . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get registration stats: ' . $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Redirect based on user role
+     * Export registrations data
      */
-    protected function redirectBasedOnRole($user)
+    public function exportRegistrations()
     {
-        $redirectUrl = '/dashboard';
+        try {
+            $db = Database::getInstance();
 
-        switch ($user->type) {
-            case 'admin':
-                $redirectUrl = '/admin/dashboard';
-                break;
-            case 'agent':
-                $redirectUrl = '/agent/dashboard';
-                break;
-            case 'associate':
-                $redirectUrl = '/associate/dashboard';
-                break;
-            case 'builder':
-                $redirectUrl = '/builder/dashboard';
-                break;
-            case 'investor':
-                $redirectUrl = '/investor/dashboard';
-                break;
-            case 'customer':
-            default:
-                $redirectUrl = '/dashboard';
-                break;
+            $registrations = $db->fetchAll(
+                "SELECT u.id, u.name, u.email, u.phone, u.city, u.state, u.created_at,
+                        m.level, m.total_referrals
+                 FROM users u 
+                 LEFT JOIN mlm_profiles m ON u.id = m.user_id 
+                 ORDER BY u.created_at DESC"
+            );
+
+            // Convert to CSV
+            $csv = "ID,Name,Email,Phone,City,State,Registration Date,MLM Level,Total Referrals\n";
+            
+            foreach ($registrations as $reg) {
+                $csv .= "{$reg['id']},\"{$reg['name']}\",\"{$reg['email']}\",\"{$reg['phone']}\",\"{$reg['city']}\",\"{$reg['state']}\",\"{$reg['created_at']}\",{$reg['level']},{$reg['total_referrals']}\n";
+            }
+
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="registrations.csv"');
+            echo $csv;
+            exit;
+
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Export failed: ' . $e->getMessage()
+            ], 500);
         }
-
-        return redirect($redirectUrl)->with('success', 'Registration successful! Welcome to APS Dream Home.');
-    }
-
-    /**
-     * Validate referral code via AJAX
-     */
-    public function validateReferralCode(Request $request)
-    {
-        $code = $request->get('code');
-        $referrerInfo = $this->mlmReferralService->validateReferralCode($code);
-
-        return response()->json([
-            'valid' => $referrerInfo !== null,
-            'referrer' => $referrerInfo ? [
-                'name' => $referrerInfo['name'],
-                'referral_code' => $referrerInfo['referral_code']
-            ] : null
-        ]);
-    }
-
-    /**
-     * Check email availability via AJAX
-     */
-    public function checkEmail(Request $request)
-    {
-        $email = $request->get('email');
-        $exists = User::where('email', $email)->exists();
-
-        return response()->json(['available' => !$exists]);
-    }
-
-    /**
-     * Check mobile availability via AJAX
-     */
-    public function checkMobile(Request $request)
-    {
-        $mobile = $request->get('mobile');
-        $exists = User::where('mobile', $mobile)->exists();
-
-        return response()->json(['available' => !$exists]);
     }
 }
