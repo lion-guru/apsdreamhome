@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Security;
+use Exception;
 
 /**
  * WhatsApp Template Manager Controller
