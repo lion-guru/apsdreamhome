@@ -5184,3 +5184,49 @@ Stack trace:
 [15-Mar-2026 08:37:11 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
 [15-Mar-2026 08:37:11 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
 [15-Mar-2026 08:37:11 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 09:49:45 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 09:49:45 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 09:49:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 09:49:45 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 09:49:46 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 09:49:46 Europe/Berlin] FINAL ROUTER URI: api/properties/featured
+[15-Mar-2026 09:50:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/apple-touch-icon.png
+[15-Mar-2026 09:50:01 Europe/Berlin] FINAL ROUTER URI: assets/images/apple-touch-icon.png
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: /
+[15-Mar-2026 12:20:06 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[15-Mar-2026 12:20:06 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-property.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/images/hero-property.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/images/projects/gorakhpur/suryoday1.jpeg
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/about-us.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/images/about-us.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: assets/images/placeholder.jpg
+[15-Mar-2026 12:20:06 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/api/properties/featured
+[15-Mar-2026 12:20:06 Europe/Berlin] FINAL ROUTER URI: api/properties/featured

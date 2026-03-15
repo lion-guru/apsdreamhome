@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Security;
 use Exception;
 
 /**
@@ -28,7 +29,6 @@ class MapController extends BaseController
                 'page_description' => 'Browse properties on an interactive map',
                 'properties' => $properties
             ], 'layouts/base');
-
         } catch (Exception $e) {
             $this->setFlash('error', 'Failed to load map: ' . $e->getMessage());
             $this->redirect('/properties');
@@ -74,7 +74,6 @@ class MapController extends BaseController
                 'success' => true,
                 'markers' => $markers
             ]);
-
         } catch (Exception $e) {
             header('Content-Type: application/json');
             echo json_encode([
@@ -132,7 +131,6 @@ class MapController extends BaseController
                 'success' => true,
                 'markers' => $markers
             ]);
-
         } catch (Exception $e) {
             header('Content-Type: application/json');
             echo json_encode([
@@ -172,7 +170,6 @@ class MapController extends BaseController
                 'success' => true,
                 'suggestions' => $suggestions
             ]);
-
         } catch (Exception $e) {
             header('Content-Type: application/json');
             echo json_encode([
