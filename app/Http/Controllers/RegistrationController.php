@@ -312,6 +312,7 @@ class RegistrationController extends BaseController
         $db = Database::getInstance();
 
         // Get referrer information
+        // fetchOne() method exists in Database class at line 102-105
         $referrer = $db->fetchOne(
             "SELECT u.id, m.id as mlm_profile_id 
              FROM users u 
