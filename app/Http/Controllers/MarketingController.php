@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Marketing\AutomationService;
+use App\Core\Database\Database;
+use App\Services\Marketing\MarketingAutomationService;
 use App\Models\MarketingLead;
-use Psr\Log\LoggerInterface;
+use App\Services\SystemLogger as Logger;
 
-class MarketingController
+class MarketingController extends BaseController
 {
-    private AutomationService $marketingService;
-    private LoggerInterface $logger;
+    private MarketingAutomationService $marketingService;
+    private $logger;
 
-    public function __construct(AutomationService $marketingService, LoggerInterface $logger)
+    public function __construct(MarketingAutomationService $marketingService, Logger $logger)
     {
+        parent::__construct();
         $this->marketingService = $marketingService;
         $this->logger = $logger;
     }
@@ -23,16 +25,15 @@ class MarketingController
     public function dashboard()
     {
         try {
-            $analytics = $this->marketingService->getAnalytics();
-            
-            return view('marketing.dashboard', [
-                'analytics' => $analytics,
+            $stats = $this->marketingService->getDashboardData();
+
+            return $this->view('marketing.dashboard', [
+                'stats' => $stats,
                 'page_title' => 'Marketing Dashboard - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to load marketing dashboard", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->view('errors.500');
         }
     }
 
@@ -42,31 +43,25 @@ class MarketingController
     public function createCampaign()
     {
         try {
-            $data = request()->all();
-            
-            $result = $this->marketingService->createCampaign(
-                $data['name'],
-                $data['type'],
-                $data['config'] ?? [],
-                $data['segments'] ?? []
-            );
+            $data = $_REQUEST;
 
-            if ($result['success']) {
-                return response()->json([
+            $campaign = $this->marketingService->createEmailCampaign($data['name'], $data['subject'], $data['content'], $data['target_audience'], $data['schedule_at'] ?? null);
+
+            if ($campaign) {
+                return $this->response([
                     'success' => true,
-                    'message' => $result['message'],
-                    'campaign_id' => $result['campaign_id']
+                    'message' => 'Campaign created successfully',
+                    'campaign' => $campaign
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => $result['message']
-                ], 400);
+                    'message' => 'Failed to create campaign'
+                ], 500);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to create campaign", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to create campaign'
             ], 500);
@@ -79,27 +74,28 @@ class MarketingController
     public function executeCampaign($id)
     {
         try {
-            $result = $this->marketingService->executeCampaign((int)$id);
+            $data = $_REQUEST;
+
+            $result = $this->marketingService->triggerAutomation('campaign_execute', $id);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
                     'message' => $result['message'],
                     'results' => $result['results']
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => $result['message']
                 ], 400);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to execute campaign", [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to execute campaign'
             ], 500);
@@ -112,29 +108,27 @@ class MarketingController
     public function addLead()
     {
         try {
-            $data = request()->all();
-            $tags = request()->input('tags', []);
+            $data = $_REQUEST;
+            $tags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : [];
 
-            $result = $this->marketingService->addLead($data, $tags);
+            $result = $this->marketingService->captureLead($data['name'], $data['email'], $data['phone'], $data['source'] ?? 'website', $data['campaign'] ?? '');
 
-            if ($result['success']) {
-                return response()->json([
+            if ($result) {
+                return $this->response([
                     'success' => true,
-                    'message' => $result['message'],
-                    'lead_id' => $result['lead_id'],
-                    'score' => $result['score'] ?? 0
+                    'message' => 'Lead added successfully',
+                    'lead_id' => $result,
+                    'score' => 0
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => $result['message'],
-                    'errors' => $result['errors'] ?? []
-                ], 400);
+                    'message' => 'Failed to add lead'
+                ], 500);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to add lead", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to add lead'
             ], 500);
@@ -147,23 +141,22 @@ class MarketingController
     public function getLead($id)
     {
         try {
-            $lead = $this->marketingService->getLead((int)$id);
-            
-            if (!$lead) {
-                return response()->json([
+            $lead = $this->marketingService->getLead($id);
+
+            if ($lead) {
+                return $this->response([
+                    'success' => true,
+                    'lead' => $lead
+                ]);
+            } else {
+                return $this->response([
                     'success' => false,
                     'message' => 'Lead not found'
                 ], 404);
             }
-
-            return response()->json([
-                'success' => true,
-                'lead' => $lead
-            ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get lead", ['id' => $id, 'error' => $e->getMessage()]);
-            return response()->json([
+            $this->logger->error("Failed to get lead", ['error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to get lead'
             ], 500);
@@ -176,29 +169,28 @@ class MarketingController
     public function updateLeadStatus($id)
     {
         try {
-            $status = request()->input('status');
-            $reason = request()->input('reason', '');
+            $status = isset($_REQUEST['status']) ? $_REQUEST['status'] : null;
+            $reason = isset($_REQUEST['reason']) ? $_REQUEST['reason'] : '';
 
-            $result = $this->marketingService->updateLeadStatus((int)$id, $status, $reason);
+            $result = $this->marketingService->updateLeadStatus($id, $status, $reason);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
                     'message' => $result['message']
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => $result['message']
                 ], 400);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to update lead status", [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to update status'
             ], 500);
@@ -211,10 +203,11 @@ class MarketingController
     public function processWorkflows()
     {
         try {
-            $result = $this->marketingService->processWorkflows();
+            $data = $_REQUEST;
+            $result = $this->marketingService->triggerAutomation('manual_workflow', $data['lead_id']);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
                     'message' => $result['message'],
                     'processed' => $result['processed'],
@@ -222,15 +215,14 @@ class MarketingController
                     'errors' => $result['errors']
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => $result['message']
-                ], 400);
+                ], 500);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to process workflows", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to process workflows'
             ], 500);
@@ -243,17 +235,16 @@ class MarketingController
     public function getAnalytics()
     {
         try {
-            $filters = request()->all();
-            $analytics = $this->marketingService->getAnalytics($filters);
+            $filters = $_REQUEST;
+            $stats = $this->marketingService->getDashboardData($filters);
 
-            return response()->json([
+            return $this->response([
                 'success' => true,
-                'analytics' => $analytics
+                'analytics' => $stats,
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get analytics", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to get analytics'
             ], 500);
@@ -266,7 +257,7 @@ class MarketingController
     public function getLeads()
     {
         try {
-            $filters = request()->all();
+            $filters = $_REQUEST;
             $leads = MarketingLead::query();
 
             // Apply filters
@@ -296,11 +287,11 @@ class MarketingController
 
             if (!empty($filters['search'])) {
                 $searchTerm = '%' . $filters['search'] . '%';
-                $leads->where(function($query) use ($searchTerm) {
+                $leads->where(function ($query) use ($searchTerm) {
                     $query->where('first_name', 'LIKE', $searchTerm)
-                          ->orWhere('last_name', 'LIKE', $searchTerm)
-                          ->orWhere('email', 'LIKE', $searchTerm)
-                          ->orWhere('company', 'LIKE', $searchTerm);
+                        ->orWhere('last_name', 'LIKE', $searchTerm)
+                        ->orWhere('email', 'LIKE', $searchTerm)
+                        ->orWhere('company', 'LIKE', $searchTerm);
                 });
             }
 
@@ -312,21 +303,20 @@ class MarketingController
             }
 
             $results = $leads->get();
-            
+
             // Transform to include summary data
-            $leadData = $results->map(function($lead) {
+            $leadData = $results->map(function ($lead) {
                 return $lead->getSummary();
             });
 
-            return response()->json([
+            return $this->response([
                 'success' => true,
                 'leads' => $leadData,
                 'total' => count($leadData)
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get leads", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to get leads'
             ], 500);
@@ -339,32 +329,54 @@ class MarketingController
     public function getLeadScoring()
     {
         try {
-            $leads = MarketingLead::all();
-            
+            // Get all leads using database query
+            $leads = Database::getInstance()->fetchAll("SELECT * FROM marketing_leads");
+
+            $totalLeads = count($leads);
+            $totalScore = array_sum(array_column($leads, 'score'));
+            $averageScore = $totalLeads > 0 ? $totalScore / $totalLeads : 0;
+
+            // Count score distributions
+            $highScore = 0;
+            $mediumScore = 0;
+            $lowScore = 0;
+
+            foreach ($leads as $lead) {
+                if ($lead['score'] >= 80) $highScore++;
+                elseif ($lead['score'] >= 60) $mediumScore++;
+                else $lowScore++;
+            }
+
+            // Group by status
+            $statusDistribution = [];
+            foreach ($leads as $lead) {
+                $status = $lead['status'];
+                $statusDistribution[$status] = ($statusDistribution[$status] ?? 0) + 1;
+            }
+
             $scoringData = [
-                'total_leads' => $leads->count(),
-                'average_score' => $leads->avg('score'),
+                'total_leads' => $totalLeads,
+                'average_score' => $averageScore,
                 'score_distribution' => [
-                    'high' => $leads->where('score', '>=', 80)->count(),
-                    'medium' => $leads->whereBetween('score', [60, 79])->count(),
-                    'low' => $leads->where('score', '<', 60)->count()
+                    'high' => $highScore,
+                    'medium' => $mediumScore,
+                    'low' => $lowScore
                 ],
-                'status_distribution' => $leads->groupBy('status')->map->count(),
+                'status_distribution' => $statusDistribution,
                 'conversion_probability' => [
-                    'high' => $leads->filter(fn($lead) => $lead->getConversionProbability() >= 0.7)->count(),
-                    'medium' => $leads->filter(fn($lead) => $lead->getConversionProbability() >= 0.4 && $lead->getConversionProbability() < 0.7)->count(),
-                    'low' => $leads->filter(fn($lead) => $lead->getConversionProbability() < 0.4)->count()
+                    'high' => $highScore, // Simplified logic
+                    'medium' => $mediumScore,
+                    'low' => $lowScore
                 ]
             ];
 
-            return response()->json([
+            return $this->response([
                 'success' => true,
                 'scoring_data' => $scoringData
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get lead scoring", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to get lead scoring'
             ], 500);
@@ -377,59 +389,75 @@ class MarketingController
     public function exportLeads()
     {
         try {
-            $filters = request()->all();
-            
+            $filters = $_REQUEST;
+
             // Get leads with same logic as getLeads
-            $leads = MarketingLead::query();
+            $sql = "SELECT * FROM marketing_leads WHERE 1=1";
+            $params = [];
 
             // Apply same filters as getLeads method
             if (!empty($filters['status'])) {
-                $leads->where('status', $filters['status']);
+                $sql .= " AND status = ?";
+                $params[] = $filters['status'];
             }
 
             if (!empty($filters['date_from'])) {
-                $leads->where('created_at', '>=', $filters['date_from']);
+                $sql .= " AND created_at >= ?";
+                $params[] = $filters['date_from'];
             }
 
             if (!empty($filters['date_to'])) {
-                $leads->where('created_at', '<=', $filters['date_to']);
+                $sql .= " AND created_at <= ?";
+                $params[] = $filters['date_to'];
             }
 
-            $results = $leads->orderBy('created_at', 'desc')->get();
+            if (!empty($filters['source'])) {
+                $sql .= " AND source = ?";
+                $params[] = $filters['source'];
+            }
+
+            $sql .= " ORDER BY created_at DESC";
+
+            if (!empty($filters['limit'])) {
+                $sql .= " LIMIT ?";
+                $params[] = (int)$filters['limit'];
+            }
+
+            $results = Database::getInstance()->fetchAll($sql, $params);
 
             $csvData = [];
             $csvData[] = ['ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Company', 'Position', 'Source', 'Status', 'Score', 'Created Date'];
 
             foreach ($results as $lead) {
                 $csvData[] = [
-                    $lead->id,
-                    $lead->first_name,
-                    $lead->last_name,
-                    $lead->email,
-                    $lead->phone ?? '',
-                    $lead->company ?? '',
-                    $lead->position ?? '',
-                    $lead->source ?? '',
-                    $lead->status,
-                    $lead->score,
-                    $lead->created_at
+                    $lead['id'],
+                    $lead['first_name'],
+                    $lead['last_name'],
+                    $lead['email'],
+                    $lead['phone'] ?? '',
+                    $lead['company'] ?? '',
+                    $lead['position'] ?? '',
+                    $lead['source'] ?? '',
+                    $lead['status'],
+                    $lead['score'],
+                    $lead['created_at']
                 ];
             }
 
-            $filename = 'marketing_leads_' . date('Y-m-d') . '.csv';
-            
+            $filename = 'leads_export_' . date('Y-m-d_H-i-s') . '.csv';
+
             header('Content-Type: text/csv');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
-            
+
             $output = fopen('php://output', 'w');
             foreach ($csvData as $row) {
                 fputcsv($output, $row);
             }
             fclose($output);
-
+            exit;
         } catch (\Exception $e) {
             $this->logger->error("Failed to export leads", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to export leads'
             ], 500);
@@ -442,8 +470,8 @@ class MarketingController
     public function getCampaignPerformance()
     {
         try {
-            $campaignId = request()->input('campaign_id');
-            
+            $campaignId = isset($_REQUEST['campaign_id']) ? $_REQUEST['campaign_id'] : null;
+
             if ($campaignId) {
                 // Get specific campaign performance
                 $sql = "SELECT cl.*, l.first_name, l.last_name, l.email 
@@ -451,8 +479,8 @@ class MarketingController
                         JOIN marketing_leads l ON cl.lead_id = l.id 
                         WHERE cl.campaign_id = ? 
                         ORDER BY cl.created_at DESC";
-                
-                $performance = $this->marketingService->getDb()->fetchAll($sql, [$campaignId]);
+
+                $performance = Database::getInstance()->fetchAll($sql, [$campaignId]);
             } else {
                 // Get overall performance
                 $sql = "SELECT c.name, c.type, 
@@ -466,18 +494,17 @@ class MarketingController
                         LEFT JOIN campaign_leads cl ON c.id = cl.campaign_id 
                         GROUP BY c.id, c.name, c.type 
                         ORDER BY c.created_at DESC";
-                
-                $performance = $this->marketingService->getDb()->fetchAll($sql);
+
+                $performance = Database::getInstance()->fetchAll($sql);
             }
 
-            return response()->json([
+            return $this->response([
                 'success' => true,
                 'performance' => $performance
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get campaign performance", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to get campaign performance'
             ], 500);
@@ -490,13 +517,12 @@ class MarketingController
     public function settings()
     {
         try {
-            return view('marketing.settings', [
+            return $this->view('marketing.settings', [
                 'page_title' => 'Marketing Settings - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to load marketing settings", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->view('errors.500');
         }
     }
 }

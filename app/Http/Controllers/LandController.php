@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Services\Land\PlottingService;
+use App\Services\SystemLogger as Logger;
 use App\Models\LandProject;
 use App\Models\Plot;
-use Psr\Log\LoggerInterface;
 
-class LandController
+class LandController extends BaseController
 {
     private PlottingService $plottingService;
-    private LoggerInterface $logger;
+    private $logger;
 
-    public function __construct(PlottingService $plottingService, LoggerInterface $logger)
+    public function __construct(PlottingService $plottingService, Logger $logger)
     {
+        parent::__construct();
         $this->plottingService = $plottingService;
         $this->logger = $logger;
     }
@@ -25,15 +26,14 @@ class LandController
     {
         try {
             $stats = $this->plottingService->getPlottingStats();
-            
-            return view('land.dashboard', [
+
+            return $this->view('land.dashboard', [
                 'stats' => $stats,
                 'page_title' => 'Land Management Dashboard - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to load land dashboard", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->response(['success' => false, 'message' => 'Dashboard error'], 500);
         }
     }
 
@@ -43,28 +43,27 @@ class LandController
     public function createProject()
     {
         try {
-            $data = request()->all();
-            $documents = request()->files('documents', []);
+            $data = $_REQUEST;
+            $documents = isset($_FILES['documents']) ? $_FILES['documents'] : [];
 
             $result = $this->plottingService->createProject($data, $documents);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
                     'message' => $result['message'],
                     'project_id' => $result['project_id']
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => $result['message'],
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to create project", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to create project'
             ], 500);
@@ -77,70 +76,28 @@ class LandController
     public function subdivideLand($projectId)
     {
         try {
-            $data = request()->all();
+            $data = $_REQUEST;
 
             $result = $this->plottingService->subdivideLand((int)$projectId, $data);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
                     'message' => $result['message'],
-                    'subdivision_id' => $result['subdivision_id'],
-                    'plots_generated' => $result['plots_generated']
+                    'plots' => $result['plots']
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => $result['message'],
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to subdivide land", [
-                'project_id' => $projectId,
-                'error' => $e->getMessage()
-            ]);
-            return response()->json([
+            $this->logger->error("Failed to subdivide land", ['project_id' => $projectId, 'error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to subdivide land'
-            ], 500);
-        }
-    }
-
-    /**
-     * Create new plot
-     */
-    public function createPlot($projectId)
-    {
-        try {
-            $data = request()->all();
-
-            $result = $this->plottingService->createPlot((int)$projectId, $data);
-
-            if ($result['success']) {
-                return response()->json([
-                    'success' => true,
-                    'message' => $result['message'],
-                    'plot_id' => $result['plot_id'],
-                    'plot_number' => $result['plot_number']
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => $result['message'],
-                    'errors' => $result['errors'] ?? []
-                ], 400);
-            }
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to create plot", [
-                'project_id' => $projectId,
-                'error' => $e->getMessage()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create plot'
             ], 500);
         }
     }
@@ -151,31 +108,27 @@ class LandController
     public function reservePlot($plotId)
     {
         try {
-            $customerData = request()->all();
-            $paymentData = request()->input('payment_data', []);
+            $data = $_REQUEST;
 
-            $result = $this->plottingService->reservePlot((int)$plotId, $customerData, $paymentData);
+            $result = $this->plottingService->reservePlot((int)$plotId, $data, $this->logger);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
-                    'message' => $result['message'],
-                    'reservation_id' => $result['reservation_id']
+                    'message' => $result['message']
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
-                    'message' => $result['message'],
-                    'errors' => $result['errors'] ?? []
+                    'message' => $result['message']
                 ], 400);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to reserve plot", [
                 'plot_id' => $plotId,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to reserve plot'
             ], 500);
@@ -188,30 +141,29 @@ class LandController
     public function sellPlot($plotId)
     {
         try {
-            $saleData = request()->all();
+            $data = $_REQUEST;
 
-            $result = $this->plottingService->sellPlot((int)$plotId, $saleData);
+            $result = $this->plottingService->sellPlot((int)$plotId, $data, $this->logger);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->response([
                     'success' => true,
                     'message' => $result['message'],
                     'sale_id' => $result['sale_id']
                 ]);
             } else {
-                return response()->json([
+                return $this->response([
                     'success' => false,
                     'message' => $result['message'],
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to sell plot", [
                 'plot_id' => $plotId,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to sell plot'
             ], 500);
@@ -221,26 +173,25 @@ class LandController
     /**
      * Get project details
      */
-    public function getProject($id)
+    public function getProject($projectId)
     {
         try {
-            $project = $this->plottingService->getProject((int)$id);
-            
-            if (!$project) {
-                return response()->json([
+            $project = $this->plottingService->getProject((int)$projectId);
+
+            if ($project) {
+                return $this->response([
+                    'success' => true,
+                    'data' => $project
+                ]);
+            } else {
+                return $this->response([
                     'success' => false,
                     'message' => 'Project not found'
                 ], 404);
             }
-
-            return response()->json([
-                'success' => true,
-                'project' => $project
-            ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get project", ['id' => $id, 'error' => $e->getMessage()]);
-            return response()->json([
+            $this->logger->error("Failed to get project", ['project_id' => $projectId, 'error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to get project'
             ], 500);
@@ -250,26 +201,25 @@ class LandController
     /**
      * Get plot details
      */
-    public function getPlot($id)
+    public function getPlot($plotId)
     {
         try {
-            $plot = $this->plottingService->getPlot((int)$id);
-            
-            if (!$plot) {
-                return response()->json([
+            $plot = $this->plottingService->getPlot((int)$plotId);
+
+            if ($plot) {
+                return $this->response([
+                    'success' => true,
+                    'data' => $plot
+                ]);
+            } else {
+                return $this->response([
                     'success' => false,
                     'message' => 'Plot not found'
                 ], 404);
             }
-
-            return response()->json([
-                'success' => true,
-                'plot' => $plot
-            ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get plot", ['id' => $id, 'error' => $e->getMessage()]);
-            return response()->json([
+            $this->logger->error("Failed to get plot", ['plot_id' => $plotId, 'error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
                 'message' => 'Failed to get plot'
             ], 500);
@@ -277,312 +227,54 @@ class LandController
     }
 
     /**
-     * Get projects list
+     * Get available plots
      */
-    public function getProjects()
+    public function getAvailablePlots()
     {
         try {
-            $filters = request()->all();
-            $projects = $this->plottingService->getProjects($filters);
+            $filters = $this->request->all();
+            $plots = $this->plottingService->getAvailablePlots($filters);
 
-            return response()->json([
+            return $this->response([
                 'success' => true,
-                'projects' => $projects,
-                'total' => count($projects)
+                'data' => $plots
             ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get projects", ['error' => $e->getMessage()]);
-            return response()->json([
+            $this->logger->error("Failed to get available plots", ['error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
-                'message' => 'Failed to get projects'
+                'message' => 'Failed to get available plots'
             ], 500);
         }
     }
 
     /**
-     * Get plots list
+     * Update plot status
      */
-    public function getPlots()
+    public function updatePlotStatus($plotId)
     {
         try {
-            $filters = request()->all();
-            $plots = $this->plottingService->getPlots($filters);
+            $data = $_REQUEST;
 
-            return response()->json([
-                'success' => true,
-                'plots' => $plots,
-                'total' => count($plots)
-            ]);
+            $result = $this->plottingService->updatePlotStatus((int)$plotId, $data['status']);
 
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get plots", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get plots'
-            ], 500);
-        }
-    }
-
-    /**
-     * Get plotting statistics
-     */
-    public function getStats()
-    {
-        try {
-            $filters = request()->all();
-            $stats = $this->plottingService->getPlottingStats($filters);
-
-            return response()->json([
-                'success' => true,
-                'stats' => $stats
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get stats", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get statistics'
-            ], 500);
-        }
-    }
-
-    /**
-     * Project details page
-     */
-    public function projectDetails($id)
-    {
-        try {
-            $project = $this->plottingService->getProject((int)$id);
-            
-            if (!$project) {
-                return redirect('/land/dashboard')->with('error', 'Project not found');
-            }
-
-            return view('land.project-details', [
-                'project' => $project,
-                'page_title' => 'Project Details - APS Dream Home'
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to load project details", [
-                'id' => $id,
-                'error' => $e->getMessage()
-            ]);
-            return view('errors.500');
-        }
-    }
-
-    /**
-     * Plot details page
-     */
-    public function plotDetails($id)
-    {
-        try {
-            $plot = $this->plottingService->getPlot((int)$id);
-            
-            if (!$plot) {
-                return redirect('/land/dashboard')->with('error', 'Plot not found');
-            }
-
-            return view('land.plot-details', [
-                'plot' => $plot,
-                'page_title' => 'Plot Details - APS Dream Home'
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to load plot details", [
-                'id' => $id,
-                'error' => $e->getMessage()
-            ]);
-            return view('errors.500');
-        }
-    }
-
-    /**
-     * Export projects to CSV
-     */
-    public function exportProjects()
-    {
-        try {
-            $filters = request()->all();
-            $projects = $this->plottingService->getProjects($filters);
-
-            $csvData = [];
-            $csvData[] = ['ID', 'Name', 'Location', 'Status', 'Total Area', 'Total Plots', 'Sold Plots', 'Available Plots', 'Completion %', 'Created Date'];
-
-            foreach ($projects as $project) {
-                $csvData[] = [
-                    $project['id'],
-                    $project['name'],
-                    $project['location'],
-                    $project['status'],
-                    $project['total_area'],
-                    $project['total_plots'],
-                    $project['sold_plots'],
-                    $project['available_plots'],
-                    round($project['completion_percentage'], 2) . '%',
-                    $project['created_at']
-                ];
-            }
-
-            $filename = 'land_projects_' . date('Y-m-d') . '.csv';
-            
-            header('Content-Type: text/csv');
-            header('Content-Disposition: attachment; filename="' . $filename . '"');
-            
-            $output = fopen('php://output', 'w');
-            foreach ($csvData as $row) {
-                fputcsv($output, $row);
-            }
-            fclose($output);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to export projects", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to export projects'
-            ], 500);
-        }
-    }
-
-    /**
-     * Export plots to CSV
-     */
-    public function exportPlots()
-    {
-        try {
-            $filters = request()->all();
-            $plots = $this->plottingService->getPlots($filters);
-
-            $csvData = [];
-            $csvData[] = ['ID', 'Plot Number', 'Project', 'Type', 'Size (sqm)', 'Price/sqm', 'Total Price', 'Status', 'Facing', 'Created Date'];
-
-            foreach ($plots as $plot) {
-                $csvData[] = [
-                    $plot['id'],
-                    $plot['plot_number'],
-                    $plot['project_name'],
-                    $plot['plot_type'],
-                    $plot['size_sq_meters'],
-                    $plot['price_per_sq_meter'],
-                    $plot['total_price'],
-                    $plot['status'],
-                    $plot['facing_direction'] ?? '',
-                    $plot['created_at']
-                ];
-            }
-
-            $filename = 'land_plots_' . date('Y-m-d') . '.csv';
-            
-            header('Content-Type: text/csv');
-            header('Content-Disposition: attachment; filename="' . $filename . '"');
-            
-            $output = fopen('php://output', 'w');
-            foreach ($csvData as $row) {
-                fputcsv($output, $row);
-            }
-            fclose($output);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to export plots", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to export plots'
-            ], 500);
-        }
-    }
-
-    /**
-     * Get project analytics
-     */
-    public function getProjectAnalytics($projectId)
-    {
-        try {
-            $project = LandProject::find($projectId);
-            
-            if (!$project) {
-                return response()->json([
+            if ($result['success']) {
+                return $this->response([
+                    'success' => true,
+                    'message' => $result['message']
+                ]);
+            } else {
+                return $this->response([
                     'success' => false,
-                    'message' => 'Project not found'
-                ], 404);
+                    'message' => $result['message']
+                ], 400);
             }
-
-            $analytics = [
-                'statistics' => $project->statistics_summary,
-                'plot_distribution' => $project->plot_distribution_by_type,
-                'monthly_sales_trend' => $project->monthly_sales_trend,
-                'top_performing_types' => $project->top_performing_plot_types,
-                'critical_issues' => $project->critical_issues,
-                'recommendations' => $project->recommendations
-            ];
-
-            return response()->json([
-                'success' => true,
-                'analytics' => $analytics
-            ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get project analytics", [
-                'project_id' => $projectId,
-                'error' => $e->getMessage()
-            ]);
-            return response()->json([
+            $this->logger->error("Failed to update plot status", ['plot_id' => $plotId, 'error' => $e->getMessage()]);
+            return $this->response([
                 'success' => false,
-                'message' => 'Failed to get analytics'
+                'message' => 'Failed to update plot status'
             ], 500);
-        }
-    }
-
-    /**
-     * Get land market insights
-     */
-    public function getMarketInsights()
-    {
-        try {
-            $projects = LandProject::all();
-            
-            $insights = [
-                'total_projects' => $projects->count(),
-                'active_projects' => $projects->where('status', 'development')->count(),
-                'completed_projects' => $projects->where('status', 'handover')->count(),
-                'total_plots' => $projects->sum(function($project) {
-                    return $project->plots()->count();
-                }),
-                'total_revenue' => $projects->sum('total_revenue'),
-                'average_roi' => $projects->avg('roi_percentage'),
-                'project_types' => $projects->groupBy('project_type')->map->count(),
-                'regional_distribution' => $projects->groupBy('location')->map->count(),
-                'delayed_projects' => $projects->filter(fn($project) => $project->isDelayed())->count()
-            ];
-
-            return response()->json([
-                'success' => true,
-                'insights' => $insights
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get market insights", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get market insights'
-            ], 500);
-        }
-    }
-
-    /**
-     * Land management settings page
-     */
-    public function settings()
-    {
-        try {
-            return view('land.settings', [
-                'page_title' => 'Land Management Settings - APS Dream Home'
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to load land settings", ['error' => $e->getMessage()]);
-            return view('errors.500');
         }
     }
 }
