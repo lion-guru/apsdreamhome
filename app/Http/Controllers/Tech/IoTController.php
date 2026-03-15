@@ -7,11 +7,21 @@
 
 namespace App\Http\Controllers\Tech;
 
-use App\Controllers\BaseController;
+use App\Http\Controllers\BaseController;
+use App\Core\Database;
 use Exception;
 
 class IoTController extends BaseController
 {
+    protected $data;
+    protected $db;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->data = [];
+        $this->db = Database::getInstance();
+    }
 
     /**
      * Smart home dashboard for properties
@@ -153,7 +163,7 @@ class IoTController extends BaseController
         $device = $this->getIoTDevice($device_id);
         $status = $this->getDeviceStatus($device_id);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'device' => $device,
             'status' => $status,
@@ -171,12 +181,12 @@ class IoTController extends BaseController
         $input = json_decode(file_get_contents('php://input'), true);
 
         if (!$input || !isset($input['device_id']) || !isset($input['command'])) {
-            sendJsonResponse(['success' => false, 'error' => 'Device ID and command required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Device ID and command required'], 400);
         }
 
         $success = $this->controlIoTDevice($input['device_id'], $input);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $success,
             'message' => $success ? 'Device controlled successfully' : 'Failed to control device'
         ]);
@@ -192,7 +202,7 @@ class IoTController extends BaseController
         $timeframe = $_GET['timeframe'] ?? '24h';
         $energy_data = $this->getEnergyData($property_id, $timeframe);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $energy_data,
             'timeframe' => $timeframe
@@ -707,12 +717,12 @@ class IoTController extends BaseController
         $property_specs = json_decode(file_get_contents('php://input'), true);
 
         if (!$property_specs) {
-            sendJsonResponse(['success' => false, 'error' => 'Property specifications required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Property specifications required'], 400);
         }
 
         $compatibility = $this->checkSmartHomeCompatibility($property_specs);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $compatibility
         ]);
@@ -865,7 +875,7 @@ class IoTController extends BaseController
                 $this->getDeviceData();
                 break;
             default:
-                sendJsonResponse(['success' => false, 'error' => 'Invalid action'], 400);
+                $this->jsonResponse(['success' => false, 'error' => 'Invalid action'], 400);
         }
     }
 
@@ -878,11 +888,11 @@ class IoTController extends BaseController
 
         // Validate device data
         if (!$device_data || !isset($device_data['device_id']) || !isset($device_data['device_type'])) {
-            sendJsonResponse(['success' => false, 'error' => 'Device ID and type required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Device ID and type required'], 400);
         }
 
         // In production, this would register the device with the IoT platform
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'message' => 'Device registered successfully',
             'device_token' => 'token_' . uniqid()
@@ -898,13 +908,13 @@ class IoTController extends BaseController
         $status = $_GET['status'] ?? 'online';
 
         if (empty($device_id)) {
-            sendJsonResponse(['success' => false, 'error' => 'Device ID required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Device ID required'], 400);
         }
 
         // Update device status in database
         $this->updateDeviceStatus($device_id, $status);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'message' => 'Heartbeat received',
             'timestamp' => date('Y-m-d H:i:s')
@@ -919,7 +929,7 @@ class IoTController extends BaseController
         $command_data = json_decode(file_get_contents('php://input'), true);
 
         // In production, this would send commands to actual devices
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'message' => 'Command sent to device',
             'command_id' => 'cmd_' . uniqid()
@@ -943,7 +953,7 @@ class IoTController extends BaseController
             'timestamp' => date('Y-m-d H:i:s')
         ];
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $mock_data
         ]);
