@@ -60,7 +60,7 @@ class VirtualTourController extends BaseController
 
         $tour_data = $this->getVirtualTourData($property_id);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $tour_data
         ]);
@@ -81,7 +81,7 @@ class VirtualTourController extends BaseController
         $panorama_type = Security::sanitize($_POST['panorama_type']) ?? 'interior';
 
         if (empty($property_id) || !isset($_FILES['panorama_image'])) {
-            sendJsonResponse(['success' => false, 'error' => 'Property ID and image are required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Property ID and image are required'], 400);
         }
 
         try {
@@ -91,17 +91,17 @@ class VirtualTourController extends BaseController
                 // Save panorama data to database
                 $this->savePanoramaData($property_id, $upload_result['file_path'], $panorama_type);
 
-                sendJsonResponse([
+                $this->jsonResponse([
                     'success' => true,
                     'message' => 'Panorama uploaded successfully',
                     'data' => $upload_result
                 ]);
             } else {
-                sendJsonResponse(['success' => false, 'error' => $upload_result['error']], 400);
+                $this->jsonResponse(['success' => false, 'error' => $upload_result['error']], 400);
             }
         } catch (\Exception $e) {
             error_log('Panorama upload error: ' . $e->getMessage());
-            sendJsonResponse(['success' => false, 'error' => 'Upload failed'], 500);
+            $this->jsonResponse(['success' => false, 'error' => 'Upload failed'], 500);
         }
     }
 
@@ -116,13 +116,13 @@ class VirtualTourController extends BaseController
             $room_data = json_decode(file_get_contents('php://input'), true);
 
             if (!$room_data) {
-                sendJsonResponse(['success' => false, 'error' => 'Invalid room data'], 400);
+                $this->jsonResponse(['success' => false, 'error' => 'Invalid room data'], 400);
             }
 
             // Process AR furniture placement
             $ar_result = $this->processARFurniture($room_data);
 
-            sendJsonResponse([
+            $this->jsonResponse([
                 'success' => true,
                 'data' => $ar_result
             ]);
