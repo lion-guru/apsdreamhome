@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Services\Marketing\MarketingAutomationService;
 use TCPDF;
 
 /**
@@ -12,11 +13,13 @@ use TCPDF;
 class EMIController extends AdminController
 {
     protected $emiModel;
+    protected $marketingAutomationService;
 
     public function __construct()
     {
         parent::__construct();
         $this->emiModel = $this->model('EMI');
+        $this->marketingAutomationService = new MarketingAutomationService();
     }
 
     /**

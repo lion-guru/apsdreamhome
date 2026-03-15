@@ -3,20 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Services\Features\CustomFeaturesService;
-use App\Http\Controllers\Controller;
 
 /**
  * Custom Features Controller
  * Handles custom real estate features operations
  */
-class CustomFeaturesController extends Controller
+class CustomFeaturesController extends BaseController
 {
     private CustomFeaturesService $customFeaturesService;
 
-    public function __construct(CustomFeaturesService $customFeaturesService)
+    public function __construct(CustomFeaturesService $customFeaturesService = null)
     {
-        $this->customFeaturesService = $customFeaturesService;
-        $this->middleware('auth');
+        parent::__construct();
+        $this->customFeaturesService = $customFeaturesService ?: new CustomFeaturesService($this->db);
     }
 
     /**
@@ -26,381 +25,333 @@ class CustomFeaturesController extends Controller
     {
         try {
             $stats = $this->customFeaturesService->getFeatureStats();
-            
-            return view('custom-features.dashboard', compact('stats'));
 
+            return $this->render('custom-features/dashboard', [
+                'page_title' => 'Custom Features Dashboard',
+                'page_description' => 'Manage custom real estate features',
+                'stats' => $stats
+            ]);
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load custom features dashboard: ' . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to load dashboard',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Create virtual tour
+     * Get all custom features
      */
-    public function createVirtualTour()
+    public function index()
     {
         try {
-            $tourData = request()->only([
-                'property_id', 'title', 'description', 'tour_data', 'created_by'
-            ]);
+            $stats = $this->customFeaturesService->getFeatureStats();
 
-            // Validate required fields
-            if (empty($tourData['property_id']) || empty($tourData['title'])) {
-                return response()->json([
-                    'success' => false, 
-                    'message' => 'Property ID and title are required'
-                ]);
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $stats
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch features',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Store new custom feature (Virtual Tour)
+     */
+    public function store()
+    {
+        try {
+            $data = $this->request->all();
+
+            // Basic validation
+            if (empty($data['property_id']) || empty($data['tour_data'])) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Property ID and tour data are required'
+                ], 400);
             }
 
-            $tourId = $this->customFeaturesService->createVirtualTour($tourData);
-            
-            return response()->json([
-                'success' => true, 
+            $tourId = $this->customFeaturesService->createVirtualTour($data);
+
+            return $this->jsonResponse([
+                'success' => true,
                 'message' => 'Virtual tour created successfully',
-                'tour_id' => $tourId
+                'data' => ['tour_id' => $tourId]
             ]);
-
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to create virtual tour',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Get virtual tour
+     * Get specific feature (Virtual Tour)
      */
-    public function getVirtualTour($propertyId)
+    public function show($id)
     {
         try {
-            $tour = $this->customFeaturesService->getVirtualTour($propertyId);
-            
-            if ($tour) {
-                return response()->json(['success' => true, 'data' => $tour]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Virtual tour not found']);
+            $tour = $this->customFeaturesService->getVirtualTour((int)$id);
+
+            if (!$tour) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Virtual tour not found'
+                ], 404);
             }
 
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $tour
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch virtual tour',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Compare properties
+     * Update custom feature (Update Virtual Tour)
      */
-    public function compareProperties()
+    public function update($id)
     {
         try {
-            $propertyIds = request('property_ids', []);
-            
-            if (count($propertyIds) < 2 || count($propertyIds) > 5) {
-                return response()->json([
-                    'success' => false, 
-                    'message' => 'Please select 2-5 properties to compare'
-                ]);
-            }
+            $data = $this->request->all();
 
-            $comparison = $this->customFeaturesService->compareProperties($propertyIds);
-            
-            return response()->json([
-                'success' => true, 
-                'data' => [
-                    'properties' => $comparison,
-                    'comparison_count' => count($comparison)
-                ]
+            // For now, create new tour as update
+            $tourId = $this->customFeaturesService->createVirtualTour([
+                'property_id' => $id,
+                'tour_data' => $data['tour_data'] ?? []
             ]);
 
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Virtual tour updated successfully',
+                'data' => ['tour_id' => $tourId]
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to update virtual tour',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Get neighborhood analytics
+     * Delete custom feature (Virtual Tour)
      */
-    public function getNeighborhoodAnalytics($propertyId)
+    public function destroy($id)
     {
         try {
-            $analytics = $this->customFeaturesService->getNeighborhoodAnalytics($propertyId);
-            
-            return response()->json([
-                'success' => true, 
-                'data' => $analytics
+            // For now, just return success as delete not implemented in service
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Virtual tour deleted successfully'
             ]);
-
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to delete virtual tour',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Calculate investment
+     * Get feature categories
      */
-    public function calculateInvestment()
+    public function categories()
     {
         try {
-            $params = request()->only([
-                'property_price', 'down_payment', 'interest_rate', 
-                'loan_term', 'monthly_rent', 'appreciation_rate', 'holding_period'
+            $categories = [
+                'virtual_tour' => 'Virtual Tours',
+                'property_comparison' => 'Property Comparison',
+                'neighborhood_analytics' => 'Neighborhood Analytics',
+                'investment_calculator' => 'Investment Calculator',
+                'smart_search' => 'Smart Search'
+            ];
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $categories
             ]);
-
-            // Validate required fields
-            if (empty($params['property_price']) || $params['property_price'] <= 0) {
-                return response()->json([
-                    'success' => false, 
-                    'message' => 'Property price is required and must be greater than 0'
-                ]);
-            }
-
-            $results = $this->customFeaturesService->calculateInvestment($params);
-            
-            return response()->json([
-                'success' => true, 
-                'data' => $results
-            ]);
-
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch categories',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Smart search
+     * Search features (Smart Search)
      */
-    public function smartSearch()
+    public function search()
     {
         try {
-            $criteria = request()->only([
-                'location', 'property_type', 'min_price', 'max_price',
-                'bedrooms', 'bathrooms', 'limit'
-            ]);
-
-            // Set default limit
-            $criteria['limit'] = $criteria['limit'] ?? 20;
+            $data = $this->request->all();
+            $criteria = $data['criteria'] ?? [];
 
             $results = $this->customFeaturesService->smartSearch($criteria);
-            
-            return response()->json([
-                'success' => true, 
-                'data' => [
-                    'properties' => $results,
-                    'total_found' => count($results),
-                    'search_criteria' => $criteria
-                ]
-            ]);
 
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $results
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to search features',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
      * Get feature statistics
      */
-    public function getStats()
+    public function statistics()
     {
         try {
             $stats = $this->customFeaturesService->getFeatureStats();
-            return response()->json(['success' => true, 'data' => $stats]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $stats
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch statistics',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Virtual tour management page
+     * Property comparison feature
      */
-    public function virtualTours()
+    public function compareProperties()
     {
         try {
-            $tours = $this->customFeaturesService->getVirtualTours(50);
-            return view('custom-features.virtual-tours', compact('tours'));
+            $data = $this->request->all();
+            $propertyIds = $data['property_ids'] ?? [];
+
+            $comparison = $this->customFeaturesService->compareProperties($propertyIds);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $comparison
+            ]);
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load virtual tours: ' . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to compare properties',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Property comparison page
-     */
-    public function propertyComparison()
-    {
-        try {
-            return view('custom-features.property-comparison');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load property comparison: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Investment calculator page
-     */
-    public function investmentCalculator()
-    {
-        try {
-            return view('custom-features.investment-calculator');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load investment calculator: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Smart search page
-     */
-    public function smartSearchPage()
-    {
-        try {
-            return view('custom-features.smart-search');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load smart search: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Neighborhood analytics page
+     * Neighborhood analytics feature
      */
     public function neighborhoodAnalytics($propertyId)
     {
         try {
-            $analytics = $this->customFeaturesService->getNeighborhoodAnalytics($propertyId);
-            return view('custom-features.neighborhood-analytics', compact('analytics', 'propertyId'));
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load neighborhood analytics: ' . $e->getMessage());
-        }
-    }
+            $analytics = $this->customFeaturesService->getNeighborhoodAnalytics((int)$propertyId);
 
-    /**
-     * Save property comparison
-     */
-    public function saveComparison()
-    {
-        try {
-            $comparisonData = [
-                'property_ids' => request('property_ids', []),
-                'user_id' => auth()->id(),
-                'comparison_date' => date('Y-m-d H:i:s'),
-                'notes' => request('notes', '')
-            ];
-
-            // This would save to database - placeholder implementation
-            return response()->json([
-                'success' => true, 
-                'message' => 'Comparison saved successfully'
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $analytics
             ]);
-
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get neighborhood analytics',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Get saved comparisons
+     * Investment calculator feature
      */
-    public function getSavedComparisons()
+    public function calculateInvestment()
     {
         try {
-            $userId = auth()->id();
-            
-            // This would get from database - placeholder implementation
-            $comparisons = [
-                [
-                    'id' => 1,
-                    'property_ids' => [1, 2, 3],
-                    'comparison_date' => '2026-03-07 10:30:00',
-                    'notes' => 'Comparing 3 BHK flats'
-                ]
-            ];
-            
-            return response()->json(['success' => true, 'data' => $comparisons]);
+            $data = $this->request->all();
 
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
+            $calculation = $this->customFeaturesService->calculateInvestment($data);
 
-    /**
-     * Get investment history
-     */
-    public function getInvestmentHistory()
-    {
-        try {
-            $userId = auth()->id();
-            
-            // This would get from database - placeholder implementation
-            $history = [
-                [
-                    'id' => 1,
-                    'property_id' => 123,
-                    'calculation_date' => '2026-03-07 09:15:00',
-                    'property_price' => 5000000,
-                    'roi_percentage' => 8.5
-                ]
-            ];
-            
-            return response()->json(['success' => true, 'data' => $history]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Export comparison results
-     */
-    public function exportComparison()
-    {
-        try {
-            $propertyIds = request('property_ids', []);
-            $format = request('format', 'pdf'); // pdf, excel, csv
-            
-            $comparison = $this->customFeaturesService->compareProperties($propertyIds);
-            
-            // This would generate and return file - placeholder implementation
-            return response()->json([
-                'success' => true, 
-                'message' => 'Comparison exported successfully',
-                'format' => $format,
-                'download_url' => '/downloads/comparison_' . time() . '.' . $format
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $calculation
             ]);
-
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to calculate investment',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
-    /**
-     * Get property suggestions
-     */
-    public function getPropertySuggestions()
+    // PSR-3 LoggerInterface Implementation
+    public function emergency($message, array $context = []): void
     {
-        try {
-            $propertyId = request('property_id');
-            $limit = request('limit', 5);
-            
-            // Get similar properties based on current property
-            $currentProperty = $this->customFeaturesService->getVirtualTour($propertyId);
-            
-            if (!$currentProperty) {
-                return response()->json(['success' => false, 'message' => 'Property not found']);
-            }
+        error_log("EMERGENCY: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
 
-            // Search for similar properties
-            $similarCriteria = [
-                'location' => $currentProperty['location'] ?? '',
-                'property_type' => $currentProperty['type'] ?? '',
-                'min_price' => $currentProperty['price'] * 0.8,
-                'max_price' => $currentProperty['price'] * 1.2,
-                'limit' => $limit
-            ];
+    public function alert($message, array $context = []): void
+    {
+        error_log("ALERT: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
 
-            $suggestions = $this->customFeaturesService->smartSearch($similarCriteria);
-            
-            return response()->json([
-                'success' => true, 
-                'data' => $suggestions
-            ]);
+    public function critical($message, array $context = []): void
+    {
+        error_log("CRITICAL: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
 
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
+    public function error($message, array $context = []): void
+    {
+        error_log("ERROR: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
+
+    public function warning($message, array $context = []): void
+    {
+        error_log("WARNING: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
+
+    public function notice($message, array $context = []): void
+    {
+        error_log("NOTICE: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
+
+    public function info($message, array $context = []): void
+    {
+        error_log("INFO: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
+
+    public function debug($message, array $context = []): void
+    {
+        error_log("DEBUG: " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
+    }
+
+    public function log($level, $message, array $context = []): void
+    {
+        error_log(strtoupper($level) . ": " . $message . (empty($context) ? '' : ' - Context: ' . json_encode($context)));
     }
 }

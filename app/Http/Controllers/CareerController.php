@@ -3,18 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Services\Career\CareerService;
+use App\Services\SystemLogger as Logger;
 use App\Models\JobApplication;
-use Psr\Log\LoggerInterface;
 
-class CareerController
+class CareerController extends BaseController
 {
     private CareerService $careerService;
-    private LoggerInterface $logger;
+    private $logger;
 
-    public function __construct(CareerService $careerService, LoggerInterface $logger)
+    public function __construct(CareerService $careerService, Logger $logger)
     {
+        parent::__construct();
         $this->careerService = $careerService;
         $this->logger = $logger;
+    }
+
+    /**
+     * Get request data helper
+     */
+    private function request()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Get request input
+     */
+    private function getInput($key, $default = null)
+    {
+        return $_POST[$key] ?? $_GET[$key] ?? $default;
+    }
+
+    /**
+     * Get request files
+     */
+    private function getFiles()
+    {
+        return $_FILES;
     }
 
     /**
@@ -24,15 +49,15 @@ class CareerController
     {
         try {
             $stats = $this->careerService->getCareerStats();
-            
-            return view('careers.index', [
+
+            return $this->view('careers.index', [
                 'stats' => $stats,
                 'page_title' => 'Careers - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to load career page", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            // Simple error logging
+            error_log("Failed to load career page: " . $e->getMessage());
+            return $this->view('errors.500');
         }
     }
 
@@ -42,28 +67,28 @@ class CareerController
     public function submitApplication()
     {
         try {
-            $data = request()->all();
-            $files = request()->files();
+            $data = $this->request->all();
+            $files = $this->getFiles();
 
             $result = $this->careerService->submitApplication($data, $files);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => $result['message'],
                     'application_id' => $result['application_id']
                 ]);
             } else {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => $result['message'],
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to submit application", ['error' => $e->getMessage()]);
-            return response()->json([
+            // Simple error logging
+            error_log("Failed to submit application: " . $e->getMessage());
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to submit application'
             ], 500);
@@ -77,22 +102,21 @@ class CareerController
     {
         try {
             $application = $this->careerService->getApplication((int)$id);
-            
+
             if (!$application) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => 'Application not found'
                 ], 404);
             }
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'application' => $application
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get application", ['id' => $id, 'error' => $e->getMessage()]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get application'
             ], 500);
@@ -105,18 +129,17 @@ class CareerController
     public function getApplications()
     {
         try {
-            $filters = request()->all();
+            $filters = $this->request->all();
             $applications = $this->careerService->getApplications($filters);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'applications' => $applications,
                 'total' => count($applications)
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get applications", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get applications'
             ], 500);
@@ -129,29 +152,28 @@ class CareerController
     public function updateStatus($id)
     {
         try {
-            $status = request()->input('status');
-            $reason = request()->input('reason', '');
+            $status = $this->getInput('status');
+            $reason = $this->getInput('reason', '');
 
             $result = $this->careerService->updateApplicationStatus((int)$id, $status, $reason);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => $result['message']
                 ]);
             } else {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => $result['message']
                 ], 400);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to update application status", [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update status'
             ], 500);
@@ -164,29 +186,28 @@ class CareerController
     public function scheduleInterview($id)
     {
         try {
-            $interviewData = request()->all();
+            $interviewData = $this->request->all();
             $result = $this->careerService->scheduleInterview((int)$id, $interviewData);
 
             if ($result['success']) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => true,
                     'message' => $result['message'],
                     'interview_id' => $result['interview_id']
                 ]);
             } else {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => $result['message'],
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to schedule interview", [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to schedule interview'
             ], 500);
@@ -199,17 +220,16 @@ class CareerController
     public function getStats()
     {
         try {
-            $filters = request()->all();
+            $filters = $this->request->all();
             $stats = $this->careerService->getCareerStats($filters);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'stats' => $stats
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get career stats", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get statistics'
             ], 500);
@@ -225,15 +245,14 @@ class CareerController
             $stats = $this->careerService->getCareerStats();
             $recentApplications = $this->careerService->getApplications(['limit' => 10]);
 
-            return view('careers.dashboard', [
+            return $this->view('careers.dashboard', [
                 'stats' => $stats,
                 'recent_applications' => $recentApplications,
                 'page_title' => 'Career Dashboard - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to load career dashboard", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->view('errors.500');
         }
     }
 
@@ -244,22 +263,21 @@ class CareerController
     {
         try {
             $application = $this->careerService->getApplication((int)$id);
-            
+
             if (!$application) {
-                return redirect('/careers/dashboard')->with('error', 'Application not found');
+                return $this->redirect('/careers/dashboard');
             }
 
-            return view('careers.details', [
+            return $this->view('careers.details', [
                 'application' => $application,
                 'page_title' => 'Application Details - APS Dream Home'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to load application details", [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
-            return view('errors.500');
+            return $this->view('errors.500');
         }
     }
 
@@ -269,7 +287,7 @@ class CareerController
     public function exportApplications()
     {
         try {
-            $filters = request()->all();
+            $filters = $this->request->all();
             $applications = $this->careerService->getApplications($filters);
 
             $csvData = [];
@@ -289,19 +307,18 @@ class CareerController
             }
 
             $filename = 'applications_' . date('Y-m-d') . '.csv';
-            
+
             header('Content-Type: text/csv');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
-            
+
             $output = fopen('php://output', 'w');
             foreach ($csvData as $row) {
                 fputcsv($output, $row);
             }
             fclose($output);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to export applications", ['error' => $e->getMessage()]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to export applications'
             ], 500);
@@ -314,30 +331,29 @@ class CareerController
     public function addNote($id)
     {
         try {
-            $note = request()->input('note');
-            $createdBy = request()->input('created_by', 'System');
+            $note = $this->getInput('note');
+            $createdBy = $this->getInput('created_by', 'System');
 
             if (empty($note)) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => 'Note content is required'
                 ], 400);
             }
 
             $sql = "INSERT INTO application_notes (application_id, note, created_by, created_at) VALUES (?, ?, ?, NOW())";
-            $this->careerService->getDb()->execute($sql, [$id, $note, $createdBy]);
+            $this->db->execute($sql, [$id, $note, $createdBy]);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Note added successfully'
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to add note", [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to add note'
             ], 500);
@@ -351,9 +367,9 @@ class CareerController
     {
         try {
             $application = JobApplication::find($id);
-            
+
             if (!$application) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => 'Application not found'
                 ], 404);
@@ -361,17 +377,16 @@ class CareerController
 
             $timeline = $application->getTimeline();
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'timeline' => $timeline
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error("Failed to get application timeline", [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get timeline'
             ], 500);

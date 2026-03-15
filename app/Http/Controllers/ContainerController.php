@@ -6,8 +6,6 @@ use App\Services\DependencyContainer;
 use App\Contracts\ContainerInterface;
 use App\Contracts\ServiceNotFoundException;
 use App\Contracts\ContainerException;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 /**
  * Controller for managing Dependency Injection Container
@@ -16,21 +14,22 @@ class ContainerController extends BaseController
 {
     private DependencyContainer $container;
 
-    public function __construct(DependencyContainer $container)
+    public function __construct(DependencyContainer $container = null)
     {
-        $this->container = $container;
+        parent::__construct();
+        $this->container = $container ?: new DependencyContainer();
     }
 
     /**
      * Get all registered services
      */
-    public function index(): JsonResponse
+    public function index()
     {
         try {
             $services = $this->container->getRegisteredServices();
             $aliases = $this->container->getAliases();
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'data' => [
                     'services' => $services,
@@ -40,7 +39,7 @@ class ContainerController extends BaseController
                 ]
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to retrieve container information',
                 'error' => $e->getMessage()
@@ -51,15 +50,18 @@ class ContainerController extends BaseController
     /**
      * Register a new service
      */
-    public function register(Request $request): JsonResponse
+    public function register()
     {
         try {
-            $validated = $request->validate([
-                'id' => 'required|string',
-                'definition' => 'required',
-                'shared' => 'boolean',
-                'alias' => 'string|nullable'
-            ]);
+            $validated = $this->request->all();
+
+            // Basic validation
+            if (empty($validated['id']) || empty($validated['definition'])) {
+                return $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'ID and definition are required'
+                ], 400);
+            }
 
             $id = $validated['id'];
             $definition = $validated['definition'];
@@ -84,7 +86,7 @@ class ContainerController extends BaseController
                 $this->container->alias($validated['alias'], $id);
             }
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => "Service '{$id}' registered successfully",
                 'data' => [
@@ -94,7 +96,7 @@ class ContainerController extends BaseController
                 ]
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to register service',
                 'error' => $e->getMessage()
@@ -105,13 +107,13 @@ class ContainerController extends BaseController
     /**
      * Get a specific service
      */
-    public function show(string $id): JsonResponse
+    public function bind(string $id)
     {
         try {
             $hasService = $this->container->has($id);
-            
+
             if (!$hasService) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => "Service '{$id}' not found"
                 ], 404);
@@ -119,7 +121,7 @@ class ContainerController extends BaseController
 
             // Note: We don't actually resolve the service here as it might be expensive
             // We just confirm it exists
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'data' => [
                     'id' => $id,
@@ -128,7 +130,7 @@ class ContainerController extends BaseController
                 ]
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to check service',
                 'error' => $e->getMessage()
@@ -139,12 +141,12 @@ class ContainerController extends BaseController
     /**
      * Resolve and test a service
      */
-    public function resolve(string $id): JsonResponse
+    public function resolve($id)
     {
         try {
             $service = $this->container->get($id);
-            
-            return response()->json([
+
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => "Service '{$id}' resolved successfully",
                 'data' => [
@@ -154,18 +156,18 @@ class ContainerController extends BaseController
                 ]
             ]);
         } catch (ServiceNotFoundException $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 404);
         } catch (ContainerException $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Container error',
                 'error' => $e->getMessage()
             ], 500);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to resolve service',
                 'error' => $e->getMessage()
@@ -176,13 +178,13 @@ class ContainerController extends BaseController
     /**
      * Remove a service
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(string $id)
     {
         try {
             $hasService = $this->container->has($id);
-            
+
             if (!$hasService) {
-                return response()->json([
+                return $this->jsonResponse([
                     'success' => false,
                     'message' => "Service '{$id}' not found"
                 ], 404);
@@ -190,12 +192,12 @@ class ContainerController extends BaseController
 
             $this->container->remove($id);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => "Service '{$id}' removed successfully"
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to remove service',
                 'error' => $e->getMessage()
@@ -206,17 +208,17 @@ class ContainerController extends BaseController
     /**
      * Clear all services
      */
-    public function clear(): JsonResponse
+    public function clear()
     {
         try {
             $this->container->clear();
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => 'Container cleared successfully'
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to clear container',
                 'error' => $e->getMessage()
@@ -227,7 +229,7 @@ class ContainerController extends BaseController
     /**
      * Test container functionality
      */
-    public function test(): JsonResponse
+    public function check()
     {
         try {
             $results = [];
@@ -250,10 +252,13 @@ class ContainerController extends BaseController
 
             // Test 4: Class resolution with dependency injection
             $this->container->register('test_dependency', fn() => 'Dependency');
-            $this->container->register('test_class', function($container) {
+            $this->container->register('test_class', function ($container) {
                 return new class($container->get('test_dependency')) {
                     public function __construct(private $dependency) {}
-                    public function getDependency() { return $this->dependency; }
+                    public function getDependency()
+                    {
+                        return $this->dependency;
+                    }
                 };
             });
             $classInstance = $this->container->get('test_class');
@@ -267,7 +272,7 @@ class ContainerController extends BaseController
 
             $allPassed = array_reduce($results, fn($carry, $result) => $carry && $result, true);
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'message' => $allPassed ? 'All tests passed' : 'Some tests failed',
                 'data' => [
@@ -276,7 +281,7 @@ class ContainerController extends BaseController
                 ]
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Test execution failed',
                 'error' => $e->getMessage()
@@ -287,7 +292,7 @@ class ContainerController extends BaseController
     /**
      * Get container statistics
      */
-    public function stats(): JsonResponse
+    public function stats()
     {
         try {
             $services = $this->container->getRegisteredServices();
@@ -303,12 +308,12 @@ class ContainerController extends BaseController
                 'peak_memory' => memory_get_peak_usage(true)
             ];
 
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => true,
                 'data' => $stats
             ]);
         } catch (\Exception $e) {
-            return response()->json([
+            return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get container statistics',
                 'error' => $e->getMessage()

@@ -4,14 +4,14 @@
 
 namespace App\Http\Controllers\Utility;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Core\ErrorHandler;
 
 /**
  * Test Controller for Error Pages
  * Tests the unified error handling system
  */
-class ErrorTestController extends Controller
+class ErrorTestController extends BaseController
 {
     /**
      * Test 404 error page
@@ -20,7 +20,7 @@ class ErrorTestController extends Controller
     {
         ErrorHandler::handle404();
     }
-    
+
     /**
      * Test 500 error page
      */
@@ -28,7 +28,7 @@ class ErrorTestController extends Controller
     {
         ErrorHandler::handle500();
     }
-    
+
     /**
      * Test 403 error page
      */
@@ -36,7 +36,7 @@ class ErrorTestController extends Controller
     {
         ErrorHandler::handle403();
     }
-    
+
     /**
      * Test 401 error page
      */
@@ -44,7 +44,7 @@ class ErrorTestController extends Controller
     {
         ErrorHandler::handle401();
     }
-    
+
     /**
      * Test 400 error page
      */
@@ -52,7 +52,7 @@ class ErrorTestController extends Controller
     {
         ErrorHandler::render(400);
     }
-    
+
     /**
      * Test generic error rendering
      */
@@ -60,7 +60,7 @@ class ErrorTestController extends Controller
     {
         ErrorHandler::render(418, "I'm a teapot! This is a test of the generic error handler.");
     }
-    
+
     /**
      * Test exception handling
      */

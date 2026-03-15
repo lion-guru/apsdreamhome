@@ -27,7 +27,7 @@ class SystemDiagnosticController extends AdminController
 
         // In a real MVC, we would return a view.
         // For now, let's output JSON or a simple HTML report
-        if ($this->isAjaxRequest()) {
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
             header('Content-Type: application/json');
             echo json_encode([
                 'status' => empty($this->criticalIssues) ? 'success' : 'error',

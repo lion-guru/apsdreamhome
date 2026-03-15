@@ -22,7 +22,7 @@ class FarmerService
     public function getAllFarmers(array $filters = [], int $perPage = 20): array
     {
         $cacheKey = 'farmers:' . md5(json_encode($filters) . $perPage);
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($filters, $perPage) {
             $query = DB::table('farmer_profiles as fp')
                 ->leftJoin('associates as a', 'fp.associate_id', '=', 'a.id')
@@ -51,15 +51,15 @@ class FarmerService
                 $search = '%' . $filters['search'] . '%';
                 $query->where(function ($q) use ($search) {
                     $q->where('fp.full_name', 'like', $search)
-                      ->orWhere('fp.farmer_number', 'like', $search)
-                      ->orWhere('fp.phone', 'like', $search)
-                      ->orWhere('fp.village', 'like', $search);
+                        ->orWhere('fp.farmer_number', 'like', $search)
+                        ->orWhere('fp.phone', 'like', $search)
+                        ->orWhere('fp.village', 'like', $search);
                 });
             }
 
             return $query->orderBy('fp.created_at', 'desc')
-                       ->paginate($perPage)
-                       ->toArray();
+                ->paginate($perPage)
+                ->toArray();
         });
     }
 
@@ -69,7 +69,7 @@ class FarmerService
     public function getFarmer(int $id): ?array
     {
         $cacheKey = "farmer:{$id}";
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($id) {
             $farmer = DB::table('farmer_profiles as fp')
                 ->leftJoin('associates as a', 'fp.associate_id', '=', 'a.id')
@@ -88,7 +88,7 @@ class FarmerService
             }
 
             $farmer = (array) $farmer;
-            
+
             // Get related data
             $farmer['land_holdings'] = $this->getFarmerLandHoldings($id);
             $farmer['transactions'] = $this->getFarmerTransactions($id, 10);
@@ -198,47 +198,47 @@ class FarmerService
 
             // Update farmer profile
             DB::table('farmer_profiles')
-              ->where('id', $id)
-              ->update([
-                  'full_name' => $data['full_name'] ?? $existing->full_name,
-                  'father_name' => $data['father_name'] ?? $existing->father_name,
-                  'spouse_name' => $data['spouse_name'] ?? $existing->spouse_name,
-                  'date_of_birth' => $data['date_of_birth'] ?? $existing->date_of_birth,
-                  'gender' => $data['gender'] ?? $existing->gender,
-                  'phone' => $data['phone'] ?? $existing->phone,
-                  'alternate_phone' => $data['alternate_phone'] ?? $existing->alternate_phone,
-                  'email' => $data['email'] ?? $existing->email,
-                  'address' => $data['address'] ?? $existing->address,
-                  'village' => $data['village'] ?? $existing->village,
-                  'post_office' => $data['post_office'] ?? $existing->post_office,
-                  'tehsil' => $data['tehsil'] ?? $existing->tehsil,
-                  'district' => $data['district'] ?? $existing->district,
-                  'state' => $data['state'] ?? $existing->state,
-                  'pincode' => $data['pincode'] ?? $existing->pincode,
-                  'aadhar_number' => $data['aadhar_number'] ?? $existing->aadhar_number,
-                  'pan_number' => $data['pan_number'] ?? $existing->pan_number,
-                  'voter_id' => $data['voter_id'] ?? $existing->voter_id,
-                  'bank_account_number' => $data['bank_account_number'] ?? $existing->bank_account_number,
-                  'bank_name' => $data['bank_name'] ?? $existing->bank_name,
-                  'ifsc_code' => $data['ifsc_code'] ?? $existing->ifsc_code,
-                  'account_holder_name' => $data['account_holder_name'] ?? $existing->account_holder_name,
-                  'total_land_holding' => $data['total_land_holding'] ?? $existing->total_land_holding,
-                  'cultivated_area' => $data['cultivated_area'] ?? $existing->cultivated_area,
-                  'irrigated_area' => $data['irrigated_area'] ?? $existing->irrigated_area,
-                  'non_irrigated_area' => $data['non_irrigated_area'] ?? $existing->non_irrigated_area,
-                  'crop_types' => isset($data['crop_types']) ? json_encode($data['crop_types']) : $existing->crop_types,
-                  'farming_experience' => $data['farming_experience'] ?? $existing->farming_experience,
-                  'education_level' => $data['education_level'] ?? $existing->education_level,
-                  'family_members' => $data['family_members'] ?? $existing->family_members,
-                  'family_income' => $data['family_income'] ?? $existing->family_income,
-                  'credit_score' => $data['credit_score'] ?? $existing->credit_score,
-                  'credit_limit' => $data['credit_limit'] ?? $existing->credit_limit,
-                  'outstanding_loans' => $data['outstanding_loans'] ?? $existing->outstanding_loans,
-                  'payment_history' => isset($data['payment_history']) ? json_encode($data['payment_history']) : $existing->payment_history,
-                  'status' => $data['status'] ?? $existing->status,
-                  'associate_id' => $data['associate_id'] ?? $existing->associate_id,
-                  'updated_at' => now()
-              ]);
+                ->where('id', $id)
+                ->update([
+                    'full_name' => $data['full_name'] ?? $existing->full_name,
+                    'father_name' => $data['father_name'] ?? $existing->father_name,
+                    'spouse_name' => $data['spouse_name'] ?? $existing->spouse_name,
+                    'date_of_birth' => $data['date_of_birth'] ?? $existing->date_of_birth,
+                    'gender' => $data['gender'] ?? $existing->gender,
+                    'phone' => $data['phone'] ?? $existing->phone,
+                    'alternate_phone' => $data['alternate_phone'] ?? $existing->alternate_phone,
+                    'email' => $data['email'] ?? $existing->email,
+                    'address' => $data['address'] ?? $existing->address,
+                    'village' => $data['village'] ?? $existing->village,
+                    'post_office' => $data['post_office'] ?? $existing->post_office,
+                    'tehsil' => $data['tehsil'] ?? $existing->tehsil,
+                    'district' => $data['district'] ?? $existing->district,
+                    'state' => $data['state'] ?? $existing->state,
+                    'pincode' => $data['pincode'] ?? $existing->pincode,
+                    'aadhar_number' => $data['aadhar_number'] ?? $existing->aadhar_number,
+                    'pan_number' => $data['pan_number'] ?? $existing->pan_number,
+                    'voter_id' => $data['voter_id'] ?? $existing->voter_id,
+                    'bank_account_number' => $data['bank_account_number'] ?? $existing->bank_account_number,
+                    'bank_name' => $data['bank_name'] ?? $existing->bank_name,
+                    'ifsc_code' => $data['ifsc_code'] ?? $existing->ifsc_code,
+                    'account_holder_name' => $data['account_holder_name'] ?? $existing->account_holder_name,
+                    'total_land_holding' => $data['total_land_holding'] ?? $existing->total_land_holding,
+                    'cultivated_area' => $data['cultivated_area'] ?? $existing->cultivated_area,
+                    'irrigated_area' => $data['irrigated_area'] ?? $existing->irrigated_area,
+                    'non_irrigated_area' => $data['non_irrigated_area'] ?? $existing->non_irrigated_area,
+                    'crop_types' => isset($data['crop_types']) ? json_encode($data['crop_types']) : $existing->crop_types,
+                    'farming_experience' => $data['farming_experience'] ?? $existing->farming_experience,
+                    'education_level' => $data['education_level'] ?? $existing->education_level,
+                    'family_members' => $data['family_members'] ?? $existing->family_members,
+                    'family_income' => $data['family_income'] ?? $existing->family_income,
+                    'credit_score' => $data['credit_score'] ?? $existing->credit_score,
+                    'credit_limit' => $data['credit_limit'] ?? $existing->credit_limit,
+                    'outstanding_loans' => $data['outstanding_loans'] ?? $existing->outstanding_loans,
+                    'payment_history' => isset($data['payment_history']) ? json_encode($data['payment_history']) : $existing->payment_history,
+                    'status' => $data['status'] ?? $existing->status,
+                    'associate_id' => $data['associate_id'] ?? $existing->associate_id,
+                    'updated_at' => now()
+                ]);
 
             // Clear cache
             $this->clearFarmerCache($id);
@@ -268,8 +268,8 @@ class FarmerService
     public function getFarmerLandHoldings(int $farmerId, int $limit = null): array
     {
         $query = DB::table('farmer_land_holdings')
-                  ->where('farmer_id', $farmerId)
-                  ->orderBy('created_at', 'desc');
+            ->where('farmer_id', $farmerId)
+            ->orderBy('created_at', 'desc');
 
         if ($limit) {
             $query->limit($limit);
@@ -359,8 +359,8 @@ class FarmerService
             }
 
             $result = DB::table('farmer_land_holdings')
-                       ->where('id', $holdingId)
-                       ->update($updateData);
+                ->where('id', $holdingId)
+                ->update($updateData);
 
             if ($result) {
                 // Get farmer ID to update total land
@@ -387,9 +387,9 @@ class FarmerService
     public function getFarmerTransactions(int $farmerId, int $limit = null): array
     {
         $query = DB::table('farmer_transactions')
-                  ->where('farmer_id', $farmerId)
-                  ->orderBy('transaction_date', 'desc')
-                  ->orderBy('created_at', 'desc');
+            ->where('farmer_id', $farmerId)
+            ->orderBy('transaction_date', 'desc')
+            ->orderBy('created_at', 'desc');
 
         if ($limit) {
             $query->limit($limit);
@@ -458,11 +458,11 @@ class FarmerService
     public function getFarmerLoans(int $farmerId): array
     {
         return DB::table('farmer_loans')
-                 ->where('farmer_id', $farmerId)
-                 ->orderBy('sanction_date', 'desc')
-                 ->orderBy('created_at', 'desc')
-                 ->get()
-                 ->toArray();
+            ->where('farmer_id', $farmerId)
+            ->orderBy('sanction_date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->toArray();
     }
 
     /**
@@ -471,8 +471,8 @@ class FarmerService
     public function getFarmerSupportRequests(int $farmerId, int $limit = null): array
     {
         $query = DB::table('farmer_support_requests')
-                  ->where('farmer_id', $farmerId)
-                  ->orderBy('created_at', 'desc');
+            ->where('farmer_id', $farmerId)
+            ->orderBy('created_at', 'desc');
 
         if ($limit) {
             $query->limit($limit);
@@ -529,7 +529,7 @@ class FarmerService
     public function getFarmerDashboard(int $farmerId): array
     {
         $cacheKey = "farmer_dashboard:{$farmerId}";
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($farmerId) {
             $dashboard = [];
 
@@ -588,7 +588,7 @@ class FarmerService
     public function getFarmerStats(): array
     {
         $cacheKey = 'farmer_stats';
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () {
             return [
                 'total_farmers' => DB::table('farmer_profiles')->count(),
@@ -619,9 +619,9 @@ class FarmerService
         $prefix = 'F';
         $year = date('Y');
         $sequence = DB::table('farmer_profiles')
-                     ->where('farmer_number', 'like', $prefix . $year . '%')
-                     ->count() + 1;
-        
+            ->where('farmer_number', 'like', $prefix . $year . '%')
+            ->count() + 1;
+
         return $prefix . $year . str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
 
@@ -633,9 +633,9 @@ class FarmerService
         $prefix = 'TXN';
         $date = date('Ymd');
         $sequence = DB::table('farmer_transactions')
-                     ->where('transaction_number', 'like', $prefix . $date . '%')
-                     ->count() + 1;
-        
+            ->where('transaction_number', 'like', $prefix . $date . '%')
+            ->count() + 1;
+
         return $prefix . $date . str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
 
@@ -647,9 +647,9 @@ class FarmerService
         $prefix = 'SR';
         $year = date('Y');
         $sequence = DB::table('farmer_support_requests')
-                     ->where('request_number', 'like', $prefix . $year . '%')
-                     ->count() + 1;
-        
+            ->where('request_number', 'like', $prefix . $year . '%')
+            ->count() + 1;
+
         return $prefix . $year . str_pad($sequence, 5, '0', STR_PAD_LEFT);
     }
 
@@ -659,7 +659,7 @@ class FarmerService
     private function validateFarmerData(array $data): void
     {
         $required = ['full_name', 'phone', 'village', 'district', 'state', 'bank_account_number', 'bank_name', 'ifsc_code'];
-        
+
         foreach ($required as $field) {
             if (empty($data[$field])) {
                 throw new \Exception("Field '{$field}' is required");
@@ -679,10 +679,10 @@ class FarmerService
         // Check for duplicate farmer number
         if (!empty($data['farmer_number'])) {
             $exists = DB::table('farmer_profiles')
-                      ->where('farmer_number', $data['farmer_number'])
-                      ->where('id', '!=', $data['id'] ?? 0)
-                      ->exists();
-            
+                ->where('farmer_number', $data['farmer_number'])
+                ->where('id', '!=', $data['id'] ?? 0)
+                ->exists();
+
             if ($exists) {
                 throw new \Exception('Farmer number already exists');
             }
@@ -690,10 +690,10 @@ class FarmerService
 
         // Check for duplicate phone
         $exists = DB::table('farmer_profiles')
-                  ->where('phone', $data['phone'])
-                  ->where('id', '!=', $data['id'] ?? 0)
-                  ->exists();
-        
+            ->where('phone', $data['phone'])
+            ->where('id', '!=', $data['id'] ?? 0)
+            ->exists();
+
         if ($exists) {
             throw new \Exception('Phone number already exists');
         }
@@ -705,12 +705,12 @@ class FarmerService
     private function updateFarmerTotalLand(int $farmerId): void
     {
         $totalLand = DB::table('farmer_land_holdings')
-                      ->where('farmer_id', $farmerId)
-                      ->sum('land_area');
+            ->where('farmer_id', $farmerId)
+            ->sum('land_area');
 
         DB::table('farmer_profiles')
-          ->where('id', $farmerId)
-          ->update(['total_land_holding' => $totalLand]);
+            ->where('id', $farmerId)
+            ->update(['total_land_holding' => $totalLand]);
     }
 
     /**
@@ -719,8 +719,8 @@ class FarmerService
     private function updateFarmerPaymentHistory(int $farmerId, array $transaction): void
     {
         $farmer = DB::table('farmer_profiles')
-                   ->where('id', $farmerId)
-                   ->first();
+            ->where('id', $farmerId)
+            ->first();
 
         if (!$farmer) {
             return;
@@ -733,8 +733,8 @@ class FarmerService
         $paymentHistory = array_slice($paymentHistory, -10);
 
         DB::table('farmer_profiles')
-          ->where('id', $farmerId)
-          ->update(['payment_history' => json_encode($paymentHistory)]);
+            ->where('id', $farmerId)
+            ->update(['payment_history' => json_encode($paymentHistory)]);
     }
 
     /**
@@ -746,7 +746,7 @@ class FarmerService
             Cache::forget("farmer:{$farmerId}");
             Cache::forget("farmer_dashboard:{$farmerId}");
         }
-        
+
         Cache::forget('farmer_stats');
         Cache::flush(); // Clear all farmer-related cache
     }
@@ -765,10 +765,10 @@ class FarmerService
             )
             ->where(function ($q) use ($query) {
                 $q->where('fp.full_name', 'like', '%' . $query . '%')
-                  ->orWhere('fp.farmer_number', 'like', '%' . $query . '%')
-                  ->orWhere('fp.phone', 'like', '%' . $query . '%')
-                  ->orWhere('fp.village', 'like', '%' . $query . '%')
-                  ->orWhere('fp.aadhar_number', 'like', '%' . $query . '%');
+                    ->orWhere('fp.farmer_number', 'like', '%' . $query . '%')
+                    ->orWhere('fp.phone', 'like', '%' . $query . '%')
+                    ->orWhere('fp.village', 'like', '%' . $query . '%')
+                    ->orWhere('fp.aadhar_number', 'like', '%' . $query . '%');
             });
 
         // Apply additional filters
@@ -781,8 +781,105 @@ class FarmerService
         }
 
         return $searchQuery->orderBy('fp.full_name')
-                        ->limit(50)
-                        ->get()
-                        ->toArray();
+            ->limit(50)
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * Delete farmer
+     */
+    public function deleteFarmer(int $id): bool
+    {
+        try {
+            $deleted = DB::table('farmer_profiles')
+                ->where('id', $id)
+                ->delete();
+
+            if ($deleted) {
+                Cache::forget('farmer:' . $id);
+                Cache::forget('farmer_stats');
+            }
+
+            return $deleted > 0;
+        } catch (\Exception $e) {
+            Log::error('Failed to delete farmer', ['id' => $id, 'error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    /**
+     * Get farmer statistics
+     */
+    public function getStatistics(): array
+    {
+        $cacheKey = 'farmer_stats';
+
+        return Cache::remember($cacheKey, $this->cacheTtl, function () {
+            return [
+                'total_farmers' => DB::table('farmer_profiles')->count(),
+                'active_farmers' => DB::table('farmer_profiles')->where('status', 'active')->count(),
+                'inactive_farmers' => DB::table('farmer_profiles')->where('status', 'inactive')->count(),
+                'new_this_month' => DB::table('farmer_profiles')
+                    ->where('created_at', '>=', now()->subMonth())
+                    ->count(),
+                'by_state' => DB::table('farmer_profiles')
+                    ->select('state', DB::raw('count(*) as count'))
+                    ->groupBy('state')
+                    ->orderBy('count', 'desc')
+                    ->get()
+                    ->toArray(),
+                'by_district' => DB::table('farmer_profiles')
+                    ->select('district', DB::raw('count(*) as count'))
+                    ->groupBy('district')
+                    ->orderBy('count', 'desc')
+                    ->limit(10)
+                    ->get()
+                    ->toArray()
+            ];
+        });
+    }
+
+    /**
+     * Bulk operations
+     */
+    public function bulkOperation(string $operation, array $farmerIds): array
+    {
+        $results = [];
+
+        foreach ($farmerIds as $farmerId) {
+            try {
+                switch ($operation) {
+                    case 'activate':
+                        $updated = DB::table('farmer_profiles')
+                            ->where('id', $farmerId)
+                            ->update(['status' => 'active', 'updated_at' => now()]);
+                        $results[] = ['id' => $farmerId, 'success' => $updated, 'action' => 'activated'];
+                        break;
+
+                    case 'deactivate':
+                        $updated = DB::table('farmer_profiles')
+                            ->where('id', $farmerId)
+                            ->update(['status' => 'inactive', 'updated_at' => now()]);
+                        $results[] = ['id' => $farmerId, 'success' => $updated, 'action' => 'deactivated'];
+                        break;
+
+                    case 'delete':
+                        $deleted = $this->deleteFarmer($farmerId);
+                        $results[] = ['id' => $farmerId, 'success' => $deleted, 'action' => 'deleted'];
+                        break;
+
+                    default:
+                        $results[] = ['id' => $farmerId, 'success' => false, 'error' => 'Unknown operation'];
+                }
+            } catch (\Exception $e) {
+                $results[] = ['id' => $farmerId, 'success' => false, 'error' => $e->getMessage()];
+            }
+        }
+
+        // Clear cache after bulk operations
+        Cache::forget('farmer_stats');
+
+        return $results;
     }
 }

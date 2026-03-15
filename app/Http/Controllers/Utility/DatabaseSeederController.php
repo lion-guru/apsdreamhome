@@ -27,7 +27,7 @@ class DatabaseSeederController extends AdminController
         $results['associates'] = $this->seedAssociates();
         $results['commissions'] = $this->seedCommissions();
 
-        if ($this->isAjaxRequest()) {
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
             header('Content-Type: application/json');
             echo json_encode($results);
             exit;
