@@ -1,43 +1,23 @@
 <?php
-namespace App\Controllers;
-//
-// ERROR HANDLING CONFIGURATION
-//
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
 
-function handleError($message, $file = null, $line = null) {
-    $error_msg = date('Y-m-d H:i:s') . ' - ERROR: ' . $message;
-    if ($file) $error_msg .= ' in ' . $file;
-    if ($line) $error_msg .= ' on line ' . $line;
-    error_log($error_msg);
-    return false;
-}
+namespace App\Http\Controllers\Tech;
 
-function safeExecute($callback, $errorMessage = 'Operation failed') {
-    try {
-        return $callback();
-    } catch (\Exception $e) {
-        handleError($errorMessage . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
-        return null;
-    }
-}
+use App\Http\Controllers\BaseController;
+use Exception;
 
-//
 /**
  * Sustainable Technology Integration Controller
  * Handles green technology, sustainability features, and environmental impact
  */
 
-
-
-class SustainableTechController extends BaseController {
+class SustainableTechController extends BaseController
+{
 
     /**
      * Sustainability dashboard
      */
-    public function sustainabilityDashboard() {
+    public function sustainabilityDashboard()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -59,7 +39,8 @@ class SustainableTechController extends BaseController {
     /**
      * Carbon footprint tracking and reduction
      */
-    public function carbonFootprint() {
+    public function carbonFootprint()
+    {
         $carbon_data = [
             'current_footprint' => $this->calculateCarbonFootprint(),
             'reduction_strategies' => $this->getReductionStrategies(),
@@ -76,7 +57,8 @@ class SustainableTechController extends BaseController {
     /**
      * Energy efficiency optimization
      */
-    public function energyEfficiency() {
+    public function energyEfficiency()
+    {
         $energy_data = [
             'current_consumption' => $this->getCurrentEnergyConsumption(),
             'efficiency_improvements' => $this->getEfficiencyImprovements(),
@@ -93,7 +75,8 @@ class SustainableTechController extends BaseController {
     /**
      * Green technology adoption
      */
-    public function greenTechnology() {
+    public function greenTechnology()
+    {
         $green_tech_data = [
             'adopted_technologies' => $this->getAdoptedGreenTechnologies(),
             'implementation_timeline' => $this->getImplementationTimeline(),
@@ -110,7 +93,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainable property features
      */
-    public function sustainableProperties() {
+    public function sustainableProperties()
+    {
         $sustainable_features = [
             'energy_efficient_properties' => $this->getEnergyEfficientProperties(),
             'green_building_standards' => $this->getGreenBuildingStandards(),
@@ -127,7 +111,8 @@ class SustainableTechController extends BaseController {
     /**
      * Environmental impact assessment
      */
-    public function environmentalImpact() {
+    public function environmentalImpact()
+    {
         $impact_data = [
             'property_impact' => $this->assessPropertyEnvironmentalImpact(),
             'construction_impact' => $this->assessConstructionImpact(),
@@ -144,7 +129,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability reporting and compliance
      */
-    public function sustainabilityReporting() {
+    public function sustainabilityReporting()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -166,7 +152,8 @@ class SustainableTechController extends BaseController {
     /**
      * Calculate carbon footprint
      */
-    private function calculateCarbonFootprint() {
+    private function calculateCarbonFootprint()
+    {
         return [
             'total_carbon_footprint' => '2.3 tons CO2/year',
             'per_user_footprint' => '0.045 tons CO2/year',
@@ -184,7 +171,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get reduction strategies
      */
-    private function getReductionStrategies() {
+    private function getReductionStrategies()
+    {
         return [
             'data_center_optimization' => [
                 'strategy' => 'Use energy-efficient servers and cooling',
@@ -210,7 +198,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get offset programs
      */
-    private function getOffsetPrograms() {
+    private function getOffsetPrograms()
+    {
         return [
             'tree_plantation' => [
                 'program' => 'Tree Plantation Initiative',
@@ -236,7 +225,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get sustainability certifications
      */
-    private function getSustainabilityCertifications() {
+    private function getSustainabilityCertifications()
+    {
         return [
             'energy_star' => [
                 'certification' => 'ENERGY STAR Certified',
@@ -262,7 +252,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get current energy consumption
      */
-    private function getCurrentEnergyConsumption() {
+    private function getCurrentEnergyConsumption()
+    {
         return [
             'total_consumption' => '45,000 kWh/month',
             'per_user_consumption' => '0.89 kWh/month',
@@ -275,7 +266,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get efficiency improvements
      */
-    private function getEfficiencyImprovements() {
+    private function getEfficiencyImprovements()
+    {
         return [
             'server_optimization' => [
                 'improvement' => 'Energy-efficient server deployment',
@@ -301,7 +293,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get renewable energy sources
      */
-    private function getRenewableEnergySources() {
+    private function getRenewableEnergySources()
+    {
         return [
             'solar_power' => [
                 'capacity' => '50 kW',
@@ -327,7 +320,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get optimization recommendations
      */
-    private function getOptimizationRecommendations() {
+    private function getOptimizationRecommendations()
+    {
         return [
             'immediate_actions' => [
                 'Switch to LED lighting in offices',
@@ -353,7 +347,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get adopted green technologies
      */
-    private function getAdoptedGreenTechnologies() {
+    private function getAdoptedGreenTechnologies()
+    {
         return [
             'energy_efficient_servers' => [
                 'technology' => 'ARM-based Energy-Efficient Servers',
@@ -385,7 +380,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get implementation timeline
      */
-    private function getImplementationTimeline() {
+    private function getImplementationTimeline()
+    {
         return [
             'q1_2024' => [
                 'completed' => 'Energy-efficient server deployment',
@@ -413,7 +409,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get cost benefit analysis
      */
-    private function getCostBenefitAnalysis() {
+    private function getCostBenefitAnalysis()
+    {
         return [
             'investment_required' => '₹75,00,000',
             'annual_savings' => '₹25,00,000',
@@ -431,7 +428,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get environmental impact
      */
-    private function getEnvironmentalImpact() {
+    private function getEnvironmentalImpact()
+    {
         return [
             'carbon_reduction' => [
                 'current_reduction' => '35%',
@@ -455,7 +453,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get energy efficient properties
      */
-    private function getEnergyEfficientProperties() {
+    private function getEnergyEfficientProperties()
+    {
         return [
             'leed_certified' => [
                 'count' => 234,
@@ -481,7 +480,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get green building standards
      */
-    private function getGreenBuildingStandards() {
+    private function getGreenBuildingStandards()
+    {
         return [
             'leed' => [
                 'standard' => 'LEED v4.1',
@@ -504,7 +504,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get sustainability ratings
      */
-    private function getSustainabilityRatings() {
+    private function getSustainabilityRatings()
+    {
         return [
             'overall_platform_rating' => 'A- (Excellent)',
             'energy_efficiency_rating' => 'A (Outstanding)',
@@ -517,7 +518,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get eco-friendly features
      */
-    private function getEcoFriendlyFeatures() {
+    private function getEcoFriendlyFeatures()
+    {
         return [
             'energy_features' => [
                 'Solar panels' => 'Generate clean energy',
@@ -543,7 +545,8 @@ class SustainableTechController extends BaseController {
     /**
      * Assess property environmental impact
      */
-    private function assessPropertyEnvironmentalImpact() {
+    private function assessPropertyEnvironmentalImpact()
+    {
         return [
             'carbon_footprint' => '1.2 tons CO2/year per property',
             'energy_consumption' => '8,500 kWh/year per property',
@@ -561,7 +564,8 @@ class SustainableTechController extends BaseController {
     /**
      * Assess construction impact
      */
-    private function assessConstructionImpact() {
+    private function assessConstructionImpact()
+    {
         return [
             'material_sourcing' => [
                 'sustainable_materials' => '78% of materials sourced sustainably',
@@ -579,7 +583,8 @@ class SustainableTechController extends BaseController {
     /**
      * Assess operational impact
      */
-    private function assessOperationalImpact() {
+    private function assessOperationalImpact()
+    {
         return [
             'energy_performance' => [
                 'building_energy_intensity' => '45 kWh/m²/year',
@@ -602,7 +607,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get mitigation strategies
      */
-    private function getMitigationStrategies() {
+    private function getMitigationStrategies()
+    {
         return [
             'immediate_actions' => [
                 'Install energy-efficient lighting',
@@ -628,7 +634,8 @@ class SustainableTechController extends BaseController {
     /**
      * Generate ESG reports
      */
-    private function generateESGReports() {
+    private function generateESGReports()
+    {
         return [
             'environmental_report' => [
                 'report_period' => 'Q4 2024',
@@ -655,7 +662,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get compliance status
      */
-    private function getComplianceStatus() {
+    private function getComplianceStatus()
+    {
         return [
             'gdpr_compliance' => '100% compliant',
             'ccpa_compliance' => '100% compliant',
@@ -668,7 +676,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get sustainability metrics
      */
-    private function getSustainabilityMetrics() {
+    private function getSustainabilityMetrics()
+    {
         return [
             'carbon_intensity' => '0.045 tons CO2 per user',
             'energy_intensity' => '0.89 kWh per user',
@@ -681,7 +690,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get stakeholder reports
      */
-    private function getStakeholderReports() {
+    private function getStakeholderReports()
+    {
         return [
             'investors' => [
                 'esg_performance' => 'A- rating',
@@ -707,7 +717,8 @@ class SustainableTechController extends BaseController {
     /**
      * Green finance and investment
      */
-    public function greenFinance() {
+    public function greenFinance()
+    {
         $finance_data = [
             'green_bonds' => $this->getGreenBonds(),
             'sustainable_investments' => $this->getSustainableInvestments(),
@@ -724,7 +735,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get green bonds data
      */
-    private function getGreenBonds() {
+    private function getGreenBonds()
+    {
         return [
             'issued_bonds' => '₹50 crores',
             'green_projects_funded' => 45,
@@ -737,7 +749,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get sustainable investments
      */
-    private function getSustainableInvestments() {
+    private function getSustainableInvestments()
+    {
         return [
             'total_aum' => '₹200 crores',
             'sustainable_properties' => '₹150 crores',
@@ -750,7 +763,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get carbon credits
      */
-    private function getCarbonCredits() {
+    private function getCarbonCredits()
+    {
         return [
             'credits_generated' => '1,500 tons CO2',
             'credits_sold' => '1,200 tons CO2',
@@ -763,7 +777,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get impact investing
      */
-    private function getImpactInvesting() {
+    private function getImpactInvesting()
+    {
         return [
             'impact_funds' => '₹75 crores',
             'social_impact' => '15,000 beneficiaries',
@@ -776,7 +791,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability education and training
      */
-    public function sustainabilityEducation() {
+    public function sustainabilityEducation()
+    {
         $education_programs = [
             'employee_training' => [
                 'program' => 'Green Workplace Training',
@@ -809,7 +825,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability partnerships
      */
-    public function sustainabilityPartnerships() {
+    public function sustainabilityPartnerships()
+    {
         $partnerships = [
             'environmental_ngos' => [
                 'greenpeace' => [
@@ -858,7 +875,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability innovation lab
      */
-    public function innovationLab() {
+    public function innovationLab()
+    {
         $innovation_projects = [
             'ai_energy_optimization' => [
                 'project' => 'AI-Powered Energy Optimization',
@@ -892,7 +910,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability awards and recognition
      */
-    public function awards() {
+    public function awards()
+    {
         $awards_data = [
             'received_awards' => [
                 'green_technology_innovation' => [
@@ -939,7 +958,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability goals and targets
      */
-    private function getSustainabilityGoals() {
+    private function getSustainabilityGoals()
+    {
         return [
             'carbon_neutrality' => [
                 'target' => 'Carbon neutral by 2025',
@@ -971,7 +991,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability calculator
      */
-    public function sustainabilityCalculator() {
+    public function sustainabilityCalculator()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
@@ -997,7 +1018,8 @@ class SustainableTechController extends BaseController {
     /**
      * Calculate sustainability score
      */
-    private function calculateSustainabilityScore($property_data) {
+    private function calculateSustainabilityScore($property_data)
+    {
         $score = 0;
         $max_score = 100;
 
@@ -1039,7 +1061,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get sustainability rating
      */
-    private function getSustainabilityRating($percentage) {
+    private function getSustainabilityRating($percentage)
+    {
         if ($percentage >= 90) return 'Platinum';
         elseif ($percentage >= 80) return 'Gold';
         elseif ($percentage >= 70) return 'Silver';
@@ -1050,7 +1073,8 @@ class SustainableTechController extends BaseController {
     /**
      * Get improvement suggestions
      */
-    private function getImprovementSuggestions($property_data, $percentage) {
+    private function getImprovementSuggestions($property_data, $percentage)
+    {
         $suggestions = [];
 
         if ($percentage < 70) {
@@ -1077,7 +1101,8 @@ class SustainableTechController extends BaseController {
     /**
      * API - Get sustainability data
      */
-    public function apiSustainabilityData() {
+    public function apiSustainabilityData()
+    {
         header('Content-Type: application/json');
 
         $data_type = Security::sanitize($_GET['type']) ?? '';
@@ -1106,7 +1131,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability roadmap
      */
-    public function sustainabilityRoadmap() {
+    public function sustainabilityRoadmap()
+    {
         $roadmap_data = [
             '2024' => [
                 'q3' => 'Achieve 50% renewable energy usage',
@@ -1135,7 +1161,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability case studies
      */
-    public function caseStudies() {
+    public function caseStudies()
+    {
         $case_studies = [
             'green_building_transformation' => [
                 'title' => 'Office Building Green Transformation',
@@ -1172,7 +1199,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability community engagement
      */
-    public function communityEngagement() {
+    public function communityEngagement()
+    {
         $community_programs = [
             'tree_plantation' => [
                 'program' => 'Urban Tree Plantation Drive',
@@ -1206,7 +1234,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability policy and governance
      */
-    public function governance() {
+    public function governance()
+    {
         $governance_data = [
             'sustainability_policy' => [
                 'policy_document' => 'Comprehensive Sustainability Policy v2.1',
@@ -1237,7 +1266,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability investment opportunities
      */
-    public function investmentOpportunities() {
+    public function investmentOpportunities()
+    {
         $investment_data = [
             'green_bonds' => [
                 'total_issued' => '₹200 crores',
@@ -1268,7 +1298,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability trends and insights
      */
-    public function trends() {
+    public function trends()
+    {
         $trends_data = [
             'emerging_trends' => [
                 'regenerative_design' => [
@@ -1307,7 +1338,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability resources and tools
      */
-    public function resources() {
+    public function resources()
+    {
         $resources = [
             'calculators' => [
                 'carbon_footprint_calculator' => 'Calculate your personal carbon footprint',
@@ -1338,7 +1370,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability challenges and solutions
      */
-    public function challenges() {
+    public function challenges()
+    {
         $challenges_data = [
             'implementation_challenges' => [
                 'high_initial_costs' => [
@@ -1380,7 +1413,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability success stories
      */
-    public function successStories() {
+    public function successStories()
+    {
         $stories = [
             'carbon_neutral_achievement' => [
                 'title' => 'Achieving Carbon Neutrality',
@@ -1414,7 +1448,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability future vision
      */
-    public function futureVision() {
+    public function futureVision()
+    {
         $vision_data = [
             '2030_goals' => [
                 'carbon_negative_operations' => 'Achieve carbon negative status',
@@ -1445,7 +1480,8 @@ class SustainableTechController extends BaseController {
     /**
      * Sustainability API endpoints
      */
-    public function apiSustainabilityEndpoints() {
+    public function apiSustainabilityEndpoints()
+    {
         header('Content-Type: application/json');
 
         $endpoints = [
