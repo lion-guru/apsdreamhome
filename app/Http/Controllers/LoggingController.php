@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Services\LoggingService;
+use App\Core\Database\Database;
 
 /**
  * Custom Logging Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
  * Following APS Dream Home custom architecture patterns
  */
-class LoggingController
+class LoggingController extends BaseController
 {
     private $loggingService;
     private $viewRenderer;
 
     public function __construct()
     {
+        parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->viewRenderer = new \App\Core\View();
     }
 
     /**
@@ -46,7 +47,7 @@ class LoggingController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('logging/dashboard', $data);
+        return $this->render('logging/dashboard', $data);
     }
 
     /**
@@ -68,8 +69,7 @@ class LoggingController
         $offset = ($page - 1) * $limit;
 
         // Get logs from database
-        $database = \App\Core\Database::getInstance();
-        $logs = $database->select(
+        $logs = Database::getInstance()->fetchAll(
             "SELECT * FROM system_logs 
              WHERE category = ? 
              ORDER BY created_at DESC 
@@ -78,7 +78,7 @@ class LoggingController
         );
 
         // Get total count
-        $total = $database->selectOne(
+        $total = Database::getInstance()->fetchOne(
             "SELECT COUNT(*) as count FROM system_logs WHERE category = ?",
             [$category]
         )['count'];
@@ -98,7 +98,7 @@ class LoggingController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('logging/logs', $data);
+        return $this->render('logging/logs', $data);
     }
 
     /**
@@ -119,8 +119,7 @@ class LoggingController
         $offset = ($page - 1) * $limit;
 
         // Get security alerts
-        $database = \App\Core\Database::getInstance();
-        $alerts = $database->select(
+        $alerts = Database::getInstance()->fetchAll(
             "SELECT * FROM security_alerts 
              WHERE status = 'active' 
              ORDER BY created_at DESC 
@@ -129,7 +128,7 @@ class LoggingController
         );
 
         // Get total count
-        $total = $database->selectOne(
+        $total = Database::getInstance()->fetchOne(
             "SELECT COUNT(*) as count FROM security_alerts WHERE status = 'active'"
         )['count'];
 
@@ -147,7 +146,7 @@ class LoggingController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('logging/security-alerts', $data);
+        return $this->render('logging/security-alerts', $data);
     }
 
     /**
@@ -179,7 +178,7 @@ class LoggingController
                 'file' => basename($csvFile),
                 'path' => $csvFile
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => 'Export failed: ' . $e->getMessage()
@@ -219,7 +218,7 @@ class LoggingController
                 'success' => true,
                 'message' => 'Cleanup completed'
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => 'Cleanup failed: ' . $e->getMessage()
@@ -284,8 +283,7 @@ class LoggingController
         }
 
         // Search logs
-        $database = \App\Core\Database::getInstance();
-        $logs = $database->select(
+        $logs = Database::getInstance()->fetchAll(
             "SELECT * FROM system_logs 
              WHERE category = ? AND (message LIKE ? OR context LIKE ?)
              ORDER BY created_at DESC 
@@ -294,7 +292,7 @@ class LoggingController
         );
 
         // Get total count
-        $total = $database->selectOne(
+        $total = Database::getInstance()->fetchOne(
             "SELECT COUNT(*) as count FROM system_logs 
              WHERE category = ? AND (message LIKE ? OR context LIKE ?)",
             [$category, "%$search%", "%$search%"]
@@ -316,7 +314,7 @@ class LoggingController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('logging/search', $data);
+        return $this->render('logging/search', $data);
     }
 
     /**
@@ -341,8 +339,7 @@ class LoggingController
         }
 
         // Get log details
-        $database = \App\Core\Database::getInstance();
-        $log = $database->selectOne(
+        $log = Database::getInstance()->fetchOne(
             "SELECT * FROM system_logs WHERE id = ?",
             [$logId]
         );
@@ -366,7 +363,7 @@ class LoggingController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        return $this->viewRenderer->render('logging/details', $data);
+        return $this->render('logging/details', $data);
     }
 
     /**
@@ -416,7 +413,7 @@ class LoggingController
                     'message' => 'Failed to dismiss alert'
                 ];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
