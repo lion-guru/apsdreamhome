@@ -19,7 +19,7 @@ class CustomFeaturesController extends BaseController
         if ($customFeaturesService) {
             $this->customFeaturesService = $customFeaturesService;
         } else {
-            $this->customFeaturesService = new CustomFeaturesService(Database::getInstance());
+            $this->customFeaturesService = new CustomFeaturesService(null);
         }
     }
 
