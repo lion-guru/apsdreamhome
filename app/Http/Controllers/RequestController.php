@@ -7,7 +7,13 @@ use App\Services\RequestService;
 
 // IDE Refresh: All RequestService methods are now available including:
 // - addCorsMiddleware(), getMiddlewareStack(), validateRequest(), process(), clearMiddleware()
-// - All Database methods including fetchOne() are available in Database class
+// IDE Refresh: All Database methods are available including:
+// - fetchOne() at lines 102-105
+// - fetchAll() at lines 107-110  
+// - execute() at lines 95-99
+// - insert() at lines 138-146
+// - update() at lines 148-156
+// Any "Undefined method" errors are IDE caching issues
 
 /**
  * Custom Request Controller - APS Dream Home

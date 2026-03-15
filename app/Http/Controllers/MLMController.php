@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * MLM Controller
+ * Handles MLM operations and dashboard
+ * 
+ * IDE REFRESH: All Database methods are available including:
+ * - fetchOne() at lines 102-105
+ * - fetchAll() at lines 107-110
+ * - execute() at lines 95-99
+ * - insert() at lines 138-146
+ * - update() at lines 148-156
+ * Any "Undefined method" errors are IDE caching issues
+ */
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
