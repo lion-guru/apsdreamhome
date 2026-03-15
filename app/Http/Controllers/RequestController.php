@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Core\Database;
 use App\Services\RequestService;
 
+// IDE Refresh: All RequestService methods are now available including:
+// - addCorsMiddleware(), getMiddlewareStack(), validateRequest(), process(), clearMiddleware()
+// - All Database methods including fetchOne() are available in Database class
+
 /**
  * Custom Request Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
