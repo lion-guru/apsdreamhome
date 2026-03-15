@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Http\Controllers\BaseController;
 
 /**
@@ -12,7 +13,7 @@ class MonitoringController extends BaseController
 {
     private $logFile;
     private $alertThresholds;
-    
+
     public function __construct()
     {
         parent::__construct();
@@ -25,7 +26,7 @@ class MonitoringController extends BaseController
             'error_rate' => 5 // % per hour
         ];
     }
-    
+
     /**
      * Main monitoring dashboard
      */
@@ -33,11 +34,11 @@ class MonitoringController extends BaseController
     {
         // Temporarily disable login for testing
         // $this->requireLogin();
-        
+
         $healthStatus = $this->getSystemHealth();
         $recentAlerts = $this->getRecentAlerts();
         $performanceMetrics = $this->getPerformanceMetrics();
-        
+
         $this->render('admin/monitoring/dashboard', [
             'page_title' => 'System Monitoring - APS Dream Home',
             'health_status' => $healthStatus,
@@ -45,16 +46,16 @@ class MonitoringController extends BaseController
             'performance_metrics' => $performanceMetrics
         ]);
     }
-    
+
     /**
      * API endpoint for health check
      */
     public function healthCheck()
     {
         header('Content-Type: application/json');
-        
+
         $health = $this->getSystemHealth();
-        
+
         echo json_encode([
             'status' => $health['overall_status'],
             'timestamp' => date('Y-m-d H:i:s'),
@@ -62,7 +63,7 @@ class MonitoringController extends BaseController
             'uptime' => $this->getUptime()
         ]);
     }
-    
+
     /**
      * Get comprehensive system health status
      */
@@ -76,7 +77,7 @@ class MonitoringController extends BaseController
             'security' => $this->checkSecurityStatus(),
             'api_endpoints' => $this->checkApiEndpoints()
         ];
-        
+
         $overallStatus = 'healthy';
         foreach ($checks as $check) {
             if ($check['status'] === 'critical') {
@@ -86,14 +87,14 @@ class MonitoringController extends BaseController
                 $overallStatus = 'warning';
             }
         }
-        
+
         return [
             'overall_status' => $overallStatus,
             'checks' => $checks,
             'last_check' => date('Y-m-d H:i:s')
         ];
     }
-    
+
     /**
      * Check database health
      */
@@ -101,32 +102,32 @@ class MonitoringController extends BaseController
     {
         try {
             $startTime = microtime(true);
-            
+
             // Test basic connection
             $result = $this->db->fetch("SELECT 1 as test");
-            
+
             $responseTime = microtime(true) - $startTime;
-            
+
             // Check table counts
             $tableCountResult = $this->db->fetchColumn("SHOW TABLES");
             $tableCount = is_array($tableCountResult) ? count($tableCountResult) : 0;
-            
+
             // Check slow queries
             $slowQueries = $this->getSlowQueryCount();
-            
+
             $status = 'healthy';
             $issues = [];
-            
+
             if ($responseTime > $this->alertThresholds['response_time']) {
                 $status = 'warning';
                 $issues[] = 'Slow database response time';
             }
-            
+
             if ($slowQueries > 10) {
                 $status = 'critical';
                 $issues[] = 'High number of slow queries';
             }
-            
+
             return [
                 'status' => $status,
                 'response_time' => round($responseTime * 1000, 2) . 'ms',
@@ -134,7 +135,6 @@ class MonitoringController extends BaseController
                 'slow_queries' => $slowQueries,
                 'issues' => $issues
             ];
-            
         } catch (Exception $e) {
             return [
                 'status' => 'critical',
@@ -143,7 +143,7 @@ class MonitoringController extends BaseController
             ];
         }
     }
-    
+
     /**
      * Check filesystem health
      */
@@ -151,32 +151,32 @@ class MonitoringController extends BaseController
     {
         $issues = [];
         $status = 'healthy';
-        
+
         // Check log directory
         $logDir = __DIR__ . '/../../storage/logs';
         if (!is_dir($logDir)) {
             $status = 'critical';
             $issues[] = 'Log directory missing';
         }
-        
+
         // Check upload directory
         $uploadDir = __DIR__ . '/../../public/uploads';
         if (!is_dir($uploadDir)) {
             $status = 'warning';
             $issues[] = 'Upload directory missing';
         }
-        
+
         // Check disk usage
         $totalSpace = disk_total_space(__DIR__);
         $freeSpace = disk_free_space(__DIR__);
         $usedSpace = $totalSpace - $freeSpace;
         $usagePercent = ($usedSpace / $totalSpace) * 100;
-        
+
         if ($usagePercent > $this->alertThresholds['disk_usage']) {
             $status = 'critical';
             $issues[] = 'High disk usage';
         }
-        
+
         return [
             'status' => $status,
             'disk_usage' => round($usagePercent, 2) . '%',
@@ -185,7 +185,7 @@ class MonitoringController extends BaseController
             'issues' => $issues
         ];
     }
-    
+
     /**
      * Check memory usage
      */
@@ -194,20 +194,20 @@ class MonitoringController extends BaseController
         $memoryUsage = memory_get_usage(true);
         $memoryLimit = $this->parseMemoryLimit(ini_get('memory_limit'));
         $usagePercent = ($memoryUsage / $memoryLimit) * 100;
-        
+
         $status = 'healthy';
         $issues = [];
-        
+
         if ($usagePercent > 80) {
             $status = 'warning';
             $issues[] = 'High memory usage';
         }
-        
+
         if ($usagePercent > 90) {
             $status = 'critical';
             $issues[] = 'Critical memory usage';
         }
-        
+
         return [
             'status' => $status,
             'current_usage' => $this->formatBytes($memoryUsage),
@@ -216,7 +216,7 @@ class MonitoringController extends BaseController
             'issues' => $issues
         ];
     }
-    
+
     /**
      * Check performance metrics
      */
@@ -224,23 +224,23 @@ class MonitoringController extends BaseController
     {
         $issues = [];
         $status = 'healthy';
-        
+
         // Check script execution time
         $executionTime = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
-        
+
         if ($executionTime > $this->alertThresholds['response_time']) {
             $status = 'warning';
             $issues[] = 'Slow script execution';
         }
-        
+
         // Get database performance stats
         $dbStats = $this->db->getPerformanceStats();
-        
+
         if ($dbStats['slow_queries'] > 5) {
             $status = 'critical';
             $issues[] = 'Multiple slow queries detected';
         }
-        
+
         return [
             'status' => $status,
             'execution_time' => round($executionTime * 1000, 2) . 'ms',
@@ -250,7 +250,7 @@ class MonitoringController extends BaseController
             'issues' => $issues
         ];
     }
-    
+
     /**
      * Check security status
      */
@@ -258,13 +258,13 @@ class MonitoringController extends BaseController
     {
         $issues = [];
         $status = 'healthy';
-        
+
         // Check if debug mode is on
         if (getenv('APP_DEBUG') === 'true') {
             $status = 'warning';
             $issues[] = 'Debug mode is enabled';
         }
-        
+
         // Check .env file permissions
         $envFile = __DIR__ . '/../../.env';
         if (file_exists($envFile) && is_readable($envFile)) {
@@ -275,7 +275,7 @@ class MonitoringController extends BaseController
                 $issues[] = '.env file is world-readable';
             }
         }
-        
+
         return [
             'status' => $status,
             'debug_mode' => getenv('APP_DEBUG') === 'true' ? 'enabled' : 'disabled',
@@ -283,7 +283,7 @@ class MonitoringController extends BaseController
             'issues' => $issues
         ];
     }
-    
+
     /**
      * Check API endpoints
      */
@@ -291,27 +291,27 @@ class MonitoringController extends BaseController
     {
         $issues = [];
         $status = 'healthy';
-        
+
         $endpoints = [
             '/properties' => 'Properties API',
             '/api/health' => 'Health Check API'
         ];
-        
+
         foreach ($endpoints as $endpoint => $name) {
             $startTime = microtime(true);
-            
+
             $context = stream_context_create([
                 'http' => [
                     'timeout' => 5,
                     'method' => 'GET'
                 ]
             ]);
-            
+
             $url = 'http://localhost:8000' . $endpoint;
             $response = @file_get_contents($url, false, $context);
-            
+
             $responseTime = microtime(true) - $startTime;
-            
+
             if ($response === false) {
                 $status = 'critical';
                 $issues[] = "$name is not responding";
@@ -320,14 +320,14 @@ class MonitoringController extends BaseController
                 $issues[] = "$name is slow to respond";
             }
         }
-        
+
         return [
             'status' => $status,
             'endpoints_checked' => count($endpoints),
             'issues' => $issues
         ];
     }
-    
+
     /**
      * Get recent alerts
      */
@@ -348,7 +348,7 @@ class MonitoringController extends BaseController
             ]
         ];
     }
-    
+
     /**
      * Get performance metrics
      */
@@ -375,7 +375,7 @@ class MonitoringController extends BaseController
             ]
         ];
     }
-    
+
     /**
      * Get slow query count
      */
@@ -388,7 +388,7 @@ class MonitoringController extends BaseController
             return 0;
         }
     }
-    
+
     /**
      * Get system uptime
      */
@@ -402,10 +402,10 @@ class MonitoringController extends BaseController
                 'load_15min' => $load[2]
             ];
         }
-        
+
         return ['load_1min' => 0, 'load_5min' => 0, 'load_15min' => 0];
     }
-    
+
     /**
      * Format bytes to human readable format
      */
@@ -415,12 +415,12 @@ class MonitoringController extends BaseController
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count($units) - 1);
-        
+
         $bytes /= pow(1024, $pow);
-        
+
         return round($bytes, 2) . ' ' . $units[$pow];
     }
-    
+
     /**
      * Parse memory limit string
      */
@@ -429,7 +429,7 @@ class MonitoringController extends BaseController
         $limit = trim($limit);
         $last = strtolower($limit[strlen($limit) - 1]);
         $value = (int) $limit;
-        
+
         switch ($last) {
             case 'g':
                 $value *= 1024;
@@ -438,10 +438,10 @@ class MonitoringController extends BaseController
             case 'k':
                 $value *= 1024;
         }
-        
+
         return $value;
     }
-    
+
     /**
      * Log monitoring event
      */
