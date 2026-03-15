@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use Exception;
 
 class PWAController extends BaseController
@@ -522,19 +523,19 @@ function removeOfflineMessage(id) {
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            sendJsonResponse(['success' => false, 'error' => 'Method not allowed'], 405);
+            $this->jsonResponse(['success' => false, 'error' => 'Method not allowed'], 405);
         }
 
         $subscription = json_decode(file_get_contents('php://input'), true);
 
         if (!$subscription) {
-            sendJsonResponse(['success' => false, 'error' => 'Invalid subscription data'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid subscription data'], 400);
         }
 
         // Save subscription to database
         $success = $this->savePushSubscription($subscription);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $success,
             'message' => $success ? 'Subscription saved' : 'Failed to save subscription'
         ]);
@@ -578,22 +579,22 @@ function removeOfflineMessage(id) {
     public function sendPushNotification()
     {
         if (!$this->isAdmin()) {
-            sendJsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
+            $this->jsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            sendJsonResponse(['success' => false, 'error' => 'Method not allowed'], 405);
+            $this->jsonResponse(['success' => false, 'error' => 'Method not allowed'], 405);
         }
 
         $notification_data = json_decode(file_get_contents('php://input'), true);
 
         if (!$notification_data) {
-            sendJsonResponse(['success' => false, 'error' => 'Invalid notification data'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid notification data'], 400);
         }
 
         $success = $this->broadcastNotification($notification_data);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $success,
             'message' => $success ? 'Notification sent' : 'Failed to send notification'
         ]);
@@ -647,7 +648,7 @@ function removeOfflineMessage(id) {
         header('Content-Type: application/json');
 
         if (!$this->isAdmin()) {
-            sendJsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
+            $this->jsonResponse(['success' => false, 'error' => 'Unauthorized'], 403);
         }
 
         $stats = [
@@ -657,7 +658,7 @@ function removeOfflineMessage(id) {
             'offline_usage' => $this->getOfflineUsageStats()
         ];
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $stats
         ]);
@@ -736,7 +737,7 @@ function removeOfflineMessage(id) {
 
         try {
             if (!$this->db) {
-                sendJsonResponse(['success' => false, 'error' => 'Database connection failed'], 500);
+                $this->jsonResponse(['success' => false, 'error' => 'Database connection failed'], 500);
             }
 
             $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
@@ -752,13 +753,13 @@ function removeOfflineMessage(id) {
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? ''
             ]);
 
-            sendJsonResponse([
+            $this->jsonResponse([
                 'success' => $success,
                 'message' => 'Install prompt logged'
             ]);
         } catch (Exception $e) {
             error_log('Install prompt logging error: ' . $e->getMessage());
-            sendJsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
+            $this->jsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
         }
     }
 
@@ -771,7 +772,7 @@ function removeOfflineMessage(id) {
 
         try {
             if (!$this->db) {
-                sendJsonResponse(['success' => false, 'error' => 'Database connection failed'], 500);
+                $this->jsonResponse(['success' => false, 'error' => 'Database connection failed'], 500);
             }
 
             $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
@@ -787,13 +788,13 @@ function removeOfflineMessage(id) {
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? ''
             ]);
 
-            sendJsonResponse([
+            $this->jsonResponse([
                 'success' => $success,
                 'message' => 'Installation logged'
             ]);
         } catch (Exception $e) {
             error_log('Installation logging error: ' . $e->getMessage());
-            sendJsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
+            $this->jsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
         }
     }
 
