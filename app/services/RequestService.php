@@ -262,4 +262,159 @@ class RequestService
     {
         return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
     }
+
+    /**
+     * Add CORS middleware
+     */
+    public function addCorsMiddleware($config = [])
+    {
+        $this->registerMiddleware('before', function ($request) use ($config) {
+            // Handle preflight requests
+            if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+                $this->handleCors();
+                exit;
+            }
+
+            // Add CORS headers to response
+            return $request;
+        });
+    }
+
+    /**
+     * Add authentication middleware
+     */
+    public function addAuthenticationMiddleware($config = [])
+    {
+        $this->registerMiddleware('before', function ($request) use ($config) {
+            // Check for valid authentication token
+            $token = $request['headers']['Authorization'] ?? '';
+            $requiredRole = $config['required_role'] ?? 'user';
+
+            if (empty($token)) {
+                http_response_code(401);
+                return ['error' => 'Authentication required'];
+            }
+
+            // Validate token (simplified for demo)
+            if (!$this->validateAuthToken($token, $requiredRole)) {
+                http_response_code(403);
+                return ['error' => 'Invalid or expired token'];
+            }
+
+            return $request;
+        });
+    }
+
+    /**
+     * Validate authentication token
+     */
+    private function validateAuthToken($token, $requiredRole)
+    {
+        // Simplified token validation - in production, use proper JWT validation
+        return !empty($token) && strlen($token) > 10;
+    }
+
+    /**
+     * Get middleware stack
+     */
+    public function getMiddlewareStack()
+    {
+        return $this->middleware;
+    }
+
+    /**
+     * Clear middleware stack
+     */
+    public function clearMiddleware()
+    {
+        $this->middleware = [];
+        return true;
+    }
+
+    /**
+     * Validate request data
+     */
+    public function validateRequest($data)
+    {
+        $errors = [];
+
+        // Check required fields
+        if (empty($data['method'])) {
+            $errors['method'] = 'Request method is required';
+        }
+
+        if (empty($data['path'])) {
+            $errors['path'] = 'Request path is required';
+        }
+
+        // Validate method
+        $allowedMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
+        if (!empty($data['method']) && !in_array(strtoupper($data['method']), $allowedMethods)) {
+            $errors['method'] = 'Invalid HTTP method';
+        }
+
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors
+        ];
+    }
+
+    /**
+     * Process request through middleware stack
+     */
+    public function process($request)
+    {
+        $this->currentRequest = $request;
+
+        // Apply 'before' middleware
+        foreach ($this->middleware['before'] ?? [] as $middleware) {
+            $result = $middleware($request);
+            if (is_array($result) && isset($result['error'])) {
+                return $result;
+            }
+            $request = $result;
+        }
+
+        // Route to appropriate handler
+        $handler = $this->findHandler($request['method'], $request['path']);
+        if ($handler) {
+            $response = call_user_func($handler, $request);
+        } else {
+            $response = [
+                'error' => 'Route not found',
+                'message' => 'No handler registered for ' . $request['method'] . ' ' . $request['path']
+            ];
+        }
+
+        // Apply 'after' middleware
+        foreach ($this->middleware['after'] ?? [] as $middleware) {
+            $response = $middleware($request, $response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Find handler for given method and path
+     */
+    private function findHandler($method, $path)
+    {
+        foreach ($this->routes as $route) {
+            if ($route['method'] === strtoupper($method) && $this->pathMatches($route['path'], $path)) {
+                return $route['handler'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if path matches route pattern
+     */
+    private function pathMatches($pattern, $path)
+    {
+        // Convert pattern to regex
+        $regex = $this->convertPathToRegex($pattern);
+        return preg_match($regex, $path);
+    }
 }
