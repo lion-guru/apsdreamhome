@@ -1,41 +1,34 @@
 <?php
 
-namespace App\Controllers;
+/**
+ * Edge Computing & 5G Integration Controller
+ * Handles edge computing, 5G connectivity, and distributed processing
+ */
 
-//
-// ERROR HANDLING CONFIGURATION
-//
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
+namespace App\Http\Controllers\Tech;
 
-function handleError_edge($message, $file = null, $line = null) {
-    $error_msg = date('Y-m-d H:i:s') . ' - ERROR: ' . $message;
-    if ($file) $error_msg .= ' in ' . $file;
-    if ($line) $error_msg .= ' on line ' . $line;
-    error_log($error_msg);
-    return false;
-}
-
-function safeExecute_edge($callback, $errorMessage = 'Operation failed') {
-    try {
-        return $callback();
-    } catch (\Exception $e) {
-        handleError_edge($errorMessage . ': ' . $e->getMessage(), $e->getFile(), $e->getLine());
-        return null;
-    }
-}
+use App\Http\Controllers\BaseController;
+use Exception;
 
 /**
  * Edge Computing & 5G Integration Controller
  * Handles edge computing optimization and 5G network integration
  */
-class EdgeComputingController extends BaseController {
+class EdgeComputingController extends BaseController
+{
+    protected $data;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->data = [];
+    }
 
     /**
      * Edge computing dashboard
      */
-    public function edgeDashboard() {
+    public function edgeDashboard()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -57,7 +50,8 @@ class EdgeComputingController extends BaseController {
     /**
      * 5G network integration
      */
-    public function fiveGIntegration() {
+    public function fiveGIntegration()
+    {
         $fiveg_data = [
             'network_status' => $this->get5GNetworkStatus(),
             'coverage_areas' => $this->get5GCoverageAreas(),
@@ -74,19 +68,20 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge AI processing
      */
-    public function edgeAI() {
+    public function edgeAI()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
             $ai_request = json_decode(file_get_contents('php://input'), true);
 
             if (!$ai_request) {
-                sendJsonResponse(['success' => false, 'error' => 'Invalid AI request'], 400);
+                $this->jsonResponse(['success' => false, 'error' => 'Invalid AI request'], 400);
             }
 
             $edge_result = $this->processEdgeAI($ai_request);
 
-            sendJsonResponse([
+            $this->jsonResponse([
                 'success' => true,
                 'data' => $edge_result
             ]);
@@ -101,7 +96,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Real-time data processing
      */
-    public function realTimeProcessing() {
+    public function realTimeProcessing()
+    {
         $realtime_data = [
             'data_streams' => $this->getDataStreams(),
             'processing_latency' => $this->getProcessingLatency(),
@@ -118,7 +114,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Distributed computing network
      */
-    public function distributedNetwork() {
+    public function distributedNetwork()
+    {
         if (!$this->isAdmin()) {
             $this->redirect(BASE_URL . 'login');
             return;
@@ -140,7 +137,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Mobile edge computing
      */
-    public function mobileEdge() {
+    public function mobileEdge()
+    {
         $mobile_data = [
             'mec_nodes' => $this->getMECNodes(),
             'mobile_optimization' => $this->getMobileOptimization(),
@@ -157,7 +155,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Content delivery optimization
      */
-    public function contentDelivery() {
+    public function contentDelivery()
+    {
         $cdn_data = [
             'cdn_performance' => $this->getCDNPerformance(),
             'content_optimization' => $this->getContentOptimization(),
@@ -174,7 +173,8 @@ class EdgeComputingController extends BaseController {
     /**
      * API - Get edge computing status
      */
-    public function apiEdgeStatus() {
+    public function apiEdgeStatus()
+    {
         header('Content-Type: application/json');
 
         $edge_status = [
@@ -185,7 +185,7 @@ class EdgeComputingController extends BaseController {
             'system_health' => 'excellent'
         ];
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $edge_status,
             'timestamp' => date('Y-m-d H:i:s')
@@ -195,18 +195,19 @@ class EdgeComputingController extends BaseController {
     /**
      * API - Process data at edge
      */
-    public function apiProcessAtEdge() {
+    public function apiProcessAtEdge()
+    {
         header('Content-Type: application/json');
 
         $process_data = json_decode(file_get_contents('php://input'), true);
 
         if (!$process_data) {
-            sendJsonResponse(['success' => false, 'error' => 'Invalid processing data'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid processing data'], 400);
         }
 
         $result = $this->processAtEdge($process_data);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $result['success'],
             'data' => $result,
             'processing_time' => microtime(true)
@@ -216,7 +217,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get edge computing nodes
      */
-    private function getEdgeNodes() {
+    private function getEdgeNodes()
+    {
         return [
             'mumbai_edge_1' => [
                 'location' => 'Mumbai, Maharashtra',
@@ -245,7 +247,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get edge performance metrics
      */
-    private function getEdgePerformanceMetrics() {
+    private function getEdgePerformanceMetrics()
+    {
         return [
             'average_response_time' => '12ms',
             'throughput' => '2.5 TB/hour',
@@ -258,7 +261,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get content delivery statistics
      */
-    private function getContentDeliveryStats() {
+    private function getContentDeliveryStats()
+    {
         return [
             'files_delivered' => 1542000,
             'bandwidth_saved' => '2.3 TB',
@@ -271,7 +275,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get real-time analytics
      */
-    private function getRealTimeAnalytics() {
+    private function getRealTimeAnalytics()
+    {
         return [
             'active_streams' => 2340,
             'events_per_second' => 15420,
@@ -284,7 +289,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get 5G network status
      */
-    private function get5GNetworkStatus() {
+    private function get5GNetworkStatus()
+    {
         return [
             'network_coverage' => '78% of target areas',
             'average_speed' => '1.2 Gbps',
@@ -297,7 +303,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get 5G coverage areas
      */
-    private function get5GCoverageAreas() {
+    private function get5GCoverageAreas()
+    {
         return [
             'mumbai_metropolitan' => ['coverage' => '95%', 'speed' => '1.5 Gbps', 'latency' => '6ms'],
             'delhi_ncr' => ['coverage' => '89%', 'speed' => '1.3 Gbps', 'latency' => '8ms'],
@@ -309,7 +316,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get 5G performance metrics
      */
-    private function get5GPerformanceMetrics() {
+    private function get5GPerformanceMetrics()
+    {
         return [
             'peak_download_speed' => '2.1 Gbps',
             'average_upload_speed' => '450 Mbps',
@@ -322,7 +330,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get 5G application optimization
      */
-    private function get5GApplicationOptimization() {
+    private function get5GApplicationOptimization()
+    {
         return [
             'ar_vr_optimization' => ['improvement' => '400%', 'latency_reduction' => '75%'],
             'real_time_video' => ['improvement' => '250%', 'quality_enhancement' => '60%'],
@@ -334,7 +343,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Process AI at edge
      */
-    private function processEdgeAI($ai_request) {
+    private function processEdgeAI($ai_request)
+    {
         // Simulate edge AI processing
         $processing_time = rand(5, 25); // milliseconds
 
@@ -351,7 +361,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Generate edge AI result
      */
-    private function generateEdgeAIResult($request) {
+    private function generateEdgeAIResult($request)
+    {
         switch ($request['type'] ?? '') {
             case 'image_recognition':
                 return [
@@ -379,7 +390,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get edge computing capabilities
      */
-    private function getEdgeCapabilities() {
+    private function getEdgeCapabilities()
+    {
         return [
             'ai_processing' => ['supported' => true, 'models' => ['Image Recognition', 'Speech Processing', 'Predictive Analytics']],
             'real_time_analytics' => ['supported' => true, 'throughput' => '10K events/sec'],
@@ -392,7 +404,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get data streams
      */
-    private function getDataStreams() {
+    private function getDataStreams()
+    {
         return [
             'property_views' => ['rate' => '120/sec', 'volume' => '4.5 GB/hour'],
             'user_interactions' => ['rate' => '85/sec', 'volume' => '2.1 GB/hour'],
@@ -404,7 +417,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get processing latency
      */
-    private function getProcessingLatency() {
+    private function getProcessingLatency()
+    {
         return [
             'edge_processing' => '12ms',
             'cloud_processing' => '150ms',
@@ -416,7 +430,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get throughput metrics
      */
-    private function getThroughputMetrics() {
+    private function getThroughputMetrics()
+    {
         return [
             'data_ingestion' => '2.8 TB/hour',
             'processing_capacity' => '5.6 TB/hour',
@@ -428,7 +443,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get scalability statistics
      */
-    private function getScalabilityStats() {
+    private function getScalabilityStats()
+    {
         return [
             'current_capacity' => '80%',
             'auto_scaling_enabled' => true,
@@ -440,7 +456,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get network topology
      */
-    private function getNetworkTopology() {
+    private function getNetworkTopology()
+    {
         return [
             'total_nodes' => 156,
             'edge_nodes' => 89,
@@ -453,7 +470,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get load balancing statistics
      */
-    private function getLoadBalancingStats() {
+    private function getLoadBalancingStats()
+    {
         return [
             'load_distribution' => '94.2% even',
             'response_time_variance' => '8ms',
@@ -465,7 +483,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get fault tolerance metrics
      */
-    private function getFaultToleranceMetrics() {
+    private function getFaultToleranceMetrics()
+    {
         return [
             'redundancy_level' => 'N+2',
             'failure_recovery_time' => '2.3 seconds',
@@ -477,7 +496,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get resource utilization
      */
-    private function getResourceUtilization() {
+    private function getResourceUtilization()
+    {
         return [
             'cpu_utilization' => '67%',
             'memory_utilization' => '73%',
@@ -489,7 +509,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get MEC nodes
      */
-    private function getMECNodes() {
+    private function getMECNodes()
+    {
         return [
             'telecom_towers' => ['count' => 234, 'capacity' => '10 Gbps each'],
             'wifi_hotspots' => ['count' => 156, 'capacity' => '1 Gbps each'],
@@ -501,7 +522,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get mobile optimization data
      */
-    private function getMobileOptimization() {
+    private function getMobileOptimization()
+    {
         return [
             'app_performance' => '+200% improvement',
             'battery_life' => '+45% extension',
@@ -513,7 +535,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get latency reduction metrics
      */
-    private function getLatencyReduction() {
+    private function getLatencyReduction()
+    {
         return [
             'average_latency' => '8ms',
             'peak_latency' => '25ms',
@@ -525,7 +548,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get battery optimization data
      */
-    private function getBatteryOptimization() {
+    private function getBatteryOptimization()
+    {
         return [
             'edge_processing_savings' => '35%',
             'optimized_networking' => '25%',
@@ -537,7 +561,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get CDN performance metrics
      */
-    private function getCDNPerformance() {
+    private function getCDNPerformance()
+    {
         return [
             'global_hit_rate' => '94.5%',
             'average_response_time' => '45ms',
@@ -549,7 +574,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get content optimization data
      */
-    private function getContentOptimization() {
+    private function getContentOptimization()
+    {
         return [
             'image_optimization' => 'WebP + AVIF formats',
             'video_optimization' => 'H.265 + AV1 codecs',
@@ -561,7 +587,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get geographic distribution
      */
-    private function getGeographicDistribution() {
+    private function getGeographicDistribution()
+    {
         return [
             'asia_pacific' => ['nodes' => 45, 'traffic' => '40%'],
             'north_america' => ['nodes' => 23, 'traffic' => '25%'],
@@ -573,7 +600,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Get cache efficiency metrics
      */
-    private function getCacheEfficiency() {
+    private function getCacheEfficiency()
+    {
         return [
             'cache_hit_rate' => '94.5%',
             'cache_miss_rate' => '5.5%',
@@ -585,7 +613,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Process data at edge
      */
-    private function processAtEdge($data) {
+    private function processAtEdge($data)
+    {
         // Simulate edge processing
         $processing_time = rand(5, 20); // milliseconds
         $edge_node = 'mumbai_edge_' . rand(1, 3);
@@ -603,7 +632,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Generate edge processing result
      */
-    private function generateEdgeResult($data) {
+    private function generateEdgeResult($data)
+    {
         switch ($data['type'] ?? '') {
             case 'property_search':
                 return [
@@ -634,7 +664,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing cost analysis
      */
-    public function costAnalysis() {
+    public function costAnalysis()
+    {
         $cost_data = [
             'infrastructure_costs' => [
                 'edge_servers' => '₹25,00,000',
@@ -665,7 +696,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing security features
      */
-    public function securityFeatures() {
+    public function securityFeatures()
+    {
         $security_data = [
             'edge_security_measures' => [
                 'distributed_firewalls' => ['coverage' => '100%', 'threat_detection' => '99.7%'],
@@ -696,7 +728,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing performance benchmarks
      */
-    public function performanceBenchmarks() {
+    public function performanceBenchmarks()
+    {
         $benchmark_data = [
             'latency_benchmarks' => [
                 'edge_vs_cloud' => ['edge' => '12ms', 'cloud' => '150ms', 'improvement' => '92%'],
@@ -724,7 +757,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing integration guide
      */
-    public function integrationGuide() {
+    public function integrationGuide()
+    {
         $integration_steps = [
             'planning' => [
                 'title' => 'Infrastructure Planning',
@@ -773,7 +807,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing use cases
      */
-    public function useCases() {
+    public function useCases()
+    {
         $use_cases = [
             'real_estate' => [
                 'title' => 'Real Estate Applications',
@@ -810,14 +845,15 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing ROI calculator
      */
-    public function roiCalculator() {
+    public function roiCalculator()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Content-Type: application/json');
 
             $investment_data = json_decode(file_get_contents('php://input'), true);
 
             if (!$investment_data) {
-                sendJsonResponse(['success' => false, 'error' => 'Invalid investment data'], 400);
+                $this->jsonResponse(['success' => false, 'error' => 'Invalid investment data'], 400);
             }
 
             $roi_result = $this->calculateEdgeROI($investment_data);
@@ -836,7 +872,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Calculate edge computing ROI
      */
-    private function calculateEdgeROI($investment_data) {
+    private function calculateEdgeROI($investment_data)
+    {
         $initial_investment = $investment_data['initial_investment'] ?? 1000000;
         $timeframe = $investment_data['timeframe'] ?? 3; // years
 
@@ -879,7 +916,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing future roadmap
      */
-    public function roadmap() {
+    public function roadmap()
+    {
         $roadmap_data = [
             '2024' => [
                 'q3' => 'Deploy edge computing infrastructure in top 10 cities',
@@ -908,7 +946,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing partnerships
      */
-    public function partnerships() {
+    public function partnerships()
+    {
         $partners = [
             'aws_wavelength' => [
                 'name' => 'AWS Wavelength',
@@ -942,7 +981,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing education and training
      */
-    public function education() {
+    public function education()
+    {
         $training_programs = [
             'edge_fundamentals' => [
                 'title' => 'Edge Computing Fundamentals',
@@ -976,7 +1016,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing industry impact
      */
-    public function industryImpact() {
+    public function industryImpact()
+    {
         $impact_data = [
             'real_estate_sector' => [
                 'current_challenges' => ['High latency in property searches', 'Poor mobile experience', 'Limited AR/VR capabilities'],
@@ -1006,7 +1047,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing sustainability
      */
-    public function sustainability() {
+    public function sustainability()
+    {
         $sustainability_data = [
             'energy_efficiency' => [
                 'edge_vs_cloud' => ['edge' => '25 kW', 'cloud' => '150 kW', 'savings' => '83%'],
@@ -1035,7 +1077,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing research and development
      */
-    public function research() {
+    public function research()
+    {
         $research_areas = [
             'edge_ai_optimization' => [
                 'title' => 'Edge AI Model Optimization',
@@ -1069,7 +1112,8 @@ class EdgeComputingController extends BaseController {
     /**
      * Edge computing case studies
      */
-    public function caseStudies() {
+    public function caseStudies()
+    {
         $case_studies = [
             'real_estate_ar' => [
                 'title' => 'AR Property Tours at Edge Scale',
