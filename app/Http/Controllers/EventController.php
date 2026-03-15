@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
-use App\Services\Events\EventService;
+use App\Services\EventService;
 use App\Services\SystemLogger as Logger;
 
 /**
@@ -28,8 +28,8 @@ class EventController extends BaseController
     public function dashboard()
     {
         try {
-            $stats = $this->eventService->getEventStats();
-            $recentEvents = $this->eventService->getRecentEvents(20);
+            $stats = $this->eventService->generateReport();
+            $recentEvents = $this->eventService->getEventHistory([], 20);
 
             return $this->render('events/dashboard', [
                 'page_title' => 'Event Dashboard',
@@ -52,7 +52,7 @@ class EventController extends BaseController
     public function publish()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $eventName = $data['event_name'] ?? '';
             $eventData = $data['event_data'] ?? [];
             $eventType = $data['event_type'] ?? 'user';
@@ -93,7 +93,7 @@ class EventController extends BaseController
     public function subscribe()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
 
             // Basic validation
             if (empty($data['event_name']) || empty($data['handler'])) {
@@ -145,7 +145,7 @@ class EventController extends BaseController
     public function unsubscribe()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $eventName = $data['event_name'] ?? '';
 
             if (empty($eventName)) {
@@ -177,10 +177,10 @@ class EventController extends BaseController
     public function getSubscriptions()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $eventName = $data['event_name'] ?? '';
 
-            $subscriptions = $this->eventService->getSubscribers($eventName);
+            $subscriptions = $this->eventService->getSubscriptions();
 
             return $this->jsonResponse([
                 'success' => true,
@@ -221,7 +221,7 @@ class EventController extends BaseController
     public function statistics()
     {
         try {
-            $stats = $this->eventService->getEventStats();
+            $stats = $this->eventService->generateReport();
 
             return $this->jsonResponse([
                 'success' => true,
@@ -242,10 +242,10 @@ class EventController extends BaseController
     public function recentEvents()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $limit = (int)($data['limit'] ?? 20);
 
-            $events = $this->eventService->getRecentEvents($limit);
+            $events = $this->eventService->getEventHistory([], $limit);
 
             return $this->jsonResponse([
                 'success' => true,
@@ -266,7 +266,7 @@ class EventController extends BaseController
     public function bulkPublish()
     {
         try {
-            $data = $this->request->all();
+            $data = $_REQUEST;
             $events = $data['events'] ?? [];
 
             if (empty($events)) {
