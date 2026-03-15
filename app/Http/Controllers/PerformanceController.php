@@ -3,20 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Services\Performance\PerformanceService;
-use App\Http\Controllers\Controller;
 
 /**
  * Performance Controller
  * Handles performance and caching operations
  */
-class PerformanceController extends Controller
+class PerformanceController extends BaseController
 {
     private PerformanceService $performanceService;
 
     public function __construct(PerformanceService $performanceService)
     {
         $this->performanceService = $performanceService;
-        $this->middleware('auth');
     }
 
     /**
@@ -27,254 +25,9 @@ class PerformanceController extends Controller
         try {
             $stats = $this->performanceService->getStats();
             
-            return view('performance.dashboard', compact('stats'));
-
+            return $this->render('performance/dashboard', compact('stats'));
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load performance dashboard: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Get cache value
-     */
-    public function getCache()
-    {
-        try {
-            $key = request('key');
-            $default = request('default');
-            
-            $value = $this->performanceService->get($key, $default);
-            
-            return response()->json([
-                'success' => true, 
-                'data' => [
-                    'key' => $key,
-                    'value' => $value,
-                    'found' => $value !== $default
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Set cache value
-     */
-    public function setCache()
-    {
-        try {
-            $key = request('key');
-            $value = request('value');
-            $ttl = request('ttl', 3600);
-            
-            $success = $this->performanceService->set($key, $value, $ttl);
-            
-            return response()->json([
-                'success' => $success, 
-                'message' => $success ? 'Cache set successfully' : 'Failed to set cache'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Delete cache value
-     */
-    public function deleteCache()
-    {
-        try {
-            $key = request('key');
-            $success = $this->performanceService->delete($key);
-            
-            return response()->json([
-                'success' => $success, 
-                'message' => $success ? 'Cache deleted successfully' : 'Failed to delete cache'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Clear all cache
-     */
-    public function clearCache()
-    {
-        try {
-            $success = $this->performanceService->clear();
-            
-            return response()->json([
-                'success' => $success, 
-                'message' => $success ? 'Cache cleared successfully' : 'Failed to clear cache'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Get cache statistics
-     */
-    public function getStats()
-    {
-        try {
-            $stats = $this->performanceService->getStats();
-            return response()->json(['success' => true, 'data' => $stats]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Optimize cache performance
-     */
-    public function optimize()
-    {
-        try {
-            $optimizations = $this->performanceService->optimize();
-            
-            return response()->json([
-                'success' => true, 
-                'message' => 'Cache optimization completed',
-                'data' => $optimizations
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Cache database query
-     */
-    public function cacheQuery()
-    {
-        try {
-            $sql = request('sql');
-            $params = request('params', []);
-            $ttl = request('ttl', 3600);
-            
-            // Security: Only allow SELECT queries
-            if (!preg_match('/^\s*SELECT\s+/i', $sql)) {
-                return response()->json([
-                    'success' => false, 
-                    'message' => 'Only SELECT queries are allowed for caching'
-                ]);
-            }
-            
-            $result = $this->performanceService->cacheQuery($sql, $params, $ttl);
-            
-            return response()->json([
-                'success' => true, 
-                'data' => [
-                    'sql' => $sql,
-                    'params' => $params,
-                    'result' => $result,
-                    'ttl' => $ttl
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Cache function result
-     */
-    public function cacheFunction()
-    {
-        try {
-            $functionName = request('function');
-            $args = request('args', []);
-            $ttl = request('ttl', 3600);
-            
-            // Security: Only allow predefined safe functions
-            $allowedFunctions = [
-                'time', 'date', 'strtotime', 'md5', 'sha1', 'json_encode',
-                'count', 'array_sum', 'array_merge', 'implode', 'explode'
-            ];
-            
-            if (!in_array($functionName, $allowedFunctions)) {
-                return response()->json([
-                    'success' => false, 
-                    'message' => 'Function not allowed for caching'
-                ]);
-            }
-            
-            $result = $this->performanceService->cacheFunction(
-                $functionName, 
-                $args, 
-                $ttl, 
-                'func_' . $functionName
-            );
-            
-            return response()->json([
-                'success' => true, 
-                'data' => [
-                    'function' => $functionName,
-                    'args' => $args,
-                    'result' => $result,
-                    'ttl' => $ttl
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Test cache performance
-     */
-    public function testPerformance()
-    {
-        try {
-            $testKey = 'performance_test_' . time();
-            $testValue = ['test' => true, 'timestamp' => time(), 'data' => range(1, 100)];
-            
-            // Test set
-            $setStart = microtime(true);
-            $setResult = $this->performanceService->set($testKey, $testValue, 60);
-            $setTime = (microtime(true) - $setStart) * 1000;
-            
-            // Test get
-            $getStart = microtime(true);
-            $getResult = $this->performanceService->get($testKey);
-            $getTime = (microtime(true) - $getStart) * 1000;
-            
-            // Test delete
-            $deleteStart = microtime(true);
-            $deleteResult = $this->performanceService->delete($testKey);
-            $deleteTime = (microtime(true) - $deleteStart) * 1000;
-            
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'set' => [
-                        'success' => $setResult,
-                        'time_ms' => round($setTime, 3)
-                    ],
-                    'get' => [
-                        'success' => $getResult === $testValue,
-                        'time_ms' => round($getTime, 3)
-                    ],
-                    'delete' => [
-                        'success' => $deleteResult,
-                        'time_ms' => round($deleteTime, 3)
-                    ],
-                    'total_time_ms' => round($setTime + $getTime + $deleteTime, 3)
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->render('performance/dashboard', compact('stats'));
         }
     }
 
@@ -284,79 +37,297 @@ class PerformanceController extends Controller
     public function getMetrics()
     {
         try {
-            $stats = $this->performanceService->getStats();
+            $metrics = $this->performanceService->getMetrics();
             
-            // Calculate additional metrics
-            $metrics = [
-                'cache_hit_ratio' => $this->calculateHitRatio($stats),
-                'average_response_time' => $this->calculateAverageResponseTime($stats),
-                'memory_usage' => $this->getMemoryUsage(),
-                'cache_efficiency' => $this->calculateCacheEfficiency($stats)
-            ];
-            
-            return response()->json([
-                'success' => true, 
-                'data' => array_merge($stats, $metrics)
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $metrics
             ]);
-
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get performance metrics',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Calculate cache hit ratio
+     * Get system performance
      */
-    private function calculateHitRatio(array $stats): float
+    public function getSystemPerformance()
     {
-        // This would be calculated from actual hit/miss statistics
-        // For now, return a placeholder
-        return 0.85; // 85% hit ratio
+        try {
+            $performance = $this->performanceService->getSystemPerformance();
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $performance
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get system performance',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Calculate average response time
+     * Get database performance
      */
-    private function calculateAverageResponseTime(array $stats): float
+    public function getDatabasePerformance()
     {
-        // This would be calculated from actual response time statistics
-        return 45.5; // 45.5ms average
+        try {
+            $dbPerformance = $this->performanceService->getDatabasePerformance();
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $dbPerformance
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get database performance',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Get memory usage
+     * Get cache performance
      */
-    private function getMemoryUsage(): array
+    public function getCachePerformance()
     {
-        return [
-            'current' => memory_get_usage(true),
-            'peak' => memory_get_peak_usage(true),
-            'formatted_current' => $this->formatBytes(memory_get_usage(true)),
-            'formatted_peak' => $this->formatBytes(memory_get_peak_usage(true))
-        ];
+        try {
+            $cachePerformance = $this->performanceService->getCachePerformance();
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $cachePerformance
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get cache performance',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Calculate cache efficiency
+     * Optimize performance
      */
-    private function calculateCacheEfficiency(array $stats): float
+    public function optimize()
     {
-        // This would be calculated from actual efficiency metrics
-        return 0.92; // 92% efficiency
+        try {
+            $result = $this->performanceService->optimizePerformance();
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Performance optimized successfully',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to optimize performance',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Format bytes to human readable format
+     * Clear performance cache
      */
-    private function formatBytes(int $bytes): string
+    public function clearCache()
     {
-        $units = ['B', 'KB', 'MB', 'GB'];
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-        
-        $bytes /= pow(1024, $pow);
-        
-        return round($bytes, 2) . ' ' . $units[$pow];
+        try {
+            $result = $this->performanceService->clearPerformanceCache();
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Performance cache cleared successfully',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to clear performance cache',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate performance report
+     */
+    public function generateReport()
+    {
+        try {
+            $request = $_REQUEST;
+            $type = $request['type'] ?? 'summary';
+            $startDate = $request['start_date'] ?? null;
+            $endDate = $request['end_date'] ?? null;
+            
+            $report = $this->performanceService->generateReport($type, $startDate, $endDate);
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Performance report generated successfully',
+                'data' => $report
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to generate performance report',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get performance alerts
+     */
+    public function getAlerts()
+    {
+        try {
+            $alerts = $this->performanceService->getPerformanceAlerts();
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $alerts
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get performance alerts',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Monitor performance
+     */
+    public function monitor()
+    {
+        try {
+            $request = $_REQUEST;
+            $metrics = $request['metrics'] ?? ['cpu', 'memory', 'disk', 'network'];
+            $interval = (int)($request['interval'] ?? 60);
+            
+            $data = $this->performanceService->monitorPerformance($metrics, $interval);
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to monitor performance',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get performance trends
+     */
+    public function getTrends()
+    {
+        try {
+            $request = $_REQUEST;
+            $period = $request['period'] ?? '24h';
+            $metric = $request['metric'] ?? 'cpu';
+            
+            $trends = $this->performanceService->getPerformanceTrends($period, $metric);
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $trends
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get performance trends',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Set performance threshold
+     */
+    public function setThreshold()
+    {
+        try {
+            $request = $_REQUEST;
+            $metric = $request['metric'] ?? '';
+            $threshold = $request['threshold'] ?? null;
+            $operator = $request['operator'] ?? '>';
+            $action = $request['action'] ?? 'alert';
+            
+            $result = $this->performanceService->setPerformanceThreshold($metric, $threshold, $operator, $action);
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Performance threshold set successfully',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to set performance threshold',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get performance settings
+     */
+    public function getSettings()
+    {
+        try {
+            $settings = $this->performanceService->getPerformanceSettings();
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $settings
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to get performance settings',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update performance settings
+     */
+    public function updateSettings()
+    {
+        try {
+            $request = $_REQUEST;
+            $settings = $request['settings'] ?? [];
+            
+            $result = $this->performanceService->updatePerformanceSettings($settings);
+            
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Performance settings updated successfully',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to update performance settings',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
