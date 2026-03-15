@@ -12,6 +12,13 @@ use Exception;
 
 class AdvancedSecurityController extends BaseController
 {
+    protected $data;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->data = [];
+    }
 
     /**
      * Advanced security dashboard
@@ -1216,7 +1223,7 @@ class AdvancedSecurityController extends BaseController
             'system_health' => 'Excellent'
         ];
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $security_status,
             'timestamp' => date('Y-m-d H:i:s')
@@ -1233,12 +1240,12 @@ class AdvancedSecurityController extends BaseController
         $incident_data = json_decode(file_get_contents('php://input'), true);
 
         if (!$incident_data) {
-            sendJsonResponse(['success' => false, 'error' => 'Invalid incident data'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid incident data'], 400);
         }
 
         $incident_id = $this->createSecurityIncident($incident_data);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $incident_id ? true : false,
             'incident_id' => $incident_id,
             'message' => $incident_id ? 'Incident reported successfully' : 'Failed to report incident'
@@ -1346,7 +1353,7 @@ class AdvancedSecurityController extends BaseController
             $investment_data = json_decode(file_get_contents('php://input'), true);
 
             if (!$investment_data) {
-                sendJsonResponse(['success' => false, 'error' => 'Invalid investment data'], 400);
+                $this->jsonResponse(['success' => false, 'error' => 'Invalid investment data'], 400);
             }
 
             $roi_result = $this->calculateSecurityROI($investment_data);
@@ -1661,7 +1668,7 @@ class AdvancedSecurityController extends BaseController
             ]
         ];
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $endpoints
         ]);
