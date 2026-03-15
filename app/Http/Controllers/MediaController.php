@@ -120,7 +120,7 @@ class MediaController extends BaseController
             $category = $_REQUEST['category'] ?? '';
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $documents = $this->mediaService->getDocuments($category, $limit);
-            return $this->jsonResponse()->json(['success' => true, 'data' => $documents]);
+            return $this->jsonResponse(['success' => true, 'data' => $documents]);
         } catch (\Exception $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
