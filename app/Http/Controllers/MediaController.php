@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Services\Communication\MediaService;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 
 /**
  * Media Controller
  * Handles all media library operations
  */
-class MediaController extends Controller
+class MediaController extends BaseController
 {
     private MediaService $mediaService;
 
@@ -25,16 +25,17 @@ class MediaController extends Controller
     public function index()
     {
         try {
-            $filters = request()->only(['category', 'type', 'search']);
-            $page = request('page', 1);
-            $limit = request('limit', 20);
+            $filters = $_REQUEST['category'] ?? '';
+            $type = $_REQUEST['type'] ?? '';
+            $search = $_REQUEST['search'] ?? '';
+            $page = (int)($_REQUEST['page'] ?? 1);
+            $limit = (int)($_REQUEST['limit'] ?? 20);
 
             $media = $this->mediaService->getAllMedia($filters, $page, $limit);
-            
-            return view('media.index', compact('media', 'filters', 'page', 'limit'));
 
+            return $this->render('media/index', compact('media', 'filters', 'page', 'limit'));
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to load media library: ' . $e->getMessage());
+            return $this->render('media/index', compact('media', 'filters', 'page', 'limit'));
         }
     }
 
@@ -44,13 +45,13 @@ class MediaController extends Controller
     public function getMediaForTemplates()
     {
         try {
-            $category = request('category');
-            $limit = request('limit', 10);
-            
+            $category = $_REQUEST['category'] ?? '';
+            $limit = (int)($_REQUEST['limit'] ?? 10);
+
             $media = $this->mediaService->getMediaForTemplates($category, $limit);
-            return response()->json(['success' => true, 'data' => $media]);
+            return $this->jsonResponse()->json(['success' => true, 'data' => $media]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -62,9 +63,9 @@ class MediaController extends Controller
         try {
             $limit = request('limit', 10);
             $images = $this->mediaService->getHeaderImages($limit);
-            return response()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -76,9 +77,9 @@ class MediaController extends Controller
         try {
             $limit = request('limit', 10);
             $photos = $this->mediaService->getTeamPhotos($limit);
-            return response()->json(['success' => true, 'data' => $photos]);
+            return $this->jsonResponse()->json(['success' => true, 'data' => $photos]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -90,9 +91,9 @@ class MediaController extends Controller
         try {
             $limit = request('limit', 10);
             $images = $this->mediaService->getPropertyImages($limit);
-            return response()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -104,9 +105,9 @@ class MediaController extends Controller
         try {
             $limit = request('limit', 10);
             $images = $this->mediaService->getProjectImages($limit);
-            return response()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -116,12 +117,12 @@ class MediaController extends Controller
     public function getDocuments()
     {
         try {
-            $category = request('category');
-            $limit = request('limit', 10);
+            $category = $_REQUEST['category'] ?? '';
+            $limit = (int)($_REQUEST['limit'] ?? 10);
             $documents = $this->mediaService->getDocuments($category, $limit);
-            return response()->json(['success' => true, 'data' => $documents]);
+            return $this->jsonResponse()->json(['success' => true, 'data' => $documents]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -133,9 +134,9 @@ class MediaController extends Controller
         try {
             $limit = request('limit', 5);
             $images = $this->mediaService->getCarouselImages($limit);
-            return response()->json(['success' => true, 'data' => $images]);
+            return $this->jsonResponse()->json(['success' => true, 'data' => $images]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -146,20 +147,21 @@ class MediaController extends Controller
     {
         try {
             if (!request()->hasFile('media_file')) {
-                return response()->json(['success' => false, 'message' => 'No file uploaded']);
+                return $this->jsonResponse()->json(['success' => false, 'message' => 'No file uploaded']);
             }
 
-            $file = request()->file('media_file');
-            $metadata = request()->only(['title', 'description', 'category']);
+            $file = $_FILES['media_file'] ?? null;
+            $metadata = $_REQUEST['title'] ?? '';
+            $description = $_REQUEST['description'] ?? '';
+            $category = $_REQUEST['category'] ?? '';
 
             if ($this->mediaService->uploadMedia($file, $metadata)) {
-                return response()->json(['success' => true, 'message' => 'File uploaded successfully']);
+                return $this->jsonResponse()->json(['success' => true, 'message' => 'File uploaded successfully']);
             } else {
-                return response()->json(['success' => false, 'message' => 'Failed to upload file']);
+                return $this->jsonResponse()->json(['success' => false, 'message' => 'Failed to upload file']);
             }
-
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -170,15 +172,14 @@ class MediaController extends Controller
     {
         try {
             $url = $this->mediaService->getMediaUrl($id);
-            
-            if ($url) {
-                return response()->json(['success' => true, 'url' => $url]);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Media not found']);
-            }
 
+            if ($url) {
+                return $this->jsonResponse()->json(['success' => true, 'url' => $url]);
+            } else {
+                return $this->jsonResponse()->json(['success' => false, 'message' => 'Media not found']);
+            }
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->jsonResponse()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 }
