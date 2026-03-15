@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use App\Core\Database;
 use Exception;
 
