@@ -24,13 +24,13 @@ class FarmerController extends BaseController
     {
         try {
             $filters = [
-                'status' => $this->request->get('status'),
-                'district' => $this->request->get('district'),
-                'state' => $this->request->get('state'),
-                'search' => $this->request->get('search')
+                'status' => isset($_REQUEST['status']) ? $_REQUEST['status'] : null,
+                'district' => isset($_REQUEST['district']) ? $_REQUEST['district'] : null,
+                'state' => isset($_REQUEST['state']) ? $_REQUEST['state'] : null,
+                'search' => isset($_REQUEST['search']) ? $_REQUEST['search'] : null
             ];
 
-            $perPage = (int) $this->request->get('per_page', 20);
+            $perPage = (int) (isset($_REQUEST['per_page']) ? $_REQUEST['per_page'] : 20);
             $farmers = $this->farmerService->getAllFarmers($filters, $perPage);
 
             $this->jsonResponse([
@@ -81,14 +81,14 @@ class FarmerController extends BaseController
     {
         try {
             $data = [
-                'name' => $this->request->get('name'),
-                'email' => $this->request->get('email'),
-                'phone' => $this->request->get('phone'),
-                'address' => $this->request->get('address'),
-                'district' => $this->request->get('district'),
-                'state' => $this->request->get('state'),
-                'farm_size' => $this->request->get('farm_size'),
-                'crop_type' => $this->request->get('crop_type'),
+                'name' => isset($_REQUEST['name']) ? $_REQUEST['name'] : null,
+                'email' => isset($_REQUEST['email']) ? $_REQUEST['email'] : null,
+                'phone' => isset($_REQUEST['phone']) ? $_REQUEST['phone'] : null,
+                'address' => isset($_REQUEST['address']) ? $_REQUEST['address'] : null,
+                'district' => isset($_REQUEST['district']) ? $_REQUEST['district'] : null,
+                'state' => isset($_REQUEST['state']) ? $_REQUEST['state'] : null,
+                'farm_size' => isset($_REQUEST['farm_size']) ? $_REQUEST['farm_size'] : null,
+                'crop_type' => isset($_REQUEST['crop_type']) ? $_REQUEST['crop_type'] : null,
                 'status' => 'active'
             ];
 
@@ -115,15 +115,15 @@ class FarmerController extends BaseController
     {
         try {
             $data = [
-                'name' => $this->request->get('name'),
-                'email' => $this->request->get('email'),
-                'phone' => $this->request->get('phone'),
-                'address' => $this->request->get('address'),
-                'district' => $this->request->get('district'),
-                'state' => $this->request->get('state'),
-                'farm_size' => $this->request->get('farm_size'),
-                'crop_type' => $this->request->get('crop_type'),
-                'status' => $this->request->get('status')
+                'name' => isset($_REQUEST['name']) ? $_REQUEST['name'] : null,
+                'email' => isset($_REQUEST['email']) ? $_REQUEST['email'] : null,
+                'phone' => isset($_REQUEST['phone']) ? $_REQUEST['phone'] : null,
+                'address' => isset($_REQUEST['address']) ? $_REQUEST['address'] : null,
+                'district' => isset($_REQUEST['district']) ? $_REQUEST['district'] : null,
+                'state' => isset($_REQUEST['state']) ? $_REQUEST['state'] : null,
+                'farm_size' => isset($_REQUEST['farm_size']) ? $_REQUEST['farm_size'] : null,
+                'crop_type' => isset($_REQUEST['crop_type']) ? $_REQUEST['crop_type'] : null,
+                'status' => isset($_REQUEST['status']) ? $_REQUEST['status'] : null
             ];
 
             $farmer = $this->farmerService->updateFarmer($id, $data);
@@ -204,12 +204,12 @@ class FarmerController extends BaseController
     public function search(): void
     {
         try {
-            $query = $this->request->get('query');
+            $query = isset($_REQUEST['query']) ? $_REQUEST['query'] : null;
             $filters = [
-                'district' => $this->request->get('district'),
-                'state' => $this->request->get('state'),
-                'crop_type' => $this->request->get('crop_type'),
-                'status' => $this->request->get('status')
+                'district' => isset($_REQUEST['district']) ? $_REQUEST['district'] : null,
+                'state' => isset($_REQUEST['state']) ? $_REQUEST['state'] : null,
+                'crop_type' => isset($_REQUEST['crop_type']) ? $_REQUEST['crop_type'] : null,
+                'status' => isset($_REQUEST['status']) ? $_REQUEST['status'] : null
             ];
 
             $results = $this->farmerService->searchFarmers($query, $filters);
@@ -233,8 +233,8 @@ class FarmerController extends BaseController
     public function bulkOperation(): void
     {
         try {
-            $operation = $this->request->get('operation');
-            $farmerIds = $this->request->get('farmer_ids', []);
+            $operation = isset($_REQUEST['operation']) ? $_REQUEST['operation'] : null;
+            $farmerIds = isset($_REQUEST['farmer_ids']) ? $_REQUEST['farmer_ids'] : [];
 
             $results = $this->farmerService->bulkOperation($operation, $farmerIds);
 
