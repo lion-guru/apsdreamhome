@@ -8,6 +8,9 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
+use App\Core\PaymentGateway;
+use App\Core\EmailNotification;
 use Exception;
 use PDO;
 
@@ -75,18 +78,23 @@ class AdvancedPaymentController extends BaseController
                 return;
             }
 
-            // Process payment based on gateway
-            switch ($gateway) {
-                case 'razorpay':
-                    return $this->processRazorpayPayment($payment_method);
-                case 'paypal':
-                    return $this->processPayPalPayment($payment_method);
-                case 'stripe':
-                    return $this->processStripePayment($payment_method);
-                case 'payu':
-                    return $this->processPayUPayment($payment_method);
-                default:
-                    throw new Exception('Unsupported payment gateway');
+            // Process payment using unified gateway
+            $payment = new PaymentGateway();
+            $order_data = $_SESSION['payment_order'] ?? [];
+            if (empty($order_data)) {
+                throw new Exception('Order data not found');
+            }
+
+            $payment_data = [];
+
+            if ($payment_result['success']) {
+                // Redirect to payment gateway
+                if (isset($payment_result['redirect_url'])) {
+                    header('Location: ' . $payment_result['redirect_url']);
+                    exit;
+                }
+            } else {
+                throw new Exception('Payment processing failed: ' . $payment_result['error']);
             }
         } catch (Exception $e) {
             error_log('Payment processing error: ' . $e->getMessage());
@@ -102,7 +110,7 @@ class AdvancedPaymentController extends BaseController
     {
         try {
             // Initialize Razorpay
-            $razorpay = new \App\Core\RazorpayGateway();
+            $razorpay = new PaymentGateway();
 
             $order_data = $_SESSION['payment_order'] ?? [];
             if (empty($order_data)) {
@@ -134,7 +142,7 @@ class AdvancedPaymentController extends BaseController
     private function processPayPalPayment($payment_method)
     {
         try {
-            $paypal = new \App\Core\PayPalGateway();
+            $paypal = new PaymentGateway();
 
             $order_data = $_SESSION['payment_order'] ?? [];
             if (empty($order_data)) {
@@ -167,7 +175,7 @@ class AdvancedPaymentController extends BaseController
     private function processStripePayment($payment_method)
     {
         try {
-            $stripe = new \App\Core\StripeGateway();
+            $stripe = new PaymentGateway();
 
             $order_data = $_SESSION['payment_order'] ?? [];
             if (empty($order_data)) {
@@ -199,7 +207,7 @@ class AdvancedPaymentController extends BaseController
     private function processPayUPayment($payment_method)
     {
         try {
-            $payu = new \App\Core\PayUGateway();
+            $payu = new PaymentGateway();
 
             $order_data = $_SESSION['payment_order'] ?? [];
             if (empty($order_data)) {
@@ -360,13 +368,13 @@ class AdvancedPaymentController extends BaseController
                     $razorpay = new \App\Core\RazorpayGateway();
                     return $razorpay->verifyPayment($payment_id, $order_id);
                 case 'paypal':
-                    $paypal = new \App\Core\PayPalGateway();
+                    $paypal = new PaymentGateway();
                     return $paypal->verifyPayment($payment_id, $order_id);
                 case 'stripe':
-                    $stripe = new \App\Core\StripeGateway();
+                    $stripe = new PaymentGateway();
                     return $stripe->verifyPayment($payment_id, $order_id);
                 case 'payu':
-                    $payu = new \App\Core\PayUGateway();
+                    $payu = new PaymentGateway();
                     return $payu->verifyPayment($payment_id, $order_id);
                 default:
                     throw new \Exception('Unsupported gateway for verification');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use Exception;
 
 /**
@@ -1121,7 +1122,8 @@ class SustainableTechController extends BaseController
                 $data = ['error' => 'Invalid data type'];
         }
 
-        sendJsonResponse([
+        header('Content-Type: application/json');
+        echo json_encode([
             'success' => true,
             'data' => $data,
             'timestamp' => date('Y-m-d H:i:s')

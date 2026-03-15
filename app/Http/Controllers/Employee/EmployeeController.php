@@ -8,7 +8,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-function handleError($message, $file = null, $line = null) {
+function handleError($message, $file = null, $line = null)
+{
     $error_msg = date('Y-m-d H:i:s') . ' - ERROR: ' . $message;
     if ($file) $error_msg .= ' in ' . $file;
     if ($line) $error_msg .= ' on line ' . $line;
@@ -16,7 +17,8 @@ function handleError($message, $file = null, $line = null) {
     return false;
 }
 
-function safeExecute($callback, $errorMessage = 'Operation failed') {
+function safeExecute($callback, $errorMessage = 'Operation failed')
+{
     try {
         return $callback();
     } catch (\Exception $e) {
@@ -26,6 +28,10 @@ function safeExecute($callback, $errorMessage = 'Operation failed') {
 }
 
 //
+use App\Http\Controllers\BaseController;
+use App\Core\Security;
+use App\Models\Employee;
+use App\Models\Admin;
 use App\Models\EmployeeAttendance;
 use App\Models\Leave;
 use App\Models\Document;
@@ -1271,78 +1277,78 @@ class EmployeeController extends BaseController
 // Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Admin\EmployeeController.php
 
 function index()
-    {
-        $filters = [
-            'search' => $this->request->get('search', ''),
-            'department' => $this->request->get('department', '')
-        ];
-        
-        $employees = $this->model('Employee')->getAllEmployees($filters);
-        
-        return $this->render('admin/employees/index', [
-            'employees' => $employees,
-            'filters' => $filters,
-            'page_title' => $this->mlSupport->translate('Employee Management') . ' - ' . $this->getConfig('app_name')
-        ]);
-    }
-function create()
-    {
-        $employeeModel = $this->model('Employee');
-        $roles = $employeeModel->getRoles();
-        $departments = $employeeModel->getDepartments();
+{
+    $filters = [
+        'search' => $this->request->get('search', ''),
+        'department' => $this->request->get('department', '')
+    ];
 
-        return $this->render('admin/employees/create', [
-            'roles' => $roles,
-            'departments' => $departments,
-            'page_title' => $this->mlSupport->translate('Add New Employee') . ' - ' . $this->getConfig('app_name')
-        ]);
-    }
+    $employees = $this->model('Employee')->getAllEmployees($filters);
+
+    return $this->render('admin/employees/index', [
+        'employees' => $employees,
+        'filters' => $filters,
+        'page_title' => $this->mlSupport->translate('Employee Management') . ' - ' . $this->getConfig('app_name')
+    ]);
+}
+function create()
+{
+    $employeeModel = $this->model('Employee');
+    $roles = $employeeModel->getRoles();
+    $departments = $employeeModel->getDepartments();
+
+    return $this->render('admin/employees/create', [
+        'roles' => $roles,
+        'departments' => $departments,
+        'page_title' => $this->mlSupport->translate('Add New Employee') . ' - ' . $this->getConfig('app_name')
+    ]);
+}
 function store()
-    {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->back();
-        }
+{
+    if ($this->request->method() !== 'POST') {
+        $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+        return $this->back();
     }
+}
 function show($id)
-    {
-        $employeeModel = $this->model('Employee');
-        $employee = $employeeModel->getEmployeeById($id);
-        
-        if (!$employee) {
-            $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
-            return $this->redirect('/admin/employees');
-        }
+{
+    $employeeModel = $this->model('Employee');
+    $employee = $employeeModel->getEmployeeById($id);
+
+    if (!$employee) {
+        $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
+        return $this->redirect('/admin/employees');
     }
+}
 function edit($id)
-    {
-        $employeeModel = $this->model('Employee');
-        $employee = $employeeModel->getEmployeeById($id);
-        
-        if (!$employee) {
-            $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
-            return $this->redirect('/admin/employees');
-        }
+{
+    $employeeModel = $this->model('Employee');
+    $employee = $employeeModel->getEmployeeById($id);
+
+    if (!$employee) {
+        $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
+        return $this->redirect('/admin/employees');
     }
+}
 function destroy($id)
-    {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->back();
-        }
+{
+    if ($this->request->method() !== 'POST') {
+        $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+        return $this->back();
     }
+}
 function offboard($id)
-    {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->back();
-        }
+{
+    if ($this->request->method() !== 'POST') {
+        $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
+        return $this->back();
     }
+}
 
 function requireAuth()
-    {
-        if (!$this->isLoggedIn()) {
-            $this->setFlash('error', 'Please login to access this page');
-            $this->redirect('/login');
-        }
+{
+    if (!$this->isLoggedIn()) {
+        $this->setFlash('error', 'Please login to access this page');
+        $this->redirect('/login');
     }
+}
