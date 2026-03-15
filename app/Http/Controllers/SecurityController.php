@@ -7,7 +7,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\BaseController;
-use App\Services\SecurityServiceNew;
+use App\Services\SecurityService;
+use App\Core\Security;
 use Exception;
 
 class SecurityController extends BaseController
@@ -17,7 +18,7 @@ class SecurityController extends BaseController
     public function __construct()
     {
         parent::__construct();
-        $this->securityService = new SecurityServiceNew();
+        $this->securityService = new SecurityService();
     }
 
     /**
@@ -32,7 +33,6 @@ class SecurityController extends BaseController
                 'success' => true,
                 'results' => $results
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -65,7 +65,6 @@ class SecurityController extends BaseController
                 'recent_events' => $recentEvents,
                 'vulnerabilities' => $vulnerabilities
             ]);
-
         } catch (Exception $e) {
             error_log("Security Dashboard Error: " . $e->getMessage());
             $this->render('pages/security-dashboard', [
@@ -109,7 +108,6 @@ class SecurityController extends BaseController
                 'suspicious_activities' => $suspiciousActivities['count'] ?? 0,
                 'security_score' => $this->calculateSecurityScore($totalEvents['count'] ?? 0, $blockedAttempts['count'] ?? 0, $failedLogins['count'] ?? 0)
             ];
-
         } catch (Exception $e) {
             error_log("Security Statistics Error: " . $e->getMessage());
             return [
@@ -142,7 +140,6 @@ class SecurityController extends BaseController
             );
 
             return $events;
-
         } catch (Exception $e) {
             error_log("Recent Security Events Error: " . $e->getMessage());
             return [];
@@ -169,7 +166,6 @@ class SecurityController extends BaseController
             );
 
             return $vulnerabilities;
-
         } catch (Exception $e) {
             error_log("System Vulnerabilities Error: " . $e->getMessage());
             return [];
@@ -225,7 +221,6 @@ class SecurityController extends BaseController
                 'message' => 'IP address blocked successfully',
                 'block_data' => $blockData
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -254,7 +249,6 @@ class SecurityController extends BaseController
                 'success' => true,
                 'message' => 'IP address unblocked successfully'
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -286,7 +280,6 @@ class SecurityController extends BaseController
                 'success' => true,
                 'blocked_ips' => $blockedIPs
             ]);
-
         } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
@@ -301,23 +294,23 @@ class SecurityController extends BaseController
     private function getRequestData(): array
     {
         $data = [];
-        
+
         // Get JSON data
         $input = file_get_contents('php://input');
         if (!empty($input)) {
             $data = json_decode($input, true) ?: [];
         }
-        
+
         // Merge with POST data
         if (!empty($_POST)) {
             $data = array_merge($data, $_POST);
         }
-        
+
         // Merge with GET data
         if (!empty($_GET)) {
             $data = array_merge($data, $_GET);
         }
-        
+
         return $data;
     }
 }
