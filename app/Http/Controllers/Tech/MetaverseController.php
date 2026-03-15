@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Tech;
 
 use App\Http\Controllers\BaseController;
+use App\Core\Security;
 use Exception;
 
 class MetaverseController extends BaseController
@@ -183,7 +184,7 @@ class MetaverseController extends BaseController
 
         $vr_data = $this->getVRData($property_id);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'data' => $vr_data
         ]);
@@ -197,18 +198,18 @@ class MetaverseController extends BaseController
         header('Content-Type: application/json');
 
         if (!$this->isLoggedIn()) {
-            sendJsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
         }
 
         $property_data = json_decode(file_get_contents('php://input'), true);
 
         if (!$property_data) {
-            sendJsonResponse(['success' => false, 'error' => 'Invalid property data'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Invalid property data'], 400);
         }
 
         $virtual_property_id = $this->createVirtualProperty($property_data);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $virtual_property_id ? true : false,
             'virtual_property_id' => $virtual_property_id,
             'message' => $virtual_property_id ? 'Virtual property created' : 'Creation failed'
@@ -223,19 +224,19 @@ class MetaverseController extends BaseController
         header('Content-Type: application/json');
 
         if (!$this->isLoggedIn()) {
-            sendJsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+            $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
         }
 
         $space_id = isset($_POST['space_id']) ? Security::sanitize($_POST['space_id']) : '';
         $user_avatar = isset($_POST['avatar']) ? Security::sanitize($_POST['avatar']) : 'default';
 
         if (empty($space_id)) {
-            sendJsonResponse(['success' => false, 'error' => 'Space ID required'], 400);
+            $this->jsonResponse(['success' => false, 'error' => 'Space ID required'], 400);
         }
 
         $join_result = $this->joinCollaborativeSpace($space_id, $_SESSION['user_id'], $user_avatar);
 
-        sendJsonResponse([
+        $this->jsonResponse([
             'success' => $join_result['success'],
             'message' => $join_result['message'],
             'space_data' => $join_result['space_data'] ?? null
