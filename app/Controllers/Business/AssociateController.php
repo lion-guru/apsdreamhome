@@ -3,7 +3,7 @@
 namespace App\Controllers\Business;
 
 use App\Services\Business\AssociateService;
-use App\Services\Monitoring\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 
 /**
  * Associate Controller - APS Dream Home
@@ -14,14 +14,14 @@ class AssociateController
     private $associateService;
     private $authService;
     private $viewRenderer;
-    
+
     public function __construct()
     {
         $this->associateService = new AssociateService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new \App\Core\ViewRenderer();
     }
-    
+
     /**
      * Show associates list
      */
@@ -33,16 +33,16 @@ class AssociateController
             $this->redirect('/login');
             return;
         }
-        
+
         $page = max(1, intval($request['get']['page'] ?? 1));
         $limit = 20;
         $filters = [
             'status' => $request['get']['status'] ?? '',
             'search' => $request['get']['search'] ?? ''
         ];
-        
+
         $result = $this->associateService->getAllAssociates($page, $limit, $filters);
-        
+
         $data = [
             'title' => 'Associates - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -57,12 +57,12 @@ class AssociateController
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors']);
-        
+
         return $this->viewRenderer->render('business/associates/index', $data);
     }
-    
+
     /**
      * Show associate details
      */
@@ -74,23 +74,23 @@ class AssociateController
             $this->redirect('/login');
             return;
         }
-        
+
         $id = $request['params']['id'] ?? null;
-        
+
         if (!$id) {
             $_SESSION['errors'] = ['Associate ID is required'];
             $this->redirect('/associates');
             return;
         }
-        
+
         $result = $this->associateService->getAssociateDetails($id);
-        
+
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
             $this->redirect('/associates');
             return;
         }
-        
+
         $data = [
             'title' => 'Associate Details - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -101,12 +101,12 @@ class AssociateController
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors']);
-        
+
         return $this->viewRenderer->render('business/associates/show', $data);
     }
-    
+
     /**
      * Show create associate form
      */
@@ -118,7 +118,7 @@ class AssociateController
             $this->redirect('/login');
             return;
         }
-        
+
         $data = [
             'title' => 'Create Associate - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -126,12 +126,12 @@ class AssociateController
             'errors' => $_SESSION['errors'] ?? [],
             'old_input' => $_SESSION['old_input'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
-        
+
         return $this->viewRenderer->render('business/associates/create', $data);
     }
-    
+
     /**
      * Store new associate
      */
@@ -144,7 +144,7 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $data = [
             'name' => trim($request['post']['name'] ?? ''),
             'email' => trim($request['post']['email'] ?? ''),
@@ -154,9 +154,9 @@ class AssociateController
             'commission_rate' => floatval($request['post']['commission_rate'] ?? 0),
             'status' => $request['post']['status'] ?? 'active'
         ];
-        
+
         $result = $this->associateService->createAssociate($data);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
             $this->redirect('/associates');
@@ -165,10 +165,10 @@ class AssociateController
             $_SESSION['old_input'] = $data;
             $this->redirect('/associates/create');
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Show edit associate form
      */
@@ -180,23 +180,23 @@ class AssociateController
             $this->redirect('/login');
             return;
         }
-        
+
         $id = $request['params']['id'] ?? null;
-        
+
         if (!$id) {
             $_SESSION['errors'] = ['Associate ID is required'];
             $this->redirect('/associates');
             return;
         }
-        
+
         $result = $this->associateService->getAssociateDetails($id);
-        
+
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
             $this->redirect('/associates');
             return;
         }
-        
+
         $data = [
             'title' => 'Edit Associate - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -205,12 +205,12 @@ class AssociateController
             'errors' => $_SESSION['errors'] ?? [],
             'old_input' => $_SESSION['old_input'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
-        
+
         return $this->viewRenderer->render('business/associates/edit', $data);
     }
-    
+
     /**
      * Update associate
      */
@@ -223,16 +223,16 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $id = $request['params']['id'] ?? null;
-        
+
         if (!$id) {
             return [
                 'success' => false,
                 'message' => 'Associate ID is required'
             ];
         }
-        
+
         $data = [
             'name' => trim($request['post']['name'] ?? ''),
             'email' => trim($request['post']['email'] ?? ''),
@@ -241,9 +241,9 @@ class AssociateController
             'commission_rate' => floatval($request['post']['commission_rate'] ?? 0),
             'status' => $request['post']['status'] ?? 'active'
         ];
-        
+
         $result = $this->associateService->updateAssociate($id, $data);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
             $this->redirect("/associates/$id");
@@ -252,10 +252,10 @@ class AssociateController
             $_SESSION['old_input'] = $data;
             $this->redirect("/associates/$id/edit");
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Delete associate
      */
@@ -268,29 +268,29 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $id = $request['params']['id'] ?? null;
-        
+
         if (!$id) {
             return [
                 'success' => false,
                 'message' => 'Associate ID is required'
             ];
         }
-        
+
         $result = $this->associateService->deleteAssociate($id);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
         } else {
             $_SESSION['errors'] = [$result['message']];
         }
-        
+
         $this->redirect('/associates');
-        
+
         return $result;
     }
-    
+
     /**
      * Update commission rate (AJAX)
      */
@@ -303,20 +303,20 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $id = $request['post']['associate_id'] ?? null;
         $rate = floatval($request['post']['commission_rate'] ?? 0);
-        
+
         if (!$id) {
             return [
                 'success' => false,
                 'message' => 'Associate ID is required'
             ];
         }
-        
+
         return $this->associateService->updateCommissionRate($id, $rate);
     }
-    
+
     /**
      * Get performance report
      */
@@ -328,20 +328,20 @@ class AssociateController
             $this->redirect('/login');
             return;
         }
-        
+
         $filters = [
             'start_date' => $request['get']['start_date'] ?? date('Y-m-01'),
             'end_date' => $request['get']['end_date'] ?? date('Y-m-d')
         ];
-        
+
         $result = $this->associateService->getPerformanceReport($filters);
-        
+
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
             $this->redirect('/associates');
             return;
         }
-        
+
         $data = [
             'title' => 'Associate Performance Report - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -351,12 +351,12 @@ class AssociateController
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors']);
-        
+
         return $this->viewRenderer->render('business/associates/performance', $data);
     }
-    
+
     /**
      * Get top performers (AJAX)
      */
@@ -369,13 +369,13 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $limit = intval($request['get']['limit'] ?? 10);
         $period = $request['get']['period'] ?? 'month';
-        
+
         return $this->associateService->getTopPerformers($limit, $period);
     }
-    
+
     /**
      * Export associates (AJAX)
      */
@@ -388,15 +388,15 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $format = $request['post']['format'] ?? 'csv';
         $filters = [
             'status' => $request['post']['status'] ?? ''
         ];
-        
+
         return $this->associateService->exportAssociates($format, $filters);
     }
-    
+
     /**
      * Search associates (AJAX)
      */
@@ -409,27 +409,26 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $query = trim($request['get']['q'] ?? '');
         $limit = intval($request['get']['limit'] ?? 20);
-        
+
         if (empty($query)) {
             return [
                 'success' => false,
                 'message' => 'Search query is required'
             ];
         }
-        
+
         try {
             $associates = \App\Models\Associate::search($query, $limit);
-            
+
             return [
                 'success' => true,
-                'data' => array_map(function($associate) {
+                'data' => array_map(function ($associate) {
                     return $associate->toArray();
                 }, $associates)
             ];
-            
         } catch (\Exception $e) {
             return [
                 'success' => false,
@@ -437,7 +436,7 @@ class AssociateController
             ];
         }
     }
-    
+
     /**
      * Activate associate
      */
@@ -450,29 +449,29 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $id = $request['params']['id'] ?? null;
-        
+
         if (!$id) {
             return [
                 'success' => false,
                 'message' => 'Associate ID is required'
             ];
         }
-        
+
         $result = $this->associateService->updateAssociate($id, ['status' => 'active']);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = 'Associate activated successfully';
         } else {
             $_SESSION['errors'] = [$result['message']];
         }
-        
+
         $this->redirect('/associates');
-        
+
         return $result;
     }
-    
+
     /**
      * Deactivate associate
      */
@@ -485,29 +484,29 @@ class AssociateController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $id = $request['params']['id'] ?? null;
-        
+
         if (!$id) {
             return [
                 'success' => false,
                 'message' => 'Associate ID is required'
             ];
         }
-        
+
         $result = $this->associateService->updateAssociate($id, ['status' => 'inactive']);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = 'Associate deactivated successfully';
         } else {
             $_SESSION['errors'] = [$result['message']];
         }
-        
+
         $this->redirect('/associates');
-        
+
         return $result;
     }
-    
+
     /**
      * Redirect helper
      */
