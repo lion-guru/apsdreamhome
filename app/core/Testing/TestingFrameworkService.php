@@ -7,6 +7,12 @@ use App\Services\LoggingService;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
+use stdClass;
+
+// Define base path constant
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', dirname(__DIR__, 3));
+}
 
 /**
  * Testing Framework Service - APS Dream Home
@@ -22,7 +28,7 @@ class TestingFrameworkService
     private $assertions = 0;
     private $failures = 0;
     private $successes = 0;
-    
+
     public function __construct()
     {
         $this->database = Database::getInstance();
@@ -83,7 +89,6 @@ class TestingFrameworkService
                 INDEX idx_test_date (test_date)
             )";
             $this->database->execute($sql);
-
         } catch (Exception $e) {
             $this->logger->log("Error creating testing tables: " . $e->getMessage(), 'error', 'testing');
         }
@@ -96,22 +101,21 @@ class TestingFrameworkService
     {
         $startTime = microtime(true);
         $this->resetTestResults();
-        
+
         $this->logger->log("Starting test suite: $suiteName", 'info', 'testing');
-        
+
         try {
             if ($suiteName === 'all') {
                 $this->runAllTests();
             } else {
                 $this->runSpecificSuite($suiteName);
             }
-            
+
             $executionTime = (microtime(true) - $startTime) * 1000;
-            
+
             $this->generateTestReport($suiteName, $executionTime);
-            
+
             return $this->getTestSummary();
-            
         } catch (Exception $e) {
             $this->logger->log("Error running test suite: " . $e->getMessage(), 'error', 'testing');
             throw new RuntimeException("Test suite execution failed: " . $e->getMessage());
@@ -175,28 +179,28 @@ class TestingFrameworkService
      */
     private function runDatabaseTests()
     {
-        $this->testSuite('database', function() {
+        $this->testSuite('database', function () {
             // Test database connection
-            $this->test('Database Connection', function() {
+            $this->test('Database Connection', function () {
                 $connection = Database::getInstance();
                 $this->assertNotNull($connection, 'Database connection should not be null');
                 $this->assertInstanceOf('PDO', $connection->getConnection(), 'Should return PDO instance');
             });
 
             // Test database query execution
-            $this->test('Database Query Execution', function() {
+            $this->test('Database Query Execution', function () {
                 $result = $this->database->fetchOne("SELECT 1 as test");
                 $this->assertEquals(1, $result['test'], 'Simple query should return correct result');
             });
 
             // Test prepared statements
-            $this->test('Prepared Statements', function() {
+            $this->test('Prepared Statements', function () {
                 $result = $this->database->fetchOne("SELECT ? as test", [42]);
                 $this->assertEquals(42, $result['test'], 'Prepared statement should work correctly');
             });
 
             // Test transaction handling
-            $this->test('Transaction Handling', function() {
+            $this->test('Transaction Handling', function () {
                 $this->database->beginTransaction();
                 $result = $this->database->fetchOne("SELECT 1 as test");
                 $this->database->commit();
@@ -210,34 +214,34 @@ class TestingFrameworkService
      */
     private function runServiceTests()
     {
-        $this->testSuite('services', function() {
+        $this->testSuite('services', function () {
             // Test AlertService
-            $this->test('AlertService Creation', function() {
+            $this->test('AlertService Creation', function () {
                 $alertService = new \App\Services\AlertService();
                 $this->assertNotNull($alertService, 'AlertService should instantiate correctly');
             });
 
             // Test LoggingService
-            $this->test('LoggingService Creation', function() {
+            $this->test('LoggingService Creation', function () {
                 $loggingService = \App\Services\LoggingService::getInstance();
                 $this->assertNotNull($loggingService, 'LoggingService should return instance');
                 $this->assertInstanceOf('App\Services\LoggingService', $loggingService, 'Should return correct type');
             });
 
             // Test EmailService
-            $this->test('EmailService Creation', function() {
+            $this->test('EmailService Creation', function () {
                 $emailService = new \App\Services\EmailService();
                 $this->assertNotNull($emailService, 'EmailService should instantiate correctly');
             });
 
             // Test CareerService
-            $this->test('CareerService Creation', function() {
+            $this->test('CareerService Creation', function () {
                 $careerService = new \App\Services\HR\CareerService();
                 $this->assertNotNull($careerService, 'CareerService should instantiate correctly');
             });
 
             // Test MediaLibraryService
-            $this->test('MediaLibraryService Creation', function() {
+            $this->test('MediaLibraryService Creation', function () {
                 $mediaService = new \App\Services\Media\MediaLibraryService();
                 $this->assertNotNull($mediaService, 'MediaLibraryService should instantiate correctly');
             });
@@ -249,33 +253,33 @@ class TestingFrameworkService
      */
     private function runControllerTests()
     {
-        $this->testSuite('controllers', function() {
+        $this->testSuite('controllers', function () {
             // Test MarketingAutomationController
-            $this->test('MarketingAutomationController Creation', function() {
+            $this->test('MarketingAutomationController Creation', function () {
                 $controller = new \App\Controllers\Marketing\MarketingAutomationController();
                 $this->assertNotNull($controller, 'Controller should instantiate correctly');
             });
 
             // Test AdminDashboardController
-            $this->test('AdminDashboardController Creation', function() {
-                $controller = new \App\Controllers\Admin\AdminDashboardController();
+            $this->test('AdminDashboardController Creation', function () {
+                $controller = new \App\Http\Controllers\Admin\AdminDashboardController();
                 $this->assertNotNull($controller, 'Controller should instantiate correctly');
             });
 
             // Test CareerController
-            $this->test('CareerController Creation', function() {
+            $this->test('CareerController Creation', function () {
                 $controller = new \App\Controllers\HumanResources\CareerController();
                 $this->assertNotNull($controller, 'Controller should instantiate correctly');
             });
 
             // Test PlottingController
-            $this->test('PlottingController Creation', function() {
+            $this->test('PlottingController Creation', function () {
                 $controller = new \App\Controllers\Land\PlottingController();
                 $this->assertNotNull($controller, 'Controller should instantiate correctly');
             });
 
             // Test MediaLibraryController
-            $this->test('MediaLibraryController Creation', function() {
+            $this->test('MediaLibraryController Creation', function () {
                 $controller = new \App\Controllers\Media\MediaLibraryController();
                 $this->assertNotNull($controller, 'Controller should instantiate correctly');
             });
@@ -287,25 +291,25 @@ class TestingFrameworkService
      */
     private function runSecurityTests()
     {
-        $this->testSuite('security', function() {
+        $this->testSuite('security', function () {
             // Test SecurityEnhancementService
-            $this->test('SecurityEnhancementService Creation', function() {
+            $this->test('SecurityEnhancementService Creation', function () {
                 $securityService = new \App\Core\Security\SecurityEnhancementService();
                 $this->assertNotNull($securityService, 'SecurityEnhancementService should instantiate correctly');
             });
 
             // Test SQL Injection Detection
-            $this->test('SQL Injection Detection', function() {
+            $this->test('SQL Injection Detection', function () {
                 $securityService = new \App\Core\Security\SecurityEnhancementService();
                 $maliciousRequest = [
                     'request_uri' => '/user?id=1\' OR 1=1--',
                     'request_method' => 'GET',
                     'user_agent' => 'Mozilla/5.0'
                 ];
-                
+
                 $threats = $securityService->detectThreats($maliciousRequest);
                 $this->assertGreaterThan(0, count($threats), 'Should detect SQL injection attempt');
-                
+
                 $sqlInjectionFound = false;
                 foreach ($threats as $threat) {
                     if ($threat['type'] === 'sql_injection') {
@@ -317,17 +321,17 @@ class TestingFrameworkService
             });
 
             // Test XSS Detection
-            $this->test('XSS Detection', function() {
+            $this->test('XSS Detection', function () {
                 $securityService = new \App\Core\Security\SecurityEnhancementService();
                 $maliciousRequest = [
                     'request_uri' => '/search?q=<script>alert("xss")</script>',
                     'request_method' => 'GET',
                     'user_agent' => 'Mozilla/5.0'
                 ];
-                
+
                 $threats = $securityService->detectThreats($maliciousRequest);
                 $this->assertGreaterThan(0, count($threats), 'Should detect XSS attempt');
-                
+
                 $xssFound = false;
                 foreach ($threats as $threat) {
                     if ($threat['type'] === 'xss') {
@@ -339,15 +343,15 @@ class TestingFrameworkService
             });
 
             // Test Rate Limiting
-            $this->test('Rate Limiting', function() {
+            $this->test('Rate Limiting', function () {
                 $securityService = new \App\Core\Security\SecurityEnhancementService();
                 $testIP = '192.168.1.100';
-                
+
                 // First request should pass
                 $request1 = ['request_method' => 'GET', 'remote_addr' => $testIP];
                 $result1 = $securityService->monitorRequest($request1);
                 $this->assertTrue($result1, 'First request should pass rate limiting');
-                
+
                 // This test would need to simulate many requests, which is complex
                 // For now, we'll just test the basic functionality
             });
@@ -359,43 +363,43 @@ class TestingFrameworkService
      */
     private function runPerformanceTests()
     {
-        $this->testSuite('performance', function() {
+        $this->testSuite('performance', function () {
             // Test PerformanceMonitoringService
-            $this->test('PerformanceMonitoringService Creation', function() {
+            $this->test('PerformanceMonitoringService Creation', function () {
                 $perfService = new \App\Core\Performance\PerformanceMonitoringService();
                 $this->assertNotNull($perfService, 'PerformanceMonitoringService should instantiate correctly');
             });
 
             // Test Database Query Performance
-            $this->test('Database Query Performance', function() {
+            $this->test('Database Query Performance', function () {
                 $startTime = microtime(true);
-                
+
                 // Execute a simple query
                 $this->database->fetchOne("SELECT 1 as test");
-                
+
                 $executionTime = (microtime(true) - $startTime) * 1000;
                 $this->assertLessThan(100, $executionTime, 'Simple query should execute in under 100ms');
-                
+
                 // Record performance metric
                 $perfService = new \App\Core\Performance\PerformanceMonitoringService();
                 $perfService->monitorQuery("SELECT 1 as test", [], $startTime);
             });
 
             // Test Memory Usage
-            $this->test('Memory Usage', function() {
+            $this->test('Memory Usage', function () {
                 $initialMemory = memory_get_usage(true);
-                
+
                 // Create some objects
                 $objects = [];
                 for ($i = 0; $i < 100; $i++) {
                     $objects[] = new stdClass();
                 }
-                
+
                 $finalMemory = memory_get_usage(true);
                 $memoryIncrease = $finalMemory - $initialMemory;
-                
+
                 $this->assertLessThan(10 * 1024 * 1024, $memoryIncrease, 'Memory increase should be under 10MB');
-                
+
                 // Cleanup
                 unset($objects);
             });
@@ -407,25 +411,25 @@ class TestingFrameworkService
      */
     private function runAPITests()
     {
-        $this->testSuite('api', function() {
+        $this->testSuite('api', function () {
             // Test API endpoint structure
-            $this->test('API Endpoint Structure', function() {
+            $this->test('API Endpoint Structure', function () {
                 $routesFile = file_get_contents(BASE_PATH . '/routes/api.php');
                 $this->assertNotEmpty($routesFile, 'API routes file should not be empty');
                 $this->assertStringContains('Router::', $routesFile, 'Should contain Router definitions');
             });
 
             // Test JSON response format
-            $this->test('JSON Response Format', function() {
+            $this->test('JSON Response Format', function () {
                 $responseData = [
                     'success' => true,
                     'data' => ['test' => 'value'],
                     'message' => 'Test response'
                 ];
-                
+
                 $jsonResponse = json_encode($responseData);
                 $this->assertNotEmpty($jsonResponse, 'JSON response should not be empty');
-                
+
                 $decodedResponse = json_decode($jsonResponse, true);
                 $this->assertTrue($decodedResponse['success'], 'Response should indicate success');
                 $this->assertArrayHasKey('data', $decodedResponse, 'Response should contain data');
@@ -438,18 +442,18 @@ class TestingFrameworkService
      */
     private function runModelTests()
     {
-        $this->testSuite('models', function() {
+        $this->testSuite('models', function () {
             // Test Model structure
-            $this->test('Model Structure', function() {
+            $this->test('Model Structure', function () {
                 $modelsPath = BASE_PATH . '/app/Models';
                 $this->assertTrue(is_dir($modelsPath), 'Models directory should exist');
-                
+
                 $modelFiles = glob($modelsPath . '/*.php');
                 $this->assertGreaterThan(0, count($modelFiles), 'Should have at least one model file');
             });
 
             // Test User model (if exists)
-            $this->test('User Model', function() {
+            $this->test('User Model', function () {
                 $userModelPath = BASE_PATH . '/app/Models/User/User.php';
                 if (file_exists($userModelPath)) {
                     require_once $userModelPath;
@@ -486,20 +490,19 @@ class TestingFrameworkService
     {
         $startTime = microtime(true);
         $startMemory = memory_get_usage(true);
-        
+
         try {
             $callback();
-            
+
             $executionTime = (microtime(true) - $startTime) * 1000;
             $memoryUsage = (memory_get_usage(true) - $startMemory) / 1024 / 1024;
-            
+
             $this->recordTestResult($testName, 'passed', $executionTime, $memoryUsage);
             $this->successes++;
-            
         } catch (Exception $e) {
             $executionTime = (microtime(true) - $startTime) * 1000;
             $memoryUsage = (memory_get_usage(true) - $startMemory) / 1024 / 1024;
-            
+
             $this->recordTestResult($testName, 'failed', $executionTime, $memoryUsage, $e->getMessage());
             $this->failures++;
         }
@@ -596,6 +599,14 @@ class TestingFrameworkService
         }
     }
 
+    private function assertNotEmpty($value, $message = '')
+    {
+        $this->assertions++;
+        if (empty($value)) {
+            throw new Exception($message ?: "Assertion failed: expected value to not be empty");
+        }
+    }
+
     /**
      * Record test result
      */
@@ -604,7 +615,7 @@ class TestingFrameworkService
         try {
             $sql = "INSERT INTO test_results (test_suite, test_name, status, execution_time, memory_usage, error_message, assertion_count)
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
-            
+
             $this->database->execute($sql, [
                 end($this->testSuites)['name'] ?? 'unknown',
                 $testName,
@@ -614,7 +625,6 @@ class TestingFrameworkService
                 $errorMessage,
                 $this->assertions
             ]);
-            
         } catch (Exception $e) {
             $this->logger->log("Error recording test result: " . $e->getMessage(), 'error', 'testing');
         }
@@ -639,7 +649,7 @@ class TestingFrameworkService
     {
         $totalTests = $this->successes + $this->failures;
         $successRate = $totalTests > 0 ? ($this->successes / $totalTests) * 100 : 0;
-        
+
         return [
             'total_tests' => $totalTests,
             'successes' => $this->successes,
@@ -656,7 +666,7 @@ class TestingFrameworkService
     private function generateTestReport($suiteName, $executionTime)
     {
         $summary = $this->getTestSummary();
-        
+
         $report = [
             'suite_name' => $suiteName,
             'execution_time' => round($executionTime, 2),
@@ -664,13 +674,13 @@ class TestingFrameworkService
             'summary' => $summary,
             'details' => $this->testSuites
         ];
-        
+
         // Save report to file
         $reportFile = BASE_PATH . "/storage/reports/test_report_" . date('Y-m-d_H-i-s') . ".json";
         file_put_contents($reportFile, json_encode($report, JSON_PRETTY_PRINT));
-        
+
         $this->logger->log("Test report generated: $reportFile", 'info', 'testing');
-        
+
         return $report;
     }
 
@@ -714,7 +724,6 @@ class TestingFrameworkService
             $this->database->execute($sql, [$days]);
 
             $this->logger->log("Test data cleanup completed", 'info', 'testing');
-            
         } catch (Exception $e) {
             $this->logger->log("Error cleaning test data: " . $e->getMessage(), 'error', 'testing');
         }
