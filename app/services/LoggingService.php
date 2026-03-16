@@ -11,8 +11,20 @@ use App\Core\Database\Database;
  */
 class LoggingService
 {
+    private static $instance = null;
     private $db;
     private $logLevels = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'];
+
+    /**
+     * Get singleton instance
+     */
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     public function __construct()
     {
