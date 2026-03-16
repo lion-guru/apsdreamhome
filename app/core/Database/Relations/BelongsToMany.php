@@ -1,7 +1,7 @@
 <?php
 
 // TODO: Add proper error handling with try-catch blocks
-
+// IDE Cache Refresh: getQuery() and applyScopes() methods are available in QueryBuilder
 
 namespace App\Core\Database\Relations;
 
