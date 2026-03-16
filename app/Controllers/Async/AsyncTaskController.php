@@ -3,7 +3,7 @@
 namespace App\Controllers\Async;
 
 use App\Services\Async\AsyncTaskService;
-use App\Services\Monitoring\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 
 /**
  * Async Task Controller - APS Dream Home
@@ -14,14 +14,14 @@ class AsyncTaskController
     private $taskService;
     private $authService;
     private $viewRenderer;
-    
+
     public function __construct()
     {
         $this->taskService = new AsyncTaskService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new \App\Core\ViewRenderer();
     }
-    
+
     /**
      * Show task dashboard
      */
@@ -33,10 +33,10 @@ class AsyncTaskController
             $this->redirect('/login');
             return;
         }
-        
+
         // Get task statistics
         $statsResult = $this->taskService->getTaskStats();
-        
+
         $data = [
             'title' => 'Task Dashboard - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -44,12 +44,12 @@ class AsyncTaskController
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors']);
-        
+
         return $this->viewRenderer->render('async/dashboard', $data);
     }
-    
+
     /**
      * Show tasks list
      */
@@ -61,20 +61,20 @@ class AsyncTaskController
             $this->redirect('/login');
             return;
         }
-        
+
         $filters = [
             'status' => $request['get']['status'] ?? null,
             'task_type' => $request['get']['task_type'] ?? null,
             'assigned_worker' => $request['get']['assigned_worker'] ?? null,
             'priority' => $request['get']['priority'] ?? null
         ];
-        
+
         $page = max(1, intval($request['get']['page'] ?? 1));
         $limit = 20;
         $offset = ($page - 1) * $limit;
-        
+
         $result = $this->taskService->getTasks($filters, $limit, $offset);
-        
+
         $data = [
             'title' => 'Tasks - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -83,12 +83,12 @@ class AsyncTaskController
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors']);
-        
+
         return $this->viewRenderer->render('async/tasks', $data);
     }
-    
+
     /**
      * Show create task form
      */
@@ -100,7 +100,7 @@ class AsyncTaskController
             $this->redirect('/login');
             return;
         }
-        
+
         $data = [
             'title' => 'Create Task - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -115,12 +115,12 @@ class AsyncTaskController
             'errors' => $_SESSION['errors'] ?? [],
             'old_input' => $_SESSION['old_input'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors'], $_SESSION['old_input']);
-        
+
         return $this->viewRenderer->render('async/create_task', $data);
     }
-    
+
     /**
      * Handle create task
      */
@@ -133,15 +133,15 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskName = trim($request['post']['task_name'] ?? '');
         $taskType = trim($request['post']['task_type'] ?? '');
         $priority = intval($request['post']['priority'] ?? AsyncTaskService::PRIORITY_NORMAL);
         $maxRetries = intval($request['post']['max_retries'] ?? 3);
-        
+
         // Build parameters based on task type
         $parameters = [];
-        
+
         switch ($taskType) {
             case 'email':
                 $parameters = [
@@ -151,7 +151,7 @@ class AsyncTaskController
                     'template' => trim($request['post']['email_template'] ?? 'default')
                 ];
                 break;
-                
+
             case 'image_processing':
                 $parameters = [
                     'image_path' => trim($request['post']['image_path'] ?? ''),
@@ -159,7 +159,7 @@ class AsyncTaskController
                     'output_format' => trim($request['post']['output_format'] ?? 'jpg')
                 ];
                 break;
-                
+
             case 'report_generation':
                 $parameters = [
                     'report_type' => trim($request['post']['report_type'] ?? ''),
@@ -170,7 +170,7 @@ class AsyncTaskController
                     'format' => trim($request['post']['report_format'] ?? 'pdf')
                 ];
                 break;
-                
+
             case 'data_export':
                 $parameters = [
                     'export_type' => trim($request['post']['export_type'] ?? ''),
@@ -178,7 +178,7 @@ class AsyncTaskController
                     'filters' => json_decode($request['post']['export_filters'] ?? '{}', true) ?? []
                 ];
                 break;
-                
+
             case 'backup':
                 $parameters = [
                     'backup_type' => trim($request['post']['backup_type'] ?? 'full'),
@@ -187,9 +187,9 @@ class AsyncTaskController
                 ];
                 break;
         }
-        
+
         $result = $this->taskService->createTask($taskName, $taskType, $parameters, $priority, $maxRetries);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = 'Task created successfully';
             $this->redirect('/async/tasks');
@@ -198,10 +198,10 @@ class AsyncTaskController
             $_SESSION['old_input'] = $request['post'];
             $this->redirect('/async/task/create');
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Show task details
      */
@@ -213,23 +213,23 @@ class AsyncTaskController
             $this->redirect('/login');
             return;
         }
-        
+
         $taskId = $request['params']['id'] ?? null;
-        
+
         if (!$taskId) {
             $_SESSION['errors'] = ['Task ID is required'];
             $this->redirect('/async/tasks');
             return;
         }
-        
+
         $result = $this->taskService->getTaskStatus($taskId);
-        
+
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
             $this->redirect('/async/tasks');
             return;
         }
-        
+
         $data = [
             'title' => 'Task Details - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
@@ -237,12 +237,12 @@ class AsyncTaskController
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
         ];
-        
+
         unset($_SESSION['success'], $_SESSION['errors']);
-        
+
         return $this->viewRenderer->render('async/task_details', $data);
     }
-    
+
     /**
      * Cancel task
      */
@@ -255,29 +255,29 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskId = $request['params']['id'] ?? null;
-        
+
         if (!$taskId) {
             return [
                 'success' => false,
                 'message' => 'Task ID is required'
             ];
         }
-        
+
         $result = $this->taskService->cancelTask($taskId);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
         } else {
             $_SESSION['errors'] = [$result['message']];
         }
-        
+
         $this->redirect("/async/task/$taskId");
-        
+
         return $result;
     }
-    
+
     /**
      * Retry task
      */
@@ -290,29 +290,29 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskId = $request['params']['id'] ?? null;
-        
+
         if (!$taskId) {
             return [
                 'success' => false,
                 'message' => 'Task ID is required'
             ];
         }
-        
+
         $result = $this->taskService->retryTask($taskId);
-        
+
         if ($result['success']) {
             $_SESSION['success'] = $result['message'];
         } else {
             $_SESSION['errors'] = [$result['message']];
         }
-        
+
         $this->redirect("/async/task/$taskId");
-        
+
         return $result;
     }
-    
+
     /**
      * Process next task (for workers)
      */
@@ -325,34 +325,34 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $workerName = $request['post']['worker_name'] ?? 'worker_' . $this->authService->getCurrentUser()['id'];
         $queueName = $request['post']['queue_name'] ?? 'default';
-        
+
         $result = $this->taskService->getNextTask($workerName, $queueName);
-        
+
         if (!$result['success']) {
             return $result;
         }
-        
+
         $task = $result['data'];
-        
+
         // Process task based on type
         switch ($task['task_type']) {
             case 'email':
                 return $this->taskService->processEmailTask($task);
-                
+
             case 'image_processing':
                 return $this->taskService->processImageTask($task);
-                
+
             case 'report_generation':
                 return $this->taskService->processReportTask($task);
-                
+
             default:
                 return $this->taskService->failTask($task['id'], 'Unknown task type: ' . $task['task_type']);
         }
     }
-    
+
     /**
      * Update task progress
      */
@@ -365,21 +365,21 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskId = $request['post']['task_id'] ?? null;
         $progress = intval($request['post']['progress'] ?? 0);
         $result = json_decode($request['post']['result'] ?? '{}', true) ?? [];
-        
+
         if (!$taskId) {
             return [
                 'success' => false,
                 'message' => 'Task ID is required'
             ];
         }
-        
+
         return $this->taskService->updateTaskProgress($taskId, $progress, $result);
     }
-    
+
     /**
      * Get tasks (AJAX)
      */
@@ -392,20 +392,20 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $filters = [
             'status' => $request['get']['status'] ?? null,
             'task_type' => $request['get']['task_type'] ?? null,
             'assigned_worker' => $request['get']['assigned_worker'] ?? null,
             'priority' => $request['get']['priority'] ?? null
         ];
-        
+
         $limit = min(max(intval($request['get']['limit'] ?? 20), 1), 100);
         $offset = max(0, intval($request['get']['offset'] ?? 0));
-        
+
         return $this->taskService->getTasks($filters, $limit, $offset);
     }
-    
+
     /**
      * Get task status (AJAX)
      */
@@ -418,19 +418,19 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskId = $request['get']['id'] ?? null;
-        
+
         if (!$taskId) {
             return [
                 'success' => false,
                 'message' => 'Task ID is required'
             ];
         }
-        
+
         return $this->taskService->getTaskStatus($taskId);
     }
-    
+
     /**
      * Get task statistics (AJAX)
      */
@@ -443,10 +443,10 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         return $this->taskService->getTaskStats();
     }
-    
+
     /**
      * Create task (AJAX)
      */
@@ -459,16 +459,16 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskName = trim($request['post']['task_name'] ?? '');
         $taskType = trim($request['post']['task_type'] ?? '');
         $priority = intval($request['post']['priority'] ?? AsyncTaskService::PRIORITY_NORMAL);
         $maxRetries = intval($request['post']['max_retries'] ?? 3);
         $parameters = json_decode($request['post']['parameters'] ?? '{}', true) ?? [];
-        
+
         return $this->taskService->createTask($taskName, $taskType, $parameters, $priority, $maxRetries);
     }
-    
+
     /**
      * Cancel task (AJAX)
      */
@@ -481,19 +481,19 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskId = $request['post']['task_id'] ?? null;
-        
+
         if (!$taskId) {
             return [
                 'success' => false,
                 'message' => 'Task ID is required'
             ];
         }
-        
+
         return $this->taskService->cancelTask($taskId);
     }
-    
+
     /**
      * Retry task (AJAX)
      */
@@ -506,19 +506,19 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $taskId = $request['post']['task_id'] ?? null;
-        
+
         if (!$taskId) {
             return [
                 'success' => false,
                 'message' => 'Task ID is required'
             ];
         }
-        
+
         return $this->taskService->retryTask($taskId);
     }
-    
+
     /**
      * Cleanup old tasks (AJAX)
      */
@@ -531,12 +531,12 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $daysOld = intval($request['post']['days_old'] ?? 30);
-        
+
         return $this->taskService->cleanupOldTasks($daysOld);
     }
-    
+
     /**
      * Worker endpoint for processing tasks
      */
@@ -549,14 +549,14 @@ class AsyncTaskController
                 'message' => 'Access denied'
             ];
         }
-        
+
         $workerName = $request['get']['worker'] ?? 'worker_' . $this->authService->getCurrentUser()['id'];
         $queueName = $request['get']['queue'] ?? 'default';
         $continuous = isset($request['get']['continuous']) ? true : false;
-        
+
         do {
             $result = $this->taskService->getNextTask($workerName, $queueName);
-            
+
             if (!$result['success']) {
                 // No tasks available
                 if ($continuous) {
@@ -566,42 +566,41 @@ class AsyncTaskController
                     break;
                 }
             }
-            
+
             $task = $result['data'];
-            
+
             // Process task based on type
             switch ($task['task_type']) {
                 case 'email':
                     $processResult = $this->taskService->processEmailTask($task);
                     break;
-                    
+
                 case 'image_processing':
                     $processResult = $this->taskService->processImageTask($task);
                     break;
-                    
+
                 case 'report_generation':
                     $processResult = $this->taskService->processReportTask($task);
                     break;
-                    
+
                 default:
                     $processResult = $this->taskService->failTask($task['id'], 'Unknown task type: ' . $task['task_type']);
             }
-            
+
             if (!$continuous) {
                 break;
             }
-            
+
             // Small delay between tasks
             sleep(1);
-            
         } while ($continuous);
-        
+
         return [
             'success' => true,
             'message' => 'Worker completed successfully'
         ];
     }
-    
+
     /**
      * Check if user is admin
      */
@@ -609,7 +608,7 @@ class AsyncTaskController
     {
         return $user && ($user['role'] === 'admin' || $user['role'] === 'super_admin');
     }
-    
+
     /**
      * Redirect helper
      */
