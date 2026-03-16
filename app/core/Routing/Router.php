@@ -8,6 +8,35 @@ use App\Core\App;
 use Closure;
 use Exception;
 
+/**
+ * Enhanced auto routing function for legacy compatibility
+ */
+function enhancedAutoRouting($uri)
+{
+    // Basic auto-routing logic
+    $segments = explode('/', trim($uri, '/'));
+
+    if (empty($segments[0])) {
+        return null;
+    }
+
+    // Try to find controller file
+    $controllerName = ucfirst($segments[0]) . 'Controller';
+    $controllerFile = __DIR__ . '/../../Controllers/' . $controllerName . '.php';
+
+    if (file_exists($controllerFile)) {
+        return $controllerFile;
+    }
+
+    // Try Http/Controllers directory
+    $httpControllerFile = __DIR__ . '/../../Http/Controllers/' . $controllerName . '.php';
+    if (file_exists($httpControllerFile)) {
+        return $httpControllerFile;
+    }
+
+    return null;
+}
+
 class Router
 {
     /**
@@ -560,7 +589,7 @@ class Router
             }
 
             // Create controller instance
-            $controller = $this->app->make($controller);
+            $controller = new $controller();
 
             if (!method_exists($controller, $method)) {
                 return $this->handleNotFound();
@@ -635,7 +664,7 @@ class Router
         $middleware = $route->getMiddleware();
 
         foreach ($middleware as $middlewareName) {
-            $middlewareInstance = $this->app->make($middlewareName);
+            $middlewareInstance = new $middlewareName();
 
             $response = $middlewareInstance->handle($this->request, function ($request) {
                 return $this->runRoute($this->currentRoute);
@@ -675,7 +704,7 @@ class Router
         if ($controller instanceof \Closure) {
             return $controller();
         }
-        
+
         list($class, $method) = explode('@', $controller);
 
         if (!str_contains($class, '\\')) {
@@ -685,7 +714,7 @@ class Router
         }
 
         try {
-            $controller = $this->app->make($class);
+            $controller = new $class();
         } catch (Exception $e) {
             if (class_exists($class)) {
                 $controller = new $class();
@@ -744,7 +773,7 @@ class Router
 
             // If the parameter is type-hinted, resolve it from the container
             if ($type && !$type->isBuiltin()) {
-                $dependencies[] = $this->app->make($type->getName());
+                $dependencies[] = new ($type->getName())();
                 continue;
             }
 
