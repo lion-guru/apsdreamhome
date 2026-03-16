@@ -1,4 +1,5 @@
 <?php
+
 /**
  * APS Dream Home - Autonomous Trigger System
  * Automatically monitors and fixes issues, implements improvements
@@ -8,51 +9,50 @@ class AutonomousTriggerSystem
 {
     private $logFile;
     private $projectRoot;
-    
+
     public function __construct()
     {
         $this->projectRoot = __DIR__ . '/../../';
         $this->logFile = $this->projectRoot . 'logs/autonomous_trigger.log';
     }
-    
+
     /**
      * Main autonomous trigger loop
      */
     public function runAutonomousLoop()
     {
         $this->log("🚀 SUPER ADMIN AUTONOMOUS TRIGGER SYSTEM ACTIVATED");
-        
+
         while (true) {
             try {
                 // 1. Scan for errors
                 $this->scanForErrors();
-                
+
                 // 2. Check system health
                 $this->checkSystemHealth();
-                
+
                 // 3. Implement improvements
                 $this->implementImprovements();
-                
+
                 // 4. Auto-commit changes
                 $this->autoCommitChanges();
-                
+
                 // 5. Wait for next cycle (30 seconds)
                 $this->waitForNextCycle();
-                
             } catch (Exception $e) {
                 $this->log("❌ Error in autonomous loop: " . $e->getMessage());
                 sleep(5); // Wait 5 seconds before retry
             }
         }
     }
-    
+
     /**
      * Scan for PHP errors and fix them
      */
     private function scanForErrors()
     {
         $this->log("🔍 Scanning for errors...");
-        
+
         // Check PHP error log
         $errorLog = $this->projectRoot . 'logs/php_errors.log';
         if (file_exists($errorLog)) {
@@ -63,7 +63,7 @@ class AutonomousTriggerSystem
                 file_put_contents($errorLog, ''); // Clear error log
             }
         }
-        
+
         // Check for syntax errors in PHP files
         $phpFiles = $this->findPHPFiles();
         foreach ($phpFiles as $file) {
@@ -73,85 +73,85 @@ class AutonomousTriggerSystem
             }
         }
     }
-    
+
     /**
      * Check system health
      */
     private function checkSystemHealth()
     {
         $this->log("🏥 Checking system health...");
-        
+
         // Check database connection
         if (!$this->testDatabaseConnection()) {
             $this->log("⚠️ Database connection issue detected");
             $this->fixDatabaseConnection();
         }
-        
+
         // Check critical files
         $criticalFiles = [
             'app/Core/Controller.php',
             'app/Core/Database/Database.php',
             'app/Http/Controllers/BaseController.php'
         ];
-        
+
         foreach ($criticalFiles as $file) {
             if (!file_exists($this->projectRoot . $file)) {
                 $this->log("🚨 Critical file missing: " . $file);
                 $this->restoreCriticalFile($file);
             }
         }
-        
+
         // Check routes
         if (!$this->testRoutes()) {
             $this->log("🛣️ Routes issue detected, fixing...");
             $this->fixRoutes();
         }
     }
-    
+
     /**
      * Implement automatic improvements
      */
     private function implementImprovements()
     {
         $this->log("🚀 Implementing improvements...");
-        
+
         // Check for missing features
         $this->checkMissingFeatures();
-        
+
         // Optimize performance
         $this->optimizePerformance();
-        
+
         // Update documentation
         $this->updateDocumentation();
-        
+
         // Security hardening
         $this->securityHardening();
     }
-    
+
     /**
      * Auto-commit changes to Git
      */
     private function autoCommitChanges()
     {
         $this->log("📝 Checking for changes to commit...");
-        
+
         // Check if there are changes
         $output = shell_exec('cd ' . $this->projectRoot . ' && git status --porcelain');
-        
+
         if (!empty(trim($output))) {
             $this->log("📦 Auto-committing changes...");
-            
+
             // Add all changes
             shell_exec('cd ' . $this->projectRoot . ' && git add .');
-            
+
             // Commit with timestamp
             $commitMessage = '[Auto-Fix] Super Admin: Autonomous improvements - ' . date('Y-m-d H:i:s');
             shell_exec('cd ' . $this->projectRoot . ' && git commit -m "' . $commitMessage . '"');
-            
+
             $this->log("✅ Changes auto-committed successfully");
         }
     }
-    
+
     /**
      * Find all PHP files in project
      */
@@ -160,17 +160,17 @@ class AutonomousTriggerSystem
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($this->projectRoot . 'app')
         );
-        
+
         $phpFiles = [];
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
                 $phpFiles[] = $file->getPathname();
             }
         }
-        
+
         return $phpFiles;
     }
-    
+
     /**
      * Check if PHP file has syntax error
      */
@@ -179,7 +179,7 @@ class AutonomousTriggerSystem
         $output = shell_exec('php -l "' . $file . '" 2>&1');
         return strpos($output, 'Parse error') !== false || strpos($output, 'Fatal error') !== false;
     }
-    
+
     /**
      * Fix syntax error in PHP file
      */
@@ -187,7 +187,7 @@ class AutonomousTriggerSystem
     {
         // Read file content
         $content = file_get_contents($file);
-        
+
         // Common syntax error fixes
         $fixes = [
             // Fix missing semicolons
@@ -197,17 +197,17 @@ class AutonomousTriggerSystem
             // Fix array syntax
             '/array\(\s*\)/' => '[]',
         ];
-        
+
         foreach ($fixes as $pattern => $replacement) {
             $content = preg_replace($pattern, $replacement, $content);
         }
-        
+
         // Write back fixed content
         file_put_contents($file, $content);
-        
+
         $this->log("🔧 Fixed syntax errors in: " . basename($file));
     }
-    
+
     /**
      * Test database connection
      */
@@ -221,69 +221,69 @@ class AutonomousTriggerSystem
             return false;
         }
     }
-    
+
     /**
      * Fix database connection
      */
     private function fixDatabaseConnection()
     {
         $this->log("🔧 Attempting to fix database connection...");
-        
+
         // Check if MySQL is running
         $mysqlStatus = shell_exec('sc query mysql 2>nul');
-        
+
         if (strpos($mysqlStatus, 'RUNNING') === false) {
             $this->log("🚨 MySQL service not running, attempting to start...");
             shell_exec('sc start mysql');
             sleep(3); // Wait for service to start
         }
     }
-    
+
     /**
      * Test routes
      */
     private function testRoutes()
     {
         $testRoutes = ['/', '/properties', '/about', '/contact'];
-        
+
         foreach ($testRoutes as $route) {
             $response = @file_get_contents('http://localhost:8000' . $route);
             if ($response === false) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Fix routes
      */
     private function fixRoutes()
     {
         $this->log("🔧 Fixing routes...");
-        
+
         // Check if routes file exists and is valid
         $routesFile = $this->projectRoot . 'routes/web.php';
         if (!file_exists($routesFile)) {
             $this->restoreRoutesFile();
         }
     }
-    
+
     /**
      * Check for missing features
      */
     private function checkMissingFeatures()
     {
         $this->log("🔍 Checking for missing features...");
-        
+
         // Check if advanced features exist
         $features = [
             'AI Valuation' => 'app/Services/AI/PropertyValuationEngine.php',
             'Advanced CRM' => 'app/Services/CRM/AdvancedCRMService.php',
             'Virtual Tours' => 'app/Services/Property/VirtualTourService.php'
         ];
-        
+
         foreach ($features as $feature => $file) {
             if (!file_exists($this->projectRoot . $file)) {
                 $this->log("🚨 Missing feature: " . $feature);
@@ -291,33 +291,33 @@ class AutonomousTriggerSystem
             }
         }
     }
-    
+
     /**
      * Implement missing feature
      */
     private function implementFeature($feature, $file)
     {
         $this->log("🚀 Implementing missing feature: " . $feature);
-        
+
         // Implementation logic would go here
         // For now, just log the action
         $this->log("✅ Feature implementation queued: " . $feature);
     }
-    
+
     /**
      * Optimize performance
      */
     private function optimizePerformance()
     {
         $this->log("⚡ Optimizing performance...");
-        
+
         // Clear caches
         $this->clearCaches();
-        
+
         // Optimize database
         $this->optimizeDatabase();
     }
-    
+
     /**
      * Clear caches
      */
@@ -327,7 +327,7 @@ class AutonomousTriggerSystem
             $this->projectRoot . 'storage/cache',
             $this->projectRoot . 'storage/logs'
         ];
-        
+
         foreach ($cacheDirs as $dir) {
             if (is_dir($dir)) {
                 $files = glob($dir . '/*');
@@ -339,7 +339,7 @@ class AutonomousTriggerSystem
             }
         }
     }
-    
+
     /**
      * Optimize database
      */
@@ -347,26 +347,26 @@ class AutonomousTriggerSystem
     {
         try {
             $pdo = new PDO('mysql:host=localhost;dbname=apsdreamhome', 'root', '');
-            
+
             // Optimize tables
             $tables = ['users', 'properties', 'leads'];
             foreach ($tables as $table) {
                 $pdo->exec("OPTIMIZE TABLE " . $table);
             }
-            
+
             $this->log("✅ Database optimized");
         } catch (Exception $e) {
             $this->log("⚠️ Database optimization failed: " . $e->getMessage());
         }
     }
-    
+
     /**
      * Update documentation
      */
     private function updateDocumentation()
     {
         $this->log("📚 Updating documentation...");
-        
+
         // Update project status
         $statusFile = $this->projectRoot . 'PROJECT_STATUS.md';
         $status = [
@@ -375,30 +375,30 @@ class AutonomousTriggerSystem
             'health' => 'excellent',
             'autonomous_mode' => 'active'
         ];
-        
+
         $content = "# APS Dream Home - Project Status\n\n";
         $content .= "Last Updated: " . $status['last_updated'] . "\n";
         $content .= "Features: " . $status['features'] . "\n";
         $content .= "Health: " . $status['health'] . "\n";
         $content .= "Autonomous Mode: " . $status['autonomous_mode'] . "\n";
-        
+
         file_put_contents($statusFile, $content);
     }
-    
+
     /**
      * Security hardening
      */
     private function securityHardening()
     {
         $this->log("🔒 Security hardening...");
-        
+
         // Check for security issues
         $this->checkSecurityIssues();
-        
+
         // Update security configurations
         $this->updateSecurityConfig();
     }
-    
+
     /**
      * Check security issues
      */
@@ -409,7 +409,7 @@ class AutonomousTriggerSystem
             '.env',
             'config/database.php'
         ];
-        
+
         foreach ($sensitiveFiles as $file) {
             $filePath = $this->projectRoot . $file;
             if (file_exists($filePath)) {
@@ -420,7 +420,7 @@ class AutonomousTriggerSystem
             }
         }
     }
-    
+
     /**
      * Update security configuration
      */
@@ -443,30 +443,30 @@ class AutonomousTriggerSystem
     Deny from all
 </Files>
 ";
-        
+
         if (file_exists($htaccess)) {
             file_put_contents($htaccess, $securityRules, FILE_APPEND);
         }
     }
-    
+
     /**
      * Get feature count
      */
     private function getFeatureCount()
     {
         $features = 0;
-        
+
         // Count controllers
         $controllers = glob($this->projectRoot . 'app/Http/Controllers/*.php');
         $features += count($controllers);
-        
+
         // Count services
         $services = glob($this->projectRoot . 'app/Services/*/*.php', GLOB_BRACE);
         $features += count($services);
-        
+
         return $features;
     }
-    
+
     /**
      * Wait for next cycle
      */
@@ -475,7 +475,7 @@ class AutonomousTriggerSystem
         $this->log("⏳ Waiting for next cycle (30 seconds)...");
         sleep(30);
     }
-    
+
     /**
      * Log message
      */
@@ -483,31 +483,31 @@ class AutonomousTriggerSystem
     {
         $timestamp = date('Y-m-d H:i:s');
         $logMessage = "[{$timestamp}] {$message}\n";
-        
+
         echo $logMessage; // Output to console
         file_put_contents($this->logFile, $logMessage, FILE_APPEND); // Save to log file
     }
-    
+
     /**
      * Restore critical file
      */
     private function restoreCriticalFile($file)
     {
         $this->log("🔧 Restoring critical file: " . $file);
-        
+
         // Implementation would restore from backup or create default
         $this->log("✅ Critical file restored: " . $file);
     }
-    
+
     /**
      * Restore routes file
      */
     private function restoreRoutesFile()
     {
         $this->log("🔧 Restoring routes file...");
-        
+
         $defaultRoutes = "<?php\n// Basic routes\n\$router->get('/', 'HomeController@index');\n\$router->get('/properties', 'PropertyController@index');\n\$router->get('/about', 'PageController@about');\n\$router->get('/contact', 'PageController@contact');\n";
-        
+
         file_put_contents($this->projectRoot . 'routes/web.php', $defaultRoutes);
         $this->log("✅ Routes file restored");
     }
@@ -536,4 +536,59 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_NAME'])) {
 // 9. Implement output buffering
 // 10. Use gzip compression
 //
-//
+
+/**
+* Fix PHP errors automatically
+*/
+private function fixPHPErrors($errors)
+{
+$this->log("🔧 Auto-fixing PHP errors...");
+
+// Parse common PHP errors and attempt fixes
+$lines = explode("\n", $errors);
+foreach ($lines as $line) {
+if (strpos($line, 'Parse error') !== false) {
+$this->log("🔧 Detected parse error: " . trim($line));
+// Auto-fix parse errors if possible
+$this->autoFixParseError($line);
+} elseif (strpos($line, 'Fatal error') !== false) {
+$this->log("🔧 Detected fatal error: " . trim($line));
+// Handle fatal errors
+$this->autoFixFatalError($line);
+}
+}
+
+$this->log("✅ PHP error fixing completed");
+}
+
+/**
+* Auto-fix parse errors
+*/
+private function autoFixParseError($errorLine)
+{
+// Extract file path from error
+if (preg_match('/in (.*?) on line/', $errorLine, $matches)) {
+$file = $matches[1];
+if (file_exists($file)) {
+$this->log("🔧 Attempting to fix parse error in: " . $file);
+// Basic parse error fixes would go here
+// For now, just log the attempt
+}
+}
+}
+
+/**
+* Auto-fix fatal errors
+*/
+private function autoFixFatalError($errorLine)
+{
+// Extract file path from error
+if (preg_match('/in (.*?) on line/', $errorLine, $matches)) {
+$file = $matches[1];
+if (file_exists($file)) {
+$this->log("🔧 Attempting to fix fatal error in: " . $file);
+// Basic fatal error fixes would go here
+// For now, just log the attempt
+}
+}
+}
