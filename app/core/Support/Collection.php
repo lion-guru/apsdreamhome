@@ -2,7 +2,6 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-
 namespace App\Core\Support;
 
 use ArrayAccess;
@@ -11,6 +10,32 @@ use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
+
+/**
+ * Arrayable interface for collection compatibility
+ */
+interface Arrayable
+{
+    public function toArray();
+}
+
+/**
+ * Closure class for compatibility
+ */
+class Closure
+{
+    private $function;
+
+    public function __construct($function)
+    {
+        $this->function = $function;
+    }
+
+    public function __invoke(...$args)
+    {
+        return ($this->function)(...$args);
+    }
+}
 
 class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
@@ -213,7 +238,7 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
 
         return function ($item) use ($key, $operator, $value) {
             $retrieved = $item;
-            
+
             if (is_array($item) && isset($item[$key])) {
                 $retrieved = $item[$key];
             } elseif (is_object($item) && isset($item->{$key})) {
@@ -223,15 +248,23 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
             switch ($operator) {
                 default:
                 case '=':
-                case '==':  return $retrieved == $value;
+                case '==':
+                    return $retrieved == $value;
                 case '!=':
-                case '<>':  return $retrieved != $value;
-                case '<':   return $retrieved < $value;
-                case '>':   return $retrieved > $value;
-                case '<=':  return $retrieved <= $value;
-                case '>=':  return $retrieved >= $value;
-                case '===': return $retrieved === $value;
-                case '!==': return $retrieved !== $value;
+                case '<>':
+                    return $retrieved != $value;
+                case '<':
+                    return $retrieved < $value;
+                case '>':
+                    return $retrieved > $value;
+                case '<=':
+                    return $retrieved <= $value;
+                case '>=':
+                    return $retrieved >= $value;
+                case '===':
+                    return $retrieved === $value;
+                case '!==':
+                    return $retrieved !== $value;
             }
         };
     }
@@ -242,10 +275,10 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
     public function pluck($value, $key = null)
     {
         $results = [];
-        
+
         foreach ($this->items as $item) {
             $itemValue = $this->dataGet($item, $value);
-            
+
             if (is_null($key)) {
                 $results[] = $itemValue;
             } else {
@@ -253,7 +286,7 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
                 $results[$itemKey] = $itemValue;
             }
         }
-        
+
         return new static($results);
     }
 
