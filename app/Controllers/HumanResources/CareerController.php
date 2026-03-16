@@ -9,6 +9,7 @@ use App\Core\ViewRenderer;
 /**
  * Career Controller - APS Dream Home
  * Custom MVC implementation without Laravel dependencies
+ * IDE Cache Refresh: Methods added to CareerService
  */
 class CareerController
 {
