@@ -522,4 +522,105 @@ class CareerService
             throw $e;
         }
     }
+
+    /**
+     * Get applications with pagination and filters
+     */
+    public function getApplications($page = 1, $limit = 10, $filters = [])
+    {
+        try {
+            $offset = ($page - 1) * $limit;
+            $where = [];
+            $params = [];
+
+            // Build WHERE clause from filters
+            if (!empty($filters['status'])) {
+                $where[] = "status = ?";
+                $params[] = $filters['status'];
+            }
+
+            if (!empty($filters['position'])) {
+                $where[] = "position LIKE ?";
+                $params[] = '%' . $filters['position'] . '%';
+            }
+
+            if (!empty($filters['search'])) {
+                $where[] = "(name LIKE ? OR email LIKE ? OR position LIKE ?)";
+                $params[] = '%' . $filters['search'] . '%';
+                $params[] = '%' . $filters['search'] . '%';
+                $params[] = '%' . $filters['search'] . '%';
+            }
+
+            $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+            // Get total count
+            $countSql = "SELECT COUNT(*) as total FROM job_applications $whereClause";
+            $totalResult = $this->db->fetchOne($countSql, $params);
+            $total = $totalResult['total'] ?? 0;
+
+            // Get applications
+            $sql = "SELECT * FROM job_applications $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
+            $params[] = $limit;
+            $params[] = $offset;
+
+            $applications = $this->db->fetchAll($sql, $params);
+
+            return [
+                'success' => true,
+                'data' => [
+                    'applications' => $applications,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $limit,
+                        'total' => $total,
+                        'total_pages' => ceil($total / $limit)
+                    ]
+                ]
+            ];
+        } catch (Exception $e) {
+            $this->logger->error('Failed to get applications', [
+                'page' => $page,
+                'limit' => $limit,
+                'filters' => $filters,
+                'error' => $e->getMessage()
+            ]);
+            return [
+                'success' => false,
+                'message' => 'Failed to retrieve applications'
+            ];
+        }
+    }
+
+    /**
+     * Get available positions
+     */
+    public function getAvailablePositions()
+    {
+        try {
+            // Get distinct positions from applications
+            $sql = "SELECT DISTINCT position FROM job_applications WHERE status != 'rejected' ORDER BY position";
+            $positions = $this->db->fetchAll($sql);
+
+            return [
+                'success' => true,
+                'data' => array_column($positions, 'position')
+            ];
+        } catch (Exception $e) {
+            $this->logger->error('Failed to get available positions', [
+                'error' => $e->getMessage()
+            ]);
+            return [
+                'success' => false,
+                'message' => 'Failed to retrieve positions'
+            ];
+        }
+    }
+
+    /**
+     * Get application details (alias for getApplicationById)
+     */
+    public function getApplicationDetails($id)
+    {
+        return $this->getApplicationById($id);
+    }
 }
