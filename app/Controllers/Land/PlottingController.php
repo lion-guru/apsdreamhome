@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Land;
 
-use App\Services\Land\PlottingServiceEnhanced;
+use App\Services\Land\PlottingService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
 
@@ -18,7 +18,7 @@ class PlottingController
 
     public function __construct()
     {
-        $this->plottingService = new PlottingServiceEnhanced();
+        $this->plottingService = new PlottingService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new ViewRenderer();
     }
