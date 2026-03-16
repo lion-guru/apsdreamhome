@@ -15,12 +15,24 @@ use RuntimeException;
  */
 class SecurityEnhancementService
 {
+    private static $instance = null;
     private $database;
     private $logger;
     private $securityConfig;
     private $blockedIPs = [];
     private $rateLimits = [];
-    
+
+    /**
+     * Get singleton instance
+     */
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     public function __construct()
     {
         $this->database = Database::getInstance();
@@ -102,7 +114,6 @@ class SecurityEnhancementService
                 INDEX idx_status (status)
             )";
             $this->database->execute($sql);
-
         } catch (Exception $e) {
             $this->logger->log("Error creating security tables: " . $e->getMessage(), 'error', 'security');
         }
@@ -132,10 +143,10 @@ class SecurityEnhancementService
 
         // Check for common attack patterns
         $threats = $this->detectThreats($request);
-        
+
         foreach ($threats as $threat) {
             $this->handleThreat($threat, $ipAddress, $request);
-            
+
             // Auto-block for critical threats
             if ($threat['severity'] === 'critical') {
                 $this->blockIP($ipAddress, 'Critical security threat detected', 24);
@@ -292,20 +303,19 @@ class SecurityEnhancementService
     {
         try {
             $expiresAt = date('Y-m-d H:i:s', strtotime("+{$hours} hours"));
-            
+
             $sql = "INSERT INTO blocked_ips (ip_address, reason, expires_at, blocked_by) 
                     VALUES (?, ?, ?, 'SecurityEnhancementService')
                     ON DUPLICATE KEY UPDATE 
                     reason = VALUES(reason), 
                     expires_at = VALUES(expires_at), 
                     blocked_at = NOW()";
-            
+
             $this->database->execute($sql, [$ipAddress, $reason, $expiresAt]);
-            
+
             $this->blockedIPs[$ipAddress] = true;
-            
+
             $this->logger->log("IP blocked: $ipAddress - Reason: $reason", 'warning', 'security');
-            
         } catch (Exception $e) {
             $this->logger->log("Error blocking IP: " . $e->getMessage(), 'error', 'security');
         }
@@ -324,14 +334,13 @@ class SecurityEnhancementService
             $sql = "SELECT COUNT(*) as count FROM blocked_ips 
                     WHERE ip_address = ? 
                     AND (expires_at IS NULL OR expires_at > NOW() OR permanent = TRUE)";
-            
+
             $result = $this->database->fetchOne($sql, [$ipAddress]);
-            
+
             if ($result['count'] > 0) {
                 $this->blockedIPs[$ipAddress] = true;
                 return true;
             }
-            
         } catch (Exception $e) {
             $this->logger->log("Error checking blocked IP: " . $e->getMessage(), 'error', 'security');
         }
@@ -356,21 +365,21 @@ class SecurityEnhancementService
             $sql = "SELECT request_count, blocked FROM rate_limits 
                     WHERE ip_address = ? AND request_type = ? 
                     AND window_start >= DATE_SUB(NOW(), INTERVAL ? SECOND)";
-            
+
             $result = $this->database->fetchOne($sql, [$ipAddress, $requestType, $windowDuration]);
-            
+
             if ($result && $result['blocked']) {
                 return false;
             }
 
             $currentCount = $result['request_count'] ?? 0;
-            
+
             if ($currentCount >= $maxRequests) {
                 // Block for this window
                 $sql = "UPDATE rate_limits SET blocked = TRUE 
                         WHERE ip_address = ? AND request_type = ?";
                 $this->database->execute($sql, [$ipAddress, $requestType]);
-                
+
                 return false;
             }
 
@@ -386,7 +395,6 @@ class SecurityEnhancementService
             }
 
             return true;
-            
         } catch (Exception $e) {
             $this->logger->log("Error checking rate limit: " . $e->getMessage(), 'error', 'security');
             return true; // Allow on error
@@ -401,14 +409,14 @@ class SecurityEnhancementService
         try {
             $sql = "INSERT INTO security_events (event_type, severity, ip_address, user_agent, request_uri, request_method, details) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)";
-            
+
             $details = json_encode([
                 'description' => $description,
                 'post_params' => $request['post_params'] ?? [],
                 'get_params' => $request['get_params'] ?? [],
                 'headers' => $request['headers'] ?? []
             ]);
-            
+
             $this->database->execute($sql, [
                 $eventType,
                 $severity,
@@ -418,7 +426,6 @@ class SecurityEnhancementService
                 $request['request_method'] ?? 'GET',
                 $details
             ]);
-            
         } catch (Exception $e) {
             $this->logger->log("Error logging security event: " . $e->getMessage(), 'error', 'security');
         }
@@ -452,7 +459,7 @@ class SecurityEnhancementService
             $sql = "SELECT event_type, COUNT(*) as count FROM security_events 
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                     GROUP BY event_type";
-            
+
             $results = $this->database->fetchAll($sql);
             $summary['by_type'] = [];
             foreach ($results as $row) {
@@ -463,7 +470,7 @@ class SecurityEnhancementService
             $sql = "SELECT severity, COUNT(*) as count FROM security_events 
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
                     GROUP BY severity";
-            
+
             $results = $this->database->fetchAll($sql);
             $summary['by_severity'] = [];
             foreach ($results as $row) {
@@ -473,10 +480,9 @@ class SecurityEnhancementService
             // Total events
             $sql = "SELECT COUNT(*) as total FROM security_events 
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            
+
             $result = $this->database->fetchOne($sql);
             $summary['total_events'] = $result['total'] ?? 0;
-
         } catch (Exception $e) {
             $this->logger->log("Error getting threat summary: " . $e->getMessage(), 'error', 'security');
         }
@@ -494,9 +500,8 @@ class SecurityEnhancementService
                     WHERE expires_at IS NULL OR expires_at > NOW() 
                     ORDER BY blocked_at DESC 
                     LIMIT ?";
-            
+
             return $this->database->fetchAll($sql, [$limit]);
-            
         } catch (Exception $e) {
             $this->logger->log("Error getting blocked IPs: " . $e->getMessage(), 'error', 'security');
             return [];
@@ -512,9 +517,8 @@ class SecurityEnhancementService
             $sql = "SELECT * FROM security_events 
                     ORDER BY created_at DESC 
                     LIMIT ?";
-            
+
             return $this->database->fetchAll($sql, [$limit]);
-            
         } catch (Exception $e) {
             $this->logger->log("Error getting security events: " . $e->getMessage(), 'error', 'security');
             return [];
@@ -531,9 +535,8 @@ class SecurityEnhancementService
                     WHERE status = 'open' 
                     ORDER BY severity DESC, discovered_at DESC 
                     LIMIT ?";
-            
+
             return $this->database->fetchAll($sql, [$limit]);
-            
         } catch (Exception $e) {
             $this->logger->log("Error getting vulnerabilities: " . $e->getMessage(), 'error', 'security');
             return [];
@@ -546,13 +549,13 @@ class SecurityEnhancementService
     private function calculateSecurityScore()
     {
         $score = 100;
-        
+
         try {
             // Deduct points for recent critical events
             $sql = "SELECT COUNT(*) as count FROM security_events 
                     WHERE severity = 'critical' 
                     AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            
+
             $result = $this->database->fetchOne($sql);
             $criticalEvents = $result['count'] ?? 0;
             $score -= $criticalEvents * 20;
@@ -561,7 +564,7 @@ class SecurityEnhancementService
             $sql = "SELECT COUNT(*) as count FROM security_events 
                     WHERE severity = 'high' 
                     AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            
+
             $result = $this->database->fetchOne($sql);
             $highEvents = $result['count'] ?? 0;
             $score -= $highEvents * 10;
@@ -569,13 +572,12 @@ class SecurityEnhancementService
             // Deduct points for open vulnerabilities
             $sql = "SELECT COUNT(*) as count FROM vulnerability_scans 
                     WHERE status = 'open' AND severity IN ('high', 'critical')";
-            
+
             $result = $this->database->fetchOne($sql);
             $vulnerabilities = $result['count'] ?? 0;
             $score -= $vulnerabilities * 15;
 
             return max(0, $score);
-            
         } catch (Exception $e) {
             $this->logger->log("Error calculating security score: " . $e->getMessage(), 'error', 'security');
             return 50; // Default score
@@ -607,12 +609,11 @@ class SecurityEnhancementService
             // Load blocked IPs
             $sql = "SELECT ip_address FROM blocked_ips 
                     WHERE expires_at IS NULL OR expires_at > NOW() OR permanent = TRUE";
-            
+
             $results = $this->database->fetchAll($sql);
             foreach ($results as $row) {
                 $this->blockedIPs[$row['ip_address']] = true;
             }
-            
         } catch (Exception $e) {
             $this->logger->log("Error loading security data: " . $e->getMessage(), 'error', 'security');
         }
@@ -624,16 +625,16 @@ class SecurityEnhancementService
     private function getClientIP($request)
     {
         $headers = $request['headers'] ?? [];
-        
+
         // Check for forwarded IP
         if (isset($headers['X-Forwarded-For']) && !empty($headers['X-Forwarded-For'])) {
             return $headers['X-Forwarded-For'];
         }
-        
+
         if (isset($headers['X-Real-IP']) && !empty($headers['X-Real-IP'])) {
             return $headers['X-Real-IP'];
         }
-        
+
         return $request['remote_addr'] ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
     }
 
@@ -656,10 +657,9 @@ class SecurityEnhancementService
             $sql = "SELECT COUNT(*) as count FROM security_events 
                     WHERE ip_address = ? AND severity = ? 
                     AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            
+
             $result = $this->database->fetchOne($sql, [$ipAddress, $severity]);
             return $result['count'] ?? 0;
-            
         } catch (Exception $e) {
             return 0;
         }
@@ -684,7 +684,6 @@ class SecurityEnhancementService
             $this->database->execute($sql);
 
             $this->logger->log("Security data cleanup completed", 'info', 'security');
-            
         } catch (Exception $e) {
             $this->logger->log("Error cleaning security data: " . $e->getMessage(), 'error', 'security');
         }
