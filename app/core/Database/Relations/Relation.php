@@ -33,11 +33,11 @@ abstract class Relation
     /**
      * Create a new relation instance.
      */
-    public function __construct(QueryBuilder $query, Model $parent)
+    public function __construct(QueryBuilder $query, Model $parent, Model $related = null)
     {
         $this->query = $query;
         $this->parent = $parent;
-        $this->related = $query->getModel();
+        $this->related = $related ?? $parent; // Default to parent if not provided
 
         $this->addConstraints();
     }
