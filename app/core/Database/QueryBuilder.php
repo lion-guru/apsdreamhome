@@ -439,7 +439,7 @@ class QueryBuilder
             'operator' => $operator,
             'second' => $second
         ];
-        
+
         return $this;
     }
 
@@ -455,7 +455,7 @@ class QueryBuilder
             'operator' => $operator,
             'second' => $second
         ];
-        
+
         return $this;
     }
 
@@ -481,5 +481,26 @@ class QueryBuilder
         }
 
         return $this;
+    }
+
+    /**
+     * Get the model instance for the query.
+     */
+    public function getModel()
+    {
+        // Return a basic model instance for the table
+        return new class($this->table) {
+            private $table;
+
+            public function __construct($table)
+            {
+                $this->table = $table;
+            }
+
+            public function getTable()
+            {
+                return $this->table;
+            }
+        };
     }
 }
