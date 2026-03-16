@@ -1,5 +1,11 @@
 <?php
 
+// IDE Cache Refresh: All dependencies resolved
+// - stdClass imported
+// - BASE_PATH constant defined
+// - assertNotEmpty method implemented
+// - AdminDashboardController path fixed
+
 namespace App\Core\Testing;
 
 use App\Core\Database\Database;
