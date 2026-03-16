@@ -503,4 +503,20 @@ class QueryBuilder
             }
         };
     }
+
+    /**
+     * Get the query instance (for compatibility with relations)
+     */
+    public function getQuery()
+    {
+        return $this;
+    }
+
+    /**
+     * Apply scopes (for compatibility with relations)
+     */
+    public function applyScopes()
+    {
+        return $this;
+    }
 }
