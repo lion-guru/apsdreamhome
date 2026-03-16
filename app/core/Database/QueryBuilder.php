@@ -24,7 +24,7 @@ class QueryBuilder
     /**
      * The columns that should be returned.
      */
-    protected $columns = ['*'];
+    public $columns = ['*'];
 
     /**
      * The where constraints for the query.
@@ -518,5 +518,35 @@ class QueryBuilder
     public function applyScopes()
     {
         return $this;
+    }
+
+    /**
+     * Add columns to the query
+     */
+    public function addSelect($columns)
+    {
+        if (is_array($columns)) {
+            $this->columns = array_merge($this->columns, $columns);
+        } else {
+            $this->columns[] = $columns;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Eager load relations (placeholder for compatibility)
+     */
+    public function eagerLoadRelations($models)
+    {
+        return $models;
+    }
+
+    /**
+     * Get models (placeholder for compatibility)
+     */
+    public function getModels()
+    {
+        return [];
     }
 }
