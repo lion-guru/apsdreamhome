@@ -69,9 +69,9 @@ class Pivot extends Model
     /**
      * Get the table associated with the model.
      */
-    public static function getTable()
+    public function getTable()
     {
-        return parent::getTable();
+        return $this->table;
     }
 
     /**
