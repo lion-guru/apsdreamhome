@@ -78,6 +78,36 @@ $router->post('/admin/bookings/{id}/update', 'App\Http\Controllers\Admin\Booking
 $router->post('/admin/bookings/{id}/destroy', 'App\Http\Controllers\Admin\BookingController@destroy');
 $router->post('/admin/bookings/{id}/payment', 'App\Http\Controllers\Admin\BookingController@processPayment');
 
+// Admin Site Management Routes
+$router->get('/admin/sites', 'App\Http\Controllers\Admin\SiteController@index');
+$router->get('/admin/sites/create', 'App\Http\Controllers\Admin\SiteController@create');
+$router->post('/admin/sites', 'App\Http\Controllers\Admin\SiteController@store');
+$router->get('/admin/sites/{id}', 'App\Http\Controllers\Admin\SiteController@show');
+$router->get('/admin/sites/{id}/edit', 'App\Http\Controllers\Admin\SiteController@edit');
+$router->post('/admin/sites/{id}/update', 'App\Http\Controllers\Admin\SiteController@update');
+$router->post('/admin/sites/{id}/destroy', 'App\Http\Controllers\Admin\SiteController@destroy');
+
+// Admin Plot Management Routes
+$router->get('/admin/plots', 'App\Http\Controllers\Admin\PlotManagementController@index');
+$router->get('/admin/plots/create', 'App\Http\Controllers\Admin\PlotManagementController@create');
+$router->post('/admin/plots', 'App\Http\Controllers\Admin\PlotManagementController@store');
+$router->get('/admin/plots/{id}', 'App\Http\Controllers\Admin\PlotManagementController@show');
+$router->get('/admin/plots/{id}/edit', 'App\Http\Controllers\Admin\PlotManagementController@edit');
+$router->post('/admin/plots/{id}/update', 'App\Http\Controllers\Admin\PlotManagementController@update');
+$router->post('/admin/plots/{id}/destroy', 'App\Http\Controllers\Admin\PlotManagementController@destroy');
+$router->get('/admin/plots/check-availability', 'App\Http\Controllers\Admin\PlotManagementController@checkAvailability');
+$router->post('/admin/plots/{id}/update-status', 'App\Http\Controllers\Admin\PlotManagementController@updateStatus');
+
+// Admin Property Management Routes
+$router->get('/admin/properties', 'App\Http\Controllers\Admin\PropertyManagementController@index');
+$router->get('/admin/properties/create', 'App\Http\Controllers\Admin\PropertyManagementController@create');
+$router->post('/admin/properties', 'App\Http\Controllers\Admin\PropertyManagementController@store');
+$router->get('/admin/properties/{id}', 'App\Http\Controllers\Admin\PropertyManagementController@show');
+$router->get('/admin/properties/{id}/edit', 'App\Http\Controllers\Admin\PropertyManagementController@edit');
+$router->post('/admin/properties/{id}/update', 'App\Http\Controllers\Admin\PropertyManagementController@update');
+$router->post('/admin/properties/{id}/destroy', 'App\Http\Controllers\Admin\PropertyManagementController@destroy');
+$router->get('/admin/properties/check-availability', 'App\Http\Controllers\Admin\PropertyManagementController@checkAvailability');
+
 // Additional routes
 $router->get('/career', 'Front\PageController@careers');
 $router->get('/careers/apply', 'Front\PageController@careerApply');
