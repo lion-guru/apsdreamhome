@@ -81,6 +81,89 @@
                                 <i class="fas fa-home"></i> Dashboard
                             </a>
                         </li>
+                        <!-- Dashboard Submenu -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#dashboardSubmenu" aria-expanded="false">
+                                <i class="fas fa-chart-line"></i> Role Dashboards <i class="fas fa-chevron-down ms-auto"></i>
+                            </a>
+                            <ul class="collapse nav flex-column ms-3" id="dashboardSubmenu">
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'agent-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/agent">
+                                        <i class="fas fa-user-tie"></i> Agent Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'builder-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/builder">
+                                        <i class="fas fa-hard-hat"></i> Builder Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'ceo-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/ceo">
+                                        <i class="fas fa-crown"></i> CEO Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'cfo-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/cfo">
+                                        <i class="fas fa-calculator"></i> CFO Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'cm-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/cm">
+                                        <i class="fas fa-user"></i> CM Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'coo-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/coo">
+                                        <i class="fas fa-cogs"></i> COO Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'cto-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/cto">
+                                        <i class="fas fa-laptop-code"></i> CTO Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'director-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/director">
+                                        <i class="fas fa-user-tie"></i> Director Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'finance-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/finance">
+                                        <i class="fas fa-money-bill-wave"></i> Finance Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'hr-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/hr">
+                                        <i class="fas fa-users-cog"></i> HR Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'it-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/it">
+                                        <i class="fas fa-server"></i> IT Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'marketing-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/marketing">
+                                        <i class="fas fa-bullhorn"></i> Marketing Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'operations-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/operations">
+                                        <i class="fas fa-tasks"></i> Operations Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'sales-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/sales">
+                                        <i class="fas fa-chart-bar"></i> Sales Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link <?php echo ($active_page ?? '') == 'superadmin-dashboard' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/dashboard/superadmin">
+                                        <i class="fas fa-user-shield"></i> Super Admin Dashboard
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link <?php echo ($active_page ?? '') == 'properties' ? 'active' : ''; ?>" href="<?php echo BASE_URL ?? '/'; ?>/admin/properties">
                                 <i class="fas fa-building"></i> Properties
