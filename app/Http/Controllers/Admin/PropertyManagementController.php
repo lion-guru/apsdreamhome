@@ -9,8 +9,6 @@ use Exception;
 
 class PropertyManagementController extends BaseController
 {
-    private $db;
-
     public function __construct()
     {
         parent::__construct();
@@ -29,7 +27,7 @@ class PropertyManagementController extends BaseController
             $status = $_GET['status'] ?? '';
             $type = $_GET['type'] ?? '';
             $siteId = intval($_GET['site_id'] ?? 0);
-            
+
             $offset = ($page - 1) * 10;
             $where = ["1=1"];
             $params = [];
@@ -75,10 +73,10 @@ class PropertyManagementController extends BaseController
             $countSql = str_replace("SELECT p.*, s.site_name, s.location as site_location, s.city as site_city", "SELECT COUNT(*)", $sql);
             $countSql = preg_replace('/ORDER BY.*$/', '', $countSql);
             $countSql = preg_replace('/LIMIT.*$/', '', $countSql);
-            
+
             $countParams = $params;
             unset($countParams['offset'], $countParams['limit']);
-            
+
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($countParams);
             $total = $countStmt->fetch()['total'];
@@ -94,7 +92,6 @@ class PropertyManagementController extends BaseController
                 'total_pages' => ceil($total / 10),
                 'filters' => ['search' => $search, 'status' => $status, 'type' => $type, 'site_id' => $siteId]
             ]);
-
         } catch (Exception $e) {
             error_log("Property listing error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load properties');
@@ -111,14 +108,13 @@ class PropertyManagementController extends BaseController
             $siteId = $siteId ? intval($siteId) : intval($_GET['site_id'] ?? 0);
             $sites = $this->db->fetchAll("SELECT id, site_name, location FROM sites ORDER BY site_name");
             $propertyTypes = $this->db->fetchAll("SELECT * FROM property_types ORDER BY name");
-            
+
             return $this->render('admin/properties/create', [
                 'sites' => $sites,
                 'property_types' => $propertyTypes,
                 'selected_site_id' => $siteId,
                 'page_title' => 'Add New Property - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Property create form error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property form');
@@ -143,7 +139,7 @@ class PropertyManagementController extends BaseController
 
         try {
             $data = $this->post();
-            
+
             $siteId = intval($data['site_id'] ?? 0);
             $title = trim($data['title'] ?? '');
             $description = trim($data['description'] ?? '');
@@ -209,17 +205,16 @@ class PropertyManagementController extends BaseController
 
             if ($success) {
                 $propertyId = (int)$this->db->lastInsertId();
-                
+
                 // Handle image uploads if any
                 $this->handlePropertyImages($propertyId, $_FILES['images'] ?? []);
-                
+
                 $this->setFlash('success', 'Property added successfully');
                 return $this->redirect('admin/properties?site_id=' . $siteId);
             } else {
                 $this->setFlash('error', 'Failed to add property');
                 return $this->redirect('admin/properties/create');
             }
-
         } catch (Exception $e) {
             error_log("Property creation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to add property');
@@ -267,7 +262,7 @@ class PropertyManagementController extends BaseController
                            LEFT JOIN users u ON b.customer_id = u.id
                            WHERE b.property_id = :property_id
                            ORDER BY b.created_at DESC";
-            
+
             $bookingsStmt = $this->db->prepare($bookingsSql);
             $bookingsStmt->execute(['property_id' => $propertyId]);
             $bookings = $bookingsStmt->fetchAll();
@@ -278,7 +273,6 @@ class PropertyManagementController extends BaseController
                 'bookings' => $bookings,
                 'page_title' => 'Property Details - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Property show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property details');
@@ -299,7 +293,7 @@ class PropertyManagementController extends BaseController
             }
 
             $property = $this->db->fetchOne("SELECT * FROM properties WHERE id = ? LIMIT 1", [$propertyId]);
-            
+
             if (!$property) {
                 $this->setFlash('error', 'Property not found');
                 return $this->redirect('admin/properties');
@@ -314,7 +308,6 @@ class PropertyManagementController extends BaseController
                 'property_types' => $propertyTypes,
                 'page_title' => 'Edit Property - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Property edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property for editing');
@@ -351,7 +344,7 @@ class PropertyManagementController extends BaseController
             }
 
             $data = $this->post();
-            
+
             $sql = "UPDATE properties 
                     SET site_id = :site_id, title = :title, description = :description, price = :price,
                         location = :location, type = :type, status = :status, city = :city, state = :state,
@@ -387,14 +380,13 @@ class PropertyManagementController extends BaseController
             if ($success) {
                 // Handle image updates if any
                 $this->handlePropertyImages($propertyId, $_FILES['images'] ?? []);
-                
+
                 $this->setFlash('success', 'Property updated successfully');
                 return $this->redirect('admin/properties');
             } else {
                 $this->setFlash('error', 'Failed to update property');
                 return $this->redirect("admin/properties/{$propertyId}/edit");
             }
-
         } catch (Exception $e) {
             error_log("Property update error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to update property');
@@ -444,20 +436,18 @@ class PropertyManagementController extends BaseController
             try {
                 // Delete property images
                 $this->db->prepare("DELETE FROM property_images WHERE property_id = ?")->execute([$propertyId]);
-                
+
                 // Delete property
                 $this->db->prepare("DELETE FROM properties WHERE id = ?")->execute([$propertyId]);
 
                 $this->db->commit();
                 $this->setFlash('success', 'Property deleted successfully');
-
             } catch (Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
 
             return $this->redirect('admin/properties');
-
         } catch (Exception $e) {
             error_log("Property deletion error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to delete property');
@@ -490,13 +480,12 @@ class PropertyManagementController extends BaseController
                         // Insert image record
                         $sql = "INSERT INTO property_images (property_id, image_name, image_path, sort_order)
                                 VALUES (?, ?, ?, ?)";
-                        
+
                         $stmt = $this->db->prepare($sql);
                         $stmt->execute([$propertyId, $fileName, 'uploads/properties/' . $fileName, $i + 1]);
                     }
                 }
             }
-
         } catch (Exception $e) {
             error_log("Property image upload error: " . $e->getMessage());
         }
@@ -517,7 +506,7 @@ class PropertyManagementController extends BaseController
                         FROM properties 
                         WHERE site_id = :site_id AND status = 'active'
                         ORDER BY title";
-                
+
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute(['site_id' => $siteId]);
                 $properties = $stmt->fetchAll();
@@ -529,7 +518,7 @@ class PropertyManagementController extends BaseController
             } elseif ($propertyId > 0) {
                 // Check specific property availability
                 $property = $this->db->fetchOne(
-                    "SELECT status, price FROM properties WHERE id = ? LIMIT 1", 
+                    "SELECT status, price FROM properties WHERE id = ? LIMIT 1",
                     [$propertyId]
                 );
 
@@ -551,7 +540,6 @@ class PropertyManagementController extends BaseController
                 'success' => false,
                 'message' => 'Invalid parameters'
             ]);
-
         } catch (Exception $e) {
             error_log("Property availability check error: " . $e->getMessage());
             return json_encode([

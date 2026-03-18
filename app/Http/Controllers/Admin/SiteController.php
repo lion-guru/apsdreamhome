@@ -9,7 +9,7 @@ use Exception;
 
 class SiteController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
@@ -28,7 +28,7 @@ class SiteController extends BaseController
             $search = trim($_GET['search'] ?? '');
             $status = $_GET['status'] ?? '';
             $type = $_GET['type'] ?? '';
-            
+
             $offset = ($page - 1) * 10;
             $where = ["1=1"];
             $params = [];
@@ -52,15 +52,11 @@ class SiteController extends BaseController
 
             // Get sites with counts
             $sql = "SELECT s.*, 
-                           COUNT(p.plot_id) as total_plots,
-                           SUM(CASE WHEN p.plot_status = 'available' THEN 1 ELSE 0 END) as available_plots,
-                           SUM(CASE WHEN p.plot_status = 'sold' THEN 1 ELSE 0 END) as sold_plots,
-                           COUNT(pr.id) as total_properties
+                           (SELECT COUNT(*) FROM plot_master WHERE site_id = s.id) as total_plots,
+                           (SELECT COUNT(*) FROM plot_master WHERE site_id = s.id AND plot_status = 'available') as available_plots,
+                           (SELECT COUNT(*) FROM properties WHERE site_id = s.id) as total_properties
                     FROM sites s
-                    LEFT JOIN plot_master p ON s.id = p.site_id
-                    LEFT JOIN properties pr ON s.id = pr.site_id
                     WHERE $whereClause
-                    GROUP BY s.id
                     ORDER BY s.created_at DESC
                     LIMIT :offset, :limit";
 
@@ -72,16 +68,17 @@ class SiteController extends BaseController
             $sites = $stmt->fetchAll();
 
             // Get total count
-            $countSql = str_replace("SELECT s.*, COUNT(p.plot_id) as total_plots", "SELECT COUNT(DISTINCT s.id)", $sql);
+            $countSql = str_replace("SELECT s.*, (SELECT COUNT(*) FROM plot_master WHERE site_id = s.id) as total_plots", "SELECT COUNT(DISTINCT s.id)", $sql);
             $countSql = preg_replace('/GROUP BY s\.id.*$/', '', $countSql);
             $countSql = preg_replace('/LIMIT.*$/', '', $countSql);
-            
+
             $countParams = $params;
             unset($countParams['offset'], $countParams['limit']);
-            
+
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($countParams);
-            $total = $countStmt->fetch()['total'];
+            $result = $countStmt->fetch();
+            $total = $result['total'];
 
             return $this->render('admin/sites/index', [
                 'sites' => $sites,
@@ -90,7 +87,6 @@ class SiteController extends BaseController
                 'total_pages' => ceil($total / 10),
                 'filters' => ['search' => $search, 'status' => $status, 'type' => $type]
             ]);
-
         } catch (Exception $e) {
             error_log("Site listing error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sites');
@@ -125,7 +121,7 @@ class SiteController extends BaseController
 
         try {
             $data = $this->post();
-            
+
             $siteName = trim($data['site_name'] ?? '');
             $location = trim($data['location'] ?? '');
             $city = trim($data['city'] ?? '');
@@ -173,7 +169,6 @@ class SiteController extends BaseController
                 $this->setFlash('error', 'Failed to create site');
                 return $this->redirect('admin/sites/create');
             }
-
         } catch (Exception $e) {
             error_log("Site creation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to create site');
@@ -233,7 +228,6 @@ class SiteController extends BaseController
                 'properties' => $properties,
                 'page_title' => 'Site Details - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Site show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site details');
@@ -253,8 +247,8 @@ class SiteController extends BaseController
                 return $this->redirect('admin/sites');
             }
 
-            $site = $this->db->fetchOne("SELECT * FROM sites WHERE id = ? LIMIT 1", [$siteId]);
-            
+            $site = $this->db->fetch("SELECT * FROM sites WHERE id = ? LIMIT 1", [$siteId]);
+
             if (!$site) {
                 $this->setFlash('error', 'Site not found');
                 return $this->redirect('admin/sites');
@@ -264,7 +258,6 @@ class SiteController extends BaseController
                 'site' => $site,
                 'page_title' => 'Edit Site - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Site edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site for editing');
@@ -294,14 +287,14 @@ class SiteController extends BaseController
                 return $this->redirect('admin/sites');
             }
 
-            $site = $this->db->fetchOne("SELECT id FROM sites WHERE id = ? LIMIT 1", [$siteId]);
+            $site = $this->db->fetch("SELECT id FROM sites WHERE id = ? LIMIT 1", [$siteId]);
             if (!$site) {
                 $this->setFlash('error', 'Site not found');
                 return $this->redirect('admin/sites');
             }
 
             $data = $this->post();
-            
+
             $sql = "UPDATE sites 
                     SET site_name = :site_name, location = :location, city = :city, state = :state,
                         pincode = :pincode, total_area = :total_area, site_type = :site_type,
@@ -333,7 +326,6 @@ class SiteController extends BaseController
                 $this->setFlash('error', 'Failed to update site');
                 return $this->redirect("admin/sites/{$siteId}/edit");
             }
-
         } catch (Exception $e) {
             error_log("Site update error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to update site');
@@ -363,15 +355,15 @@ class SiteController extends BaseController
                 return $this->redirect('admin/sites');
             }
 
-            $site = $this->db->fetchOne("SELECT * FROM sites WHERE id = ? LIMIT 1", [$siteId]);
+            $site = $this->db->fetch("SELECT * FROM sites WHERE id = ? LIMIT 1", [$siteId]);
             if (!$site) {
                 $this->setFlash('error', 'Site not found');
                 return $this->redirect('admin/sites');
             }
 
             // Check if site has plots or properties
-            $plotCount = $this->db->fetchOne("SELECT COUNT(*) as count FROM plot_master WHERE site_id = ?", [$siteId])['count'];
-            $propertyCount = $this->db->fetchOne("SELECT COUNT(*) as count FROM properties WHERE site_id = ?", [$siteId])['count'];
+            $plotCount = $this->db->fetch("SELECT COUNT(*) as count FROM plot_master WHERE site_id = ?", [$siteId])['count'];
+            $propertyCount = $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE site_id = ?", [$siteId])['count'];
 
             if ($plotCount > 0 || $propertyCount > 0) {
                 $this->setFlash('error', 'Cannot delete site with existing plots or properties');
@@ -387,7 +379,6 @@ class SiteController extends BaseController
             }
 
             return $this->redirect('admin/sites');
-
         } catch (Exception $e) {
             error_log("Site deletion error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to delete site');
