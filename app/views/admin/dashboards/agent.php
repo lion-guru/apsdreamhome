@@ -13,8 +13,8 @@
             <div class="card border-start border-primary border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">My Commissions</h6>
-                    <h3>₹<?php echo $my_commissions['total'] ?? '0'; ?></h3>
-                    <p class="text-success mb-0"><i class="fas fa-wallet me-1"></i>₹<?php echo $my_commissions['pending'] ?? '0'; ?> Pending</p>
+                    <h3>₹<?php echo number_format($stats['total_commissions'] ?? 0); ?></h3>
+                    <p class="text-success mb-0"><i class="fas fa-wallet me-1"></i>₹<?php echo number_format($stats['pending_commissions'] ?? 0); ?> Pending</p>
                 </div>
             </div>
         </div>
@@ -22,27 +22,28 @@
             <div class="card border-start border-info border-4 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted text-uppercase small">My Network Size</h6>
-                    <h3><?php echo $my_network['total_associates'] ?? '0'; ?></h3>
-                    <p class="text-muted mb-0"><?php echo $my_network['active_associates'] ?? '0'; ?> Active now</p>
+                    <h3><?php echo $network['total_associates'] ?? 0; ?></h3>
+                    <p class="text-muted mb-0"><?php echo $network['active_associates'] ?? 0; ?> Active now</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-start border-success border-4 shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-muted text-uppercase small">My Total Bookings</h6>
-                    <h3><?php echo $my_commissions['bookings_count'] ?? '0'; ?></h3>
-                    <p class="text-success mb-0"><i class="fas fa-star me-1"></i>Top Performer</p>
+                    <h6 class="text-muted text-uppercase small">Performance</h6>
+                    <h3><?php echo $stats['total_sales'] ?? 0; ?></h3>
+                    <p class="text-success mb-0"><i class="fas fa-chart-line me-1"></i>Sales this month</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Sales Performance -->
-        <div class="col-md-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-white">
+    <!-- Performance Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Performance (Last 7 Days)</h5>
                     <h5 class="mb-0">My Sales Performance</h5>
                 </div>
                 <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
