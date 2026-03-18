@@ -35,7 +35,7 @@ if (!class_exists('App\Services\NotificationService')) {
 class BookingController extends AdminController
 {
     public $auth;
-    private PDO $db;
+    protected $db;
     private SecurityService $securityService;
     private AgentAssignmentService $agentAssignmentService;
     private MLMIncentiveService $mlmService;
@@ -67,18 +67,17 @@ class BookingController extends AdminController
     public function index()
     {
         try {
-            $request = $this->request();
             $filters = [
-                'search' => $request->get('search', ''),
-                'status' => $request->get('status', ''),
-                'customer_id' => $request->get('customer_id', ''),
-                'associate_id' => $request->get('associate_id', ''),
-                'date_from' => $request->get('date_from', ''),
-                'date_to' => $request->get('date_to', ''),
-                'page' => (int)$request->get('page', 1),
-                'per_page' => (int)$request->get('per_page', 10),
-                'sort' => $request->get('sort', 'created_at'),
-                'order' => $request->get('order', 'DESC')
+                'search' => $_GET['search'] ?? '',
+                'status' => $_GET['status'] ?? '',
+                'customer_id' => $_GET['customer_id'] ?? '',
+                'associate_id' => $_GET['associate_id'] ?? '',
+                'date_from' => $_GET['date_from'] ?? '',
+                'date_to' => $_GET['date_to'] ?? '',
+                'page' => (int)($_GET['page'] ?? 1),
+                'per_page' => (int)($_GET['per_page'] ?? 10),
+                'sort' => $_GET['sort'] ?? 'created_at',
+                'order' => $_GET['order'] ?? 'DESC'
             ];
 
             // Build query
