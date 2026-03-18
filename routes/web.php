@@ -68,6 +68,16 @@ $router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@log
 $router->get('/admin/properties', 'App\Http\Controllers\Admin\AdminController@properties');
 $router->get('/admin/users', 'App\Http\Controllers\Admin\AdminController@users');
 
+// Admin Booking CRUD Routes
+$router->get('/admin/bookings', 'App\Http\Controllers\Admin\BookingController@index');
+$router->get('/admin/bookings/create', 'App\Http\Controllers\Admin\BookingController@create');
+$router->post('/admin/bookings', 'App\Http\Controllers\Admin\BookingController@store');
+$router->get('/admin/bookings/{id}', 'App\Http\Controllers\Admin\BookingController@show');
+$router->get('/admin/bookings/{id}/edit', 'App\Http\Controllers\Admin\BookingController@edit');
+$router->post('/admin/bookings/{id}/update', 'App\Http\Controllers\Admin\BookingController@update');
+$router->post('/admin/bookings/{id}/destroy', 'App\Http\Controllers\Admin\BookingController@destroy');
+$router->post('/admin/bookings/{id}/payment', 'App\Http\Controllers\Admin\BookingController@processPayment');
+
 // Additional routes
 $router->get('/career', 'Front\PageController@careers');
 $router->get('/careers/apply', 'Front\PageController@careerApply');
