@@ -62,6 +62,33 @@ $router->get('/projects/awadhpuri', 'Front\PageController@awadhpuri');
 $router->get('/admin', 'App\Http\Controllers\Admin\AdminController@dashboard');
 $router->get('/admin/dashboard', 'App\Http\Controllers\Admin\AdminController@dashboard');
 $router->get('/admin/enterprise_dashboard', 'App\Http\Controllers\Admin\AdminController@enterpriseDashboard');
+
+// Dashboard Routes - Role-based
+$router->get('/admin/dashboard/agent', 'App\Http\Controllers\Admin\AgentDashboardController@index');
+$router->get('/admin/dashboard/builder', 'App\Http\Controllers\Admin\BuilderDashboardController@index');
+$router->get('/admin/dashboard/ceo', 'App\Http\Controllers\Admin\CEODashboardController@index');
+$router->get('/admin/dashboard/cfo', 'App\Http\Controllers\Admin\CFODashboardController@index');
+$router->get('/admin/dashboard/cm', 'App\Http\Controllers\Admin\CMDashboardController@index');
+$router->get('/admin/dashboard/coo', 'App\Http\Controllers\Admin\COODashboardController@index');
+$router->get('/admin/dashboard/cto', 'App\Http\Controllers\Admin\CTODashboardController@index');
+$router->get('/admin/dashboard/director', 'App\Http\Controllers\Admin\DirectorDashboardController@index');
+$router->get('/admin/dashboard/finance', 'App\Http\Controllers\Admin\FinanceDashboardController@index');
+$router->get('/admin/dashboard/hr', 'App\Http\Controllers\Admin\HRDashboardController@index');
+$router->get('/admin/dashboard/it', 'App\Http\Controllers\Admin\ITDashboardController@index');
+$router->get('/admin/dashboard/marketing', 'App\Http\Controllers\Admin\MarketingDashboardController@index');
+$router->get('/admin/dashboard/operations', 'App\Http\Controllers\Admin\OperationsDashboardController@index');
+$router->get('/admin/dashboard/sales', 'App\Http\Controllers\Admin\SalesDashboardController@index');
+$router->get('/admin/dashboard/superadmin', 'App\Http\Controllers\Admin\SuperAdminDashboardController@index');
+
+// Dashboard AJAX Routes
+$router->get('/api/dashboard/agent/performance', 'App\Http\Controllers\Admin\AgentDashboardController@getPerformanceData');
+$router->get('/api/dashboard/agent/network', 'App\Http\Controllers\Admin\AgentDashboardController@getNetworkTree');
+$router->get('/api/dashboard/ceo/analytics', 'App\Http\Controllers\Admin\CEODashboardController@getRevenueAnalytics');
+$router->get('/api/dashboard/ceo/team', 'App\Http\Controllers\Admin\CEODashboardController@getTeamPerformance');
+$router->get('/api/dashboard/cfo/financial', 'App\Http\Controllers\Admin\CFODashboardController@getFinancialAnalytics');
+$router->get('/api/dashboard/cfo/expenses', 'App\Http\Controllers\Admin\CFODashboardController@getExpenseBreakdown');
+$router->get('/api/dashboard/builder/analytics', 'App\Http\Controllers\Admin\BuilderDashboardController@getConstructionAnalytics');
+$router->get('/api/dashboard/builder/materials', 'App\Http\Controllers\Admin\BuilderDashboardController@getMaterialStatus');
 $router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
 $router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
 $router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
