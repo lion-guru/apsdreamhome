@@ -9,7 +9,7 @@ use Exception;
 
 class PlotManagementController extends BaseController
 {
-    private $db;
+    protected $db;
 
     public function __construct()
     {
@@ -28,7 +28,7 @@ class PlotManagementController extends BaseController
             $search = trim($_GET['search'] ?? '');
             $status = $_GET['status'] ?? '';
             $siteId = $siteId ? intval($siteId) : intval($_GET['site_id'] ?? 0);
-            
+
             $offset = ($page - 1) * 15;
             $where = ["1=1"];
             $params = [];
@@ -69,10 +69,10 @@ class PlotManagementController extends BaseController
             $countSql = str_replace("SELECT p.*, s.site_name, s.location as site_location", "SELECT COUNT(*)", $sql);
             $countSql = preg_replace('/ORDER BY.*$/', '', $countSql);
             $countSql = preg_replace('/LIMIT.*$/', '', $countSql);
-            
+
             $countParams = $params;
             unset($countParams['offset'], $countParams['limit']);
-            
+
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($countParams);
             $total = $countStmt->fetch()['total'];
@@ -88,7 +88,6 @@ class PlotManagementController extends BaseController
                 'total_pages' => ceil($total / 15),
                 'filters' => ['search' => $search, 'status' => $status, 'site_id' => $siteId]
             ]);
-
         } catch (Exception $e) {
             error_log("Plot listing error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load plots');
@@ -104,13 +103,12 @@ class PlotManagementController extends BaseController
         try {
             $siteId = $siteId ? intval($siteId) : intval($_GET['site_id'] ?? 0);
             $sites = $this->db->fetchAll("SELECT id, site_name, location FROM sites ORDER BY site_name");
-            
+
             return $this->render('admin/plots/create', [
                 'sites' => $sites,
                 'selected_site_id' => $siteId,
                 'page_title' => 'Add New Plot - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Plot create form error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load plot form');
@@ -135,7 +133,7 @@ class PlotManagementController extends BaseController
 
         try {
             $data = $this->post();
-            
+
             $siteId = intval($data['site_id'] ?? 0);
             $plotNo = trim($data['plot_no'] ?? '');
             $area = floatval($data['area'] ?? 0);
@@ -144,7 +142,7 @@ class PlotManagementController extends BaseController
             $plotFacing = trim($data['plot_facing'] ?? '');
             $plotPrice = floatval($data['plot_price'] ?? 0);
             $plotStatus = $data['plot_status'] ?? 'available';
-            
+
             // Gata details
             $gataA = intval($data['gata_a'] ?? 0);
             $gataB = intval($data['gata_b'] ?? 0);
@@ -163,10 +161,10 @@ class PlotManagementController extends BaseController
 
             // Check if plot number already exists for this site
             $existing = $this->db->fetchOne(
-                "SELECT plot_id FROM plot_master WHERE site_id = ? AND plot_no = ? LIMIT 1", 
+                "SELECT plot_id FROM plot_master WHERE site_id = ? AND plot_no = ? LIMIT 1",
                 [$siteId, $plotNo]
             );
-            
+
             if ($existing) {
                 $this->setFlash('error', 'Plot number already exists for this site');
                 return $this->redirect('admin/plots/create');
@@ -213,7 +211,6 @@ class PlotManagementController extends BaseController
                 $this->setFlash('error', 'Failed to add plot');
                 return $this->redirect('admin/plots/create');
             }
-
         } catch (Exception $e) {
             error_log("Plot creation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to add plot');
@@ -255,7 +252,7 @@ class PlotManagementController extends BaseController
                            LEFT JOIN users u ON b.customer_id = u.id
                            WHERE b.plot_id = :plot_id
                            ORDER BY b.created_at DESC";
-            
+
             $bookingsStmt = $this->db->prepare($bookingsSql);
             $bookingsStmt->execute(['plot_id' => $plotId]);
             $bookings = $bookingsStmt->fetchAll();
@@ -265,7 +262,6 @@ class PlotManagementController extends BaseController
                 'bookings' => $bookings,
                 'page_title' => 'Plot Details - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Plot show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load plot details');
@@ -286,7 +282,7 @@ class PlotManagementController extends BaseController
             }
 
             $plot = $this->db->fetchOne("SELECT * FROM plot_master WHERE plot_id = ? LIMIT 1", [$plotId]);
-            
+
             if (!$plot) {
                 $this->setFlash('error', 'Plot not found');
                 return $this->redirect('admin/plots');
@@ -299,7 +295,6 @@ class PlotManagementController extends BaseController
                 'sites' => $sites,
                 'page_title' => 'Edit Plot - APS Dream Home'
             ]);
-
         } catch (Exception $e) {
             error_log("Plot edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load plot for editing');
@@ -336,7 +331,7 @@ class PlotManagementController extends BaseController
             }
 
             $data = $this->post();
-            
+
             $sql = "UPDATE plot_master 
                     SET site_id = :site_id, plot_no = :plot_no, area = :area, available_area = :available_area,
                         plot_dimension = :plot_dimension, plot_facing = :plot_facing, plot_price = :plot_price,
@@ -372,7 +367,6 @@ class PlotManagementController extends BaseController
                 $this->setFlash('error', 'Failed to update plot');
                 return $this->redirect("admin/plots/{$plotId}/edit");
             }
-
         } catch (Exception $e) {
             error_log("Plot update error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to update plot');
@@ -425,7 +419,6 @@ class PlotManagementController extends BaseController
             }
 
             return $this->redirect('admin/plots');
-
         } catch (Exception $e) {
             error_log("Plot deletion error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to delete plot');
@@ -448,7 +441,7 @@ class PlotManagementController extends BaseController
                         FROM plot_master 
                         WHERE site_id = :site_id AND plot_status = 'available'
                         ORDER BY plot_no";
-                
+
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute(['site_id' => $siteId]);
                 $plots = $stmt->fetchAll();
@@ -460,7 +453,7 @@ class PlotManagementController extends BaseController
             } elseif ($plotId > 0) {
                 // Check specific plot availability
                 $plot = $this->db->fetchOne(
-                    "SELECT plot_status, plot_price FROM plot_master WHERE plot_id = ? LIMIT 1", 
+                    "SELECT plot_status, plot_price FROM plot_master WHERE plot_id = ? LIMIT 1",
                     [$plotId]
                 );
 
@@ -482,7 +475,6 @@ class PlotManagementController extends BaseController
                 'success' => false,
                 'message' => 'Invalid parameters'
             ]);
-
         } catch (Exception $e) {
             error_log("Plot availability check error: " . $e->getMessage());
             return json_encode([
@@ -515,7 +507,7 @@ class PlotManagementController extends BaseController
             }
 
             $success = $this->db->prepare("UPDATE plot_master SET plot_status = ? WHERE plot_id = ?")
-                              ->execute([$newStatus, $plotId]);
+                ->execute([$newStatus, $plotId]);
 
             if ($success) {
                 return json_encode([
@@ -528,7 +520,6 @@ class PlotManagementController extends BaseController
                     'message' => 'Failed to update plot status'
                 ]);
             }
-
         } catch (Exception $e) {
             error_log("Plot status update error: " . $e->getMessage());
             return json_encode([
