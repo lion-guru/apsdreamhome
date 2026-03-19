@@ -1,249 +1,21 @@
 <?php
 
-namespace App\Services\Legacy;
+namespace App\Services;
+
+use App\Core\Database;
+use App\Core\Config;
+use Exception;
+
 /**
- * Advanced Authentication Middleware
- * Provides robust authentication and authorization mechanisms
+ * Authentication Middleware Service - APS Dream Home
+ * Handles authentication and authorization for the application
  */
-class AuthMiddleware {
-    private const MAX_LOGIN_ATTEMPTS = 5;
-    private const LOCKOUT_DURATION = 900; // 15 minutes
-    private const SESSION_TIMEOUT = 1800; // 30 minutes
-
-    /**
-     * Validate admin login credentials
-     * @param string $username
-     * @param string $password
-     * @return bool
-     */
-    public static function validateAdminCredentials($username, $password) {
-        // Sanitize inputs
-        $username = SecurityUtility::sanitizeInput($username, 'username');
-        $password = SecurityUtility::sanitizeInput($password, 'password');
-
-        if (!$username || !$password) {
-            AdminLogger::log('INVALID_LOGIN_ATTEMPT', [
-                'reason' => 'Invalid input format',
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-            ]);
-            return false;
-        }
-
-        // Check brute force attempts
-        if (!self::checkLoginAttempts($username)) {
-            return false;
-        }
-
-        try {
-            // Database credential verification
-            $db = \App\Core\App::database();
-            
-            // Query users table (modern) instead of legacy user table
-            // Check both name and email for flexibility
-            $sql = "SELECT * FROM users WHERE name = :username OR email = :email";
-            $user = $db->fetch($sql, ['username' => $username, 'email' => $username]);
-
-            if (!$user) {
-                // Fallback check in admin table if not found in users
-                $sqlAdmin = "SELECT * FROM admin WHERE auser = :username OR email = :email";
-                $adminUser = $db->fetch($sqlAdmin, ['username' => $username, 'email' => $username]);
-                
-                if ($adminUser) {
-                    $user = $adminUser;
-                    // Map admin columns to user columns for consistency
-                    $user['password'] = $adminUser['apass'] ?? $adminUser['password'];
-                    $user['username'] = $adminUser['auser'] ?? $adminUser['username'];
-                    $user['role'] = $adminUser['role'] ?? 'admin';
-                }
-            }
-
-            if (!$user) {
-                AdminLogger::log('LOGIN_ATTEMPT_NONEXISTENT_USER', [
-                    'username' => $username,
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-                ]);
-                return false;
-            }
-
-            // Verify password - support both modern and legacy hashing
-            $password_verified = false;
-            
-            // Modern bcrypt check
-            if (isset($user['password']) && password_verify($password, $user['password'])) {
-                $password_verified = true;
-            } 
-            // Legacy SHA1/MD5 check (fallback)
-            else if (isset($user['salt']) && isset($user['password_hash'])) {
-                // Legacy user table format
-                $hashedPassword = hash('sha256', $password . $user['salt']);
-                if (hash_equals($user['password_hash'], $hashedPassword)) {
-                    $password_verified = true;
-                }
-            }
-            // Simple SHA1 check (legacy admin)
-            else if (isset($user['apass']) && sha1($password) === $user['apass']) {
-                $password_verified = true;
-            }
-
-            if (!$password_verified) {
-                AdminLogger::log('INVALID_PASSWORD_ATTEMPT', [
-                    'username' => $username,
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-                ]);
-                return false;
-            }
-            
-            // Check if user has admin privileges
-            $role = $user['role'] ?? 'user';
-            if (!in_array($role, ['admin', 'super_admin', 'manager', 'employee'])) {
-                 AdminLogger::log('UNAUTHORIZED_ROLE_LOGIN', [
-                    'username' => $username,
-                    'role' => $role,
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-                ]);
-                return false;
-            }
-
-            // Successful login
-            self::createSecureSession($user['username'] ?? $username);
-            return true;
-
-        } catch (Exception $e) {
-            AdminLogger::logError('DATABASE_AUTH_ERROR', [
-                'message' => $e->getMessage(),
-                'username' => $username
-            ]);
-            return false;
-        }
-    }
-
-    /**
-     * Check and manage login attempts
-     * @param string $username
-     * @return bool
-     */
-    private static function checkLoginAttempts($username) {
-        if (!isset($_SESSION['login_attempts'])) {
-            $_SESSION['login_attempts'] = [];
-        }
-
-        $currentTime = time();
-        
-        // Clean up old attempts
-        foreach ($_SESSION['login_attempts'] as $attempt => $timestamp) {
-            if ($currentTime - $timestamp > self::LOCKOUT_DURATION) {
-                unset($_SESSION['login_attempts'][$attempt]);
-            }
-        }
-
-        // Record this attempt
-        $_SESSION['login_attempts'][$username] = $currentTime;
-
-        // Check if attempts exceed limit
-        if (count($_SESSION['login_attempts']) > self::MAX_LOGIN_ATTEMPTS) {
-            AdminLogger::securityAlert('BRUTE_FORCE_ATTEMPT', [
-                'username' => $username,
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-            ]);
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Create secure session after successful login
-     * @param string $username
-     */
-    private static function createSecureSession($username) {
-        // Regenerate session ID
-        session_regenerate_id(true);
-
-        // Set session variables
-        $_SESSION['admin_logged_in'] = true;
-        $_SESSION['admin_username'] = $username;
-        $_SESSION['login_time'] = time();
-        $_SESSION['last_activity'] = time();
-
-        // Log successful login
-        AdminLogger::log('ADMIN_LOGIN_SUCCESS', [
-            'username' => $username,
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-        ]);
-    }
-
-    /**
-     * Check if admin session is valid
-     * @return bool
-     */
-    public static function isAdminSessionValid() {
-        // Check if admin is logged in
-        if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-            return false;
-        }
-
-        // Check session timeout
-        $currentTime = time();
-        if (($currentTime - $_SESSION['last_activity']) > self::SESSION_TIMEOUT) {
-            // Session expired
-            self::destroySession();
-            return false;
-        }
-
-        // Update last activity
-        $_SESSION['last_activity'] = $currentTime;
-        return true;
-    }
-
-    /**
-     * Destroy admin session
-     */
-    public static function destroySession() {
-        // Log session destruction
-        AdminLogger::log('ADMIN_SESSION_DESTROYED', [
-            'username' => $_SESSION['admin_username'] ?? 'Unknown',
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-        ]);
-
-        // Unset all session variables
-        $_SESSION = [];
-
-        // Destroy the session
-        session_destroy();
-
-        // Redirect to login
-        header('Location: /admin/login.php');
-        exit();
-    }
-
-    /**
-     * Require admin authentication for a page
-     */
-    public static function requireAdminAuth() {
-        if (!self::isAdminSessionValid()) {
-            AdminLogger::log('UNAUTHORIZED_ACCESS_ATTEMPT', [
-                'url' => $_SERVER['REQUEST_URI'] ?? 'Unknown',
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
-            ]);
-            
-            header('Location: /admin/login.php');
-            exit();
-        }
-    }
-}
-
-// Helper function for quick access
-function admin_auth_required() {
-    AuthMiddleware::requireAdminAuth();
-}
-
-
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Core\Middleware\AuthMiddleware.php
-
-function __construct(array $options = [])
+class AuthMiddleware
+{
+    private $options = [];
+    
+    public function __construct(array $options = [])
     {
-        parent::__construct();
         $this->options = array_merge([
             'redirect' => '/login',
             'except' => [],
@@ -252,13 +24,68 @@ function __construct(array $options = [])
             'remember_me' => true,
         ], $options);
     }
-function handle(array $request, callable $next)
+    
+    /**
+     * Handle authentication middleware
+     */
+    public function handle(array $request, callable $next)
     {
         // Check if this request should bypass authentication
         if ($this->shouldBypass($request)) {
             return $next($request);
         }
-function handleUnauthenticated(array $request)
+        
+        // Check if user is authenticated
+        if (!$this->isAuthenticated()) {
+            return $this->handleUnauthenticated($request);
+        }
+        
+        return $next($request);
+    }
+    
+    /**
+     * Check if request should bypass authentication
+     */
+    private function shouldBypass(array $request): bool
+    {
+        $path = $request['path'] ?? '';
+        
+        // Check except paths
+        foreach ($this->options['except'] as $except) {
+            if (str_starts_with($path, $except)) {
+                return true;
+            }
+        }
+        
+        // Check only paths
+        if (!empty($this->options['only'])) {
+            foreach ($this->options['only'] as $only) {
+                if (str_starts_with($path, $only)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Check if user is authenticated
+     */
+    private function isAuthenticated(): bool
+    {
+        return isset($_SESSION['user_id']) || 
+               isset($_SESSION['admin_logged_in']) || 
+               isset($_SESSION['employee_id']) || 
+               isset($_SESSION['customer_id']) || 
+               isset($_SESSION['associate_id']);
+    }
+    
+    /**
+     * Handle unauthenticated requests
+     */
+    private function handleUnauthenticated(array $request)
     {
         $this->logSecurityEvent('unauthenticated_access_attempt', [
             'path' => $request['path'] ?? '',
@@ -270,10 +97,44 @@ function handleUnauthenticated(array $request)
         if ($this->isAjaxRequest()) {
             return $this->errorResponse('Authentication required', 401);
         }
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Middleware\AuthMiddleware.php
-
-function adminAuth() {
+        
+        // Redirect to login
+        header('Location: ' . $this->options['redirect']);
+        exit;
+    }
+    
+    /**
+     * Check if request is AJAX
+     */
+    private function isAjaxRequest(): bool
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+    
+    /**
+     * Send error response
+     */
+    private function errorResponse(string $message, int $code): array
+    {
+        http_response_code($code);
+        return ['error' => $message];
+    }
+    
+    /**
+     * Log security event
+     */
+    private function logSecurityEvent(string $event, array $data): void
+    {
+        // Log security events for monitoring
+        error_log("Security Event: $event - " . json_encode($data));
+    }
+    
+    /**
+     * Require admin authentication
+     */
+    public static function requireAdminAuth(): void
+    {
         if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                 strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -281,7 +142,16 @@ function adminAuth() {
                 echo json_encode(['error' => 'Admin authentication required']);
                 exit;
             }
-function employeeAuth() {
+            header('Location: /admin/login.php');
+            exit();
+        }
+    }
+    
+    /**
+     * Require employee authentication
+     */
+    public static function requireEmployeeAuth(): void
+    {
         if (!isset($_SESSION['employee_id'])) {
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                 strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -289,7 +159,16 @@ function employeeAuth() {
                 echo json_encode(['error' => 'Employee authentication required']);
                 exit;
             }
-function customerAuth() {
+            header('Location: /login');
+            exit;
+        }
+    }
+    
+    /**
+     * Require customer authentication
+     */
+    public static function requireCustomerAuth(): void
+    {
         if (!isset($_SESSION['customer_id'])) {
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                 strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -297,7 +176,16 @@ function customerAuth() {
                 echo json_encode(['error' => 'Customer authentication required']);
                 exit;
             }
-function associateAuth() {
+            header('Location: /login');
+            exit;
+        }
+    }
+    
+    /**
+     * Require associate authentication
+     */
+    public static function requireAssociateAuth(): void
+    {
         if (!isset($_SESSION['associate_id'])) {
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                 strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -305,7 +193,16 @@ function associateAuth() {
                 echo json_encode(['error' => 'Associate authentication required']);
                 exit;
             }
-function auth() {
+            header('Location: /login');
+            exit;
+        }
+    }
+    
+    /**
+     * General authentication check
+     */
+    public static function requireAuth(): void
+    {
         if (!isset($_SESSION['user_id']) && !isset($_SESSION['admin_logged_in']) &&
             !isset($_SESSION['employee_id']) && !isset($_SESSION['customer_id']) &&
             !isset($_SESSION['associate_id'])) {
@@ -315,3 +212,29 @@ function auth() {
                 echo json_encode(['error' => 'Authentication required']);
                 exit;
             }
+            header('Location: /login');
+            exit;
+        }
+    }
+}
+
+// Helper functions for backward compatibility
+function admin_auth_required() {
+    AuthMiddleware::requireAdminAuth();
+}
+
+function employee_auth_required() {
+    AuthMiddleware::requireEmployeeAuth();
+}
+
+function customer_auth_required() {
+    AuthMiddleware::requireCustomerAuth();
+}
+
+function associate_auth_required() {
+    AuthMiddleware::requireAssociateAuth();
+}
+
+function auth_required() {
+    AuthMiddleware::requireAuth();
+}
