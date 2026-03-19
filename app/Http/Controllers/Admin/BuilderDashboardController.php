@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Builder Dashboard Controller
  * MVC Pattern - Proper Role-based Dashboard Management
@@ -6,14 +7,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\LoggingService;
+use Exception;
 
-class BuilderDashboardController extends BaseController
+class BuilderDashboardController extends AdminController
 {
+    private $loggingService;
+
     public function __construct()
     {
         parent::__construct();
-        $this->requireAdmin();
+        $this->loggingService = new LoggingService();
     }
 
     /**
@@ -68,9 +73,8 @@ class BuilderDashboardController extends BaseController
             ];
 
             return $this->render('admin/dashboards/builder');
-
         } catch (Exception $e) {
-            error_log("Builder Dashboard Error: " . $e->getMessage());
+            $this->loggingService->error("Builder Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
             return $this->redirect('admin/dashboard');
         }
@@ -93,10 +97,10 @@ class BuilderDashboardController extends BaseController
                 ORDER BY date DESC"
             );
 
-            return $this->jsonSuccess($analytics);
-
+            return $this->jsonResponse(['success' => true, 'data' => $analytics]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            $this->loggingService->error("Get Construction Analytics error: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -119,10 +123,21 @@ class BuilderDashboardController extends BaseController
                 LIMIT 20"
             );
 
-            return $this->jsonSuccess($materials);
-
+            return $this->jsonResponse(['success' => true, 'data' => $materials]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            $this->loggingService->error("Get Material Status error: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CFO Dashboard Controller
  * MVC Pattern - Proper Role-based Dashboard Management
@@ -6,14 +7,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\LoggingService;
+use Exception;
 
-class CFODashboardController extends BaseController
+class CFODashboardController extends AdminController
 {
+    private $loggingService;
+
     public function __construct()
     {
         parent::__construct();
-        $this->requireAdmin();
+        $this->loggingService = new LoggingService();
     }
 
     /**
@@ -87,9 +92,8 @@ class CFODashboardController extends BaseController
             ];
 
             return $this->render('admin/dashboards/cfo');
-
         } catch (Exception $e) {
-            error_log("CFO Dashboard Error: " . $e->getMessage());
+            $this->loggingService->error("CFO Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
             return $this->redirect('admin/dashboard');
         }
@@ -112,10 +116,10 @@ class CFODashboardController extends BaseController
                 ORDER BY date DESC"
             );
 
-            return $this->jsonSuccess($analytics);
-
+            return $this->jsonResponse(['success' => true, 'data' => $analytics]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            $this->loggingService->error("Get Financial Analytics error: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -136,10 +140,21 @@ class CFODashboardController extends BaseController
                 ORDER BY total_amount DESC"
             );
 
-            return $this->jsonSuccess($breakdown);
-
+            return $this->jsonResponse(['success' => true, 'data' => $breakdown]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            $this->loggingService->error("Get Expense Breakdown error: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 }
