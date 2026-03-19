@@ -2,458 +2,396 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\Admin\DashboardService;
-use Psr\Log\LoggerInterface;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
+use App\Core\Database;
+use Exception;
 
-class DashboardController
+/**
+ * Dashboard Controller - Custom MVC Implementation
+ * Handles admin dashboard operations with dependency injection
+ */
+class DashboardController extends AdminController
 {
-    private DashboardService $dashboardService;
-    private LoggerInterface $logger;
+    private $loggingService;
+    private $db;
 
-    public function __construct(DashboardService $dashboardService, LoggerInterface $logger)
+    public function __construct()
     {
-        $this->dashboardService = $dashboardService;
-        $this->logger = $logger;
+        parent::__construct();
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
      * Display admin dashboard
      */
-    public function dashboard()
+    public function index()
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return redirect('/')->with('error', 'Access denied');
-            }
+            $data = [
+                'page_title' => 'Admin Dashboard - APS Dream Home',
+                'active_page' => 'dashboard',
+                'dashboard_stats' => $this->getDashboardStats(),
+                'recent_activities' => $this->getRecentActivities(),
+                'quick_actions' => $this->getQuickActions()
+            ];
 
-            $stats = $this->dashboardService->getDashboardStats();
-            $recentActivities = $this->dashboardService->getRecentActivities(10);
-            $systemHealth = $this->dashboardService->getSystemHealth();
-            $adminMenu = $this->dashboardService->getAdminMenu();
-            
-            return view('admin.dashboard', [
-                'stats' => $stats,
-                'recent_activities' => $recentActivities,
-                'system_health' => $systemHealth,
-                'admin_menu' => $adminMenu,
-                'page_title' => 'Admin Dashboard - APS Dream Home'
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to load admin dashboard", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->render('admin/dashboard/index', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Dashboard Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load dashboard');
+            return $this->redirect('admin/login');
         }
     }
 
     /**
-     * Get dashboard statistics (AJAX)
+     * Get dashboard statistics
      */
-    public function getStats()
+    private function getDashboardStats(): array
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
+            $stats = [];
 
-            $stats = $this->dashboardService->getDashboardStats();
+            // Total customers
+            $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'customer'";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_customers'] = (int)($result['total'] ?? 0);
 
-            return response()->json([
-                'success' => true,
-                'stats' => $stats
-            ]);
+            // Total associates
+            $sql = "SELECT COUNT(*) as total FROM users WHERE role = 'associate'";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_associates'] = (int)($result['total'] ?? 0);
 
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get dashboard stats", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get statistics'
-            ], 500);
-        }
-    }
+            // Total properties
+            $sql = "SELECT COUNT(*) as total FROM properties";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_properties'] = (int)($result['total'] ?? 0);
 
-    /**
-     * Get system health status
-     */
-    public function getSystemHealth()
-    {
-        try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
+            // Total bookings
+            $sql = "SELECT COUNT(*) as total FROM bookings";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_bookings'] = (int)($result['total'] ?? 0);
 
-            $health = $this->dashboardService->getSystemHealth();
+            // Today's bookings
+            $sql = "SELECT COUNT(*) as total FROM bookings WHERE DATE(created_at) = CURDATE()";
+            $result = $this->db->fetchOne($sql);
+            $stats['today_bookings'] = (int)($result['total'] ?? 0);
 
-            return response()->json([
-                'success' => true,
-                'health' => $health
-            ]);
+            // Total revenue
+            $sql = "SELECT COALESCE(SUM(total_amount), 0) as total FROM bookings";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_revenue'] = (float)($result['total'] ?? 0);
 
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get system health", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get system health'
-            ], 500);
+            // This month's revenue
+            $sql = "SELECT COALESCE(SUM(total_amount), 0) as total FROM bookings 
+                    WHERE MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)";
+            $result = $this->db->fetchOne($sql);
+            $stats['monthly_revenue'] = (float)($result['total'] ?? 0);
+
+            // Pending commissions
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as amount 
+                    FROM mlm_commission_ledger WHERE status = 'pending'";
+            $result = $this->db->fetchOne($sql);
+            $stats['pending_commissions'] = [
+                'count' => (int)($result['total'] ?? 0),
+                'amount' => (float)($result['amount'] ?? 0)
+            ];
+
+            return $stats;
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Dashboard Stats error: " . $e->getMessage());
+            return [];
         }
     }
 
     /**
      * Get recent activities
      */
-    public function getRecentActivities()
+    private function getRecentActivities(): array
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
+            $sql = "SELECT al.*, u.name as user_name
+                    FROM admin_activity_log al
+                    LEFT JOIN users u ON al.admin_id = u.id
+                    ORDER BY al.created_at DESC
+                    LIMIT 10";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Recent Activities error: " . $e->getMessage());
+            return [];
+        }
+    }
 
-            $limit = request()->input('limit', 10);
-            $activities = $this->dashboardService->getRecentActivities((int)$limit);
+    /**
+     * Get quick actions
+     */
+    private function getQuickActions(): array
+    {
+        return [
+            [
+                'title' => 'Add New Customer',
+                'url' => 'admin/customers/create',
+                'icon' => 'user-plus',
+                'color' => 'primary'
+            ],
+            [
+                'title' => 'Add New Property',
+                'url' => 'admin/properties/create',
+                'icon' => 'home',
+                'color' => 'success'
+            ],
+            [
+                'title' => 'Create Booking',
+                'url' => 'admin/bookings/create',
+                'icon' => 'calendar-plus',
+                'color' => 'info'
+            ],
+            [
+                'title' => 'View Reports',
+                'url' => 'admin/reports',
+                'icon' => 'chart-bar',
+                'color' => 'warning'
+            ]
+        ];
+    }
 
-            return response()->json([
+    /**
+     * API endpoint for dashboard stats (AJAX)
+     */
+    public function getStats()
+    {
+        try {
+            $stats = $this->getDashboardStats();
+            return $this->jsonResponse([
                 'success' => true,
-                'activities' => $activities
+                'data' => $stats
             ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get recent activities", ['error' => $e->getMessage()]);
-            return response()->json([
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Stats API error: " . $e->getMessage());
+            return $this->jsonResponse([
                 'success' => false,
-                'message' => 'Failed to get recent activities'
+                'message' => 'Failed to fetch stats'
             ], 500);
         }
     }
 
     /**
-     * Get admin menu
+     * API endpoint for recent activities (AJAX)
      */
-    public function getAdminMenu()
+    public function getActivities()
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
-
-            $menu = $this->dashboardService->getAdminMenu();
-
-            return response()->json([
-                'success' => true,
-                'menu' => $menu
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get admin menu", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get admin menu'
-            ], 500);
-        }
-    }
-
-    /**
-     * Log admin activity
-     */
-    public function logActivity()
-    {
-        try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
-
-            $userId = $_SESSION['user_id'] ?? null;
-            $action = request()->input('action');
-            $data = request()->input('data', []);
-
-            if (!$userId || !$action) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User ID and action are required'
-                ], 400);
-            }
-
-            if ($this->dashboardService->logAdminActivity((int)$userId, $action, $data)) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Activity logged successfully'
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to log activity'
-                ], 500);
-            }
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to log admin activity", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to log activity'
-            ], 500);
-        }
-    }
-
-    /**
-     * Get admin activity logs
-     */
-    public function getActivityLogs()
-    {
-        try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
-
-            $limit = request()->input('limit', 50);
-            $filters = request()->only(['user_id', 'action', 'date_from', 'date_to']);
-
-            $logs = $this->dashboardService->getAdminActivityLogs((int)$limit, $filters);
-
-            return response()->json([
-                'success' => true,
-                'logs' => $logs,
-                'total' => count($logs)
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get activity logs", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get activity logs'
-            ], 500);
-        }
-    }
-
-    /**
-     * Admin settings page
-     */
-    public function settings()
-    {
-        try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return redirect('/')->with('error', 'Access denied');
-            }
-
-            $systemHealth = $this->dashboardService->getSystemHealth();
-            $adminMenu = $this->dashboardService->getAdminMenu();
+            $limit = (int)($_GET['limit'] ?? 10);
+            $activities = $this->getRecentActivities();
             
-            return view('admin.settings', [
-                'system_health' => $systemHealth,
-                'admin_menu' => $adminMenu,
-                'page_title' => 'Admin Settings - APS Dream Home'
-            ]);
+            // Apply limit if specified
+            if ($limit > 0 && count($activities) > $limit) {
+                $activities = array_slice($activities, 0, $limit);
+            }
 
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to load admin settings", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $activities
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Activities API error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch activities'
+            ], 500);
         }
     }
 
     /**
-     * Admin reports page
+     * System health check
      */
-    public function reports()
+    public function healthCheck()
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return redirect('/')->with('error', 'Access denied');
-            }
+            $health = [
+                'database' => $this->checkDatabaseHealth(),
+                'disk_space' => $this->checkDiskSpace(),
+                'memory_usage' => $this->checkMemoryUsage(),
+                'active_sessions' => $this->checkActiveSessions(),
+                'system_uptime' => $this->getSystemUptime()
+            ];
 
-            $stats = $this->dashboardService->getDashboardStats();
-            $adminMenu = $this->dashboardService->getAdminMenu();
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $health
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Health Check error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Health check failed'
+            ], 500);
+        }
+    }
+
+    /**
+     * Check database health
+     */
+    private function checkDatabaseHealth(): array
+    {
+        try {
+            // Test database connection
+            $sql = "SELECT 1 as test";
+            $result = $this->db->fetchOne($sql);
             
-            return view('admin.reports', [
-                'stats' => $stats,
-                'admin_menu' => $adminMenu,
-                'page_title' => 'Admin Reports - APS Dream Home'
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to load admin reports", ['error' => $e->getMessage()]);
-            return view('errors.500');
+            // Get table counts
+            $sql = "SELECT COUNT(*) as table_count FROM information_schema.tables 
+                    WHERE table_schema = DATABASE()";
+            $result = $this->db->fetchOne($sql);
+            
+            return [
+                'status' => 'healthy',
+                'connection' => 'connected',
+                'table_count' => (int)($result['table_count'] ?? 0),
+                'last_check' => date('Y-m-d H:i:s')
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'connection' => 'disconnected',
+                'error' => $e->getMessage(),
+                'last_check' => date('Y-m-d H:i:s')
+            ];
         }
     }
 
     /**
-     * Refresh dashboard data
+     * Check disk space
      */
-    public function refresh()
+    private function checkDiskSpace(): array
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
-
-            $stats = $this->dashboardService->getDashboardStats();
-            $recentActivities = $this->dashboardService->getRecentActivities(5);
-            $systemHealth = $this->dashboardService->getSystemHealth();
-
-            return response()->json([
-                'success' => true,
-                'stats' => $stats,
-                'recent_activities' => $recentActivities,
-                'system_health' => $systemHealth,
-                'refreshed_at' => date('Y-m-d H:i:s')
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to refresh dashboard", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to refresh dashboard'
-            ], 500);
+            $totalSpace = disk_total_space('.');
+            $freeSpace = disk_free_space('.');
+            $usedSpace = $totalSpace - $freeSpace;
+            
+            return [
+                'total' => $this->formatBytes($totalSpace),
+                'used' => $this->formatBytes($usedSpace),
+                'free' => $this->formatBytes($freeSpace),
+                'usage_percentage' => round(($usedSpace / $totalSpace) * 100, 2)
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'error' => $e->getMessage()
+            ];
         }
     }
 
     /**
-     * Get dashboard widgets
+     * Check memory usage
      */
-    public function getWidgets()
+    private function checkMemoryUsage(): array
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
-
-            $widgets = request()->input('widgets', []);
-            $data = [];
-
-            foreach ($widgets as $widget) {
-                switch ($widget) {
-                    case 'users':
-                        $data['users'] = $this->dashboardService->getDashboardStats()['users'];
-                        break;
-                    case 'properties':
-                        $data['properties'] = $this->dashboardService->getDashboardStats()['properties'];
-                        break;
-                    case 'leads':
-                        $data['leads'] = $this->dashboardService->getDashboardStats()['leads'];
-                        break;
-                    case 'revenue':
-                        $data['revenue'] = $this->dashboardService->getDashboardStats()['revenue'];
-                        break;
-                    case 'system_health':
-                        $data['system_health'] = $this->dashboardService->getSystemHealth();
-                        break;
-                    case 'activities':
-                        $data['activities'] = $this->dashboardService->getRecentActivities(5);
-                        break;
-                }
-            }
-
-            return response()->json([
-                'success' => true,
-                'widgets' => $data
-            ]);
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get dashboard widgets", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to get widgets'
-            ], 500);
+            $memoryUsage = memory_get_usage(true);
+            $memoryLimit = $this->parseMemoryLimit(ini_get('memory_limit'));
+            
+            return [
+                'current' => $this->formatBytes($memoryUsage),
+                'limit' => $this->formatBytes($memoryLimit),
+                'usage_percentage' => round(($memoryUsage / $memoryLimit) * 100, 2),
+                'peak' => $this->formatBytes(memory_get_peak_usage(true))
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'error' => $e->getMessage()
+            ];
         }
     }
 
     /**
-     * Export dashboard data
+     * Check active sessions
      */
-    public function export()
+    private function checkActiveSessions(): array
     {
         try {
-            // Check if user is admin
-            if (!$this->dashboardService->isAdmin()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Access denied'
-                ], 403);
-            }
-
-            $format = request()->input('format', 'json');
-            $stats = $this->dashboardService->getDashboardStats();
-
-            switch ($format) {
-                case 'json':
-                    header('Content-Type: application/json');
-                    header('Content-Disposition: attachment; filename="dashboard_stats.json"');
-                    echo json_encode($stats, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-                    break;
-
-                case 'csv':
-                    header('Content-Type: text/csv');
-                    header('Content-Disposition: attachment; filename="dashboard_stats.csv"');
-                    
-                    $output = fopen('php://output', 'w');
-                    
-                    // Header
-                    fputcsv($output, ['Category', 'Metric', 'Value']);
-                    
-                    // Data
-                    foreach ($stats as $category => $data) {
-                        if (is_array($data)) {
-                            foreach ($data as $key => $value) {
-                                if (is_array($value)) {
-                                    foreach ($value as $subKey => $subValue) {
-                                        fputcsv($output, [$category, "{$key}.{$subKey}", $subValue]);
-                                    }
-                                } else {
-                                    fputcsv($output, [$category, $key, $value]);
-                                }
-                            }
-                        }
-                    }
-                    
-                    fclose($output);
-                    break;
-
-                default:
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Unsupported format'
-                    ], 400);
-            }
-
-            exit;
-
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to export dashboard data", ['error' => $e->getMessage()]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to export data'
-            ], 500);
+            // This is a simplified check - in production you'd check session storage
+            $sessionPath = session_save_path();
+            $sessionFiles = glob($sessionPath . '/sess_*');
+            
+            return [
+                'active_sessions' => count($sessionFiles),
+                'session_path' => $sessionPath,
+                'last_check' => date('Y-m-d H:i:s')
+            ];
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'error' => $e->getMessage()
+            ];
         }
+    }
+
+    /**
+     * Get system uptime
+     */
+    private function getSystemUptime(): string
+    {
+        try {
+            if (function_exists('sys_getloadavg')) {
+                $load = sys_getloadavg();
+                return 'Load: ' . implode(', ', $load);
+            }
+            
+            // Fallback for Windows
+            return 'System running';
+        } catch (Exception $e) {
+            return 'Unknown';
+        }
+    }
+
+    /**
+     * Format bytes to human readable format
+     */
+    private function formatBytes(int $bytes, int $precision = 2): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        
+        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+            $bytes /= 1024;
+        }
+        
+        return round($bytes, $precision) . ' ' . $units[$i];
+    }
+
+    /**
+     * Parse memory limit string
+     */
+    private function parseMemoryLimit(string $limit): int
+    {
+        $limit = strtolower($limit);
+        $multiplier = 1;
+        
+        if (strpos($limit, 'g') !== false) {
+            $multiplier = 1024 * 1024 * 1024;
+        } elseif (strpos($limit, 'm') !== false) {
+            $multiplier = 1024 * 1024;
+        } elseif (strpos($limit, 'k') !== false) {
+            $multiplier = 1024;
+        }
+        
+        return (int)preg_replace('/[^0-9]/', '', $limit) * $multiplier;
+    }
+
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 }
