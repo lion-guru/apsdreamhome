@@ -15,13 +15,11 @@ use Exception;
 class DashboardController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
@@ -186,7 +184,7 @@ class DashboardController extends AdminController
         try {
             $limit = (int)($_GET['limit'] ?? 10);
             $activities = $this->getRecentActivities();
-            
+
             // Apply limit if specified
             if ($limit > 0 && count($activities) > $limit) {
                 $activities = array_slice($activities, 0, $limit);
@@ -241,12 +239,12 @@ class DashboardController extends AdminController
             // Test database connection
             $sql = "SELECT 1 as test";
             $result = $this->db->fetchOne($sql);
-            
+
             // Get table counts
             $sql = "SELECT COUNT(*) as table_count FROM information_schema.tables 
                     WHERE table_schema = DATABASE()";
             $result = $this->db->fetchOne($sql);
-            
+
             return [
                 'status' => 'healthy',
                 'connection' => 'connected',
@@ -272,7 +270,7 @@ class DashboardController extends AdminController
             $totalSpace = disk_total_space('.');
             $freeSpace = disk_free_space('.');
             $usedSpace = $totalSpace - $freeSpace;
-            
+
             return [
                 'total' => $this->formatBytes($totalSpace),
                 'used' => $this->formatBytes($usedSpace),
@@ -295,7 +293,7 @@ class DashboardController extends AdminController
         try {
             $memoryUsage = memory_get_usage(true);
             $memoryLimit = $this->parseMemoryLimit(ini_get('memory_limit'));
-            
+
             return [
                 'current' => $this->formatBytes($memoryUsage),
                 'limit' => $this->formatBytes($memoryLimit),
@@ -319,7 +317,7 @@ class DashboardController extends AdminController
             // This is a simplified check - in production you'd check session storage
             $sessionPath = session_save_path();
             $sessionFiles = glob($sessionPath . '/sess_*');
-            
+
             return [
                 'active_sessions' => count($sessionFiles),
                 'session_path' => $sessionPath,
@@ -343,7 +341,7 @@ class DashboardController extends AdminController
                 $load = sys_getloadavg();
                 return 'Load: ' . implode(', ', $load);
             }
-            
+
             // Fallback for Windows
             return 'System running';
         } catch (Exception $e) {
@@ -357,11 +355,11 @@ class DashboardController extends AdminController
     private function formatBytes(int $bytes, int $precision = 2): string
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        
+
         for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
-        
+
         return round($bytes, $precision) . ' ' . $units[$i];
     }
 
@@ -372,7 +370,7 @@ class DashboardController extends AdminController
     {
         $limit = strtolower($limit);
         $multiplier = 1;
-        
+
         if (strpos($limit, 'g') !== false) {
             $multiplier = 1024 * 1024 * 1024;
         } elseif (strpos($limit, 'm') !== false) {
@@ -380,18 +378,7 @@ class DashboardController extends AdminController
         } elseif (strpos($limit, 'k') !== false) {
             $multiplier = 1024;
         }
-        
-        return (int)preg_replace('/[^0-9]/', '', $limit) * $multiplier;
-    }
 
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
+        return (int)preg_replace('/[^0-9]/', '', $limit) * $multiplier;
     }
 }

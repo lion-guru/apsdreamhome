@@ -370,26 +370,4 @@ class EngagementController extends AdminController
             return 0;
         }
     }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
-    }
 }

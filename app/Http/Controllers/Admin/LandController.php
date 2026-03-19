@@ -15,14 +15,12 @@ use Exception;
 class LandController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'storeTransaction']]);
     }
@@ -153,7 +151,7 @@ class LandController extends AdminController
             if (!empty($data['latitude']) && !empty($data['longitude'])) {
                 $latitude = (float)$data['latitude'];
                 $longitude = (float)$data['longitude'];
-                
+
                 if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
                     return $this->jsonError('Invalid coordinates', 400);
                 }
@@ -371,11 +369,11 @@ class LandController extends AdminController
             if (!empty($data['latitude']) && !empty($data['longitude'])) {
                 $latitude = (float)$data['latitude'];
                 $longitude = (float)$data['longitude'];
-                
+
                 if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
                     return $this->jsonError('Invalid coordinates', 400);
                 }
-                
+
                 $updateFields[] = "latitude = ?";
                 $updateValues[] = $latitude;
                 $updateFields[] = "longitude = ?";
@@ -589,27 +587,5 @@ class LandController extends AdminController
                 'message' => 'Failed to fetch land stats'
             ], 500);
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }
