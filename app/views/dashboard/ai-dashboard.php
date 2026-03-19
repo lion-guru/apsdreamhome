@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-page_title = 'AI Dashboard - APS Dream Home';
+$page_title = 'AI Dashboard - APS Dream Home';
 $page_description = 'Advanced AI agent monitoring and management interface';
 include __DIR__ . '/../layouts/base.php';
 ?>
@@ -34,7 +34,7 @@ include __DIR__ . '/../layouts/base.php';
                             <span class="badge bg-info ms-1">💬 Interactive</span>
                         </div>
                     </div>
-                    
+
                     <!-- Quick Actions -->
                     <div class="quick-actions">
                         <h6><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
@@ -50,7 +50,7 @@ include __DIR__ . '/../layouts/base.php';
                             </button>
                         </div>
                     </div>
-                    
+
                     <!-- AI Statistics -->
                     <div class="ai-stats mt-4">
                         <h6><i class="fas fa-chart-line me-2"></i>AI Statistics</h6>
@@ -72,7 +72,7 @@ include __DIR__ . '/../layouts/base.php';
                 </div>
             </div>
         </div>
-        
+
         <!-- Main Dashboard Area -->
         <div class="col-md-9">
             <!-- AI Performance Metrics -->
@@ -102,7 +102,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
                 </div>
             </div>
-            
+
             <!-- AI Training Interface -->
             <div class="card mb-4">
                 <div class="card-header">
@@ -129,7 +129,7 @@ include __DIR__ . '/../layouts/base.php';
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mt-3">
                         <button class="btn btn-primary" onclick="startTraining()">
                             <i class="fas fa-play me-2"></i>Start Training Session
@@ -140,7 +140,7 @@ include __DIR__ . '/../layouts/base.php';
                     </div>
                 </div>
             </div>
-            
+
             <!-- Recent AI Interactions -->
             <div class="card">
                 <div class="card-header">
@@ -160,7 +160,7 @@ include __DIR__ . '/../layouts/base.php';
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="activity-item">
                             <div class="d-flex align-items-start">
                                 <div class="activity-icon activity-whatsapp">
@@ -173,7 +173,7 @@ include __DIR__ . '/../layouts/base.php';
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="activity-item">
                             <div class="d-flex align-items-start">
                                 <div class="activity-icon activity-email">
@@ -194,126 +194,137 @@ include __DIR__ . '/../layouts/base.php';
 </div>
 
 <style>
-.metric-card {
-    text-align: center;
-    padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 10px;
-    margin: 10px 0;
-}
+    .metric-card {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
 
-.metric-value {
-    font-size: 2.5em;
-    font-weight: bold;
-}
+    .metric-value {
+        font-size: 2.5em;
+        font-weight: bold;
+    }
 
-.metric-label {
-    font-size: 0.9em;
-    opacity: 0.9;
-}
+    .metric-label {
+        font-size: 0.9em;
+        opacity: 0.9;
+    }
 
-.ai-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .ai-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.stat-item {
-    padding: 10px;
-}
+    .stat-item {
+        padding: 10px;
+    }
 
-.stat-value {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: var(--primary-color);
-}
+    .stat-value {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
 
-.stat-label {
-    font-size: 0.8em;
-    color: var(--gray-600);
-}
+    .stat-label {
+        font-size: 0.8em;
+        color: var(--gray-600);
+    }
 
-.activity-timeline {
-    position: relative;
-    padding-left: 30px;
-}
+    .activity-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
 
-.activity-timeline::before {
-    content: '';
-    position: absolute;
-    left: 15px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #dee2e6;
-}
+    .activity-timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #dee2e6;
+    }
 
-.activity-item {
-    position: relative;
-    margin: 15px 0;
-    padding: 15px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    .activity-item {
+        position: relative;
+        margin: 15px 0;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-.activity-item::before {
-    content: '';
-    position: absolute;
-    left: -23px;
-    top: 20px;
-    width: 12px;
-    height: 12px;
-    background: #007bff;
-    border-radius: 50%;
-    border: 3px solid white;
-}
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        left: -23px;
+        top: 20px;
+        width: 12px;
+        height: 12px;
+        background: #007bff;
+        border-radius: 50%;
+        border: 3px solid white;
+    }
 
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-}
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+    }
 
-.activity-ai { background: #6f42c1; color: white; }
-.activity-whatsapp { background: #25d366; color: white; }
-.activity-email { background: #007bff; color: white; }
+    .activity-ai {
+        background: #6f42c1;
+        color: white;
+    }
+
+    .activity-whatsapp {
+        background: #25d366;
+        color: white;
+    }
+
+    .activity-email {
+        background: #007bff;
+        color: white;
+    }
 </style>
 
 <script>
-function trainAI() {
-    alert('AI Training session started. This may take a few minutes...');
-    // Implement AI training logic
-}
-
-function resetAI() {
-    if (confirm('Are you sure you want to reset AI memory? This action cannot be undone.')) {
-        alert('AI memory reset successfully.');
-        // Implement AI reset logic
+    function trainAI() {
+        alert('AI Training session started. This may take a few minutes...');
+        // Implement AI training logic
     }
-}
 
-function exportData() {
-    alert('Exporting AI training data...');
-    // Implement data export logic
-}
+    function resetAI() {
+        if (confirm('Are you sure you want to reset AI memory? This action cannot be undone.')) {
+            alert('AI memory reset successfully.');
+            // Implement AI reset logic
+        }
+    }
 
-function startTraining() {
-    alert('Training session initiated. Monitor progress in the training log.');
-    // Implement training session logic
-}
+    function exportData() {
+        alert('Exporting AI training data...');
+        // Implement data export logic
+    }
 
-function viewTrainingLog() {
-    alert('Opening training log...');
-    // Implement training log viewer
-}
+    function startTraining() {
+        alert('Training session initiated. Monitor progress in the training log.');
+        // Implement training session logic
+    }
+
+    function viewTrainingLog() {
+        alert('Opening training log...');
+        // Implement training log viewer
+    }
 </script>
