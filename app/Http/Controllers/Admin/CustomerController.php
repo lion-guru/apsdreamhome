@@ -15,14 +15,12 @@ use Exception;
 class CustomerController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'updateProfile', 'createAlert', 'toggleFavorite', 'sendInvitation', 'acceptInvitation']]);
     }
@@ -497,7 +495,7 @@ class CustomerController extends AdminController
                     AND (name LIKE ? OR email LIKE ? OR phone LIKE ?)
                     ORDER BY name ASC
                     LIMIT ? OFFSET ?";
-            
+
             $searchParam = '%' . $search . '%';
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$searchParam, $searchParam, $searchParam, $limit, $offset]);
@@ -581,26 +579,5 @@ class CustomerController extends AdminController
         } catch (Exception $e) {
             $this->loggingService->error("Send Customer Credentials error: " . $e->getMessage());
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data): void
-    {
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }
