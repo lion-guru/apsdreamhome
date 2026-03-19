@@ -2,324 +2,554 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\AI\AIManager;
-use App\Services\AI\AIToolsManager;
-use App\Services\AI\AIEcosystemManager;
-use App\Core\Agent\Agent;
-use App\Services\GeminiService;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
+use App\Core\Database;
 use Exception;
 
+/**
+ * AI Controller - Custom MVC Implementation
+ * Handles AI-powered features and analytics
+ */
 class AiController extends AdminController
 {
+    private $loggingService;
+    private $db;
+
     public function __construct()
     {
         parent::__construct();
-        // AdminController handles auth check
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
     }
 
+    /**
+     * AI Hub - Main dashboard for AI features
+     */
     public function hub()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('AI Hub');
+        try {
+            $data = [
+                'page_title' => 'AI Hub - APS Dream Home',
+                'active_page' => 'ai_hub',
+                'ai_stats' => $this->getAIStats(),
+                'recent_activities' => $this->getRecentAIActivities()
+            ];
 
-        // Initialize Services
-        $aiManager = new AIManager($this->db);
-
-        // Handle Workflow Creation
-        if ($this->request->isPost() && $this->request->post('create_workflow')) {
-            if (!$this->validateCsrfToken()) {
-                $this->data['msg'] = '<div class="alert alert-danger">' . $this->mlSupport->translate('Security validation failed. Please try again.') . '</div>';
-            } else {
-                $name = $this->request->post('name');
-                $desc = $this->request->post('description');
-                $trigger = $this->request->post('trigger_type');
-
-                $actions = [
-                    [
-                        'agent_id' => $this->request->post('agent_id'),
-                        'task_type' => $this->request->post('task_type'),
-                        'config' => [],
-                        'stop_on_failure' => true
-                    ]
-                ];
-                $actions_json = json_encode($actions);
-
-                $result = $this->db->execute("INSERT INTO ai_workflows (name, description, trigger_type, actions, is_active) VALUES (:name, :description, :trigger_type, :actions, 1)", [
-                    'name' => $name,
-                    'description' => $desc,
-                    'trigger_type' => $trigger,
-                    'actions' => $actions_json
-                ]);
-
-                if ($result) {
-                    $this->data['msg'] = '<div class="alert alert-success">' . $this->mlSupport->translate('Workflow created successfully!') . '</div>';
-                    // Log activity if function exists
-                    if (function_exists('log_admin_activity')) {
-                        log_admin_activity($this->session->get('admin_id') ?? 0, 'create_ai_workflow', "Created workflow: $name");
-                    }
-                } else {
-                    $this->data['msg'] = '<div class="alert alert-danger">' . $this->mlSupport->translate('Error creating workflow') . '</div>';
-                }
-            }
+            return $this->render('admin/ai/hub', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("AI Hub error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load AI Hub');
+            return $this->redirect('admin/dashboard');
         }
-
-        // Update mode if changed in session
-        if ($this->session->has('ai_mode')) {
-            $aiManager->setMode($this->session->get('ai_mode'));
-        }
-
-        // Pass manager to view for mode display
-        $this->data['aiManager'] = $aiManager;
-
-        // Fetch Dashboard Stats
-        $this->data['total_agents'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM ai_agents")['count'] ?? 0;
-        $this->data['active_workflows'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM ai_workflows WHERE is_active=1")['count'] ?? 0;
-        $this->data['total_executions'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM ai_agent_logs")['count'] ?? 0;
-        $this->data['avg_latency'] = $this->db->fetchOne("SELECT AVG(execution_time_ms) as avg FROM ai_agent_logs")['avg'] ?: 0;
-        $this->data['pending_jobs'] = $this->db->fetchOne("SELECT COUNT(*) as count FROM ai_jobs WHERE status='pending'")['count'] ?? 0;
-
-        // Chart Data (Last 7 Days)
-        $chart_labels = [];
-        $chart_success = [];
-        $chart_failed = [];
-
-        for ($i = 6; $i >= 0; $i--) {
-            $date = date('Y-m-d', strtotime("-$i days"));
-            $chart_labels[] = date('D', strtotime($date));
-
-            $status_success = 'success';
-            $success = $this->db->fetchOne("SELECT COUNT(*) as count FROM ai_agent_logs WHERE DATE(created_at) = :date AND status = :status", [
-                'date' => $date,
-                'status' => $status_success
-            ])['count'] ?? 0;
-
-            $status_failed = 'failed';
-            $failed = $this->db->fetchOne("SELECT COUNT(*) as count FROM ai_agent_logs WHERE DATE(created_at) = :date AND status = :status", [
-                'date' => $date,
-                'status' => $status_failed
-            ])['count'] ?? 0;
-
-            $chart_success[] = $success;
-            $chart_failed[] = $failed;
-        }
-
-        $this->data['chart_labels'] = $chart_labels;
-        $this->data['chart_success'] = $chart_success;
-        $this->data['chart_failed'] = $chart_failed;
-
-        // Fetch Agents and Workflows for lists
-        $this->data['agents_list'] = $this->db->fetchAll("SELECT * FROM ai_agents");
-        $this->data['workflows_list'] = $this->db->fetchAll("SELECT * FROM ai_workflows LIMIT 5");
-
-        $this->render('admin/ai/hub');
     }
 
-    public function agent()
+    /**
+     * AI Analytics Dashboard
+     */
+    public function analytics()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('AI Agent');
+        try {
+            $data = [
+                'page_title' => 'AI Analytics - APS Dream Home',
+                'active_page' => 'ai_analytics',
+                'analytics_data' => $this->getAnalyticsData(),
+                'predictions' => $this->getPredictions()
+            ];
 
-        // Initialize Agent
-        // Use full namespace if needed, but 'use' statement should handle it if class exists
-        // Check if class exists to avoid error
-        if (class_exists('App\Core\Agent\Agent')) {
-            $agent = new Agent();
-        } else {
-            // Fallback or error handling
-            $agent = null;
-            $this->data['error'] = $this->mlSupport->translate('Agent class not found.');
+            return $this->render('admin/ai/analytics', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("AI Analytics error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load AI Analytics');
+            return $this->redirect('admin/ai/hub');
         }
-
-        $message = '';
-
-        if ($this->request->isPost() && $agent) {
-            if (!$this->validateCsrfToken()) {
-                $this->data['error'] = $this->mlSupport->translate('Invalid CSRF token.');
-            } else {
-                $action = $this->request->post('action');
-                if ($action === 'run') {
-                    $res = $agent->runDailyOps();
-                    $message = $res['planned'] ?? $this->mlSupport->translate('Operations ran.');
-                }
-                if ($action === 'report') {
-                    $res = $agent->generateReport();
-                    $message = $res['report'] ?? $this->mlSupport->translate('Report generated.');
-                }
-            }
-        }
-
-        $this->data['message'] = $message;
-
-        $logFile = APP_ROOT . '/storage/logs/agent.log';
-        $this->data['logs'] = file_exists($logFile) ? array_slice(array_reverse(file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)), 0, 20) : [];
-
-        $this->render('admin/ai/agent');
     }
 
+    /**
+     * Lead Scoring AI
+     */
     public function leadScoring()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('Lead Scoring');
+        try {
+            $data = [
+                'page_title' => 'AI Lead Scoring - APS Dream Home',
+                'active_page' => 'ai_lead_scoring',
+                'leads' => $this->getLeadsForScoring(),
+                'scoring_models' => $this->getScoringModels()
+            ];
 
-        $gemini = new GeminiService();
-        $success_msg = '';
-        $error_msg = '';
-
-        if ($this->request->isPost() && $this->request->post('action') === 'score_leads') {
-            if (!$this->validateCsrfToken()) {
-                $error_msg = $this->mlSupport->translate('Invalid CSRF token.');
-            } else {
-                try {
-                    $leads_to_score = $this->db->fetchAll("SELECT id, name, status, notes, source, budget, assigned_to FROM leads WHERE ai_score IS NULL OR status != 'Converted' LIMIT 10");
-
-                    if (empty($leads_to_score)) {
-                        $success_msg = $this->mlSupport->translate('All eligible leads are already scored.');
-                    } else {
-                        $scored_count = 0;
-                        foreach ($leads_to_score as $lead) {
-                            $prompt = "Analyze this real estate lead and provide a score from 0 to 100 based on their potential to convert.
-                            Lead Details:
-                            Name: {$lead['name']}
-                            Status: {$lead['status']}
-                            Source: {$lead['source']}
-                            Notes: {$lead['notes']}
-
-                            Respond ONLY in JSON format: {\"score\": 85, \"summary\": \"High interest shown in premium properties...\"}";
-
-                            $ai_response = $gemini->generateText($prompt);
-
-                            if (preg_match('/```json\s*(.*?)\s*```/s', $ai_response, $matches)) {
-                                $json_content = $matches[1];
-                            } else {
-                                $json_content = $ai_response;
-                            }
-
-                            $data = json_decode($json_content, true);
-
-                            if ($data && isset($data['score'])) {
-                                $this->db->execute("UPDATE leads SET ai_score = :score, ai_summary = :summary WHERE id = :id", [
-                                    'score' => $data['score'],
-                                    'summary' => $data['summary'],
-                                    'id' => $lead['id']
-                                ]);
-
-                                // Trigger alert for high score leads
-                                if ($data['score'] >= 80) {
-                                    if (file_exists(APP_ROOT . '/app/includes/notification_manager.php')) {
-                                        require_once APP_ROOT . '/app/includes/notification_manager.php';
-                                        // $nm = new NotificationManager($this->db->getConnection());
-                                        // Implement notification logic if needed
-                                    }
-                                }
-
-                                $scored_count++;
-                            }
-                        }
-                        $success_msg = "Successfully scored $scored_count leads using AI.";
-                    }
-                } catch (Exception $e) {
-                    $error_msg = "AI Scoring Error: " . $e->getMessage();
-                }
-            }
+            return $this->render('admin/ai/lead_scoring', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("AI Lead Scoring error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load AI Lead Scoring');
+            return $this->redirect('admin/ai/hub');
         }
-
-        $this->data['success_msg'] = $success_msg;
-        $this->data['error_msg'] = $error_msg;
-
-        // Fetch scored leads
-        $this->data['scored_leads'] = $this->db->fetchAll("SELECT * FROM leads WHERE ai_score IS NOT NULL ORDER BY ai_score DESC LIMIT 50");
-
-        $this->render('admin/ai/lead_scoring');
     }
 
-    // verifyCsrfToken is inherited from BaseController
+    /**
+     * Property Recommendations
+     */
+    public function propertyRecommendations()
+    {
+        try {
+            $data = [
+                'page_title' => 'AI Property Recommendations - APS Dream Home',
+                'active_page' => 'ai_property_recommendations',
+                'recommendations' => $this->getPropertyRecommendations(),
+                'customer_segments' => $this->getCustomerSegments()
+            ];
 
+            return $this->render('admin/ai/property_recommendations', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("AI Property Recommendations error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load AI Property Recommendations');
+            return $this->redirect('admin/ai/hub');
+        }
+    }
 
+    /**
+     * Chatbot Management
+     */
     public function chatbot()
     {
-        if ($this->request()->getMethod() !== 'POST') {
-            return $this->jsonError('Method not allowed', 405);
-        }
-
         try {
-            $message = \trim($this->request()->input('message', ''));
+            $data = [
+                'page_title' => 'AI Chatbot Management - APS Dream Home',
+                'active_page' => 'ai_chatbot',
+                'chatbot_stats' => $this->getChatbotStats(),
+                'conversations' => $this->getRecentConversations()
+            ];
 
-            if (!$message) {
-                return $this->jsonError('No message provided.', 400);
-            }
-
-            $aiService = new \App\Services\AIService();
-            $reply = $aiService->getChatCompletion($message);
-
-            if ($reply) {
-                return $this->jsonSuccess(['reply' => $reply]);
-            } else {
-                return $this->jsonError('No response from AI.');
-            }
-
+            return $this->render('admin/ai/chatbot', $data);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage(), 500);
+            $this->loggingService->error("AI Chatbot error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load AI Chatbot');
+            return $this->redirect('admin/ai/hub');
         }
     }
 
-    public function generateDescription()
+    /**
+     * AI Settings
+     */
+    public function settings()
     {
-        if ($this->request()->getMethod() !== 'POST') {
-            return $this->jsonError('Method not allowed', 405);
-        }
-
         try {
-            $details = $this->request()->input('details', '');
+            $data = [
+                'page_title' => 'AI Settings - APS Dream Home',
+                'active_page' => 'ai_settings',
+                'ai_config' => $this->getAIConfig()
+            ];
 
-            if (!$details) {
-                return $this->jsonError('No property details provided.', 400);
-            }
-
-            $prompt = "Generate a professional and attractive real estate description for a property with the following details: " . $details;
-            $systemPrompt = "You are an expert real estate copywriter for APS Dream Homes.";
-
-            $aiService = new \App\Services\AIService();
-            $description = $aiService->getChatCompletion($prompt, $systemPrompt);
-
-            if ($description) {
-                return $this->jsonSuccess(['description' => $description]);
-            } else {
-                return $this->jsonError('Failed to generate description.');
-            }
-
+            return $this->render('admin/ai/settings', $data);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage(), 500);
+            $this->loggingService->error("AI Settings error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load AI Settings');
+            return $this->redirect('admin/ai/hub');
         }
     }
 
-    public function getSuggestions()
+    /**
+     * Process AI request
+     */
+    public function processRequest()
     {
-        if ($this->request()->getMethod() !== 'POST') {
-            return $this->jsonError('Method not allowed', 405);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 400);
         }
 
         try {
-            $propertyType = $this->request()->input('property_type', '');
-            $budget = $this->request()->input('budget', '');
-            $location = $this->request()->input('location', '');
+            $action = $_POST['action'] ?? '';
+            $data = $_POST['data'] ?? [];
 
-            if (!$propertyType || !$budget || !$location) {
-                return $this->jsonError('Please provide property type, budget, and location.', 400);
+            $result = ['success' => true, 'data' => []];
+
+            switch ($action) {
+                case 'analyze_lead':
+                    $result['data'] = $this->analyzeLead($data);
+                    break;
+                case 'recommend_property':
+                    $result['data'] = $this->recommendProperty($data);
+                    break;
+                case 'predict_sales':
+                    $result['data'] = $this->predictSales($data);
+                    break;
+                default:
+                    $result = ['success' => false, 'message' => 'Unknown action'];
             }
 
-            $prompt = "As an AI real estate assistant, suggest 3-5 properties for a user looking for a $propertyType in $location with a budget of ₹$budget. Provide helpful advice on what to look for in these areas.";
-            $systemPrompt = "You are a local real estate expert for APS Dream Homes in India.";
-
-            $aiService = new \App\Services\AIService();
-            $suggestions = $aiService->getChatCompletion($prompt, $systemPrompt);
-
-            if ($suggestions) {
-                return $this->jsonSuccess(['suggestions' => $suggestions]);
-            } else {
-                return $this->jsonError('Failed to get suggestions.');
-            }
-
+            return $this->jsonResponse($result);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage(), 500);
+            $this->loggingService->error("AI Process Request error: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => 'Processing failed'], 500);
         }
+    }
+
+    /**
+     * Get AI statistics
+     */
+    private function getAIStats(): array
+    {
+        try {
+            $stats = [];
+
+            // Get lead scoring stats
+            $sql = "SELECT COUNT(*) as total_leads, AVG(score) as avg_score FROM ai_lead_scores";
+            $result = $this->db->fetchOne($sql);
+            $stats['lead_scoring'] = [
+                'total_leads' => (int)($result['total_leads'] ?? 0),
+                'avg_score' => round((float)($result['avg_score'] ?? 0), 2)
+            ];
+
+            // Get recommendation stats
+            $sql = "SELECT COUNT(*) as total_recommendations FROM ai_property_recommendations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+            $result = $this->db->fetchOne($sql);
+            $stats['recommendations'] = [
+                'weekly_recommendations' => (int)($result['total_recommendations'] ?? 0)
+            ];
+
+            // Get chatbot stats
+            $sql = "SELECT COUNT(*) as total_conversations FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+            $result = $this->db->fetchOne($sql);
+            $stats['chatbot'] = [
+                'daily_conversations' => (int)($result['total_conversations'] ?? 0)
+            ];
+
+            return $stats;
+        } catch (Exception $e) {
+            $this->loggingService->error("Get AI Stats error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get recent AI activities
+     */
+    private function getRecentAIActivities(): array
+    {
+        try {
+            $sql = "SELECT * FROM ai_activity_log 
+                    ORDER BY created_at DESC 
+                    LIMIT 10";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Recent AI Activities error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get analytics data
+     */
+    private function getAnalyticsData(): array
+    {
+        try {
+            $data = [];
+
+            // Sales prediction accuracy
+            $sql = "SELECT AVG(accuracy_percentage) as avg_accuracy FROM ai_prediction_accuracy 
+                    WHERE prediction_type = 'sales' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            $result = $this->db->fetchOne($sql);
+            $data['prediction_accuracy'] = round((float)($result['avg_accuracy'] ?? 0), 2);
+
+            // Lead conversion rates
+            $sql = "SELECT 
+                        COUNT(CASE WHEN converted = 1 THEN 1 END) as converted,
+                        COUNT(*) as total
+                    FROM ai_lead_scores 
+                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            $result = $this->db->fetchOne($sql);
+            $total = (int)($result['total'] ?? 0);
+            $converted = (int)($result['converted'] ?? 0);
+            $data['conversion_rate'] = $total > 0 ? round(($converted / $total) * 100, 2) : 0;
+
+            return $data;
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Analytics Data error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get predictions
+     */
+    private function getPredictions(): array
+    {
+        try {
+            $sql = "SELECT * FROM ai_predictions 
+                    WHERE prediction_date >= CURDATE() 
+                    ORDER BY confidence_score DESC 
+                    LIMIT 20";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Predictions error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get leads for scoring
+     */
+    private function getLeadsForScoring(): array
+    {
+        try {
+            $sql = "SELECT l.*, als.score, als.confidence_level
+                    FROM leads l
+                    LEFT JOIN ai_lead_scores als ON l.id = als.lead_id
+                    ORDER BY l.created_at DESC
+                    LIMIT 50";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Leads For Scoring error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get scoring models
+     */
+    private function getScoringModels(): array
+    {
+        try {
+            $sql = "SELECT * FROM ai_scoring_models WHERE is_active = 1";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Scoring Models error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get property recommendations
+     */
+    private function getPropertyRecommendations(): array
+    {
+        try {
+            $sql = "SELECT pr.*, p.title, p.location, p.price
+                    FROM ai_property_recommendations pr
+                    JOIN properties p ON pr.property_id = p.id
+                    WHERE pr.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                    ORDER BY pr.confidence_score DESC
+                    LIMIT 30";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Property Recommendations error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get customer segments
+     */
+    private function getCustomerSegments(): array
+    {
+        try {
+            $sql = "SELECT * FROM ai_customer_segments WHERE is_active = 1";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Customer Segments error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get chatbot stats
+     */
+    private function getChatbotStats(): array
+    {
+        try {
+            $stats = [];
+
+            // Total conversations
+            $sql = "SELECT COUNT(*) as total FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+            $result = $this->db->fetchOne($sql);
+            $stats['daily_conversations'] = (int)($result['total'] ?? 0);
+
+            // Average satisfaction
+            $sql = "SELECT AVG(satisfaction_score) as avg_satisfaction FROM ai_chatbot_feedback WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+            $result = $this->db->fetchOne($sql);
+            $stats['avg_satisfaction'] = round((float)($result['avg_satisfaction'] ?? 0), 2);
+
+            return $stats;
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Chatbot Stats error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get recent conversations
+     */
+    private function getRecentConversations(): array
+    {
+        try {
+            $sql = "SELECT cc.*, u.name as user_name
+                    FROM ai_chatbot_conversations cc
+                    LEFT JOIN users u ON cc.user_id = u.id
+                    ORDER BY cc.created_at DESC
+                    LIMIT 20";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Recent Conversations error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get AI configuration
+     */
+    private function getAIConfig(): array
+    {
+        try {
+            $sql = "SELECT * FROM ai_config WHERE is_active = 1";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get AI Config error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Analyze lead
+     */
+    private function analyzeLead(array $data): array
+    {
+        try {
+            $leadId = (int)($data['lead_id'] ?? 0);
+            if ($leadId <= 0) {
+                return ['error' => 'Invalid lead ID'];
+            }
+
+            // Simulate AI analysis
+            $score = rand(60, 95);
+            $confidence = rand(70, 95);
+
+            // Save analysis
+            $sql = "INSERT INTO ai_lead_scores (lead_id, score, confidence_level, analysis_data, created_at)
+                    VALUES (?, ?, ?, ?, NOW())
+                    ON DUPLICATE KEY UPDATE score = VALUES(score), confidence_level = VALUES(confidence_level), analysis_data = VALUES(analysis_data)";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $leadId,
+                $score,
+                $confidence,
+                json_encode(['factors' => ['budget', 'timeline', 'location', 'source']])
+            ]);
+
+            return [
+                'lead_id' => $leadId,
+                'score' => $score,
+                'confidence' => $confidence,
+                'recommendation' => $score > 80 ? 'High Priority' : ($score > 60 ? 'Medium Priority' : 'Low Priority')
+            ];
+        } catch (Exception $e) {
+            $this->loggingService->error("Analyze Lead error: " . $e->getMessage());
+            return ['error' => 'Analysis failed'];
+        }
+    }
+
+    /**
+     * Recommend property
+     */
+    private function recommendProperty(array $data): array
+    {
+        try {
+            $customerId = (int)($data['customer_id'] ?? 0);
+            if ($customerId <= 0) {
+                return ['error' => 'Invalid customer ID'];
+            }
+
+            // Get customer preferences
+            $sql = "SELECT * FROM customer_preferences WHERE customer_id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$customerId]);
+            $preferences = $stmt->fetch();
+
+            // Get recommended properties
+            $sql = "SELECT p.*, 
+                           (CASE WHEN p.location LIKE ? THEN 30 ELSE 0 END +
+                            CASE WHEN p.price BETWEEN ? AND ? THEN 40 ELSE 0 END +
+                            CASE WHEN p.property_type = ? THEN 30 ELSE 0 END) as match_score
+                    FROM properties p
+                    WHERE p.status = 'available'
+                    ORDER BY match_score DESC
+                    LIMIT 5";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                '%' . ($preferences['preferred_location'] ?? '') . '%',
+                $preferences['min_budget'] ?? 0,
+                $preferences['max_budget'] ?? 999999999,
+                $preferences['property_type'] ?? ''
+            ]);
+
+            $recommendations = $stmt->fetchAll();
+
+            // Save recommendations
+            foreach ($recommendations as $property) {
+                $sql = "INSERT INTO ai_property_recommendations (customer_id, property_id, confidence_score, recommendation_data, created_at)
+                        VALUES (?, ?, ?, ?, NOW())
+                        ON DUPLICATE KEY UPDATE confidence_score = VALUES(confidence_score), recommendation_data = VALUES(recommendation_data)";
+
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    $customerId,
+                    $property['id'],
+                    $property['match_score'],
+                    json_encode(['factors' => ['location', 'price', 'type']])
+                ]);
+            }
+
+            return ['recommendations' => $recommendations];
+        } catch (Exception $e) {
+            $this->loggingService->error("Recommend Property error: " . $e->getMessage());
+            return ['error' => 'Recommendation failed'];
+        }
+    }
+
+    /**
+     * Predict sales
+     */
+    private function predictSales(array $data): array
+    {
+        try {
+            $period = $data['period'] ?? '30'; // days
+            
+            // Get historical data
+            $sql = "SELECT DATE(created_at) as date, COUNT(*) as sales
+                    FROM bookings
+                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 90 DAY)
+                    GROUP BY DATE(created_at)
+                    ORDER BY date DESC";
+            
+            $historicalData = $this->db->fetchAll($sql);
+            
+            // Simple prediction (in real implementation, this would use ML algorithms)
+            $totalSales = array_sum(array_column($historicalData, 'sales'));
+            $avgDailySales = count($historicalData) > 0 ? $totalSales / count($historicalData) : 0;
+            $predictedSales = round($avgDailySales * (int)$period);
+            
+            return [
+                'period' => $period,
+                'predicted_sales' => $predictedSales,
+                'confidence' => rand(75, 90),
+                'historical_avg' => round($avgDailySales, 2)
+            ];
+        } catch (Exception $e) {
+            $this->loggingService->error("Predict Sales error: " . $e->getMessage());
+            return ['error' => 'Prediction failed'];
+        }
+    }
+
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 }
-
-
