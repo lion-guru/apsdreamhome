@@ -3,388 +3,613 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Services\NotificationService;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
+use App\Core\Database;
+use Exception;
 
+/**
+ * Land Controller - Custom MVC Implementation
+ * Handles land management operations in the Admin panel
+ */
 class LandController extends AdminController
 {
-    protected $notificationService;
+    private $loggingService;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
+        
+        // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'storeTransaction']]);
-        $this->notificationService = new NotificationService();
     }
 
+    /**
+     * Display land records
+     */
     public function index()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('Kissan Land Records');
-        $this->data['land_records'] = $this->db->fetchAll("SELECT * FROM kisaan_land_management ORDER BY id DESC");
+        try {
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
 
-        $this->render('admin/land/index');
+            $offset = ($page - 1) * $perPage;
+
+            // Build query
+            $sql = "SELECT l.*, 
+                           COUNT(p.id) as property_count,
+                           COALESCE(SUM(p.total_area), 0) as total_area
+                    FROM land_records l
+                    LEFT JOIN properties p ON l.id = p.land_id
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (l.land_title LIKE ? OR l.location LIKE ? OR l.owner_name LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+
+            if (!empty($status)) {
+                $sql .= " AND l.status = ?";
+                $params[] = $status;
+            }
+
+            $sql .= " GROUP BY l.id ORDER BY l.created_at DESC";
+
+            // Count total
+            $countSql = str_replace("SELECT l.*, COUNT(p.id) as property_count, COALESCE(SUM(p.total_area), 0) as total_area", "SELECT COUNT(DISTINCT l.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
+
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $landRecords = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Land Records - APS Dream Home',
+                'active_page' => 'land',
+                'land_records' => $landRecords,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status
+                ]
+            ];
+
+            return $this->render('admin/land/index', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load land records');
+            return $this->redirect('admin/dashboard');
+        }
     }
 
+    /**
+     * Show the form for creating a new land record
+     */
     public function create()
     {
-        $this->data['page_title'] = $this->mlSupport->translate('Add New Land Record');
-        $this->render('admin/land/create');
+        try {
+            $data = [
+                'page_title' => 'Add New Land Record - APS Dream Home',
+                'active_page' => 'land'
+            ];
+
+            return $this->render('admin/land/create', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Create error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load land form');
+            return $this->redirect('admin/land');
+        }
     }
 
+    /**
+     * Store a newly created land record
+     */
     public function store()
     {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/land/create');
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
-
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            $this->redirect('admin/land/create');
-            return;
-        }
-
-        $farmer_name = trim($this->request->post('farmer_name'));
-        $farmer_mobile = trim($this->request->post('farmer_mobile'));
-
-        if (empty($farmer_name) || empty($farmer_mobile)) {
-            $this->setFlash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
-            $this->redirect('admin/land/create');
-            return;
-        }
-
-        $bank_name = trim($this->request->post('bank_name'));
-        $account_number = trim($this->request->post('account_number'));
-        $bank_ifsc = trim($this->request->post('bank_ifsc'));
-        $site_name = trim($this->request->post('site_name'));
-        $land_area = floatval($this->request->post('land_area') ?? 0);
-        $total_land_price = floatval($this->request->post('total_land_price') ?? 0);
-        $gata_number = trim($this->request->post('gata_number'));
-        $district = trim($this->request->post('district'));
-        $tehsil = trim($this->request->post('tehsil'));
-        $city = trim($this->request->post('city'));
-        $gram = trim($this->request->post('gram'));
-        $land_manager_name = trim($this->request->post('land_manager_name'));
-        $land_manager_mobile = trim($this->request->post('land_manager_mobile'));
-        $agreement_status = trim($this->request->post('agreement_status') ?? 'Pending');
-
-        // File Upload
-        $file_path = "";
-        $land_paper = $this->request->files('land_paper');
-        if (isset($land_paper['error']) && $land_paper['error'] === UPLOAD_ERR_OK) {
-            $allowed_extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif'];
-            $file_extension = strtolower(pathinfo($land_paper['name'], PATHINFO_EXTENSION));
-
-            if (in_array($file_extension, $allowed_extensions)) {
-                $upload_dir = 'uploads/land_papers/';
-                $app_root = defined('APP_ROOT') ? APP_ROOT : dirname(dirname(dirname(dirname(__DIR__))));
-                if (!is_dir($app_root . '/' . $upload_dir)) {
-                    mkdir($app_root . '/' . $upload_dir, 0755, true);
-                }
-
-                $file_name = uniqid('land_', true) . '.' . $file_extension;
-                $target_path = $app_root . '/' . $upload_dir . $file_name;
-
-                if (move_uploaded_file($land_paper['tmp_name'], $target_path)) {
-                    $file_path = $upload_dir . $file_name;
-                } else {
-                    $this->setFlash('error', $this->mlSupport->translate('Failed to upload file.'));
-                    $this->redirect('admin/land/create');
-                    return;
-                }
-            } else {
-                $this->setFlash('error', $this->mlSupport->translate('Invalid file type.'));
-                $this->redirect('admin/land/create');
-                return;
-            }
-        }
-
-        $sql = "INSERT INTO kisaan_land_management (
-            farmer_name, farmer_mobile, bank_name, account_number, bank_ifsc, 
-            site_name, land_area, total_land_price, gata_number, district, 
-            tehsil, city, gram, land_paper, land_manager_name, 
-            land_manager_mobile, agreement_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
-            $this->db->execute($sql, [
-                $farmer_name,
-                $farmer_mobile,
-                $bank_name,
-                $account_number,
-                $bank_ifsc,
-                $site_name,
-                $land_area,
-                $total_land_price,
-                $gata_number,
-                $district,
-                $tehsil,
-                $city,
-                $gram,
-                $file_path,
-                $land_manager_name,
-                $land_manager_mobile,
-                $agreement_status
-            ]);
+            $data = $_POST;
 
-            // Send notification
-            try {
-                $adminEmail = getenv('MAIL_ADMIN') ?: 'admin@apsdreamhome.com';
-                $subject = "New Land Record Added: " . $farmer_name;
-                $message = "A new land record has been added.\n\n";
-                $message .= "Farmer: " . $farmer_name . "\n";
-                $message .= "Site: " . $site_name . "\n";
-                $message .= "Area: " . $land_area . "\n";
-                $message .= "Total Price: " . $total_land_price . "\n";
-                $message .= "Added by: " . ($this->session->get('username', 'Admin'));
-
-                $this->notificationService->sendEmail(
-                    $adminEmail,
-                    $subject,
-                    $message,
-                    'land_record_created'
-                );
-            } catch (\Exception $e) {
-                // Log error but don't fail the request
-                logger()->error("Failed to send land record notification: " . $e->getMessage());
+            // Validate required fields
+            $required = ['land_title', 'location', 'owner_name', 'total_area', 'land_type'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
+                }
             }
 
-            $this->setFlash('success', $this->mlSupport->translate('Land record added successfully.'));
-            $this->redirect('admin/land');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error adding record: ') . $e->getMessage());
-            $this->redirect('admin/land/create');
+            // Validate area
+            $totalArea = (float)$data['total_area'];
+            if ($totalArea <= 0) {
+                return $this->jsonError('Total area must be greater than 0', 400);
+            }
+
+            // Validate coordinates if provided
+            $latitude = null;
+            $longitude = null;
+            if (!empty($data['latitude']) && !empty($data['longitude'])) {
+                $latitude = (float)$data['latitude'];
+                $longitude = (float)$data['longitude'];
+                
+                if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
+                    return $this->jsonError('Invalid coordinates', 400);
+                }
+            }
+
+            // Insert land record
+            $sql = "INSERT INTO land_records 
+                    (land_title, location, owner_name, total_area, land_type, description,
+                     latitude, longitude, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'available', NOW())";
+
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                CoreFunctionsServiceCustom::validateInput($data['land_title'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['location'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['owner_name'], 'string'),
+                $totalArea,
+                CoreFunctionsServiceCustom::validateInput($data['land_type'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
+                $latitude,
+                $longitude
+            ]);
+
+            if ($result) {
+                $landId = $this->db->lastInsertId();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'land_record_created', [
+                    'land_id' => $landId,
+                    'land_title' => $data['land_title']
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Land record created successfully',
+                    'land_id' => $landId
+                ]);
+            }
+
+            return $this->jsonError('Failed to create land record', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Store error: " . $e->getMessage());
+            return $this->jsonError('Failed to create land record', 500);
         }
     }
 
+    /**
+     * Display the specified land record
+     */
+    public function show($id)
+    {
+        try {
+            $landId = intval($id);
+            if ($landId <= 0) {
+                $this->setFlash('error', 'Invalid land record ID');
+                return $this->redirect('admin/land');
+            }
+
+            // Get land record details
+            $sql = "SELECT l.*, 
+                           COUNT(p.id) as property_count,
+                           COALESCE(SUM(p.total_area), 0) as developed_area
+                    FROM land_records l
+                    LEFT JOIN properties p ON l.id = p.land_id
+                    WHERE l.id = ?
+                    GROUP BY l.id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$landId]);
+            $landRecord = $stmt->fetch();
+
+            if (!$landRecord) {
+                $this->setFlash('error', 'Land record not found');
+                return $this->redirect('admin/land');
+            }
+
+            // Get properties on this land
+            $sql = "SELECT p.*, 
+                           b.booking_number,
+                           c.name as customer_name
+                    FROM properties p
+                    LEFT JOIN bookings b ON p.id = b.property_id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    WHERE p.land_id = ?
+                    ORDER BY p.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$landId]);
+            $properties = $stmt->fetchAll();
+
+            // Get land transactions
+            $sql = "SELECT * FROM land_transactions 
+                    WHERE land_id = ?
+                    ORDER BY transaction_date DESC
+                    LIMIT 10";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$landId]);
+            $transactions = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Land Record Details - APS Dream Home',
+                'active_page' => 'land',
+                'land_record' => $landRecord,
+                'properties' => $properties,
+                'transactions' => $transactions
+            ];
+
+            return $this->render('admin/land/show', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Show error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load land record details');
+            return $this->redirect('admin/land');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified land record
+     */
     public function edit($id)
     {
-        $id = intval($id);
-        $land_record = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
+        try {
+            $landId = intval($id);
+            if ($landId <= 0) {
+                $this->setFlash('error', 'Invalid land record ID');
+                return $this->redirect('admin/land');
+            }
 
-        if (!$land_record) {
-            $this->setFlash('error', $this->mlSupport->translate('Record not found.'));
-            $this->redirect('admin/land');
-            return;
+            // Get land record details
+            $sql = "SELECT * FROM land_records WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$landId]);
+            $landRecord = $stmt->fetch();
+
+            if (!$landRecord) {
+                $this->setFlash('error', 'Land record not found');
+                return $this->redirect('admin/land');
+            }
+
+            $data = [
+                'page_title' => 'Edit Land Record - APS Dream Home',
+                'active_page' => 'land',
+                'land_record' => $landRecord
+            ];
+
+            return $this->render('admin/land/edit', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Edit error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load land form');
+            return $this->redirect('admin/land');
         }
-
-        $this->data['page_title'] = $this->mlSupport->translate('Edit Land Record');
-        $this->data['land_record'] = $land_record;
-        $this->render('admin/land/edit');
     }
 
+    /**
+     * Update the specified land record
+     */
     public function update($id)
     {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect("admin/land/edit/$id");
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
-
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            $this->redirect("admin/land/edit/$id");
-            return;
-        }
-
-        $id = intval($id);
-
-        $farmer_name = trim($this->request->post('farmer_name') ?? '');
-        $farmer_mobile = trim($this->request->post('farmer_mobile') ?? '');
-
-        if (empty($farmer_name) || empty($farmer_mobile)) {
-            $this->setFlash('error', $this->mlSupport->translate('Farmer name and mobile are required.'));
-            $this->redirect("admin/land/edit/$id");
-            return;
-        }
-
-        $bank_name = trim($this->request->post('bank_name') ?? '');
-        $account_number = trim($this->request->post('account_number') ?? '');
-        $bank_ifsc = trim($this->request->post('bank_ifsc') ?? '');
-        $site_name = trim($this->request->post('site_name') ?? '');
-        $land_area = floatval($this->request->post('land_area') ?? 0);
-        $total_land_price = floatval($this->request->post('total_land_price') ?? 0);
-        $total_paid_amount = floatval($this->request->post('total_paid_amount') ?? 0);
-        $amount_pending = $total_land_price - $total_paid_amount;
-        $gata_number = trim($this->request->post('gata_number') ?? '');
-        $district = trim($this->request->post('district') ?? '');
-        $tehsil = trim($this->request->post('tehsil') ?? '');
-        $city = trim($this->request->post('city') ?? '');
-        $gram = trim($this->request->post('gram') ?? '');
-        $land_manager_name = trim($this->request->post('land_manager_name') ?? '');
-        $land_manager_mobile = trim($this->request->post('land_manager_mobile') ?? '');
-        $agreement_status = trim($this->request->post('agreement_status') ?? 'Pending');
-
-        $sql = "UPDATE kisaan_land_management SET
-            farmer_name = ?, farmer_mobile = ?, bank_name = ?, account_number = ?, bank_ifsc = ?,
-            site_name = ?, land_area = ?, total_land_price = ?, total_paid_amount = ?, amount_pending = ?,
-            gata_number = ?, district = ?, tehsil = ?, city = ?, gram = ?,
-            land_manager_name = ?, land_manager_mobile = ?, agreement_status = ?
-            WHERE id = ?";
 
         try {
-            $this->db->execute($sql, [
-                $farmer_name,
-                $farmer_mobile,
-                $bank_name,
-                $account_number,
-                $bank_ifsc,
-                $site_name,
-                $land_area,
-                $total_land_price,
-                $total_paid_amount,
-                $amount_pending,
-                $gata_number,
-                $district,
-                $tehsil,
-                $city,
-                $gram,
-                $land_manager_name,
-                $land_manager_mobile,
-                $agreement_status,
-                $id
-            ]);
+            $landId = intval($id);
+            if ($landId <= 0) {
+                return $this->jsonError('Invalid land record ID', 400);
+            }
 
-            $this->setFlash('success', $this->mlSupport->translate('Land record updated successfully.'));
-            $this->redirect('admin/land');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error updating record: ') . $e->getMessage());
-            $this->redirect("admin/land/edit/$id");
+            $data = $_POST;
+
+            // Check if land record exists
+            $sql = "SELECT id FROM land_records WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$landId]);
+            if (!$stmt->fetch()) {
+                return $this->jsonError('Land record not found', 404);
+            }
+
+            // Build update query
+            $updateFields = [];
+            $updateValues = [];
+
+            if (!empty($data['land_title'])) {
+                $updateFields[] = "land_title = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['land_title'], 'string');
+            }
+
+            if (!empty($data['location'])) {
+                $updateFields[] = "location = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['location'], 'string');
+            }
+
+            if (!empty($data['owner_name'])) {
+                $updateFields[] = "owner_name = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['owner_name'], 'string');
+            }
+
+            if (!empty($data['total_area'])) {
+                $totalArea = (float)$data['total_area'];
+                if ($totalArea <= 0) {
+                    return $this->jsonError('Total area must be greater than 0', 400);
+                }
+                $updateFields[] = "total_area = ?";
+                $updateValues[] = $totalArea;
+            }
+
+            if (!empty($data['land_type'])) {
+                $updateFields[] = "land_type = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['land_type'], 'string');
+            }
+
+            if (isset($data['description'])) {
+                $updateFields[] = "description = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['description'], 'string');
+            }
+
+            // Validate coordinates if provided
+            if (!empty($data['latitude']) && !empty($data['longitude'])) {
+                $latitude = (float)$data['latitude'];
+                $longitude = (float)$data['longitude'];
+                
+                if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
+                    return $this->jsonError('Invalid coordinates', 400);
+                }
+                
+                $updateFields[] = "latitude = ?";
+                $updateValues[] = $latitude;
+                $updateFields[] = "longitude = ?";
+                $updateValues[] = $longitude;
+            }
+
+            if (isset($data['status'])) {
+                $validStatuses = ['available', 'under_development', 'fully_developed', 'reserved'];
+                if (in_array($data['status'], $validStatuses)) {
+                    $updateFields[] = "status = ?";
+                    $updateValues[] = $data['status'];
+                }
+            }
+
+            if (empty($updateFields)) {
+                return $this->jsonError('No fields to update', 400);
+            }
+
+            $updateFields[] = "updated_at = NOW()";
+            $updateValues[] = $landId;
+
+            $sql = "UPDATE land_records SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($updateValues);
+
+            if ($result) {
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'land_record_updated', [
+                    'land_id' => $landId,
+                    'changes' => $data
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Land record updated successfully'
+                ]);
+            }
+
+            return $this->jsonError('Failed to update land record', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Update error: " . $e->getMessage());
+            return $this->jsonError('Failed to update land record', 500);
         }
     }
 
+    /**
+     * Remove the specified land record
+     */
     public function destroy($id)
     {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/land');
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
-
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            $this->redirect('admin/land');
-            return;
-        }
-
-        $id = intval($id);
 
         try {
-            $this->db->execute("DELETE FROM kisaan_land_management WHERE id = ?", [$id]);
+            $landId = intval($id);
+            if ($landId <= 0) {
+                return $this->jsonError('Invalid land record ID', 400);
+            }
 
-            // Log notification logic if needed (migrated from legacy)
-            // ...
+            // Check if land record exists
+            $sql = "SELECT * FROM land_records WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$landId]);
+            $landRecord = $stmt->fetch();
 
-            $this->setFlash('success', $this->mlSupport->translate('Record deleted successfully.'));
-        } catch (\Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error deleting record: ') . $e->getMessage());
+            if (!$landRecord) {
+                return $this->jsonError('Land record not found', 404);
+            }
+
+            // Check if land has properties
+            $sql = "SELECT COUNT(*) as property_count FROM properties WHERE land_id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$landId]);
+            $propertyCount = $stmt->fetch()['property_count'];
+
+            if ($propertyCount > 0) {
+                return $this->jsonError('Cannot delete land record with existing properties', 400);
+            }
+
+            // Delete land record
+            $sql = "DELETE FROM land_records WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([$landId]);
+
+            if ($result) {
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'land_record_deleted', [
+                    'land_id' => $landId,
+                    'land_title' => $landRecord['land_title']
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Land record deleted successfully'
+                ]);
+            }
+
+            return $this->jsonError('Failed to delete land record', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Land Destroy error: " . $e->getMessage());
+            return $this->jsonError('Failed to delete land record', 500);
         }
-
-        $this->redirect('admin/land');
     }
 
-    public function transactions($id)
+    /**
+     * Store land transaction
+     */
+    public function storeTransaction($landId)
     {
-        $id = intval($id);
-        $land_record = $this->db->fetchOne("SELECT * FROM kisaan_land_management WHERE id = ?", [$id]);
-
-        if (!$land_record) {
-            $this->setFlash('error', $this->mlSupport->translate('Record not found.'));
-            $this->redirect('admin/land');
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
-
-        // Ensure transactions table exists
-        $this->ensureTransactionsTable();
-
-        $transactions = $this->db->fetchAll("SELECT * FROM kisaan_land_transactions WHERE land_record_id = ? ORDER BY date DESC", [$id]);
-
-        $this->render('admin/land/transactions/index', [
-            'land_record' => $land_record,
-            'transactions' => $transactions,
-            'page_title' => $this->mlSupport->translate('Land Transactions')
-        ]);
-    }
-
-    public function createTransaction()
-    {
-        $kisan_id = $this->request->get('kisan_id');
-        $this->render('admin/land/transactions/create', [
-            'kisan_id' => $kisan_id,
-            'page_title' => $this->mlSupport->translate('Add Transaction')
-        ]);
-    }
-
-    public function storeTransaction()
-    {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/land/transactions/create');
-            return;
-        }
-
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            $this->redirect('admin/land/transactions/create');
-            return;
-        }
-
-        $kisan_id = intval($this->request->post('kisan_id'));
-        $amount = floatval($this->request->post('amount'));
-        $date = $this->request->post('date');
-        $description = trim($this->request->post('description'));
-
-        if (!$kisan_id || $amount <= 0 || empty($date)) {
-            $this->setFlash('error', $this->mlSupport->translate('Please fill all required fields correctly.'));
-            $this->redirect('admin/land/transactions/create?kisan_id=' . $kisan_id);
-            return;
-        }
-
-        // Ensure transactions table exists
-        $this->ensureTransactionsTable();
 
         try {
-            $this->db->execute(
-                "INSERT INTO kisaan_land_transactions (land_record_id, amount, date, description, created_at) VALUES (?, ?, ?, ?, NOW())",
-                [$kisan_id, $amount, $date, $description]
-            );
+            $landId = intval($landId);
+            if ($landId <= 0) {
+                return $this->jsonError('Invalid land record ID', 400);
+            }
 
-            // Update total paid and pending
-            $this->updatePaymentStatus($kisan_id);
+            $data = $_POST;
 
-            $this->setFlash('success', $this->mlSupport->translate('Transaction added successfully.'));
-            $this->redirect("admin/land/transactions/$kisan_id");
-        } catch (\Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error adding transaction: ') . $e->getMessage());
-            $this->redirect('admin/land/transactions/create?kisan_id=' . $kisan_id);
+            // Validate required fields
+            $required = ['transaction_type', 'amount', 'transaction_date'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
+                }
+            }
+
+            $amount = (float)$data['amount'];
+            if ($amount <= 0) {
+                return $this->jsonError('Amount must be greater than 0', 400);
+            }
+
+            // Validate transaction type
+            $validTypes = ['purchase', 'sale', 'development_cost', 'maintenance', 'other'];
+            if (!in_array($data['transaction_type'], $validTypes)) {
+                return $this->jsonError('Invalid transaction type', 400);
+            }
+
+            // Insert transaction
+            $sql = "INSERT INTO land_transactions 
+                    (land_id, transaction_type, amount, description, transaction_date, created_at)
+                    VALUES (?, ?, ?, ?, ?, NOW())";
+
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                $landId,
+                $data['transaction_type'],
+                $amount,
+                CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
+                $data['transaction_date']
+            ]);
+
+            if ($result) {
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'land_transaction_created', [
+                    'land_id' => $landId,
+                    'transaction_type' => $data['transaction_type'],
+                    'amount' => $amount
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Land transaction recorded successfully'
+                ]);
+            }
+
+            return $this->jsonError('Failed to record land transaction', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Store Land Transaction error: " . $e->getMessage());
+            return $this->jsonError('Failed to record land transaction', 500);
         }
     }
 
-    protected function updatePaymentStatus($id)
+    /**
+     * Get land statistics
+     */
+    public function getStats()
     {
-        $total_paid = $this->db->fetchColumn("SELECT SUM(amount) FROM kisaan_land_transactions WHERE land_record_id = ?", [$id]);
-        $land_record = $this->db->fetchOne("SELECT total_land_price FROM kisaan_land_management WHERE id = ?", [$id]);
+        try {
+            $stats = [];
 
-        if ($land_record) {
-            $pending = $land_record['total_land_price'] - $total_paid;
-            $this->db->execute(
-                "UPDATE kisaan_land_management SET total_paid_amount = ?, amount_pending = ? WHERE id = ?",
-                [$total_paid, $pending, $id]
-            );
+            // Total land records
+            $sql = "SELECT COUNT(*) as total FROM land_records";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_records'] = (int)($result['total'] ?? 0);
+
+            // Total land area
+            $sql = "SELECT COALESCE(SUM(total_area), 0) as total FROM land_records";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_area'] = (float)($result['total'] ?? 0);
+
+            // Land by status
+            $sql = "SELECT status, COUNT(*) as count FROM land_records GROUP BY status";
+            $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
+
+            // Land by type
+            $sql = "SELECT land_type, COUNT(*) as count FROM land_records GROUP BY land_type";
+            $stats['by_type'] = $this->db->fetchAll($sql) ?: [];
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $stats
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Land Stats error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch land stats'
+            ], 500);
         }
     }
 
-    protected function ensureTransactionsTable()
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
     {
-        $sql = "CREATE TABLE IF NOT EXISTS kisaan_land_transactions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            land_record_id INT NOT NULL,
-            amount DECIMAL(10,2) NOT NULL,
-            date DATE NOT NULL,
-            description TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (land_record_id) REFERENCES kisaan_land_management(id) ON DELETE CASCADE
-        )";
-        $this->db->execute($sql);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+
+    /**
+     * JSON error helper
+     */
+    private function jsonError(string $message, int $statusCode = 400): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
