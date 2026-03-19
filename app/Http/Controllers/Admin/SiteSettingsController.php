@@ -15,14 +15,12 @@ use Exception;
 class SiteSettingsController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['update', 'store', 'destroy']]);
     }
@@ -129,10 +127,10 @@ class SiteSettingsController extends AdminController
                              updated_at = NOW()";
 
                     $stmt = $this->db->prepare($sql);
-                    
+
                     // Determine category based on key
                     $category = $this->getSettingCategory($key);
-                    
+
                     $stmt->execute([
                         $key,
                         CoreFunctionsServiceCustom::validateInput($value, 'string'),
@@ -223,7 +221,7 @@ class SiteSettingsController extends AdminController
 
                 foreach ($defaultSettings as $key => $value) {
                     $category = $this->getSettingCategory($key);
-                    
+
                     $sql = "INSERT INTO site_settings (setting_key, setting_value, category, updated_at) 
                              VALUES (?, ?, ?, NOW())
                              ON DUPLICATE KEY UPDATE 
@@ -301,7 +299,7 @@ class SiteSettingsController extends AdminController
     {
         try {
             $format = $_GET['format'] ?? 'json';
-            
+
             $sql = "SELECT * FROM site_settings ORDER BY category, setting_key";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
@@ -310,15 +308,15 @@ class SiteSettingsController extends AdminController
             if ($format === 'csv') {
                 // Generate CSV export
                 $filename = 'site_settings_' . date('Y-m-d_H-i-s') . '.csv';
-                
+
                 header('Content-Type: text/csv');
                 header('Content-Disposition: attachment; filename="' . $filename . '"');
-                
+
                 $output = fopen('php://output', 'w');
-                
+
                 // CSV header
                 fputcsv($output, ['Setting Key', 'Setting Value', 'Category', 'Updated At']);
-                
+
                 // CSV data
                 foreach ($settings as $setting) {
                     fputcsv($output, [
@@ -328,7 +326,7 @@ class SiteSettingsController extends AdminController
                         $setting['updated_at']
                     ]);
                 }
-                
+
                 fclose($output);
                 exit;
             } else {
