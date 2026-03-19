@@ -15,14 +15,12 @@ use Exception;
 class UserController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
@@ -331,7 +329,7 @@ class UserController extends AdminController
                 if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                     return $this->jsonError('Invalid email address', 400);
                 }
-                
+
                 // Check if email already exists (excluding current user)
                 $sql = "SELECT id FROM users WHERE email = ? AND id != ?";
                 $stmt = $this->db->prepare($sql);
@@ -339,7 +337,7 @@ class UserController extends AdminController
                 if ($stmt->fetch()) {
                     return $this->jsonError('Email already exists', 400);
                 }
-                
+
                 $updateFields[] = "email = ?";
                 $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['email'], 'string');
             }
