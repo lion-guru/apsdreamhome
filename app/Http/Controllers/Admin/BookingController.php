@@ -141,11 +141,11 @@ class BookingController extends AdminController
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
-            $bookings = $stmt->fetchAll();
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Get filter options
-            $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
-            $associates = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
+            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $associates = $this->db->query("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
 
             $data = [
                 'page_title' => 'Bookings - APS Dream Home',
@@ -256,9 +256,9 @@ class BookingController extends AdminController
             }
 
             // Get form data
-            $properties = $this->db->fetchAll("SELECT id, title, price FROM properties ORDER BY title");
-            $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
-            $associates = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
+            $properties = $this->db->query("SELECT id, title, price FROM properties ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
+            $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
+            $associates = $this->db->query("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
 
             $data = [
                 'page_title' => 'Edit Booking - APS Dream Home',
@@ -315,7 +315,9 @@ class BookingController extends AdminController
             }
 
             // Check if booking exists
-            $existing = $this->db->fetchOne("SELECT id FROM bookings WHERE id = ? LIMIT 1", [$bookingId]);
+            $stmt = $this->db->prepare("SELECT id FROM bookings WHERE id = ? LIMIT 1");
+            $stmt->execute([$bookingId]);
+            $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$existing) {
                 $this->setFlash('error', 'Booking not found');
                 return $this->redirect('admin/bookings');
@@ -383,7 +385,9 @@ class BookingController extends AdminController
             }
 
             // Check if booking exists
-            $booking = $this->db->fetchOne("SELECT * FROM bookings WHERE id = ? LIMIT 1", [$bookingId]);
+            $stmt = $this->db->prepare("SELECT * FROM bookings WHERE id = ? LIMIT 1");
+            $stmt->execute([$bookingId]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$booking) {
                 $this->setFlash('error', 'Booking not found');
                 return $this->redirect('admin/bookings');
@@ -479,14 +483,15 @@ class BookingController extends AdminController
     private function handleStatusChange(int $bookingId, string $newStatus): void
     {
         try {
-            $booking = $this->db->fetchOne(
+            $stmt = $this->db->prepare(
                 "SELECT b.*, c.name as customer_name, c.email, p.title as property_title
                  FROM bookings b
                  JOIN users c ON b.customer_id = c.id
                  JOIN properties p ON b.property_id = p.id
-                 WHERE b.id = ? LIMIT 1",
-                [$bookingId]
+                 WHERE b.id = ? LIMIT 1"
             );
+            $stmt->execute([$bookingId]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$booking) return;
 
@@ -613,15 +618,15 @@ class BookingController extends AdminController
     {
         // Fetch properties (available)
         // Using direct query for simple list or use model method if available
-        $properties = $this->db->fetchAll("SELECT id, title, price FROM properties WHERE status = 'available' ORDER BY title");
+        $properties = $this->db->query("SELECT id, title, price FROM properties WHERE status = 'available' ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
 
         // Fetch customers (users with role='customer')
         // Using direct query to be efficient
-        $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
+        $customers = $this->db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
 
         // Fetch associates (users with role='associate' and status='active')
         // For associate assignment in booking
-        $associates = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
+        $associates = $this->db->query("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
 
         return $this->render('admin/bookings/create', [
             'page_title' => 'Add New Booking - APS Dream Home',
