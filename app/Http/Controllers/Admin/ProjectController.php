@@ -2,23 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Project;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
 use App\Core\Database;
+use Exception;
 
+/**
+ * Project Controller - Custom MVC Implementation
+ * Handles project management operations in the Admin panel
+ */
 class ProjectController extends AdminController
 {
-    protected $projectModel;
+    private $loggingService;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
-
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
+        
         // Register middlewares
-        // AdminController likely handles basic auth, but we can keep specific ones
-        //$this->middleware('role:admin'); // AdminController usually checks this in index or constructor
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
-
-        $this->projectModel = $this->model('Project');
     }
 
     /**
@@ -26,709 +32,658 @@ class ProjectController extends AdminController
      */
     public function index()
     {
-        $projects = $this->projectModel->getAllActiveProjects();
-        return $this->render('admin/projects/index', [
-            'projects' => $projects,
-            'page_title' => $this->mlSupport->translate('Project Management') . ' - ' . $this->getConfig('app_name')
-        ]);
+        try {
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $type = $_GET['type'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
+
+            $offset = ($page - 1) * $perPage;
+
+            // Build query
+            $sql = "SELECT p.*, 
+                           COUNT(pr.id) as property_count,
+                           COALESCE(SUM(pr.total_area), 0) as developed_area,
+                           COALESCE(SUM(pr.price), 0) as total_value
+                    FROM projects p
+                    LEFT JOIN properties pr ON p.id = pr.project_id
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (p.project_name LIKE ? OR p.location LIKE ? OR p.description LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+
+            if (!empty($status)) {
+                $sql .= " AND p.status = ?";
+                $params[] = $status;
+            }
+
+            if (!empty($type)) {
+                $sql .= " AND p.project_type = ?";
+                $params[] = $type;
+            }
+
+            $sql .= " GROUP BY p.id ORDER BY p.created_at DESC";
+
+            // Count total
+            $countSql = str_replace("SELECT p.*, COUNT(pr.id) as property_count, COALESCE(SUM(pr.total_area), 0) as developed_area, COALESCE(SUM(pr.price), 0) as total_value", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
+
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $projects = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Project Management - APS Dream Home',
+                'active_page' => 'projects',
+                'projects' => $projects,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status,
+                    'type' => $type
+                ]
+            ];
+
+            return $this->render('admin/projects/index', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load projects');
+            return $this->redirect('admin/dashboard');
+        }
     }
 
     /**
-     * Show create project form
+     * Show the form for creating a new project
      */
     public function create()
     {
-        return $this->render('admin/projects/create', [
-            'page_title' => $this->mlSupport->translate('Add New Project') . ' - ' . $this->getConfig('app_name')
-        ]);
+        try {
+            $data = [
+                'page_title' => 'Create Project - APS Dream Home',
+                'active_page' => 'projects'
+            ];
+
+            return $this->render('admin/projects/create', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Create error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load project form');
+            return $this->redirect('admin/projects');
+        }
     }
 
     /**
-     * Store new project
+     * Store a newly created project
      */
     public function store()
     {
-        if ($this->request->getMethod() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->redirect('/admin/projects/create');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            return $this->redirect('/admin/projects/create');
-        }
+        try {
+            $data = $_POST;
 
-        $data = $this->request->all();
-
-        // Basic validation
-        if (empty($data['project_name']) || empty($data['project_code'])) {
-            $this->setFlash('error', $this->mlSupport->translate('Project name and code are required.'));
-            return $this->redirect('/admin/projects/create');
-        }
-
-        // Explicitly define fillable fields for security
-        $fillableFields = [
-            'project_name',
-            'project_code',
-            'project_type',
-            'location',
-            'city',
-            'state',
-            'pincode',
-            'description',
-            'short_description',
-            'total_area',
-            'total_plots',
-            'available_plots',
-            'price_per_sqft',
-            'base_price',
-            'project_status',
-            'possession_date',
-            'rera_number',
-            'is_featured',
-            'is_active',
-            'latitude',
-            'longitude',
-            'address',
-            'highlights',
-            'amenities'
-        ];
-
-        $projectData = [];
-        foreach ($fillableFields as $field) {
-            if (isset($data[$field])) {
-                $projectData[$field] = $data[$field]; // Model should handle sanitization/encoding
+            // Validate required fields
+            $required = ['project_name', 'location', 'project_type'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
+                }
             }
-        }
 
-        $projectData['created_by'] = $this->session->get('user_id') ?? 1;
-        $projectData['is_active'] = isset($data['is_active']) ? 1 : 0;
-        $projectData['is_featured'] = isset($data['is_featured']) ? 1 : 0;
+            // Validate numeric fields
+            $totalArea = (float)($data['total_area'] ?? 0);
+            $estimatedBudget = (float)($data['estimated_budget'] ?? 0);
 
-        $projectId = $this->projectModel->createProject($projectData);
-
-        if ($projectId) {
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
+            if ($totalArea <= 0) {
+                return $this->jsonError('Total area must be greater than 0', 400);
             }
-            $this->logActivity('Project Creation', 'Created project: ' . h($data['project_name']) . ' (ID: ' . $projectId . ')');
-            $this->setFlash('success', $this->mlSupport->translate('Project created successfully.'));
-            return $this->redirect('/admin/projects');
-        } else {
-            $this->setFlash('error', $this->mlSupport->translate('Failed to create project.'));
-            return $this->redirect('/admin/projects/create');
+
+            // Handle image upload
+            $imagePath = null;
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $imageValidation = $this->validateImage($_FILES['image']);
+                if (!$imageValidation['valid']) {
+                    return $this->jsonError($imageValidation['error'], 400);
+                }
+                $imagePath = $this->uploadImage($_FILES['image']);
+                if (!$imagePath) {
+                    return $this->jsonError('Failed to upload image', 500);
+                }
+            }
+
+            // Insert project
+            $sql = "INSERT INTO projects 
+                    (project_name, location, project_type, total_area, estimated_budget, 
+                     description, image, start_date, end_date, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'planning', NOW())";
+
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                CoreFunctionsServiceCustom::validateInput($data['project_name'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['location'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['project_type'], 'string'),
+                $totalArea,
+                $estimatedBudget,
+                CoreFunctionsServiceCustom::validateInput($data['description'] ?? '', 'string'),
+                $imagePath,
+                $data['start_date'] ?? null,
+                $data['end_date'] ?? null
+            ]);
+
+            if ($result) {
+                $projectId = $this->db->lastInsertId();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'project_created', [
+                    'project_id' => $projectId,
+                    'project_name' => $data['project_name']
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Project created successfully',
+                    'project_id' => $projectId
+                ]);
+            }
+
+            // Clean up uploaded image if database insert failed
+            if ($imagePath && file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            return $this->jsonError('Failed to create project', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Store error: " . $e->getMessage());
+            return $this->jsonError('Failed to create project', 500);
         }
     }
 
     /**
-     * Show edit project form
+     * Display the specified project
+     */
+    public function show($id)
+    {
+        try {
+            $projectId = intval($id);
+            if ($projectId <= 0) {
+                $this->setFlash('error', 'Invalid project ID');
+                return $this->redirect('admin/projects');
+            }
+
+            // Get project details
+            $sql = "SELECT p.*, 
+                           COUNT(pr.id) as property_count,
+                           COALESCE(SUM(pr.total_area), 0) as developed_area,
+                           COALESCE(SUM(pr.price), 0) as total_value
+                    FROM projects p
+                    LEFT JOIN properties pr ON p.id = pr.project_id
+                    WHERE p.id = ?
+                    GROUP BY p.id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$projectId]);
+            $project = $stmt->fetch();
+
+            if (!$project) {
+                $this->setFlash('error', 'Project not found');
+                return $this->redirect('admin/projects');
+            }
+
+            // Get properties in this project
+            $sql = "SELECT pr.*, 
+                           b.booking_number,
+                           c.name as customer_name
+                    FROM properties pr
+                    LEFT JOIN bookings b ON pr.id = b.property_id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    WHERE pr.project_id = ?
+                    ORDER BY pr.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$projectId]);
+            $properties = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Project Details - APS Dream Home',
+                'active_page' => 'projects',
+                'project' => $project,
+                'properties' => $properties
+            ];
+
+            return $this->render('admin/projects/show', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Show error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load project details');
+            return $this->redirect('admin/projects');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified project
      */
     public function edit($id)
     {
-        $id = \intval($id);
-        $project = $this->projectModel->getProjectById($id);
-        if (!$project) {
-            $this->setFlash('error', $this->mlSupport->translate('Project not found.'));
-            return $this->redirect('/admin/projects');
-        }
+        try {
+            $projectId = intval($id);
+            if ($projectId <= 0) {
+                $this->setFlash('error', 'Invalid project ID');
+                return $this->redirect('admin/projects');
+            }
 
-        return $this->render('admin/projects/edit', [
-            'project' => $project,
-            'page_title' => $this->mlSupport->translate('Edit Project') . ' - ' . $this->getConfig('app_name')
-        ]);
+            // Get project details
+            $sql = "SELECT * FROM projects WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$projectId]);
+            $project = $stmt->fetch();
+
+            if (!$project) {
+                $this->setFlash('error', 'Project not found');
+                return $this->redirect('admin/projects');
+            }
+
+            $data = [
+                'page_title' => 'Edit Project - APS Dream Home',
+                'active_page' => 'projects',
+                'project' => $project
+            ];
+
+            return $this->render('admin/projects/edit', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Edit error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load project form');
+            return $this->redirect('admin/projects');
+        }
     }
 
     /**
-     * Update project
+     * Update the specified project
      */
     public function update($id)
     {
-        $id = \intval($id);
-
-        if ($this->request->getMethod() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->redirect("/admin/projects/edit/$id");
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
-            return $this->redirect("/admin/projects/edit/$id");
-        }
-
-        $data = $this->request->all();
-
-        if (empty($data['project_name'])) {
-            $this->setFlash('error', $this->mlSupport->translate('Project name is required.'));
-            return $this->redirect("/admin/projects/edit/$id");
-        }
-
-        // Explicitly define fillable fields for security
-        $fillableFields = [
-            'project_name',
-            'project_code',
-            'project_type',
-            'location',
-            'city',
-            'state',
-            'pincode',
-            'description',
-            'short_description',
-            'total_area',
-            'total_plots',
-            'available_plots',
-            'price_per_sqft',
-            'base_price',
-            'project_status',
-            'possession_date',
-            'rera_number',
-            'is_featured',
-            'is_active',
-            'latitude',
-            'longitude',
-            'address',
-            'highlights',
-            'amenities'
-        ];
-
-        $projectData = [];
-        foreach ($fillableFields as $field) {
-            if (isset($data[$field])) {
-                $projectData[$field] = $data[$field];
+        try {
+            $projectId = intval($id);
+            if ($projectId <= 0) {
+                return $this->jsonError('Invalid project ID', 400);
             }
-        }
 
-        $projectData['is_active'] = isset($data['is_active']) ? 1 : 0;
-        $projectData['is_featured'] = isset($data['is_featured']) ? 1 : 0;
+            $data = $_POST;
 
-        $updated = $this->projectModel->updateProject($id, $projectData);
+            // Check if project exists
+            $sql = "SELECT * FROM projects WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$projectId]);
+            $project = $stmt->fetch();
 
-        if ($updated) {
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
+            if (!$project) {
+                return $this->jsonError('Project not found', 404);
             }
-            $this->logActivity('Project Update', 'Updated project: ' . h($data['project_name']) . ' (ID: ' . $id . ')');
-            $this->setFlash('success', $this->mlSupport->translate('Project updated successfully.'));
-            return $this->redirect('/admin/projects');
-        } else {
-            $this->setFlash('error', $this->mlSupport->translate('Failed to update project.'));
-            return $this->redirect("/admin/projects/edit/$id");
+
+            // Handle image upload
+            $imagePath = $project['image']; // Keep existing image by default
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $imageValidation = $this->validateImage($_FILES['image']);
+                if (!$imageValidation['valid']) {
+                    return $this->jsonError($imageValidation['error'], 400);
+                }
+                
+                $newImagePath = $this->uploadImage($_FILES['image']);
+                if (!$newImagePath) {
+                    return $this->jsonError('Failed to upload image', 500);
+                }
+
+                // Delete old image if exists
+                if ($project['image'] && file_exists($project['image'])) {
+                    unlink($project['image']);
+                }
+
+                $imagePath = $newImagePath;
+            }
+
+            // Build update query
+            $updateFields = [];
+            $updateValues = [];
+
+            if (!empty($data['project_name'])) {
+                $updateFields[] = "project_name = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['project_name'], 'string');
+            }
+
+            if (!empty($data['location'])) {
+                $updateFields[] = "location = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['location'], 'string');
+            }
+
+            if (!empty($data['project_type'])) {
+                $updateFields[] = "project_type = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['project_type'], 'string');
+            }
+
+            if (isset($data['total_area'])) {
+                $totalArea = (float)$data['total_area'];
+                if ($totalArea <= 0) {
+                    return $this->jsonError('Total area must be greater than 0', 400);
+                }
+                $updateFields[] = "total_area = ?";
+                $updateValues[] = $totalArea;
+            }
+
+            if (isset($data['estimated_budget'])) {
+                $updateFields[] = "estimated_budget = ?";
+                $updateValues[] = (float)$data['estimated_budget'];
+            }
+
+            if (isset($data['description'])) {
+                $updateFields[] = "description = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['description'], 'string');
+            }
+
+            if (isset($data['start_date'])) {
+                $updateFields[] = "start_date = ?";
+                $updateValues[] = $data['start_date'];
+            }
+
+            if (isset($data['end_date'])) {
+                $updateFields[] = "end_date = ?";
+                $updateValues[] = $data['end_date'];
+            }
+
+            if (isset($data['status'])) {
+                $validStatuses = ['planning', 'in_progress', 'completed', 'on_hold', 'cancelled'];
+                if (in_array($data['status'], $validStatuses)) {
+                    $updateFields[] = "status = ?";
+                    $updateValues[] = $data['status'];
+                }
+            }
+
+            $updateFields[] = "image = ?";
+            $updateValues[] = $imagePath;
+            $updateFields[] = "updated_at = NOW()";
+            $updateValues[] = $projectId;
+
+            $sql = "UPDATE projects SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($updateValues);
+
+            if ($result) {
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'project_updated', [
+                    'project_id' => $projectId,
+                    'changes' => $data
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Project updated successfully'
+                ]);
+            }
+
+            return $this->jsonError('Failed to update project', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Update error: " . $e->getMessage());
+            return $this->jsonError('Failed to update project', 500);
         }
     }
 
     /**
-     * Delete project
+     * Remove the specified project
      */
     public function destroy($id)
     {
-        $id = \intval($id);
-
-        if ($this->request->getMethod() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->redirect('/admin/projects');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        $stmt = $this->db->prepare("DELETE FROM projects WHERE project_id = :id");
-        $deleted = $stmt->execute(['id' => $id]);
-
-        if ($deleted) {
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
-            $this->logActivity('Project Deletion', 'Deleted project ID: ' . $id);
-            $this->setFlash('success', $this->mlSupport->translate('Project deleted successfully.'));
-        } else {
-            $this->setFlash('error', $this->mlSupport->translate('Failed to delete project.'));
-        }
-        return $this->redirect('/admin/projects');
-    }
-
-    /**
-     * Bulk update projects status
-     */
-    public function bulkUpdateStatus()
-    {
-        if ($this->request->getMethod() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        $data = $this->request->all();
-        $projectIds = $data['project_ids'] ?? [];
-        $status = $data['status'] ?? null;
-
-        if (empty($projectIds) || !is_array($projectIds)) {
-            $this->setFlash('error', $this->mlSupport->translate('Please select projects to update.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        if ($status === null) {
-            $this->setFlash('error', $this->mlSupport->translate('Please select a status.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        $updatedCount = 0;
-        foreach ($projectIds as $projectId) {
-            $projectId = intval($projectId);
-            $updateData = ['project_status' => $status];
-
-            if ($this->projectModel->updateProject($projectId, $updateData)) {
-                $updatedCount++;
-            }
-        }
-
-        if ($updatedCount > 0) {
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
-            $this->logActivity('Bulk Project Status Update', "Updated $updatedCount projects to status: $status");
-            $this->setFlash('success', $this->mlSupport->translate("$updatedCount projects updated successfully."));
-        } else {
-            $this->setFlash('error', $this->mlSupport->translate('Failed to update projects.'));
-        }
-
-        return $this->redirect('/admin/projects');
-    }
-
-    /**
-     * Bulk delete projects
-     */
-    public function bulkDelete()
-    {
-        if ($this->request->getMethod() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        $data = $this->request->all();
-        $projectIds = $data['project_ids'] ?? [];
-
-        if (empty($projectIds) || !is_array($projectIds)) {
-            $this->setFlash('error', $this->mlSupport->translate('Please select projects to delete.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        $deletedCount = 0;
-        foreach ($projectIds as $projectId) {
-            $projectId = intval($projectId);
-
-            $stmt = $this->db->prepare("DELETE FROM projects WHERE project_id = :id");
-            if ($stmt->execute(['id' => $projectId])) {
-                $deletedCount++;
-            }
-        }
-
-        if ($deletedCount > 0) {
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
-            $this->logActivity('Bulk Project Deletion', "Deleted $deletedCount projects");
-            $this->setFlash('success', $this->mlSupport->translate("$deletedCount projects deleted successfully."));
-        } else {
-            $this->setFlash('error', $this->mlSupport->translate('Failed to delete projects.'));
-        }
-
-        return $this->redirect('/admin/projects');
-    }
-
-    /**
-     * Toggle featured status for multiple projects
-     */
-    public function bulkToggleFeatured()
-    {
-        if ($this->request->getMethod() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        if (!$this->validateCsrfToken()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        $data = $this->request->all();
-        $projectIds = $data['project_ids'] ?? [];
-        $featured = isset($data['featured']) ? 1 : 0;
-
-        if (empty($projectIds) || !is_array($projectIds)) {
-            $this->setFlash('error', $this->mlSupport->translate('Please select projects to update.'));
-            return $this->redirect('/admin/projects');
-        }
-
-        $updatedCount = 0;
-        foreach ($projectIds as $projectId) {
-            $projectId = intval($projectId);
-            $updateData = ['is_featured' => $featured];
-
-            if ($this->projectModel->updateProject($projectId, $updateData)) {
-                $updatedCount++;
-            }
-        }
-
-        $action = $featured ? 'featured' : 'unfeatured';
-        if ($updatedCount > 0) {
-            // Invalidate dashboard cache
-            if (function_exists('getPerformanceManager')) {
-                getPerformanceManager()->clearCache('query_');
-            }
-            $this->logActivity('Bulk Project Featured Toggle', "$updatedCount projects $action");
-            $this->setFlash('success', $this->mlSupport->translate("$updatedCount projects $action successfully."));
-        } else {
-            $this->setFlash('error', $this->mlSupport->translate('Failed to update projects.'));
-        }
-
-        return $this->redirect('/admin/projects');
-    }
-
-    /**
-     * Export projects data
-     */
-    public function export()
-    {
-        $projects = $this->projectModel->getAllActiveProjects();
-
-        // Set headers for CSV download
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=projects_' . date('Y-m-d') . '.csv');
-
-        $output = fopen('php://output', 'w');
-
-        // CSV headers
-        fputcsv($output, [
-            'ID', 'Project Name', 'Project Code', 'Location', 'City', 'State',
-            'Total Area', 'Total Plots', 'Available Plots', 'Base Price',
-            'Status', 'Is Featured', 'Is Active', 'Created Date'
-        ]);
-
-        // CSV data
-        foreach ($projects as $project) {
-            fputcsv($output, [
-                $project['project_id'] ?? $project['id'] ?? '',
-                $project['project_name'] ?? '',
-                $project['project_code'] ?? '',
-                $project['location'] ?? '',
-                $project['city'] ?? '',
-                $project['state'] ?? '',
-                $project['total_area'] ?? '',
-                $project['total_plots'] ?? '',
-                $project['available_plots'] ?? '',
-                $project['base_price'] ?? '',
-                $project['project_status'] ?? '',
-                ($project['is_featured'] ?? 0) ? 'Yes' : 'No',
-                ($project['is_active'] ?? 0) ? 'Yes' : 'No',
-                $project['created_at'] ?? ''
-            ]);
-        }
-
-        fclose($output);
-        exit;
-    }
-
-    public function detail($id)
-    {
         try {
-            // Get project details
-            $project = $this->getProjectById($id);
-            
-            if (!$project) {
-                header('HTTP/1.0 404 Not Found');
-                $this->render('errors/404', [
-                    'page_title' => 'Project Not Found - APS Dream Home'
-                ]);
-                return;
+            $projectId = intval($id);
+            if ($projectId <= 0) {
+                return $this->jsonError('Invalid project ID', 400);
             }
-            
-            // Get related projects
-            $relatedProjects = $this->getRelatedProjects($id, $project['city'], 3);
-            
-            // Get project gallery
-            $gallery = $this->getProjectGallery($id);
-            
-            // Get project amenities
-            $amenities = $this->getProjectAmenities($id);
-            
-            // Get project specifications
-            $specifications = $this->getProjectSpecifications($id);
-            
-            // SEO meta data
-            $metaData = [
-                'title' => $project['name'] . ' - APS Dream Home | ' . $project['type'] . ' Project in ' . $project['city'],
-                'description' => substr(strip_tags($project['description']), 0, 150),
-                'keywords' => $project['name'] . ', ' . $project['city'] . ', ' . $project['type'] . ', APS Dream Home, real estate',
-                'canonical' => BASE_URL . '/projects/' . $id
-            ];
-            
-            $this->render('projects/detail', [
-                'page_title' => $metaData['title'],
-                'page_description' => $metaData['description'],
-                'meta_data' => $metaData,
-                'project' => $project,
-                'related_projects' => $relatedProjects,
-                'gallery' => $gallery,
-                'amenities' => $amenities,
-                'specifications' => $specifications
-            ]);
-            
-        } catch (\Exception $e) {
-            error_log("ProjectController detail error: " . $e->getMessage());
-            
-            // Fallback to sample data
-            $this->render('projects/detail', [
-                'page_title' => 'Project Details - APS Dream Home',
-                'page_description' => 'Premium real estate project details',
-                'project' => $this->getSampleProject($id),
-                'related_projects' => array_slice($this->getSampleProjects(), 0, 3),
-                'gallery' => $this->getSampleGallery(),
-                'amenities' => $this->getSampleAmenities(),
-                'specifications' => $this->getSampleSpecifications()
-            ]);
+
+            // Check if project exists
+            $sql = "SELECT * FROM projects WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$projectId]);
+            $project = $stmt->fetch();
+
+            if (!$project) {
+                return $this->jsonError('Project not found', 404);
+            }
+
+            // Check if project has properties
+            $sql = "SELECT COUNT(*) as property_count FROM properties WHERE project_id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$projectId]);
+            $propertyCount = $stmt->fetch()['property_count'];
+
+            if ($propertyCount > 0) {
+                return $this->jsonError('Cannot delete project with existing properties', 400);
+            }
+
+            // Delete image if exists
+            if ($project['image'] && file_exists($project['image'])) {
+                unlink($project['image']);
+            }
+
+            // Delete project
+            $sql = "DELETE FROM projects WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([$projectId]);
+
+            if ($result) {
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'project_deleted', [
+                    'project_id' => $projectId,
+                    'project_name' => $project['project_name']
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Project deleted successfully'
+                ]);
+            }
+
+            return $this->jsonError('Failed to delete project', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Destroy error: " . $e->getMessage());
+            return $this->jsonError('Failed to delete project', 500);
         }
     }
 
-    public function submitEnquiry()
+    /**
+     * Display project analytics
+     */
+    public function analytics()
     {
         try {
             $data = [
-                'project_id' => Security::sanitize($_POST['project_id']) ?? 0,
-                'name' => Security::sanitize($_POST['name']) ?? '',
-                'email' => Security::sanitize($_POST['email']) ?? '',
-                'phone' => Security::sanitize($_POST['phone']) ?? '',
-                'message' => Security::sanitize($_POST['message']) ?? '',
-                'budget' => Security::sanitize($_POST['budget']) ?? '',
-                'preferred_time' => Security::sanitize($_POST['preferred_time']) ?? '',
-                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
+                'page_title' => 'Project Analytics - APS Dream Home',
+                'active_page' => 'projects',
+                'analytics_data' => $this->getProjectAnalytics()
             ];
-            
-            // Validate required fields
-            if (empty($data['name']) || empty($data['email']) || empty($data['phone'])) {
-                $_SESSION['flash_messages'][] = [
-                    'type' => 'danger',
-                    'text' => 'Please fill in all required fields'
-                ];
-                header('Location: ' . $_SERVER['HTTP_REFERER']);
-                exit;
-            }
-            
-            // Save enquiry
-            $enquiryModel = new ProjectEnquiry();
-            $enquiryId = $enquiryModel->create($data);
-            
-            if ($enquiryId) {
-                // Send email notification (implement email service)
-                $this->sendEnquiryNotification($data);
-                
-                $_SESSION['flash_messages'][] = [
-                    'type' => 'success',
-                    'text' => 'Your enquiry has been submitted successfully. We will contact you soon!'
-                ];
-            } else {
-                $_SESSION['flash_messages'][] = [
-                    'type' => 'danger',
-                    'text' => 'Failed to submit enquiry. Please try again.'
-                ];
-            }
-            
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit;
-            
-        } catch (\Exception $e) {
-            error_log("ProjectController submitEnquiry error: " . $e->getMessage());
-            
-            $_SESSION['flash_messages'][] = [
-                'type' => 'danger',
-                'text' => 'An error occurred. Please try again.'
-            ];
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit;
+
+            return $this->render('admin/projects/analytics', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Project Analytics error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load project analytics');
+            return $this->redirect('admin/projects');
         }
     }
 
-    public function apiProjects()
+    /**
+     * Validate uploaded image
+     */
+    private function validateImage(array $file): array
+    {
+        // Check file size (5MB max)
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        if ($file['size'] > $maxSize) {
+            return ['valid' => false, 'error' => 'Image size too large. Maximum 5MB allowed.'];
+        }
+
+        // Check image type
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!in_array(mime_content_type($file['tmp_name']), $allowedTypes)) {
+            return ['valid' => false, 'error' => 'Invalid image type. Allowed types: JPG, PNG, GIF, WebP'];
+        }
+
+        return ['valid' => true];
+    }
+
+    /**
+     * Upload image
+     */
+    private function uploadImage(array $file): ?string
     {
         try {
-            header('Content-Type: application/json');
-            
-            $projects = $this->getSampleProjects();
-            
-            echo json_encode([
-                'success' => true,
-                'data' => $projects,
-                'total' => count($projects)
-            ]);
-            
-        } catch (\Exception $e) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => false,
-                'error' => 'Failed to fetch projects'
-            ]);
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $fileName = uniqid('project_') . '.' . $extension;
+
+            // Create upload directory if it doesn't exist
+            $uploadDir = 'uploads/projects/' . date('Y/m');
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $filePath = $uploadDir . '/' . $fileName;
+
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                return $filePath;
+            }
+
+            return null;
+        } catch (Exception $e) {
+            $this->loggingService->error("Upload Image error: " . $e->getMessage());
+            return null;
         }
     }
-    public function getFilteredProjects($type, $status, $city, $price_min, $price_max)
+
+    /**
+     * Get project analytics
+     */
+    private function getProjectAnalytics(): array
     {
-        return $this->getSampleProjects();
-    }
-    public function getProjectStats()
-    {
-        return $this->getSampleStats();
-    }
-    public function getProjectById($id)
-    {
-        return $this->getSampleProject($id);
-    }
-    public function getRelatedProjects($id, $city, $limit)
-    {
-        return array_slice($this->getSampleProjects(), 0, $limit);
-    }
-    public function getProjectGallery($id)
-    {
-        return $this->getSampleGallery();
-    }
-    public function getProjectAmenities($id)
-    {
-        return $this->getSampleAmenities();
-    }
-    public function getProjectSpecifications($id)
-    {
-        return $this->getSampleSpecifications();
-    }
-    public function sendEnquiryNotification($data)
-    {
-        // Implement email notification service
-        error_log("Project enquiry notification: " . json_encode($data));
-    }
-    public function getSampleProjects()
-    {
-        return [
-            [
-                'id' => 1,
-                'name' => 'APS Gardenia',
-                'type' => 'Residential',
-                'category' => 'Apartment',
-                'status' => 'Ongoing',
-                'completion' => '65%',
-                'city' => 'Lucknow',
-                'location' => 'Gomti Nagar',
-                'price_range' => '₹85L - ₹1.5Cr',
-                'base_price' => 8500000,
-                'featured_image' => 'projects/aps-gardenia.jpg',
-                'short_description' => 'Luxury residential apartments with modern amenities',
-                'description' => 'Premium 3/4 BHK apartments with world-class amenities and excellent connectivity.',
-                'total_units' => 120,
-                'available_units' => 45,
-                'possession_date' => '2024-12-31'
-            ],
-            [
-                'id' => 2,
-                'name' => 'APS Grand Plaza',
-                'type' => 'Commercial',
-                'category' => 'Office Space',
-                'status' => 'Completed',
-                'completion' => '100%',
-                'city' => 'Lucknow',
-                'location' => 'Hazratganj',
-                'price_range' => '₹45L - ₹2.5Cr',
-                'base_price' => 4500000,
-                'featured_image' => 'projects/aps-grand-plaza.jpg',
-                'short_description' => 'Premium commercial complex in heart of city',
-                'description' => 'State-of-the-art commercial complex with modern infrastructure and strategic location.',
-                'total_units' => 80,
-                'available_units' => 25,
-                'possession_date' => '2023-06-30'
-            ],
-            [
-                'id' => 3,
-                'name' => 'APS Greens',
-                'type' => 'Residential',
-                'category' => 'Villa',
-                'status' => 'Completed',
-                'completion' => '100%',
-                'city' => 'Lucknow',
-                'location' => 'Indira Nagar',
-                'price_range' => '₹65L - ₹1.2Cr',
-                'base_price' => 6500000,
-                'featured_image' => 'projects/aps-greens.jpg',
-                'short_description' => 'Eco-friendly residential project',
-                'description' => 'Sustainable living with green spaces and modern amenities.',
-                'total_units' => 60,
-                'available_units' => 15,
-                'possession_date' => '2023-12-31'
-            ]
-        ];
+        try {
+            $analytics = [];
+
+            // Project status distribution
+            $sql = "SELECT status, COUNT(*) as count FROM projects GROUP BY status";
+            $analytics['status_distribution'] = $this->db->fetchAll($sql) ?: [];
+
+            // Project type distribution
+            $sql = "SELECT project_type, COUNT(*) as count FROM projects GROUP BY project_type";
+            $analytics['type_distribution'] = $this->db->fetchAll($sql) ?: [];
+
+            // Top projects by value
+            $sql = "SELECT p.project_name, COUNT(pr.id) as property_count,
+                           COALESCE(SUM(pr.price), 0) as total_value
+                    FROM projects p
+                    LEFT JOIN properties pr ON p.id = pr.project_id
+                    GROUP BY p.id
+                    ORDER BY total_value DESC
+                    LIMIT 10";
+            $analytics['top_projects'] = $this->db->fetchAll($sql) ?: [];
+
+            // Project progress timeline
+            $sql = "SELECT DATE(created_at) as date, COUNT(*) as count
+                    FROM projects
+                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                    GROUP BY DATE(created_at)
+                    ORDER BY date DESC";
+            $analytics['timeline'] = $this->db->fetchAll($sql) ?: [];
+
+            return $analytics;
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Project Analytics error: " . $e->getMessage());
+            return [];
+        }
     }
 
-    private function getSampleProject($id)
+    /**
+     * Get project statistics
+     */
+    public function getStats()
     {
-        $projects = $this->getSampleProjects();
-        return $projects[array_search($id, array_column($projects, 'id'))] ?? $projects[0];
+        try {
+            $stats = [];
+
+            // Total projects
+            $sql = "SELECT COUNT(*) as total FROM projects";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_projects'] = (int)($result['total'] ?? 0);
+
+            // Active projects
+            $sql = "SELECT COUNT(*) as total FROM projects WHERE status IN ('planning', 'in_progress')";
+            $result = $this->db->fetchOne($sql);
+            $stats['active_projects'] = (int)($result['total'] ?? 0);
+
+            // Completed projects
+            $sql = "SELECT COUNT(*) as total FROM projects WHERE status = 'completed'";
+            $result = $this->db->fetchOne($sql);
+            $stats['completed_projects'] = (int)($result['total'] ?? 0);
+
+            // Total area
+            $sql = "SELECT COALESCE(SUM(total_area), 0) as total FROM projects";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_area'] = (float)($result['total'] ?? 0);
+
+            // Total budget
+            $sql = "SELECT COALESCE(SUM(estimated_budget), 0) as total FROM projects";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_budget'] = (float)($result['total'] ?? 0);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $stats
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Project Stats error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch project stats'
+            ], 500);
+        }
     }
-    public function getSampleStats()
+
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
     {
-        return [
-            'total_projects' => 25,
-            'ongoing_projects' => 8,
-            'completed_projects' => 17,
-            'total_units' => 1500,
-            'happy_families' => 5000,
-            'cities_served' => 6
-        ];
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
-    public function getSampleGallery()
+
+    /**
+     * JSON error helper
+     */
+    private function jsonError(string $message, int $statusCode = 400): void
     {
-        return [
-            'projects/aps-gardenia-1.jpg',
-            'projects/aps-gardenia-2.jpg',
-            'projects/aps-gardenia-3.jpg',
-            'projects/aps-gardenia-4.jpg',
-            'projects/aps-gardenia-5.jpg'
-        ];
-    }
-    public function getSampleAmenities()
-    {
-        return [
-            'Swimming Pool',
-            'Gymnasium',
-            'Children\'s Play Area',
-            'Landscaped Gardens',
-            '24/7 Security',
-            'Power Backup',
-            'Clubhouse',
-            'Parking',
-            'Jogging Track',
-            'Multipurpose Hall'
-        ];
-    }
-    public function getSampleSpecifications()
-    {
-        return [
-            'Structure' => 'RCC Framed Structure',
-            'Walls' => 'Brick Masonry with Plaster',
-            'Flooring' => 'Vitrified Tiles',
-            'Doors' => 'Engineered Wood',
-            'Windows' => 'UPVC with Double Glazing',
-            'Kitchen' => 'Modular with Granite Platform',
-            'Bathrooms' => 'Premium Sanitary Ware',
-            'Electrical' => 'Concealed Copper Wiring'
-        ];
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
