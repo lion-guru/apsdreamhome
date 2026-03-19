@@ -15,14 +15,12 @@ use Exception;
 class SalesController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
@@ -130,10 +128,10 @@ class SalesController extends AdminController
         try {
             // Fetch associates with their names from users table
             $associates = $this->db->fetchAll("SELECT id, name FROM users WHERE role = 'associate' ORDER BY name");
-            
+
             // Get available properties
             $properties = $this->db->fetchAll("SELECT id, title, price, location FROM properties WHERE status = 'available' ORDER BY title");
-            
+
             // Get customers
             $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
 
@@ -649,27 +647,5 @@ class SalesController extends AdminController
                 'message' => 'Failed to fetch sales stats'
             ], 500);
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }

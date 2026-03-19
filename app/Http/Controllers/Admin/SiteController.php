@@ -15,14 +15,12 @@ use Exception;
 class SiteController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
@@ -372,7 +370,7 @@ class SiteController extends AdminController
                 if (!$imageValidation['valid']) {
                     return $this->jsonError($imageValidation['error'], 400);
                 }
-                
+
                 $newImagePath = $this->uploadImage($_FILES['image']);
                 if (!$newImagePath) {
                     return $this->jsonError('Failed to upload image', 500);
@@ -662,27 +660,5 @@ class SiteController extends AdminController
                 'message' => 'Failed to fetch site stats'
             ], 500);
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }
