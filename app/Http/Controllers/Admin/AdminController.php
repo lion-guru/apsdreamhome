@@ -301,6 +301,25 @@ class AdminController extends BaseController
     }
 
     /**
+     * JSON response helper
+     */
+    public function jsonResponse($data, int $statusCode = 200)
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+
+    /**
+     * JSON error response helper
+     */
+    protected function jsonError($message, $statusCode = 400)
+    {
+        $this->jsonResponse(['success' => false, 'message' => $message], $statusCode);
+    }
+
+    /**
      * User Network Management
      */
     public function users()
