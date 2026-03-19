@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Media;
 
-use App\Services\Media\MediaLibraryServiceEnhanced;
+use App\Services\Media\MediaLibraryService;
 use App\Services\Auth\AuthenticationService;
 use App\Core\ViewRenderer;
 
@@ -18,7 +18,7 @@ class MediaLibraryController
 
     public function __construct()
     {
-        $this->mediaService = new MediaLibraryServiceEnhanced();
+        $this->mediaService = new MediaLibraryService();
         $this->authService = new AuthenticationService();
         $this->viewRenderer = new ViewRenderer();
     }

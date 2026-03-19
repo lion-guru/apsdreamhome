@@ -15,13 +15,11 @@ use Exception;
 class AiController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
@@ -195,7 +193,8 @@ class AiController extends AdminController
 
             // Get lead scoring stats
             $sql = "SELECT COUNT(*) as total_leads, AVG(score) as avg_score FROM ai_lead_scores";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['lead_scoring'] = [
                 'total_leads' => (int)($result['total_leads'] ?? 0),
                 'avg_score' => round((float)($result['avg_score'] ?? 0), 2)
@@ -203,14 +202,16 @@ class AiController extends AdminController
 
             // Get recommendation stats
             $sql = "SELECT COUNT(*) as total_recommendations FROM ai_property_recommendations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['recommendations'] = [
                 'weekly_recommendations' => (int)($result['total_recommendations'] ?? 0)
             ];
 
             // Get chatbot stats
             $sql = "SELECT COUNT(*) as total_conversations FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['chatbot'] = [
                 'daily_conversations' => (int)($result['total_conversations'] ?? 0)
             ];
@@ -231,7 +232,8 @@ class AiController extends AdminController
             $sql = "SELECT * FROM ai_activity_log 
                     ORDER BY created_at DESC 
                     LIMIT 10";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Recent AI Activities error: " . $e->getMessage());
             return [];
@@ -249,7 +251,8 @@ class AiController extends AdminController
             // Sales prediction accuracy
             $sql = "SELECT AVG(accuracy_percentage) as avg_accuracy FROM ai_prediction_accuracy 
                     WHERE prediction_type = 'sales' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $data['prediction_accuracy'] = round((float)($result['avg_accuracy'] ?? 0), 2);
 
             // Lead conversion rates
@@ -258,7 +261,8 @@ class AiController extends AdminController
                         COUNT(*) as total
                     FROM ai_lead_scores 
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $total = (int)($result['total'] ?? 0);
             $converted = (int)($result['converted'] ?? 0);
             $data['conversion_rate'] = $total > 0 ? round(($converted / $total) * 100, 2) : 0;
@@ -280,7 +284,8 @@ class AiController extends AdminController
                     WHERE prediction_date >= CURDATE() 
                     ORDER BY confidence_score DESC 
                     LIMIT 20";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Predictions error: " . $e->getMessage());
             return [];
@@ -298,7 +303,8 @@ class AiController extends AdminController
                     LEFT JOIN ai_lead_scores als ON l.id = als.lead_id
                     ORDER BY l.created_at DESC
                     LIMIT 50";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Leads For Scoring error: " . $e->getMessage());
             return [];
@@ -312,7 +318,8 @@ class AiController extends AdminController
     {
         try {
             $sql = "SELECT * FROM ai_scoring_models WHERE is_active = 1";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Scoring Models error: " . $e->getMessage());
             return [];
@@ -331,7 +338,8 @@ class AiController extends AdminController
                     WHERE pr.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
                     ORDER BY pr.confidence_score DESC
                     LIMIT 30";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Property Recommendations error: " . $e->getMessage());
             return [];
@@ -345,7 +353,8 @@ class AiController extends AdminController
     {
         try {
             $sql = "SELECT * FROM ai_customer_segments WHERE is_active = 1";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Customer Segments error: " . $e->getMessage());
             return [];
@@ -362,12 +371,14 @@ class AiController extends AdminController
 
             // Total conversations
             $sql = "SELECT COUNT(*) as total FROM ai_chatbot_conversations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['daily_conversations'] = (int)($result['total'] ?? 0);
 
             // Average satisfaction
             $sql = "SELECT AVG(satisfaction_score) as avg_satisfaction FROM ai_chatbot_feedback WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['avg_satisfaction'] = round((float)($result['avg_satisfaction'] ?? 0), 2);
 
             return $stats;
@@ -388,7 +399,8 @@ class AiController extends AdminController
                     LEFT JOIN users u ON cc.user_id = u.id
                     ORDER BY cc.created_at DESC
                     LIMIT 20";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Recent Conversations error: " . $e->getMessage());
             return [];
@@ -515,21 +527,22 @@ class AiController extends AdminController
     {
         try {
             $period = $data['period'] ?? '30'; // days
-            
+
             // Get historical data
             $sql = "SELECT DATE(created_at) as date, COUNT(*) as sales
                     FROM bookings
                     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 90 DAY)
                     GROUP BY DATE(created_at)
                     ORDER BY date DESC";
-            
-            $historicalData = $this->db->fetchAll($sql);
-            
+
+            $stmt = $this->db->query($sql);
+            $historicalData = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
             // Simple prediction (in real implementation, this would use ML algorithms)
             $totalSales = array_sum(array_column($historicalData, 'sales'));
             $avgDailySales = count($historicalData) > 0 ? $totalSales / count($historicalData) : 0;
             $predictedSales = round($avgDailySales * (int)$period);
-            
+
             return [
                 'period' => $period,
                 'predicted_sales' => $predictedSales,
@@ -540,16 +553,5 @@ class AiController extends AdminController
             $this->loggingService->error("Predict Sales error: " . $e->getMessage());
             return ['error' => 'Prediction failed'];
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
     }
 }

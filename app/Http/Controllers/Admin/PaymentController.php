@@ -15,14 +15,12 @@ use Exception;
 class PaymentController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'processPayment', 'refundPayment']]);
     }
@@ -632,22 +630,22 @@ class PaymentController extends AdminController
     private function exportCSV(array $data, string $type, string $startDate, string $endDate): void
     {
         $filename = "payments_{$type}_{$startDate}_to_{$endDate}.csv";
-        
+
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         $output = fopen('php://output', 'w');
-        
+
         if (!empty($data)) {
             // Header row
             fputcsv($output, array_keys($data[0]));
-            
+
             // Data rows
             foreach ($data as $row) {
                 fputcsv($output, $row);
             }
         }
-        
+
         fclose($output);
         exit;
     }
@@ -658,39 +656,17 @@ class PaymentController extends AdminController
     private function exportJSON(array $data, string $type, string $startDate, string $endDate): void
     {
         $filename = "payments_{$type}_{$startDate}_to_{$endDate}.json";
-        
+
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         echo json_encode([
             'type' => $type,
             'period' => ['start' => $startDate, 'end' => $endDate],
             'data' => $data,
             'exported_at' => date('Y-m-d H:i:s')
         ]);
-        
-        exit;
-    }
 
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
         exit;
     }
 }

@@ -15,14 +15,12 @@ use Exception;
 class EMIController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
@@ -197,8 +195,8 @@ class EMIController extends AdminController
             // Calculate EMI details
             $loanAmount = $totalAmount - $downPayment;
             $monthlyInterest = $interestRate / 12 / 100;
-            $emiAmount = $loanAmount * $monthlyInterest * pow(1 + $monthlyInterest, $tenureMonths) / 
-                        (pow(1 + $monthlyInterest, $tenureMonths) - 1);
+            $emiAmount = $loanAmount * $monthlyInterest * pow(1 + $monthlyInterest, $tenureMonths) /
+                (pow(1 + $monthlyInterest, $tenureMonths) - 1);
             $totalPayable = $downPayment + ($emiAmount * $tenureMonths);
             $totalInterest = $totalPayable - $totalAmount;
 
@@ -472,27 +470,5 @@ class EMIController extends AdminController
                 'message' => 'Failed to fetch EMI stats'
             ], 500);
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }

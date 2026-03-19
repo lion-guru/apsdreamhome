@@ -15,13 +15,11 @@ use Exception;
 class AnalyticsController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
@@ -175,7 +173,8 @@ class AnalyticsController extends AdminController
                            COUNT(*) as total_transactions
                     FROM mlm_commission_ledger
                     WHERE status = 'paid'";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_paid'] = (float)($result['total_paid'] ?? 0);
             $stats['total_transactions'] = (int)($result['total_transactions'] ?? 0);
 
@@ -184,7 +183,8 @@ class AnalyticsController extends AdminController
                            COUNT(*) as pending_count
                     FROM mlm_commission_ledger
                     WHERE status = 'pending'";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['pending_amount'] = (float)($result['pending_amount'] ?? 0);
             $stats['pending_count'] = (int)($result['pending_count'] ?? 0);
 
@@ -193,7 +193,8 @@ class AnalyticsController extends AdminController
                     FROM mlm_commission_ledger
                     WHERE status = 'paid' AND MONTH(created_at) = MONTH(CURRENT_DATE)
                     AND YEAR(created_at) = YEAR(CURRENT_DATE)";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['this_month'] = (float)($result['this_month'] ?? 0);
 
             return $stats;
@@ -219,7 +220,8 @@ class AnalyticsController extends AdminController
                     GROUP BY u.id, u.name, u.email
                     ORDER BY total_commission DESC
                     LIMIT 10";
-            return $this->db->fetchAll($sql) ?: [];
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             $this->loggingService->error("Get Performance Data error: " . $e->getMessage());
             return [];
@@ -393,10 +395,10 @@ class AnalyticsController extends AdminController
                         (SELECT COUNT(*) FROM leads WHERE status = 'converted' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)) as converted_leads,
                         (SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)) as total_leads";
             $result = $this->db->fetchOne($sql);
-            
+
             $converted = (int)($result['converted_leads'] ?? 0);
             $total = (int)($result['total_leads'] ?? 0);
-            
+
             return [
                 'conversion_rate' => $total > 0 ? round(($converted / $total) * 100, 2) : 0,
                 'converted_leads' => $converted,
@@ -509,7 +511,7 @@ class AnalyticsController extends AdminController
             $summary['net_profit'] = $summary['total_revenue'] - $summary['total_commissions'];
 
             // Profit margin
-            $summary['profit_margin'] = $summary['total_revenue'] > 0 ? 
+            $summary['profit_margin'] = $summary['total_revenue'] > 0 ?
                 round(($summary['net_profit'] / $summary['total_revenue']) * 100, 2) : 0;
 
             return $summary;
@@ -606,22 +608,22 @@ class AnalyticsController extends AdminController
     private function exportCSV(array $data, string $type, string $startDate, string $endDate): void
     {
         $filename = "{$type}_analytics_{$startDate}_to_{$endDate}.csv";
-        
+
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         $output = fopen('php://output', 'w');
-        
+
         if (!empty($data)) {
             // Header row
             fputcsv($output, array_keys($data[0]));
-            
+
             // Data rows
             foreach ($data as $row) {
                 fputcsv($output, $row);
             }
         }
-        
+
         fclose($output);
         exit;
     }
@@ -632,17 +634,17 @@ class AnalyticsController extends AdminController
     private function exportJSON(array $data, string $type, string $startDate, string $endDate): void
     {
         $filename = "{$type}_analytics_{$startDate}_to_{$endDate}.json";
-        
+
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         echo json_encode([
             'type' => $type,
             'period' => ['start' => $startDate, 'end' => $endDate],
             'data' => $data,
             'exported_at' => date('Y-m-d H:i:s')
         ]);
-        
+
         exit;
     }
 }

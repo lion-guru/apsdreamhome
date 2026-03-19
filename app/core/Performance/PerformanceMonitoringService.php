@@ -82,7 +82,7 @@ class PerformanceMonitoringService
             )";
             $this->database->execute($sql);
         } catch (Exception $e) {
-            $this->logger->log("Error creating performance tables: " . $e->getMessage(), 'error', 'performance');
+            $this->logger->logUserActivity(0, "performance_table_creation_error", ["error" => $e->getMessage()]);
         }
     }
 
@@ -102,9 +102,9 @@ class PerformanceMonitoringService
 
             $this->checkPerformanceThresholds($metrics);
 
-            $this->logger->log("System metrics recorded successfully", 'info', 'performance');
+            $this->logger->logPerformance("system_metrics_recorded", 0, ["status" => "success"]);
         } catch (Exception $e) {
-            $this->logger->log("Error recording system metrics: " . $e->getMessage(), 'error', 'performance');
+            $this->logger->logUserActivity(0, "system_metrics_recording_error", ["error" => $e->getMessage()]);
         }
     }
 
@@ -261,7 +261,7 @@ class PerformanceMonitoringService
             $severity
         ]);
 
-        $this->logger->log($message, 'warning', 'performance');
+        $this->logger->logPerformance("threshold_warning", 0, ["message" => $message]);
     }
 
     /**
@@ -281,7 +281,7 @@ class PerformanceMonitoringService
             $memoryUsage
         ]);
 
-        $this->logger->log("Slow query detected: {$executionTime}ms", 'warning', 'performance');
+        $this->logger->logPerformance("slow_query_detected", $executionTime, ["memory_usage" => $memoryUsage]);
     }
 
     /**
@@ -508,9 +508,9 @@ class PerformanceMonitoringService
             $sql = "DELETE FROM performance_alerts WHERE resolved = TRUE AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
             $this->database->execute($sql, [$days]);
 
-            $this->logger->log("Performance data cleanup completed", 'info', 'performance');
+            $this->logger->logPerformance("data_cleanup_completed", 0, ["days" => $days]);
         } catch (Exception $e) {
-            $this->logger->log("Error cleaning performance data: " . $e->getMessage(), 'error', 'performance');
+            $this->logger->logUserActivity(0, "performance_data_cleanup_error", ["error" => $e->getMessage()]);
         }
     }
 

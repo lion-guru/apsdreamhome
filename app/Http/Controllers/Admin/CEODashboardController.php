@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CEO Dashboard Controller
  * MVC Pattern - Proper Role-based Dashboard Management
@@ -7,6 +8,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
+use Exception;
 
 class CEODashboardController extends BaseController
 {
@@ -81,7 +83,6 @@ class CEODashboardController extends BaseController
             ];
 
             return $this->render('admin/dashboards/ceo');
-
         } catch (Exception $e) {
             error_log("CEO Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
@@ -106,10 +107,9 @@ class CEODashboardController extends BaseController
                 ORDER BY date DESC"
             );
 
-            return $this->jsonSuccess($analytics);
-
+            return $this->jsonResponse(['success' => true, 'data' => $analytics]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -132,10 +132,9 @@ class CEODashboardController extends BaseController
                 ORDER BY user_count DESC"
             );
 
-            return $this->jsonSuccess($performance);
-
+            return $this->jsonResponse(['success' => true, 'data' => $performance]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 }
