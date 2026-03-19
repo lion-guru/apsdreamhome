@@ -490,11 +490,23 @@ class CacheManager
     }
 
     // Helper methods for predictive warming
-    private function getUserFavorites($userId) { /* Implementation */ return []; }
-    private function getUserSearches($userId) { /* Implementation */ return []; }
-    private function warmDashboardData() { /* Implementation */ }
-    private function warmPropertyListingData($context) { /* Implementation */ }
-    private function warmUserProfileData($userId) { /* Implementation */ }
+    private function getUserFavorites($userId)
+    { /* Implementation */
+        return [];
+    }
+    private function getUserSearches($userId)
+    { /* Implementation */
+        return [];
+    }
+    private function warmDashboardData()
+    { /* Implementation */
+    }
+    private function warmPropertyListingData($context)
+    { /* Implementation */
+    }
+    private function warmUserProfileData($userId)
+    { /* Implementation */
+    }
 }
 
 /**
@@ -508,10 +520,22 @@ class ApcuCacheLayer
         $value = apcu_fetch($key, $success);
         return $success ? $value : null;
     }
-    public function set($key, $value, $ttl) { return apcu_store($key, $value, $ttl); }
-    public function delete($key) { return apcu_delete($key); }
-    public function clear() { return apcu_clear_cache(); }
-    public function getStats() { return apcu_cache_info(true); }
+    public function set($key, $value, $ttl)
+    {
+        return apcu_store($key, $value, $ttl);
+    }
+    public function delete($key)
+    {
+        return apcu_delete($key);
+    }
+    public function clear()
+    {
+        return apcu_clear_cache();
+    }
+    public function getStats()
+    {
+        return apcu_cache_info(true);
+    }
 }
 
 /**
@@ -586,46 +610,61 @@ class FileCacheLayer
 
 // Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Services\Legacy\CacheManager.php
 
-function setBrowserCache($ttl = 3600, $public = true) {
-        $expires = gmdate('D, d M Y H:i:s T', time() + $ttl);
-        $max_age = $ttl;
-        $cache_control = $public ? 'public' : 'private';
-        
-        header("Cache-Control: {$cache_control}
-function getCacheFile($key) {
-        $filename = md5($key) . '.cache';
-        return $this->cache_dir . $filename;
-    }
-function cacheQuery($query, $params, $result, $ttl = 1800) {
-        $key = 'query_' . md5($query . serialize($params));
-        return $this->set($key, $result, $ttl);
-    }
-function getCachedQuery($query, $params) {
-        $key = 'query_' . md5($query . serialize($params));
-        return $this->get($key);
-    }
-function cacheAPIResponse($endpoint, $params, $response, $ttl = 3600) {
-        $key = 'api_' . md5($endpoint . serialize($params));
-        return $this->set($key, $response, $ttl);
-    }
-function getCachedAPIResponse($endpoint, $params) {
-        $key = 'api_' . md5($endpoint . serialize($params));
-        return $this->get($key);
-    }
-function cacheHTML($key, $html, $ttl = 3600) {
-        return $this->set('html_' . $key, $html, $ttl);
-    }
-function getCachedHTML($key) {
-        return $this->get('html_' . $key);
-    }
-function cacheImageMetadata($image_path, $metadata, $ttl = 86400) {
-        $key = 'img_meta_' . md5($image_path);
-        return $this->set($key, $metadata, $ttl);
-    }
-function getCachedImageMetadata($image_path) {
-        $key = 'img_meta_' . md5($image_path);
-        return $this->get($key);
-    }
+function setBrowserCache($ttl = 3600, $public = true)
+{
+    $expires = gmdate('D, d M Y H:i:s T', time() + $ttl);
+    $max_age = $ttl;
+    $cache_control = $public ? 'public' : 'private';
+
+    header("Cache-Control: {$cache_control}, max-age={$max_age}");
+    header("Expires: {$expires}");
+    header("Pragma: cache");
+}
+
+function getCacheFile($key)
+{
+    $filename = md5($key) . '.cache';
+    return $this->cache_dir . $filename;
+}
+
+function cacheQuery($query, $params, $result, $ttl = 1800)
+{
+    $key = 'query_' . md5($query . serialize($params));
+    return $this->set($key, $result, $ttl);
+}
+function getCachedQuery($query, $params)
+{
+    $key = 'query_' . md5($query . serialize($params));
+    return $this->get($key);
+}
+function cacheAPIResponse($endpoint, $params, $response, $ttl = 3600)
+{
+    $key = 'api_' . md5($endpoint . serialize($params));
+    return $this->set($key, $response, $ttl);
+}
+function getCachedAPIResponse($endpoint, $params)
+{
+    $key = 'api_' . md5($endpoint . serialize($params));
+    return $this->get($key);
+}
+function cacheHTML($key, $html, $ttl = 3600)
+{
+    return $this->set('html_' . $key, $html, $ttl);
+}
+function getCachedHTML($key)
+{
+    return $this->get('html_' . $key);
+}
+function cacheImageMetadata($image_path, $metadata, $ttl = 86400)
+{
+    $key = 'img_meta_' . md5($image_path);
+    return $this->set($key, $metadata, $ttl);
+}
+function getCachedImageMetadata($image_path)
+{
+    $key = 'img_meta_' . md5($image_path);
+    return $this->get($key);
+}
 //
 // PERFORMANCE OPTIMIZATION GUIDELINES
 //
