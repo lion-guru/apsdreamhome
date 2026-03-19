@@ -3,20 +3,115 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
+use App\Core\Database;
 use Exception;
 
 /**
- * PaymentController
+ * Payment Controller - Custom MVC Implementation
  * Handles payment-related operations in the Admin panel
  */
 class PaymentController extends AdminController
 {
-    protected $paymentModel;
+    private $loggingService;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
-        $this->paymentModel = $this->model('Payment');
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
+        
+        // Register middlewares
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'processPayment', 'refundPayment']]);
+    }
+
+    /**
+     * Display payments list
+     */
+    public function index()
+    {
+        try {
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $method = $_GET['method'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
+
+            $offset = ($page - 1) * $perPage;
+
+            // Build query
+            $sql = "SELECT p.*, 
+                           b.booking_number,
+                           c.name as customer_name,
+                           c.email as customer_email,
+                           pr.title as property_title
+                    FROM booking_payments p
+                    LEFT JOIN bookings b ON p.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties pr ON b.property_id = pr.id
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (b.booking_number LIKE ? OR c.name LIKE ? OR c.email LIKE ? OR p.transaction_id LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+
+            if (!empty($status)) {
+                $sql .= " AND p.status = ?";
+                $params[] = $status;
+            }
+
+            if (!empty($method)) {
+                $sql .= " AND p.payment_method = ?";
+                $params[] = $method;
+            }
+
+            $sql .= " ORDER BY p.created_at DESC";
+
+            // Count total
+            $countSql = str_replace("SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email, pr.title as property_title", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
+
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $payments = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Payments - APS Dream Home',
+                'active_page' => 'payments',
+                'payments' => $payments,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status,
+                    'method' => $method
+                ]
+            ];
+
+            return $this->render('admin/payments/index', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Payment Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load payments');
+            return $this->redirect('admin/dashboard');
+        }
     }
 
     /**
@@ -25,508 +120,577 @@ class PaymentController extends AdminController
     public function dashboardStats()
     {
         try {
-            $stats = $this->paymentModel->getDashboardStats();
+            $stats = $this->getDashboardStats();
             return $this->jsonResponse([
                 'success' => true,
                 'data' => $stats
             ]);
         } catch (Exception $e) {
-            return $this->jsonError('Failed to fetch dashboard statistics: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Display a listing of payments
-     */
-    public function index()
-    {
-        // View handles data loading via AJAX
-        $this->render('admin/payments/index', [
-            'page_title' => $this->mlSupport->translate('Payment Management')
-        ]);
-    }
-
-    /**
-     * DataTables AJAX data source
-     */
-    public function data()
-    {
-        try {
-            $start = $this->request->get('start', 0);
-            $length = $this->request->get('length', 10);
-            $search = $this->request->get('search', [])['value'] ?? '';
-            $order = $this->request->get('order', [])[0] ?? [];
-
-            $filters = [
-                'dateRange' => $this->request->get('dateRange', ''),
-                'status' => $this->request->get('status', ''),
-                'type' => $this->request->get('type', '')
-            ];
-
-            $payments = $this->paymentModel->getPaginatedPayments($start, $length, $search, $order, $filters);
-            $totalFiltered = $this->paymentModel->getTotalPaymentsCount($search, $filters);
-            $totalRecords = $this->paymentModel->getTotalPaymentsCount();
-
-            $data = [];
-            foreach ($payments as $payment) {
-                $actions = '<div class="btn-group">';
-                $actions .= '<button type="button" class="btn btn-sm btn-info" onclick="viewPayment(' . $payment['id'] . ')" title="View"><i class="fas fa-eye"></i></button>';
-                $actions .= '<a href="/admin/payments/edit/' . $payment['id'] . '" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>';
-                $actions .= '<a href="/admin/payments/receipt/' . $payment['id'] . '" class="btn btn-sm btn-secondary" title="Receipt" target="_blank"><i class="fas fa-file-invoice"></i></a>';
-                $actions .= '<button type="button" class="btn btn-sm btn-danger" onclick="deletePayment(' . $payment['id'] . ')" title="Delete"><i class="fas fa-trash"></i></button>';
-                $actions .= '</div>';
-
-                $statusBadge = match ($payment['status']) {
-                    'completed', 'success' => '<span class="badge bg-success">Completed</span>',
-                    'pending' => '<span class="badge bg-warning text-dark">Pending</span>',
-                    'failed' => '<span class="badge bg-danger">Failed</span>',
-                    'cancelled' => '<span class="badge bg-secondary">Cancelled</span>',
-                    default => '<span class="badge bg-secondary">' . ucfirst($payment['status']) . '</span>'
-                };
-
-                $data[] = [
-                    'payment_date' => date('d M Y, h:i A', strtotime($payment['payment_date'])),
-                    'transaction_id' => $payment['transaction_id'] ?? 'N/A',
-                    'customer_name' => $payment['customer_name'] ?? 'Unknown',
-                    'payment_type' => ucfirst(str_replace('_', ' ', $payment['payment_type'])),
-                    'amount' => '₹' . number_format($payment['amount'], 2),
-                    'status' => $statusBadge,
-                    'actions' => $actions
-                ];
-            }
-
-            return $this->jsonResponse([
-                'draw' => intval($this->request->get('draw', 1)),
-                'recordsTotal' => $totalRecords,
-                'recordsFiltered' => $totalFiltered,
-                'data' => $data
-            ]);
-        } catch (Exception $e) {
-            return $this->jsonError('Failed to fetch payment data: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Show payment details (AJAX)
-     */
-    public function show($id)
-    {
-        try {
-            $payment = $this->paymentModel->getPaymentById($id);
-
-            if ($payment) {
-                return $this->jsonResponse([
-                    'success' => true,
-                    'data' => $payment
-                ]);
-            } else {
-                return $this->jsonResponse([
-                    'success' => false,
-                    'message' => 'Payment not found'
-                ]);
-            }
-        } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Generate payment receipt
-     */
-    public function receipt($id)
-    {
-        $payment = $this->paymentModel->getPaymentById($id);
-
-        if (!$payment) {
-            $this->notFound();
-            return;
-        }
-
-        $this->render('admin/payments/receipt', [
-            'payment' => $payment,
-            'title' => 'Payment Receipt #' . ($payment['transaction_id'] ?? $id)
-        ]);
-    }
-
-    /**
-     * Delete payment
-     */
-    public function destroy($id)
-    {
-        if ($this->request->method() !== 'POST') {
-            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
-        }
-
-        if (!$this->validateCsrfToken()) {
-            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
-        }
-
-        try {
-            // Check if payment exists
-            $payment = $this->paymentModel->getPaymentById($id);
-            if (!$payment) {
-                throw new Exception('Payment not found');
-            }
-
-            $result = $this->paymentModel->deletePayment($id);
-
-            if ($result) {
-                return $this->jsonResponse([
-                    'success' => true,
-                    'message' => 'Payment deleted successfully'
-                ]);
-            } else {
-                throw new Exception('Failed to delete payment');
-            }
-        } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Show the form for editing a payment
-     */
-    public function edit($id)
-    {
-        $payment = $this->paymentModel->getPaymentById($id);
-
-        if (!$payment) {
-            $this->notFound();
-            return;
-        }
-
-        $this->render('admin/payments/edit', [
-            'payment' => $payment,
-            'title' => 'Edit Payment: ' . ($payment['transaction_id'] ?? $id)
-        ]);
-    }
-
-    /**
-     * Update the specified payment
-     */
-    public function update($id)
-    {
-        if ($this->request->method() !== 'POST') {
-            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
-        }
-
-        if (!$this->validateCsrfToken()) {
-            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
-        }
-
-        try {
-            $data = $this->request->post();
-
-            // Remove csrf_token and other non-db fields if necessary
-            unset($data['csrf_token']);
-
-            // Validate required fields
-            $requiredFields = ['customer_id', 'amount', 'payment_type', 'payment_method'];
-            foreach ($requiredFields as $field) {
-                if (!isset($data[$field]) || empty($data[$field])) {
-                    throw new Exception(ucfirst(str_replace('_', ' ', $field)) . " is required");
-                }
-            }
-
-            $result = $this->paymentModel->updatePayment($id, $data);
-
-            if ($result) {
-                return $this->jsonResponse([
-                    'success' => true,
-                    'message' => 'Payment updated successfully'
-                ]);
-            } else {
-                throw new Exception('Failed to update payment');
-            }
-        } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Search customers for Select2
-     */
-    public function customers()
-    {
-        $search = $this->request->get('search', '');
-        $page = $this->request->get('page', 1);
-        $limit = 10;
-        $offset = ($page - 1) * $limit;
-
-        $customerModel = $this->model('Customer');
-        $result = $customerModel->searchCustomers($search, $limit, $offset);
-
-        return $this->jsonResponse([
-            'items' => $result['items'],
-            'more' => ($offset + $limit) < $result['total']
-        ]);
-    }
-
-    /**
-     * Store a newly created payment
-     */
-    public function store()
-    {
-        if (!$this->validateCsrfToken()) {
-            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
-        }
-
-        if ($this->request->method() !== 'POST') {
-            return $this->jsonResponse(['success' => false, 'message' => 'Invalid request method'], 405);
-        }
-
-        try {
-            $data = $this->request->post();
-
-            // Validate required fields
-            $requiredFields = ['customer_id', 'amount', 'payment_type', 'payment_method'];
-            foreach ($requiredFields as $field) {
-                if (!isset($data[$field]) || empty($data[$field])) {
-                    throw new Exception(ucfirst(str_replace('_', ' ', $field)) . " is required");
-                }
-            }
-
-            $paymentId = $this->paymentModel->recordPayment($data);
-
-            if ($paymentId) {
-                return $this->jsonResponse([
-                    'success' => true,
-                    'message' => 'Payment recorded successfully',
-                    'payment_id' => $paymentId
-                ]);
-            } else {
-                throw new Exception('Failed to record payment');
-            }
-        } catch (Exception $e) {
+            $this->loggingService->error("Payment Dashboard Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Failed to fetch stats'
             ], 500);
         }
     }
 
     /**
-     * Show create payment form (unused but kept for structure)
+     * Display the specified payment
      */
-    public function create()
+    public function show($id)
     {
-        $this->render('admin/payments/create', [
-            'page_title' => 'Add New Payment'
-        ]);
-    }
-
-    public function checkout($propertyId) {
-        $property = $this->propertyService->getPropertyById($propertyId);
-        
-        if (!$property) {
-            $this->notFound();
-            return;
-        }
-        
-        $this->view('payments/checkout', [
-            'title' => 'Complete Your Purchase',
-            'property' => $property
-        ]);
-    }
-
-    public function process() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/');
-            return;
-        }
-        
-        $propertyId = (int)(Security::sanitize($_POST['property_id']) ?? 0);
-        $property = $this->propertyService->getPropertyById($propertyId);
-        
-        if (!$property) {
-            $this->notFound();
-            return;
-        }
-        
         try {
-            $paymentData = [
-                'amount' => $property['price'] * 100, // Convert to smallest currency unit (e.g., cents)
-                'currency' => 'INR',
-                'description' => 'Property Purchase: ' . $property['title'],
-                'customer_email' => $_SESSION['user_email'] ?? '',
-                'metadata' => [
-                    'property_id' => $propertyId,
-                    'user_id' => $_SESSION['user_id']
-                ]
-            ];
-            
-            $payment = $this->paymentService->processPayment($paymentData);
-            
-            if ($payment['success']) {
-                // Save payment record to database
-                $this->savePaymentRecord($payment, $propertyId);
-                
-                $this->setFlash('success', 'Payment successful! Your purchase is complete.');
-                $this->redirect('/payments/success?payment_id=' . $payment['payment_id']);
-                return;
+            $paymentId = intval($id);
+            if ($paymentId <= 0) {
+                $this->setFlash('error', 'Invalid payment ID');
+                return $this->redirect('admin/payments');
             }
+
+            // Get payment details
+            $sql = "SELECT p.*, 
+                           b.booking_number,
+                           b.total_amount as booking_total,
+                           c.name as customer_name,
+                           c.email as customer_email,
+                           c.phone as customer_phone,
+                           pr.title as property_title,
+                           pr.location as property_location
+                    FROM booking_payments p
+                    LEFT JOIN bookings b ON p.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties pr ON b.property_id = pr.id
+                    WHERE p.id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$paymentId]);
+            $payment = $stmt->fetch();
+
+            if (!$payment) {
+                $this->setFlash('error', 'Payment not found');
+                return $this->redirect('admin/payments');
+            }
+
+            // Get payment history
+            $sql = "SELECT * FROM payment_history 
+                    WHERE payment_id = ? 
+                    ORDER BY created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$paymentId]);
+            $history = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Payment Details - APS Dream Home',
+                'active_page' => 'payments',
+                'payment' => $payment,
+                'history' => $history
+            ];
+
+            return $this->render('admin/payments/show', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Payment Show error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load payment details');
+            return $this->redirect('admin/payments');
+        }
+    }
+
+    /**
+     * Process payment
+     */
+    public function processPayment($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $paymentId = intval($id);
+            $amount = (float)($_POST['amount'] ?? 0);
+            $method = $_POST['payment_method'] ?? '';
+            $transactionId = $_POST['transaction_id'] ?? '';
+            $notes = $_POST['notes'] ?? '';
+
+            if ($paymentId <= 0 || $amount <= 0 || empty($method)) {
+                return $this->jsonError('Invalid payment details', 400);
+            }
+
+            $this->db->beginTransaction();
+
+            try {
+                // Get payment details
+                $sql = "SELECT * FROM booking_payments WHERE id = ? AND status = 'pending'";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$paymentId]);
+                $payment = $stmt->fetch();
+
+                if (!$payment) {
+                    $this->db->rollBack();
+                    return $this->jsonError('Payment not found or already processed', 404);
+                }
+
+                // Update payment status
+                $sql = "UPDATE booking_payments 
+                        SET status = 'completed', amount = ?, payment_method = ?, 
+                            transaction_id = ?, payment_date = NOW(), notes = ?
+                        WHERE id = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$amount, $method, $transactionId, $notes, $paymentId]);
+
+                // Create payment history record
+                $sql = "INSERT INTO payment_history 
+                        (payment_id, action, amount, method, transaction_id, notes, created_by, created_at)
+                        VALUES (?, 'processed', ?, ?, ?, ?, ?, NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$paymentId, $amount, $method, $transactionId, $notes, $_SESSION['user_id'] ?? 0]);
+
+                // Update booking payment status
+                $this->updateBookingPaymentStatus($payment['booking_id']);
+
+                $this->db->commit();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'payment_processed', [
+                    'payment_id' => $paymentId,
+                    'amount' => $amount,
+                    'method' => $method
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Payment processed successfully'
+                ]);
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            $this->loggingService->error("Process Payment error: " . $e->getMessage());
+            return $this->jsonError('Failed to process payment', 500);
+        }
+    }
+
+    /**
+     * Refund payment
+     */
+    public function refundPayment($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $paymentId = intval($id);
+            $refundAmount = (float)($_POST['refund_amount'] ?? 0);
+            $reason = $_POST['refund_reason'] ?? '';
+
+            if ($paymentId <= 0 || $refundAmount <= 0 || empty($reason)) {
+                return $this->jsonError('Invalid refund details', 400);
+            }
+
+            $this->db->beginTransaction();
+
+            try {
+                // Get payment details
+                $sql = "SELECT * FROM booking_payments WHERE id = ? AND status = 'completed'";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$paymentId]);
+                $payment = $stmt->fetch();
+
+                if (!$payment) {
+                    $this->db->rollBack();
+                    return $this->jsonError('Payment not found or not completed', 404);
+                }
+
+                if ($refundAmount > $payment['amount']) {
+                    $this->db->rollBack();
+                    return $this->jsonError('Refund amount cannot exceed payment amount', 400);
+                }
+
+                // Update payment status
+                $sql = "UPDATE booking_payments 
+                        SET status = 'refunded', refund_amount = ?, refund_reason = ?, refund_date = NOW()
+                        WHERE id = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$refundAmount, $reason, $paymentId]);
+
+                // Create payment history record
+                $sql = "INSERT INTO payment_history 
+                        (payment_id, action, amount, method, notes, created_by, created_at)
+                        VALUES (?, 'refunded', ?, ?, ?, ?, NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$paymentId, $refundAmount, $payment['payment_method'], $reason, $_SESSION['user_id'] ?? 0]);
+
+                $this->db->commit();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'payment_refunded', [
+                    'payment_id' => $paymentId,
+                    'refund_amount' => $refundAmount,
+                    'reason' => $reason
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Payment refunded successfully'
+                ]);
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            $this->loggingService->error("Refund Payment error: " . $e->getMessage());
+            return $this->jsonError('Failed to refund payment', 500);
+        }
+    }
+
+    /**
+     * Display payment analytics
+     */
+    public function analytics()
+    {
+        try {
+            $data = [
+                'page_title' => 'Payment Analytics - APS Dream Home',
+                'active_page' => 'payments',
+                'analytics_data' => $this->getPaymentAnalytics()
+            ];
+
+            return $this->render('admin/payments/analytics', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Payment Analytics error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load payment analytics');
+            return $this->redirect('admin/payments');
+        }
+    }
+
+    /**
+     * Get dashboard statistics
+     */
+    private function getDashboardStats(): array
+    {
+        try {
+            $stats = [];
+
+            // Total payments
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
+                    FROM booking_payments WHERE status = 'completed'";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_payments'] = (int)($result['total'] ?? 0);
+            $stats['total_amount'] = (float)($result['total_amount'] ?? 0);
+
+            // Today's payments
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
+                    FROM booking_payments 
+                    WHERE status = 'completed' AND DATE(payment_date) = CURDATE()";
+            $result = $this->db->fetchOne($sql);
+            $stats['today_payments'] = (int)($result['total'] ?? 0);
+            $stats['today_amount'] = (float)($result['total_amount'] ?? 0);
+
+            // This month's payments
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
+                    FROM booking_payments 
+                    WHERE status = 'completed' 
+                    AND MONTH(payment_date) = MONTH(CURRENT_DATE) 
+                    AND YEAR(payment_date) = YEAR(CURRENT_DATE)";
+            $result = $this->db->fetchOne($sql);
+            $stats['monthly_payments'] = (int)($result['total'] ?? 0);
+            $stats['monthly_amount'] = (float)($result['total_amount'] ?? 0);
+
+            // Pending payments
+            $sql = "SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as total_amount
+                    FROM booking_payments WHERE status = 'pending'";
+            $result = $this->db->fetchOne($sql);
+            $stats['pending_payments'] = (int)($result['total'] ?? 0);
+            $stats['pending_amount'] = (float)($result['total_amount'] ?? 0);
+
+            return $stats;
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Dashboard Stats error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Update booking payment status
+     */
+    private function updateBookingPaymentStatus(int $bookingId): void
+    {
+        try {
+            // Get total paid amount for booking
+            $sql = "SELECT COALESCE(SUM(amount), 0) as total_paid
+                    FROM booking_payments 
+                    WHERE booking_id = ? AND status = 'completed'";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$bookingId]);
+            $totalPaid = $stmt->fetch()['total_paid'];
+
+            // Get booking total amount
+            $sql = "SELECT total_amount FROM bookings WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$bookingId]);
+            $bookingTotal = $stmt->fetch()['total_amount'];
+
+            // Update booking payment status
+            if ($totalPaid >= $bookingTotal) {
+                $paymentStatus = 'paid';
+            } elseif ($totalPaid > 0) {
+                $paymentStatus = 'partial';
+            } else {
+                $paymentStatus = 'pending';
+            }
+
+            $sql = "UPDATE bookings SET payment_status = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$paymentStatus, $bookingId]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Update Booking Payment Status error: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get payment analytics
+     */
+    private function getPaymentAnalytics(): array
+    {
+        try {
+            $analytics = [];
+
+            // Payment trends (last 30 days)
+            $sql = "SELECT DATE(payment_date) as date, COUNT(*) as count, COALESCE(SUM(amount), 0) as total
+                    FROM booking_payments
+                    WHERE status = 'completed' AND payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                    GROUP BY DATE(payment_date)
+                    ORDER BY date DESC";
+            $analytics['trends'] = $this->db->fetchAll($sql) ?: [];
+
+            // Payment methods distribution
+            $sql = "SELECT payment_method, COUNT(*) as count, COALESCE(SUM(amount), 0) as total
+                    FROM booking_payments
+                    WHERE status = 'completed' AND payment_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                    GROUP BY payment_method
+                    ORDER BY total DESC";
+            $analytics['methods'] = $this->db->fetchAll($sql) ?: [];
+
+            // Top paying customers
+            $sql = "SELECT c.name, c.email, COUNT(p.id) as payment_count, COALESCE(SUM(p.amount), 0) as total_paid
+                    FROM booking_payments p
+                    JOIN bookings b ON p.booking_id = b.id
+                    JOIN users c ON b.customer_id = c.id
+                    WHERE p.status = 'completed'
+                    GROUP BY c.id
+                    ORDER BY total_paid DESC
+                    LIMIT 10";
+            $analytics['top_customers'] = $this->db->fetchAll($sql) ?: [];
+
+            // Payment status distribution
+            $sql = "SELECT status, COUNT(*) as count, COALESCE(SUM(amount), 0) as total
+                    FROM booking_payments
+                    GROUP BY status
+                    ORDER BY count DESC";
+            $analytics['status_distribution'] = $this->db->fetchAll($sql) ?: [];
+
+            return $analytics;
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Payment Analytics error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Export payment data
+     */
+    public function export()
+    {
+        try {
+            $format = $_GET['format'] ?? 'csv';
+            $type = $_GET['type'] ?? 'all';
+            $startDate = $_GET['start_date'] ?? date('Y-m-01');
+            $endDate = $_GET['end_date'] ?? date('Y-m-t');
+
+            switch ($type) {
+                case 'completed':
+                    $data = $this->getCompletedPayments($startDate, $endDate);
+                    break;
+                case 'pending':
+                    $data = $this->getPendingPayments($startDate, $endDate);
+                    break;
+                case 'refunded':
+                    $data = $this->getRefundedPayments($startDate, $endDate);
+                    break;
+                default:
+                    $data = $this->getAllPayments($startDate, $endDate);
+            }
+
+            if ($format === 'csv') {
+                return $this->exportCSV($data, $type, $startDate, $endDate);
+            } elseif ($format === 'json') {
+                return $this->exportJSON($data, $type, $startDate, $endDate);
+            }
+
+            $this->setFlash('error', 'Invalid export format');
+            return $this->redirect('admin/payments');
+        } catch (Exception $e) {
+            $this->loggingService->error("Payment Export error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to export data');
+            return $this->redirect('admin/payments');
+        }
+    }
+
+    /**
+     * Get all payments for export
+     */
+    private function getAllPayments(string $startDate, string $endDate): array
+    {
+        try {
+            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
+                           pr.title as property_title
+                    FROM booking_payments p
+                    LEFT JOIN bookings b ON p.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties pr ON b.property_id = pr.id
+                    WHERE p.created_at BETWEEN ? AND ?
+                    ORDER BY p.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get All Payments error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get completed payments for export
+     */
+    private function getCompletedPayments(string $startDate, string $endDate): array
+    {
+        try {
+            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
+                           pr.title as property_title
+                    FROM booking_payments p
+                    LEFT JOIN bookings b ON p.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties pr ON b.property_id = pr.id
+                    WHERE p.status = 'completed' AND p.payment_date BETWEEN ? AND ?
+                    ORDER BY p.payment_date DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Completed Payments error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get pending payments for export
+     */
+    private function getPendingPayments(string $startDate, string $endDate): array
+    {
+        try {
+            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
+                           pr.title as property_title
+                    FROM booking_payments p
+                    LEFT JOIN bookings b ON p.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties pr ON b.property_id = pr.id
+                    WHERE p.status = 'pending' AND p.created_at BETWEEN ? AND ?
+                    ORDER BY p.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Pending Payments error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get refunded payments for export
+     */
+    private function getRefundedPayments(string $startDate, string $endDate): array
+    {
+        try {
+            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
+                           pr.title as property_title
+                    FROM booking_payments p
+                    LEFT JOIN bookings b ON p.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties pr ON b.property_id = pr.id
+                    WHERE p.status = 'refunded' AND p.refund_date BETWEEN ? AND ?
+                    ORDER BY p.refund_date DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Refunded Payments error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Export data as CSV
+     */
+    private function exportCSV(array $data, string $type, string $startDate, string $endDate): void
+    {
+        $filename = "payments_{$type}_{$startDate}_to_{$endDate}.csv";
+        
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        
+        if (!empty($data)) {
+            // Header row
+            fputcsv($output, array_keys($data[0]));
             
-            throw new \Exception('Payment processing failed');
-            
-        } catch (\Exception $e) {
-            $this->setFlash('error', 'Payment failed: ' . $e->getMessage());
-            $this->redirect("/properties/$propertyId/payment");
+            // Data rows
+            foreach ($data as $row) {
+                fputcsv($output, $row);
+            }
         }
+        
+        fclose($output);
+        exit;
     }
 
-    public function webhook() {
-        // In a real application, this would verify the webhook signature
-        $payload = @file_get_contents('php://input');
-        $event = json_decode($payload, true);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            http_response_code(400);
-            exit('Invalid payload');
-        }
-        
-        // Process different types of webhook events
-        switch ($event['type']) {
-            case 'payment_intent.succeeded':
-                $this->handlePaymentSucceeded($event['data']['object']);
-                break;
-                
-            case 'payment_intent.payment_failed':
-                $this->handlePaymentFailed($event['data']['object']);
-                break;
-                
-            // Add more event types as needed
-        }
-        
-        http_response_code(200);
-    }
-
-    public function processStripePayment()
+    /**
+     * Export data as JSON
+     */
+    private function exportJSON(array $data, string $type, string $startDate, string $endDate): void
     {
-        return $this->json([
-            "success" => true,
-            "data" => [
-                "payment_id" => "pi_" . uniqid(),
-                "status" => "succeeded",
-                "amount" => 150000,
-                "currency" => "usd",
-                "payment_method" => "stripe"
-            ]
+        $filename = "payments_{$type}_{$startDate}_to_{$endDate}.json";
+        
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        echo json_encode([
+            'type' => $type,
+            'period' => ['start' => $startDate, 'end' => $endDate],
+            'data' => $data,
+            'exported_at' => date('Y-m-d H:i:s')
         ]);
+        
+        exit;
     }
 
-    public function processPayPalPayment()
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
     {
-        return $this->json([
-            "success" => true,
-            "data" => [
-                "payment_id" => "PAYID_" . uniqid(),
-                "status" => "completed",
-                "amount" => 150000,
-                "currency" => "USD",
-                "payment_method" => "paypal"
-            ]
-        ]);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 
-    public function getPaymentHistory()
+    /**
+     * JSON error helper
+     */
+    private function jsonError(string $message, int $statusCode = 400): void
     {
-        return $this->json([
-            "success" => true,
-            "data" => [
-                "payments" => [
-                    [
-                        "id" => "pi_123",
-                        "amount" => 150000,
-                        "status" => "succeeded",
-                        "date" => "2026-03-01",
-                        "method" => "stripe"
-                    ],
-                    [
-                        "id" => "PAYID_456",
-                        "amount" => 200000,
-                        "status" => "completed",
-                        "date" => "2026-02-28",
-                        "method" => "paypal"
-                    ]
-                ],
-                "total_count" => 2
-            ]
-        ]);
-    }
-
-    public function success() {
-        $paymentId = $_GET['payment_id'] ?? '';
-        
-        if (empty($paymentId)) {
-            $this->redirect('/');
-            return;
-        }
-    }
-
-    private function savePaymentRecord(array $payment, int $propertyId) {
-        $query = "
-            INSERT INTO payments (
-                payment_id, user_id, property_id, amount, 
-                currency, status, payment_method, 
-                transaction_id, created_at
-            ) VALUES (:payment_id, :user_id, :property_id, :amount, 
-                :currency, :status, :payment_method, 
-                :transaction_id, NOW())
-        ";
-        
-        $params = [
-            ':payment_id' => $payment['payment_id'],
-            ':user_id' => $_SESSION['user_id'],
-            ':property_id' => $propertyId,
-            ':amount' => $payment['amount'] / 100, // Convert back to normal amount
-            ':currency' => $payment['currency'],
-            ':status' => $payment['status'],
-            ':payment_method' => $payment['payment_method'] ?? 'card',
-            ':transaction_id' => $payment['transaction_id'] ?? null
-        ];
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
-        
-        // Update property status to sold
-        $this->propertyService->updateProperty($propertyId, ['status' => 'sold']);
-    }
-
-    private function handlePaymentSucceeded(array $paymentIntent) {
-        $query = "
-            UPDATE payments 
-            SET status = 'succeeded',
-                payment_method = :payment_method,
-                transaction_id = :transaction_id,
-                updated_at = NOW()
-            WHERE payment_id = :payment_id
-        ";
-        
-        $params = [
-            ':payment_method' => $paymentIntent['payment_method_types'][0] ?? 'card',
-            ':transaction_id' => $paymentIntent['id'],
-            ':payment_id' => $paymentIntent['id']
-        ];
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
-    }
-
-    private function handlePaymentFailed(array $paymentIntent) {
-        $query = "
-            UPDATE payments 
-            SET status = 'failed',
-                failure_message = :failure_message,
-                updated_at = NOW()
-            WHERE payment_id = :payment_id
-        ";
-        
-        $params = [
-            ':failure_message' => $paymentIntent['last_payment_error']['message'] ?? 'Payment failed',
-            ':payment_id' => $paymentIntent['id']
-        ];
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
