@@ -86,7 +86,7 @@ class BuilderDashboardController extends AdminController
     public function getConstructionAnalytics()
     {
         try {
-            $analytics = $this->db->fetchAll(
+            $analytics = $this->db->query(
                 "SELECT 
                     DATE(created_at) as date,
                     COUNT(*) as projects_started,
@@ -95,7 +95,7 @@ class BuilderDashboardController extends AdminController
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 GROUP BY DATE(created_at)
                 ORDER BY date DESC"
-            );
+            )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $analytics]);
         } catch (Exception $e) {
@@ -110,7 +110,7 @@ class BuilderDashboardController extends AdminController
     public function getMaterialStatus()
     {
         try {
-            $materials = $this->db->fetchAll(
+            $materials = $this->db->query(
                 "SELECT 
                     name,
                     category,
@@ -121,7 +121,7 @@ class BuilderDashboardController extends AdminController
                 FROM materials
                 ORDER BY stock_quantity ASC
                 LIMIT 20"
-            );
+            )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $materials]);
         } catch (Exception $e) {
