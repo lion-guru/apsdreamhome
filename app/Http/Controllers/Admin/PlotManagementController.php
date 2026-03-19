@@ -2,20 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
 use App\Core\Database;
-use App\Core\Security;
 use Exception;
 
-class PlotManagementController extends BaseController
+/**
+ * Plot Management Controller - Custom MVC Implementation
+ * Handles advanced plot management operations in the Admin panel
+ */
+class PlotManagementController extends AdminController
 {
-    protected $db;
+    private $loggingService;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
-        $this->requireAdmin();
+        $this->loggingService = new LoggingService();
         $this->db = Database::getInstance()->getConnection();
+        
+        // Register middlewares
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'bulkUpdate']]);
     }
 
     /**
@@ -28,504 +37,682 @@ class PlotManagementController extends BaseController
             $search = trim($_GET['search'] ?? '');
             $status = $_GET['status'] ?? '';
             $siteId = $siteId ? intval($siteId) : intval($_GET['site_id'] ?? 0);
+            $perPage = (int)($_GET['per_page'] ?? 20);
 
-            $offset = ($page - 1) * 15;
-            $where = ["1=1"];
+            $offset = ($page - 1) * $perPage;
+
+            // Build query
+            $sql = "SELECT p.*, 
+                           s.site_name,
+                           l.land_title,
+                           COUNT(pr.id) as property_count,
+                           COALESCE(SUM(pr.total_area), 0) as developed_area
+                    FROM plots p
+                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN land_records l ON p.land_id = l.id
+                    LEFT JOIN properties pr ON p.id = pr.plot_id
+                    WHERE 1=1";
             $params = [];
 
+            // Apply filters
             if ($siteId > 0) {
-                $where[] = "p.site_id = :site_id";
-                $params['site_id'] = $siteId;
+                $sql .= " AND p.site_id = ?";
+                $params[] = $siteId;
             }
 
             if (!empty($search)) {
-                $where[] = "(p.plot_no LIKE :search OR p.plot_dimension LIKE :search OR p.plot_facing LIKE :search)";
-                $params['search'] = '%' . $search . '%';
+                $sql .= " AND (p.plot_number LIKE ? OR p.location LIKE ? OR s.site_name LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
             }
 
             if (!empty($status)) {
-                $where[] = "p.plot_status = :status";
-                $params['status'] = $status;
+                $sql .= " AND p.status = ?";
+                $params[] = $status;
             }
 
-            $whereClause = implode(' AND ', $where);
+            $sql .= " GROUP BY p.id ORDER BY p.created_at DESC";
 
-            // Get plots with site information
-            $sql = "SELECT p.*, s.site_name, s.location as site_location
-                    FROM plot_master p
-                    LEFT JOIN sites s ON p.site_id = s.id
-                    WHERE $whereClause
-                    ORDER BY p.plot_no
-                    LIMIT :offset, :limit";
+            // Count total
+            $countSql = str_replace("SELECT p.*, s.site_name, l.land_title, COUNT(pr.id) as property_count, COALESCE(SUM(pr.total_area), 0) as developed_area", "SELECT COUNT(DISTINCT p.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
 
-            $params['offset'] = $offset;
-            $params['limit'] = 15;
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $plots = $stmt->fetchAll();
 
-            // Get total count
-            $countSql = str_replace("SELECT p.*, s.site_name, s.location as site_location", "SELECT COUNT(*)", $sql);
-            $countSql = preg_replace('/ORDER BY.*$/', '', $countSql);
-            $countSql = preg_replace('/LIMIT.*$/', '', $countSql);
+            // Get sites for filter
+            $sites = $this->db->fetchAll("SELECT * FROM sites ORDER BY site_name");
 
-            $countParams = $params;
-            unset($countParams['offset'], $countParams['limit']);
-
-            $countStmt = $this->db->prepare($countSql);
-            $countStmt->execute($countParams);
-            $total = $countStmt->fetch()['total'];
-
-            // Get sites for dropdown
-            $sites = $this->db->fetchAll("SELECT id, site_name, location FROM sites ORDER BY site_name");
-
-            return $this->render('admin/plots/index', [
+            $data = [
+                'page_title' => 'Plot Management - APS Dream Home',
+                'active_page' => 'plot_management',
                 'plots' => $plots,
-                'sites' => $sites,
                 'total' => $total,
-                'current_page' => $page,
-                'total_pages' => ceil($total / 15),
-                'filters' => ['search' => $search, 'status' => $status, 'site_id' => $siteId]
-            ]);
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status,
+                    'site_id' => $siteId
+                ],
+                'sites' => $sites
+            ];
+
+            return $this->render('admin/plot_management/index', $data);
         } catch (Exception $e) {
-            error_log("Plot listing error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load plots');
+            $this->loggingService->error("Plot Management Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load plot management data');
             return $this->redirect('admin/dashboard');
         }
     }
 
     /**
-     * Show add plot form
+     * Display plot management dashboard
      */
-    public function create($siteId = null)
+    public function dashboard()
     {
         try {
-            $siteId = $siteId ? intval($siteId) : intval($_GET['site_id'] ?? 0);
-            $sites = $this->db->fetchAll("SELECT id, site_name, location FROM sites ORDER BY site_name");
+            $data = [
+                'page_title' => 'Plot Management Dashboard - APS Dream Home',
+                'active_page' => 'plot_management',
+                'dashboard_stats' => $this->getDashboardStats(),
+                'site_summary' => $this->getSiteSummary(),
+                'recent_activity' => $this->getRecentActivity()
+            ];
 
-            return $this->render('admin/plots/create', [
-                'sites' => $sites,
-                'selected_site_id' => $siteId,
-                'page_title' => 'Add New Plot - APS Dream Home'
-            ]);
+            return $this->render('admin/plot_management/dashboard', $data);
         } catch (Exception $e) {
-            error_log("Plot create form error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load plot form');
-            return $this->redirect('admin/plots');
+            $this->loggingService->error("Plot Management Dashboard error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load dashboard');
+            return $this->redirect('admin/plot_management');
         }
     }
 
     /**
-     * Store new plot
+     * Display plot allocation management
      */
-    public function store()
-    {
-        if ($this->method() !== 'POST') {
-            $this->setFlash('error', 'Invalid request method');
-            return $this->redirect('admin/plots');
-        }
-
-        if (!$this->validateCsrfTokenLocal()) {
-            $this->setFlash('error', 'Security validation failed');
-            return $this->redirect('admin/plots');
-        }
-
-        try {
-            $data = $this->post();
-
-            $siteId = intval($data['site_id'] ?? 0);
-            $plotNo = trim($data['plot_no'] ?? '');
-            $area = floatval($data['area'] ?? 0);
-            $availableArea = floatval($data['available_area'] ?? 0);
-            $plotDimension = trim($data['plot_dimension'] ?? '');
-            $plotFacing = trim($data['plot_facing'] ?? '');
-            $plotPrice = floatval($data['plot_price'] ?? 0);
-            $plotStatus = $data['plot_status'] ?? 'available';
-
-            // Gata details
-            $gataA = intval($data['gata_a'] ?? 0);
-            $gataB = intval($data['gata_b'] ?? 0);
-            $gataC = intval($data['gata_c'] ?? 0);
-            $gataD = intval($data['gata_d'] ?? 0);
-            $areaGataA = floatval($data['area_gata_a'] ?? 0);
-            $areaGataB = floatval($data['area_gata_b'] ?? 0);
-            $areaGataC = floatval($data['area_gata_c'] ?? 0);
-            $areaGataD = floatval($data['area_gata_d'] ?? 0);
-
-            // Validation
-            if ($siteId <= 0 || empty($plotNo) || $area <= 0) {
-                $this->setFlash('error', 'Please fill in all required fields');
-                return $this->redirect('admin/plots/create');
-            }
-
-            // Check if plot number already exists for this site
-            $existing = $this->db->fetchOne(
-                "SELECT plot_id FROM plot_master WHERE site_id = ? AND plot_no = ? LIMIT 1",
-                [$siteId, $plotNo]
-            );
-
-            if ($existing) {
-                $this->setFlash('error', 'Plot number already exists for this site');
-                return $this->redirect('admin/plots/create');
-            }
-
-            // Check if site exists
-            $site = $this->db->fetchOne("SELECT id FROM sites WHERE id = ? LIMIT 1", [$siteId]);
-            if (!$site) {
-                $this->setFlash('error', 'Invalid site selected');
-                return $this->redirect('admin/plots/create');
-            }
-
-            $sql = "INSERT INTO plot_master (site_id, plot_no, area, available_area, plot_dimension, 
-                           plot_facing, plot_price, plot_status, gata_a, gata_b, gata_c, gata_d,
-                           area_gata_a, area_gata_b, area_gata_c, area_gata_d)
-                    VALUES (:site_id, :plot_no, :area, :available_area, :plot_dimension,
-                           :plot_facing, :plot_price, :plot_status, :gata_a, :gata_b, :gata_c, :gata_d,
-                           :area_gata_a, :area_gata_b, :area_gata_c, :area_gata_d)";
-
-            $stmt = $this->db->prepare($sql);
-            $success = $stmt->execute([
-                'site_id' => $siteId,
-                'plot_no' => $plotNo,
-                'area' => $area,
-                'available_area' => $availableArea,
-                'plot_dimension' => $plotDimension,
-                'plot_facing' => $plotFacing,
-                'plot_price' => $plotPrice,
-                'plot_status' => $plotStatus,
-                'gata_a' => $gataA,
-                'gata_b' => $gataB,
-                'gata_c' => $gataC,
-                'gata_d' => $gataD,
-                'area_gata_a' => $areaGataA,
-                'area_gata_b' => $areaGataB,
-                'area_gata_c' => $areaGataC,
-                'area_gata_d' => $areaGataD
-            ]);
-
-            if ($success) {
-                $this->setFlash('success', 'Plot added successfully');
-                return $this->redirect('admin/plots?site_id=' . $siteId);
-            } else {
-                $this->setFlash('error', 'Failed to add plot');
-                return $this->redirect('admin/plots/create');
-            }
-        } catch (Exception $e) {
-            error_log("Plot creation error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to add plot');
-            return $this->redirect('admin/plots/create');
-        }
-    }
-
-    /**
-     * Show plot details
-     */
-    public function show($id)
+    public function allocation()
     {
         try {
-            $plotId = intval($id);
-            if ($plotId <= 0) {
-                $this->setFlash('error', 'Invalid plot ID');
-                return $this->redirect('admin/plots');
-            }
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
 
-            // Get plot details with site information
-            $sql = "SELECT p.*, s.site_name, s.location as site_location, s.city as site_city
-                    FROM plot_master p
+            $offset = ($page - 1) * $perPage;
+
+            // Build query for allocation requests
+            $sql = "SELECT pa.*, 
+                           p.plot_number, p.total_area, p.status as plot_status,
+                           u.name as requested_by_name, u.email as requested_by_email,
+                           s.site_name
+                    FROM plot_allocations pa
+                    LEFT JOIN plots p ON pa.plot_id = p.id
+                    LEFT JOIN users u ON pa.requested_by = u.id
                     LEFT JOIN sites s ON p.site_id = s.id
-                    WHERE p.plot_id = :plot_id
-                    LIMIT 1";
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (p.plot_number LIKE ? OR u.name LIKE ? OR s.site_name LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+
+            if (!empty($status)) {
+                $sql .= " AND pa.status = ?";
+                $params[] = $status;
+            }
+
+            $sql .= " ORDER BY pa.created_at DESC";
+
+            // Count total
+            $countSql = str_replace("SELECT pa.*, p.plot_number, p.total_area, p.status as plot_status, u.name as requested_by_name, u.email as requested_by_email, s.site_name", "SELECT COUNT(DISTINCT pa.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
+
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute(['plot_id' => $plotId]);
-            $plot = $stmt->fetch();
+            $stmt->execute($params);
+            $allocations = $stmt->fetchAll();
 
-            if (!$plot) {
-                $this->setFlash('error', 'Plot not found');
-                return $this->redirect('admin/plots');
-            }
+            $data = [
+                'page_title' => 'Plot Allocation - APS Dream Home',
+                'active_page' => 'plot_management',
+                'allocations' => $allocations,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status
+                ]
+            ];
 
-            // Get booking history for this plot
-            $bookingsSql = "SELECT b.*, u.name as customer_name, u.email as customer_email
-                           FROM bookings b
-                           LEFT JOIN users u ON b.customer_id = u.id
-                           WHERE b.plot_id = :plot_id
-                           ORDER BY b.created_at DESC";
-
-            $bookingsStmt = $this->db->prepare($bookingsSql);
-            $bookingsStmt->execute(['plot_id' => $plotId]);
-            $bookings = $bookingsStmt->fetchAll();
-
-            return $this->render('admin/plots/show', [
-                'plot' => $plot,
-                'bookings' => $bookings,
-                'page_title' => 'Plot Details - APS Dream Home'
-            ]);
+            return $this->render('admin/plot_management/allocation', $data);
         } catch (Exception $e) {
-            error_log("Plot show error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load plot details');
-            return $this->redirect('admin/plots');
+            $this->loggingService->error("Plot Allocation error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load allocation data');
+            return $this->redirect('admin/plot_management');
         }
     }
 
     /**
-     * Show edit plot form
+     * Process plot allocation
      */
-    public function edit($id)
+    public function processAllocation($id)
     {
-        try {
-            $plotId = intval($id);
-            if ($plotId <= 0) {
-                $this->setFlash('error', 'Invalid plot ID');
-                return $this->redirect('admin/plots');
-            }
-
-            $plot = $this->db->fetchOne("SELECT * FROM plot_master WHERE plot_id = ? LIMIT 1", [$plotId]);
-
-            if (!$plot) {
-                $this->setFlash('error', 'Plot not found');
-                return $this->redirect('admin/plots');
-            }
-
-            $sites = $this->db->fetchAll("SELECT id, site_name, location FROM sites ORDER BY site_name");
-
-            return $this->render('admin/plots/edit', [
-                'plot' => $plot,
-                'sites' => $sites,
-                'page_title' => 'Edit Plot - APS Dream Home'
-            ]);
-        } catch (Exception $e) {
-            error_log("Plot edit error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load plot for editing');
-            return $this->redirect('admin/plots');
-        }
-    }
-
-    /**
-     * Update plot
-     */
-    public function update($id)
-    {
-        if ($this->method() !== 'POST') {
-            $this->setFlash('error', 'Invalid request method');
-            return $this->redirect('admin/plots');
-        }
-
-        if (!$this->validateCsrfTokenLocal()) {
-            $this->setFlash('error', 'Security validation failed');
-            return $this->redirect('admin/plots');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
         try {
-            $plotId = intval($id);
-            if ($plotId <= 0) {
-                $this->setFlash('error', 'Invalid plot ID');
-                return $this->redirect('admin/plots');
+            $allocationId = intval($id);
+            $action = $_POST['action'] ?? '';
+            $notes = $_POST['notes'] ?? '';
+
+            if ($allocationId <= 0 || empty($action)) {
+                return $this->jsonError('Invalid parameters', 400);
             }
 
-            $plot = $this->db->fetchOne("SELECT plot_id FROM plot_master WHERE plot_id = ? LIMIT 1", [$plotId]);
-            if (!$plot) {
-                $this->setFlash('error', 'Plot not found');
-                return $this->redirect('admin/plots');
-            }
+            $this->db->beginTransaction();
 
-            $data = $this->post();
-
-            $sql = "UPDATE plot_master 
-                    SET site_id = :site_id, plot_no = :plot_no, area = :area, available_area = :available_area,
-                        plot_dimension = :plot_dimension, plot_facing = :plot_facing, plot_price = :plot_price,
-                        plot_status = :plot_status, gata_a = :gata_a, gata_b = :gata_b, gata_c = :gata_c, gata_d = :gata_d,
-                        area_gata_a = :area_gata_a, area_gata_b = :area_gata_b, area_gata_c = :area_gata_c, area_gata_d = :area_gata_d
-                    WHERE plot_id = :plot_id";
-
-            $stmt = $this->db->prepare($sql);
-            $success = $stmt->execute([
-                'site_id' => intval($data['site_id']),
-                'plot_no' => trim($data['plot_no']),
-                'area' => floatval($data['area']),
-                'available_area' => floatval($data['available_area']),
-                'plot_dimension' => trim($data['plot_dimension']),
-                'plot_facing' => trim($data['plot_facing']),
-                'plot_price' => floatval($data['plot_price']),
-                'plot_status' => $data['plot_status'],
-                'gata_a' => intval($data['gata_a']),
-                'gata_b' => intval($data['gata_b']),
-                'gata_c' => intval($data['gata_c']),
-                'gata_d' => intval($data['gata_d']),
-                'area_gata_a' => floatval($data['area_gata_a']),
-                'area_gata_b' => floatval($data['area_gata_b']),
-                'area_gata_c' => floatval($data['area_gata_c']),
-                'area_gata_d' => floatval($data['area_gata_d']),
-                'plot_id' => $plotId
-            ]);
-
-            if ($success) {
-                $this->setFlash('success', 'Plot updated successfully');
-                return $this->redirect('admin/plots');
-            } else {
-                $this->setFlash('error', 'Failed to update plot');
-                return $this->redirect("admin/plots/{$plotId}/edit");
-            }
-        } catch (Exception $e) {
-            error_log("Plot update error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to update plot');
-            return $this->redirect("admin/plots/{$id}/edit");
-        }
-    }
-
-    /**
-     * Delete plot
-     */
-    public function destroy($id)
-    {
-        if ($this->method() !== 'POST') {
-            $this->setFlash('error', 'Invalid request method');
-            return $this->redirect('admin/plots');
-        }
-
-        if (!$this->validateCsrfTokenLocal()) {
-            $this->setFlash('error', 'Security validation failed');
-            return $this->redirect('admin/plots');
-        }
-
-        try {
-            $plotId = intval($id);
-            if ($plotId <= 0) {
-                $this->setFlash('error', 'Invalid plot ID');
-                return $this->redirect('admin/plots');
-            }
-
-            $plot = $this->db->fetchOne("SELECT * FROM plot_master WHERE plot_id = ? LIMIT 1", [$plotId]);
-            if (!$plot) {
-                $this->setFlash('error', 'Plot not found');
-                return $this->redirect('admin/plots');
-            }
-
-            // Check if plot has bookings
-            $bookingCount = $this->db->fetchOne("SELECT COUNT(*) as count FROM bookings WHERE plot_id = ?", [$plotId])['count'];
-
-            if ($bookingCount > 0) {
-                $this->setFlash('error', 'Cannot delete plot with existing bookings');
-                return $this->redirect('admin/plots');
-            }
-
-            $success = $this->db->prepare("DELETE FROM plot_master WHERE plot_id = ?")->execute([$plotId]);
-
-            if ($success) {
-                $this->setFlash('success', 'Plot deleted successfully');
-            } else {
-                $this->setFlash('error', 'Failed to delete plot');
-            }
-
-            return $this->redirect('admin/plots');
-        } catch (Exception $e) {
-            error_log("Plot deletion error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to delete plot');
-            return $this->redirect('admin/plots');
-        }
-    }
-
-    /**
-     * Check plot availability for booking
-     */
-    public function checkAvailability()
-    {
-        try {
-            $siteId = intval($_GET['site_id'] ?? 0);
-            $plotId = intval($_GET['plot_id'] ?? 0);
-
-            if ($siteId > 0) {
-                // Get available plots for site
-                $sql = "SELECT plot_id, plot_no, area, plot_price, plot_dimension, plot_facing
-                        FROM plot_master 
-                        WHERE site_id = :site_id AND plot_status = 'available'
-                        ORDER BY plot_no";
-
+            try {
+                // Get allocation details
+                $sql = "SELECT pa.*, p.plot_number, p.status as plot_status
+                        FROM plot_allocations pa
+                        LEFT JOIN plots p ON pa.plot_id = p.id
+                        WHERE pa.id = ? AND pa.status = 'pending'";
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute(['site_id' => $siteId]);
-                $plots = $stmt->fetchAll();
+                $stmt->execute([$allocationId]);
+                $allocation = $stmt->fetch();
 
-                return json_encode([
-                    'success' => true,
-                    'plots' => $plots
-                ]);
-            } elseif ($plotId > 0) {
-                // Check specific plot availability
-                $plot = $this->db->fetchOne(
-                    "SELECT plot_status, plot_price FROM plot_master WHERE plot_id = ? LIMIT 1",
-                    [$plotId]
-                );
+                if (!$allocation) {
+                    $this->db->rollBack();
+                    return $this->jsonError('Allocation not found or already processed', 404);
+                }
 
-                if ($plot) {
-                    return json_encode([
-                        'success' => true,
-                        'available' => $plot['plot_status'] === 'available',
-                        'price' => $plot['plot_price']
-                    ]);
+                // Process allocation based on action
+                if ($action === 'approve') {
+                    // Update allocation status
+                    $sql = "UPDATE plot_allocations 
+                            SET status = 'approved', processed_by = ?, processed_at = NOW(), notes = ?
+                            WHERE id = ?";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId]);
+
+                    // Update plot status
+                    $sql = "UPDATE plots SET status = 'allocated', updated_at = NOW() WHERE id = ?";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute([$allocation['plot_id']]);
+
+                } elseif ($action === 'reject') {
+                    // Update allocation status
+                    $sql = "UPDATE plot_allocations 
+                            SET status = 'rejected', processed_by = ?, processed_at = NOW(), notes = ?
+                            WHERE id = ?";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId]);
+
                 } else {
-                    return json_encode([
-                        'success' => false,
-                        'message' => 'Plot not found'
-                    ]);
+                    $this->db->rollBack();
+                    return $this->jsonError('Invalid action', 400);
+                }
+
+                $this->db->commit();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_allocation_processed', [
+                    'allocation_id' => $allocationId,
+                    'action' => $action,
+                    'plot_id' => $allocation['plot_id']
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => "Allocation {$action}d successfully"
+                ]);
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            $this->loggingService->error("Process Allocation error: " . $e->getMessage());
+            return $this->jsonError('Failed to process allocation', 500);
+        }
+    }
+
+    /**
+     * Display plot development tracking
+     */
+    public function development()
+    {
+        try {
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
+
+            $offset = ($page - 1) * $perPage;
+
+            // Build query for development tracking
+            $sql = "SELECT pd.*, 
+                           p.plot_number, p.total_area, p.status as plot_status,
+                           s.site_name,
+                           u.name as developer_name
+                    FROM plot_development pd
+                    LEFT JOIN plots p ON pd.plot_id = p.id
+                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN users u ON pd.developer_id = u.id
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (p.plot_number LIKE ? OR s.site_name LIKE ? OR u.name LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+
+            if (!empty($status)) {
+                $sql .= " AND pd.status = ?";
+                $params[] = $status;
+            }
+
+            $sql .= " ORDER BY pd.created_at DESC";
+
+            // Count total
+            $countSql = str_replace("SELECT pd.*, p.plot_number, p.total_area, p.status as plot_status, s.site_name, u.name as developer_name", "SELECT COUNT(DISTINCT pd.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
+
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $developments = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Plot Development - APS Dream Home',
+                'active_page' => 'plot_management',
+                'developments' => $developments,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status
+                ]
+            ];
+
+            return $this->render('admin/plot_management/development', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Plot Development error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load development data');
+            return $this->redirect('admin/plot_management');
+        }
+    }
+
+    /**
+     * Bulk update plot status
+     */
+    public function bulkUpdate()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $plotIds = $_POST['plot_ids'] ?? [];
+            $status = $_POST['status'] ?? '';
+            $notes = $_POST['notes'] ?? '';
+
+            if (empty($plotIds) || empty($status)) {
+                return $this->jsonError('Invalid parameters', 400);
+            }
+
+            $validStatuses = ['available', 'reserved', 'under_development', 'developed'];
+            if (!in_array($status, $validStatuses)) {
+                return $this->jsonError('Invalid status', 400);
+            }
+
+            $updated = 0;
+            $failed = 0;
+
+            foreach ($plotIds as $plotId) {
+                try {
+                    $sql = "UPDATE plots SET status = ?, updated_at = NOW() WHERE id = ?";
+                    $stmt = $this->db->prepare($sql);
+                    $result = $stmt->execute([$status, (int)$plotId]);
+                    
+                    if ($result) {
+                        $updated++;
+                        
+                        // Log each update
+                        $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_bulk_updated', [
+                            'plot_id' => $plotId,
+                            'status' => $status,
+                            'notes' => $notes
+                        ]);
+                    } else {
+                        $failed++;
+                    }
+                } catch (Exception $e) {
+                    $failed++;
                 }
             }
 
-            return json_encode([
-                'success' => false,
-                'message' => 'Invalid parameters'
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => "Bulk update completed: {$updated} updated, {$failed} failed",
+                'updated' => $updated,
+                'failed' => $failed
             ]);
         } catch (Exception $e) {
-            error_log("Plot availability check error: " . $e->getMessage());
-            return json_encode([
-                'success' => false,
-                'message' => 'Failed to check availability'
-            ]);
+            $this->loggingService->error("Bulk Update error: " . $e->getMessage());
+            return $this->jsonError('Failed to perform bulk update', 500);
         }
     }
 
     /**
-     * Update plot status (for booking system)
+     * Get dashboard statistics
      */
-    public function updateStatus($id)
+    private function getDashboardStats(): array
     {
-        if ($this->method() !== 'POST') {
-            return json_encode(['success' => false, 'message' => 'Invalid request method']);
-        }
-
         try {
-            $plotId = intval($id);
-            $newStatus = $_POST['status'] ?? '';
+            $stats = [];
 
-            if ($plotId <= 0 || empty($newStatus)) {
-                return json_encode(['success' => false, 'message' => 'Invalid parameters']);
-            }
+            // Total plots
+            $sql = "SELECT COUNT(*) as total FROM plots";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_plots'] = (int)($result['total'] ?? 0);
 
-            $validStatuses = ['available', 'sold', 'reserved', 'under_process'];
-            if (!in_array($newStatus, $validStatuses)) {
-                return json_encode(['success' => false, 'message' => 'Invalid status']);
-            }
+            // Plots by status
+            $sql = "SELECT status, COUNT(*) as count FROM plots GROUP BY status";
+            $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
 
-            $success = $this->db->prepare("UPDATE plot_master SET plot_status = ? WHERE plot_id = ?")
-                ->execute([$newStatus, $plotId]);
+            // Total area
+            $sql = "SELECT COALESCE(SUM(total_area), 0) as total FROM plots";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_area'] = (float)($result['total'] ?? 0);
 
-            if ($success) {
-                return json_encode([
-                    'success' => true,
-                    'message' => 'Plot status updated successfully'
-                ]);
-            } else {
-                return json_encode([
-                    'success' => false,
-                    'message' => 'Failed to update plot status'
-                ]);
-            }
+            // Developed area
+            $sql = "SELECT COALESCE(SUM(pr.total_area), 0) as developed
+                    FROM properties pr
+                    JOIN plots p ON pr.plot_id = p.id
+                    WHERE p.status = 'developed'";
+            $result = $this->db->fetchOne($sql);
+            $stats['developed_area'] = (float)($result['developed'] ?? 0);
+
+            // Pending allocations
+            $sql = "SELECT COUNT(*) as total FROM plot_allocations WHERE status = 'pending'";
+            $result = $this->db->fetchOne($sql);
+            $stats['pending_allocations'] = (int)($result['total'] ?? 0);
+
+            return $stats;
         } catch (Exception $e) {
-            error_log("Plot status update error: " . $e->getMessage());
-            return json_encode([
-                'success' => false,
-                'message' => 'Failed to update plot status'
-            ]);
+            $this->loggingService->error("Get Dashboard Stats error: " . $e->getMessage());
+            return [];
         }
+    }
+
+    /**
+     * Get site summary
+     */
+    private function getSiteSummary(): array
+    {
+        try {
+            $sql = "SELECT s.site_name, 
+                           COUNT(p.id) as plot_count,
+                           COALESCE(SUM(p.total_area), 0) as total_area,
+                           COUNT(CASE WHEN p.status = 'developed' THEN 1 END) as developed_plots
+                    FROM sites s
+                    LEFT JOIN plots p ON s.id = p.site_id
+                    GROUP BY s.id, s.site_name
+                    ORDER BY plot_count DESC
+                    LIMIT 10";
+            return $this->db->fetchAll($sql) ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Site Summary error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get recent activity
+     */
+    private function getRecentActivity(): array
+    {
+        try {
+            $activities = [];
+
+            // Recent plot allocations
+            $sql = "SELECT 'allocation' as type, pa.created_at, p.plot_number, u.name as user_name, pa.status
+                    FROM plot_allocations pa
+                    LEFT JOIN plots p ON pa.plot_id = p.id
+                    LEFT JOIN users u ON pa.requested_by = u.id
+                    ORDER BY pa.created_at DESC
+                    LIMIT 5";
+            $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
+
+            // Recent plot updates
+            $sql = "SELECT 'plot_update' as type, p.updated_at as created_at, p.plot_number, u.name as user_name, p.status
+                    FROM plots p
+                    LEFT JOIN users u ON p.updated_by = u.id
+                    WHERE p.updated_at IS NOT NULL
+                    ORDER BY p.updated_at DESC
+                    LIMIT 5";
+            $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
+
+            // Sort by date and limit
+            usort($activities, function($a, $b) {
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
+
+            return array_slice($activities, 0, 10);
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Recent Activity error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Export plot management data
+     */
+    public function export()
+    {
+        try {
+            $format = $_GET['format'] ?? 'csv';
+            $type = $_GET['type'] ?? 'plots';
+            $startDate = $_GET['start_date'] ?? date('Y-m-01');
+            $endDate = $_GET['end_date'] ?? date('Y-m-t');
+
+            switch ($type) {
+                case 'plots':
+                    $data = $this->getPlotsExport($startDate, $endDate);
+                    break;
+                case 'allocations':
+                    $data = $this->getAllocationsExport($startDate, $endDate);
+                    break;
+                case 'development':
+                    $data = $this->getDevelopmentExport($startDate, $endDate);
+                    break;
+                default:
+                    $data = [];
+            }
+
+            if ($format === 'csv') {
+                return $this->exportCSV($data, $type, $startDate, $endDate);
+            } elseif ($format === 'json') {
+                return $this->exportJSON($data, $type, $startDate, $endDate);
+            }
+
+            $this->setFlash('error', 'Invalid export format');
+            return $this->redirect('admin/plot_management');
+        } catch (Exception $e) {
+            $this->loggingService->error("Plot Management Export error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to export data');
+            return $this->redirect('admin/plot_management');
+        }
+    }
+
+    /**
+     * Get plots data for export
+     */
+    private function getPlotsExport(string $startDate, string $endDate): array
+    {
+        try {
+            $sql = "SELECT p.*, s.site_name, l.land_title
+                    FROM plots p
+                    LEFT JOIN sites s ON p.site_id = s.id
+                    LEFT JOIN land_records l ON p.land_id = l.id
+                    WHERE p.created_at BETWEEN ? AND ?
+                    ORDER BY p.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Plots Export error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get allocations data for export
+     */
+    private function getAllocationsExport(string $startDate, string $endDate): array
+    {
+        try {
+            $sql = "SELECT pa.*, p.plot_number, u.name as requested_by_name, s.site_name
+                    FROM plot_allocations pa
+                    LEFT JOIN plots p ON pa.plot_id = p.id
+                    LEFT JOIN users u ON pa.requested_by = u.id
+                    LEFT JOIN sites s ON p.site_id = s.id
+                    WHERE pa.created_at BETWEEN ? AND ?
+                    ORDER BY pa.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Allocations Export error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get development data for export
+     */
+    private function getDevelopmentExport(string $startDate, string $endDate): array
+    {
+        try {
+            $sql = "SELECT pd.*, p.plot_number, u.name as developer_name, s.site_name
+                    FROM plot_development pd
+                    LEFT JOIN plots p ON pd.plot_id = p.id
+                    LEFT JOIN users u ON pd.developer_id = u.id
+                    LEFT JOIN sites s ON p.site_id = s.id
+                    WHERE pd.created_at BETWEEN ? AND ?
+                    ORDER BY pd.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$startDate, $endDate]);
+            return $stmt->fetchAll() ?: [];
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Development Export error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Export data as CSV
+     */
+    private function exportCSV(array $data, string $type, string $startDate, string $endDate): void
+    {
+        $filename = "plot_management_{$type}_{$startDate}_to_{$endDate}.csv";
+        
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        
+        if (!empty($data)) {
+            // Header row
+            fputcsv($output, array_keys($data[0]));
+            
+            // Data rows
+            foreach ($data as $row) {
+                fputcsv($output, $row);
+            }
+        }
+        
+        fclose($output);
+        exit;
+    }
+
+    /**
+     * Export data as JSON
+     */
+    private function exportJSON(array $data, string $type, string $startDate, string $endDate): void
+    {
+        $filename = "plot_management_{$type}_{$startDate}_to_{$endDate}.json";
+        
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        echo json_encode([
+            'type' => $type,
+            'period' => ['start' => $startDate, 'end' => $endDate],
+            'data' => $data,
+            'exported_at' => date('Y-m-d H:i:s')
+        ]);
+        
+        exit;
+    }
+
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+
+    /**
+     * JSON error helper
+     */
+    private function jsonError(string $message, int $statusCode = 400): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
