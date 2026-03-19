@@ -7,6 +7,9 @@ require_once __DIR__ . '/router.php';
 // Initialize router
 $router = new Router();
 
+// Debug: Log routing setup
+error_log("ROUTER SETUP: Starting route registration");
+
 // Main routes - Public Pages
 $router->get('/', 'Front\\PageController@home');
 $router->get('/about', 'Front\\PageController@about');
@@ -14,10 +17,10 @@ $router->get('/contact', 'Front\\PageController@contact');
 $router->post('/contact', 'Front\\PageController@submitContact');
 
 // Customer Authentication
-$router->get('/register', 'Auth\CustomerAuthController@register');
-$router->post('/register', 'Auth\CustomerAuthController@handleRegister');
-$router->get('/login', 'Auth\CustomerAuthController@login');
-$router->post('/login', 'Auth\CustomerAuthController@authenticate');
+$router->get('/register', 'Auth\\CustomerAuthController@register');
+$router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
+$router->get('/login', 'Auth\\CustomerAuthController@login');
+$router->post('/login', 'Auth\\CustomerAuthController@authenticate');
 
 // Agent Authentication
 $router->get('/agent/register', 'Auth\AgentAuthController@register');

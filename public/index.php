@@ -19,7 +19,8 @@ define('APS_LOGS', APS_ROOT . '/logs');
 // Define BASE_URL dynamically
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $domainName = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$projectName = '/apsdreamhome';
+// Remove project name for localhost development
+$projectName = (str_contains($domainName, 'localhost')) ? '' : '/apsdreamhome';
 define('BASE_URL', $protocol . $domainName . $projectName);
 
 // Error reporting
