@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Agent Dashboard Controller
  * MVC Pattern - Proper Role-based Dashboard Management
@@ -6,14 +7,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\LoggingService;
+use Exception;
 
-class AgentDashboardController extends BaseController
+class AgentDashboardController extends AdminController
 {
+    private $loggingService;
+
     public function __construct()
     {
         parent::__construct();
-        $this->requireAdmin();
+        $this->loggingService = new LoggingService();
     }
 
     /**
@@ -23,7 +28,7 @@ class AgentDashboardController extends BaseController
     {
         try {
             $user_id = $_SESSION['user_id'] ?? 1;
-            
+
             // Get agent statistics
             $stats = $this->db->fetchOne(
                 "SELECT 
@@ -88,7 +93,6 @@ class AgentDashboardController extends BaseController
             ];
 
             return $this->render('admin/dashboards/agent');
-
         } catch (Exception $e) {
             error_log("Agent Dashboard Error: " . $e->getMessage());
             $this->setFlash('error', 'Dashboard loading failed');
@@ -103,7 +107,7 @@ class AgentDashboardController extends BaseController
     {
         try {
             $user_id = $_SESSION['user_id'] ?? 1;
-            
+
             $performance = $this->db->fetchAll(
                 "SELECT 
                     DATE(created_at) as date,
@@ -117,10 +121,10 @@ class AgentDashboardController extends BaseController
                 [$user_id]
             );
 
-            return $this->jsonSuccess($performance);
-
+            return $this->jsonResponse(['success' => true, 'data' => $performance]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            $this->loggingService->error("Get Performance Data error: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -131,7 +135,7 @@ class AgentDashboardController extends BaseController
     {
         try {
             $user_id = $_SESSION['user_id'] ?? 1;
-            
+
             $network = $this->db->fetchAll(
                 "SELECT 
                     u.id,
@@ -148,10 +152,21 @@ class AgentDashboardController extends BaseController
                 [$user_id, $user_id]
             );
 
-            return $this->jsonSuccess($network);
-
+            return $this->jsonResponse(['success' => true, 'data' => $network]);
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage());
+            $this->loggingService->error("Get Network Tree error: " . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 }
