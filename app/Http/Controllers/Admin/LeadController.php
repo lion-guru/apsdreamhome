@@ -3,89 +3,134 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Services\CleanLeadService;
-use App\Services\EmailService;
-use App\Models\Lead\Lead;
-use App\Models\Lead\LeadActivity;
-use App\Models\Lead\LeadNote;
-use App\Models\Lead\LeadFile;
-use App\Models\Lead\LeadStatus;
-use App\Models\Lead\LeadSource;
-use App\Models\Lead\LeadTag;
-use App\Models\User\User;
-use App\Models\Lead\LeadDeal;
-use App\Models\Lead\LeadCustomField;
-use App\Core\Security;
-use App\Core\Database\Database;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
+use App\Core\Database;
+use Exception;
 
+/**
+ * Lead Controller - Custom MVC Implementation
+ * Handles lead management operations in the Admin panel
+ */
 class LeadController extends AdminController
 {
-    private $leadService;
-    private $emailService;
+    private $loggingService;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
-
-        $this->leadService = new CleanLeadService();
-        $this->emailService = new EmailService();
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
+        
+        // Register middlewares
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'addNote', 'updateStatus']]);
     }
 
     /**
-     * Display a listing of leads
+     * Display leads list
      */
     public function index()
     {
-        $filters = [
-            'search' => $this->request->get('search'),
-            'status' => $this->request->get('status'),
-            'source' => $this->request->get('source'),
-            'priority' => $this->request->get('priority'),
-            'assigned_to' => $this->request->get('assigned_to'),
-            'date_from' => $this->request->get('date_from'),
-            'date_to' => $this->request->get('date_to'),
-            'page' => (int)($this->request->get('page') ?? 1),
-            'per_page' => (int)($this->request->get('per_page') ?? 20)
-        ];
+        try {
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $source = $_GET['source'] ?? '';
+            $assignedTo = $_GET['assigned_to'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
 
-        $leads = $this->leadService->getLeads($filters);
-        $leadStats = $this->leadService->getLeadStats();
-        $sources = $this->leadService->getSources();
-        $statuses = $this->leadService->getStatuses();
+            $offset = ($page - 1) * $perPage;
 
-        $this->data['title'] = $this->mlSupport->translate('Lead Management');
-        $this->data['leads'] = $leads;
-        $this->data['filters'] = $filters;
-        $this->data['leadStats'] = $leadStats;
-        $this->data['sources'] = $sources;
-        $this->data['statuses'] = $statuses;
+            // Build query
+            $sql = "SELECT l.*, 
+                           u.name as assigned_to_name,
+                           ls.name as status_name,
+                           ls.color as status_color,
+                           src.name as source_name,
+                           COUNT(la.id) as activity_count
+                    FROM leads l
+                    LEFT JOIN users u ON l.assigned_to = u.id
+                    LEFT JOIN lead_statuses ls ON l.status = ls.id
+                    LEFT JOIN lead_sources src ON l.source_id = src.id
+                    LEFT JOIN lead_activities la ON l.id = la.lead_id
+                    WHERE 1=1";
+            $params = [];
 
-        $this->render('admin/leads/index');
-    }
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (l.name LIKE ? OR l.email LIKE ? OR l.phone LIKE ? OR l.company LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
 
-    /**
-     * Display the specified lead
-     */
-    public function show($id)
-    {
-        $lead = $this->leadService->getLeadById($id);
+            if (!empty($status)) {
+                $sql .= " AND l.status = ?";
+                $params[] = $status;
+            }
 
-        if (!$lead) {
-            $this->notFound();
-            return;
+            if (!empty($source)) {
+                $sql .= " AND l.source_id = ?";
+                $params[] = $source;
+            }
+
+            if (!empty($assignedTo)) {
+                $sql .= " AND l.assigned_to = ?";
+                $params[] = $assignedTo;
+            }
+
+            $sql .= " GROUP BY l.id ORDER BY l.created_at DESC";
+
+            // Count total
+            $countSql = str_replace("SELECT l.*, u.name as assigned_to_name, ls.name as status_name, ls.color as status_color, src.name as source_name, COUNT(la.id) as activity_count", "SELECT COUNT(DISTINCT l.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
+
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $leads = $stmt->fetchAll();
+
+            // Get filter options
+            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY name");
+            $sources = $this->db->fetchAll("SELECT * FROM lead_sources ORDER BY name");
+            $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate', 'manager') ORDER BY name");
+
+            $data = [
+                'page_title' => 'Leads - APS Dream Home',
+                'active_page' => 'leads',
+                'leads' => $leads,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status,
+                    'source' => $source,
+                    'assigned_to' => $assignedTo
+                ],
+                'filter_options' => [
+                    'statuses' => $statuses,
+                    'sources' => $sources,
+                    'assignees' => $assignees
+                ]
+            ];
+
+            return $this->render('admin/leads/index', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Lead Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load leads');
+            return $this->redirect('admin/dashboard');
         }
-
-        $activities = $this->leadService->getLeadActivities($id);
-        $notes = $this->leadService->getLeadNotes($id);
-        $files = $this->leadService->getLeadFiles($id);
-
-        $this->data['title'] = $this->mlSupport->translate('Lead') . ': ' . $lead['name'];
-        $this->data['lead'] = $lead;
-        $this->data['activities'] = $activities;
-        $this->data['notes'] = $notes;
-        $this->data['files'] = $files;
-
-        $this->render('admin/leads/show');
     }
 
     /**
@@ -93,16 +138,26 @@ class LeadController extends AdminController
      */
     public function create()
     {
-        $sources = $this->leadService->getSources();
-        $statuses = $this->leadService->getStatuses();
-        $users = $this->leadService->getAssignableUsers();
+        try {
+            // Get dropdown options
+            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY name");
+            $sources = $this->db->fetchAll("SELECT * FROM lead_sources ORDER BY name");
+            $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate', 'manager') ORDER BY name");
 
-        $this->data['title'] = $this->mlSupport->translate('Create New Lead');
-        $this->data['sources'] = $sources;
-        $this->data['statuses'] = $statuses;
-        $this->data['users'] = $users;
+            $data = [
+                'page_title' => 'Create Lead - APS Dream Home',
+                'active_page' => 'leads',
+                'statuses' => $statuses,
+                'sources' => $sources,
+                'assignees' => $assignees
+            ];
 
-        $this->render('admin/leads/create');
+            return $this->render('admin/leads/create', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Lead Create error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load lead form');
+            return $this->redirect('admin/leads');
+        }
     }
 
     /**
@@ -110,83 +165,207 @@ class LeadController extends AdminController
      */
     public function store()
     {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/leads/create');
-            return;
-        }
-
-        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/leads/create');
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
         try {
-            $data = [
-                'name' => $this->request->post('name') ?? '',
-                'email' => $this->request->post('email') ?? '',
-                'phone' => $this->request->post('phone') ?? '',
-                'source' => $this->request->post('source') ?? '',
-                'status' => $this->request->post('status') ?? 'new',
-                'priority' => $this->request->post('priority') ?? 'medium',
-                'budget' => ($budget = $this->request->post('budget')) && !empty($budget) ? (float)$budget : null,
-                'property_type' => $this->request->post('property_type') ?? '',
-                'location_preference' => $this->request->post('location_preference') ?? '',
-                'notes' => $this->request->post('notes') ?? '',
-                'assigned_to' => $this->request->post('assigned_to') ?? null,
-                'created_by' => $this->session->get('user_id'),
-                'company' => $this->request->post('company') ?? null
-            ];
+            $data = $_POST;
 
-            $leadId = $this->leadService->createLead($data);
-
-            if ($leadId) {
-                // Send welcome email
-                $this->emailService->sendLeadWelcomeEmail($data['email'], $data['name']);
-
-                $this->setFlash('success', 'Lead created successfully!');
-                $this->redirect('admin/leads/' . $leadId);
-                return;
+            // Validate required fields
+            $required = ['name', 'email', 'phone'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst($field) . ' is required', 400);
+                }
             }
 
-            throw new \Exception('Failed to create lead');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-            $this->session->set('form_data', $this->request->all());
-            $this->redirect('admin/leads/create');
+            // Validate email
+            $email = CoreFunctionsServiceCustom::validateInput($data['email'], 'email');
+            if (!$email) {
+                return $this->jsonError('Invalid email address', 400);
+            }
+
+            // Check if email already exists
+            $sql = "SELECT id FROM leads WHERE email = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$email]);
+            if ($stmt->fetch()) {
+                return $this->jsonError('Email already exists', 400);
+            }
+
+            // Validate phone
+            $phone = CoreFunctionsServiceCustom::validateInput($data['phone'], 'phone');
+            if ($phone === false) {
+                return $this->jsonError('Invalid phone number', 400);
+            }
+
+            // Get default status
+            $defaultStatus = $this->db->fetchOne("SELECT id FROM lead_statuses WHERE is_default = 1 LIMIT 1");
+            $statusId = $defaultStatus['id'] ?? 1;
+
+            // Insert lead
+            $sql = "INSERT INTO leads 
+                    (name, email, phone, company, position, source_id, status, assigned_to, 
+                     budget, notes, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                CoreFunctionsServiceCustom::validateInput($data['name'], 'string'),
+                $email,
+                $phone,
+                CoreFunctionsServiceCustom::validateInput($data['company'] ?? '', 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['position'] ?? '', 'string'),
+                (int)($data['source_id'] ?? 0),
+                (int)($data['status'] ?? $statusId),
+                (int)($data['assigned_to'] ?? 0),
+                (float)($data['budget'] ?? 0),
+                CoreFunctionsServiceCustom::validateInput($data['notes'] ?? '', 'string')
+            ]);
+
+            if ($result) {
+                $leadId = $this->db->lastInsertId();
+
+                // Create initial activity
+                $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                        VALUES (?, 'created', 'Lead created', ?, NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$leadId, $_SESSION['user_id'] ?? 0]);
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'lead_created', [
+                    'lead_id' => $leadId,
+                    'email' => $email
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Lead created successfully',
+                    'lead_id' => $leadId
+                ]);
+            }
+
+            return $this->jsonError('Failed to create lead', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Lead Store error: " . $e->getMessage());
+            return $this->jsonError('Failed to create lead', 500);
         }
     }
 
     /**
-     * Show the form for editing a lead
+     * Display the specified lead
+     */
+    public function show($id)
+    {
+        try {
+            $leadId = intval($id);
+            if ($leadId <= 0) {
+                $this->setFlash('error', 'Invalid lead ID');
+                return $this->redirect('admin/leads');
+            }
+
+            // Get lead details
+            $sql = "SELECT l.*, 
+                           u.name as assigned_to_name,
+                           u.email as assigned_to_email,
+                           ls.name as status_name,
+                           ls.color as status_color,
+                           src.name as source_name
+                    FROM leads l
+                    LEFT JOIN users u ON l.assigned_to = u.id
+                    LEFT JOIN lead_statuses ls ON l.status = ls.id
+                    LEFT JOIN lead_sources src ON l.source_id = src.id
+                    WHERE l.id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $lead = $stmt->fetch();
+
+            if (!$lead) {
+                $this->setFlash('error', 'Lead not found');
+                return $this->redirect('admin/leads');
+            }
+
+            // Get lead activities
+            $sql = "SELECT la.*, u.name as created_by_name
+                    FROM lead_activities la
+                    LEFT JOIN users u ON la.created_by = u.id
+                    WHERE la.lead_id = ?
+                    ORDER BY la.created_at DESC
+                    LIMIT 20";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $activities = $stmt->fetchAll();
+
+            // Get lead notes
+            $sql = "SELECT ln.*, u.name as created_by_name
+                    FROM lead_notes ln
+                    LEFT JOIN users u ON ln.created_by = u.id
+                    WHERE ln.lead_id = ?
+                    ORDER BY ln.created_at DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $notes = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'Lead Details - APS Dream Home',
+                'active_page' => 'leads',
+                'lead' => $lead,
+                'activities' => $activities,
+                'notes' => $notes
+            ];
+
+            return $this->render('admin/leads/show', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Lead Show error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load lead details');
+            return $this->redirect('admin/leads');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified lead
      */
     public function edit($id)
     {
-        $lead = $this->leadService->getLeadById($id);
+        try {
+            $leadId = intval($id);
+            if ($leadId <= 0) {
+                $this->setFlash('error', 'Invalid lead ID');
+                return $this->redirect('admin/leads');
+            }
 
-        if (!$lead) {
-            $this->notFound();
-            return;
+            // Get lead details
+            $sql = "SELECT * FROM leads WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $lead = $stmt->fetch();
+
+            if (!$lead) {
+                $this->setFlash('error', 'Lead not found');
+                return $this->redirect('admin/leads');
+            }
+
+            // Get dropdown options
+            $statuses = $this->db->fetchAll("SELECT * FROM lead_statuses ORDER BY name");
+            $sources = $this->db->fetchAll("SELECT * FROM lead_sources ORDER BY name");
+            $assignees = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate', 'manager') ORDER BY name");
+
+            $data = [
+                'page_title' => 'Edit Lead - APS Dream Home',
+                'active_page' => 'leads',
+                'lead' => $lead,
+                'statuses' => $statuses,
+                'sources' => $sources,
+                'assignees' => $assignees
+            ];
+
+            return $this->render('admin/leads/edit', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Lead Edit error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load lead form');
+            return $this->redirect('admin/leads');
         }
-
-        // Check permissions
-        if (!$this->canEditLead($lead)) {
-            $this->forbidden();
-            return;
-        }
-
-        $sources = $this->leadService->getSources();
-        $statuses = $this->leadService->getStatuses();
-        $users = $this->leadService->getAssignableUsers();
-
-        $this->data['title'] = 'Edit Lead: ' . $lead['name'];
-        $this->data['lead'] = $lead;
-        $this->data['sources'] = $sources;
-        $this->data['statuses'] = $statuses;
-        $this->data['users'] = $users;
-
-        $this->render('admin/leads/edit');
     }
 
     /**
@@ -194,140 +373,194 @@ class LeadController extends AdminController
      */
     public function update($id)
     {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect("admin/leads/edit/$id");
-            return;
-        }
-
-        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect("admin/leads/edit/$id");
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
         try {
-            $lead = $this->leadService->getLeadById($id);
+            $leadId = intval($id);
+            if ($leadId <= 0) {
+                return $this->jsonError('Invalid lead ID', 400);
+            }
+
+            $data = $_POST;
+
+            // Check if lead exists
+            $sql = "SELECT * FROM leads WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $lead = $stmt->fetch();
 
             if (!$lead) {
-                $this->notFound();
-                return;
+                return $this->jsonError('Lead not found', 404);
             }
 
-            // Check permissions
-            if (!$this->canEditLead($lead)) {
-                $this->forbidden();
-                return;
+            // Build update query
+            $updateFields = [];
+            $updateValues = [];
+
+            if (!empty($data['name'])) {
+                $updateFields[] = "name = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['name'], 'string');
             }
 
-            $data = [
-                'name' => $this->request->post('name') ?? $lead['name'],
-                'email' => $this->request->post('email') ?? $lead['email'],
-                'phone' => $this->request->post('phone') ?? $lead['phone'],
-                'source' => $this->request->post('source') ?? $lead['source'],
-                'status' => $this->request->post('status') ?? $lead['status'],
-                'priority' => $this->request->post('priority') ?? $lead['priority'],
-                'budget' => ($budget = $this->request->post('budget')) && !empty($budget) ? (float)$budget : $lead['budget'],
-                'property_type' => $this->request->post('property_type') ?? $lead['property_type'], // property_interest
-                'location_preference' => $this->request->post('location_preference') ?? $lead['location_preference'],
-                'notes' => $this->request->post('notes') ?? $lead['notes'],
-                'assigned_to' => $this->request->post('assigned_to') ?? $lead['assigned_to'],
-                'company' => $this->request->post('company') ?? $lead['company']
-            ];
+            if (!empty($data['email'])) {
+                $email = CoreFunctionsServiceCustom::validateInput($data['email'], 'email');
+                if (!$email) {
+                    return $this->jsonError('Invalid email address', 400);
+                }
 
-            $result = $this->leadService->updateLead($id, $data);
+                // Check if email already exists for another lead
+                $sql = "SELECT id FROM leads WHERE email = ? AND id != ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$email, $leadId]);
+                if ($stmt->fetch()) {
+                    return $this->jsonError('Email already exists', 400);
+                }
+
+                $updateFields[] = "email = ?";
+                $updateValues[] = $email;
+            }
+
+            if (!empty($data['phone'])) {
+                $phone = CoreFunctionsServiceCustom::validateInput($data['phone'], 'phone');
+                if ($phone === false) {
+                    return $this->jsonError('Invalid phone number', 400);
+                }
+                $updateFields[] = "phone = ?";
+                $updateValues[] = $phone;
+            }
+
+            if (isset($data['company'])) {
+                $updateFields[] = "company = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['company'], 'string');
+            }
+
+            if (isset($data['position'])) {
+                $updateFields[] = "position = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['position'], 'string');
+            }
+
+            if (isset($data['source_id'])) {
+                $updateFields[] = "source_id = ?";
+                $updateValues[] = (int)$data['source_id'];
+            }
+
+            if (isset($data['status'])) {
+                $updateFields[] = "status = ?";
+                $updateValues[] = (int)$data['status'];
+            }
+
+            if (isset($data['assigned_to'])) {
+                $updateFields[] = "assigned_to = ?";
+                $updateValues[] = (int)$data['assigned_to'];
+            }
+
+            if (isset($data['budget'])) {
+                $updateFields[] = "budget = ?";
+                $updateValues[] = (float)$data['budget'];
+            }
+
+            if (isset($data['notes'])) {
+                $updateFields[] = "notes = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['notes'], 'string');
+            }
+
+            if (empty($updateFields)) {
+                return $this->jsonError('No fields to update', 400);
+            }
+
+            $updateFields[] = "updated_at = NOW()";
+            $updateValues[] = $leadId;
+
+            $sql = "UPDATE leads SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($updateValues);
 
             if ($result) {
-                $this->setFlash('success', 'Lead updated successfully!');
-                $this->redirect('admin/leads/' . $id);
-                return;
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'lead_updated', [
+                    'lead_id' => $leadId,
+                    'changes' => $data
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Lead updated successfully'
+                ]);
             }
 
-            throw new \Exception('Failed to update lead');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-            $this->session->set('form_data', $this->request->all());
-            $this->redirect("admin/leads/edit/$id");
+            return $this->jsonError('Failed to update lead', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Lead Update error: " . $e->getMessage());
+            return $this->jsonError('Failed to update lead', 500);
         }
     }
 
     /**
-     * Add activity to lead
-     */
-    public function addActivity($id)
-    {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
-        }
-
-        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
-        }
-
-        try {
-            $lead = $this->leadService->getLeadById($id);
-
-            if (!$lead) {
-                $this->notFound();
-                return;
-            }
-
-            $data = [
-                'lead_id' => $id,
-                'activity_type' => $this->request->post('activity_type') ?? '',
-                'description' => $this->request->post('description') ?? '',
-                'created_by' => $this->session->get('user_id'),
-                'metadata' => ($metadata = $this->request->post('metadata')) && !empty($metadata) ? json_encode($metadata) : null
-            ];
-
-            $activityId = $this->leadService->addActivity($data);
-
-            if ($activityId) {
-                $this->setFlash('success', 'Activity added successfully!');
-            } else {
-                $this->setFlash('error', 'Failed to add activity');
-            }
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-        }
-
-        $this->redirect('admin/leads/' . $id);
-    }
-
-    /**
-     * Delete lead
+     * Remove the specified lead
      */
     public function destroy($id)
     {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/leads');
-            return;
-        }
-
-        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/leads');
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
         try {
-            $result = $this->leadService->deleteLead($id);
-
-            if ($result) {
-                $this->setFlash('success', 'Lead deleted successfully!');
-            } else {
-                $this->setFlash('error', 'Failed to delete lead');
+            $leadId = intval($id);
+            if ($leadId <= 0) {
+                return $this->jsonError('Invalid lead ID', 400);
             }
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-        }
 
-        $this->redirect('admin/leads');
+            // Check if lead exists
+            $sql = "SELECT * FROM leads WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $lead = $stmt->fetch();
+
+            if (!$lead) {
+                return $this->jsonError('Lead not found', 404);
+            }
+
+            // Delete lead and related data
+            $this->db->beginTransaction();
+
+            try {
+                // Delete lead activities
+                $sql = "DELETE FROM lead_activities WHERE lead_id = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$leadId]);
+
+                // Delete lead notes
+                $sql = "DELETE FROM lead_notes WHERE lead_id = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$leadId]);
+
+                // Delete lead
+                $sql = "DELETE FROM leads WHERE id = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$leadId]);
+
+                $this->db->commit();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'lead_deleted', [
+                    'lead_id' => $leadId,
+                    'lead_email' => $lead['email']
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Lead deleted successfully'
+                ]);
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            $this->loggingService->error("Lead Destroy error: " . $e->getMessage());
+            return $this->jsonError('Failed to delete lead', 500);
+        }
     }
 
     /**
@@ -335,1021 +568,197 @@ class LeadController extends AdminController
      */
     public function addNote($id)
     {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
-        }
-
-        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
 
         try {
-            $lead = $this->leadService->getLeadById($id);
-
-            if (!$lead) {
-                $this->notFound();
-                return;
+            $leadId = intval($id);
+            if ($leadId <= 0) {
+                return $this->jsonError('Invalid lead ID', 400);
             }
 
-            $data = [
-                'lead_id' => $id,
-                'note' => $this->request->post('note') ?? '',
-                'created_by' => $this->session->get('user_id')
-            ];
-
-            $noteId = $this->leadService->addNote($data);
-
-            if ($noteId) {
-                $this->setFlash('success', 'Note added successfully!');
-            } else {
-                $this->setFlash('error', 'Failed to add note');
-            }
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-        }
-
-        $this->redirect('admin/leads/' . $id);
-    }
-
-    /**
-     * Assign lead to user
-     */
-    public function assign($id)
-    {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
-        }
-
-        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
-        }
-
-        try {
-            $lead = $this->leadService->getLeadById($id);
-
-            if (!$lead) {
-                $this->notFound();
-                return;
+            $note = $_POST['note'] ?? '';
+            if (empty($note)) {
+                return $this->jsonError('Note content is required', 400);
             }
 
-            $assignedTo = $this->request->post('assigned_to') ?? null;
-
-            if (!$assignedTo) {
-                throw new \Exception('Please select a user to assign the lead to');
+            // Check if lead exists
+            $sql = "SELECT id FROM leads WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            if (!$stmt->fetch()) {
+                return $this->jsonError('Lead not found', 404);
             }
 
-            $result = $this->leadService->assignLead($id, $assignedTo);
+            // Insert note
+            $sql = "INSERT INTO lead_notes (lead_id, note, created_by, created_at)
+                    VALUES (?, ?, ?, NOW())";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                $leadId,
+                CoreFunctionsServiceCustom::validateInput($note, 'string'),
+                $_SESSION['user_id'] ?? 0
+            ]);
 
             if ($result) {
-                $this->setFlash('success', 'Lead assigned successfully!');
-            } else {
-                $this->setFlash('error', 'Failed to assign lead');
-            }
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-        }
+                // Create activity
+                $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                        VALUES (?, 'note_added', 'Note added', ?, NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$leadId, $_SESSION['user_id'] ?? 0]);
 
-        $this->redirect('admin/leads/' . $id);
-    }
-
-    /**
-     * Convert lead to customer
-     */
-    public function convert($id)
-    {
-        if ($this->request->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
-        }
-
-        if (!$this->verifyCsrfToken($this->request->post('csrf_token') ?? '')) {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid CSRF token.'));
-            $this->redirect('admin/leads/' . $id);
-            return;
-        }
-
-        try {
-            $lead = $this->leadService->getLeadById($id);
-
-            if (!$lead) {
-                $this->notFound();
-                return;
-            }
-
-            $customerId = $this->leadService->convertToCustomer($id);
-
-            if ($customerId) {
-                $this->setFlash('success', 'Lead converted to customer successfully!');
-                $this->redirect('admin/customers');
-                return;
-            }
-
-            throw new \Exception('Failed to convert lead');
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-            $this->redirect('admin/leads/' . $id);
-        }
-    }
-
-    /**
-     * Display lead reports
-     */
-    public function reports()
-    {
-        $reportType = $this->request->get('type') ?? 'summary';
-        $dateRange = [
-            'start' => $this->request->get('start_date') ?? date('Y-m-d', strtotime('-30 days')),
-            'end' => $this->request->get('end_date') ?? date('Y-m-d')
-        ];
-
-        $report = $this->leadService->generateReport($reportType, $dateRange);
-
-        $this->data['title'] = 'Lead Reports';
-        $this->data['report'] = $report;
-        $this->data['reportType'] = $reportType;
-        $this->data['dateRange'] = $dateRange;
-
-        $this->render('admin/leads/reports');
-    }
-
-    /**
-     * Check if user can edit lead
-     */
-    private function canEditLead($lead)
-    {
-        // Admin can edit all leads
-        if ($this->isAdmin()) {
-            return true;
-        }
-
-        $userId = $this->session->get('user_id');
-
-        // Lead creator can edit
-        if ($lead['created_by'] == $userId) {
-            return true;
-        }
-
-        // Assigned user can edit
-        if ($lead['assigned_to'] == $userId) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public function uploadFile($id)
-    {
-        try {
-            $lead = Lead::find($id);
-            if (!$lead) {
-                $this->jsonError('Lead not found', 404);
-                return;
-            }
-
-            if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-                $this->jsonError('No file uploaded or upload error', 400);
-                return;
-            }
-
-            $file = $_FILES['file'];
-            $uploadDir = __DIR__ . '/../../uploads/leads/' . $lead->id;
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-
-            $filename = time() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "_", $file['name']);
-            $filePath = $uploadDir . '/' . $filename;
-
-            if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                $leadFile = LeadFile::create([
-                    'lead_id' => $lead->id,
-                    'original_name' => $file['name'],
-                    'file_path' => 'uploads/leads/' . $lead->id . '/' . $filename,
-                    'file_type' => $file['type'],
-                    'file_size' => $file['size'],
-                    'uploaded_by' => $this->session->get('user_id')
-                ]);
-
-                $this->jsonResponse([
+                return $this->jsonResponse([
                     'success' => true,
-                    'message' => 'File uploaded successfully',
-                    'data' => [
-                        'id' => $leadFile->id,
-                        'original_name' => $leadFile->original_name,
-                        'file_path' => $leadFile->file_path
-                    ]
+                    'message' => 'Note added successfully'
                 ]);
-            } else {
-                $this->jsonError('Failed to move uploaded file', 500);
             }
-        } catch (\Exception $e) {
-            $this->jsonError($e->getMessage(), 500);
+
+            return $this->jsonError('Failed to add note', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Add Note error: " . $e->getMessage());
+            return $this->jsonError('Failed to add note', 500);
         }
     }
 
+    /**
+     * Update lead status
+     */
     public function updateStatus($id)
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
         try {
-            $data = json_decode(file_get_contents('php://input'), true);
-            if (!$data || !isset($data['status'])) {
-                $this->jsonError('Invalid status data', 400);
-                return;
+            $leadId = intval($id);
+            $statusId = (int)($_POST['status_id'] ?? 0);
+
+            if ($leadId <= 0 || $statusId <= 0) {
+                return $this->jsonError('Invalid parameters', 400);
             }
 
-            $lead = Lead::find($id);
+            // Check if lead exists and status is valid
+            $sql = "SELECT l.*, ls.name as status_name
+                    FROM leads l
+                    LEFT JOIN lead_statuses ls ON l.status = ls.id
+                    WHERE l.id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$leadId]);
+            $lead = $stmt->fetch();
+
             if (!$lead) {
-                $this->jsonError('Lead not found', 404);
-                return;
+                return $this->jsonError('Lead not found', 404);
             }
 
-            $oldStatus = $lead->status;
-            $newStatus = $data['status'];
+            // Check if new status exists
+            $sql = "SELECT name FROM lead_statuses WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$statusId]);
+            $newStatus = $stmt->fetch();
 
-            if ($oldStatus !== $newStatus) {
-                $lead->status = $newStatus;
-                $lead->save();
+            if (!$newStatus) {
+                return $this->jsonError('Invalid status', 400);
+            }
 
-                // Add note if provided
-                if (!empty($data['notes'])) {
-                    $currentUser = $this->getCurrentUser();
-                    $noteData = [
-                        'lead_id' => $lead->id,
-                        'content' => "Status changed from {$oldStatus} to {$newStatus}. " . $data['notes'],
-                        'is_private' => false,
-                        'created_by' => $currentUser->id,
-                    ];
+            // Update lead status
+            $sql = "UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([$statusId, $leadId]);
 
-                    $note = new LeadNote($noteData);
-                    $note->save();
-                }
+            if ($result) {
+                // Create activity
+                $sql = "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at)
+                        VALUES (?, 'status_changed', ?, ?, NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    $leadId,
+                    "Status changed from '{$lead['status_name']}' to '{$newStatus['name']}'",
+                    $_SESSION['user_id'] ?? 0
+                ]);
 
-                // Log activity
-                $this->logLeadActivity($lead->id, 'status_changed', 'Status changed', [
-                    'from' => $oldStatus,
-                    'to' => $newStatus,
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'Lead status updated successfully'
                 ]);
             }
 
-            $this->jsonResponse([
-                'success' => true,
-                'message' => 'Status updated successfully',
-                'data' => $this->formatLeadData($lead),
-            ]);
-        } catch (\Exception $e) {
-            $this->jsonError('Failed to update status: ' . $e->getMessage(), 500);
+            return $this->jsonError('Failed to update status', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("Update Status error: " . $e->getMessage());
+            return $this->jsonError('Failed to update status', 500);
         }
     }
 
     /**
-     * Format lead data for JSON response
+     * Get lead statistics
      */
-    private function formatLeadData($lead)
-    {
-        return [
-            'id' => $lead->id ?? $lead['id'],
-            'name' => $lead->name ?? $lead['name'],
-            'email' => $lead->email ?? $lead['email'],
-            'status' => $lead->status ?? $lead['status'],
-            'updated_at' => $lead->updated_at ?? $lead['updated_at'] ?? date('Y-m-d H:i:s')
-        ];
-    }
-
-    public function bulkAssign()
-    {
-        try {
-            $data = json_decode(file_get_contents('php://input'), true);
-
-            if (empty($data['lead_ids']) || !is_array($data['lead_ids'])) {
-                $this->jsonError('Lead IDs array is required', 422);
-                return;
-            }
-
-            if (empty($data['user_id'])) {
-                $this->jsonError('User ID is required', 422);
-                return;
-            }
-
-            $leadIds = $data['lead_ids'];
-            $userId = $data['user_id'];
-            $notes = $data['notes'] ?? null;
-
-            $currentUser = $this->getCurrentUser();
-            $assignedCount = 0;
-            $errors = [];
-
-            foreach ($leadIds as $leadId) {
-                try {
-                    $lead = Lead::find($leadId);
-
-                    if (!$lead) {
-                        $errors[] = "Lead $leadId not found";
-                        continue;
-                    }
-
-                    $oldUserId = $lead->assigned_to;
-
-                    // Only update if assignment is changing
-                    if ($oldUserId != $userId) {
-                        $lead->assigned_to = $userId;
-                        $lead->save();
-                        $assignedCount++;
-
-                        // Add assignment note if provided
-                        if ($notes) {
-                            $noteData = [
-                                'lead_id' => $lead->id,
-                                'content' => 'Bulk assignment: ' . $notes,
-                                'is_private' => false,
-                                'created_by' => $currentUser->id,
-                            ];
-
-                            $note = new LeadNote($noteData);
-                            $note->save();
-                        }
-
-                        // Log activity
-                        $this->logLeadActivity($lead->id, 'assigned', 'Lead bulk assigned', [
-                            'from' => $oldUserId,
-                            'to' => $userId,
-                        ]);
-                    }
-                } catch (\Exception $e) {
-                    $errors[] = "Failed to assign lead $leadId: " . $e->getMessage();
-                }
-            }
-
-            $this->jsonResponse([
-                'success' => true,
-                'message' => "Successfully assigned $assignedCount out of " . count($leadIds) . " leads",
-                'data' => [
-                    'assigned_count' => $assignedCount,
-                    'total_requested' => count($leadIds),
-                    'errors' => $errors,
-                ],
-            ]);
-        } catch (\Exception $e) {
-            $this->jsonError('Failed to bulk assign leads: ' . $e->getMessage(), 500);
-        }
-    }
-
     public function getStats()
     {
         try {
-            // Get total leads count
-            $totalLeads = count(Lead::all()->all());
+            $stats = [];
 
-            // Get leads by status
-            $leadsByStatus = [];
-            $statuses = LeadStatus::active();
-            foreach ($statuses as $status) {
-                $count = count(array_filter(Lead::all()->all(), function ($lead) use ($status) {
-                    return $lead->status === $status->name;
-                }));
-                if ($count > 0) {
-                    $leadsByStatus[$status->name] = $count;
-                }
-            }
+            // Total leads
+            $sql = "SELECT COUNT(*) as total FROM leads";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_leads'] = (int)($result['total'] ?? 0);
 
-            // Get leads by source
-            $leadsBySource = [];
-            $sources = LeadSource::active();
-            foreach ($sources as $source) {
-                $count = count(array_filter(Lead::all()->all(), function ($lead) use ($source) {
-                    return $lead->source === $source->name;
-                }));
-                if ($count > 0) {
-                    $leadsBySource[$source->name] = $count;
-                }
-            }
+            // Leads by status
+            $sql = "SELECT ls.name, ls.color, COUNT(l.id) as count
+                    FROM lead_statuses ls
+                    LEFT JOIN leads l ON ls.id = l.status
+                    GROUP BY ls.id, ls.name, ls.color
+                    ORDER BY ls.name";
+            $stats['by_status'] = $this->db->fetchAll($sql) ?: [];
 
-            // Get recent activities (last 10)
-            $activities = LeadActivity::all()->all();
-            usort($activities, function ($a, $b) {
-                return strtotime($b->created_at ?? '2020-01-01') - strtotime($a->created_at ?? '2020-01-01');
-            });
-            $recentActivities = array_slice($activities, 0, 10);
+            // Leads by source
+            $sql = "SELECT src.name, COUNT(l.id) as count
+                    FROM lead_sources src
+                    LEFT JOIN leads l ON src.id = l.source_id
+                    GROUP BY src.id, src.name
+                    ORDER BY count DESC
+                    LIMIT 10";
+            $stats['by_source'] = $this->db->fetchAll($sql) ?: [];
 
-            $this->jsonResponse([
+            // This month's leads
+            $sql = "SELECT COUNT(*) as total FROM leads 
+                    WHERE MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)";
+            $result = $this->db->fetchOne($sql);
+            $stats['monthly_leads'] = (int)($result['total'] ?? 0);
+
+            return $this->jsonResponse([
                 'success' => true,
-                'data' => [
-                    'total_leads' => $totalLeads,
-                    'leads_by_status' => $leadsByStatus,
-                    'leads_by_source' => $leadsBySource,
-                    'recent_activities' => $recentActivities,
-                ],
+                'data' => $stats
             ]);
-        } catch (\Exception $e) {
-            $this->jsonError('Failed to fetch statistics: ' . $e->getMessage(), 500);
-        }
-    }
-
-    public function getLookupData()
-    {
-        try {
-            $this->jsonResponse([
-                'success' => true,
-                'data' => [
-                    'statuses' => LeadStatus::active(),
-                    'sources' => LeadSource::active(),
-                    'tags' => LeadTag::all(),
-                    'users' => User::all(),
-                ],
-            ]);
-        } catch (\Exception $e) {
-            $this->jsonError('Failed to fetch lookup data: ' . $e->getMessage(), 500);
-        }
-    }
-
-    public function getNotes($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $notes = $lead->notes()
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $notes,
-        ]);
-    }
-
-    public function updateNote($leadId, $noteId)
-    {
-        $note = LeadNote::where('lead_id', $leadId)
-            ->findOrFail($noteId);
-
-        // Check if user has permission to update this note
-        $user = $this->getCurrentUser();
-        if ($note->user_id !== $user->id && !$user->hasRole('admin')) {
+        } catch (Exception $e) {
+            $this->loggingService->error("Get Lead Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
-                'message' => 'You do not have permission to update this note',
-            ], 403);
-        }
-
-        try {
-            $note->content = $this->request->get('content');
-            $note->is_private = $this->request->get('is_private') ?? $note->is_private;
-            $note->save();
-
-            // Log the activity
-            $this->leadService->logActivity($note->lead, 'note_updated', [
-                'title' => 'Note Updated',
-                'description' => 'A note was updated',
-                'note_id' => $note->id,
-            ]);
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Note updated successfully',
-                'data' => $note->load('user'),
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to update note',
-                'error' => $e->getMessage(),
+                'message' => 'Failed to fetch lead stats'
             ], 500);
         }
     }
 
-    public function deleteNote($leadId, $noteId)
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
     {
-        $note = LeadNote::where('lead_id', $leadId)
-            ->findOrFail($noteId);
-
-        // Check if user has permission to delete this note
-        $user = $this->getCurrentUser();
-        if ($note->user_id !== $user->id && !$user->hasRole('admin')) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'You do not have permission to delete this note',
-            ], 403);
-        }
-
-        try {
-            // Log the activity before deleting
-            $this->leadService->logActivity($note->lead, 'note_deleted', [
-                'title' => 'Note Deleted',
-                'description' => 'A note was deleted',
-                'note_id' => $note->id,
-            ]);
-
-            $note->delete();
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Note deleted successfully',
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to delete note',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function getFiles($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $files = $lead->files()
-            ->with('uploader')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $files,
-        ]);
-    }
-
-    public function deleteFile($leadId, $fileId)
-    {
-        $file = LeadFile::where('lead_id', $leadId)
-            ->findOrFail($fileId);
-
-        // Check if user has permission to delete this file
-        $user = $this->getCurrentUser();
-        if ($file->uploaded_by !== $user->id && !$user->hasRole('admin')) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'You do not have permission to delete this file',
-            ], 403);
-        }
-
-        try {
-            $filePath = $file->file_path;
-            
-            // Log the activity before deleting
-            $this->leadService->logActivity($file->lead, 'file_deleted', [
-                'title' => 'File Deleted',
-                'description' => 'A file was deleted from the lead',
-                'file_id' => $file->id,
-                'file_name' => $file->file_name,
-            ]);
-
-            // Delete the actual file
-            $fullPath = __DIR__ . '/../../' . $filePath;
-            if (file_exists($fullPath)) {
-                unlink($fullPath);
-            }
-
-            // Delete the file record
-            $file->delete();
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'File deleted successfully',
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to delete file',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function downloadFile($leadId, $fileId)
-    {
-        $file = LeadFile::where('lead_id', $leadId)
-            ->findOrFail($fileId);
-
-        // Check if user has permission to download this file
-        $user = $this->getCurrentUser();
-        if ($file->is_private && $file->uploaded_by !== $user->id && !$user->hasRole('admin')) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'You do not have permission to download this file',
-            ], 403);
-        }
-
-        $filePath = __DIR__ . '/../../' . $file->file_path;
-
-        if (!file_exists($filePath)) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'File not found',
-            ], 404);
-        }
-
-        // Log the download activity
-        $this->leadService->logActivity($file->lead, 'file_downloaded', [
-            'title' => 'File Downloaded',
-            'description' => 'A file was downloaded from the lead',
-            'file_id' => $file->id,
-            'file_name' => $file->file_name,
-        ]);
-
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . basename($file->original_name) . '"');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . filesize($filePath));
-        readfile($filePath);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
         exit;
     }
 
-    public function getActivities($id)
+    /**
+     * JSON error helper
+     */
+    private function jsonError(string $message, int $statusCode = 400): void
     {
-        $lead = Lead::findOrFail($id);
-        $activities = $lead->activities()
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $activities,
-        ]);
-    }
-
-    public function getTags($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $tags = $lead->tags;
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $tags,
-        ]);
-    }
-
-    public function addTag($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $tagName = $this->request->get('name');
-
-        if (empty($tagName)) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Tag name is required',
-            ], 422);
-        }
-
-        try {
-            // Find or create the tag
-            $tag = LeadTag::where('name', $tagName)->first();
-            if (!$tag) {
-                $tagId = LeadTag::insert([
-                    'name' => $tagName,
-                    'color' => '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT),
-                    'created_by' => $this->session->get('user_id'),
-                    'created_at' => date('Y-m-d H:i:s')
-                ]);
-                $tag = LeadTag::find($tagId);
-            }
-
-            // Attach the tag to the lead (manual pivot insert since we don't have attach() yet)
-            $this->db->query("INSERT INTO lead_tag_pivot (lead_id, tag_id, created_by, created_at) VALUES (?, ?, ?, ?)", [
-                $lead->id,
-                $tag->id,
-                $this->session->get('user_id'),
-                date('Y-m-d H:i:s')
-            ]);
-
-            // Log the activity
-            $this->leadService->logActivity($lead, 'tag_added', [
-                'title' => 'Tag Added',
-                'description' => 'A tag was added to the lead',
-                'tag_id' => $tag->id,
-                'tag_name' => $tag->name,
-            ]);
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Tag added successfully',
-                'data' => $tag,
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to add tag',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function removeTag($leadId, $tagId)
-    {
-        $lead = Lead::findOrFail($leadId);
-
-        try {
-            // Log the activity before detaching
-            $this->db->query("DELETE FROM lead_tag_pivot WHERE lead_id = ? AND tag_id = ?", [$leadId, $tagId]);
-
-            $this->leadService->logActivity($lead, 'tag_removed', [
-                'title' => 'Tag Removed',
-                'description' => 'A tag was removed from the lead',
-                'tag_id' => $tagId,
-            ]);
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Tag removed successfully',
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to remove tag',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function getCustomFields($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $customFields = LeadCustomField::where('is_active', true)->get();
-        // Manual mapping of values since we don't have with() working perfectly for all relations
-        foreach ($customFields as &$field) {
-            $value = $this->db->fetchOne("SELECT value FROM lead_custom_field_values WHERE lead_id = ? AND field_id = ?", [$id, $field->id]);
-            $field->value = $value ? $value['value'] : null;
-        }
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $customFields,
-        ]);
-    }
-
-    public function updateCustomFields($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        try {
-            foreach ($data as $fieldId => $value) {
-                $this->db->query("
-                    INSERT INTO lead_custom_field_values (lead_id, field_id, value, updated_at) 
-                    VALUES (?, ?, ?, NOW()) 
-                    ON DUPLICATE KEY UPDATE value = VALUES(value), updated_at = NOW()
-                ", [$id, $fieldId, $value]);
-            }
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Custom fields updated successfully',
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to update custom fields',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function getDeals($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $deals = LeadDeal::where('lead_id', $id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $deals,
-        ]);
-    }
-
-    public function createDeal($id)
-    {
-        $lead = Lead::findOrFail($id);
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        try {
-            $dealData = array_merge($data, [
-                'lead_id' => $id,
-                'created_by' => $this->session->get('user_id'),
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-            
-            $dealId = LeadDeal::insert($dealData);
-            $deal = LeadDeal::find($dealId);
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Deal created successfully',
-                'data' => $deal,
-            ], 201);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to create deal',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function updateDeal($leadId, $dealId)
-    {
-        $deal = LeadDeal::where('lead_id', $leadId)->findOrFail($dealId);
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        try {
-            $deal->update($data);
-
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Deal updated successfully',
-                'data' => $deal,
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to update deal',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function deleteDeal($leadId, $dealId)
-    {
-        $deal = LeadDeal::where('lead_id', $leadId)->findOrFail($dealId);
-
-        try {
-            $deal->delete();
-            return $this->jsonResponse([
-                'success' => true,
-                'message' => 'Deal deleted successfully',
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => 'Failed to delete deal',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function getOverviewStats()
-    {
-        $user = $this->getCurrentUser();
-        
-        $query = Lead::query();
-        if (!$user->hasRole('admin')) {
-            $query->where('assigned_to', $user->id);
-        }
-        
-        $totalLeads = $query->count();
-        $newLeads = $query->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-7 days')))->count();
-        
-        // Manual count for converted leads since we don't have whereHas fully working for count
-        $sql = "SELECT COUNT(DISTINCT lead_id) as count FROM lead_deals WHERE deal_stage = 'won'";
-        if (!$user->hasRole('admin')) {
-            $sql .= " AND lead_id IN (SELECT id FROM leads WHERE assigned_to = " . (int)$user->id . ")";
-        }
-        $convertedLeads = $this->db->fetchOne($sql)['count'];
-        
-        $conversionRate = $totalLeads > 0 
-            ? round(($convertedLeads / $totalLeads) * 100, 2) 
-            : 0;
-        
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => [
-                'total_leads' => $totalLeads,
-                'new_leads' => $newLeads,
-                'converted_leads' => $convertedLeads,
-                'conversion_rate' => $conversionRate,
-            ],
-        ]);
-    }
-
-    public function getStatusStats()
-    {
-        $user = $this->getCurrentUser();
-        
-        $statuses = $this->db->fetchAll("
-            SELECT s.*, (SELECT COUNT(*) FROM leads l WHERE l.status_id = s.id" . ($user->hasRole('admin') ? "" : " AND l.assigned_to = " . (int)$user->id) . ") as leads_count
-            FROM lead_statuses s
-            WHERE s.is_active = 1
-        ");
-        
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $statuses,
-        ]);
-    }
-
-    public function getSourceStats()
-    {
-        $user = $this->getCurrentUser();
-        
-        $sources = $this->db->fetchAll("
-            SELECT s.*, (SELECT COUNT(*) FROM leads l WHERE l.source_id = s.id" . ($user->hasRole('admin') ? "" : " AND l.assigned_to = " . (int)$user->id) . ") as leads_count
-            FROM lead_sources s
-            WHERE s.is_active = 1
-        ");
-        
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $sources,
-        ]);
-    }
-
-    public function getTimelineStats()
-    {
-        $user = $this->getCurrentUser();
-        
-        $sql = "SELECT YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count FROM leads";
-        $params = [];
-        
-        if (!$user->hasRole('admin')) {
-            $sql .= " WHERE assigned_to = ?";
-            $params[] = $user->id;
-            $sql .= " AND created_at >= ?";
-        } else {
-            $sql .= " WHERE created_at >= ?";
-        }
-        $params[] = date('Y-m-d H:i:s', strtotime('-12 months'));
-        $sql .= " GROUP BY year, month ORDER BY year, month";
-        
-        $leadsByMonth = $this->db->fetchAll($sql, $params);
-        
-        $labels = [];
-        $data = [];
-        for ($i = 11; $i >= 0; $i--) {
-            $timestamp = strtotime("-" . $i . " months");
-            $year = date('Y', $timestamp);
-            $month = date('n', $timestamp);
-            $labels[] = date('M Y', $timestamp);
-            
-            $count = 0;
-            foreach ($leadsByMonth as $item) {
-                if ($item['year'] == $year && $item['month'] == $month) {
-                    $count = (int)$item['count'];
-                    break;
-                }
-            }
-            $data[] = $count;
-        }
-        
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => [
-                'labels' => $labels,
-                'datasets' => [['label' => 'Leads', 'data' => $data]]
-            ],
-        ]);
-    }
-
-    public function getUsers()
-    {
-        $users = User::orderBy('name')->get();
-        return $this->jsonResponse(['success' => true, 'data' => $users]);
-    }
-
-    public function getCustomFieldDefinitions()
-    {
-        $fields = LeadCustomField::where('is_active', true)->orderBy('sort_order')->get();
-        return $this->jsonResponse(['success' => true, 'data' => $fields]);
-    }
-
-    public function storeQuick()
-    {
-        $name = trim(Security::sanitize($_POST['name'] ?? ''));
-        $phone = trim(Security::sanitize($_POST['phone'] ?? ''));
-        $source = trim(Security::sanitize($_POST['source'] ?? 'website_quick_register'));
-
-        if (empty($name) || empty($phone)) {
-            $this->jsonResponse(['status' => 'error', 'message' => 'Name and Phone are required'], 400);
-            return;
-        }
-
-        $existingLead = Lead::where('phone', $phone)->first();
-        if ($existingLead) {
-            $this->jsonResponse(['status' => 'success', 'message' => 'Welcome back!', 'lead_id' => $existingLead['id'], 'is_new' => false]);
-            return;
-        }
-
-        try {
-            $leadId = Lead::insert([
-                'first_name' => $name,
-                'phone' => $phone,
-                'source_id' => 1, // Default source or lookup
-                'status_id' => 1, // Default status
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-
-            setcookie('visitor_lead_id', $leadId, time() + (86400 * 30), "/");
-            $this->jsonResponse(['status' => 'success', 'message' => 'Thank you!', 'lead_id' => $leadId, 'is_new' => true]);
-        } catch (\Exception $e) {
-            $this->jsonResponse(['status' => 'error', 'message' => 'Something went wrong.'], 500);
-        }
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
