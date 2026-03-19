@@ -2,7 +2,7 @@
 
 // TODO: Add proper error handling with try-catch blocks
 
-/ app/views/pages/careers.php
+// app/views/pages/careers.php
 // Data passed from PageController::careers()
 ?>
 <!-- Hero Section -->

@@ -16,12 +16,16 @@ define('APS_CONFIG', APS_ROOT . '/config');
 define('APS_STORAGE', APS_ROOT . '/storage');
 define('APS_LOGS', APS_ROOT . '/logs');
 
-// Define BASE_URL dynamically
+// Define BASE_URL dynamically for XAMPP
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $domainName = $_SERVER['HTTP_HOST'] ?? 'localhost';
-// Remove project name for localhost development
-$projectName = (str_contains($domainName, 'localhost')) ? '' : '/apsdreamhome';
-define('BASE_URL', $protocol . $domainName . $projectName);
+// Check if accessing via XAMPP localhost/apsdreamhome
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+if (str_contains($requestUri, '/apsdreamhome')) {
+    define('BASE_URL', $protocol . $domainName . '/apsdreamhome');
+} else {
+    define('BASE_URL', $protocol . $domainName);
+}
 
 // Error reporting
 error_reporting(E_ALL);
@@ -53,6 +57,7 @@ spl_autoload_register(function ($class) {
 });
 
 // Include required files
+require_once APS_ROOT . '/app/helpers.php';
 require_once APS_ROOT . '/routes/web.php';
 
 // Dispatch router

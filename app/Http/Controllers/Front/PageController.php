@@ -299,7 +299,7 @@ class PageController extends BaseController
             'company_culture' => $company_culture
         ];
 
-        $this->render('pages/career', $data);
+        $this->render('pages/careers', $data);
     }
 
     /**
