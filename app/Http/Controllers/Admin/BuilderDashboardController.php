@@ -129,15 +129,4 @@ class BuilderDashboardController extends AdminController
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
 }
