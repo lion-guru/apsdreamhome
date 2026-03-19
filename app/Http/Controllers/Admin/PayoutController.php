@@ -15,14 +15,12 @@ use Exception;
 class PayoutController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'processPayout', 'batchProcess']]);
     }
@@ -608,27 +606,5 @@ class PayoutController extends AdminController
             $this->loggingService->error("Get Payout Analytics error: " . $e->getMessage());
             return [];
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }

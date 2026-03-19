@@ -15,14 +15,12 @@ use Exception;
 class MediaController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
@@ -510,27 +508,5 @@ class MediaController extends AdminController
                 'message' => 'Failed to fetch media stats'
             ], 500);
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }

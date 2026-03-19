@@ -15,13 +15,11 @@ use Exception;
 class NetworkController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
@@ -53,7 +51,7 @@ class NetworkController extends AdminController
     {
         try {
             $associateId = (int)($_GET['associate_id'] ?? 0);
-            
+
             if ($associateId > 0) {
                 $networkData = $this->getNetworkTree($associateId);
             } else {
@@ -133,7 +131,7 @@ class NetworkController extends AdminController
         try {
             $associateId = (int)($_GET['associate_id'] ?? 0);
             $levels = (int)($_GET['levels'] ?? 5);
-            
+
             if ($associateId <= 0) {
                 $this->setFlash('error', 'Please select an associate');
                 return $this->redirect('admin/network/tree');
@@ -581,7 +579,7 @@ class NetworkController extends AdminController
                 'status' => $member['status'],
                 'created_at' => $member['created_at']
             ];
-            
+
             if (!empty($member['children'])) {
                 $flat = array_merge($flat, $this->flattenTreeForExport($member['children']));
             }
@@ -614,22 +612,22 @@ class NetworkController extends AdminController
     private function exportCSV(array $data, string $type): void
     {
         $filename = "network_{$type}_export_" . date('Y-m-d') . ".csv";
-        
+
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         $output = fopen('php://output', 'w');
-        
+
         if (!empty($data)) {
             // Header row
             fputcsv($output, array_keys($data[0]));
-            
+
             // Data rows
             foreach ($data as $row) {
                 fputcsv($output, $row);
             }
         }
-        
+
         fclose($output);
         exit;
     }
@@ -640,16 +638,16 @@ class NetworkController extends AdminController
     private function exportJSON(array $data, string $type): void
     {
         $filename = "network_{$type}_export_" . date('Y-m-d') . ".json";
-        
+
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         echo json_encode([
             'type' => $type,
             'export_date' => date('Y-m-d H:i:s'),
             'data' => $data
         ]);
-        
+
         exit;
     }
 }

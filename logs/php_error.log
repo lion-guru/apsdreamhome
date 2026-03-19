@@ -5319,3 +5319,13 @@ Stack trace:
 [18-Mar-2026 22:11:26 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js
 [18-Mar-2026 22:11:26 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
 [18-Mar-2026 22:11:26 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[19-Mar-2026 06:26:19 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/dashboard
+[19-Mar-2026 06:26:19 Europe/Berlin] FINAL ROUTER URI: admin/dashboard
+[19-Mar-2026 06:26:19 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminController.php
+[19-Mar-2026 06:26:19 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[19-Mar-2026 06:26:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[19-Mar-2026 06:26:20 Europe/Berlin] FINAL ROUTER URI: assets/css/style.css
+[19-Mar-2026 06:26:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[19-Mar-2026 06:26:20 Europe/Berlin] FINAL ROUTER URI: assets/js/main.js
+[19-Mar-2026 06:26:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/premium-header.js
+[19-Mar-2026 06:26:20 Europe/Berlin] FINAL ROUTER URI: assets/js/premium-header.js

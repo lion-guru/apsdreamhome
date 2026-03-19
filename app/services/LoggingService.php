@@ -2,306 +2,387 @@
 
 namespace App\Services;
 
-use App\Core\Database\Database;
+use App\Core\Database;
+use App\Core\Config;
+use Exception;
 
 /**
- * Custom Logging Service - APS Dream Home
- * Custom MVC implementation without Laravel dependencies
- * Following APS Dream Home custom architecture patterns
+ * Custom Logging Service
+ * Pure PHP implementation for APS Dream Home Custom MVC
  */
 class LoggingService
 {
-    private static $instance = null;
     private $db;
-    private $logLevels = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'];
-
-    /**
-     * Get singleton instance
-     */
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
+    private $logFile;
+    private $logLevel;
+    
     public function __construct()
     {
-        $this->db = Database::getInstance();
-    }
-
-    /**
-     * Log a message
-     */
-    public function log($level, $message, $context = [], $category = 'system')
-    {
-        if (!in_array($level, $this->logLevels)) {
-            $level = 'info';
+        $this->db = Database::getInstance()->getConnection();
+        $this->logFile = 'logs/application.log';
+        $this->logLevel = 'INFO';
+        
+        // Ensure log directory exists
+        $logDir = dirname($this->logFile);
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0755, true);
         }
-
-        $this->db->insert('system_logs', [
-            'level' => $level,
-            'message' => $message,
-            'context' => json_encode($context),
-            'category' => $category,
-            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'cli',
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'cli',
-            'user_id' => $this->getUserId(),
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
     }
-
+    
     /**
-     * Emergency level log
+     * Log emergency message
      */
-    public function emergency($message, $context = [], $category = 'system')
+    public function emergency(string $message, array $context = []): void
     {
-        $this->log('emergency', $message, $context, $category);
+        $this->log('EMERGENCY', $message, $context);
     }
-
+    
     /**
-     * Alert level log
+     * Log alert message
      */
-    public function alert($message, $context = [], $category = 'system')
+    public function alert(string $message, array $context = []): void
     {
-        $this->log('alert', $message, $context, $category);
+        $this->log('ALERT', $message, $context);
     }
-
+    
     /**
-     * Critical level log
+     * Log critical message
      */
-    public function critical($message, $context = [], $category = 'system')
+    public function critical(string $message, array $context = []): void
     {
-        $this->log('critical', $message, $context, $category);
+        $this->log('CRITICAL', $message, $context);
     }
-
+    
     /**
-     * Error level log
+     * Log error message
      */
-    public function error($message, $context = [], $category = 'system')
+    public function error(string $message, array $context = []): void
     {
-        $this->log('error', $message, $context, $category);
+        $this->log('ERROR', $message, $context);
     }
-
+    
     /**
-     * Warning level log
+     * Log warning message
      */
-    public function warning($message, $context = [], $category = 'system')
+    public function warning(string $message, array $context = []): void
     {
-        $this->log('warning', $message, $context, $category);
+        $this->log('WARNING', $message, $context);
     }
-
+    
     /**
-     * Notice level log
+     * Log notice message
      */
-    public function notice($message, $context = [], $category = 'system')
+    public function notice(string $message, array $context = []): void
     {
-        $this->log('notice', $message, $context, $category);
+        $this->log('NOTICE', $message, $context);
     }
-
+    
     /**
-     * Info level log
+     * Log info message
      */
-    public function info($message, $context = [], $category = 'system')
+    public function info(string $message, array $context = []): void
     {
-        $this->log('info', $message, $context, $category);
+        $this->log('INFO', $message, $context);
     }
-
+    
     /**
-     * Debug level log
+     * Log debug message
      */
-    public function debug($message, $context = [], $category = 'system')
+    public function debug(string $message, array $context = []): void
     {
-        $this->log('debug', $message, $context, $category);
+        $this->log('DEBUG', $message, $context);
     }
-
+    
+    /**
+     * Core logging method
+     */
+    private function log(string $level, string $message, array $context = []): void
+    {
+        // Check if we should log this level
+        if (!$this->shouldLog($level)) {
+            return;
+        }
+        
+        $timestamp = date('Y-m-d H:i:s');
+        $contextStr = empty($context) ? '' : ' ' . json_encode($context);
+        $logEntry = "[$timestamp] $level: $message$contextStr" . PHP_EOL;
+        
+        // Write to file
+        file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
+        
+        // Also store in database if enabled
+        if (Config::get('log_to_database', false)) {
+            $this->logToDatabase($level, $message, $context);
+        }
+        
+        // Send to external monitoring if critical
+        if (in_array($level, ['EMERGENCY', 'ALERT', 'CRITICAL'])) {
+            $this->sendAlert($level, $message, $context);
+        }
+    }
+    
+    /**
+     * Check if we should log this level
+     */
+    private function shouldLog(string $level): bool
+    {
+        $levels = [
+            'DEBUG' => 0,
+            'INFO' => 1,
+            'NOTICE' => 2,
+            'WARNING' => 3,
+            'ERROR' => 4,
+            'CRITICAL' => 5,
+            'ALERT' => 6,
+            'EMERGENCY' => 7
+        ];
+        
+        return $levels[$level] >= $levels[$this->logLevel];
+    }
+    
+    /**
+     * Log to database
+     */
+    private function logToDatabase(string $level, string $message, array $context): void
+    {
+        try {
+            $sql = "INSERT INTO system_logs (level, message, context, ip_address, user_agent, created_at) 
+                    VALUES (?, ?, ?, ?, ?, NOW())";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $level,
+                $message,
+                json_encode($context),
+                $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+            ]);
+        } catch (Exception $e) {
+            // Fallback to file logging if database fails
+            error_log("Failed to log to database: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Send alert for critical errors
+     */
+    private function sendAlert(string $level, string $message, array $context): void
+    {
+        try {
+            // TODO: Implement external alert system (email, Slack, etc.)
+            // For now, just log to a separate alert file
+            $alertFile = 'logs/alerts.log';
+            $timestamp = date('Y-m-d H:i:s');
+            $alertEntry = "[$timestamp] $level ALERT: $message " . json_encode($context) . PHP_EOL;
+            
+            file_put_contents($alertFile, $alertEntry, FILE_APPEND | LOCK_EX);
+        } catch (Exception $e) {
+            error_log("Failed to send alert: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Log user activity
+     */
+    public function logUserActivity(int $userId, string $action, array $details = []): void
+    {
+        try {
+            $sql = "INSERT INTO user_activity_log (user_id, action, details, ip_address, user_agent, created_at) 
+                    VALUES (?, ?, ?, ?, ?, NOW())";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $userId,
+                $action,
+                json_encode($details),
+                $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+            ]);
+            
+            // Also log to main log
+            $this->info("User activity: $action", array_merge(['user_id' => $userId], $details));
+            
+        } catch (Exception $e) {
+            $this->error("Failed to log user activity: " . $e->getMessage());
+        }
+    }
+    
     /**
      * Log security event
      */
-    public function logSecurity($event, $details = [])
+    public function logSecurityEvent(string $event, array $details = []): void
     {
-        $this->db->insert('security_alerts', [
-            'event_type' => $event,
-            'details' => json_encode($details),
-            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
-            'user_id' => $this->getUserId(),
-            'status' => 'active',
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+        try {
+            $sql = "INSERT INTO security_log (event, details, ip_address, user_agent, created_at) 
+                    VALUES (?, ?, ?, ?, NOW())";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $event,
+                json_encode($details),
+                $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+            ]);
+            
+            // Also log to main log
+            $this->warning("Security event: $event", $details);
+            
+        } catch (Exception $e) {
+            $this->error("Failed to log security event: " . $e->getMessage());
+        }
     }
-
+    
+    /**
+     * Log performance metrics
+     */
+    public function logPerformance(string $action, float $duration, array $details = []): void
+    {
+        try {
+            $sql = "INSERT INTO performance_log (action, duration, details, created_at) 
+                    VALUES (?, ?, ?, NOW())";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $action,
+                $duration,
+                json_encode($details)
+            ]);
+            
+            // Log slow queries
+            if ($duration > 1.0) { // More than 1 second
+                $this->warning("Slow operation detected: $action took {$duration}s", $details);
+            }
+            
+        } catch (Exception $e) {
+            $this->error("Failed to log performance: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Get recent logs
+     */
+    public function getRecentLogs(int $limit = 100, string $level = null): array
+    {
+        try {
+            $sql = "SELECT * FROM system_logs";
+            $params = [];
+            
+            if ($level) {
+                $sql .= " WHERE level = ?";
+                $params[] = $level;
+            }
+            
+            $sql .= " ORDER BY created_at DESC LIMIT ?";
+            $params[] = $limit;
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            
+            return $stmt->fetchAll();
+            
+        } catch (Exception $e) {
+            $this->error("Failed to get recent logs: " . $e->getMessage());
+            return [];
+        }
+    }
+    
     /**
      * Get log statistics
      */
-    public function getLogStats($hours = 24)
+    public function getLogStats(string $startDate = null, string $endDate = null): array
     {
-        $stats = [];
-
-        foreach ($this->logLevels as $level) {
-            $count = $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM system_logs 
-                 WHERE level = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? HOUR)",
-                [$level, $hours]
-            )['count'];
-
-            $stats[$level] = $count;
+        try {
+            $sql = "SELECT level, COUNT(*) as count FROM system_logs";
+            $params = [];
+            
+            if ($startDate || $endDate) {
+                $sql .= " WHERE";
+                $conditions = [];
+                
+                if ($startDate) {
+                    $conditions[] = " created_at >= ?";
+                    $params[] = $startDate;
+                }
+                
+                if ($endDate) {
+                    $conditions[] = " created_at <= ?";
+                    $params[] = $endDate;
+                }
+                
+                $sql .= " " . implode(" AND", $conditions);
+            }
+            
+            $sql .= " GROUP BY level ORDER BY count DESC";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            
+            $stats = [];
+            foreach ($stmt->fetchAll() as $row) {
+                $stats[$row['level']] = (int)$row['count'];
+            }
+            
+            return $stats;
+            
+        } catch (Exception $e) {
+            $this->error("Failed to get log stats: " . $e->getMessage());
+            return [];
         }
-
-        // Get category stats
-        $categories = $this->db->select(
-            "SELECT category, COUNT(*) as count FROM system_logs 
-             WHERE created_at > DATE_SUB(NOW(), INTERVAL ? HOUR)
-             GROUP BY category",
-            [$hours]
-        );
-
-        $stats['categories'] = [];
-        foreach ($categories as $cat) {
-            $stats['categories'][$cat['category']] = $cat['count'];
-        }
-
-        return $stats;
     }
-
-    /**
-     * Get logs with pagination
-     */
-    public function getLogs($category = 'system', $limit = 50, $offset = 0)
-    {
-        return $this->db->select(
-            "SELECT * FROM system_logs 
-             WHERE category = ? 
-             ORDER BY created_at DESC 
-             LIMIT ? OFFSET ?",
-            [$category, $limit, $offset]
-        );
-    }
-
-    /**
-     * Search logs
-     */
-    public function searchLogs($search, $category = 'system', $limit = 50, $offset = 0)
-    {
-        return $this->db->select(
-            "SELECT * FROM system_logs 
-             WHERE category = ? AND (message LIKE ? OR context LIKE ?)
-             ORDER BY created_at DESC 
-             LIMIT ? OFFSET ?",
-            [$category, "%$search%", "%$search%", $limit, $offset]
-        );
-    }
-
-    /**
-     * Get log by ID
-     */
-    public function getLogById($id)
-    {
-        return $this->db->fetchOne(
-            "SELECT * FROM system_logs WHERE id = ?",
-            [$id]
-        );
-    }
-
-    /**
-     * Get security alerts
-     */
-    public function getSecurityAlerts($status = 'active', $limit = 25, $offset = 0)
-    {
-        return $this->db->select(
-            "SELECT * FROM security_alerts 
-             WHERE status = ? 
-             ORDER BY created_at DESC 
-             LIMIT ? OFFSET ?",
-            [$status, $limit, $offset]
-        );
-    }
-
-    /**
-     * Dismiss security alert
-     */
-    public function dismissAlert($alertId, $userId)
-    {
-        return $this->db->update('security_alerts', [
-            'status' => 'dismissed',
-            'dismissed_by' => $userId,
-            'dismissed_at' => date('Y-m-d H:i:s')
-        ], 'id = ?', [$alertId]);
-    }
-
+    
     /**
      * Clean old logs
      */
-    public function cleanOldLogs($days = 30)
+    public function cleanOldLogs(int $daysToKeep = 30): bool
     {
-        $deleted = $this->db->query(
-            "DELETE FROM system_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)",
-            [$days]
-        );
-
-        return $deleted;
+        try {
+            // Clean database logs
+            $sql = "DELETE FROM system_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$daysToKeep]);
+            
+            // Clean log files
+            $logFiles = ['logs/application.log', 'logs/alerts.log'];
+            foreach ($logFiles as $file) {
+                if (file_exists($file)) {
+                    $lines = file($file);
+                    $cutoffDate = date('Y-m-d H:i:s', strtotime("-$daysToKeep days"));
+                    
+                    $newLines = [];
+                    foreach ($lines as $line) {
+                        if (preg_match('/\[([\d-]+ [\d:]+)\]/', $line, $matches)) {
+                            if ($matches[1] >= $cutoffDate) {
+                                $newLines[] = $line;
+                            }
+                        }
+                    }
+                    
+                    file_put_contents($file, implode('', $newLines));
+                }
+            }
+            
+            $this->info("Old logs cleaned successfully", ['days_kept' => $daysToKeep]);
+            return true;
+            
+        } catch (Exception $e) {
+            $this->error("Failed to clean old logs: " . $e->getMessage());
+            return false;
+        }
     }
-
+    
     /**
-     * Export logs to CSV
+     * Set log level
      */
-    public function exportLogs($category = null, $startDate = null, $endDate = null)
+    public function setLogLevel(string $level): void
     {
-        $where = [];
-        $params = [];
-
-        if ($category) {
-            $where[] = "category = ?";
-            $params[] = $category;
-        }
-
-        if ($startDate) {
-            $where[] = "created_at >= ?";
-            $params[] = $startDate;
-        }
-
-        if ($endDate) {
-            $where[] = "created_at <= ?";
-            $params[] = $endDate;
-        }
-
-        $whereClause = empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
-
-        $logs = $this->db->select(
-            "SELECT * FROM system_logs $whereClause ORDER BY created_at DESC",
-            $params
-        );
-
-        $filename = 'logs_export_' . date('Y-m-d_H-i-s') . '.csv';
-        $filepath = sys_get_temp_dir() . '/' . $filename;
-
-        $file = fopen($filepath, 'w');
-        fputcsv($file, ['ID', 'Level', 'Message', 'Context', 'Category', 'IP Address', 'User Agent', 'Created At']);
-
-        foreach ($logs as $log) {
-            fputcsv($file, [
-                $log['id'],
-                $log['level'],
-                $log['message'],
-                $log['context'],
-                $log['category'],
-                $log['ip_address'],
-                $log['user_agent'],
-                $log['created_at']
-            ]);
-        }
-
-        fclose($file);
-
-        return $filepath;
+        $this->logLevel = $level;
     }
-
+    
     /**
-     * Get current user ID from session
+     * Get log level
      */
-    private function getUserId()
+    public function getLogLevel(): string
     {
-        return $_SESSION['user_id'] ?? null;
+        return $this->logLevel;
     }
 }

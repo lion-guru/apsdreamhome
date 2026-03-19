@@ -64,9 +64,9 @@ class Database
             if (empty($config)) {
                 // Use default configuration
                 $host = defined('DB_HOST') ? DB_HOST : ($_ENV['DB_HOST'] ?? getenv('DB_HOST') ?: 'localhost');
-                $dbname = defined('DB_NAME') ? DB_NAME : ($_ENV['DB_DATABASE'] ?? getenv('DB_NAME') ?: 'apsdreamhome');
-                $user = defined('DB_USER') ? DB_USER : ($_ENV['DB_USERNAME'] ?? getenv('DB_USER') ?: 'root');
-                $pass = defined('DB_PASS') ? DB_PASS : ($_ENV['DB_PASSWORD'] ?? getenv('DB_PASS') ?: '');
+                $dbname = defined('DB_DATABASE') ? DB_DATABASE : ($_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE') ?: 'apsdreamhome');
+                $user = defined('DB_USERNAME') ? DB_USERNAME : ($_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME') ?: 'root');
+                $pass = defined('DB_PASSWORD') ? DB_PASSWORD : ($_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: '');
 
                 $config = [
                     'host' => $host,

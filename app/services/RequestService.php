@@ -2,419 +2,450 @@
 
 namespace App\Services;
 
-use App\Core\Database\Database;
+use App\Core\Database;
+use App\Core\Config;
+use Exception;
 
 /**
- * Custom Request Service - APS Dream Home
- * Custom MVC implementation without Laravel dependencies
- * Following APS Dream Home custom architecture patterns
+ * Custom Request Service
+ * Pure PHP implementation for APS Dream Home Custom MVC
  */
 class RequestService
 {
     private $db;
-    private $routes = [];
-    private $middleware = [];
-    private $currentRequest;
-
+    private $middlewares = [];
+    
     public function __construct()
     {
-        $this->db = Database::getInstance();
+        $this->db = Database::getInstance()->getConnection();
     }
-
+    
     /**
-     * Register a route
+     * Add middleware
      */
-    public function registerRoute($method, $path, $handler, $middleware = [])
+    public function addMiddleware(string $name, callable $middleware): void
     {
-        $this->routes[] = [
-            'method' => strtoupper($method),
-            'path' => $path,
-            'handler' => $handler,
-            'middleware' => $middleware
-        ];
+        $this->middlewares[$name] = $middleware;
     }
-
+    
     /**
-     * Register middleware
+     * Execute middleware
      */
-    public function registerMiddleware($stage, $handler)
+    public function executeMiddleware(array $middlewareNames): bool
     {
-        $this->middleware[$stage][] = $handler;
-    }
-
-    /**
-     * Add security middleware
-     */
-    public function addSecurityMiddleware()
-    {
-        $this->registerMiddleware('before', function ($request) {
-            // CSRF validation
-            if (in_array($request['method'], ['POST', 'PUT', 'DELETE'])) {
-                $token = $request['headers']['x-csrf-token'] ?? $request['post']['_token'] ?? '';
-                if (!$this->validateCsrfToken($token)) {
-                    http_response_code(403);
-                    echo json_encode(['error' => 'Invalid CSRF token']);
-                    exit;
+        foreach ($middlewareNames as $name) {
+            if (isset($this->middlewares[$name])) {
+                $result = call_user_func($this->middlewares[$name]);
+                if ($result === false) {
+                    return false;
                 }
             }
-
-            return $request;
-        });
-    }
-
-    /**
-     * Add rate limiting middleware
-     */
-    public function addRateLimitingMiddleware($requests = 100, $window = 3600)
-    {
-        $this->registerMiddleware('before', function ($request) use ($requests, $window) {
-            $ip = $request['ip'];
-            $key = "rate_limit:$ip";
-
-            $current = $this->db->fetchOne(
-                "SELECT requests, window_start FROM rate_limits WHERE ip_address = ?",
-                [$ip]
-            );
-
-            $now = time();
-            $windowStart = $current ? strtotime($current['window_start']) : $now;
-
-            if ($now - $windowStart > $window) {
-                // Reset window
-                $count = 1;
-                $this->db->query(
-                    "INSERT INTO rate_limits (ip_address, requests, window_start) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE requests = 1, window_start = VALUES(window_start)",
-                    [$ip, 1, date('Y-m-d H:i:s', $now)]
-                );
-            } else {
-                $count = $current['requests'] + 1;
-                $this->db->query(
-                    "UPDATE rate_limits SET requests = requests + 1 WHERE ip_address = ?",
-                    [$ip]
-                );
-            }
-
-            if ($count > $requests) {
-                http_response_code(429);
-                echo json_encode(['error' => 'Rate limit exceeded']);
-                exit;
-            }
-
-            return $request;
-        });
-    }
-
-    /**
-     * Add logging middleware
-     */
-    public function addLoggingMiddleware()
-    {
-        $this->registerMiddleware('after', function ($request, $response) {
-            $this->db->insert('api_logs', [
-                'method' => $request['method'],
-                'uri' => $request['uri'],
-                'ip_address' => $request['ip'],
-                'user_agent' => $request['user_agent'],
-                'status_code' => $response['status'] ?? 200,
-                'response_size' => strlen($response['body'] ?? ''),
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-
-            return $response;
-        });
-    }
-
-    /**
-     * Handle CORS
-     */
-    public function handleCors()
-    {
-        $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
-        $methods = 'GET, POST, PUT, DELETE, OPTIONS';
-        $headers = 'Content-Type, Authorization, X-CSRF-Token';
-
-        header("Access-Control-Allow-Origin: $origin");
-        header("Access-Control-Allow-Methods: $methods");
-        header("Access-Control-Allow-Headers: $headers");
-
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            http_response_code(200);
-            exit;
         }
+        return true;
     }
-
+    
     /**
-     * Process current request
+     * Get request method
      */
-    public function processRequest()
+    public function getMethod(): string
     {
-        $this->currentRequest = $this->parseRequest();
-
-        // Run before middleware
-        foreach ($this->middleware['before'] ?? [] as $middleware) {
-            $this->currentRequest = $middleware($this->currentRequest);
-        }
-
-        // Find matching route
-        $response = $this->dispatchRoute($this->currentRequest);
-
-        // Run after middleware
-        foreach ($this->middleware['after'] ?? [] as $middleware) {
-            $response = $middleware($this->currentRequest, $response);
-        }
-
-        return $response;
+        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
-
+    
     /**
-     * Parse incoming request
+     * Get request URI
      */
-    private function parseRequest()
+    public function getUri(): string
     {
-        return [
-            'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
-            'uri' => parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH),
-            'query' => $_GET,
-            'post' => $_POST,
-            'json' => $this->parseJsonBody(),
-            'headers' => $this->parseHeaders(),
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
-        ];
+        return $_SERVER['REQUEST_URI'] ?? '/';
     }
-
+    
     /**
-     * Parse JSON body
+     * Get input data
      */
-    private function parseJsonBody()
+    public function input(string $key = null, $default = null)
+    {
+        if ($key === null) {
+            return array_merge($_GET, $_POST);
+        }
+        
+        return $_POST[$key] ?? $_GET[$key] ?? $default;
+    }
+    
+    /**
+     * Get JSON input
+     */
+    public function getJson(): array
     {
         $input = file_get_contents('php://input');
-        return json_decode($input, true) ?? [];
+        return json_decode($input, true) ?: [];
     }
-
+    
     /**
-     * Parse headers
+     * Validate request
      */
-    private function parseHeaders()
+    public function validate(array $rules): array
+    {
+        $errors = [];
+        $data = $this->input();
+        
+        foreach ($rules as $field => $fieldRules) {
+            $value = $data[$field] ?? null;
+            
+            foreach ($fieldRules as $rule => $ruleValue) {
+                switch ($rule) {
+                    case 'required':
+                        if (empty($value)) {
+                            $errors[$field][] = "$field is required";
+                        }
+                        break;
+                        
+                    case 'email':
+                        if (!empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                            $errors[$field][] = "$field must be a valid email";
+                        }
+                        break;
+                        
+                    case 'min':
+                        if (!empty($value) && strlen($value) < $ruleValue) {
+                            $errors[$field][] = "$field must be at least $ruleValue characters";
+                        }
+                        break;
+                        
+                    case 'max':
+                        if (!empty($value) && strlen($value) > $ruleValue) {
+                            $errors[$field][] = "$field must not exceed $ruleValue characters";
+                        }
+                        break;
+                        
+                    case 'numeric':
+                        if (!empty($value) && !is_numeric($value)) {
+                            $errors[$field][] = "$field must be numeric";
+                        }
+                        break;
+                        
+                    case 'regex':
+                        if (!empty($value) && !preg_match($ruleValue, $value)) {
+                            $errors[$field][] = "$field format is invalid";
+                        }
+                        break;
+                }
+            }
+        }
+        
+        return $errors;
+    }
+    
+    /**
+     * Get headers
+     */
+    public function getHeaders(): array
     {
         $headers = [];
-        foreach ($_SERVER as $name => $value) {
-            if (strpos($name, 'HTTP_') === 0) {
-                $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-                $headers[$headerName] = $value;
+        foreach ($_SERVER as $key => $value) {
+            if (str_starts_with($key, 'HTTP_')) {
+                $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+                $headers[$header] = $value;
             }
         }
         return $headers;
     }
-
+    
     /**
-     * Dispatch to matching route
+     * Get header
      */
-    private function dispatchRoute($request)
+    public function getHeader(string $key, $default = null)
     {
-        foreach ($this->routes as $route) {
-            if ($route['method'] !== $request['method']) {
-                continue;
-            }
-
-            $pattern = $this->convertPathToRegex($route['path']);
-            if (preg_match($pattern, $request['uri'], $matches)) {
-                // Run route middleware
-                foreach ($route['middleware'] as $middleware) {
-                    if (is_callable($middleware)) {
-                        $request = $middleware($request);
-                    }
+        $headers = $this->getHeaders();
+        return $headers[$key] ?? $default;
+    }
+    
+    /**
+     * Check if AJAX request
+     */
+    public function isAjax(): bool
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+    
+    /**
+     * Check if JSON request
+     */
+    public function isJson(): bool
+    {
+        $contentType = $this->getHeader('Content-Type', '');
+        return str_contains($contentType, 'application/json');
+    }
+    
+    /**
+     * Get client IP
+     */
+    public function getClientIp(): string
+    {
+        $ipKeys = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR'];
+        
+        foreach ($ipKeys as $key) {
+            if (!empty($_SERVER[$key])) {
+                $ips = explode(',', $_SERVER[$key]);
+                $ip = trim($ips[0]);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
                 }
-
-                // Call handler
-                $handler = $route['handler'];
-                if (is_array($handler)) {
-                    $object = $handler[0];
-                    $method = $handler[1];
-                    return $object->$method($request);
-                }
-
-                return $handler($request);
             }
         }
-
-        // 404 response
-        http_response_code(404);
-        return [
-            'status' => 404,
-            'body' => 'Not Found'
-        ];
+        
+        return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     }
-
+    
     /**
-     * Convert path to regex pattern
+     * Get user agent
      */
-    private function convertPathToRegex($path)
+    public function getUserAgent(): string
     {
-        $pattern = preg_replace('/\{([^}]+)\}/', '([^/]+)', $path);
-        return '#^' . $pattern . '$#';
+        return $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
     }
-
+    
     /**
-     * Validate CSRF token
+     * Check if HTTPS
      */
-    private function validateCsrfToken($token)
+    public function isSecure(): bool
     {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
+               $_SERVER['SERVER_PORT'] == 443;
     }
-
+    
     /**
-     * Add CORS middleware
+     * Get full URL
      */
-    public function addCorsMiddleware($config = [])
+    public function getFullUrl(): string
     {
-        $this->registerMiddleware('before', function ($request) use ($config) {
-            // Handle preflight requests
-            if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-                $this->handleCors();
-                exit;
-            }
-
-            // Add CORS headers to response
-            return $request;
-        });
+        $protocol = $this->isSecure() ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        return $protocol . '://' . $host . $uri;
     }
-
+    
     /**
-     * Add authentication middleware
+     * Get base URL
      */
-    public function addAuthenticationMiddleware($config = [])
+    public function getBaseUrl(): string
     {
-        $this->registerMiddleware('before', function ($request) use ($config) {
-            // Check for valid authentication token
-            $token = $request['headers']['Authorization'] ?? '';
-            $requiredRole = $config['required_role'] ?? 'user';
-
-            if (empty($token)) {
-                http_response_code(401);
-                return ['error' => 'Authentication required'];
-            }
-
-            // Validate token (simplified for demo)
-            if (!$this->validateAuthToken($token, $requiredRole)) {
-                http_response_code(403);
-                return ['error' => 'Invalid or expired token'];
-            }
-
-            return $request;
-        });
+        $protocol = $this->isSecure() ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $path = dirname($_SERVER['SCRIPT_NAME']);
+        return $protocol . '://' . $host . $path;
     }
-
+    
     /**
-     * Validate authentication token
+     * CSRF protection
      */
-    private function validateAuthToken($token, $requiredRole)
+    public function validateCsrfToken(): bool
     {
-        // Simplified token validation - in production, use proper JWT validation
-        return !empty($token) && strlen($token) > 10;
+        $token = $this->input('_token') ?? $this->getHeader('X-CSRF-TOKEN');
+        return $token === ($_SESSION['csrf_token'] ?? '');
     }
-
+    
     /**
-     * Get middleware stack
+     * Rate limiting
      */
-    public function getMiddlewareStack()
+    public function checkRateLimit(string $key, int $maxAttempts = 60, int $timeWindow = 60): bool
     {
-        return $this->middleware;
-    }
-
-    /**
-     * Clear middleware stack
-     */
-    public function clearMiddleware()
-    {
-        $this->middleware = [];
+        $cacheKey = "rate_limit_" . md5($key);
+        
+        if (!isset($_SESSION[$cacheKey])) {
+            $_SESSION[$cacheKey] = ['attempts' => 0, 'reset_time' => time() + $timeWindow];
+        }
+        
+        $rateData = $_SESSION[$cacheKey];
+        
+        // Reset if time window passed
+        if (time() > $rateData['reset_time']) {
+            $rateData['attempts'] = 0;
+            $rateData['reset_time'] = time() + $timeWindow;
+        }
+        
+        if ($rateData['attempts'] >= $maxAttempts) {
+            return false;
+        }
+        
+        $rateData['attempts']++;
+        $_SESSION[$cacheKey] = $rateData;
+        
         return true;
     }
-
+    
     /**
-     * Validate request data
+     * File upload handling
      */
-    public function validateRequest($data)
+    public function handleFileUpload(string $fieldName, array $options = []): array
     {
-        $errors = [];
-
-        // Check required fields
-        if (empty($data['method'])) {
-            $errors['method'] = 'Request method is required';
-        }
-
-        if (empty($data['path'])) {
-            $errors['path'] = 'Request path is required';
-        }
-
-        // Validate method
-        $allowedMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
-        if (!empty($data['method']) && !in_array(strtoupper($data['method']), $allowedMethods)) {
-            $errors['method'] = 'Invalid HTTP method';
-        }
-
-        return [
-            'valid' => empty($errors),
-            'errors' => $errors
-        ];
-    }
-
-    /**
-     * Process request through middleware stack
-     */
-    public function process($request)
-    {
-        $this->currentRequest = $request;
-
-        // Apply 'before' middleware
-        foreach ($this->middleware['before'] ?? [] as $middleware) {
-            $result = $middleware($request);
-            if (is_array($result) && isset($result['error'])) {
-                return $result;
-            }
-            $request = $result;
-        }
-
-        // Route to appropriate handler
-        $handler = $this->findHandler($request['method'], $request['path']);
-        if ($handler) {
-            $response = call_user_func($handler, $request);
-        } else {
-            $response = [
-                'error' => 'Route not found',
-                'message' => 'No handler registered for ' . $request['method'] . ' ' . $request['path']
+        if (!isset($_FILES[$fieldName])) {
+            return [
+                'success' => false,
+                'message' => 'No file uploaded',
+                'error_code' => 'NO_FILE'
             ];
         }
-
-        // Apply 'after' middleware
-        foreach ($this->middleware['after'] ?? [] as $middleware) {
-            $response = $middleware($request, $response);
+        
+        $file = $_FILES[$fieldName];
+        
+        // Check upload error
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $errorMessages = [
+                UPLOAD_ERR_INI_SIZE => 'File is too large',
+                UPLOAD_ERR_FORM_SIZE => 'File is too large',
+                UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
+                UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+                UPLOAD_ERR_NO_TMP_DIR => 'Missing temporary folder',
+                UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                UPLOAD_ERR_EXTENSION => 'File upload stopped by extension'
+            ];
+            
+            return [
+                'success' => false,
+                'message' => $errorMessages[$file['error']] ?? 'Upload failed',
+                'error_code' => 'UPLOAD_ERROR'
+            ];
         }
-
-        return $response;
-    }
-
-    /**
-     * Find handler for given method and path
-     */
-    private function findHandler($method, $path)
-    {
-        foreach ($this->routes as $route) {
-            if ($route['method'] === strtoupper($method) && $this->pathMatches($route['path'], $path)) {
-                return $route['handler'];
-            }
+        
+        // Validate file
+        $maxSize = $options['max_size'] ?? 5 * 1024 * 1024; // 5MB
+        $allowedTypes = $options['allowed_types'] ?? ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'];
+        
+        if ($file['size'] > $maxSize) {
+            return [
+                'success' => false,
+                'message' => 'File is too large',
+                'error_code' => 'FILE_TOO_LARGE'
+            ];
         }
-
-        return null;
+        
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($extension, $allowedTypes)) {
+            return [
+                'success' => false,
+                'message' => 'File type not allowed',
+                'error_code' => 'INVALID_FILE_TYPE'
+            ];
+        }
+        
+        // Generate unique filename
+        $filename = date('Y-m-d_H-i-s') . '_' . uniqid() . '.' . $extension;
+        $uploadDir = $options['upload_dir'] ?? 'uploads/';
+        
+        // Ensure upload directory exists
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        
+        // Move file
+        $destination = $uploadDir . $filename;
+        if (!move_uploaded_file($file['tmp_name'], $destination)) {
+            return [
+                'success' => false,
+                'message' => 'Failed to save file',
+                'error_code' => 'SAVE_FAILED'
+            ];
+        }
+        
+        return [
+            'success' => true,
+            'message' => 'File uploaded successfully',
+            'filename' => $filename,
+            'filepath' => $destination,
+            'size' => $file['size'],
+            'type' => $extension
+        ];
     }
-
+    
     /**
-     * Check if path matches route pattern
+     * Send JSON response
      */
-    private function pathMatches($pattern, $path)
+    public function jsonResponse($data, int $statusCode = 200): void
     {
-        // Convert pattern to regex
-        $regex = $this->convertPathToRegex($pattern);
-        return preg_match($regex, $path);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+    
+    /**
+     * Send error response
+     */
+    public function errorResponse(string $message, int $statusCode = 400, $data = null): void
+    {
+        $response = [
+            'success' => false,
+            'message' => $message,
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+        
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+        
+        $this->jsonResponse($response, $statusCode);
+    }
+    
+    /**
+     * Send success response
+     */
+    public function successResponse(string $message, $data = null): void
+    {
+        $response = [
+            'success' => true,
+            'message' => $message,
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+        
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+        
+        $this->jsonResponse($response, 200);
+    }
+    
+    /**
+     * Redirect
+     */
+    public function redirect(string $url, int $statusCode = 302): void
+    {
+        header("Location: $url", true, $statusCode);
+        exit;
+    }
+    
+    /**
+     * Set flash message
+     */
+    public function setFlash(string $type, string $message): void
+    {
+        if (!isset($_SESSION['flash'])) {
+            $_SESSION['flash'] = [];
+        }
+        
+        $_SESSION['flash'][$type] = $message;
+    }
+    
+    /**
+     * Get flash message
+     */
+    public function getFlash(string $type): ?string
+    {
+        $message = $_SESSION['flash'][$type] ?? null;
+        if ($message !== null) {
+            unset($_SESSION['flash'][$type]);
+        }
+        return $message;
+    }
+    
+    /**
+     * Get all flash messages
+     */
+    public function getAllFlash(): array
+    {
+        $messages = $_SESSION['flash'] ?? [];
+        $_SESSION['flash'] = [];
+        return $messages;
     }
 }

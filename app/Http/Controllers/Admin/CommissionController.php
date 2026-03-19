@@ -15,13 +15,11 @@ use Exception;
 class CommissionController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
     }
 
     /**
@@ -456,7 +454,7 @@ class CommissionController extends AdminController
     {
         try {
             $status = $action === 'approve' ? 'approved' : 'rejected';
-            
+
             $sql = "UPDATE mlm_commission_ledger 
                     SET status = ?, approval_notes = ?, approved_by = ?, approved_at = NOW()
                     WHERE id = ?";
@@ -631,16 +629,5 @@ class CommissionController extends AdminController
             $this->loggingService->error("Get Commission Report Data error: " . $e->getMessage());
             return [];
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
     }
 }

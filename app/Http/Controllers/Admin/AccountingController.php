@@ -15,14 +15,12 @@ use Exception;
 class AccountingController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['storeIncome', 'storeExpense', 'update', 'destroy']]);
     }
@@ -63,12 +61,14 @@ class AccountingController extends AdminController
 
             // Total income
             $sql = "SELECT COALESCE(SUM(amount), 0) as total FROM income_records";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $totalIncome = $result['total'] ?? 0;
 
             // Total expenses
             $sql = "SELECT COALESCE(SUM(amount), 0) as total FROM expense_records";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $totalExpenses = $result['total'] ?? 0;
 
             // Recent transactions
@@ -387,11 +387,13 @@ class AccountingController extends AdminController
 
             // Total income and expenses
             $sql = "SELECT COALESCE(SUM(amount), 0) as total FROM income_records";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_income'] = (float)($result['total'] ?? 0);
 
             $sql = "SELECT COALESCE(SUM(amount), 0) as total FROM expense_records";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['total_expenses'] = (float)($result['total'] ?? 0);
 
             $stats['net_profit'] = $stats['total_income'] - $stats['total_expenses'];
@@ -410,12 +412,14 @@ class AccountingController extends AdminController
 
             // Income by category
             $sql = "SELECT category, COALESCE(SUM(amount), 0) as total FROM income_records GROUP BY category";
-            $result = $this->db->fetchAll($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $stats['income_by_category'] = $result ?: [];
 
             // Expenses by category
             $sql = "SELECT category, COALESCE(SUM(amount), 0) as total FROM expense_records GROUP BY category";
-            $result = $this->db->fetchAll($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $stats['expenses_by_category'] = $result ?: [];
 
             return $this->jsonResponse([
@@ -460,15 +464,15 @@ class AccountingController extends AdminController
 
             if ($format === 'csv') {
                 $filename = 'accounting_export_' . date('Y-m-d_H-i-s') . '.csv';
-                
+
                 header('Content-Type: text/csv');
                 header('Content-Disposition: attachment; filename="' . $filename . '"');
-                
+
                 $output = fopen('php://output', 'w');
-                
+
                 // CSV header
                 fputcsv($output, ['Type', 'Amount', 'Description', 'Category', 'Date', 'Created At']);
-                
+
                 // Income data
                 if (isset($data['income'])) {
                     foreach ($data['income'] as $record) {
@@ -482,7 +486,7 @@ class AccountingController extends AdminController
                         ]);
                     }
                 }
-                
+
                 // Expense data
                 if (isset($data['expenses'])) {
                     foreach ($data['expenses'] as $record) {
@@ -496,7 +500,7 @@ class AccountingController extends AdminController
                         ]);
                     }
                 }
-                
+
                 fclose($output);
                 exit;
             } else {
@@ -514,27 +518,5 @@ class AccountingController extends AdminController
             $this->loggingService->error("Export Accounting error: " . $e->getMessage());
             return $this->jsonError('Failed to export accounting data', 500);
         }
-    }
-
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
-        exit;
     }
 }
