@@ -108,7 +108,7 @@ class AgentDashboardController extends AdminController
         try {
             $user_id = $_SESSION['user_id'] ?? 1;
 
-            $performance = $this->db->fetchAll(
+            $performance = $this->db->query(
                 "SELECT 
                     DATE(created_at) as date,
                     COUNT(*) as sales_count,
@@ -117,9 +117,8 @@ class AgentDashboardController extends AdminController
                 WHERE agent_id = ? 
                 AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 GROUP BY DATE(created_at)
-                ORDER BY date DESC",
-                [$user_id]
-            );
+                ORDER BY date DESC"
+            )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $performance]);
         } catch (Exception $e) {
@@ -136,7 +135,7 @@ class AgentDashboardController extends AdminController
         try {
             $user_id = $_SESSION['user_id'] ?? 1;
 
-            $network = $this->db->fetchAll(
+            $network = $this->db->prepare(
                 "SELECT 
                     u.id,
                     u.name,
@@ -148,9 +147,10 @@ class AgentDashboardController extends AdminController
                 LEFT JOIN users u2 ON u2.parent_id = u.id
                 WHERE u.parent_id = ? OR u.id = ?
                 GROUP BY u.id, u.name, u.email, u.status, u.created_at
-                ORDER BY u.created_at DESC",
-                [$user_id, $user_id]
+                ORDER BY u.created_at DESC"
             );
+            $network->execute([$user_id, $user_id]);
+            $network = $network->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $network]);
         } catch (Exception $e) {

@@ -105,7 +105,7 @@ class CFODashboardController extends AdminController
     public function getFinancialAnalytics()
     {
         try {
-            $analytics = $this->db->fetchAll(
+            $analytics = $this->db->query(
                 "SELECT 
                     DATE(created_at) as date,
                     SUM(CASE WHEN status = 'completed' THEN amount END) as daily_revenue,
@@ -114,7 +114,7 @@ class CFODashboardController extends AdminController
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 GROUP BY DATE(created_at)
                 ORDER BY date DESC"
-            );
+            )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $analytics]);
         } catch (Exception $e) {
@@ -129,7 +129,7 @@ class CFODashboardController extends AdminController
     public function getExpenseBreakdown()
     {
         try {
-            $breakdown = $this->db->fetchAll(
+            $breakdown = $this->db->query(
                 "SELECT 
                     category,
                     COALESCE(SUM(amount), 0) as total_amount,
@@ -138,7 +138,7 @@ class CFODashboardController extends AdminController
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
                 GROUP BY category
                 ORDER BY total_amount DESC"
-            );
+            )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $breakdown]);
         } catch (Exception $e) {
