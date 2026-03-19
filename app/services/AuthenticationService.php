@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Core\Config;
+use App\Services\CoreFunctionsServiceCustom;
 use Exception;
 
 /**
@@ -13,12 +14,12 @@ use Exception;
 class AuthenticationService
 {
     private $db;
-    
+
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
     }
-    
+
     /**
      * User login
      */
@@ -34,13 +35,13 @@ class AuthenticationService
                     'error_code' => 'RATE_LIMITED'
                 ];
             }
-            
+
             // Find user
             $sql = "SELECT id, name, email, password, role, status, created_at FROM users WHERE email = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$email]);
             $user = $stmt->fetch();
-            
+
             if (!$user) {
                 return [
                     'success' => false,
@@ -48,7 +49,7 @@ class AuthenticationService
                     'error_code' => 'INVALID_CREDENTIALS'
                 ];
             }
-            
+
             // Check account status
             if ($user['status'] !== 'active') {
                 return [
@@ -57,7 +58,7 @@ class AuthenticationService
                     'error_code' => 'ACCOUNT_INACTIVE'
                 ];
             }
-            
+
             // Verify password
             if (!CoreFunctionsServiceCustom::verifyPasswordHash($password, $user['password'])) {
                 return [
@@ -66,10 +67,10 @@ class AuthenticationService
                     'error_code' => 'INVALID_CREDENTIALS'
                 ];
             }
-            
+
             // Update last login
             $this->updateLastLogin($user['id']);
-            
+
             // Set session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_email'] = $user['email'];
@@ -77,20 +78,20 @@ class AuthenticationService
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['logged_in'] = true;
             $_SESSION['login_time'] = time();
-            
+
             // Set remember me cookie if requested
             if ($remember) {
                 $token = CoreFunctionsServiceCustom::generateRandomString(64);
                 $expires = time() + (30 * 24 * 60 * 60); // 30 days
-                
+
                 // Store remember token
                 $sql = "UPDATE users SET remember_token = ?, remember_expires = ? WHERE id = ?";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$token, date('Y-m-d H:i:s', $expires), $user['id']]);
-                
+
                 setcookie('remember_token', $token, $expires, '/', '', false, true);
             }
-            
+
             // Log admin action
             if ($user['role'] === 'admin') {
                 CoreFunctionsServiceCustom::logAdminAction([
@@ -99,7 +100,7 @@ class AuthenticationService
                     'ip' => CoreFunctionsServiceCustom::getClientIp()
                 ]);
             }
-            
+
             return [
                 'success' => true,
                 'message' => 'Login successful',
@@ -110,7 +111,6 @@ class AuthenticationService
                     'role' => $user['role']
                 ]
             ];
-            
         } catch (Exception $e) {
             error_log("Login error: " . $e->getMessage());
             return [
@@ -120,7 +120,7 @@ class AuthenticationService
             ];
         }
     }
-    
+
     /**
      * User registration
      */
@@ -138,7 +138,7 @@ class AuthenticationService
                     ];
                 }
             }
-            
+
             // Validate email
             $email = CoreFunctionsServiceCustom::validateInput($userData['email'], 'email');
             if (!$email) {
@@ -148,7 +148,7 @@ class AuthenticationService
                     'error_code' => 'INVALID_EMAIL'
                 ];
             }
-            
+
             // Check if email already exists
             $sql = "SELECT id FROM users WHERE email = ?";
             $stmt = $this->db->prepare($sql);
@@ -160,7 +160,7 @@ class AuthenticationService
                     'error_code' => 'EMAIL_EXISTS'
                 ];
             }
-            
+
             // Validate password
             $password = $userData['password'];
             if (strlen($password) < 8) {
@@ -170,10 +170,10 @@ class AuthenticationService
                     'error_code' => 'WEAK_PASSWORD'
                 ];
             }
-            
+
             // Hash password
             $hashedPassword = CoreFunctionsServiceCustom::hashPassword($password);
-            
+
             // Create user
             $sql = "INSERT INTO users (name, email, password, role, status, created_at) VALUES (?, ?, ?, ?, 'active', NOW())";
             $stmt = $this->db->prepare($sql);
@@ -183,13 +183,13 @@ class AuthenticationService
                 $hashedPassword,
                 $userData['role']
             ]);
-            
+
             if (!$result) {
                 throw new Exception('Failed to create user');
             }
-            
+
             $userId = $this->db->lastInsertId();
-            
+
             // Log admin action
             CoreFunctionsServiceCustom::logAdminAction([
                 'action' => 'user_registered',
@@ -197,13 +197,12 @@ class AuthenticationService
                 'email' => $email,
                 'role' => $userData['role']
             ]);
-            
+
             return [
                 'success' => true,
                 'message' => 'Registration successful',
                 'user_id' => $userId
             ];
-            
         } catch (Exception $e) {
             error_log("Registration error: " . $e->getMessage());
             return [
@@ -213,7 +212,7 @@ class AuthenticationService
             ];
         }
     }
-    
+
     /**
      * User logout
      */
@@ -227,25 +226,24 @@ class AuthenticationService
                     'user_id' => $_SESSION['user_id'] ?? 0
                 ]);
             }
-            
+
             // Clear session
             session_unset();
             session_destroy();
-            
+
             // Clear remember me cookie
             if (isset($_COOKIE['remember_token'])) {
                 setcookie('remember_token', '', time() - 3600, '/', '', false, true);
                 unset($_COOKIE['remember_token']);
             }
-            
+
             return true;
-            
         } catch (Exception $e) {
             error_log("Logout error: " . $e->getMessage());
             return false;
         }
     }
-    
+
     /**
      * Check if user is logged in
      */
@@ -253,7 +251,7 @@ class AuthenticationService
     {
         return CoreFunctionsServiceCustom::isAuthenticated();
     }
-    
+
     /**
      * Get current user
      */
@@ -262,19 +260,18 @@ class AuthenticationService
         if (!$this->isLoggedIn()) {
             return null;
         }
-        
+
         try {
             $sql = "SELECT id, name, email, role, status, created_at FROM users WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$_SESSION['user_id']]);
             return $stmt->fetch() ?: null;
-            
         } catch (Exception $e) {
             error_log("Get current user error: " . $e->getMessage());
             return null;
         }
     }
-    
+
     /**
      * Update user password
      */
@@ -286,7 +283,7 @@ class AuthenticationService
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId]);
             $user = $stmt->fetch();
-            
+
             if (!$user) {
                 return [
                     'success' => false,
@@ -294,7 +291,7 @@ class AuthenticationService
                     'error_code' => 'USER_NOT_FOUND'
                 ];
             }
-            
+
             // Verify current password
             if (!CoreFunctionsServiceCustom::verifyPasswordHash($currentPassword, $user['password'])) {
                 return [
@@ -303,7 +300,7 @@ class AuthenticationService
                     'error_code' => 'INVALID_CURRENT_PASSWORD'
                 ];
             }
-            
+
             // Validate new password
             if (strlen($newPassword) < 8) {
                 return [
@@ -312,28 +309,27 @@ class AuthenticationService
                     'error_code' => 'WEAK_PASSWORD'
                 ];
             }
-            
+
             // Update password
             $hashedPassword = CoreFunctionsServiceCustom::hashPassword($newPassword);
             $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([$hashedPassword, $userId]);
-            
+
             if (!$result) {
                 throw new Exception('Failed to update password');
             }
-            
+
             // Log admin action
             CoreFunctionsServiceCustom::logAdminAction([
                 'action' => 'password_updated',
                 'user_id' => $userId
             ]);
-            
+
             return [
                 'success' => true,
                 'message' => 'Password updated successfully'
             ];
-            
         } catch (Exception $e) {
             error_log("Update password error: " . $e->getMessage());
             return [
@@ -343,7 +339,7 @@ class AuthenticationService
             ];
         }
     }
-    
+
     /**
      * Reset password
      */
@@ -355,7 +351,7 @@ class AuthenticationService
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$email]);
             $user = $stmt->fetch();
-            
+
             if (!$user) {
                 return [
                     'success' => false,
@@ -363,34 +359,33 @@ class AuthenticationService
                     'error_code' => 'EMAIL_NOT_FOUND'
                 ];
             }
-            
+
             // Generate reset token
             $token = CoreFunctionsServiceCustom::generateRandomString(64);
             $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
-            
+
             // Store reset token
             $sql = "UPDATE users SET reset_token = ?, reset_expires = ? WHERE id = ?";
             $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([$token, $expires, $user['id']]);
-            
+
             if (!$result) {
                 throw new Exception('Failed to store reset token');
             }
-            
+
             // TODO: Send reset email (implement email service)
-            
+
             // Log admin action
             CoreFunctionsServiceCustom::logAdminAction([
                 'action' => 'password_reset_requested',
                 'user_id' => $user['id'],
                 'email' => $email
             ]);
-            
+
             return [
                 'success' => true,
                 'message' => 'Password reset link sent to your email'
             ];
-            
         } catch (Exception $e) {
             error_log("Reset password error: " . $e->getMessage());
             return [
@@ -400,7 +395,7 @@ class AuthenticationService
             ];
         }
     }
-    
+
     /**
      * Update last login timestamp
      */
@@ -414,7 +409,7 @@ class AuthenticationService
             error_log("Failed to update last login: " . $e->getMessage());
         }
     }
-    
+
     /**
      * Check user permissions
      */
@@ -423,9 +418,9 @@ class AuthenticationService
         if (!$this->isLoggedIn()) {
             return false;
         }
-        
+
         $userRole = $_SESSION['user_role'] ?? '';
-        
+
         // Simple role-based permissions
         $permissions = [
             'admin' => ['*'], // All permissions
@@ -433,9 +428,9 @@ class AuthenticationService
             'associate' => ['view', 'create'],
             'customer' => ['view']
         ];
-        
+
         $userPermissions = $permissions[$userRole] ?? [];
-        
+
         return in_array('*', $userPermissions) || in_array($permission, $userPermissions);
     }
 }
