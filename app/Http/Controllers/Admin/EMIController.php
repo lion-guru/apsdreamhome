@@ -3,23 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Services\Marketing\MarketingAutomationService;
-use TCPDF;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
+use App\Core\Database;
+use Exception;
 
 /**
- * EMI Controller
+ * EMI Controller - Custom MVC Implementation
  * Handles EMI plans management in the Admin panel
  */
 class EMIController extends AdminController
 {
-    protected $emiModel;
-    protected $marketingAutomationService;
+    private $loggingService;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
-        $this->emiModel = $this->model('EMI');
-        $this->marketingAutomationService = new MarketingAutomationService();
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
+        
+        // Register middlewares
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
 
     /**
@@ -27,465 +32,467 @@ class EMIController extends AdminController
      */
     public function index()
     {
-        $params = [
-            'start' => 0,
-            'length' => 100, // Show more on main page
-            'orderBy' => 'ep.created_at',
-            'orderDir' => 'DESC'
-        ];
+        try {
+            $search = $_GET['search'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
 
-        $result = $this->emiModel->getFilteredPlans($params);
+            $offset = ($page - 1) * $perPage;
 
-        $this->render('admin/emi/index', [
-            'plans' => $result['data'],
-            'page_title' => $this->mlSupport->translate('EMI Plans')
-        ]);
+            // Build query
+            $sql = "SELECT e.*, 
+                           b.booking_number, 
+                           c.name as customer_name, 
+                           c.email as customer_email,
+                           p.title as property_title,
+                           COUNT(em.id) as payment_count,
+                           COALESCE(SUM(em.amount), 0) as paid_amount
+                    FROM emi_plans e
+                    LEFT JOIN bookings b ON e.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties p ON b.property_id = p.id
+                    LEFT JOIN emi_payments em ON e.id = em.emi_plan_id
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (b.booking_number LIKE ? OR c.name LIKE ? OR p.title LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+            }
+
+            if (!empty($status)) {
+                $sql .= " AND e.status = ?";
+                $params[] = $status;
+            }
+
+            $sql .= " GROUP BY e.id ORDER BY e.created_at DESC";
+
+            // Count total
+            $countSql = str_replace("SELECT e.*, b.booking_number, c.name as customer_name, c.email as customer_email, p.title as property_title, COUNT(em.id) as payment_count, COALESCE(SUM(em.amount), 0) as paid_amount", "SELECT COUNT(DISTINCT e.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
+
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $emiPlans = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'EMI Plans - APS Dream Home',
+                'active_page' => 'emi',
+                'emi_plans' => $emiPlans,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'status' => $status
+                ]
+            ];
+
+            return $this->render('admin/emi/index', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("EMI Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load EMI plans');
+            return $this->redirect('admin/dashboard');
+        }
     }
 
     /**
-     * Get EMI statistics for dashboard
+     * Show the form for creating a new EMI plan
      */
-    public function stats()
+    public function create()
     {
         try {
-            $stats = $this->emiModel->getStats();
+            // Get available bookings without EMI plans
+            $sql = "SELECT b.id, b.booking_number, b.total_amount, 
+                           c.name as customer_name, 
+                           p.title as property_title
+                    FROM bookings b
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties p ON b.property_id = p.id
+                    WHERE b.id NOT IN (SELECT booking_id FROM emi_plans)
+                    AND b.status = 'confirmed'
+                    ORDER BY b.created_at DESC";
+            $bookings = $this->db->fetchAll($sql);
+
+            $data = [
+                'page_title' => 'Create EMI Plan - APS Dream Home',
+                'active_page' => 'emi',
+                'bookings' => $bookings
+            ];
+
+            return $this->render('admin/emi/create', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("EMI Create error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load EMI form');
+            return $this->redirect('admin/emi');
+        }
+    }
+
+    /**
+     * Store a newly created EMI plan
+     */
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $data = $_POST;
+
+            // Validate required fields
+            $required = ['booking_id', 'total_amount', 'down_payment', 'interest_rate', 'tenure_months'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
+                }
+            }
+
+            $bookingId = (int)$data['booking_id'];
+            $totalAmount = (float)$data['total_amount'];
+            $downPayment = (float)$data['down_payment'];
+            $interestRate = (float)$data['interest_rate'];
+            $tenureMonths = (int)$data['tenure_months'];
+
+            // Validate values
+            if ($bookingId <= 0 || $totalAmount <= 0 || $downPayment < 0 || $tenureMonths <= 0) {
+                return $this->jsonError('Invalid input values', 400);
+            }
+
+            if ($downPayment >= $totalAmount) {
+                return $this->jsonError('Down payment must be less than total amount', 400);
+            }
+
+            // Check if booking exists and has no EMI plan
+            $sql = "SELECT b.*, COUNT(e.id) as existing_emi
+                    FROM bookings b
+                    LEFT JOIN emi_plans e ON b.id = e.booking_id
+                    WHERE b.id = ?
+                    GROUP BY b.id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$bookingId]);
+            $booking = $stmt->fetch();
+
+            if (!$booking) {
+                return $this->jsonError('Booking not found', 404);
+            }
+
+            if ($booking['existing_emi'] > 0) {
+                return $this->jsonError('EMI plan already exists for this booking', 400);
+            }
+
+            // Calculate EMI details
+            $loanAmount = $totalAmount - $downPayment;
+            $monthlyInterest = $interestRate / 12 / 100;
+            $emiAmount = $loanAmount * $monthlyInterest * pow(1 + $monthlyInterest, $tenureMonths) / 
+                        (pow(1 + $monthlyInterest, $tenureMonths) - 1);
+            $totalPayable = $downPayment + ($emiAmount * $tenureMonths);
+            $totalInterest = $totalPayable - $totalAmount;
+
+            // Create EMI plan
+            $sql = "INSERT INTO emi_plans 
+                    (booking_id, total_amount, down_payment, loan_amount, interest_rate, tenure_months, 
+                     emi_amount, total_interest, total_payable, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())";
+
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                $bookingId,
+                $totalAmount,
+                $downPayment,
+                $loanAmount,
+                $interestRate,
+                $tenureMonths,
+                round($emiAmount, 2),
+                round($totalInterest, 2),
+                round($totalPayable, 2)
+            ]);
+
+            if ($result) {
+                $emiPlanId = $this->db->lastInsertId();
+
+                // Create EMI schedule
+                $this->createEMISchedule($emiPlanId, $emiAmount, $tenureMonths);
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'emi_plan_created', [
+                    'emi_plan_id' => $emiPlanId,
+                    'booking_id' => $bookingId,
+                    'total_amount' => $totalAmount
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'EMI plan created successfully',
+                    'emi_plan_id' => $emiPlanId
+                ]);
+            }
+
+            return $this->jsonError('Failed to create EMI plan', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("EMI Store error: " . $e->getMessage());
+            return $this->jsonError('Failed to create EMI plan', 500);
+        }
+    }
+
+    /**
+     * Display the specified EMI plan
+     */
+    public function show($id)
+    {
+        try {
+            $emiPlanId = intval($id);
+            if ($emiPlanId <= 0) {
+                $this->setFlash('error', 'Invalid EMI plan ID');
+                return $this->redirect('admin/emi');
+            }
+
+            // Get EMI plan details
+            $sql = "SELECT e.*, 
+                           b.booking_number, 
+                           c.name as customer_name, 
+                           c.email as customer_email,
+                           p.title as property_title
+                    FROM emi_plans e
+                    LEFT JOIN bookings b ON e.booking_id = b.id
+                    LEFT JOIN users c ON b.customer_id = c.id
+                    LEFT JOIN properties p ON b.property_id = p.id
+                    WHERE e.id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$emiPlanId]);
+            $emiPlan = $stmt->fetch();
+
+            if (!$emiPlan) {
+                $this->setFlash('error', 'EMI plan not found');
+                return $this->redirect('admin/emi');
+            }
+
+            // Get EMI schedule
+            $sql = "SELECT * FROM emi_schedule 
+                    WHERE emi_plan_id = ? 
+                    ORDER BY installment_number ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$emiPlanId]);
+            $schedule = $stmt->fetchAll();
+
+            // Get payment history
+            $sql = "SELECT ep.*, es.installment_number
+                    FROM emi_payments ep
+                    LEFT JOIN emi_schedule es ON ep.emi_schedule_id = es.id
+                    WHERE ep.emi_plan_id = ?
+                    ORDER BY ep.payment_date DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$emiPlanId]);
+            $payments = $stmt->fetchAll();
+
+            $data = [
+                'page_title' => 'EMI Plan Details - APS Dream Home',
+                'active_page' => 'emi',
+                'emi_plan' => $emiPlan,
+                'schedule' => $schedule,
+                'payments' => $payments
+            ];
+
+            return $this->render('admin/emi/show', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("EMI Show error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load EMI plan details');
+            return $this->redirect('admin/emi');
+        }
+    }
+
+    /**
+     * Process EMI payment
+     */
+    public function processPayment($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $emiPlanId = intval($id);
+            $scheduleId = (int)($_POST['schedule_id'] ?? 0);
+            $paymentMethod = $_POST['payment_method'] ?? '';
+            $amount = (float)($_POST['amount'] ?? 0);
+            $transactionId = $_POST['transaction_id'] ?? '';
+
+            if ($emiPlanId <= 0 || $scheduleId <= 0 || $amount <= 0 || empty($paymentMethod)) {
+                return $this->jsonError('Invalid payment details', 400);
+            }
+
+            $this->db->beginTransaction();
+
+            try {
+                // Get schedule details
+                $sql = "SELECT es.*, e.emi_amount
+                        FROM emi_schedule es
+                        JOIN emi_plans e ON es.emi_plan_id = e.id
+                        WHERE es.id = ? AND es.emi_plan_id = ? AND es.status = 'pending'";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$scheduleId, $emiPlanId]);
+                $schedule = $stmt->fetch();
+
+                if (!$schedule) {
+                    $this->db->rollBack();
+                    return $this->jsonError('Invalid or already paid installment', 400);
+                }
+
+                // Record payment
+                $sql = "INSERT INTO emi_payments 
+                        (emi_plan_id, emi_schedule_id, amount, payment_method, transaction_id, status, payment_date)
+                        VALUES (?, ?, ?, ?, ?, 'completed', NOW())";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$emiPlanId, $scheduleId, $amount, $paymentMethod, $transactionId]);
+                $paymentId = $this->db->lastInsertId();
+
+                // Update schedule status
+                $sql = "UPDATE emi_schedule 
+                        SET status = 'paid', paid_date = NOW(), paid_amount = ?
+                        WHERE id = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$amount, $scheduleId]);
+
+                // Check if all installments are paid
+                $sql = "SELECT COUNT(*) as total, 
+                              SUM(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) as paid
+                        FROM emi_schedule 
+                        WHERE emi_plan_id = ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$emiPlanId]);
+                $result = $stmt->fetch();
+
+                if ($result['total'] == $result['paid']) {
+                    // Update EMI plan status to completed
+                    $sql = "UPDATE emi_plans SET status = 'completed', completed_at = NOW() WHERE id = ?";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->execute([$emiPlanId]);
+                }
+
+                $this->db->commit();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'emi_payment_processed', [
+                    'emi_plan_id' => $emiPlanId,
+                    'schedule_id' => $scheduleId,
+                    'amount' => $amount
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'EMI payment processed successfully',
+                    'payment_id' => $paymentId
+                ]);
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+        } catch (Exception $e) {
+            $this->loggingService->error("EMI Process Payment error: " . $e->getMessage());
+            return $this->jsonError('Failed to process EMI payment', 500);
+        }
+    }
+
+    /**
+     * Create EMI schedule
+     */
+    private function createEMISchedule(int $emiPlanId, float $emiAmount, int $tenureMonths): void
+    {
+        try {
+            $sql = "INSERT INTO emi_schedule (emi_plan_id, installment_number, due_amount, due_date, status)
+                    VALUES (?, ?, ?, ?, 'pending')";
+
+            for ($i = 1; $i <= $tenureMonths; $i++) {
+                $dueDate = date('Y-m-d', strtotime("+$i months"));
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$emiPlanId, $i, $emiAmount, $dueDate]);
+            }
+        } catch (Exception $e) {
+            $this->loggingService->error("Create EMI Schedule error: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Get EMI statistics
+     */
+    public function getStats()
+    {
+        try {
+            $stats = [];
+
+            // Total EMI plans
+            $sql = "SELECT COUNT(*) as total FROM emi_plans";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_plans'] = (int)($result['total'] ?? 0);
+
+            // Active EMI plans
+            $sql = "SELECT COUNT(*) as total FROM emi_plans WHERE status = 'active'";
+            $result = $this->db->fetchOne($sql);
+            $stats['active_plans'] = (int)($result['total'] ?? 0);
+
+            // Completed EMI plans
+            $sql = "SELECT COUNT(*) as total FROM emi_plans WHERE status = 'completed'";
+            $result = $this->db->fetchOne($sql);
+            $stats['completed_plans'] = (int)($result['total'] ?? 0);
+
+            // Total EMI amount
+            $sql = "SELECT COALESCE(SUM(total_payable), 0) as total FROM emi_plans";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_amount'] = (float)($result['total'] ?? 0);
+
+            // This month's EMI payments
+            $sql = "SELECT COALESCE(SUM(amount), 0) as total FROM emi_payments 
+                    WHERE MONTH(payment_date) = MONTH(CURRENT_DATE) 
+                    AND YEAR(payment_date) = YEAR(CURRENT_DATE)";
+            $result = $this->db->fetchOne($sql);
+            $stats['monthly_payments'] = (float)($result['total'] ?? 0);
+
             return $this->jsonResponse([
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            $this->loggingService->error("Get EMI Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
-                'message' => $e->getMessage()
-            ]);
+                'message' => 'Failed to fetch EMI stats'
+            ], 500);
         }
     }
 
     /**
-     * Get EMI plans for DataTables AJAX
+     * JSON response helper
      */
-    public function list()
+    private function jsonResponse(array $data, int $statusCode = 200): void
     {
-        $request = $this->request;
-        $search = $request->post('search');
-        $order = $request->post('order');
-
-        $params = [
-            'draw' => (int)$request->post('draw', 1),
-            'start' => (int)$request->post('start', 0),
-            'length' => (int)$request->post('length', 10),
-            'search' => $search['value'] ?? '',
-            'orderColumn' => (int)($order[0]['column'] ?? 0),
-            'orderDir' => $order[0]['dir'] ?? 'DESC'
-        ];
-
-        // Column mapping for DataTables
-        $columns = ['c.name', 'p.title', 'ep.total_amount', 'ep.emi_amount', 'ep.tenure_months', 'ep.start_date', 'ep.status'];
-        if (isset($columns[$params['orderColumn']])) {
-            $params['orderBy'] = $columns[$params['orderColumn']];
-        } else {
-            $params['orderBy'] = 'ep.id';
-        }
-        $params['orderDir'] = $params['orderDir']; // Use variable directly
-
-        try {
-            $result = $this->emiModel->getFilteredPlans($params);
-
-            return $this->jsonResponse([
-                'draw' => $params['draw'],
-                'recordsTotal' => $result['totalRecords'],
-                'recordsFiltered' => $result['filteredRecords'],
-                'data' => $result['data']
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Show create plan form
-     */
-    public function create()
-    {
-        // Get customers for dropdown
-        $customers = $this->db->fetchAll("SELECT id, name, phone FROM customers ORDER BY name ASC");
-
-        // Get properties for dropdown
-        $properties = $this->db->fetchAll("SELECT id, title FROM properties ORDER BY title ASC");
-
-        $this->render('admin/emi/create', [
-            'page_title' => $this->mlSupport->translate('Create EMI Plan'),
-            'customers' => $customers,
-            'properties' => $properties
-        ]);
-    }
-
-    /**
-     * Create a new EMI plan
-     */
-    public function store()
-    {
-        if ($this->request->method() !== 'POST') {
-            return $this->jsonError($this->mlSupport->translate('Invalid request method.'));
-        }
-
-        if (!$this->validateCsrfToken()) {
-            return $this->jsonError($this->mlSupport->translate('Security validation failed.'));
-        }
-
-        try {
-            $data = $this->request->post();
-
-            // Basic validation
-            if (empty($data['customer_id']) || empty($data['total_amount']) || empty($data['tenure_months'])) {
-                throw new \Exception($this->mlSupport->translate('Please fill all required fields.'));
-            }
-
-            $result = $this->emiModel->createPlan($data);
-
-            $this->setFlash('success', $this->mlSupport->translate('EMI Plan created successfully.'));
-            return $this->jsonResponse(['success' => true, 'redirect' => 'admin/emi']);
-        } catch (\Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Show plan details
-     */
-    public function show($id)
-    {
-        $plan = $this->emiModel->getPlanDetails($id);
-
-        if (!$plan) {
-            $this->setFlash('error', $this->mlSupport->translate('Plan not found.'));
-            $this->redirect('admin/emi');
-            return;
-        }
-
-        $installments = $this->emiModel->getInstallments($id);
-
-        $this->render('admin/emi/show', [
-            'page_title' => $this->mlSupport->translate('EMI Plan Details'),
-            'plan' => $plan,
-            'installments' => $installments
-        ]);
-    }
-
-    /**
-     * Generate Receipt for an installment
-     */
-    public function generateReceipt($id)
-    {
-        $installmentId = (int)$id;
-        $data = $this->emiModel->getInstallmentReceiptDetails($installmentId);
-
-        if (!$data || $data['status'] !== 'paid') {
-            // If not found or not paid, redirect with error
-            $this->setFlash('error', $this->mlSupport->translate('Invalid installment or payment not found'));
-            $this->redirect('admin/emi');
-            return;
-        }
-
-        // Include TCPDF library if not autoloaded
-        if (!class_exists('TCPDF')) {
-            $tcpdfPath = BASE_PATH . '/vendor/tecnickcom/tcpdf/tcpdf.php';
-            if (file_exists($tcpdfPath)) {
-                require_once $tcpdfPath;
-            } else {
-                // Fallback or error
-                $this->setFlash('error', 'TCPDF library not found.');
-                $this->redirect('admin/emi');
-                return;
-            }
-        }
-
-        // Initialize TCPDF
-        // Use global namespace for TCPDF as it's not namespaced in the library file
-        $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-        // Set document information
-        $pdf->SetCreator('APS Dream Home');
-        $pdf->SetAuthor('APS Dream Home');
-        $pdf->SetTitle('EMI Payment Receipt');
-
-        // Remove default header/footer
-        $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
-
-        // Set margins
-        $pdf->SetMargins(15, 15, 15);
-
-        // Add a page
-        $pdf->AddPage();
-
-        // Set font
-        $pdf->SetFont('helvetica', '', 12);
-
-        // Company Logo and Details
-        $logoPath = BASE_PATH . '/assets/img/logo.png';
-        if (file_exists($logoPath)) {
-            $pdf->Image($logoPath, 15, 15, 50);
-        }
-
-        $pdf->Cell(0, 5, 'APS Dream Home', 0, 1, 'R');
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->Cell(0, 5, $this->mlSupport->translate('Address: Your Company Address Here'), 0, 1, 'R'); // TODO: Fetch from settings
-        $pdf->Cell(0, 5, $this->mlSupport->translate('Phone: Your Company Phone'), 0, 1, 'R');
-        $pdf->Cell(0, 5, $this->mlSupport->translate('Email: your@email.com'), 0, 1, 'R');
-
-        // Receipt Title
-        $pdf->Ln(20);
-        $pdf->SetFont('helvetica', 'B', 16);
-        $pdf->Cell(0, 10, $this->mlSupport->translate('EMI Payment Receipt'), 0, 1, 'C');
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->Cell(0, 5, $this->mlSupport->translate('Receipt No') . ': ' . ($data['transaction_id'] ?? 'N/A'), 0, 1, 'C');
-
-        // Customer Details
-        $pdf->Ln(10);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Cell(0, 10, $this->mlSupport->translate('Customer Details'), 0, 1);
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Name') . ':', 0);
-        $pdf->Cell(0, 5, $data['customer_name'], 0, 1);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Phone') . ':', 0);
-        $pdf->Cell(0, 5, $data['customer_phone'], 0, 1);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Email') . ':', 0);
-        $pdf->Cell(0, 5, $data['customer_email'], 0, 1);
-
-        // Property Details
-        $pdf->Ln(10);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Cell(0, 10, $this->mlSupport->translate('Property Details'), 0, 1);
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Property') . ':', 0);
-        $pdf->Cell(0, 5, $data['property_title'], 0, 1);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Address') . ':', 0);
-        $pdf->Cell(0, 5, $data['property_address'], 0, 1);
-
-        // Payment Details
-        $pdf->Ln(10);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Cell(0, 10, $this->mlSupport->translate('Payment Details'), 0, 1);
-        $pdf->SetFont('helvetica', '', 10);
-
-        // Create a table for payment details
-        $pdf->Cell(60, 7, $this->mlSupport->translate('Description'), 1);
-        $pdf->Cell(30, 7, $this->mlSupport->translate('Due Date'), 1);
-        $pdf->Cell(30, 7, $this->mlSupport->translate('Paid Date'), 1);
-        $pdf->Cell(30, 7, $this->mlSupport->translate('Amount'), 1);
-        $pdf->Cell(30, 7, $this->mlSupport->translate('Late Fee'), 1, 1);
-
-        $pdf->Cell(60, 7, $this->mlSupport->translate('EMI Installment #') . $data['installment_number'], 1);
-        $pdf->Cell(30, 7, date('d/m/Y', strtotime($data['due_date'])), 1);
-        $pdf->Cell(30, 7, date('d/m/Y', strtotime($data['payment_date'])), 1);
-        $pdf->Cell(30, 7, 'Rs. ' . number_format($data['amount'], 2), 1);
-        $pdf->Cell(30, 7, 'Rs. ' . number_format($data['late_fee'] ?? 0, 2), 1, 1);
-
-        // Total
-        $totalAmount = $data['amount'] + ($data['late_fee'] ?? 0);
-        $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->Cell(150, 7, $this->mlSupport->translate('Total Amount Paid') . ':', 1);
-        $pdf->Cell(30, 7, 'Rs. ' . number_format($totalAmount, 2), 1, 1);
-
-        // Payment Method
-        $pdf->Ln(10);
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Payment Method') . ':', 0);
-        $pdf->Cell(0, 5, $this->mlSupport->translate(ucfirst($data['payment_method'] ?? 'Unknown')), 0, 1);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Transaction ID') . ':', 0);
-        $pdf->Cell(0, 5, $data['transaction_id'] ?? 'N/A', 0, 1);
-
-        // EMI Plan Status
-        $pdf->Ln(10);
-        $pdf->SetFont('helvetica', 'B', 12);
-        $pdf->Cell(0, 10, $this->mlSupport->translate('EMI Plan Status'), 0, 1);
-        $pdf->SetFont('helvetica', '', 10);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Total Amount') . ':', 0);
-        $pdf->Cell(0, 5, 'Rs. ' . number_format($data['total_amount'], 2), 0, 1);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('EMI Amount') . ':', 0);
-        $pdf->Cell(0, 5, 'Rs. ' . number_format($data['emi_amount'], 2), 0, 1);
-        $pdf->Cell(50, 5, $this->mlSupport->translate('Tenure') . ':', 0);
-        $pdf->Cell(0, 5, $data['tenure_months'] . ' ' . $this->mlSupport->translate('months'), 0, 1);
-
-        // Footer text
-        $pdf->Ln(20);
-        $pdf->SetFont('helvetica', 'I', 8);
-        $pdf->Cell(0, 5, $this->mlSupport->translate('This is a computer generated receipt and does not require a signature.'), 0, 1, 'C');
-        $pdf->Cell(0, 5, $this->mlSupport->translate('For any queries, please contact our support team.'), 0, 1, 'C');
-
-        // Output the PDF
-        $pdf->Output('EMI_Receipt_' . ($data['transaction_id'] ?? 'N/A') . '.pdf', 'I');
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
         exit;
     }
 
     /**
-     * Pay an EMI installment
+     * JSON error helper
      */
-    public function pay()
+    private function jsonError(string $message, int $statusCode = 400): void
     {
-        if ($this->request->method() !== 'POST') {
-            return $this->jsonError($this->mlSupport->translate('Invalid request method'));
-        }
-
-        if (!$this->validateCsrfToken()) {
-            return $this->jsonError($this->mlSupport->translate('Security validation failed.'));
-        }
-
-        try {
-            $data = $this->request->post();
-
-            // Basic validation
-            if (empty($data['installment_id']) || empty($data['payment_date']) || empty($data['payment_method'])) {
-                throw new \Exception($this->mlSupport->translate('Missing required fields'));
-            }
-
-            $paymentId = $this->emiModel->recordInstallmentPayment($data);
-
-            if ($paymentId) {
-                return $this->jsonResponse([
-                    'success' => true,
-                    'message' => $this->mlSupport->translate('Payment recorded successfully'),
-                    'payment_id' => $paymentId
-                ]);
-            } else {
-                throw new \Exception($this->mlSupport->translate('Failed to record payment'));
-            }
-        } catch (\Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Get foreclosure amount for a plan
-     */
-    public function getForeclosureAmount($id)
-    {
-        try {
-            $amount = $this->emiModel->calculateForeclosureAmount($id);
-            return $this->jsonResponse([
-                'success' => true,
-                'amount' => $amount,
-                'formatted_amount' => '₹' . number_format($amount, 2)
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Foreclose an EMI plan
-     */
-    public function foreclose()
-    {
-        if (!$this->request->isPost()) {
-            return $this->jsonError($this->mlSupport->translate('Invalid request method'));
-        }
-
-        if (!$this->validateCsrfToken()) {
-            return $this->jsonError($this->mlSupport->translate('Security validation failed.'));
-        }
-
-        try {
-            $data = $this->request->post();
-
-            // Basic validation
-            if (empty($data['emi_plan_id']) || empty($data['amount'])) {
-                throw new \Exception($this->mlSupport->translate('Missing required fields'));
-            }
-
-            $success = $this->emiModel->foreclosePlan($data);
-
-            if ($success) {
-                $this->setFlash('success', $this->mlSupport->translate('Plan foreclosed successfully.'));
-                return $this->jsonResponse([
-                    'success' => true,
-                    'message' => $this->mlSupport->translate('Plan foreclosed successfully')
-                ]);
-            } else {
-                throw new \Exception($this->mlSupport->translate('Failed to foreclose plan'));
-            }
-        } catch (\Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
-    }
-
-    /**
-     * Show Foreclosure Reports page
-     */
-    public function foreclosureReport()
-    {
-        $this->render('admin/emi/foreclosure_report', [
-            'page_title' => $this->mlSupport->translate('EMI Foreclosure Reports')
-        ]);
-    }
-
-    /**
-     * Get Foreclosure Statistics (AJAX)
-     */
-    public function getForeclosureStats()
-    {
-        try {
-            $stats = $this->emiModel->getForeclosureStats();
-            return $this->jsonResponse(['success' => true, 'data' => $stats]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Get Foreclosure Trend (AJAX)
-     */
-    public function getForeclosureTrend()
-    {
-        try {
-            $months = $this->request->get('months', 12);
-            $trend = $this->emiModel->getForeclosureTrend($months);
-            return $this->jsonResponse($trend);
-        } catch (\Exception $e) {
-            return $this->jsonResponse(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Get Foreclosure Report Data (AJAX)
-     */
-    public function getForeclosureReportData()
-    {
-        try {
-            $filters = [
-                'start_date' => $this->request->get('start_date'),
-                'end_date' => $this->request->get('end_date'),
-                'customer_id' => $this->request->get('customer_id')
-            ];
-
-            $data = $this->emiModel->getForeclosureReportData($filters);
-            return $this->jsonResponse($data);
-        } catch (\Exception $e) {
-            return $this->jsonResponse(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Trigger EMI Automation manually
-     */
-    public function runAutomation()
-    {
-        if (!$this->request->isPost()) {
-            return $this->jsonError('Invalid request method');
-        }
-
-        try {
-            // Include service manually if not autoloaded (though it should be)
-            if (!class_exists('\App\Services\EMIAutomationService')) {
-                require_once BASE_PATH . '/app/Services/EMIAutomationService.php';
-            }
-
-            $service = new \App\Services\EMIAutomationService();
-            $results = $service->runAll();
-            return $this->jsonResponse(['success' => true, 'data' => $results]);
-        } catch (\Exception $e) {
-            return $this->jsonError($e->getMessage());
-        }
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
