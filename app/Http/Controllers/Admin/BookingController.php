@@ -937,7 +937,9 @@ class BookingController extends AdminController
     private function sendCustomerCredentials(int $customerId, string $username, string $password, string $email, string $phone): void
     {
         try {
-            $customer = $this->db->fetchOne("SELECT name FROM users WHERE id = ? LIMIT 1", [$customerId]);
+            $stmt = $this->db->prepare("SELECT name FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$customerId]);
+            $customer = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$customer) return;
 
             $subject = "Welcome to APS Dream Home - Your Account Details";

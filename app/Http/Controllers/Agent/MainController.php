@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Core\App;
 use App\Core\Auth;
+use App\Core\Security;
 use App\Http\Controllers\BaseController;
 use PDO;
 
@@ -16,7 +17,7 @@ class AgentController extends BaseController
         $_SESSION['user_name'] = 'Test Agent';
         $_SESSION['user_role'] = 'agent';
         $_SESSION['level'] = 'Agent';
-        
+
         // Check if agent is logged in
         if (!isset($_SESSION['user_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'agent')) {
             header("Location: /agent/login");
@@ -101,12 +102,12 @@ class AgentController extends BaseController
     {
         $email = Security::sanitize($_POST['email']) ?? '';
         $password = Security::sanitize($_POST['password']) ?? '';
-        
+
         $db = App::database();
         $stmt = $db->prepare("SELECT * FROM users WHERE email = ? AND role = 'agent'");
         $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+        $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
