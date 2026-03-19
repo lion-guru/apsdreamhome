@@ -609,55 +609,74 @@ class SiteController extends AdminController
                 mkdir($uploadDir, 0755, true);
             }
 
-            $filePath = $uploadDir . '/' . $fileName;
-
-            if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                return $filePath;
-            }
-
-            return null;
+            return $uploadDir . '/' . $fileName;
         } catch (Exception $e) {
-            $this->loggingService->error("Upload Image error: " . $e->getMessage());
+            $this->loggingService->error("Upload image error: " . $e->getMessage());
             return null;
         }
     }
 
     /**
-     * Get site statistics
+     * Delete site
      */
-    public function getStats()
+    public function destroySite(int $siteId)
     {
         try {
-            $stats = [];
+            // Get site details for logging
+            $sql = "SELECT site_name FROM sites WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$siteId]);
+            $site = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            // Total sites
-            $sql = "SELECT COUNT(*) as total FROM sites";
-            $result = $this->db->fetchOne($sql);
-            $stats['total_sites'] = (int)($result['total'] ?? 0);
+            // Delete image if exists
+            if ($site['image'] && file_exists($site['image'])) {
+                unlink($site['image']);
+            }
 
-            // Active sites
-            $sql = "SELECT COUNT(*) as total FROM sites WHERE status = 'active'";
-            $result = $this->db->fetchOne($sql);
-            $stats['active_sites'] = (int)($result['total'] ?? 0);
+            // Delete site
+            $sql = "DELETE FROM sites WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([$siteId]);
 
-            // Total area
-            $sql = "SELECT COALESCE(SUM(total_area), 0) as total FROM sites";
-            $result = $this->db->fetchOne($sql);
-            $stats['total_area'] = (float)($result['total'] ?? 0);
+            if ($result) {
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'site_deleted', [
+                    'site_id' => $siteId,
+                    'site_name' => $site['site_name']
+                ]);
 
-            // Sites by type
-            $sql = "SELECT site_type, COUNT(*) as count FROM sites GROUP BY site_type";
-            $stats['by_type'] = $this->db->fetchAll($sql) ?: [];
+                // Initialize stats array
+                $stats = [];
+
+                // Total area
+                $sql = "SELECT COALESCE(SUM(total_area), 0) as total FROM sites";
+                $stmt = $this->db->query($sql);
+                $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $stats['total_area'] = (float)($result['total'] ?? 0);
+
+                // Sites by type
+                $sql = "SELECT site_type, COUNT(*) as count FROM sites GROUP BY site_type";
+                try {
+                    $stmt = $this->db->query($sql);
+                    $stats['by_type'] = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+                } catch (Exception $e) {
+                    $this->loggingService->error("Get Site Stats error: " . $e->getMessage());
+                    return $this->jsonResponse([
+                        'success' => false,
+                        'message' => 'Failed to fetch site stats'
+                    ], 500);
+                }
+            }
 
             return $this->jsonResponse([
                 'success' => true,
-                'data' => $stats
+                'message' => 'Site deleted successfully'
             ]);
         } catch (Exception $e) {
-            $this->loggingService->error("Get Site Stats error: " . $e->getMessage());
+            $this->loggingService->error("Delete site error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
-                'message' => 'Failed to fetch site stats'
+                'message' => 'Failed to delete site'
             ], 500);
         }
     }
