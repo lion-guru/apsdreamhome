@@ -5342,3 +5342,18 @@ Stack trace:
 [19-Mar-2026 13:37:49 Europe/Berlin] FINAL ROUTER URI: admin/login
 [19-Mar-2026 13:37:49 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
 [19-Mar-2026 13:37:49 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[19-Mar-2026 17:42:44 Europe/Berlin] ROUTER SETUP: Starting route registration
+[19-Mar-2026 17:42:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/admin/login
+[19-Mar-2026 17:42:44 Europe/Berlin] FINAL ROUTER URI: admin/login
+[19-Mar-2026 17:42:44 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[19-Mar-2026 17:42:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[19-Mar-2026 17:42:49 Europe/Berlin] ROUTER SETUP: Starting route registration
+[19-Mar-2026 17:42:49 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/admin/login
+[19-Mar-2026 17:42:49 Europe/Berlin] FINAL ROUTER URI: admin/login
+[19-Mar-2026 17:42:49 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[19-Mar-2026 17:42:49 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[19-Mar-2026 17:42:56 Europe/Berlin] ROUTER SETUP: Starting route registration
+[19-Mar-2026 17:42:56 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/public/admin/login
+[19-Mar-2026 17:42:56 Europe/Berlin] FINAL ROUTER URI: admin/login
+[19-Mar-2026 17:42:56 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[19-Mar-2026 17:42:56 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
