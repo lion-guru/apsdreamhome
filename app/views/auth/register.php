@@ -1,29 +1,30 @@
 /**
- * register - APS Dream Home Component
- * 
- * @package APS Dream Home
- * @version 1.0.0
- * @author APS Dream Home Team
- * @copyright 2026 APS Dream Home
- * 
- * Description: Handles register functionality
- * 
- * Features:
- * - Secure input validation
- * - Comprehensive error handling
- * - Performance optimization
- * - Database integration
- * - Session management
- * - CSRF protection
- * 
- * @see https://apsdreamhome.com/docs
- */
-<?php
+* register - APS Dream Home Component
+*
+* @package APS Dream Home
+* @version 1.0.0
+* @author APS Dream Home Team
+* @copyright 2026 APS Dream Home
+*
+* Description: Handles register functionality
+*
+* Features:
+* - Secure input validation
+* - Comprehensive error handling
+* - Performance optimization
+* - Database integration
+* - Session management
+* - CSRF protection
+*
+* @see https://apsdreamhome.com/docs
+*/
+?>
 
 // TODO: Add proper error handling with try-catch blocks
 
-PE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -110,7 +111,7 @@ PE html>
 
         .btn-register:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             color: white;
         }
 
@@ -158,11 +159,30 @@ PE html>
             margin-bottom: 1rem;
         }
 
-        .role-icon.customer { background: rgba(23, 162, 184, 0.1); color: #17a2b8; }
-        .role-icon.agent { background: rgba(41, 98, 255, 0.1); color: #2962ff; }
-        .role-icon.associate { background: rgba(76, 175, 80, 0.1); color: #4CAF50; }
-        .role-icon.builder { background: rgba(255, 152, 0, 0.1); color: #ff9800; }
-        .role-icon.investor { background: rgba(244, 67, 54, 0.1); color: #f44336; }
+        .role-icon.customer {
+            background: rgba(23, 162, 184, 0.1);
+            color: #17a2b8;
+        }
+
+        .role-icon.agent {
+            background: rgba(41, 98, 255, 0.1);
+            color: #2962ff;
+        }
+
+        .role-icon.associate {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .role-icon.builder {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+        }
+
+        .role-icon.investor {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+        }
 
         .dynamic-fields {
             display: none;
@@ -182,6 +202,7 @@ PE html>
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -212,8 +233,13 @@ PE html>
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .alert {
@@ -258,6 +284,7 @@ PE html>
         }
     </style>
 </head>
+
 <body>
     <div class="container py-4">
         <div class="row justify-content-center">
@@ -275,14 +302,14 @@ PE html>
 
                     <div class="p-4">
                         <!-- Display Errors -->
-                        <?php if(isset($errors) && $errors->any()): ?>
-//
-// TODO: This file is large (722 lines). Consider splitting into smaller functions.
-// TODO: Add input validation for all user inputs.
-//
+                        <?php if (isset($errors) && $errors->any()): ?>
+                            //
+                            // TODO: This file is large (722 lines). Consider splitting into smaller functions.
+                            // TODO: Add input validation for all user inputs.
+                            //
                             <div class="alert alert-danger">
                                 <ul class="mb-0">
-                                    <?php foreach($errors->all() as $error): ?>
+                                    <?php foreach ($errors->all() as $error): ?>
                                         <li><?php echo htmlspecialchars($error); ?></li>
                                     <?php endforeach; ?>
                                 </ul>
@@ -290,14 +317,14 @@ PE html>
                         <?php endif; ?>
 
                         <!-- Display Success -->
-                        <?php if(session('success')): ?>
+                        <?php if (session('success')): ?>
                             <div class="alert alert-success">
                                 <?php echo htmlspecialchars(session('success')); ?>
                             </div>
                         <?php endif; ?>
 
                         <!-- Referrer Information -->
-                        <?php if(isset($referrerInfo)): ?>
+                        <?php if (isset($referrerInfo)): ?>
                             <div class="referrer-info">
                                 <h5><i class="bi bi-person-check me-2"></i>Referred by</h5>
                                 <p class="mb-1"><strong><?php echo htmlspecialchars($referrerInfo['name']); ?></strong></p>
@@ -316,16 +343,16 @@ PE html>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Full Name *</label>
                                     <input type="text" class="form-control" name="full_name"
-                                           value="<?php echo htmlspecialchars(Security::sanitize($_POST['full_name']) ?? ''); ?>" required>
-                                    <?php if(isset($errors['full_name'])): ?>
+                                        value="<?php echo htmlspecialchars(Security::sanitize($_POST['full_name']) ?? ''); ?>" required>
+                                    <?php if (isset($errors['full_name'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['full_name']); ?></div>
                                     <?php endif; ?>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Email Address *</label>
                                     <input type="email" class="form-control" name="email" id="email"
-                                           value="<?php echo htmlspecialchars(Security::sanitize($_POST['email']) ?? ''); ?>" required>
-                                    <?php if(isset($errors['email'])): ?>
+                                        value="<?php echo htmlspecialchars(Security::sanitize($_POST['email']) ?? ''); ?>" required>
+                                    <?php if (isset($errors['email'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['email']); ?></div>
                                     <?php endif; ?>
                                     <div id="email-feedback" class="small mt-1"></div>
@@ -336,8 +363,8 @@ PE html>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Mobile Number *</label>
                                     <input type="tel" class="form-control" name="mobile" id="mobile"
-                                           value="<?php echo htmlspecialchars(Security::sanitize($_POST['mobile']) ?? ''); ?>" pattern="[0-9]{10}" maxlength="10" required>
-                                    <?php if(isset($errors['mobile'])): ?>
+                                        value="<?php echo htmlspecialchars(Security::sanitize($_POST['mobile']) ?? ''); ?>" pattern="[0-9]{10}" maxlength="10" required>
+                                    <?php if (isset($errors['mobile'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['mobile']); ?></div>
                                     <?php endif; ?>
                                     <div id="mobile-feedback" class="small mt-1"></div>
@@ -345,8 +372,8 @@ PE html>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Referral Code</label>
                                     <input type="text" class="form-control" name="referrer_code" id="referrer_code"
-                                           value="<?php echo htmlspecialchars($referralCode ?? ''); ?>" placeholder="Optional">
-                                    <?php if(isset($errors['referrer_code'])): ?>
+                                        value="<?php echo htmlspecialchars($referralCode ?? ''); ?>" placeholder="Optional">
+                                    <?php if (isset($errors['referrer_code'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['referrer_code']); ?></div>
                                     <?php endif; ?>
                                     <div id="referrer-feedback" class="small mt-1"></div>
@@ -357,8 +384,8 @@ PE html>
                             <h5 class="form-section-title mt-4">👥 Register As</h5>
 
                             <div class="row">
-                                <?php if(isset($userTypes)): ?>
-                                    <?php foreach($userTypes as $type => $config): ?>
+                                <?php if (isset($userTypes)): ?>
+                                    <?php foreach ($userTypes as $type => $config): ?>
                                         <div class="col-md-6 mb-3">
                                             <div class="role-card" data-role="<?php echo $type; ?>">
                                                 <div class="d-flex align-items-center">
@@ -377,7 +404,7 @@ PE html>
                             </div>
 
                             <input type="hidden" name="user_type" id="user_type" value="customer">
-                            <?php if(isset($errors['user_type'])): ?>
+                            <?php if (isset($errors['user_type'])): ?>
                                 <div class="text-danger small"><?php echo htmlspecialchars($errors['user_type']); ?></div>
                             <?php endif; ?>
 
@@ -418,12 +445,12 @@ PE html>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">License Number</label>
                                             <input type="text" class="form-control" name="license_number"
-                                                   value="<?php echo htmlspecialchars(Security::sanitize($_POST['license_number']) ?? ''); ?>" placeholder="Real Estate License">
+                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['license_number']) ?? ''); ?>" placeholder="Real Estate License">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Experience (Years)</label>
                                             <input type="number" class="form-control" name="experience"
-                                                   value="<?php echo htmlspecialchars(Security::sanitize($_POST['experience']) ?? ''); ?>" min="0" max="50">
+                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['experience']) ?? ''); ?>" min="0" max="50">
                                         </div>
                                     </div>
                                 </div>
@@ -435,14 +462,14 @@ PE html>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">PAN Number</label>
                                             <input type="text" class="form-control" name="pan_number"
-                                                   value="<?php echo htmlspecialchars(Security::sanitize($_POST['pan_number']) ?? ''); ?>" style="text-transform: uppercase;"
-                                                   placeholder="AAAAA0000A">
+                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['pan_number']) ?? ''); ?>" style="text-transform: uppercase;"
+                                                placeholder="AAAAA0000A">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Aadhar Number</label>
                                             <input type="text" class="form-control" name="aadhar_number"
-                                                   value="<?php echo htmlspecialchars(Security::sanitize($_POST['aadhar_number']) ?? ''); ?>" pattern="[0-9]{12}"
-                                                   placeholder="123456789012">
+                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['aadhar_number']) ?? ''); ?>" pattern="[0-9]{12}"
+                                                placeholder="123456789012">
                                         </div>
                                     </div>
                                 </div>
@@ -454,12 +481,12 @@ PE html>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Company Name</label>
                                             <input type="text" class="form-control" name="company_name"
-                                                   value="<?php echo htmlspecialchars(Security::sanitize($_POST['company_name']) ?? ''); ?>" placeholder="Your Company Name">
+                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['company_name']) ?? ''); ?>" placeholder="Your Company Name">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">RERA Registration</label>
                                             <input type="text" class="form-control" name="rera_registration"
-                                                   value="<?php echo htmlspecialchars(Security::sanitize($_POST['rera_registration']) ?? ''); ?>" placeholder="RERA Registration Number">
+                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['rera_registration']) ?? ''); ?>" placeholder="RERA Registration Number">
                                         </div>
                                     </div>
                                 </div>
@@ -497,7 +524,7 @@ PE html>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Password *</label>
                                     <input type="password" class="form-control" name="password" minlength="6" required>
-                                    <?php if(isset($errors['password'])): ?>
+                                    <?php if (isset($errors['password'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['password']); ?></div>
                                     <?php endif; ?>
                                     <small class="text-muted">Minimum 6 characters</small>
@@ -505,7 +532,7 @@ PE html>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Confirm Password *</label>
                                     <input type="password" class="form-control" name="confirm_password" minlength="6" required>
-                                    <?php if(isset($errors['confirm_password'])): ?>
+                                    <?php if (isset($errors['confirm_password'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['confirm_password']); ?></div>
                                     <?php endif; ?>
                                 </div>
@@ -520,7 +547,7 @@ PE html>
                                         and <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
                                     </label>
                                 </div>
-                                <?php if(isset($errors['terms'])): ?>
+                                <?php if (isset($errors['terms'])): ?>
                                     <div class="text-danger small"><?php echo htmlspecialchars($errors['terms']); ?></div>
                                 <?php endif; ?>
                             </div>
@@ -689,25 +716,27 @@ PE html>
 
             referrerTimeout = setTimeout(() => {
                 fetch('<?php echo BASE_URL; ?>/register/validate-referral', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '<?php echo $_SESSION['csrf_token'] ?? ''; ?>'
-                    },
-                    body: JSON.stringify({ code: code })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.valid) {
-                        feedback.innerHTML = `<span class="text-success">✅ Valid code - Referred by ${data.referrer.name}</span>`;
-                    } else {
-                        feedback.innerHTML = '<span class="text-danger">❌ Invalid referral code</span>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Referral validation error:', error);
-                    feedback.innerHTML = '<span class="text-warning">⚠️ Validation error</span>';
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '<?php echo $_SESSION['csrf_token'] ?? ''; ?>'
+                        },
+                        body: JSON.stringify({
+                            code: code
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.valid) {
+                            feedback.innerHTML = `<span class="text-success">✅ Valid code - Referred by ${data.referrer.name}</span>`;
+                        } else {
+                            feedback.innerHTML = '<span class="text-danger">❌ Invalid referral code</span>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Referral validation error:', error);
+                        feedback.innerHTML = '<span class="text-warning">⚠️ Validation error</span>';
+                    });
             }, 500);
         });
 
@@ -747,6 +776,7 @@ PE html>
 
 
 </body>
+
 </html>
 
 //
