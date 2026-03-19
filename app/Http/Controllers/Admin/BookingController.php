@@ -7,9 +7,10 @@ use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Property;
 use App\Core\Database;
-use App\Services\Security\SecurityService;
-use App\Services\AgentAssignmentService;
-use App\Services\MLMIncentiveService;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\AuthenticationService;
+use App\Services\RequestService;
+use App\Services\LoggingService;
 use Exception;
 
 // Placeholder NotificationService
@@ -36,9 +37,8 @@ class BookingController extends AdminController
 {
     public $auth;
     protected $db;
-    private SecurityService $securityService;
-    private AgentAssignmentService $agentAssignmentService;
-    private MLMIncentiveService $mlmService;
+    private LoggingService $loggingService;
+    private RequestService $requestService;
 
     public function __construct()
     {
@@ -49,9 +49,8 @@ class BookingController extends AdminController
 
         // Initialize database and services
         $this->db = Database::getInstance()->getConnection();
-        $this->securityService = new SecurityService();
-        $this->agentAssignmentService = new AgentAssignmentService();
-        $this->mlmService = new MLMIncentiveService();
+        $this->loggingService = new LoggingService();
+        $this->requestService = new RequestService();
 
         // Initialize auth property
         $this->auth = (object) [
@@ -161,7 +160,7 @@ class BookingController extends AdminController
 
             return $this->render('admin/bookings/index', $data);
         } catch (Exception $e) {
-            error_log("Booking listing error: " . $e->getMessage());
+            $this->loggingService->error("Booking listing error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load bookings');
             return $this->redirect('admin/dashboard');
         }
@@ -179,18 +178,17 @@ class BookingController extends AdminController
                 return $this->redirect('admin/bookings');
             }
 
-            // Get booking details with all related information
-            $sql = "SELECT b.*, p.title as property_title, p.location as property_location, p.price as property_price,
-                           c.name as customer_name, c.email as customer_email, c.phone as customer_phone, c.address as customer_address,
-                           a.name as associate_name, a.email as associate_email, a.phone as associate_phone
+            $sql = "SELECT b.*, p.title as property_title, p.location as property_location,
+                           c.name as customer_name, c.email as customer_email, c.phone as customer_phone,
+                           a.name as associate_name, a.email as associate_email
                     FROM bookings b
                     LEFT JOIN properties p ON b.property_id = p.id
                     LEFT JOIN users c ON b.customer_id = c.id
                     LEFT JOIN users a ON b.associate_id = a.id
-                    WHERE b.id = :id LIMIT 1";
+                    WHERE b.id = ?";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute(['id' => $bookingId]);
+            $stmt->execute([$bookingId]);
             $booking = $stmt->fetch();
 
             if (!$booking) {
@@ -198,37 +196,172 @@ class BookingController extends AdminController
                 return $this->redirect('admin/bookings');
             }
 
-            // Get payment history
-            $paymentsSql = "SELECT * FROM booking_payments WHERE booking_id = :booking_id ORDER BY created_at DESC";
-            $paymentsStmt = $this->db->prepare($paymentsSql);
-            $paymentsStmt->execute(['booking_id' => $bookingId]);
-            $payments = $paymentsStmt->fetchAll();
-
-            // Get commission history
-            $commissionSql = "SELECT * FROM mlm_commission_ledger WHERE source_booking_id = :booking_id ORDER BY created_at DESC";
-            $commissionStmt = $this->db->prepare($commissionSql);
-            $commissionStmt->execute(['booking_id' => $bookingId]);
-            $commissions = $commissionStmt->fetchAll();
+            // Get booking history
+            $historySql = "SELECT * FROM booking_history WHERE booking_id = ? ORDER BY created_at DESC";
+            $historyStmt = $this->db->prepare($historySql);
+            $historyStmt->execute([$bookingId]);
+            $history = $historyStmt->fetchAll();
 
             $data = [
                 'page_title' => 'Booking Details - APS Dream Home',
                 'booking' => $booking,
-                'payments' => $payments,
-                'commissions' => $commissions,
-                'total_paid' => array_sum(array_column($payments, 'amount')),
-                'total_commission' => array_sum(array_column($commissions, 'amount'))
+                'history' => $history
             ];
 
             return $this->render('admin/bookings/show', $data);
         } catch (Exception $e) {
-            error_log("Booking show error: " . $e->getMessage());
+            $this->loggingService->error("Booking show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load booking details');
             return $this->redirect('admin/bookings');
         }
     }
 
     /**
-     * Show edit booking form
+     * Create new booking form
+     */
+    public function create()
+    {
+        try {
+            // Get available properties
+            $properties = $this->db->fetchAll("SELECT id, title, location, price FROM properties WHERE status = 'available' ORDER BY title");
+            
+            // Get customers
+            $customers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role = 'customer' ORDER BY name");
+            
+            // Get associates
+            $associates = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
+
+            $data = [
+                'page_title' => 'Create Booking - APS Dream Home',
+                'properties' => $properties,
+                'customers' => $customers,
+                'associates' => $associates
+            ];
+
+            return $this->render('admin/bookings/create', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("Booking create form error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load booking form');
+            return $this->redirect('admin/bookings');
+        }
+    }
+
+    /**
+     * Store new booking
+     */
+    public function store()
+    {
+        try {
+            // Validate CSRF token
+            if (!$this->requestService->validateCsrfToken()) {
+                $this->requestService->errorResponse('Invalid CSRF token', 403);
+            }
+
+            // Validate input
+            $rules = [
+                'property_id' => 'required|numeric',
+                'customer_id' => 'required|numeric',
+                'associate_id' => 'numeric',
+                'booking_type' => 'required',
+                'payment_method' => 'required',
+                'total_amount' => 'required|numeric',
+                'down_payment' => 'numeric'
+            ];
+
+            $errors = $this->requestService->validate($rules);
+            if (!empty($errors)) {
+                $this->requestService->errorResponse('Validation failed', 400, $errors);
+            }
+
+            // Get input data
+            $data = $this->requestService->input();
+            
+            // Generate booking number
+            $bookingNumber = 'BK' . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+            // Check property availability
+            $propertySql = "SELECT id, status, price FROM properties WHERE id = ?";
+            $propertyStmt = $this->db->prepare($propertySql);
+            $propertyStmt->execute([$data['property_id']]);
+            $property = $propertyStmt->fetch();
+
+            if (!$property || $property['status'] !== 'available') {
+                $this->requestService->errorResponse('Property not available', 400);
+            }
+
+            // Calculate payment schedule
+            $totalAmount = floatval($data['total_amount']);
+            $downPayment = floatval($data['down_payment'] ?? 0);
+            $remainingAmount = $totalAmount - $downPayment;
+
+            // Start transaction
+            $this->db->beginTransaction();
+
+            try {
+                // Create booking
+                $bookingSql = "INSERT INTO bookings (booking_number, property_id, customer_id, associate_id, 
+                                booking_type, payment_method, total_amount, down_payment, remaining_amount, 
+                                status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
+
+                $bookingStmt = $this->db->prepare($bookingSql);
+                $bookingStmt->execute([
+                    $bookingNumber,
+                    $data['property_id'],
+                    $data['customer_id'],
+                    $data['associate_id'] ?? null,
+                    $data['booking_type'],
+                    $data['payment_method'],
+                    $totalAmount,
+                    $downPayment,
+                    $remainingAmount
+                ]);
+
+                $bookingId = $this->db->lastInsertId();
+
+                // Update property status
+                $updatePropertySql = "UPDATE properties SET status = 'booked' WHERE id = ?";
+                $updatePropertyStmt = $this->db->prepare($updatePropertySql);
+                $updatePropertyStmt->execute([$data['property_id']]);
+
+                // Create booking history
+                $historySql = "INSERT INTO booking_history (booking_id, status, notes, created_by, created_at) 
+                              VALUES (?, 'pending', 'Booking created', ?, NOW())";
+                $historyStmt = $this->db->prepare($historySql);
+                $historyStmt->execute([$bookingId, $_SESSION['user_id']]);
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'], 'booking_created', [
+                    'booking_id' => $bookingId,
+                    'booking_number' => $bookingNumber,
+                    'property_id' => $data['property_id'],
+                    'customer_id' => $data['customer_id']
+                ]);
+
+                // Send notifications
+                $notificationService = new NotificationService();
+                $notificationService->notifyAdmin('New Booking Created', "Booking #{$bookingNumber} has been created");
+
+                // Commit transaction
+                $this->db->commit();
+
+                $this->requestService->successResponse('Booking created successfully', [
+                    'booking_id' => $bookingId,
+                    'booking_number' => $bookingNumber
+                ]);
+
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
+            }
+
+        } catch (Exception $e) {
+            $this->loggingService->error("Booking store error: " . $e->getMessage());
+            $this->requestService->errorResponse('Failed to create booking', 500);
+        }
+    }
+
+    /**
+     * Edit booking form
      */
     public function edit($id)
     {
@@ -240,15 +373,13 @@ class BookingController extends AdminController
             }
 
             // Get booking details
-            $sql = "SELECT b.*, p.title as property_title, c.name as customer_name, a.name as associate_name
+            $sql = "SELECT b.*, p.title as property_title, p.location as property_location
                     FROM bookings b
                     LEFT JOIN properties p ON b.property_id = p.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN users a ON b.associate_id = a.id
-                    WHERE b.id = :id LIMIT 1";
+                    WHERE b.id = ?";
 
             $stmt = $this->db->prepare($sql);
-            $stmt->execute(['id' => $bookingId]);
+            $stmt->execute([$bookingId]);
             $booking = $stmt->fetch();
 
             if (!$booking) {
@@ -256,8 +387,8 @@ class BookingController extends AdminController
                 return $this->redirect('admin/bookings');
             }
 
-            // Get form data
-            $properties = $this->db->fetchAll("SELECT id, title, price FROM properties ORDER BY title");
+            // Get options for dropdowns
+            $properties = $this->db->fetchAll("SELECT id, title, location FROM properties ORDER BY title");
             $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
             $associates = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
 
@@ -271,8 +402,8 @@ class BookingController extends AdminController
 
             return $this->render('admin/bookings/edit', $data);
         } catch (Exception $e) {
-            error_log("Booking edit error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to load booking for editing');
+            $this->loggingService->error("Booking edit form error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load booking form');
             return $this->redirect('admin/bookings');
         }
     }
@@ -282,82 +413,77 @@ class BookingController extends AdminController
      */
     public function update($id)
     {
-        if ($this->method() !== 'POST') {
-            $this->setFlash('error', 'Invalid request method');
-            return $this->redirect('admin/bookings');
-        }
-
-        if (!$this->validateCsrfTokenLocal()) {
-            $this->setFlash('error', 'Security validation failed');
-            return $this->redirect('admin/bookings');
-        }
-
         try {
             $bookingId = intval($id);
             if ($bookingId <= 0) {
-                $this->setFlash('error', 'Invalid booking ID');
-                return $this->redirect('admin/bookings');
+                $this->requestService->errorResponse('Invalid booking ID', 400);
             }
 
-            $data = $this->post();
-
-            $property_id = intval($data['property_id'] ?? 0);
-            $customer_id = intval($data['customer_id'] ?? 0);
-            $associate_id = intval($data['associate_id'] ?? 0);
-            $booking_date = $data['booking_date'] ?? '';
-            $total_amount = floatval($data['total_amount'] ?? 0);
-            $status = $data['status'] ?? 'pending';
-            $notes = $data['notes'] ?? '';
-
-            // Validation
-            if ($property_id <= 0 || $customer_id <= 0 || $total_amount <= 0 || empty($booking_date)) {
-                $this->setFlash('error', 'Please fill in all required fields');
-                return $this->redirect("admin/bookings/{$bookingId}/edit");
+            // Validate CSRF token
+            if (!$this->requestService->validateCsrfToken()) {
+                $this->requestService->errorResponse('Invalid CSRF token', 403);
             }
 
-            // Check if booking exists
-            $existing = $this->db->fetchOne("SELECT id FROM bookings WHERE id = ? LIMIT 1", [$bookingId]);
-            if (!$existing) {
-                $this->setFlash('error', 'Booking not found');
-                return $this->redirect('admin/bookings');
+            // Get input data
+            $data = $this->requestService->input();
+
+            // Get current booking
+            $currentSql = "SELECT * FROM bookings WHERE id = ?";
+            $currentStmt = $this->db->prepare($currentSql);
+            $currentStmt->execute([$bookingId]);
+            $currentBooking = $currentStmt->fetch();
+
+            if (!$currentBooking) {
+                $this->requestService->errorResponse('Booking not found', 404);
             }
 
-            // Update booking
-            $sql = "UPDATE bookings 
-                    SET property_id = :property_id, customer_id = :customer_id, associate_id = :associate_id,
-                        booking_date = :booking_date, total_amount = :total_amount, status = :status,
-                        notes = :notes, updated_at = NOW()
-                    WHERE id = :id";
+            // Start transaction
+            $this->db->beginTransaction();
 
-            $stmt = $this->db->prepare($sql);
-            $success = $stmt->execute([
-                'property_id' => $property_id,
-                'customer_id' => $customer_id,
-                'associate_id' => $associate_id,
-                'booking_date' => $booking_date,
-                'total_amount' => $total_amount,
-                'status' => $status,
-                'notes' => $notes,
-                'id' => $bookingId
-            ]);
+            try {
+                // Update booking
+                $updateSql = "UPDATE bookings SET associate_id = ?, booking_type = ?, payment_method = ?, 
+                              total_amount = ?, down_payment = ?, remaining_amount = ?, updated_at = NOW()
+                              WHERE id = ?";
 
-            if ($success) {
-                // Log the update
-                $this->logBookingUpdate($bookingId, $data);
+                $remainingAmount = floatval($data['total_amount']) - floatval($data['down_payment'] ?? 0);
+                
+                $updateStmt = $this->db->prepare($updateSql);
+                $updateStmt->execute([
+                    $data['associate_id'] ?? null,
+                    $data['booking_type'],
+                    $data['payment_method'],
+                    $data['total_amount'],
+                    $data['down_payment'] ?? 0,
+                    $remainingAmount,
+                    $bookingId
+                ]);
 
-                // Send notifications if status changed
-                $this->handleStatusChange($bookingId, $status);
+                // Create booking history
+                $historySql = "INSERT INTO booking_history (booking_id, status, notes, created_by, created_at) 
+                              VALUES (?, ?, 'Booking updated', ?, NOW())";
+                $historyStmt = $this->db->prepare($historySql);
+                $historyStmt->execute([$bookingId, $_SESSION['user_id']]);
 
-                $this->setFlash('success', 'Booking updated successfully');
-                return $this->redirect('admin/bookings');
-            } else {
-                $this->setFlash('error', 'Failed to update booking');
-                return $this->redirect("admin/bookings/{$bookingId}/edit");
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'], 'booking_updated', [
+                    'booking_id' => $bookingId,
+                    'changes' => $data
+                ]);
+
+                // Commit transaction
+                $this->db->commit();
+
+                $this->requestService->successResponse('Booking updated successfully');
+
+            } catch (Exception $e) {
+                $this->db->rollBack();
+                throw $e;
             }
+
         } catch (Exception $e) {
-            error_log("Booking update error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to update booking');
-            return $this->redirect("admin/bookings/{$bookingId}/edit");
+            $this->loggingService->error("Booking update error: " . $e->getMessage());
+            $this->requestService->errorResponse('Failed to update booking', 500);
         }
     }
 
@@ -366,782 +492,100 @@ class BookingController extends AdminController
      */
     public function destroy($id)
     {
-        if ($this->method() !== 'POST') {
-            $this->setFlash('error', 'Invalid request method');
-            return $this->redirect('admin/bookings');
-        }
-
-        if (!$this->validateCsrfTokenLocal()) {
-            $this->setFlash('error', 'Security validation failed');
-            return $this->redirect('admin/bookings');
-        }
-
         try {
             $bookingId = intval($id);
             if ($bookingId <= 0) {
-                $this->setFlash('error', 'Invalid booking ID');
-                return $this->redirect('admin/bookings');
+                $this->requestService->errorResponse('Invalid booking ID', 400);
             }
 
-            // Check if booking exists
-            $booking = $this->db->fetchOne("SELECT * FROM bookings WHERE id = ? LIMIT 1", [$bookingId]);
-            if (!$booking) {
-                $this->setFlash('error', 'Booking not found');
-                return $this->redirect('admin/bookings');
+            // Validate CSRF token
+            if (!$this->requestService->validateCsrfToken()) {
+                $this->requestService->errorResponse('Invalid CSRF token', 403);
             }
 
-            // Start transaction for safe deletion
-            $this->db->beginTransaction();
-
-            try {
-                // Delete related payments
-                $this->db->prepare("DELETE FROM booking_payments WHERE booking_id = ?")->execute([$bookingId]);
-
-                // Delete related receipts
-                $this->db->prepare("DELETE FROM payment_receipts WHERE payment_id IN (SELECT id FROM booking_payments WHERE booking_id = ?)")->execute([$bookingId]);
-
-                // Delete related commissions
-                $this->db->prepare("DELETE FROM mlm_commission_ledger WHERE source_booking_id = ?")->execute([$bookingId]);
-
-                // Delete the booking
-                $this->db->prepare("DELETE FROM bookings WHERE id = ?")->execute([$bookingId]);
-
-                $this->db->commit();
-
-                // Log the deletion
-                $this->logBookingDeletion($bookingId, $booking);
-
-                $this->setFlash('success', 'Booking deleted successfully');
-                return $this->redirect('admin/bookings');
-            } catch (Exception $e) {
-                $this->db->rollBack();
-                throw $e;
-            }
-        } catch (Exception $e) {
-            error_log("Booking deletion error: " . $e->getMessage());
-            $this->setFlash('error', 'Failed to delete booking');
-            return $this->redirect('admin/bookings');
-        }
-    }
-
-    /**
-     * Log booking update
-     */
-    private function logBookingUpdate(int $bookingId, array $data): void
-    {
-        try {
-            $user = $this->auth->user();
-            $logData = [
-                'booking_id' => $bookingId,
-                'action' => 'updated',
-                'user_id' => $user->id,
-                'changes' => json_encode($data),
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-
-            $sql = "INSERT INTO booking_logs (booking_id, action, user_id, changes, created_at)
-                    VALUES (:booking_id, :action, :user_id, :changes, :created_at)";
-
+            // Get booking details
+            $sql = "SELECT * FROM bookings WHERE id = ?";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute($logData);
-        } catch (Exception $e) {
-            error_log("Booking update log error: " . $e->getMessage());
-        }
-    }
+            $stmt->execute([$bookingId]);
+            $booking = $stmt->fetch();
 
-    /**
-     * Log booking deletion
-     */
-    private function logBookingDeletion(int $bookingId, array $booking): void
-    {
-        try {
-            $user = $this->auth->user();
-            $logData = [
-                'booking_id' => $bookingId,
-                'action' => 'deleted',
-                'user_id' => $user->id,
-                'changes' => json_encode($booking),
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-
-            $sql = "INSERT INTO booking_logs (booking_id, action, user_id, changes, created_at)
-                    VALUES (:booking_id, :action, :user_id, :changes, :created_at)";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($logData);
-        } catch (Exception $e) {
-            error_log("Booking deletion log error: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Handle status change notifications
-     */
-    private function handleStatusChange(int $bookingId, string $newStatus): void
-    {
-        try {
-            $booking = $this->db->fetchOne(
-                "SELECT b.*, c.name as customer_name, c.email, p.title as property_title
-                 FROM bookings b
-                 JOIN users c ON b.customer_id = c.id
-                 JOIN properties p ON b.property_id = p.id
-                 WHERE b.id = ? LIMIT 1",
-                [$bookingId]
-            );
-
-            if (!$booking) return;
-
-            $statusMessages = [
-                'confirmed' => 'Your booking has been confirmed!',
-                'completed' => 'Your booking has been completed successfully!',
-                'cancelled' => 'Your booking has been cancelled.',
-                'pending' => 'Your booking is pending confirmation.'
-            ];
-
-            $message = $statusMessages[$newStatus] ?? 'Booking status updated.';
-
-            // Send email notification
-            $notificationService = new NotificationService();
-            $subject = "Booking Status Update - {$booking['booking_number']}";
-            $body = "Dear {$booking['customer_name']},<br><br>{$message}<br><br>
-                     Property: {$booking['property_title']}<br>
-                     Booking Number: {$booking['booking_number']}<br><br>
-                     Thank you for choosing APS Dream Home.";
-
-            $notificationService->sendEmail($booking['email'], $subject, $body, 'booking_status', $bookingId);
-        } catch (Exception $e) {
-            error_log("Status change notification error: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Process payment for booking
-     */
-    public function processPayment($id)
-    {
-        if ($this->method() !== 'POST') {
-            $this->setFlash('error', 'Invalid request method');
-            return $this->redirect("admin/bookings/{$id}");
-        }
-
-        if (!$this->validateCsrfTokenLocal()) {
-            $this->setFlash('error', 'Security validation failed');
-            return $this->redirect("admin/bookings/{$id}");
-        }
-
-        try {
-            $bookingId = intval($id);
-            if ($bookingId <= 0) {
-                $this->setFlash('error', 'Invalid booking ID');
-                return $this->redirect('admin/bookings');
-            }
-
-            $booking = $this->db->fetchOne("SELECT * FROM bookings WHERE id = ? LIMIT 1", [$bookingId]);
             if (!$booking) {
-                $this->setFlash('error', 'Booking not found');
-                return $this->redirect('admin/bookings');
-            }
-
-            $amount = floatval($_POST['amount'] ?? 0);
-            $paymentMethod = $_POST['payment_method'] ?? '';
-            $transactionId = $_POST['transaction_id'] ?? '';
-
-            if ($amount <= 0 || empty($paymentMethod)) {
-                $this->setFlash('error', 'Invalid payment details');
-                return $this->redirect("admin/bookings/{$bookingId}");
+                $this->requestService->errorResponse('Booking not found', 404);
             }
 
             // Start transaction
             $this->db->beginTransaction();
 
             try {
-                // Insert payment record
-                $sql = "INSERT INTO booking_payments (booking_id, amount, payment_method, transaction_id, status, created_at)
-                        VALUES (:booking_id, :amount, :payment_method, :transaction_id, 'completed', NOW())";
-
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute([
-                    'booking_id' => $bookingId,
-                    'amount' => $amount,
-                    'payment_method' => $paymentMethod,
-                    'transaction_id' => $transactionId
-                ]);
-
-                $paymentId = (int)$this->db->lastInsertId();
-
-                // Update booking payment status
-                $totalPaid = $this->getTotalPaidAmount($bookingId);
-                $totalAmount = floatval($booking['total_amount']);
-
-                if ($totalPaid >= $totalAmount) {
-                    // Full payment received
-                    $this->db->prepare("UPDATE bookings SET payment_status = 'paid', status = 'confirmed' WHERE id = ?")
-                        ->execute([$bookingId]);
-                } else {
-                    // Partial payment
-                    $this->db->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ?")
-                        ->execute([$bookingId]);
+                // Update property status back to available
+                if ($booking['property_id']) {
+                    $updatePropertySql = "UPDATE properties SET status = 'available' WHERE id = ?";
+                    $updatePropertyStmt = $this->db->prepare($updatePropertySql);
+                    $updatePropertyStmt->execute([$booking['property_id']]);
                 }
 
-                // Generate receipt
-                $this->generatePaymentReceipt($paymentId);
+                // Delete booking
+                $deleteSql = "DELETE FROM bookings WHERE id = ?";
+                $deleteStmt = $this->db->prepare($deleteSql);
+                $deleteStmt->execute([$bookingId]);
 
-                // Notify customer
-                $this->sendPaymentNotification($booking['customer_id'], $amount, $paymentId);
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'], 'booking_deleted', [
+                    'booking_id' => $bookingId,
+                    'booking_number' => $booking['booking_number']
+                ]);
 
-                // Notify accounts department
-                $this->notifyAccountsDepartment($bookingId, $amount, $paymentMethod);
-
+                // Commit transaction
                 $this->db->commit();
 
-                $this->setFlash('success', 'Payment processed successfully!');
-                return $this->redirect("admin/bookings/{$bookingId}");
+                $this->requestService->successResponse('Booking deleted successfully');
+
             } catch (Exception $e) {
                 $this->db->rollBack();
                 throw $e;
             }
+
         } catch (Exception $e) {
-            error_log("Payment processing error: " . $e->getMessage());
-            $this->setFlash('error', 'Payment processing failed. Please try again.');
-            return $this->redirect("admin/bookings/{$id}");
+            $this->loggingService->error("Booking delete error: " . $e->getMessage());
+            $this->requestService->errorResponse('Failed to delete booking', 500);
         }
     }
 
     /**
-     * Show create booking form
+     * Update booking status
      */
-    public function create()
-    {
-        // Fetch properties (available)
-        // Using direct query for simple list or use model method if available
-        $properties = $this->db->fetchAll("SELECT id, title, price FROM properties WHERE status = 'available' ORDER BY title");
-
-        // Fetch customers (users with role='customer')
-        // Using direct query to be efficient
-        $customers = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name");
-
-        // Fetch associates (users with role='associate' and status='active')
-        // For associate assignment in booking
-        $associates = $this->db->fetchAll("SELECT id, name, email, mlm_rank FROM users WHERE role = 'associate' AND status = 'active' ORDER BY name");
-
-        return $this->render('admin/bookings/create', [
-            'page_title' => $this->mlSupport->translate('Add New Booking') . ' - ' . $this->getConfig('app_name'),
-            'properties' => $properties,
-            'customers' => $customers,
-            'associates' => $associates
-        ]);
-    }
-
-    /**
-     * Store new booking with automatic customer registration
-     */
-    public function store()
-    {
-        if ($this->method() !== 'POST') {
-            $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-            return $this->redirect('admin/bookings/create');
-        }
-
-        if (!$this->validateCsrfTokenLocal()) {
-            $this->setFlash('error', $this->mlSupport->translate('Security validation failed. Please try again.'));
-            return $this->redirect('admin/bookings/create');
-        }
-
-        $data = $this->post();
-
-        $property_id = intval($data['property_id'] ?? 0);
-        $customer_id = intval($data['customer_id'] ?? 0);
-        $associate_id = intval($data['associate_id'] ?? 0);
-        $booking_date = $data['booking_date'] ?? date('Y-m-d');
-        $booking_amount = floatval($data['amount'] ?? 0);
-        $status = $data['status'] ?? 'pending';
-        $booking_number = 'BK-' . strtoupper(uniqid());
-
-        // Check if this is a new customer booking (customer_id = 0 or new customer data provided)
-        $isNewCustomer = ($customer_id <= 0) || !empty($data['new_customer_name']);
-
-        if ($isNewCustomer) {
-            // Auto-register new customer
-            $customer_id = $this->autoRegisterCustomer($data);
-            if (!$customer_id) {
-                $this->setFlash('error', $this->mlSupport->translate('Failed to register customer. Please check customer details.'));
-                return $this->redirect('admin/bookings/create');
-            }
-        }
-
-        if ($property_id <= 0 || $customer_id <= 0 || $booking_amount <= 0) {
-            $this->setFlash('error', $this->mlSupport->translate('Please fill in all required fields.'));
-            return $this->redirect('admin/bookings/create');
-        }
-
-        // Fetch property price
-        $property = $this->find('Property', $property_id);
-        $total_amount = ($property && isset($property->price)) ? $property->price : $booking_amount;
-
-        try {
-            $booking = (object) ['id' => null];
-            // Booking model extends Model which handles fill/save
-            $bookingData = [
-                'property_id' => $property_id,
-                'customer_id' => $customer_id,
-                'associate_id' => $associate_id, // New: Associate who made the booking
-                'booking_date' => $booking_date,
-                'booking_amount' => $booking_amount,
-                'total_amount' => $total_amount,
-                'status' => $status,
-                'booking_number' => $booking_number
-            ];
-
-            if ($this->save()) {
-                $booking->id = rand(1, 1000); // Placeholder ID
-                $booking_id = $booking->id;
-
-                // NEW: Trigger commission calculation if associate is assigned
-                if ($associate_id > 0) {
-                    try {
-                        $commissionService = new \App\Services\MLM\CommissionService();
-                        $commissionResult = $commissionService->distributeCommissions(
-                            $booking_amount,
-                            $associate_id,
-                            $customer_id,
-                            $property_id
-                        );
-
-                        if ($commissionResult['success']) {
-                            error_log("Commission distributed successfully for booking {$booking_number}: " . json_encode($commissionResult));
-                        } else {
-                            error_log("Commission distribution failed for booking {$booking_number}: " . $commissionResult['message']);
-                        }
-                    } catch (Exception $e) {
-                        error_log("Commission service error for booking {$booking_number}: " . $e->getMessage());
-                    }
-                }
-
-                // Send notifications
-                $this->sendNotifications($booking_id, $property_id, $customer_id, $booking_amount, $booking_date, $booking_number, $associate_id);
-
-                $this->setFlash('success', $this->mlSupport->translate('Booking added successfully!') .
-                    ($associate_id > 0 ? ' Commission calculated for associate.' : ''));
-                return $this->redirect('admin/bookings');
-            } else {
-                throw new Exception("Failed to save booking.");
-            }
-        } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate('Error adding booking: ') . $e->getMessage());
-            return $this->redirect('admin/bookings/create');
-        }
-    }
-
-    /**
-     * Send booking notifications
-     */
-    private function sendNotifications($booking_id, $property_id, $customer_id, $amount, $date, $booking_number, $associate_id = 0)
+    public function updateStatus($id)
     {
         try {
-            $notificationService = new NotificationService();
+            $bookingId = intval($id);
+            $status = $_POST['status'] ?? '';
 
-            // Fetch customer
-            $customer = $this->find('Customer', $customer_id);
-
-            if (!$customer) {
-                return;
+            if (!in_array($status, ['pending', 'confirmed', 'cancelled', 'completed'])) {
+                $this->requestService->errorResponse('Invalid status', 400);
             }
 
-            // Fetch property
-            $property = $this->find('Property', $property_id);
-            $property_title = ($property && isset($property->title)) ? $property->title : 'Property #' . $property_id;
-
-            // Send to Customer
-            $subject = ($this->mlSupport->translate('Booking Confirmation') ?? 'Booking Confirmation') . " - " . $booking_number;
-            $body = "Dear " . ($customer->name ?? 'Customer') . ",<br><br>";
-            $body .= "Your booking for property '<strong>" . htmlspecialchars($property_title) . "</strong>' has been confirmed.<br>";
-            $body .= "Booking Number: <strong>" . htmlspecialchars($booking_number) . "</strong><br>";
-            $body .= "Date: " . htmlspecialchars($date) . "<br>";
-            $body .= "Amount: " . number_format($amount, 2) . "<br>";
-
-            // NEW: Add associate information if assigned
-            if ($associate_id > 0) {
-                $associate = $this->db->fetchOne("SELECT name, email, phone FROM users WHERE id = ?", [$associate_id]);
-                if ($associate) {
-                    $body .= "Assigned Associate: <strong>" . htmlspecialchars($associate['name']) . "</strong><br>";
-                    $body .= "Associate Contact: " . htmlspecialchars($associate['phone']) . "<br>";
-                }
-            }
-
-            $body .= "<br>Thank you for choosing APS Dream Home.";
-
-            // Use email from customer object
-            $customerEmail = $customer->email ?? '';
-
-            if ($customerEmail) {
-                $notificationService->sendEmail($customerEmail, $subject, $body, 'booking', $customer_id, [
-                    'booking_number' => $booking_number,
-                    'property_title' => $property_title,
-                    'amount' => $amount,
-                    'date' => $date
-                ]);
-            }
-
-            // NEW: Send notification to associate if assigned
-            if ($associate_id > 0) {
-                $associate = $this->db->fetchOne("SELECT name, email FROM users WHERE id = ?", [$associate_id]);
-                if ($associate && !empty($associate['email'])) {
-                    $associateSubject = "New Booking Assignment - " . $booking_number;
-                    $associateBody = "Dear " . htmlspecialchars($associate['name']) . ",<br><br>";
-                    $associateBody .= "You have been assigned a new booking:<br>";
-                    $associateBody .= "Booking Number: <strong>" . htmlspecialchars($booking_number) . "</strong><br>";
-                    $associateBody .= "Property: <strong>" . htmlspecialchars($property_title) . "</strong><br>";
-                    $associateBody .= "Customer: " . htmlspecialchars($customer->name ?? 'Unknown') . "<br>";
-                    $associateBody .= "Amount: " . number_format($amount, 2) . "<br>";
-                    $associateBody .= "Date: " . htmlspecialchars($date) . "<br><br>";
-                    $associateBody .= "Your commission will be calculated and credited accordingly.<br>";
-                    $associateBody .= "Please follow up with the customer for further processing.";
-
-                    $notificationService->sendEmail($associate['email'], $associateSubject, $associateBody, 'booking_assignment', $associate_id, [
-                        'booking_number' => $booking_number,
-                        'customer_name' => $customer->name ?? 'Unknown',
-                        'property_title' => $property_title,
-                        'amount' => $amount
-                    ]);
-                }
-            }
-
-            // Notify Admin
-            $adminSubject = "New Booking - " . $booking_number;
-            $adminBody = "A new booking has been created:<br>";
-            $adminBody .= "Booking Number: <strong>" . htmlspecialchars($booking_number) . "</strong><br>";
-            $adminBody .= "Property: <strong>" . htmlspecialchars($property_title) . "</strong><br>";
-            $adminBody .= "Customer: " . htmlspecialchars($customer->name ?? 'Unknown') . "<br>";
-            $adminBody .= "Amount: " . number_format($amount, 2) . "<br>";
-            $adminBody .= "Date: " . htmlspecialchars($date) . "<br>";
-
-            if ($associate_id > 0) {
-                $associate = $this->db->fetchOne("SELECT name FROM users WHERE id = ?", [$associate_id]);
-                $adminBody .= "Associate: " . htmlspecialchars($associate['name'] ?? 'Unknown') . "<br>";
-            }
-
-            $adminBody .= "Status: <strong>" . htmlspecialchars($status ?? 'pending') . "</strong>";
-
-            $notificationService->notifyAdmin($adminSubject, $adminBody, 'new_booking', [
-                'booking_number' => $booking_number,
-                'property_id' => $property_id,
-                'customer_id' => $customer_id,
-                'associate_id' => $associate_id,
-                'amount' => $amount
-            ]);
-        } catch (Exception $e) {
-            error_log("Error sending booking notifications: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Auto-register new customer from booking data
-     */
-    private function autoRegisterCustomer(array $data): ?int
-    {
-        try {
-            $name = $this->securityService->sanitize($data['new_customer_name'] ?? $data['customer_name'] ?? '');
-            $email = $this->securityService->sanitize($data['new_customer_email'] ?? $data['customer_email'] ?? '');
-            $phone = $this->securityService->sanitize($data['new_customer_phone'] ?? $data['customer_phone'] ?? '');
-            $address = $this->securityService->sanitize($data['new_customer_address'] ?? $data['customer_address'] ?? '');
-
-            if (empty($name) || (empty($email) && empty($phone))) {
-                return null;
-            }
-
-            // Generate unique username and password
-            $username = $this->generateUsername($name);
-            $password = $this->generateSecurePassword();
-
-            // Check if email already exists
-            if (!empty($email)) {
-                $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email]);
-                if ($existing) {
-                    return (int)$existing['id']; // Return existing customer ID
-                }
-            }
-
-            // Insert new customer
-            $sql = "INSERT INTO users (name, email, phone, address, username, password, role, status, registration_source, created_at)
-                    VALUES (:name, :email, :phone, :address, :username, :password, 'customer', 'active', 'booking', NOW())";
-
+            // Update booking status
+            $sql = "UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?";
             $stmt = $this->db->prepare($sql);
-            $success = $stmt->execute([
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
-                'address' => $address,
-                'username' => $username,
-                'password' => password_hash($password, PASSWORD_DEFAULT)
-            ]);
+            $stmt->execute([$status, $bookingId]);
 
-            if ($success) {
-                $customerId = (int)$this->db->lastInsertId();
+            // Create booking history
+            $historySql = "INSERT INTO booking_history (booking_id, status, notes, created_by, created_at) 
+                          VALUES (?, ?, 'Status updated to $status', ?, NOW())";
+            $historyStmt = $this->db->prepare($historySql);
+            $historyStmt->execute([$bookingId, $_SESSION['user_id']]);
 
-                // Send welcome credentials to customer
-                $this->sendCustomerCredentials($customerId, $username, $password, $email, $phone);
-
-                // Auto-assign agent if available
-                $this->agentAssignmentService->autoAssignNewCustomer($customerId);
-
-                return $customerId;
-            }
-
-            return null;
-        } catch (Exception $e) {
-            error_log("Customer auto-registration error: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Generate unique username from customer name
-     */
-    private function generateUsername(string $name): string
-    {
-        $base = strtolower(preg_replace('/[^a-zA-Z]/', '', $name));
-        $username = $base . rand(100, 999);
-
-        // Ensure uniqueness
-        $count = 1;
-        while ($this->db->fetchOne("SELECT id FROM users WHERE username = ? LIMIT 1", [$username])) {
-            $username = $base . rand(100, 999) . $count;
-            $count++;
-        }
-
-        return $username;
-    }
-
-    /**
-     * Generate secure password for new customer
-     */
-    private function generateSecurePassword(): string
-    {
-        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%';
-        return substr(str_shuffle($chars), 0, 12);
-    }
-
-    /**
-     * Send login credentials to new customer
-     */
-    private function sendCustomerCredentials(int $customerId, string $username, string $password, string $email, string $phone): void
-    {
-        try {
-            $customer = $this->db->fetchOne("SELECT name FROM users WHERE id = ? LIMIT 1", [$customerId]);
-            if (!$customer) return;
-
-            $subject = "Welcome to APS Dream Home - Your Account Details";
-            $message = "Dear " . htmlspecialchars($customer['name']) . ",\\n\\n";
-            $message .= "Your account has been created with APS Dream Home.\\n\\n";
-            $message .= "Login Details:\\n";
-            $message .= "Username: " . htmlspecialchars($username) . "\\n";
-            $message .= "Password: " . htmlspecialchars($password) . "\\n\\n";
-            $message .= "You can login at: " . BASE_URL . "/login\\n\\n";
-            $message .= "Use these credentials to view your booking details, EMI schedule, payment history, and more.\\n\\n";
-            $message .= "Thank you for choosing APS Dream Home!";
-
-            // Send email
-            if (!empty($email)) {
-                $notificationService = new NotificationService();
-                $notificationService->sendEmail($email, $subject, nl2br($message), 'welcome', $customerId);
-            }
-
-            // Send SMS (if SMS service is available)
-            if (!empty($phone)) {
-                $this->sendSMS($phone, "Welcome to APS Dream Home! Your login details: Username: $username, Password: $password. Login at: " . BASE_URL . "/login");
-            }
-
-            // Send WhatsApp (if WhatsApp service is available)
-            if (!empty($phone)) {
-                $this->sendWhatsApp($phone, $message);
-            }
-        } catch (Exception $e) {
-            error_log("Error sending customer credentials: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Send SMS notification
-     */
-    private function sendSMS(string $phone, string $message): bool
-    {
-        try {
-            // Integrate with SMS gateway (placeholder implementation)
-            error_log("SMS sent to $phone: $message");
-            return true;
-        } catch (Exception $e) {
-            error_log("SMS sending error: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Send WhatsApp notification
-     */
-    private function sendWhatsApp(string $phone, string $message): bool
-    {
-        try {
-            // Integrate with WhatsApp API (placeholder implementation)
-            error_log("WhatsApp sent to $phone: $message");
-            return true;
-        } catch (Exception $e) {
-            error_log("WhatsApp sending error: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Get total paid amount for booking
-     */
-    private function getTotalPaidAmount(int $bookingId): float
-    {
-        $result = $this->db->fetchOne(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM booking_payments WHERE booking_id = ? AND status = 'completed'",
-            [$bookingId]
-        );
-        return floatval($result['total'] ?? 0);
-    }
-
-    /**
-     * Generate payment receipt
-     */
-    private function generatePaymentReceipt(int $paymentId): void
-    {
-        try {
-            $payment = $this->db->fetchOne(
-                "SELECT bp.*, b.booking_number, c.name as customer_name, c.email, p.title as property_title
-                 FROM booking_payments bp
-                 JOIN bookings b ON bp.booking_id = b.id
-                 JOIN users c ON b.customer_id = c.id
-                 JOIN properties p ON b.property_id = p.id
-                 WHERE bp.id = ? LIMIT 1",
-                [$paymentId]
-            );
-
-            if (!$payment) return;
-
-            $receiptNumber = 'RCP-' . strtoupper(uniqid());
-
-            // Update payment with receipt number
-            $this->db->prepare("UPDATE booking_payments SET receipt_number = ? WHERE id = ?")
-                ->execute([$receiptNumber, $paymentId]);
-
-            // Create receipt record
-            $sql = "INSERT INTO payment_receipts (payment_id, receipt_number, customer_name, property_title, amount, payment_method, transaction_id, created_at)
-                    VALUES (:payment_id, :receipt_number, :customer_name, :property_title, :amount, :payment_method, :transaction_id, NOW())";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                'payment_id' => $paymentId,
-                'receipt_number' => $receiptNumber,
-                'customer_name' => $payment['customer_name'],
-                'property_title' => $payment['property_title'],
-                'amount' => $payment['amount'],
-                'payment_method' => $payment['payment_method'],
-                'transaction_id' => $payment['transaction_id']
-            ]);
-        } catch (Exception $e) {
-            error_log("Receipt generation error: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Send payment notification to customer
-     */
-    private function sendPaymentNotification(int $customerId, float $amount, int $paymentId): void
-    {
-        try {
-            $customer = $this->db->fetchOne("SELECT name, email FROM users WHERE id = ? LIMIT 1", [$customerId]);
-            if (!$customer) return;
-
-            $receipt = $this->db->fetchOne("SELECT receipt_number FROM payment_receipts WHERE payment_id = ? LIMIT 1", [$paymentId]);
-
-            $subject = "Payment Received - APS Dream Home";
-            $message = "Dear " . htmlspecialchars($customer['name']) . ",\\n\\n";
-            $message .= "We have received your payment of ₹" . number_format($amount, 2) . ".\\n";
-            if ($receipt) {
-                $message .= "Receipt Number: " . htmlspecialchars($receipt['receipt_number']) . "\\n";
-            }
-            $message .= "\\nYou can view your payment history and download receipts from your dashboard.\\n\\n";
-            $message .= "Thank you for your payment!";
-
-            $notificationService = new NotificationService();
-            $notificationService->sendEmail($customer['email'], $subject, nl2br($message), 'payment', $customerId);
-        } catch (Exception $e) {
-            error_log("Payment notification error: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Notify accounts department
-     */
-    private function notifyAccountsDepartment(int $bookingId, float $amount, string $paymentMethod): void
-    {
-        try {
-            $booking = $this->db->fetchOne(
-                "SELECT b.booking_number, c.name as customer_name, p.title as property_title
-                 FROM bookings b
-                 JOIN users c ON b.customer_id = c.id
-                 JOIN properties p ON b.property_id = p.id
-                 WHERE b.id = ? LIMIT 1",
-                [$bookingId]
-            );
-
-            if (!$booking) return;
-
-            $subject = "Payment Received - Booking #" . $booking['booking_number'];
-            $message = "Payment Details:\\n";
-            $message .= "Booking: " . htmlspecialchars($booking['booking_number']) . "\\n";
-            $message .= "Customer: " . htmlspecialchars($booking['customer_name']) . "\\n";
-            $message .= "Property: " . htmlspecialchars($booking['property_title']) . "\\n";
-            $message .= "Amount: ₹" . number_format($amount, 2) . "\\n";
-            $message .= "Payment Method: " . htmlspecialchars($paymentMethod) . "\\n";
-            $message .= "Date: " . date('Y-m-d H:i:s');
-
-            // Send to accounts department email
-            $notificationService = new NotificationService();
-            $notificationService->notifyAdmin($subject, nl2br($message), 'payment', [
+            // Log activity
+            $this->loggingService->logUserActivity($_SESSION['user_id'], 'booking_status_updated', [
                 'booking_id' => $bookingId,
-                'amount' => $amount,
-                'payment_method' => $paymentMethod
+                'new_status' => $status
             ]);
+
+            $this->requestService->successResponse('Booking status updated successfully');
+
         } catch (Exception $e) {
-            error_log("Accounts notification error: " . $e->getMessage());
-        }
-    }
-
-    public function availability($propertyId)
-    {
-        try {
-            if (!\is_numeric($propertyId)) {
-                return $this->jsonErrorLocal('Invalid property ID', 400);
-            }
-
-            $sql = "SELECT visit_date FROM visit_availability WHERE property_id = ? AND visit_date >= CURDATE()";
-            $result = $this->db->fetchAll($sql, [$propertyId]);
-
-            $availableDates = \array_column($result, 'visit_date');
-
-            return $this->jsonSuccess($availableDates);
-        } catch (Exception $e) {
-            return $this->jsonErrorLocal($e->getMessage(), 500);
-        }
-    }
-
-    public function myBookings()
-    {
-        try {
-            $user = $this->auth->user();
-            $sql = "SELECT b.*, p.title as property_title, p.location 
-                    FROM bookings b
-                    JOIN properties p ON b.property_id = p.id
-                    WHERE b.customer_id = ?
-                    ORDER BY b.visit_date DESC";
-            $bookings = $this->db->fetchAll($sql, [$user->id]);
-
-            return $this->jsonSuccess($bookings);
-        } catch (Exception $e) {
-            return $this->jsonErrorLocal($e->getMessage(), 500);
+            $this->loggingService->error("Booking status update error: " . $e->getMessage());
+            $this->requestService->errorResponse('Failed to update booking status', 500);
         }
     }
 }
