@@ -540,7 +540,9 @@ class BookingController extends AdminController
                 return $this->redirect('admin/bookings');
             }
 
-            $booking = $this->db->fetchOne("SELECT * FROM bookings WHERE id = ? LIMIT 1", [$bookingId]);
+            $stmt = $this->db->prepare("SELECT * FROM bookings WHERE id = ? LIMIT 1");
+            $stmt->execute([$bookingId]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$booking) {
                 $this->setFlash('error', 'Booking not found');
                 return $this->redirect('admin/bookings');
@@ -679,7 +681,9 @@ class BookingController extends AdminController
         }
 
         // Fetch property price
-        $property = $this->db->fetchOne("SELECT price FROM properties WHERE id = ? LIMIT 1", [$property_id]);
+        $stmt = $this->db->prepare("SELECT price FROM properties WHERE id = ? LIMIT 1");
+        $stmt->execute([$property_id]);
+        $property = $stmt->fetch(\PDO::FETCH_ASSOC);
         $total_amount = ($property && isset($property['price'])) ? $property['price'] : $booking_amount;
 
         try {
@@ -736,14 +740,18 @@ class BookingController extends AdminController
             $notificationService = new NotificationService();
 
             // Fetch customer
-            $customer = $this->db->fetchOne("SELECT name, email FROM users WHERE id = ? LIMIT 1", [$customer_id]);
+            $stmt = $this->db->prepare("SELECT name, email FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$customer_id]);
+            $customer = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$customer) {
                 return;
             }
 
             // Fetch property
-            $property = $this->db->fetchOne("SELECT title FROM properties WHERE id = ? LIMIT 1", [$property_id]);
+            $stmt = $this->db->prepare("SELECT title FROM properties WHERE id = ? LIMIT 1");
+            $stmt->execute([$property_id]);
+            $property = $stmt->fetch(\PDO::FETCH_ASSOC);
             $property_title = ($property && isset($property['title'])) ? $property['title'] : 'Property #' . $property_id;
 
             // Send to Customer
@@ -756,7 +764,9 @@ class BookingController extends AdminController
 
             // Add associate information if assigned
             if ($associate_id > 0) {
-                $associate = $this->db->fetchOne("SELECT name, email, phone FROM users WHERE id = ?", [$associate_id]);
+                $stmt = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ?");
+                $stmt->execute([$associate_id]);
+                $associate = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if ($associate) {
                     $body .= "Assigned Associate: <strong>" . htmlspecialchars($associate['name']) . "</strong><br>";
                     $body .= "Associate Contact: " . htmlspecialchars($associate['phone']) . "<br>";
@@ -779,7 +789,9 @@ class BookingController extends AdminController
 
             // Send notification to associate if assigned
             if ($associate_id > 0) {
-                $associate = $this->db->fetchOne("SELECT name, email FROM users WHERE id = ?", [$associate_id]);
+                $stmt = $this->db->prepare("SELECT name, email FROM users WHERE id = ?");
+                $stmt->execute([$associate_id]);
+                $associate = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if ($associate && !empty($associate['email'])) {
                     $associateSubject = "New Booking Assignment - " . $booking_number;
                     $associateBody = "Dear " . htmlspecialchars($associate['name']) . ",<br><br>";
@@ -811,7 +823,9 @@ class BookingController extends AdminController
             $adminBody .= "Date: " . htmlspecialchars($date) . "<br>";
 
             if ($associate_id > 0) {
-                $associate = $this->db->fetchOne("SELECT name FROM users WHERE id = ?", [$associate_id]);
+                $stmt = $this->db->prepare("SELECT name FROM users WHERE id = ?");
+                $stmt->execute([$associate_id]);
+                $associate = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $adminBody .= "Associate: " . htmlspecialchars($associate['name'] ?? 'Unknown') . "<br>";
             }
 
@@ -850,7 +864,9 @@ class BookingController extends AdminController
 
             // Check if email already exists
             if (!empty($email)) {
-                $existing = $this->db->fetchOne("SELECT id FROM users WHERE email = ? LIMIT 1", [$email]);
+                $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+                $stmt->execute([$email]);
+                $existing = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if ($existing) {
                     return (int)$existing['id']; // Return existing customer ID
                 }
@@ -896,7 +912,9 @@ class BookingController extends AdminController
 
         // Ensure uniqueness
         $count = 1;
-        while ($this->db->fetchOne("SELECT id FROM users WHERE username = ? LIMIT 1", [$username])) {
+        $stmt = $this->db->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
+        $stmt->execute([$username]);
+        while ($stmt->fetch(\PDO::FETCH_ASSOC)) {
             $username = $base . rand(100, 999) . $count;
             $count++;
         }
@@ -987,10 +1005,11 @@ class BookingController extends AdminController
      */
     private function getTotalPaidAmount(int $bookingId): float
     {
-        $result = $this->db->fetchOne(
-            "SELECT COALESCE(SUM(amount), 0) as total FROM booking_payments WHERE booking_id = ? AND status = 'completed'",
-            [$bookingId]
+        $stmt = $this->db->prepare(
+            "SELECT COALESCE(SUM(amount), 0) as total FROM booking_payments WHERE booking_id = ? AND status = 'completed'"
         );
+        $stmt->execute([$bookingId]);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
         return floatval($result['total'] ?? 0);
     }
 
@@ -1000,15 +1019,16 @@ class BookingController extends AdminController
     private function generatePaymentReceipt(int $paymentId): void
     {
         try {
-            $payment = $this->db->fetchOne(
+            $stmt = $this->db->prepare(
                 "SELECT bp.*, b.booking_number, c.name as customer_name, c.email, p.title as property_title
                  FROM booking_payments bp
                  JOIN bookings b ON bp.booking_id = b.id
                  JOIN users c ON b.customer_id = c.id
                  JOIN properties p ON b.property_id = p.id
-                 WHERE bp.id = ? LIMIT 1",
-                [$paymentId]
+                 WHERE bp.id = ? LIMIT 1"
             );
+            $stmt->execute([$paymentId]);
+            $payment = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$payment) return;
 
@@ -1043,10 +1063,14 @@ class BookingController extends AdminController
     private function sendPaymentNotification(int $customerId, float $amount, int $paymentId): void
     {
         try {
-            $customer = $this->db->fetchOne("SELECT name, email FROM users WHERE id = ? LIMIT 1", [$customerId]);
+            $stmt = $this->db->prepare("SELECT name, email FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$customerId]);
+            $customer = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$customer) return;
 
-            $receipt = $this->db->fetchOne("SELECT receipt_number FROM payment_receipts WHERE payment_id = ? LIMIT 1", [$paymentId]);
+            $stmt = $this->db->prepare("SELECT receipt_number FROM payment_receipts WHERE payment_id = ? LIMIT 1");
+            $stmt->execute([$paymentId]);
+            $receipt = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $subject = "Payment Received - APS Dream Home";
             $message = "Dear " . htmlspecialchars($customer['name']) . ",\n\n";
@@ -1070,14 +1094,15 @@ class BookingController extends AdminController
     private function notifyAccountsDepartment(int $bookingId, float $amount, string $paymentMethod): void
     {
         try {
-            $booking = $this->db->fetchOne(
+            $stmt = $this->db->prepare(
                 "SELECT b.booking_number, c.name as customer_name, p.title as property_title
                  FROM bookings b
                  JOIN users c ON b.customer_id = c.id
                  JOIN properties p ON b.property_id = p.id
-                 WHERE b.id = ? LIMIT 1",
-                [$bookingId]
+                 WHERE b.id = ? LIMIT 1"
             );
+            $stmt->execute([$bookingId]);
+            $booking = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$booking) return;
 
@@ -1110,7 +1135,9 @@ class BookingController extends AdminController
             }
 
             $sql = "SELECT visit_date FROM visit_availability WHERE property_id = ? AND visit_date >= CURDATE()";
-            $result = $this->db->fetchAll($sql, [$propertyId]);
+            $stmt = $this->db->prepare("SELECT visit_date FROM visit_availability WHERE property_id = ? AND visit_date >= CURDATE()");
+            $stmt->execute([$propertyId]);
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             $availableDates = \array_column($result, 'visit_date');
 
@@ -1129,7 +1156,15 @@ class BookingController extends AdminController
                     JOIN properties p ON b.property_id = p.id
                     WHERE b.customer_id = ?
                     ORDER BY b.visit_date DESC";
-            $bookings = $this->db->fetchAll($sql, [$user->id]);
+            $stmt = $this->db->prepare(
+                "SELECT b.*, p.title as property_title, p.location 
+                    FROM bookings b
+                    JOIN properties p ON b.property_id = p.id
+                    WHERE b.customer_id = ?
+                    ORDER BY b.visit_date DESC"
+            );
+            $stmt->execute([$user->id]);
+            $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonSuccess($bookings);
         } catch (Exception $e) {
@@ -1138,7 +1173,7 @@ class BookingController extends AdminController
     }
 
     // Helper methods for CSRF validation and JSON responses
-    private function validateCsrfTokenLocal(): bool
+    protected function validateCsrfTokenLocal(): bool
     {
         $token = $_POST['_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
         return $token === ($_SESSION['csrf_token'] ?? '');

@@ -15,14 +15,12 @@ use Exception;
 class EngagementController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
@@ -306,7 +304,8 @@ class EngagementController extends AdminController
                         COUNT(CASE WHEN last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as monthly_active,
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users
                     FROM users";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['user_engagement'] = $result ?: [];
 
             // Sales performance metrics
@@ -316,7 +315,8 @@ class EngagementController extends AdminController
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as sales_this_month,
                         COALESCE(SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN amount END), 0) as revenue_this_month
                     FROM sales";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['sales_performance'] = $result ?: [];
 
             // Network growth metrics
@@ -325,7 +325,8 @@ class EngagementController extends AdminController
                         COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_connections,
                         AVG(CASE WHEN parent_id IS NOT NULL THEN 1 ELSE 0 END) * 100 as participation_rate
                     FROM users";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['network_growth'] = $result ?: [];
 
             // Goal achievement metrics
@@ -334,7 +335,8 @@ class EngagementController extends AdminController
                         COUNT(CASE WHEN current_value >= target_value THEN 1 END) as achieved_goals,
                         AVG(CASE WHEN target_value > 0 THEN (current_value / target_value) * 100 ELSE 0 END) as average_progress
                     FROM engagement_goals WHERE status = 'active'";
-            $result = $this->db->fetchOne($sql);
+            $stmt = $this->db->query($sql);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stats['goal_achievement'] = $result ?: [];
 
             return $this->jsonResponse([
@@ -358,11 +360,11 @@ class EngagementController extends AdminController
         try {
             $currentValue = floatval($goal['current_value'] ?? 0);
             $targetValue = floatval($goal['target_value'] ?? 1);
-            
+
             if ($targetValue <= 0) {
                 return 0;
             }
-            
+
             return min(($currentValue / $targetValue) * 100, 100);
         } catch (Exception $e) {
             return 0;

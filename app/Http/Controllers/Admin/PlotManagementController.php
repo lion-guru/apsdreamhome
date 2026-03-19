@@ -15,14 +15,12 @@ use Exception;
 class PlotManagementController extends AdminController
 {
     private $loggingService;
-    private $db;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
-        $this->db = Database::getInstance()->getConnection();
-        
+
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'bulkUpdate']]);
     }
@@ -265,7 +263,6 @@ class PlotManagementController extends AdminController
                     $sql = "UPDATE plots SET status = 'allocated', updated_at = NOW() WHERE id = ?";
                     $stmt = $this->db->prepare($sql);
                     $stmt->execute([$allocation['plot_id']]);
-
                 } elseif ($action === 'reject') {
                     // Update allocation status
                     $sql = "UPDATE plot_allocations 
@@ -273,7 +270,6 @@ class PlotManagementController extends AdminController
                             WHERE id = ?";
                     $stmt = $this->db->prepare($sql);
                     $stmt->execute([$_SESSION['user_id'] ?? 0, $notes, $allocationId]);
-
                 } else {
                     $this->db->rollBack();
                     return $this->jsonError('Invalid action', 400);
@@ -411,10 +407,10 @@ class PlotManagementController extends AdminController
                     $sql = "UPDATE plots SET status = ?, updated_at = NOW() WHERE id = ?";
                     $stmt = $this->db->prepare($sql);
                     $result = $stmt->execute([$status, (int)$plotId]);
-                    
+
                     if ($result) {
                         $updated++;
-                        
+
                         // Log each update
                         $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_bulk_updated', [
                             'plot_id' => $plotId,
@@ -532,7 +528,7 @@ class PlotManagementController extends AdminController
             $activities = array_merge($activities, $this->db->fetchAll($sql) ?: []);
 
             // Sort by date and limit
-            usort($activities, function($a, $b) {
+            usort($activities, function ($a, $b) {
                 return strtotime($b['created_at']) - strtotime($a['created_at']);
             });
 
@@ -654,22 +650,22 @@ class PlotManagementController extends AdminController
     private function exportCSV(array $data, string $type, string $startDate, string $endDate): void
     {
         $filename = "plot_management_{$type}_{$startDate}_to_{$endDate}.csv";
-        
+
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         $output = fopen('php://output', 'w');
-        
+
         if (!empty($data)) {
             // Header row
             fputcsv($output, array_keys($data[0]));
-            
+
             // Data rows
             foreach ($data as $row) {
                 fputcsv($output, $row);
             }
         }
-        
+
         fclose($output);
         exit;
     }
@@ -680,39 +676,17 @@ class PlotManagementController extends AdminController
     private function exportJSON(array $data, string $type, string $startDate, string $endDate): void
     {
         $filename = "plot_management_{$type}_{$startDate}_to_{$endDate}.json";
-        
+
         header('Content-Type: application/json');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
+
         echo json_encode([
             'type' => $type,
             'period' => ['start' => $startDate, 'end' => $endDate],
             'data' => $data,
             'exported_at' => date('Y-m-d H:i:s')
         ]);
-        
-        exit;
-    }
 
-    /**
-     * JSON response helper
-     */
-    private function jsonResponse(array $data, int $statusCode = 200): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-
-    /**
-     * JSON error helper
-     */
-    private function jsonError(string $message, int $statusCode = 400): void
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => $message]);
         exit;
     }
 }
