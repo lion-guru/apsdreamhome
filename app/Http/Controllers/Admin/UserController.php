@@ -2,420 +2,533 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
+use App\Http\Controllers\Admin\AdminController;
+use App\Services\CoreFunctionsServiceCustom;
+use App\Services\LoggingService;
+use App\Core\Database;
 use Exception;
 
+/**
+ * User Controller - Custom MVC Implementation
+ * Handles user management operations in Admin panel
+ */
 class UserController extends AdminController
 {
+    private $loggingService;
+    private $db;
+
     public function __construct()
     {
         parent::__construct();
-        // AdminController handles auth check
+        $this->loggingService = new LoggingService();
+        $this->db = Database::getInstance()->getConnection();
+        
+        // Register middlewares
+        $this->middleware('csrf', ['only' => ['store', 'update', 'destroy']]);
     }
 
     /**
-     * List all users
+     * Display a listing of users
      */
     public function index()
     {
-        $stmt = $this->db->query("SELECT * FROM users ORDER BY created_at DESC");
-        $users = $stmt->fetchAll();
-
-        return $this->render('admin/users/index', [
-            'users' => $users,
-            'page_title' => $this->mlSupport->translate('User Management') . ' - ' . $this->getConfig('app_name')
-        ]);
-    }
-
-    /**
-     * Show create user form
-     */
-    public function create()
-    {
-        return $this->render('admin/users/create', [
-            'page_title' => $this->mlSupport->translate('Add New User') . ' - ' . $this->getConfig('app_name')
-        ]);
-    }
-
-    /**
-     * Store new user
-     */
-    public function store()
-    {
         try {
-            if ($this->request->method() !== 'POST') {
-                $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-                $this->redirect('/admin/users/create');
-                return;
+            $search = $_GET['search'] ?? '';
+            $role = $_GET['role'] ?? '';
+            $status = $_GET['status'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $perPage = (int)($_GET['per_page'] ?? 20);
+
+            $offset = ($page - 1) * $perPage;
+
+            // Build query
+            $sql = "SELECT u.*,
+                           COUNT(p.id) as property_count,
+                           (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count
+                    FROM users u
+                    LEFT JOIN properties p ON u.id = p.created_by
+                    WHERE 1=1";
+            $params = [];
+
+            // Apply filters
+            if (!empty($search)) {
+                $sql .= " AND (u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
+                $searchParam = '%' . $search . '%';
+                $params[] = $searchParam;
+                $params[] = $searchParam;
+                $params[] = $searchParam;
             }
 
-            if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
-                $this->redirect('/admin/users/create');
-                return;
+            if (!empty($role)) {
+                $sql .= " AND u.role = ?";
+                $params[] = $role;
             }
 
-            $data = $this->request->post();
-
-            // Basic validation
-            if (empty($data['username']) || empty($data['email']) || empty($data['password'])) {
-                $this->setFlash('error', $this->mlSupport->translate("Username, Email and Password are required."));
-                $this->redirect('/admin/users/create');
-                return;
+            if (!empty($status)) {
+                $sql .= " AND u.status = ?";
+                $params[] = $status;
             }
 
-            // Check if email or username already exists
-            $stmt = $this->db->prepare("SELECT id FROM users WHERE email = :email OR username = :username");
-            $stmt->execute([
-                ':email' => $data['email'],
-                ':username' => $data['username']
-            ]);
-            if ($stmt->fetch()) {
-                $this->setFlash('error', $this->mlSupport->translate("Email or Username already exists."));
-                $this->redirect('/admin/users/create');
-                return;
-            }
+            $sql .= " ORDER BY u.created_at DESC";
 
-            // Default role and status
-            $role = $data['role'] ?? 'customer';
-            $status = $data['status'] ?? 'active';
-            $mobile = $data['mobile'] ?? '';
+            // Count total
+            $countSql = str_replace("SELECT u.*, COUNT(p.id) as property_count, (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count", "SELECT COUNT(DISTINCT u.id) as total", $sql);
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
+            $total = $countStmt->fetch()['total'];
 
-            // Insert user
-            $sql = "INSERT INTO users (username, email, password, mobile, role, status, created_at, updated_at) 
-                    VALUES (:username, :email, :password, :mobile, :role, :status, NOW(), NOW())";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':username' => $data['username'],
-                ':email' => $data['email'],
-                ':password' => password_hash($data['password'], PASSWORD_DEFAULT),
-                ':mobile' => $mobile,
-                ':role' => $role,
-                ':status' => $status
-            ]);
-
-            $this->setFlash('success', $this->mlSupport->translate("User created successfully!"));
-            $this->redirect('/admin/users');
-        } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate("Error creating user: ") . $e->getMessage());
-            $this->redirect('/admin/users/create');
-        }
-    }
-
-    /**
-     * Show edit user form
-     */
-    public function edit($id)
-    {
-        $id = intval($id);
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
-        $stmt->execute([':id' => $id]);
-        $user = $stmt->fetch();
-
-        if (!$user) {
-            $this->setFlash('error', $this->mlSupport->translate("User not found."));
-            $this->redirect('/admin/users');
-            return;
-        }
-
-        return $this->render('admin/users/edit', [
-            'user' => $user,
-            'page_title' => $this->mlSupport->translate('Edit User') . ' - ' . $this->getConfig('app_name')
-        ]);
-    }
-
-    /**
-     * Update user
-     */
-    public function update($id)
-    {
-        try {
-            $id = intval($id);
-            if ($this->request->method() !== 'POST') {
-                $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-                $this->redirect("/admin/users/edit/$id");
-                return;
-            }
-
-            if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
-                $this->redirect("/admin/users/edit/$id");
-                return;
-            }
-
-            $data = $this->request->post();
-
-            // Basic validation
-            if (empty($data['username']) || empty($data['email'])) {
-                $this->setFlash('error', $this->mlSupport->translate("Username and Email are required."));
-                $this->redirect("/admin/users/edit/$id");
-                return;
-            }
-
-            // Check if email or username already exists (excluding current user)
-            $stmt = $this->db->prepare("SELECT id FROM users WHERE (email = :email OR username = :username) AND id != :id");
-            $stmt->execute([
-                ':email' => $data['email'],
-                ':username' => $data['username'],
-                ':id' => $id
-            ]);
-            if ($stmt->fetch()) {
-                $this->setFlash('error', $this->mlSupport->translate("Email or Username already exists."));
-                $this->redirect("/admin/users/edit/$id");
-                return;
-            }
-
-            // Update user
-            $sql = "UPDATE users SET username = :username, email = :email, mobile = :mobile, role = :role, status = :status, updated_at = NOW() WHERE id = :id";
-            $params = [
-                ':username' => $data['username'],
-                ':email' => $data['email'],
-                ':mobile' => $data['mobile'] ?? '',
-                ':role' => $data['role'] ?? 'customer',
-                ':status' => $data['status'] ?? 'active',
-                ':id' => $id
-            ];
-
-            // Update password if provided
-            if (!empty($data['password'])) {
-                $sql = "UPDATE users SET username = :username, email = :email, password = :password, mobile = :mobile, role = :role, status = :status, updated_at = NOW() WHERE id = :id";
-                $params[':password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-            }
+            // Apply pagination
+            $sql .= " LIMIT ?, ?";
+            $params[] = $offset;
+            $params[] = $perPage;
 
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
+            $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            $this->setFlash('success', $this->mlSupport->translate("User updated successfully!"));
-            $this->redirect('/admin/users');
+            $data = [
+                'page_title' => 'User Management - APS Dream Home',
+                'active_page' => 'users',
+                'users' => $users,
+                'total' => $total,
+                'page' => $page,
+                'per_page' => $perPage,
+                'total_pages' => ceil($total / $perPage),
+                'filters' => [
+                    'search' => $search,
+                    'role' => $role,
+                    'status' => $status
+                ]
+            ];
+
+            return $this->render('admin/users/index', $data);
         } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate("Error updating user: ") . $e->getMessage());
-            $this->redirect("/admin/users/edit/$id");
+            $this->loggingService->error("User Index error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load users');
+            return $this->redirect('admin/dashboard');
         }
     }
 
     /**
-     * Delete user
+     * Show the form for creating a new user
+     */
+    public function create()
+    {
+        try {
+            $data = [
+                'page_title' => 'Create User - APS Dream Home',
+                'active_page' => 'users',
+                'roles' => ['admin', 'manager', 'associate', 'customer', 'user']
+            ];
+
+            return $this->render('admin/users/create', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("User Create error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load user form');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Store a newly created user
+     */
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $data = $_POST;
+
+            // Validate required fields
+            $required = ['name', 'email', 'password', 'role'];
+            foreach ($required as $field) {
+                if (empty($data[$field])) {
+                    return $this->jsonError(ucfirst(str_replace('_', ' ', $field)) . ' is required', 400);
+                }
+            }
+
+            // Validate email
+            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                return $this->jsonError('Invalid email address', 400);
+            }
+
+            // Validate role
+            $validRoles = ['admin', 'manager', 'associate', 'customer', 'user'];
+            if (!in_array($data['role'], $validRoles)) {
+                return $this->jsonError('Invalid role', 400);
+            }
+
+            // Check if email already exists
+            $sql = "SELECT id FROM users WHERE email = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$data['email']]);
+            if ($stmt->fetch()) {
+                return $this->jsonError('Email already exists', 400);
+            }
+
+            // Hash password
+            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+
+            // Insert user
+            $sql = "INSERT INTO users 
+                    (name, email, password, phone, address, role, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                CoreFunctionsServiceCustom::validateInput($data['name'], 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['email'], 'string'),
+                $hashedPassword,
+                CoreFunctionsServiceCustom::validateInput($data['phone'] ?? '', 'string'),
+                CoreFunctionsServiceCustom::validateInput($data['address'] ?? '', 'string'),
+                $data['role'],
+                $data['status'] ?? 'active'
+            ]);
+
+            if ($result) {
+                $userId = $this->db->lastInsertId();
+
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'user_created', [
+                    'user_id' => $userId,
+                    'email' => $data['email'],
+                    'role' => $data['role']
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'User created successfully',
+                    'user_id' => $userId
+                ]);
+            }
+
+            return $this->jsonError('Failed to create user', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("User Store error: " . $e->getMessage());
+            return $this->jsonError('Failed to create user', 500);
+        }
+    }
+
+    /**
+     * Display the specified user
+     */
+    public function show($id)
+    {
+        try {
+            $userId = intval($id);
+            if ($userId <= 0) {
+                $this->setFlash('error', 'Invalid user ID');
+                return $this->redirect('admin/users');
+            }
+
+            // Get user details
+            $sql = "SELECT u.*,
+                           COUNT(p.id) as property_count,
+                           (SELECT COUNT(*) FROM bookings WHERE customer_id = u.id) as booking_count
+                    FROM users u
+                    LEFT JOIN properties p ON u.id = p.created_by
+                    WHERE u.id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                $this->setFlash('error', 'User not found');
+                return $this->redirect('admin/users');
+            }
+
+            $data = [
+                'page_title' => 'User Details - APS Dream Home',
+                'active_page' => 'users',
+                'user' => $user
+            ];
+
+            return $this->render('admin/users/show', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("User Show error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load user details');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified user
+     */
+    public function edit($id)
+    {
+        try {
+            $userId = intval($id);
+            if ($userId <= 0) {
+                $this->setFlash('error', 'Invalid user ID');
+                return $this->redirect('admin/users');
+            }
+
+            // Get user details
+            $sql = "SELECT * FROM users WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                $this->setFlash('error', 'User not found');
+                return $this->redirect('admin/users');
+            }
+
+            $data = [
+                'page_title' => 'Edit User - APS Dream Home',
+                'active_page' => 'users',
+                'user' => $user,
+                'roles' => ['admin', 'manager', 'associate', 'customer', 'user']
+            ];
+
+            return $this->render('admin/users/edit', $data);
+        } catch (Exception $e) {
+            $this->loggingService->error("User Edit error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load user form');
+            return $this->redirect('admin/users');
+        }
+    }
+
+    /**
+     * Update the specified user
+     */
+    public function update($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
+        }
+
+        try {
+            $userId = intval($id);
+            if ($userId <= 0) {
+                return $this->jsonError('Invalid user ID', 400);
+            }
+
+            $data = $_POST;
+
+            // Check if user exists
+            $sql = "SELECT * FROM users WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                return $this->jsonError('User not found', 404);
+            }
+
+            // Build update query
+            $updateFields = [];
+            $updateValues = [];
+
+            if (isset($data['name'])) {
+                $updateFields[] = "name = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['name'], 'string');
+            }
+
+            if (isset($data['email'])) {
+                if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                    return $this->jsonError('Invalid email address', 400);
+                }
+                
+                // Check if email already exists (excluding current user)
+                $sql = "SELECT id FROM users WHERE email = ? AND id != ?";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$data['email'], $userId]);
+                if ($stmt->fetch()) {
+                    return $this->jsonError('Email already exists', 400);
+                }
+                
+                $updateFields[] = "email = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['email'], 'string');
+            }
+
+            if (isset($data['phone'])) {
+                $updateFields[] = "phone = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['phone'], 'string');
+            }
+
+            if (isset($data['address'])) {
+                $updateFields[] = "address = ?";
+                $updateValues[] = CoreFunctionsServiceCustom::validateInput($data['address'], 'string');
+            }
+
+            if (isset($data['role'])) {
+                $validRoles = ['admin', 'manager', 'associate', 'customer', 'user'];
+                if (in_array($data['role'], $validRoles)) {
+                    $updateFields[] = "role = ?";
+                    $updateValues[] = $data['role'];
+                }
+            }
+
+            if (isset($data['status'])) {
+                $validStatuses = ['active', 'inactive', 'suspended'];
+                if (in_array($data['status'], $validStatuses)) {
+                    $updateFields[] = "status = ?";
+                    $updateValues[] = $data['status'];
+                }
+            }
+
+            if (isset($data['password']) && !empty($data['password'])) {
+                $updateFields[] = "password = ?";
+                $updateValues[] = password_hash($data['password'], PASSWORD_DEFAULT);
+            }
+
+            if (empty($updateFields)) {
+                return $this->jsonError('No fields to update', 400);
+            }
+
+            $updateFields[] = "updated_at = NOW()";
+            $updateValues[] = $userId;
+
+            $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($updateValues);
+
+            if ($result) {
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'user_updated', [
+                    'user_id' => $userId,
+                    'changes' => $data
+                ]);
+
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'User updated successfully'
+                ]);
+            }
+
+            return $this->jsonError('Failed to update user', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("User Update error: " . $e->getMessage());
+            return $this->jsonError('Failed to update user', 500);
+        }
+    }
+
+    /**
+     * Remove the specified user
      */
     public function destroy($id)
     {
-        try {
-            $id = intval($id);
-
-            if ($this->request->method() !== 'POST') {
-                $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-                $this->redirect('/admin/users');
-                return;
-            }
-
-            if (!$this->validateCsrfToken()) {
-                $this->setFlash('error', $this->mlSupport->translate('Security validation failed.'));
-                $this->redirect('/admin/users');
-                return;
-            }
-
-            // Prevent deleting self
-            if ($id == $this->session->get('user_id')) {
-                $this->setFlash('error', $this->mlSupport->translate("You cannot delete yourself."));
-                $this->redirect('/admin/users');
-                return;
-            }
-
-            $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
-            $stmt->execute([':id' => $id]);
-
-            $this->setFlash('success', $this->mlSupport->translate("User deleted successfully!"));
-            $this->redirect('/admin/users');
-        } catch (Exception $e) {
-            $this->setFlash('error', $this->mlSupport->translate("Error deleting user: ") . $e->getMessage());
-            $this->redirect('/admin/users');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return $this->jsonError('Invalid request method', 400);
         }
-    }
-
-    public function show()
-    {
-        // TODO: Implement show functionality
-        return $this->view('show');
-    }
-
-    public function dashboard()
-    {
-        $this->requireLogin();
-
-        $user = $this->auth->user();
-
-        // Get user statistics
-        $stats = $this->userService->getUserStats($_SESSION['user_id']);
-
-        // Get recent activities
-        $recentActivities = $this->userService->getRecentActivities($_SESSION['user_id']);
-
-        $this->view('users/dashboard', [
-            'title' => 'My Dashboard',
-            'user' => $user,
-            'stats' => $stats,
-            'recent_activities' => $recentActivities
-        ]);
-    }
-
-    public function profile()
-    {
-        $this->requireLogin();
 
         try {
-            $data = [
-                'username' => Security::sanitize($_POST['username']) ?? '',
-                'mobile' => Security::sanitize($_POST['mobile']) ?? '',
-                'address' => Security::sanitize($_POST['address']) ?? '',
-                'city' => Security::sanitize($_POST['city']) ?? '',
-                'state' => Security::sanitize($_POST['state']) ?? '',
-                'country' => Security::sanitize($_POST['country']) ?? '',
-                'pincode' => Security::sanitize($_POST['pincode']) ?? ''
-            ];
+            $userId = intval($id);
+            if ($userId <= 0) {
+                return $this->jsonError('Invalid user ID', 400);
+            }
 
-            $result = $this->userService->updateProfile($_SESSION['user_id'], $data);
+            // Check if user exists
+            $sql = "SELECT * FROM users WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                return $this->jsonError('User not found', 404);
+            }
+
+            // Prevent deletion of admin users
+            if ($user['role'] === 'admin') {
+                return $this->jsonError('Cannot delete admin users', 400);
+            }
+
+            // Delete user
+            $sql = "DELETE FROM users WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([$userId]);
 
             if ($result) {
-                $this->setFlash('success', 'Profile updated successfully!');
-            } else {
-                $this->setFlash('error', 'Failed to update profile');
-            }
-        } catch (\Exception $e) {
-            $this->setFlash('error', $e->getMessage());
-            $_SESSION['form_data'] = $_POST;
-        }
+                // Log activity
+                $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'user_deleted', [
+                    'user_id' => $userId,
+                    'user_name' => $user['name'],
+                    'user_email' => $user['email']
+                ]);
 
-        $this->redirect('/profile');
-    }
-
-    public function changePassword()
-    {
-        $this->requireLogin();
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            try {
-                $currentPassword = Security::sanitize($_POST['current_password']) ?? '';
-                $newPassword = Security::sanitize($_POST['new_password']) ?? '';
-                $confirmPassword = Security::sanitize($_POST['confirm_password']) ?? '';
-
-                if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
-                    throw new \Exception('All fields are required');
-                }
-
-                if ($newPassword !== $confirmPassword) {
-                    throw new \Exception('New password and confirm password do not match');
-                }
-
-                $result = $this->userService->changePassword(
-                    $_SESSION['user_id'],
-                    $currentPassword,
-                    $newPassword
-                );
-
-                if ($result) {
-                    $this->setFlash('success', 'Password changed successfully!');
-                    $this->redirect('/profile');
-                    return;
-                }
-
-                throw new \Exception('Failed to change password');
-            } catch (\Exception $e) {
-                $this->setFlash('error', $e->getMessage());
-            }
-        }
-
-        $this->view('users/change_password', [
-            'title' => 'Change Password'
-        ]);
-    }
-
-    public function forgotPassword()
-    {
-        if ($this->isLoggedIn()) {
-            $this->redirect('/');
-            return;
-        }
-
-        $this->view('auth/forgot_password', [
-            'title' => 'Forgot Password'
-        ]);
-    }
-
-    public function sendPasswordReset()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = Security::sanitize($_POST['email']) ?? '';
-
-            if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $this->setFlash('error', 'Please provide a valid email address');
-                $this->redirect('/forgot-password');
-                return;
+                return $this->jsonResponse([
+                    'success' => true,
+                    'message' => 'User deleted successfully'
+                ]);
             }
 
-            try {
-                $result = $this->userService->requestPasswordReset($email);
-
-                if ($result) {
-                    $this->setFlash('success', 'If an account exists with this email, a password reset link has been sent.');
-                    $this->redirect('/login');
-                    return;
-                }
-
-                throw new \Exception('Failed to send password reset email');
-            } catch (\Exception $e) {
-                $this->setFlash('error', $e->getMessage());
-                $this->redirect('/forgot-password');
-            }
+            return $this->jsonError('Failed to delete user', 500);
+        } catch (Exception $e) {
+            $this->loggingService->error("User Destroy error: " . $e->getMessage());
+            return $this->jsonError('Failed to delete user', 500);
         }
-
-        $this->redirect('/forgot-password');
     }
 
-    public function resetPasswordForm($token)
+    /**
+     * Get user statistics
+     */
+    public function getStats()
     {
-        if (empty($token)) {
-            $this->setFlash('error', 'Invalid reset token');
-            $this->redirect('/login');
-            return;
-        }
+        try {
+            $stats = [];
 
-        $this->view('auth/reset_password', [
-            'title' => 'Reset Password',
-            'token' => $token
-        ]);
+            // Total users
+            $sql = "SELECT COUNT(*) as total FROM users";
+            $result = $this->db->fetchOne($sql);
+            $stats['total_users'] = (int)($result['total'] ?? 0);
+
+            // Users by role
+            $sql = "SELECT role, COUNT(*) as count FROM users GROUP BY role";
+            $result = $this->db->fetchAll($sql);
+            $stats['by_role'] = $result ?: [];
+
+            // Users by status
+            $sql = "SELECT status, COUNT(*) as count FROM users GROUP BY status";
+            $result = $this->db->fetchAll($sql);
+            $stats['by_status'] = $result ?: [];
+
+            // New users this month
+            $sql = "SELECT COUNT(*) as new_this_month FROM users 
+                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+            $result = $this->db->fetchOne($sql);
+            $stats['new_this_month'] = (int)($result['new_this_month'] ?? 0);
+
+            // Active users (logged in within last 7 days)
+            $sql = "SELECT COUNT(*) as active_users FROM users 
+                    WHERE last_login >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+            $result = $this->db->fetchOne($sql);
+            $stats['active_users'] = (int)($result['active_users'] ?? 0);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $stats
+            ]);
+        } catch (Exception $e) {
+            $this->loggingService->error("Get User Stats error: " . $e->getMessage());
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => 'Failed to fetch stats'
+            ], 500);
+        }
     }
 
-    public function googleLogin()
+    /**
+     * JSON response helper
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): void
     {
-        $authUrl = $this->googleAuthService->getAuthUrl();
-        header('Location: ' . $authUrl);
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
         exit;
     }
 
-    public function googleCallback()
+    /**
+     * JSON error helper
+     */
+    private function jsonError(string $message, int $statusCode = 400): void
     {
-        if (isset($_GET['code'])) {
-            try {
-                $user = $this->googleAuthService->handleCallback($_GET['code']);
-
-                if ($user) {
-                    // Log the user in
-                    $_SESSION['user_id'] = $user->id;
-                    $_SESSION['user_email'] = $user->email;
-                    $_SESSION['user_role'] = $user->role;
-
-                    $this->setFlash('success', 'Logged in successfully with Google!');
-                    $this->redirect('/dashboard');
-                    return;
-                }
-
-                throw new \Exception('Failed to authenticate with Google');
-            } catch (\Exception $e) {
-                $this->setFlash('error', $e->getMessage());
-            }
-        } else {
-            $this->setFlash('error', 'Invalid request');
-        }
-
-        $this->redirect('/login');
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
