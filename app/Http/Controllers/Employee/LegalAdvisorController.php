@@ -46,19 +46,19 @@ class LegalAdvisorController extends BaseController
         try {
             // Get pending document reviews
             $pendingDocuments = $this->getPendingDocuments();
-            
+
             // Get upcoming compliance deadlines
             $upcomingCompliance = $this->getUpcomingCompliance();
-            
+
             // Get active disputes
             $activeDisputes = $this->getActiveDisputes();
-            
+
             // Get legal metrics
             $legalMetrics = $this->getLegalMetrics();
-            
+
             // Get recent legal activities
             $recentActivities = $this->getRecentActivities();
-            
+
             // Get contract status
             $contractStatus = $this->getContractStatus();
 
@@ -71,7 +71,6 @@ class LegalAdvisorController extends BaseController
                 'recent_activities' => $recentActivities,
                 'contract_status' => $contractStatus
             ]);
-
         } catch (Exception $e) {
             $this->handleError($e->getMessage());
         }
@@ -94,7 +93,7 @@ class LegalAdvisorController extends BaseController
                  AND ld.assigned_to = ?
                  ORDER BY ld.priority DESC, ld.submitted_at ASC
                  LIMIT 15";
-        
+
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
 
@@ -114,7 +113,7 @@ class LegalAdvisorController extends BaseController
                  AND (ct.assigned_to = ? OR ct.assigned_to IS NULL)
                  ORDER BY ct.due_date ASC, ct.priority DESC
                  LIMIT 20";
-        
+
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
 
@@ -135,7 +134,7 @@ class LegalAdvisorController extends BaseController
                  AND (ld.assigned_lawyer = ? OR ld.assigned_lawyer IS NULL)
                  ORDER BY ld.created_at DESC
                  LIMIT 10";
-        
+
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
 
@@ -153,9 +152,9 @@ class LegalAdvisorController extends BaseController
                             FROM legal_documents 
                             WHERE assigned_to = ?
                             AND MONTH(submitted_at) = MONTH(CURDATE())";
-        
+
         $docMetrics = $this->db->fetchOne($docMetricsQuery, [$this->employeeId]);
-        
+
         // Compliance metrics
         $complianceMetricsQuery = "SELECT 
                                      COUNT(*) as total_tasks,
@@ -164,9 +163,9 @@ class LegalAdvisorController extends BaseController
                                   FROM compliance_tasks 
                                   WHERE assigned_to = ?
                                   AND MONTH(due_date) = MONTH(CURDATE())";
-        
+
         $complianceMetrics = $this->db->fetchOne($complianceMetricsQuery, [$this->employeeId]);
-        
+
         // Dispute resolution metrics
         $disputeMetricsQuery = "SELECT 
                                   COUNT(*) as total_disputes,
@@ -176,9 +175,9 @@ class LegalAdvisorController extends BaseController
                                FROM legal_disputes 
                                WHERE assigned_lawyer = ?
                                AND YEAR(created_at) = YEAR(CURDATE())";
-        
+
         $disputeMetrics = $this->db->fetchOne($disputeMetricsQuery, [$this->employeeId]);
-        
+
         return [
             'document_metrics' => $docMetrics,
             'compliance_metrics' => $complianceMetrics,
@@ -196,7 +195,7 @@ class LegalAdvisorController extends BaseController
                   AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                   ORDER BY created_at DESC
                   LIMIT 10";
-        
+
         return $this->db->fetchAll($query, [$this->employeeId]);
     }
 
@@ -212,7 +211,7 @@ class LegalAdvisorController extends BaseController
                     SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expired
                  FROM contracts 
                  WHERE assigned_to = ? OR assigned_to IS NULL";
-        
+
         return $this->db->fetchOne($query, [$this->employeeId]);
     }
 
@@ -225,17 +224,17 @@ class LegalAdvisorController extends BaseController
             // Get document details
             $docQuery = "SELECT * FROM legal_documents WHERE id = ? AND assigned_to = ?";
             $document = $this->db->fetchOne($docQuery, [$documentId, $this->employeeId]);
-            
+
             if (!$document) {
                 throw new Exception("Document not found or not assigned to you");
             }
-            
+
             // Update document status
             $query = "UPDATE legal_documents 
                       SET status = ?, review_notes = ?, reviewed_by = ?, 
                           reviewed_at = NOW(), next_review_date = ?
                       WHERE id = ?";
-            
+
             $this->db->execute($query, [
                 $reviewData['status'],
                 $reviewData['review_notes'] ?? '',
@@ -243,20 +242,21 @@ class LegalAdvisorController extends BaseController
                 $reviewData['next_review_date'] ?? null,
                 $documentId
             ]);
-            
+
             // Log activity
-            $this->logLegalActivity('document_reviewed', 
-                "Document '{$document['title']}' reviewed with status: {$reviewData['status']}", 
-                $documentId);
-            
+            $this->logLegalActivity(
+                'document_reviewed',
+                "Document '{$document['title']}' reviewed with status: {$reviewData['status']}",
+                $documentId
+            );
+
             // Notify submitter
             $this->notifyDocumentReviewed($document['submitted_by'], $document, $reviewData);
-            
+
             return [
                 'success' => true,
                 'message' => "Document reviewed successfully"
             ];
-            
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -274,39 +274,40 @@ class LegalAdvisorController extends BaseController
             // Get task details
             $taskQuery = "SELECT * FROM compliance_tasks WHERE id = ?";
             $task = $this->db->fetchOne($taskQuery, [$taskId]);
-            
+
             if (!$task) {
                 throw new Exception("Compliance task not found");
             }
-            
+
             // Update task
             $query = "UPDATE compliance_tasks 
                       SET status = ?, completion_notes = ?, completed_at = NOW(),
                           completed_by = ?
                       WHERE id = ?";
-            
+
             $this->db->execute($query, [
                 $taskData['status'],
                 $taskData['completion_notes'] ?? '',
                 $this->employeeId,
                 $taskId
             ]);
-            
+
             // Log activity
-            $this->logLegalActivity('compliance_updated', 
-                "Compliance task '{$task['title']}' updated to status: {$taskData['status']}", 
-                $taskId);
-            
+            $this->logLegalActivity(
+                'compliance_updated',
+                "Compliance task '{$task['title']}' updated to status: {$taskData['status']}",
+                $taskId
+            );
+
             // Notify responsible person
             if ($task['responsible_person']) {
                 $this->notifyComplianceUpdated($task['responsible_person'], $task, $taskData);
             }
-            
+
             return [
                 'success' => true,
                 'message' => "Compliance task updated successfully"
             ];
-            
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -324,17 +325,17 @@ class LegalAdvisorController extends BaseController
             // Get dispute details
             $disputeQuery = "SELECT * FROM legal_disputes WHERE id = ?";
             $dispute = $this->db->fetchOne($disputeQuery, [$disputeId]);
-            
+
             if (!$dispute) {
                 throw new Exception("Dispute not found");
             }
-            
+
             // Update dispute
             $query = "UPDATE legal_disputes 
                       SET status = ?, action_taken = ?, next_action_date = ?,
                           updated_by = ?, updated_at = NOW()
                       WHERE id = ?";
-            
+
             $this->db->execute($query, [
                 $actionData['status'],
                 $actionData['action_taken'] ?? '',
@@ -342,23 +343,24 @@ class LegalAdvisorController extends BaseController
                 $this->employeeId,
                 $disputeId
             ]);
-            
+
             // Add to dispute timeline
             $this->addToDisputeTimeline($disputeId, $actionData);
-            
+
             // Log activity
-            $this->logLegalActivity('dispute_handled', 
-                "Dispute '{$dispute['title']}' action taken: {$actionData['status']}", 
-                $disputeId);
-            
+            $this->logLegalActivity(
+                'dispute_handled',
+                "Dispute '{$dispute['title']}' action taken: {$actionData['status']}",
+                $disputeId
+            );
+
             // Notify client
             $this->notifyDisputeUpdate($dispute['client_id'], $dispute, $actionData);
-            
+
             return [
                 'success' => true,
                 'message' => "Dispute updated successfully"
             ];
-            
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -377,7 +379,7 @@ class LegalAdvisorController extends BaseController
                         title, category, content, variables, 
                         created_by, created_at, status
                     ) VALUES (?, ?, ?, ?, ?, NOW(), 'active')";
-            
+
             $this->db->execute($query, [
                 $templateData['title'],
                 $templateData['category'],
@@ -385,20 +387,21 @@ class LegalAdvisorController extends BaseController
                 json_encode($templateData['variables'] ?? []),
                 $this->employeeId
             ]);
-            
+
             $templateId = $this->db->lastInsertId();
-            
+
             // Log activity
-            $this->logLegalActivity('template_created', 
-                "Legal document template '{$templateData['title']}' created", 
-                $templateId);
-            
+            $this->logLegalActivity(
+                'template_created',
+                "Legal document template '{$templateData['title']}' created",
+                $templateId
+            );
+
             return [
                 'success' => true,
                 'template_id' => $templateId,
                 'message' => "Document template created successfully"
             ];
-            
         } catch (Exception $e) {
             return [
                 'success' => false,
@@ -440,22 +443,22 @@ class LegalAdvisorController extends BaseController
     {
         $whereClause = "1=1";
         $params = [];
-        
+
         if (!empty($filters['department'])) {
             $whereClause .= " AND ct.department_id = ?";
             $params[] = $filters['department'];
         }
-        
+
         if (!empty($filters['date_from'])) {
             $whereClause .= " AND ct.due_date >= ?";
             $params[] = $filters['date_from'];
         }
-        
+
         if (!empty($filters['date_to'])) {
             $whereClause .= " AND ct.due_date <= ?";
             $params[] = $filters['date_to'];
         }
-        
+
         $query = "SELECT 
                     ct.title,
                     ct.due_date,
@@ -468,9 +471,9 @@ class LegalAdvisorController extends BaseController
                  LEFT JOIN employees e ON ct.responsible_person = e.id
                  WHERE {$whereClause}
                  ORDER BY ct.due_date ASC";
-        
+
         $reportData = $this->db->fetchAll($query, $params);
-        
+
         // Calculate summary statistics
         $summary = [
             'total_tasks' => count($reportData),
@@ -479,12 +482,164 @@ class LegalAdvisorController extends BaseController
             'overdue' => count(array_filter($reportData, fn($r) => $r['status'] === 'overdue')),
             'due_this_week' => count(array_filter($reportData, fn($r) => $r['days_until_due'] <= 7 && $r['days_until_due'] >= 0))
         ];
-        
+
         return [
             'success' => true,
             'report_type' => 'compliance_status',
             'summary' => $summary,
             'data' => $reportData,
+            'generated_at' => date('Y-m-d H:i:s')
+        ];
+    }
+
+    /**
+     * Generate dispute report
+     */
+    private function generateDisputeReport($filters)
+    {
+        $whereClause = "1=1";
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $whereClause .= " AND d.status = ?";
+            $params[] = $filters['status'];
+        }
+
+        if (!empty($filters['priority'])) {
+            $whereClause .= " AND d.priority = ?";
+            $params[] = $filters['priority'];
+        }
+
+        if (!empty($filters['date_from'])) {
+            $whereClause .= " AND d.created_at >= ?";
+            $params[] = $filters['date_from'];
+        }
+
+        if (!empty($filters['date_to'])) {
+            $whereClause .= " AND d.created_at <= ?";
+            $params[] = $filters['date_to'];
+        }
+
+        $query = "SELECT d.*, c.name as client_name, c.phone as client_phone,
+                        e.name as assigned_lawyer,
+                        TIMESTAMPDIFF(DAY, d.created_at, CURDATE()) as days_open
+                 FROM disputes d
+                 LEFT JOIN clients c ON d.client_id = c.id
+                 LEFT JOIN employees e ON d.assigned_to = e.id
+                 WHERE {$whereClause}
+                 ORDER BY d.created_at DESC";
+
+        $reportData = $this->db->fetchAll($query, $params);
+
+        return [
+            'success' => true,
+            'report_type' => 'dispute_summary',
+            'data' => $reportData,
+            'summary' => [
+                'total_disputes' => count($reportData),
+                'open_disputes' => count(array_filter($reportData, fn($d) => $d['status'] === 'open')),
+                'resolved_disputes' => count(array_filter($reportData, fn($d) => $d['status'] === 'resolved')),
+                'high_priority' => count(array_filter($reportData, fn($d) => $d['priority'] === 'high')),
+                'avg_resolution_time' => count(array_filter($reportData, fn($d) => $d['status'] === 'resolved')) > 0 ?
+                    array_sum(array_column(array_filter($reportData, fn($d) => $d['status'] === 'resolved'), 'days_open')) /
+                    count(array_filter($reportData, fn($d) => $d['status'] === 'resolved')) : 0
+            ],
+            'generated_at' => date('Y-m-d H:i:s')
+        ];
+    }
+
+    /**
+     * Generate document report
+     */
+    private function generateDocumentReport($filters)
+    {
+        $whereClause = "1=1";
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $whereClause .= " AND dr.status = ?";
+            $params[] = $filters['status'];
+        }
+
+        if (!empty($filters['type'])) {
+            $whereClause .= " AND dr.document_type = ?";
+            $params[] = $filters['type'];
+        }
+
+        if (!empty($filters['priority'])) {
+            $whereClause .= " AND dr.priority = ?";
+            $params[] = $filters['priority'];
+        }
+
+        $query = "SELECT dr.*, e.name as submitted_by_name,
+                        TIMESTAMPDIFF(DAY, dr.submitted_at, CURDATE()) as days_pending
+                 FROM document_reviews dr
+                 LEFT JOIN employees e ON dr.submitted_by = e.id
+                 WHERE {$whereClause}
+                 ORDER BY dr.submitted_at DESC";
+
+        $reportData = $this->db->fetchAll($query, $params);
+
+        return [
+            'success' => true,
+            'report_type' => 'document_review',
+            'data' => $reportData,
+            'summary' => [
+                'total_documents' => count($reportData),
+                'pending_review' => count(array_filter($reportData, fn($d) => $d['status'] === 'pending')),
+                'approved' => count(array_filter($reportData, fn($d) => $d['status'] === 'approved')),
+                'rejected' => count(array_filter($reportData, fn($d) => $d['status'] === 'rejected')),
+                'high_priority' => count(array_filter($reportData, fn($d) => $d['priority'] === 'high')),
+                'avg_review_time' => count(array_filter($reportData, fn($d) => in_array($d['status'], ['approved', 'rejected']))) > 0 ?
+                    array_sum(array_column(array_filter($reportData, fn($d) => in_array($d['status'], ['approved', 'rejected'])), 'days_pending')) /
+                    count(array_filter($reportData, fn($d) => in_array($d['status'], ['approved', 'rejected']))) : 0
+            ],
+            'generated_at' => date('Y-m-d H:i:s')
+        ];
+    }
+
+    /**
+     * Generate contract report
+     */
+    private function generateContractReport($filters)
+    {
+        $whereClause = "1=1";
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $whereClause .= " AND c.status = ?";
+            $params[] = $filters['status'];
+        }
+
+        if (!empty($filters['type'])) {
+            $whereClause .= " AND c.contract_type = ?";
+            $params[] = $filters['type'];
+        }
+
+        $query = "SELECT c.*, p.title as property_title, cl.name as client_name,
+                        CASE WHEN c.expiry_date < CURDATE() THEN 'expired'
+                             WHEN c.expiry_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 'expiring_soon'
+                             ELSE 'active' END as expiry_status,
+                        TIMESTAMPDIFF(DAY, CURDATE(), c.expiry_date) as days_until_expiry
+                 FROM contracts c
+                 LEFT JOIN properties p ON c.property_id = p.id
+                 LEFT JOIN clients cl ON c.client_id = cl.id
+                 WHERE {$whereClause}
+                 ORDER BY c.expiry_date ASC";
+
+        $reportData = $this->db->fetchAll($query, $params);
+
+        return [
+            'success' => true,
+            'report_type' => 'contract_expiration',
+            'data' => $reportData,
+            'summary' => [
+                'total_contracts' => count($reportData),
+                'active_contracts' => count(array_filter($reportData, fn($c) => $c['expiry_status'] === 'active')),
+                'expired_contracts' => count(array_filter($reportData, fn($c) => $c['expiry_status'] === 'expired')),
+                'expiring_soon' => count(array_filter($reportData, fn($c) => $c['expiry_status'] === 'expiring_soon')),
+                'total_value' => array_sum(array_column($reportData, 'contract_value'))
+            ],
             'generated_at' => date('Y-m-d H:i:s')
         ];
     }
@@ -497,7 +652,7 @@ class LegalAdvisorController extends BaseController
         $query = "INSERT INTO dispute_timeline (
                     dispute_id, action, description, performed_by, created_at
                 ) VALUES (?, ?, ?, ?, NOW())";
-        
+
         $this->db->execute($query, [
             $disputeId,
             $actionData['status'],
@@ -541,7 +696,7 @@ class LegalAdvisorController extends BaseController
         $query = "INSERT INTO notifications (
                     recipient_id, type, message, related_id, created_at, status
                 ) VALUES (?, ?, ?, ?, NOW(), 'unread')";
-        
+
         $this->db->execute($query, [$recipientId, $type, $message, $relatedId]);
     }
 
@@ -554,7 +709,7 @@ class LegalAdvisorController extends BaseController
                     activity_type, description, related_id, 
                     performed_by, created_at
                 ) VALUES (?, ?, ?, ?, NOW())";
-        
+
         $this->db->execute($query, [$activityType, $description, $relatedId, $this->employeeId]);
     }
 
@@ -564,7 +719,7 @@ class LegalAdvisorController extends BaseController
     private function handleError($message)
     {
         error_log("Legal Advisor Controller Error: " . $message);
-        
+
         $_SESSION['error'] = "Unable to load legal dashboard. Please try again.";
         header('Location: ' . BASE_URL . '/employee/dashboard');
         exit;
