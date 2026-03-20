@@ -253,4 +253,12 @@ class Database
             'performance_log' => $this->performance_log
         ];
     }
+
+    /**
+     * Get the last inserted ID
+     */
+    public function getLastInsertId()
+    {
+        return $this->pdo->lastInsertId();
+    }
 }

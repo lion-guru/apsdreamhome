@@ -1,40 +1,33 @@
 <?php
-
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if already logged in
-if (isset($_SESSION['admin_id'])) {
-    header('Location: ' . BASE_URL . '/admin/dashboard');
-    exit;
-}
-
 // Set page variables
-$page_title = 'Admin Login - APS Dream Home';
-$page_description = 'Secure admin access to APS Dream Home dashboard';
+$page_title = 'Employee Login - APS Dream Home';
+$page_description = 'Secure employee access to APS Dream Home portal';
 $active_page = 'login';
 
-// Content for admin layout
-ob_start();
+// Include public header
+require_once __DIR__ . '/../layouts/header.php';
 ?>
 
-<div class="container my-5">
+<main class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="card shadow-lg border-0 login-card">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
                         <div class="mb-3">
-                            <div class="admin-icon-wrapper">
-                                <i class="fas fa-user-shield"></i>
+                            <div class="employee-icon-wrapper">
+                                <i class="fas fa-user-tie"></i>
                             </div>
                         </div>
-                        <h2 class="card-title fw-bold gradient-text">Admin Login</h2>
-                        <p class="text-muted">Welcome back! Access your admin dashboard</p>
+                        <h2 class="card-title fw-bold gradient-text">Employee Login</h2>
+                        <p class="text-muted">Welcome back! Access your employee portal</p>
                         <div class="divider">
-                            <span>Secure Access Portal</span>
+                            <span>Employee Portal</span>
                         </div>
                     </div>
 
@@ -60,7 +53,7 @@ ob_start();
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="<?php echo BASE_URL; ?>/admin/login" id="adminLoginForm" class="admin-login-form">
+                    <form method="POST" action="<?php echo BASE_URL; ?>/employee/login" id="employeeLoginForm" class="employee-login-form">
                         <?php
                         // Generate CSRF token if not exists
                         if (!isset($_SESSION['csrf_token'])) {
@@ -71,16 +64,16 @@ ob_start();
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
 
                         <div class="mb-4">
-                            <label for="username" class="form-label fw-semibold">
-                                <i class="fas fa-user me-2 text-primary"></i> Username / Email
+                            <label for="email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-2 text-primary"></i> Email Address
                             </label>
                             <div class="input-group input-group-lg">
                                 <span class="input-group-text bg-light border-end-0">
-                                    <i class="fas fa-user text-primary"></i>
+                                    <i class="fas fa-envelope text-primary"></i>
                                 </span>
-                                <input type="text" class="form-control border-start-0" id="username" name="username"
-                                    placeholder="Enter username or email (admin@apsdreamhome.com)" required
-                                    value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>">
+                                <input type="email" class="form-control border-start-0" id="email" name="email"
+                                    placeholder="Enter your email" required
+                                    value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
                             </div>
                         </div>
 
@@ -93,7 +86,7 @@ ob_start();
                                     <i class="fas fa-lock text-primary"></i>
                                 </span>
                                 <input type="password" class="form-control border-start-0 border-end-0" id="password" name="password"
-                                    placeholder="Enter your secure password" required>
+                                    placeholder="Enter your password" required>
                                 <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
                                     <i class="fas fa-eye" id="toggleIcon"></i>
                                 </button>
@@ -104,17 +97,14 @@ ob_start();
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
                                 <label class="form-check-label" for="remember">
-                                    <small>Remember me</small>
+                                    <small>Remember me for 30 days</small>
                                 </label>
                             </div>
-                            <a href="<?php echo BASE_URL; ?>/forgot-password" class="text-decoration-none">
-                                <small class="text-primary">Forgot password?</small>
-                            </a>
                         </div>
 
                         <div class="d-grid mb-4">
                             <button type="submit" class="btn btn-primary btn-lg login-btn">
-                                <i class="fas fa-sign-in-alt me-2"></i> Login to Dashboard
+                                <i class="fas fa-sign-in-alt me-2"></i> Sign In
                             </button>
                         </div>
 
@@ -127,33 +117,29 @@ ob_start();
                     </form>
 
                     <div class="text-center mt-4">
-                        <small class="text-muted">
-                            <a href="<?php echo BASE_URL; ?>/" class="text-decoration-none">
-                                <i class="fas fa-arrow-left me-1"></i> Back to Home
+                        <p class="mb-2">
+                            <a href="<?php echo BASE_URL; ?>/forgot-password" class="text-decoration-none">
+                                <i class="fas fa-question-circle me-1"></i> Forgot your password?
                             </a>
-                        </small>
+                        </p>
+                        <p class="mb-0">
+                            <small class="text-muted">
+                                Need help? Contact HR at
+                                <a href="mailto:hr@apsdreamhome.com" class="text-decoration-none">hr@apsdreamhome.com</a>
+                            </small>
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Security Features -->
             <div class="text-center mt-4">
-                <div class="security-badges">
-                    <span class="badge bg-success me-2">
-                        <i class="fas fa-check-circle me-1"></i> SSL Secured
-                    </span>
-                    <span class="badge bg-info me-2">
-                        <i class="fas fa-lock me-1"></i> Encrypted
-                    </span>
-                    <span class="badge bg-warning">
-                        <i class="fas fa-user-shield me-1"></i> Admin Only
-                    </span>
-                </div>
+                <a href="<?php echo BASE_URL; ?>/" class="text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Home
+                </a>
             </div>
         </div>
     </div>
-</div>
-</div>
+</main>
 
 <style>
     body {
@@ -200,7 +186,7 @@ ob_start();
         box-shadow: 0 35px 70px rgba(0, 0, 0, 0.2);
     }
 
-    .admin-icon-wrapper {
+    .employee-icon-wrapper {
         width: 80px;
         height: 80px;
         border-radius: 50%;
@@ -213,7 +199,7 @@ ob_start();
         animation: float 3s ease-in-out infinite;
     }
 
-    .admin-icon-wrapper i {
+    .employee-icon-wrapper i {
         font-size: 2.5rem;
         color: white;
     }
@@ -343,78 +329,18 @@ ob_start();
         }
     }
 
-    .security-badges {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .security-badges .badge {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.8rem;
-        border-radius: 20px;
-        font-weight: 500;
-    }
-
-    .navbar-brand {
-        font-weight: 700;
-        font-size: 1.2rem;
-    }
-
-    .sidebar {
-        display: none !important;
-    }
-
-    .col-md-9 {
-        margin-left: 0 !important;
-        max-width: 100% !important;
-        flex: 0 0 100% !important;
-    }
-
-    /* Loading animation */
-    .login-btn.loading {
-        pointer-events: none;
-        opacity: 0.8;
-    }
-
-    .login-btn.loading::after {
-        content: '';
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        top: 50%;
-        left: 50%;
-        margin-left: -10px;
-        margin-top: -10px;
-        border: 2px solid transparent;
-        border-top: 2px solid #ffffff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
         .login-card {
             margin: 1rem;
         }
 
-        .admin-icon-wrapper {
+        .employee-icon-wrapper {
             width: 60px;
             height: 60px;
         }
 
-        .admin-icon-wrapper i {
+        .employee-icon-wrapper i {
             font-size: 2rem;
         }
     }
@@ -443,17 +369,17 @@ ob_start();
             });
         }
 
-        // Auto-focus username field with smooth animation
+        // Auto-focus email field with smooth animation
         setTimeout(() => {
-            const usernameField = document.getElementById('username');
-            if (usernameField) {
-                usernameField.focus();
-                usernameField.select();
+            const emailField = document.getElementById('email');
+            if (emailField) {
+                emailField.focus();
+                emailField.select();
             }
         }, 500);
 
         // Enhanced form validation
-        const form = document.querySelector('#adminLoginForm');
+        const form = document.querySelector('#employeeLoginForm');
         const inputs = form.querySelectorAll('input[required]');
         const submitBtn = form.querySelector('button[type="submit"]');
 
@@ -482,13 +408,13 @@ ob_start();
             let errorMessage = '';
 
             switch (fieldName) {
-                case 'username':
+                case 'email':
                     if (value.length < 3) {
                         isValid = false;
-                        errorMessage = 'Username must be at least 3 characters';
-                    } else if (!/^[a-zA-Z0-9_@.]+$/.test(value)) {
+                        errorMessage = 'Email must be at least 3 characters';
+                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
                         isValid = false;
-                        errorMessage = 'Username can contain letters, numbers, underscores, @ and .';
+                        errorMessage = 'Please enter a valid email address';
                     }
                     break;
 
@@ -560,10 +486,8 @@ ob_start();
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Authenticating...';
             submitBtn.disabled = true;
 
-            // Simulate authentication delay (remove in production)
-            setTimeout(() => {
-                form.submit();
-            }, 1500);
+            // Submit form
+            form.submit();
         });
 
         // Shake animation
@@ -611,6 +535,6 @@ ob_start();
 </script>
 
 <?php
-// Include admin footer
-require_once __DIR__ . '/../layouts/admin_footer.php';
+// Include public footer
+require_once __DIR__ . '/../layouts/footer.php';
 ?>
