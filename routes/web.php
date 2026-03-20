@@ -61,37 +61,40 @@ $router->get('/projects/braj-radha-nagri', 'Front\PageController@brajRadhaNagri'
 $router->get('/projects/budh-bihar-colony', 'Front\PageController@budhBiharColony');
 $router->get('/projects/awadhpuri', 'Front\PageController@awadhpuri');
 
-// Admin routes
-$router->get('/admin', 'App\Http\Controllers\Admin\AdminController@dashboard');
-$router->get('/admin/dashboard', 'App\Http\Controllers\Admin\AdminController@dashboard');
-$router->get('/admin/enterprise_dashboard', 'App\Http\Controllers\Admin\AdminController@enterpriseDashboard');
+// Admin routes - Unified Role-Based Dashboard
+$router->get('/admin', 'App\Http\Controllers\RoleBasedDashboardController@index');
+$router->get('/admin/dashboard', 'App\Http\Controllers\RoleBasedDashboardController@index');
+$router->get('/admin/enterprise_dashboard', 'App\Http\Controllers\RoleBasedDashboardController@enterpriseDashboard');
 
-// Dashboard Routes - Role-based
-$router->get('/admin/dashboard/agent', 'App\Http\Controllers\Admin\AgentDashboardController@index');
-$router->get('/admin/dashboard/builder', 'App\Http\Controllers\Admin\BuilderDashboardController@index');
-$router->get('/admin/dashboard/ceo', 'App\Http\Controllers\Admin\CEODashboardController@index');
-$router->get('/admin/dashboard/cfo', 'App\Http\Controllers\Admin\CFODashboardController@index');
-$router->get('/admin/dashboard/cm', 'App\Http\Controllers\Admin\CMDashboardController@index');
-$router->get('/admin/dashboard/coo', 'App\Http\Controllers\Admin\COODashboardController@index');
-$router->get('/admin/dashboard/cto', 'App\Http\Controllers\Admin\CTODashboardController@index');
-$router->get('/admin/dashboard/director', 'App\Http\Controllers\Admin\DirectorDashboardController@index');
-$router->get('/admin/dashboard/finance', 'App\Http\Controllers\Admin\FinanceDashboardController@index');
-$router->get('/admin/dashboard/hr', 'App\Http\Controllers\Admin\HRDashboardController@index');
-$router->get('/admin/dashboard/it', 'App\Http\Controllers\Admin\ITDashboardController@index');
-$router->get('/admin/dashboard/marketing', 'App\Http\Controllers\Admin\MarketingDashboardController@index');
-$router->get('/admin/dashboard/operations', 'App\Http\Controllers\Admin\OperationsDashboardController@index');
-$router->get('/admin/dashboard/sales', 'App\Http\Controllers\Admin\SalesDashboardController@index');
-$router->get('/admin/dashboard/superadmin', 'App\Http\Controllers\Admin\SuperAdminDashboardController@index');
+// Role-based dashboard routes - Unified system
+$router->get('/admin/dashboard/{role}', 'App\Http\Controllers\RoleBasedDashboardController@getRoleDashboard');
+$router->get('/admin/dashboard/agent', 'App\Http\Controllers\RoleBasedDashboardController@agent');
+$router->get('/admin/dashboard/builder', 'App\Http\Controllers\RoleBasedDashboardController@builder');
+$router->get('/admin/dashboard/ceo', 'App\Http\Controllers\RoleBasedDashboardController@ceo');
+$router->get('/admin/dashboard/cfo', 'App\Http\Controllers\RoleBasedDashboardController@cfo');
+$router->get('/admin/dashboard/cm', 'App\Http\Controllers\RoleBasedDashboardController@cm');
+$router->get('/admin/dashboard/coo', 'App\Http\Controllers\RoleBasedDashboardController@coo');
+$router->get('/admin/dashboard/cto', 'App\Http\Controllers\RoleBasedDashboardController@cto');
+$router->get('/admin/dashboard/director', 'App\Http\Controllers\RoleBasedDashboardController@director');
+$router->get('/admin/dashboard/finance', 'App\Http\Controllers\RoleBasedDashboardController@finance');
+$router->get('/admin/dashboard/hr', 'App\Http\Controllers\RoleBasedDashboardController@hr');
+$router->get('/admin/dashboard/it', 'App\Http\Controllers\RoleBasedDashboardController@it');
+$router->get('/admin/dashboard/marketing', 'App\Http\Controllers\RoleBasedDashboardController@marketing');
+$router->get('/admin/dashboard/operations', 'App\Http\Controllers\RoleBasedDashboardController@operations');
+$router->get('/admin/dashboard/sales', 'App\Http\Controllers\RoleBasedDashboardController@sales');
+$router->get('/admin/dashboard/superadmin', 'App\Http\Controllers\RoleBasedDashboardController@superadmin');
 
-// Dashboard AJAX Routes
-$router->get('/api/dashboard/agent/performance', 'App\Http\Controllers\Admin\AgentDashboardController@getPerformanceData');
-$router->get('/api/dashboard/agent/network', 'App\Http\Controllers\Admin\AgentDashboardController@getNetworkTree');
-$router->get('/api/dashboard/ceo/analytics', 'App\Http\Controllers\Admin\CEODashboardController@getRevenueAnalytics');
-$router->get('/api/dashboard/ceo/team', 'App\Http\Controllers\Admin\CEODashboardController@getTeamPerformance');
-$router->get('/api/dashboard/cfo/financial', 'App\Http\Controllers\Admin\CFODashboardController@getFinancialAnalytics');
-$router->get('/api/dashboard/cfo/expenses', 'App\Http\Controllers\Admin\CFODashboardController@getExpenseBreakdown');
-$router->get('/api/dashboard/builder/analytics', 'App\Http\Controllers\Admin\BuilderDashboardController@getConstructionAnalytics');
-$router->get('/api/dashboard/builder/materials', 'App\Http\Controllers\Admin\BuilderDashboardController@getMaterialStatus');
+// Dashboard AJAX Routes - Unified system
+$router->get('/api/dashboard/{role}/performance', 'App\Http\Controllers\RoleBasedDashboardController@getPerformanceData');
+$router->get('/api/dashboard/{role}/analytics', 'App\Http\Controllers\RoleBasedDashboardController@getAnalytics');
+$router->get('/api/dashboard/agent/performance', 'App\Http\Controllers\RoleBasedDashboardController@getPerformanceData');
+$router->get('/api/dashboard/agent/network', 'App\Http\Controllers\RoleBasedDashboardController@getNetworkTree');
+$router->get('/api/dashboard/ceo/analytics', 'App\Http\Controllers\RoleBasedDashboardController@getRevenueAnalytics');
+$router->get('/api/dashboard/ceo/team', 'App\Http\Controllers\RoleBasedDashboardController@getTeamPerformance');
+$router->get('/api/dashboard/cfo/financial', 'App\Http\Controllers\RoleBasedDashboardController@getFinancialAnalytics');
+$router->get('/api/dashboard/cfo/expenses', 'App\Http\Controllers\RoleBasedDashboardController@getExpenseBreakdown');
+$router->get('/api/dashboard/builder/analytics', 'App\Http\Controllers\RoleBasedDashboardController@getConstructionAnalytics');
+$router->get('/api/dashboard/builder/materials', 'App\Http\Controllers\RoleBasedDashboardController@getMaterialStatus');
 $router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
 $router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
 $router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
@@ -140,6 +143,7 @@ $router->get('/admin/properties/check-availability', 'App\Http\Controllers\Admin
 
 // Additional routes
 $router->get('/career', 'Front\PageController@career');
+$router->get('/careers', 'Front\PageController@career');
 $router->get('/careers/apply', 'Front\PageController@careerApply');
 $router->post('/careers/apply', 'Front\PageController@submitCareerApplication');
 $router->get('/company/projects', 'Front\PageController@projects');

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middleware\RBACManager;
-use App\Core\Database;
+use App\Core\Database\Database;
 use App\Http\Controllers\BaseController;
 use Exception;
 
@@ -52,6 +52,121 @@ class RoleBasedDashboardController extends BaseController
             error_log("Dashboard error: " . $e->getMessage());
             return $this->getDefaultDashboard();
         }
+    }
+
+    /**
+     * Main dashboard entry point
+     */
+    public function index()
+    {
+        $userRole = $this->getCurrentUserRole();
+        $dashboardData = $this->getDashboardByRole($userRole);
+
+        $this->render('dashboard/admin_dashboard', $dashboardData);
+    }
+
+    /**
+     * Enterprise dashboard
+     */
+    public function enterpriseDashboard()
+    {
+        $dashboardData = [
+            'role' => 'enterprise',
+            'title' => 'Enterprise Dashboard',
+            'widgets' => $this->getEnterpriseWidgets(),
+            'analytics' => $this->getEnterpriseAnalytics()
+        ];
+
+        $this->render('dashboard/enterprise_dashboard', $dashboardData);
+    }
+
+    /**
+     * Get role-specific dashboard
+     */
+    public function getRoleDashboard($role)
+    {
+        $dashboardData = $this->getDashboardByRole($role);
+        $this->render("dashboard/{$role}_dashboard", $dashboardData);
+    }
+
+    // Role-specific dashboard methods
+    public function agent()
+    {
+        $this->getRoleDashboard('agent');
+    }
+    public function builder()
+    {
+        $this->getRoleDashboard('builder');
+    }
+    public function ceo()
+    {
+        $this->getRoleDashboard('ceo');
+    }
+    public function cfo()
+    {
+        $this->getRoleDashboard('cfo');
+    }
+    public function cm()
+    {
+        $this->getRoleDashboard('cm');
+    }
+
+    public function coo()
+    {
+        $this->getRoleDashboard('coo');
+    }
+
+    public function cto()
+    {
+        $this->getRoleDashboard('cto');
+    }
+
+    public function director()
+    {
+        $this->getRoleDashboard('director');
+    }
+    public function finance()
+    {
+        $this->getRoleDashboard('finance');
+    }
+
+    public function hr()
+    {
+        $this->getRoleDashboard('hr');
+    }
+
+    public function it()
+    {
+        $this->getRoleDashboard('it');
+    }
+
+    public function marketing()
+    {
+        $this->getRoleDashboard('marketing');
+    }
+
+    public function operations()
+    {
+        $this->getRoleDashboard('operations');
+    }
+
+    public function sales()
+    {
+        $this->getRoleDashboard('sales');
+    }
+
+    public function superadmin()
+    {
+        $this->getRoleDashboard('superadmin');
+    }
+
+    /**
+     * Get current user role
+     */
+    private function getCurrentUserRole()
+    {
+        // Get user role from session or authentication
+        return $_SESSION['user_role'] ?? 'guest';
     }
 
     /**
