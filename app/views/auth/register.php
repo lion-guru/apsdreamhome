@@ -317,9 +317,9 @@
                         <?php endif; ?>
 
                         <!-- Display Success -->
-                        <?php if (session('success')): ?>
+                        <?php if (isset($_SESSION['success'])): ?>
                             <div class="alert alert-success">
-                                <?php echo htmlspecialchars(session('success')); ?>
+                                <?php echo htmlspecialchars($_SESSION['success']); ?>
                             </div>
                         <?php endif; ?>
 
@@ -343,7 +343,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Full Name *</label>
                                     <input type="text" class="form-control" name="full_name"
-                                        value="<?php echo htmlspecialchars(Security::sanitize($_POST['full_name']) ?? ''); ?>" required>
+                                        value="<?php echo htmlspecialchars($_POST['full_name'] ?? ''); ?>" required>
                                     <?php if (isset($errors['full_name'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['full_name']); ?></div>
                                     <?php endif; ?>
@@ -351,7 +351,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Email Address *</label>
                                     <input type="email" class="form-control" name="email" id="email"
-                                        value="<?php echo htmlspecialchars(Security::sanitize($_POST['email']) ?? ''); ?>" required>
+                                        value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
                                     <?php if (isset($errors['email'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['email']); ?></div>
                                     <?php endif; ?>
@@ -363,7 +363,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Mobile Number *</label>
                                     <input type="tel" class="form-control" name="mobile" id="mobile"
-                                        value="<?php echo htmlspecialchars(Security::sanitize($_POST['mobile']) ?? ''); ?>" pattern="[0-9]{10}" maxlength="10" required>
+                                        value="<?php echo htmlspecialchars($_POST['mobile'] ?? ''); ?>" pattern="[0-9]{10}" maxlength="10" required>
                                     <?php if (isset($errors['mobile'])): ?>
                                         <div class="text-danger small"><?php echo htmlspecialchars($errors['mobile']); ?></div>
                                     <?php endif; ?>
@@ -418,21 +418,21 @@
                                             <label class="form-label">Budget Range</label>
                                             <select class="form-control" name="budget_range">
                                                 <option value="">Select Budget</option>
-                                                <option value="0-10" <?php echo (Security::sanitize($_POST['budget_range']) ?? '') == '0-10' ? 'selected' : ''; ?>>₹0-10 Lakh</option>
-                                                <option value="10-25" <?php echo (Security::sanitize($_POST['budget_range']) ?? '') == '10-25' ? 'selected' : ''; ?>>₹10-25 Lakh</option>
-                                                <option value="25-50" <?php echo (Security::sanitize($_POST['budget_range']) ?? '') == '25-50' ? 'selected' : ''; ?>>₹25-50 Lakh</option>
-                                                <option value="50-100" <?php echo (Security::sanitize($_POST['budget_range']) ?? '') == '50-100' ? 'selected' : ''; ?>>₹50-100 Lakh</option>
-                                                <option value="100+" <?php echo (Security::sanitize($_POST['budget_range']) ?? '') == '100+' ? 'selected' : ''; ?>>₹1 Crore+</option>
+                                                <option value="0-10" <?php echo ($_POST['budget_range'] ?? '') == '0-10' ? 'selected' : ''; ?>>₹0-10 Lakh</option>
+                                                <option value="10-25" <?php echo ($_POST['budget_range'] ?? '') == '10-25' ? 'selected' : ''; ?>>₹10-25 Lakh</option>
+                                                <option value="25-50" <?php echo ($_POST['budget_range'] ?? '') == '25-50' ? 'selected' : ''; ?>>₹25-50 Lakh</option>
+                                                <option value="50-100" <?php echo ($_POST['budget_range'] ?? '') == '50-100' ? 'selected' : ''; ?>>₹50-100 Lakh</option>
+                                                <option value="100+" <?php echo ($_POST['budget_range'] ?? '') == '100+' ? 'selected' : ''; ?>>₹1 Crore+</option>
                                             </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Property Type</label>
                                             <select class="form-control" name="property_type">
                                                 <option value="">Select Type</option>
-                                                <option value="apartment" <?php echo (Security::sanitize($_POST['property_type']) ?? '') == 'apartment' ? 'selected' : ''; ?>>Apartment</option>
-                                                <option value="house" <?php echo (Security::sanitize($_POST['property_type']) ?? '') == 'house' ? 'selected' : ''; ?>>House</option>
-                                                <option value="plot" <?php echo (Security::sanitize($_POST['property_type']) ?? '') == 'plot' ? 'selected' : ''; ?>>Plot</option>
-                                                <option value="commercial" <?php echo (Security::sanitize($_POST['property_type']) ?? '') == 'commercial' ? 'selected' : ''; ?>>Commercial</option>
+                                                <option value="apartment" <?php echo ($_POST['property_type'] ?? '') == 'apartment' ? 'selected' : ''; ?>>Apartment</option>
+                                                <option value="house" <?php echo ($_POST['property_type'] ?? '') == 'house' ? 'selected' : ''; ?>>House</option>
+                                                <option value="plot" <?php echo ($_POST['property_type'] ?? '') == 'plot' ? 'selected' : ''; ?>>Plot</option>
+                                                <option value="commercial" <?php echo ($_POST['property_type'] ?? '') == 'commercial' ? 'selected' : ''; ?>>Commercial</option>
                                             </select>
                                         </div>
                                     </div>
@@ -445,12 +445,12 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">License Number</label>
                                             <input type="text" class="form-control" name="license_number"
-                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['license_number']) ?? ''); ?>" placeholder="Real Estate License">
+                                                value="<?php echo htmlspecialchars($_POST['license_number'] ?? ''); ?>" placeholder="Real Estate License">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Experience (Years)</label>
                                             <input type="number" class="form-control" name="experience"
-                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['experience']) ?? ''); ?>" min="0" max="50">
+                                                value="<?php echo htmlspecialchars($_POST['experience'] ?? ''); ?>" min="0" max="50">
                                         </div>
                                     </div>
                                 </div>
@@ -462,13 +462,13 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">PAN Number</label>
                                             <input type="text" class="form-control" name="pan_number"
-                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['pan_number']) ?? ''); ?>" style="text-transform: uppercase;"
+                                                value="<?php echo htmlspecialchars($_POST['pan_number'] ?? ''); ?>" style="text-transform: uppercase;"
                                                 placeholder="AAAAA0000A">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Aadhar Number</label>
                                             <input type="text" class="form-control" name="aadhar_number"
-                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['aadhar_number']) ?? ''); ?>" pattern="[0-9]{12}"
+                                                value="<?php echo htmlspecialchars($_POST['aadhar_number'] ?? ''); ?>" pattern="[0-9]{12}"
                                                 placeholder="123456789012">
                                         </div>
                                     </div>
@@ -481,12 +481,12 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Company Name</label>
                                             <input type="text" class="form-control" name="company_name"
-                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['company_name']) ?? ''); ?>" placeholder="Your Company Name">
+                                                value="<?php echo htmlspecialchars($_POST['company_name'] ?? ''); ?>" placeholder="Your Company Name">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">RERA Registration</label>
                                             <input type="text" class="form-control" name="rera_registration"
-                                                value="<?php echo htmlspecialchars(Security::sanitize($_POST['rera_registration']) ?? ''); ?>" placeholder="RERA Registration Number">
+                                                value="<?php echo htmlspecialchars($_POST['rera_registration'] ?? ''); ?>" placeholder="RERA Registration Number">
                                         </div>
                                     </div>
                                 </div>
@@ -499,19 +499,19 @@
                                             <label class="form-label">Investment Range</label>
                                             <select class="form-control" name="investment_range">
                                                 <option value="">Select Range</option>
-                                                <option value="10-50" <?php echo (Security::sanitize($_POST['investment_range']) ?? '') == '10-50' ? 'selected' : ''; ?>>₹10-50 Lakh</option>
-                                                <option value="50-100" <?php echo (Security::sanitize($_POST['investment_range']) ?? '') == '50-100' ? 'selected' : ''; ?>>₹50-100 Lakh</option>
-                                                <option value="100-500" <?php echo (Security::sanitize($_POST['investment_range']) ?? '') == '100-500' ? 'selected' : ''; ?>>₹1-5 Crore</option>
-                                                <option value="500+" <?php echo (Security::sanitize($_POST['investment_range']) ?? '') == '500+' ? 'selected' : ''; ?>>₹5 Crore+</option>
+                                                <option value="10-50" <?php echo ($_POST['investment_range'] ?? '') == '10-50' ? 'selected' : ''; ?>>₹10-50 Lakh</option>
+                                                <option value="50-100" <?php echo ($_POST['investment_range'] ?? '') == '50-100' ? 'selected' : ''; ?>>₹50-100 Lakh</option>
+                                                <option value="100-500" <?php echo ($_POST['investment_range'] ?? '') == '100-500' ? 'selected' : ''; ?>>₹1-5 Crore</option>
+                                                <option value="500+" <?php echo ($_POST['investment_range'] ?? '') == '500+' ? 'selected' : ''; ?>>₹5 Crore+</option>
                                             </select>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Investment Type</label>
                                             <select class="form-control" name="investment_type">
                                                 <option value="">Select Type</option>
-                                                <option value="residential" <?php echo (Security::sanitize($_POST['investment_type']) ?? '') == 'residential' ? 'selected' : ''; ?>>Residential</option>
-                                                <option value="commercial" <?php echo (Security::sanitize($_POST['investment_type']) ?? '') == 'commercial' ? 'selected' : ''; ?>>Commercial</option>
-                                                <option value="mixed" <?php echo (Security::sanitize($_POST['investment_type']) ?? '') == 'mixed' ? 'selected' : ''; ?>>Mixed Portfolio</option>
+                                                <option value="residential" <?php echo ($_POST['investment_type'] ?? '') == 'residential' ? 'selected' : ''; ?>>Residential</option>
+                                                <option value="commercial" <?php echo ($_POST['investment_type'] ?? '') == 'commercial' ? 'selected' : ''; ?>>Commercial</option>
+                                                <option value="mixed" <?php echo ($_POST['investment_type'] ?? '') == 'mixed' ? 'selected' : ''; ?>>Mixed Portfolio</option>
                                             </select>
                                         </div>
                                     </div>
