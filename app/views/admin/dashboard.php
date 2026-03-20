@@ -5,17 +5,15 @@
  * Main admin interface
  */
 
-$page_title = $page_title ?? 'Admin Dashboard - APS Dream Home';
-$stats = $stats ?? [];
-$recent_projects = $recent_projects ?? [];
-$recent_applications = $recent_applications ?? [];
-$pending_tasks = $pending_tasks ?? [];
-?>
-
-<?php
 // Start session if not started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
+}
+
+// Check admin authentication
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ' . BASE_URL . '/admin/login');
+    exit;
 }
 
 // Set page variables
@@ -25,7 +23,7 @@ $recent_projects = $recent_projects ?? [];
 $recent_applications = $recent_applications ?? [];
 $pending_tasks = $pending_tasks ?? [];
 
-// Content for base layout
+// Content for admin layout
 ob_start();
 ?>
 
@@ -1209,8 +1207,10 @@ background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+    <!-- Admin Layout Footer -->
+    <?php
+    $content = ob_get_clean();
+    require_once __DIR__ . '/../layouts/admin_header.php';
+    echo $content;
+    require_once __DIR__ . '/../layouts/admin_footer.php';
+    ?>

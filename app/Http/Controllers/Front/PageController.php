@@ -986,4 +986,30 @@ class PageController extends BaseController
 
         $this->render('pages/awadhpuri', $data);
     }
+
+    /**
+     * Display Terms and Conditions page
+     */
+    public function terms()
+    {
+        $data = [
+            'page_title' => 'Terms and Conditions - APS Dream Home',
+            'page_description' => 'Terms and conditions for using APS Dream Home real estate services'
+        ];
+
+        $this->render('pages/legal/terms_conditions', $data);
+    }
+
+    /**
+     * Display Privacy Policy page
+     */
+    public function privacy()
+    {
+        $data = [
+            'page_title' => 'Privacy Policy - APS Dream Home',
+            'page_description' => 'Privacy policy for APS Dream Home real estate services and data protection'
+        ];
+
+        $this->render('pages/legal/privacy_policy', $data);
+    }
 }

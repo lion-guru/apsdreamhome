@@ -16,6 +16,15 @@ $router->get('/about', 'Front\\PageController@about');
 $router->get('/contact', 'Front\\PageController@contact');
 $router->post('/contact', 'Front\\PageController@submitContact');
 
+// Legal Pages
+$router->get('/terms', 'Front\\PageController@terms');
+$router->get('/privacy', 'Front\\PageController@privacy');
+
+// Admin Legal Pages Management
+$router->get('/admin/legal-pages', 'Admin\\LegalPagesController@index');
+$router->post('/admin/legal-pages/update-terms', 'Admin\\LegalPagesController@updateTerms');
+$router->post('/admin/legal-pages/update-privacy', 'Admin\\LegalPagesController@updatePrivacy');
+
 // Customer Authentication
 $router->get('/register', 'Auth\\CustomerAuthController@register');
 $router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
@@ -141,9 +150,58 @@ $router->post('/admin/properties/{id}/update', 'App\Http\Controllers\Admin\Prope
 $router->post('/admin/properties/{id}/destroy', 'App\Http\Controllers\Admin\PropertyManagementController@destroy');
 $router->get('/admin/properties/check-availability', 'App\Http\Controllers\Admin\PropertyManagementController@checkAvailability');
 
-// Additional routes
-// Careers routes
-$router->get('/career', 'Front\PageController@career');
+// AI Settings Routes
+$router->get('/admin/ai-settings', 'Admin\\AISettingsController@index');
+$router->post('/admin/ai-settings/update-key', 'Admin\\AISettingsController@updateApiKey');
+$router->post('/admin/ai-settings/test-connection', 'Admin\\AISettingsController@testConnection');
+$router->post('/admin/ai-settings/generate-content', 'Admin\\AISettingsController@generateSampleContent');
+$router->post('/admin/ai-settings/clear-logs', 'Admin\\AISettingsController@clearLogs');
+$router->get('/admin/ai-settings/export-usage-report', 'Admin\\AISettingsController@exportUsageReport');
+$router->post('/admin/ai-settings/chat', 'Admin\\AISettingsController@chat');
+
+// Gemini AI API Routes
+$router->post('/api/gemini/chat', 'Api\\GeminiApiController@chat');
+$router->post('/api/gemini/generate', 'Api\\GeminiApiController@generateContent');
+$router->post('/api/gemini/recommendations', 'Api\\GeminiApiController@propertyRecommendations');
+$router->post('/api/gemini/support', 'Api\\GeminiApiController@customerSupport');
+$router->post('/api/gemini/market-analysis', 'Api\\GeminiApiController@marketAnalysis');
+$router->post('/api/gemini/social-media', 'Api\\GeminiApiController@socialMediaContent');
+$router->get('/api/gemini/test', 'Api\\GeminiApiController@testConnection');
+$router->get('/api/gemini/status', 'Api\\GeminiApiController@getStatus');
+
+// Employee System Routes
+$router->get('/employee/login', 'Employee\\EmployeeController@login');
+$router->post('/employee/login', 'Employee\\EmployeeController@authenticate');
+$router->get('/employee/logout', 'Employee\\EmployeeController@logout');
+$router->get('/employee/dashboard', 'Employee\\EmployeeController@dashboard');
+$router->get('/employee/profile', 'Employee\\EmployeeController@profile');
+$router->post('/employee/profile', 'Employee\\EmployeeController@updateProfile');
+$router->post('/employee/checkin', 'Employee\\EmployeeController@checkIn');
+$router->post('/employee/checkout', 'Employee\\EmployeeController@checkOut');
+$router->post('/employee/api/update-task', 'Employee\\EmployeeController@updateTask');
+
+// Admin Authentication
+$router->get('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@adminLogin');
+$router->post('/admin/login', 'App\Http\Controllers\Auth\AdminAuthController@authenticateAdmin');
+$router->get('/admin/logout', 'App\Http\Controllers\Auth\AdminAuthController@logout');
+
+// Admin Dashboard
+$router->get('/admin/dashboard', 'App\Http\Controllers\Admin\AdminDashboardController@index');
+$router->get('/admin/dashboard/cm', 'App\Http\Controllers\Admin\CMDashboardController@index');
+
+// Properties
+$router->get('/properties', 'Front\\PageController@properties');
+$router->get('/properties/{id}', 'Front\\PageController@propertyDetails');
+$router->get('/company/projects', 'Front\\PageController@projects');
+$router->get('/projects/{slug}', 'Front\\PageController@projectDetails');
+
+// Careers
+$router->get('/careers', 'Front\\PageController@career');
+$router->get('/careers/jobs', 'Front\\PageController@careerJobs');
+$router->get('/careers/job/{id}', 'Front\\PageController@careerJobDetails');
+
+// 404 Handler (must be last)
+// $router->set404Handler('Front\\PageController@notFound');
 $router->get('/careers', 'Front\PageController@career');
 $router->get('/careers/apply', 'Front\PageController@careerApply');
 $router->post('/careers/apply', 'Front\PageController@submitCareerApplication');
@@ -546,3 +604,78 @@ $router->post('/core/helpers/email', 'Core\HelperController@sendEmail');
 $router->get('/core/helpers/system-info', 'Core\HelperController@systemInfo');
 $router->post('/core/helpers/backup', 'Core\HelperController@createBackup');
 $router->post('/core/helpers/cleanup', 'Core\HelperController@cleanup');
+
+// Employee Authentication and Dashboard Routes
+$router->get('/employee/login', 'Employee\\EmployeeController@login');
+$router->post('/employee/login', 'Employee\\EmployeeController@authenticate');
+$router->get('/employee/logout', 'Employee\\EmployeeController@logout');
+$router->get('/employee/dashboard', 'Employee\\EmployeeController@dashboard');
+$router->get('/employee/profile', 'Employee\\EmployeeController@profile');
+
+// Employee API Endpoints
+$router->post('/employee/checkin', 'Employee\\EmployeeController@checkIn');
+$router->post('/employee/checkout', 'Employee\\EmployeeController@checkOut');
+$router->get('/employee/api/tasks', 'Employee\\EmployeeController@getTasks');
+$router->post('/employee/api/update-task', 'Employee\\EmployeeController@updateTask');
+$router->get('/employee/api/performance', 'Employee\\EmployeeController@getPerformance');
+$router->get('/employee/api/attendance-records', 'Employee\\EmployeeController@getAttendanceRecords');
+
+// Employee Page Routes (using existing views)
+$router->get('/employee/tasks', 'Front\\PageController@employeeTasks');
+$router->get('/employee/activities', 'Front\\PageController@employeeActivities');
+$router->get('/employee/attendance', 'Front\\PageController@employeeAttendance');
+$router->get('/employee/performance-page', 'Front\\PageController@employeePerformance');
+$router->get('/employee/salary', 'Front\\PageController@employeeSalary');
+$router->get('/employee/documents', 'Front\\PageController@employeeDocuments');
+$router->get('/employee/leaves', 'Front\\PageController@employeeLeaves');
+$router->get('/employee/reporting', 'Front\\PageController@employeeReporting');
+
+// Campaign Management Routes
+$router->get('/admin/campaigns', 'Admin\\CampaignController@index');
+$router->get('/admin/campaigns/create', 'Admin\\CampaignController@create');
+$router->post('/admin/campaigns/store', 'Admin\\CampaignController@store');
+$router->get('/admin/campaigns/{id}/edit', 'Admin\\CampaignController@edit');
+$router->post('/admin/campaigns/{id}/update', 'Admin\\CampaignController@update');
+$router->get('/admin/campaigns/{id}/delete', 'Admin\\CampaignController@delete');
+$router->get('/admin/campaigns/{id}/analytics', 'Admin\\CampaignController@analytics');
+$router->get('/admin/campaigns/{id}/launch', 'Admin\\CampaignController@launch');
+
+// Notification System Routes
+$router->get('/api/notifications', 'NotificationController@getNotifications');
+$router->post('/api/notifications/mark-read', 'NotificationController@markAsRead');
+$router->get('/api/notifications/unread-count', 'NotificationController@getUnreadCount');
+$router->get('/api/popups', 'NotificationController@getPopups');
+$router->post('/api/popups/dismiss', 'NotificationController@dismissPopup');
+
+// Admin Notification Management
+$router->post('/admin/notifications/create', 'NotificationController@createNotification');
+$router->post('/admin/popups/create', 'NotificationController@createPopup');
+
+// Advanced Features Routes
+// Social Login
+$router->get('/auth/social/url', 'AdvancedFeaturesController@getSocialAuthUrl');
+$router->get('/auth/google/callback', 'AdvancedFeaturesController@handleSocialCallback');
+$router->get('/auth/facebook/callback', 'AdvancedFeaturesController@handleSocialCallback');
+$router->get('/auth/linkedin/callback', 'AdvancedFeaturesController@handleSocialCallback');
+
+// OTP Authentication
+$router->post('/auth/otp/send', 'AdvancedFeaturesController@sendOTP');
+$router->post('/auth/otp/verify', 'AdvancedFeaturesController@verifyOTP');
+
+// Progressive Registration
+$router->post('/auth/progressive/start', 'AdvancedFeaturesController@startProgressiveRegistration');
+$router->get('/auth/progressive/current', 'AdvancedFeaturesController@getCurrentRegistrationStep');
+$router->post('/auth/progressive/save', 'AdvancedFeaturesController@saveRegistrationStepData');
+$router->post('/auth/progressive/next', 'AdvancedFeaturesController@moveToNextRegistrationStep');
+$router->post('/auth/progressive/previous', 'AdvancedFeaturesController@moveToPreviousRegistrationStep');
+$router->post('/auth/progressive/complete', 'AdvancedFeaturesController@completeProgressiveRegistration');
+
+// AI Chatbot
+$router->post('/api/chatbot/message', 'AdvancedFeaturesController@processChatbotMessage');
+$router->get('/api/chatbot/history', 'AdvancedFeaturesController@getChatbotHistory');
+$router->post('/api/chatbot/clear', 'AdvancedFeaturesController@clearChatbotConversation');
+
+// Campaign Delivery
+$router->post('/api/campaigns/deliver', 'AdvancedFeaturesController@deliverCampaign');
+$router->get('/api/campaigns/stats', 'AdvancedFeaturesController@getCampaignStats');
+$router->post('/api/campaigns/track', 'AdvancedFeaturesController@trackCampaignEngagement');
