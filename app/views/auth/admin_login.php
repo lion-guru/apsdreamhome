@@ -216,6 +216,6 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-// Include base layout
-require_once __DIR__ . '/../layouts/base.php';
+// Include admin header with content
+require_once __DIR__ . '/../admin/layouts/header.php';
 ?>
