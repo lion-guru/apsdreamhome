@@ -241,7 +241,7 @@
                 <p class="lead mb-4">
                     We're always looking for talented individuals. Send us your resume and we'll keep you in mind for future opportunities.
                 </p>
-                <a href="<?= BASE_URL ?>contact" class="btn btn-light btn-lg">
+                <a href="<?= BASE_URL ?>/contact" class="btn btn-primary btn-lg">
                     <i class="fas fa-envelope me-2"></i>Get In Touch
                 </a>
             </div>
