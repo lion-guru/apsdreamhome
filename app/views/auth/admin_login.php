@@ -216,6 +216,9 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-// Include admin header with content
+// Include admin header and display content
 require_once __DIR__ . '/../admin/layouts/header.php';
+
+// Display the login form content
+echo $content;
 ?>
