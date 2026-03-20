@@ -123,6 +123,53 @@ class RBACManager
     }
 
     /**
+     * Get role permissions
+     * @param string $role User role
+     * @return array Permissions for the role
+     */
+    public static function getRolePermissions($role)
+    {
+        $permissions = [
+            self::ROLE_SUPER_ADMIN => [
+                self::PERMISSION_DASHBOARD,
+                self::PERMISSION_USER_MANAGEMENT,
+                self::PERMISSION_PROPERTY_MANAGEMENT,
+                self::PERMISSION_SYSTEM_SETTINGS,
+                self::PERMISSION_REPORTS,
+                self::PERMISSION_BANKING,
+                self::PERMISSION_COMMUNICATION
+            ],
+            self::ROLE_ADMIN => [
+                self::PERMISSION_DASHBOARD,
+                self::PERMISSION_USER_MANAGEMENT,
+                self::PERMISSION_PROPERTY_MANAGEMENT,
+                self::PERMISSION_REPORTS,
+                self::PERMISSION_COMMUNICATION
+            ],
+            self::ROLE_MANAGER => [
+                self::PERMISSION_DASHBOARD,
+                self::PERMISSION_USER_MANAGEMENT,
+                self::PERMISSION_PROPERTY_MANAGEMENT,
+                self::PERMISSION_REPORTS
+            ],
+            self::ROLE_ASSOCOCIATE => [
+                self::PERMISSION_DASHBOARD,
+                self::PERMISSION_PROPERTY_MANAGEMENT,
+                self::PERMISSION_COMMUNICATION
+            ],
+            self::ROLE_USER => [
+                self::PERMISSION_DASHBOARD,
+                self::PERMISSION_COMMUNICATION
+            ],
+            self::ROLE_GUEST => [
+                self::PERMISSION_DASHBOARD
+            ]
+        ];
+
+        return $permissions[$role] ?? [];
+    }
+
+    /**
      * Check if user has specific permission
      * @param string $permission Permission to check
      * @param string|null $userId User ID
