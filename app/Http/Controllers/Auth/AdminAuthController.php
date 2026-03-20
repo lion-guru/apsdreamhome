@@ -69,22 +69,46 @@ class AdminAuthController extends BaseController
                 throw new \Exception('Please fill in all fields');
             }
 
-            // Simple admin authentication (for demo)
-            if ($email === 'admin@apsdreamhome.com' && $password === 'admin123') {
-                // Store admin data in session
-                $_SESSION['admin_id'] = 1;
-                $_SESSION['admin_email'] = 'admin@apsdreamhome.com';
-                $_SESSION['admin_role'] = 'admin';
-                $_SESSION['admin_name'] = 'Administrator';
+            // Authenticate against database
+            $this->db = \App\Core\Database\Database::getInstance();
+
+            // Check admin users table first
+            $adminQuery = "SELECT * FROM admin_users WHERE username = ? OR email = ? LIMIT 1";
+            $adminUser = $this->db->fetchOne($adminQuery, [$email, $email]);
+
+            if ($adminUser && password_verify($password, $adminUser['password_hash'])) {
+                // Admin authentication successful
+                $_SESSION['admin_id'] = $adminUser['id'];
+                $_SESSION['admin_email'] = $adminUser['email'];
+                $_SESSION['admin_role'] = $adminUser['role'];
+                $_SESSION['admin_name'] = $adminUser['username'];
                 $_SESSION['login_time'] = time();
                 $_SESSION['csrf_token'] = $this->getCsrfToken();
 
                 // Redirect to dashboard
                 header('Location: ' . BASE_URL . '/admin/dashboard');
                 exit;
-            } else {
-                throw new \Exception('Invalid username or password');
             }
+
+            // Check users table for admin roles
+            $userQuery = "SELECT * FROM users WHERE (name = ? OR email = ?) AND role IN ('admin', 'super_admin') LIMIT 1";
+            $user = $this->db->fetchOne($userQuery, [$email, $email]);
+
+            if ($user && password_verify($password, $user['password'])) {
+                // User with admin role authentication successful
+                $_SESSION['admin_id'] = $user['id'];
+                $_SESSION['admin_email'] = $user['email'];
+                $_SESSION['admin_role'] = $user['role'];
+                $_SESSION['admin_name'] = $user['name'];
+                $_SESSION['login_time'] = time();
+                $_SESSION['csrf_token'] = $this->getCsrfToken();
+
+                // Redirect to dashboard
+                header('Location: ' . BASE_URL . '/admin/dashboard');
+                exit;
+            }
+
+            throw new \Exception('Invalid username or password');
         } catch (\Exception $e) {
             // Log failed attempt
             $this->logLoginAttempt($_POST['email'] ?? '', false, $e->getMessage());
