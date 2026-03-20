@@ -1158,7 +1158,7 @@ background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
                     <div class="col-md-3">
                         <div class="glass-card">
                             <div class="stat-icon bg-gradient-purple"><i class="fas fa-wallet"></i></div>
-                            <h2 class="fw-bold mb-0">₹<?php echo number_format($stats['total_revenue'] ?? 245000); ?></h2>
+                            <h2 class="fw-bold mb-0">₹<?php echo number_format(is_numeric($stats['total_revenue'] ?? 0) ? $stats['total_revenue'] : 245000); ?></h2>
                             <p class="text-muted small mb-0">Platform Revenue</p>
                         </div>
                     </div>
