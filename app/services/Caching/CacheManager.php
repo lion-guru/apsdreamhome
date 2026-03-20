@@ -5,6 +5,55 @@ namespace App\Services\Caching;
 use App\Core\Database\Database;
 
 /**
+ * Fallback Redis class for environments without Redis extension
+ */
+if (!class_exists('Redis')) {
+    class Redis
+    {
+        public function connect($host, $port)
+        {
+            return false;
+        }
+        public function auth($password)
+        {
+            return false;
+        }
+        public function select($db)
+        {
+            return false;
+        }
+        public function set($key, $value)
+        {
+            return false;
+        }
+        public function setex($key, $ttl, $value)
+        {
+            return false;
+        }
+        public function get($key)
+        {
+            return false;
+        }
+        public function del($key)
+        {
+            return 0;
+        }
+        public function flushDB()
+        {
+            return false;
+        }
+        public function dbSize()
+        {
+            return 0;
+        }
+        public function info()
+        {
+            return [];
+        }
+    }
+}
+
+/**
  * Cache Manager - Multi-layer caching system
  */
 class CacheManager
@@ -93,7 +142,7 @@ class CacheManager
     private function initializeLayers()
     {
         // Memory cache (APCu)
-        if (function_exists('apcu_enabled') && \apcu_enabled()) {
+        if (function_exists('apcu_enabled') && apcu_enabled()) {
             $this->layers[self::LAYER_MEMORY] = new ApcuCacheLayer();
         }
 
@@ -113,7 +162,7 @@ class CacheManager
     {
         if (class_exists('Redis') && $this->config['redis_enabled']) {
             try {
-                $this->redis = new \Redis();
+                $this->redis = new Redis();
                 $this->redis->connect(
                     $this->config['redis_host'],
                     $this->config['redis_port']

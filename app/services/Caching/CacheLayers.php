@@ -3,6 +3,52 @@
 namespace App\Services\Caching;
 
 /**
+ * Fallback APCu functions for environments without APCu extension
+ */
+if (!function_exists('apcu_fetch')) {
+    function apcu_fetch($key, &$success = null)
+    {
+        $success = false;
+        return false;
+    }
+}
+
+if (!function_exists('apcu_store')) {
+    function apcu_store($key, $value, $ttl = 0)
+    {
+        return false;
+    }
+}
+
+if (!function_exists('apcu_delete')) {
+    function apcu_delete($key)
+    {
+        return false;
+    }
+}
+
+if (!function_exists('apcu_clear_cache')) {
+    function apcu_clear_cache()
+    {
+        return false;
+    }
+}
+
+if (!function_exists('apcu_cache_info')) {
+    function apcu_cache_info($limited = false)
+    {
+        return [];
+    }
+}
+
+if (!function_exists('apcu_enabled')) {
+    function apcu_enabled()
+    {
+        return false;
+    }
+}
+
+/**
  * APCu Cache Layer Implementation
  */
 class ApcuCacheLayer
@@ -11,7 +57,7 @@ class ApcuCacheLayer
     {
         $success = false;
         if (function_exists('apcu_fetch')) {
-            $value = \apcu_fetch($key, $success);
+            $value = apcu_fetch($key, $success);
             return $success ? $value : null;
         }
         return null;
@@ -20,7 +66,7 @@ class ApcuCacheLayer
     public function set($key, $value, $ttl)
     {
         if (function_exists('apcu_store')) {
-            return \apcu_store($key, $value, $ttl);
+            return apcu_store($key, $value, $ttl);
         }
         return false;
     }
@@ -28,7 +74,7 @@ class ApcuCacheLayer
     public function delete($key)
     {
         if (function_exists('apcu_delete')) {
-            return \apcu_delete($key);
+            return apcu_delete($key);
         }
         return false;
     }
@@ -36,7 +82,7 @@ class ApcuCacheLayer
     public function clear()
     {
         if (function_exists('apcu_clear_cache')) {
-            return \apcu_clear_cache();
+            return apcu_clear_cache();
         }
         return false;
     }
@@ -44,7 +90,7 @@ class ApcuCacheLayer
     public function getStats()
     {
         if (function_exists('apcu_cache_info')) {
-            return \apcu_cache_info(true);
+            return apcu_cache_info(true);
         }
         return [];
     }
