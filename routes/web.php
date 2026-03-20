@@ -142,6 +142,7 @@ $router->post('/admin/properties/{id}/destroy', 'App\Http\Controllers\Admin\Prop
 $router->get('/admin/properties/check-availability', 'App\Http\Controllers\Admin\PropertyManagementController@checkAvailability');
 
 // Additional routes
+// Careers routes
 $router->get('/career', 'Front\PageController@career');
 $router->get('/careers', 'Front\PageController@career');
 $router->get('/careers/apply', 'Front\PageController@careerApply');
@@ -169,12 +170,9 @@ require_once __DIR__ . '/api.php';
 $router->get('/admin/dashboard', 'Admin\AdminDashboardController@dashboard');
 $router->get('/admin/stats', 'Admin\AdminDashboardController@getStats');
 
-// Career/HR routes (Modern MVC)
-$router->get('/careers', 'HumanResources\CareerController@index');
-$router->get('/careers/apply', 'HumanResources\CareerController@apply');
-$router->post('/careers/apply', 'HumanResources\CareerController@submitApplication');
-$router->get('/careers/jobs', 'HumanResources\CareerController@jobs');
-$router->get('/careers/job/{id}', 'HumanResources\CareerController@jobDetails');
+// Career/HR routes (Modern MVC) - Using Front\PageController for public pages
+$router->get('/careers/jobs', 'Front\PageController@careerJobs');
+$router->get('/careers/job/{id}', 'Front\PageController@careerJobDetails');
 
 // Land/Plotting routes (Modern MVC)
 $router->get('/land/dashboard', 'Land\PlottingController@dashboard');
@@ -328,7 +326,6 @@ $router->post('/security/policies/enforce', 'Security\SecurityController@enforce
 $router->get('/security/compliance', 'Security\SecurityController@getComplianceReport');
 
 // Career routes (Modern MVC)
-$router->get('/careers', 'Career\CareerController@index');
 $router->get('/careers/dashboard', 'Career\CareerController@dashboard');
 $router->get('/careers/application/{id}', 'Career\CareerController@applicationDetails');
 $router->post('/careers/apply', 'Career\CareerController@submitApplication');
