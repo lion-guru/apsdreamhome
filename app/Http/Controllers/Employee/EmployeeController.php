@@ -67,7 +67,7 @@ class EmployeeController extends BaseController
      */
     protected function isEmployeeLoggedIn()
     {
-        return isset($_SESSION['employee_id']);
+        return isset($_SESSION['employee_id']) && !empty($_SESSION['employee_id']);
     }
 
     /**
@@ -1263,6 +1263,326 @@ class EmployeeController extends BaseController
     }
 
     /**
+     * Get employee dashboard data
+     */
+    private function getEmployeeDashboardData($employeeId)
+    {
+        $query = "SELECT 
+                    COUNT(CASE WHEN t.status = 'pending' AND t.due_date >= CURDATE() THEN 1 END) as pending_tasks,
+                    COUNT(CASE WHEN t.status = 'completed' AND t.completed_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 END) as completed_this_week,
+                    COUNT(CASE WHEN a.status = 'present' AND a.check_in >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 END) as days_present_this_week,
+                    AVG(CASE WHEN a.check_in AND a.check_out THEN 
+                        TIMESTAMPDIFF(HOUR, a.check_in, a.check_out) END) as avg_work_hours
+                 FROM tasks t
+                 LEFT JOIN attendance a ON a.employee_id = ?
+                 WHERE t.assigned_to = ? OR a.employee_id = ?";
+
+        $result = $this->db->fetch($query, [$employeeId, $employeeId, $employeeId]);
+
+        return $result ?: [
+            'pending_tasks' => 0,
+            'completed_this_week' => 0,
+            'days_present_this_week' => 0,
+            'avg_work_hours' => 0
+        ];
+    }
+
+    /**
+     * Get employee tasks
+     */
+    private function getEmployeeTasks($employeeId, $filters = [])
+    {
+        $whereClause = "t.assigned_to = ?";
+        $params = [$employeeId];
+
+        if (!empty($filters['status'])) {
+            $whereClause .= " AND t.status = ?";
+            $params[] = $filters['status'];
+        }
+
+        if (!empty($filters['date_from'])) {
+            $whereClause .= " AND t.due_date >= ?";
+            $params[] = $filters['date_from'];
+        }
+
+        if (!empty($filters['date_to'])) {
+            $whereClause .= " AND t.due_date <= ?";
+            $params[] = $filters['date_to'];
+        }
+
+        if (!empty($filters['per_page'])) {
+            $limit = " LIMIT " . (int)$filters['per_page'];
+        } else {
+            $limit = "";
+        }
+
+        $query = "SELECT t.*, e.name as assigned_by_name
+                 FROM tasks t
+                 LEFT JOIN employees e ON t.assigned_by = e.id
+                 WHERE {$whereClause}
+                 ORDER BY t.due_date ASC, t.priority DESC{$limit}";
+
+        return $this->db->fetchAll($query, $params);
+    }
+
+    /**
+     * Get employee performance
+     */
+    private function getEmployeePerformance($employeeId, $period = 'month')
+    {
+        $dateCondition = '';
+        switch ($period) {
+            case 'week':
+                $dateCondition = "AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+                break;
+            case 'quarter':
+                $dateCondition = "AND created_at >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)";
+                break;
+            case 'year':
+                $dateCondition = "AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
+                break;
+            default: // month
+                $dateCondition = "AND created_at >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+        }
+
+        $query = "SELECT 
+                    COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_tasks,
+                    COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_tasks,
+                    COUNT(CASE WHEN status = 'in_progress' THEN 1 END) as in_progress_tasks,
+                    AVG(CASE WHEN status = 'completed' AND actual_hours > 0 THEN actual_hours END) as avg_completion_time
+                 FROM tasks 
+                 WHERE assigned_to = ? {$dateCondition}";
+
+        $result = $this->db->fetch($query, [$employeeId]);
+
+        return $result ?: [
+            'completed_tasks' => 0,
+            'pending_tasks' => 0,
+            'in_progress_tasks' => 0,
+            'avg_completion_time' => 0
+        ];
+    }
+
+    /**
+     * Get employee activities
+     */
+    private function getEmployeeActivities($employeeId, $filters = [])
+    {
+        $whereClause = "employee_id = ?";
+        $params = [$employeeId];
+
+        if (!empty($filters['activity_type'])) {
+            $whereClause .= " AND activity_type = ?";
+            $params[] = $filters['activity_type'];
+        }
+
+        if (!empty($filters['date_from'])) {
+            $whereClause .= " AND created_at >= ?";
+            $params[] = $filters['date_from'];
+        }
+
+        if (!empty($filters['date_to'])) {
+            $whereClause .= " AND created_at <= ?";
+            $params[] = $filters['date_to'];
+        }
+
+        if (!empty($filters['per_page'])) {
+            $limit = " LIMIT " . (int)$filters['per_page'];
+        } else {
+            $limit = "";
+        }
+
+        $query = "SELECT * FROM employee_activities 
+                 WHERE {$whereClause}
+                 ORDER BY created_at DESC{$limit}";
+
+        return $this->db->fetchAll($query, $params);
+    }
+
+    /**
+     * Get employee attendance
+     */
+    private function getEmployeeAttendance($employeeId, $filters = [])
+    {
+        $whereClause = "employee_id = ?";
+        $params = [$employeeId];
+
+        if (!empty($filters['month'])) {
+            $whereClause .= " AND DATE_FORMAT(check_in, '%Y-%m') = ?";
+            $params[] = $filters['month'];
+        }
+
+        if (!empty($filters['date_from'])) {
+            $whereClause .= " AND DATE(check_in) >= ?";
+            $params[] = $filters['date_from'];
+        }
+
+        if (!empty($filters['date_to'])) {
+            $whereClause .= " AND DATE(check_in) <= ?";
+            $params[] = $filters['date_to'];
+        }
+
+        if (!empty($filters['per_page'])) {
+            $limit = " LIMIT " . (int)$filters['per_page'];
+        } else {
+            $limit = "";
+        }
+
+        $query = "SELECT *, 
+                        TIMESTAMPDIFF(HOUR, check_in, check_out) as work_hours,
+                        CASE 
+                            WHEN check_in > '09:00:00' THEN 'late'
+                            WHEN status = 'present' THEN 'on_time'
+                            ELSE status 
+                        END as attendance_status
+                 FROM attendance 
+                 WHERE {$whereClause}
+                 ORDER BY check_in DESC{$limit}";
+
+        return $this->db->fetchAll($query, $params);
+    }
+
+    /**
+     * Update employee task
+     */
+    private function updateEmployeeTask($taskId, $data)
+    {
+        $setClause = [];
+        $params = [];
+
+        foreach ($data as $key => $value) {
+            if ($value !== null) {
+                $setClause[] = "{$key} = ?";
+                $params[] = $value;
+            }
+        }
+
+        $params[] = $taskId;
+
+        $query = "UPDATE tasks SET " . implode(', ', $setClause) . " WHERE id = ?";
+
+        return $this->db->execute($query, $params);
+    }
+
+    /**
+     * Insert attendance record
+     */
+    private function insertAttendance($employeeId, $data)
+    {
+        $fields = ['employee_id'];
+        $placeholders = ['?'];
+        $params = [$employeeId];
+
+        foreach ($data as $key => $value) {
+            if ($value !== null) {
+                $fields[] = $key;
+                $placeholders[] = '?';
+                $params[] = $value;
+            }
+        }
+
+        $query = "INSERT INTO attendance (" . implode(', ', $fields) . ") 
+                 VALUES (" . implode(', ', $placeholders) . ")";
+
+        return $this->db->execute($query, $params);
+    }
+
+    /**
+     * Get employee salary history
+     */
+    private function getEmployeeSalaryHistory($employeeId)
+    {
+        $query = "SELECT * FROM salary_history 
+                 WHERE employee_id = ? 
+                 ORDER BY effective_date DESC";
+
+        return $this->db->fetchAll($query, [$employeeId]);
+    }
+
+    /**
+     * Get reporting structure
+     */
+    private function getReportingStructure($employeeId)
+    {
+        $query = "SELECT 
+                    e.id, e.name, e.email, e.position, r.name as role_name,
+                    m.name as manager_name, m.email as manager_email
+                 FROM employees e
+                 LEFT JOIN roles r ON e.role_id = r.id
+                 LEFT JOIN employees m ON e.manager_id = m.id
+                 WHERE e.id = ? OR e.manager_id = ?
+                 ORDER BY e.manager_id, e.name";
+
+        return $this->db->fetchAll($query, [$employeeId, $employeeId]);
+    }
+
+    /**
+     * Update employee password
+     */
+    private function updateEmployeePassword($employeeId, $newPassword)
+    {
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $query = "UPDATE employees SET password = ?, updated_at = NOW() WHERE id = ?";
+
+        return $this->db->execute($query, [$hashedPassword, $employeeId]);
+    }
+
+    /**
+     * Get attendance record by date
+     */
+    private function getAttendanceByDate($employeeId, $date)
+    {
+        $query = "SELECT * FROM attendance 
+                 WHERE employee_id = ? AND DATE(check_in) = ?";
+
+        return $this->db->fetch($query, [$employeeId, $date]);
+    }
+
+    /**
+     * Update attendance record
+     */
+    private function updateAttendance($attendanceId, $data)
+    {
+        $setClause = [];
+        $params = [];
+
+        foreach ($data as $key => $value) {
+            if ($value !== null) {
+                $setClause[] = "{$key} = ?";
+                $params[] = $value;
+            }
+        }
+
+        $params[] = $attendanceId;
+
+        $query = "UPDATE attendance SET " . implode(', ', $setClause) . " WHERE id = ?";
+
+        return $this->db->execute($query, $params);
+    }
+
+    /**
+     * Create attendance record
+     */
+    private function createAttendance($employeeId, $data)
+    {
+        $fields = ['employee_id'];
+        $placeholders = ['?'];
+        $params = [$employeeId];
+
+        foreach ($data as $key => $value) {
+            if ($value !== null) {
+                $fields[] = $key;
+                $placeholders[] = '?';
+                $params[] = $value;
+            }
+        }
+
+        $query = "INSERT INTO attendance (" . implode(', ', $fields) . ") 
+                 VALUES (" . implode(', ', $placeholders) . ")";
+
+        return $this->db->execute($query, $params);
+    }
+    /**
      * Middleware to check employee authentication
      */
     protected function middleware($middleware, array $options = [])
@@ -1271,84 +1591,34 @@ class EmployeeController extends BaseController
             $this->redirect('/employee/login');
         }
     }
-}
 
-
-// Merged from: C:\xampp\htdocs\apsdreamhome\app\Controllers/..\Http\Controllers\Admin\EmployeeController.php
-
-function index()
-{
-    $filters = [
-        'search' => $this->request->get('search', ''),
-        'department' => $this->request->get('department', '')
-    ];
-
-    $employees = $this->model('Employee')->getAllEmployees($filters);
-
-    return $this->render('admin/employees/index', [
-        'employees' => $employees,
-        'filters' => $filters,
-        'page_title' => $this->mlSupport->translate('Employee Management') . ' - ' . $this->getConfig('app_name')
-    ]);
-}
-function create()
-{
-    $employeeModel = $this->model('Employee');
-    $roles = $employeeModel->getRoles();
-    $departments = $employeeModel->getDepartments();
-
-    return $this->render('admin/employees/create', [
-        'roles' => $roles,
-        'departments' => $departments,
-        'page_title' => $this->mlSupport->translate('Add New Employee') . ' - ' . $this->getConfig('app_name')
-    ]);
-}
-function store()
-{
-    if ($this->request->method() !== 'POST') {
-        $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-        return $this->back();
+    /**
+     * Get attendance record where clause
+     */
+    private function where($field, $value)
+    {
+        $this->whereConditions[] = "{$field} = ?";
+        $this->whereParams[] = $value;
+        return $this;
     }
-}
-function show($id)
-{
-    $employeeModel = $this->model('Employee');
-    $employee = $employeeModel->getEmployeeById($id);
 
-    if (!$employee) {
-        $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
-        return $this->redirect('/admin/employees');
-    }
-}
-function edit($id)
-{
-    $employeeModel = $this->model('Employee');
-    $employee = $employeeModel->getEmployeeById($id);
+    /**
+     * Execute where query
+     */
+    private function first()
+    {
+        if (empty($this->whereConditions)) {
+            return null;
+        }
 
-    if (!$employee) {
-        $this->setFlash('error', $this->mlSupport->translate('Employee not found.'));
-        return $this->redirect('/admin/employees');
-    }
-}
-function destroy($id)
-{
-    if ($this->request->method() !== 'POST') {
-        $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-        return $this->back();
-    }
-}
-function offboard($id)
-{
-    if ($this->request->method() !== 'POST') {
-        $this->setFlash('error', $this->mlSupport->translate('Invalid request method.'));
-        return $this->back();
-    }
-}
+        $whereClause = implode(' AND ', $this->whereConditions);
+        $query = "SELECT * FROM attendance WHERE {$whereClause} LIMIT 1";
+        $result = $this->db->fetch($query, $this->whereParams);
 
-function requireAuth()
-{
-    if (!$this->isLoggedIn()) {
-        $this->setFlash('error', 'Please login to access this page');
-        $this->redirect('/login');
+        // Reset conditions
+        $this->whereConditions = [];
+        $this->whereParams = [];
+
+        return $result;
     }
 }
