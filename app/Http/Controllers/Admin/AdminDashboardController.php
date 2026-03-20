@@ -15,8 +15,10 @@ class AdminDashboardController extends \App\Http\Controllers\BaseController
     {
         parent::__construct();
         try {
+            $dbHost = $_ENV['DB_HOST'] ?? 'localhost';
+            $dbName = $_ENV['DB_DATABASE'] ?? 'apsdreamhome';
             $this->pdo = new \PDO(
-                "mysql:host={$_ENV['DB_HOST']};dbname={$_ENV['DB_DATABASE']}",
+                "mysql:host={$dbHost};dbname={$dbName}",
                 $_ENV['DB_USERNAME'] ?? 'root',
                 $_ENV['DB_PASSWORD'] ?? '',
                 [
