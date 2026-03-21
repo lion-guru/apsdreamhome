@@ -9,8 +9,12 @@
 
 require_once 'core/functions.php';
 
-// Include header
-require_once 'includes/templates/header.php';
+// Set page variables
+$page_title = 'FAQs - APS Dream Home';
+$page_description = 'Frequently asked questions about our real estate services';
+
+// Content for base layout
+ob_start();
 ?>
 
 <!-- Page Header -->
@@ -312,47 +316,48 @@ require_once 'includes/templates/header.php';
 </section>
 
 <style>
-.accordion-button {
-    font-weight: 600;
-    color: #333;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-}
+    .accordion-button {
+        font-weight: 600;
+        color: #333;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
 
-.accordion-button:not(.collapsed) {
-    background-color: #667eea;
-    color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    .accordion-button:not(.collapsed) {
+        background-color: #667eea;
+        color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-.accordion-button:focus {
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.25);
-    border-color: #667eea;
-}
+    .accordion-button:focus {
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.25);
+        border-color: #667eea;
+    }
 
-.accordion-body {
-    background-color: white;
-    border: 1px solid #dee2e6;
-    border-top: none;
-    padding: 20px;
-    line-height: 1.6;
-}
+    .accordion-body {
+        background-color: white;
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 20px;
+        line-height: 1.6;
+    }
 
-.accordion-item {
-    margin-bottom: 10px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
+    .accordion-item {
+        margin-bottom: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
 
-.section-title {
-    color: #333;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
+    .section-title {
+        color: #333;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
 </style>
 
 <?php
-// Include footer
-require_once 'includes/templates/footer.php';
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/base.php';
+echo $content;
 ?>

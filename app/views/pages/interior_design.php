@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Interior Design Services Page - APS Dream Homes
  * Professional interior design services for real estate
@@ -34,7 +35,6 @@ try {
     $faqsQuery = "SELECT * FROM faqs WHERE category = 'interior_design' AND status = 'active' ORDER BY display_order ASC LIMIT 5";
     $faqsStmt = $pdo->query($faqsQuery);
     $faqs = $faqsStmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (Exception $e) {
     error_log('Interior design page database error: ' . $e->getMessage());
     $services = [];
@@ -47,6 +47,7 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,7 +79,7 @@ try {
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
             text-align: center;
@@ -87,7 +88,7 @@ try {
 
         .service-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .service-icon {
@@ -107,14 +108,14 @@ try {
             position: relative;
             overflow: hidden;
             border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             margin-bottom: 30px;
         }
 
         .portfolio-item:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .portfolio-image {
@@ -138,7 +139,7 @@ try {
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
             color: white;
             padding: 20px;
         }
@@ -158,14 +159,14 @@ try {
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
         }
 
         .team-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .team-image {
@@ -276,7 +277,7 @@ try {
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             border-left: 5px solid #8e44ad;
         }
 
@@ -323,7 +324,7 @@ try {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
         }
 
         .cta-section {
@@ -345,7 +346,7 @@ try {
         .btn-primary:hover {
             background: linear-gradient(45deg, #9b59b6, #8e44ad);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .btn-outline-primary {
@@ -377,6 +378,7 @@ try {
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <?php include 'includes/templates/header.php'; ?>
@@ -427,127 +429,127 @@ try {
             </div>
 
             <?php if (!empty($services)): ?>
-            <div class="row g-4">
-                <?php foreach ($services as $service): ?>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-palette'); ?>"></i>
-                        </div>
-                        <h3 class="h4 fw-bold mb-3"><?php echo htmlspecialchars($service['title'] ?? 'Design Service'); ?></h3>
-                        <p class="text-muted mb-4"><?php echo htmlspecialchars($service['description'] ?? 'Professional interior design service tailored to your needs.'); ?></p>
+                <div class="row g-4">
+                    <?php foreach ($services as $service): ?>
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                            <div class="service-card">
+                                <div class="service-icon">
+                                    <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-palette'); ?>"></i>
+                                </div>
+                                <h3 class="h4 fw-bold mb-3"><?php echo htmlspecialchars($service['title'] ?? 'Design Service'); ?></h3>
+                                <p class="text-muted mb-4"><?php echo htmlspecialchars($service['description'] ?? 'Professional interior design service tailored to your needs.'); ?></p>
 
-                        <?php if (!empty($service['features'])): ?>
-                        <?php $features = json_decode($service['features'], true); ?>
-                        <?php if (is_array($features) && !empty($features)): ?>
-                        <ul class="list-unstyled">
-                            <?php foreach ($features as $feature): ?>
-                            <li class="mb-2">
-                                <i class="fas fa-check text-success me-2"></i>
-                                <?php echo htmlspecialchars($feature); ?>
-                            </li>
-                            <?php endforeach; ?>
-                        </ul>
-                        <?php endif; ?>
-                        <?php endif; ?>
+                                <?php if (!empty($service['features'])): ?>
+                                    <?php $features = json_decode($service['features'], true); ?>
+                                    <?php if (is_array($features) && !empty($features)): ?>
+                                        <ul class="list-unstyled">
+                                            <?php foreach ($features as $feature): ?>
+                                                <li class="mb-2">
+                                                    <i class="fas fa-check text-success me-2"></i>
+                                                    <?php echo htmlspecialchars($feature); ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-palette fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted">Interior Design Services Coming Soon</h3>
+                        <p class="text-muted mb-4">
+                            We're currently expanding our interior design services. Please contact us for immediate design consultation.
+                        </p>
+                        <a href="contact.php" class="btn btn-primary">Contact Us</a>
                     </div>
                 </div>
-                <?php endforeach; ?>
-            </div>
-            <?php else: ?>
-            <div class="text-center py-5">
-                <div class="empty-state">
-                    <i class="fas fa-palette fa-4x text-muted mb-4"></i>
-                    <h3 class="text-muted">Interior Design Services Coming Soon</h3>
-                    <p class="text-muted mb-4">
-                        We're currently expanding our interior design services. Please contact us for immediate design consultation.
-                    </p>
-                    <a href="contact.php" class="btn btn-primary">Contact Us</a>
-                </div>
-            </div>
             <?php endif; ?>
         </div>
     </section>
 
     <!-- Portfolio Section -->
     <?php if (!empty($portfolio)): ?>
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Our Portfolio</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        Browse through some of our recent interior design projects
-                    </p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <?php foreach ($portfolio as $project): ?>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
-                    <div class="portfolio-item">
-                        <div class="portfolio-image">
-                            <img src="<?php echo htmlspecialchars($project['image_url'] ?? 'assets/images/property-placeholder.jpg'); ?>"
-                                 alt="<?php echo htmlspecialchars($project['title']); ?>">
-                            <div class="portfolio-overlay">
-                                <h5 class="portfolio-title"><?php echo htmlspecialchars($project['title']); ?></h5>
-                                <p class="portfolio-category"><?php echo htmlspecialchars($project['category']); ?></p>
-                            </div>
-                        </div>
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center mb-5">
+                        <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Our Portfolio</h2>
+                        <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
+                            Browse through some of our recent interior design projects
+                        </p>
                     </div>
                 </div>
-                <?php endforeach; ?>
+
+                <div class="row g-4">
+                    <?php foreach ($portfolio as $project): ?>
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                            <div class="portfolio-item">
+                                <div class="portfolio-image">
+                                    <img src="<?php echo htmlspecialchars($project['image_url'] ?? 'assets/images/property-placeholder.jpg'); ?>"
+                                        alt="<?php echo htmlspecialchars($project['title']); ?>">
+                                    <div class="portfolio-overlay">
+                                        <h5 class="portfolio-title"><?php echo htmlspecialchars($project['title']); ?></h5>
+                                        <p class="portfolio-category"><?php echo htmlspecialchars($project['category']); ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
 
     <!-- Interior Design Team Section -->
     <?php if (!empty($team_members)): ?>
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Meet Our Design Team</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        Creative professionals dedicated to bringing your vision to life
-                    </p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <?php foreach ($team_members as $member): ?>
-                <div class="col-lg-3 col-md-6" data-aos="fade-up">
-                    <div class="team-card">
-                        <div class="team-image">
-                            <img src="<?php echo htmlspecialchars($member['image_path'] ?? 'assets/images/team-placeholder.jpg'); ?>"
-                                 alt="<?php echo htmlspecialchars($member['name']); ?>">
-                        </div>
-                        <div class="team-info">
-                            <h5 class="fw-bold mb-2"><?php echo htmlspecialchars($member['name']); ?></h5>
-                            <p class="designation mb-1"><?php echo htmlspecialchars($member['designation']); ?></p>
-                            <?php if (!empty($member['specialization'])): ?>
-                            <p class="specialization mb-3"><?php echo htmlspecialchars($member['specialization']); ?></p>
-                            <?php endif; ?>
-                            <div class="social-links">
-                                <?php if (!empty($member['linkedin'])): ?>
-                                <a href="<?php echo htmlspecialchars($member['linkedin']); ?>" target="_blank" title="LinkedIn">
-                                    <i class="fab fa-linkedin"></i>
-                                </a>
-                                <?php endif; ?>
-                                <?php if (!empty($member['email'])): ?>
-                                <a href="mailto:<?php echo htmlspecialchars($member['email']); ?>" title="Email">
-                                    <i class="fas fa-envelope"></i>
-                                </a>
-                                <?php endif; ?>
-                            </div>
-                        </div>
+        <section class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center mb-5">
+                        <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Meet Our Design Team</h2>
+                        <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
+                            Creative professionals dedicated to bringing your vision to life
+                        </p>
                     </div>
                 </div>
-                <?php endforeach; ?>
+
+                <div class="row g-4">
+                    <?php foreach ($team_members as $member): ?>
+                        <div class="col-lg-3 col-md-6" data-aos="fade-up">
+                            <div class="team-card">
+                                <div class="team-image">
+                                    <img src="<?php echo htmlspecialchars($member['image_path'] ?? 'assets/images/team-placeholder.jpg'); ?>"
+                                        alt="<?php echo htmlspecialchars($member['name']); ?>">
+                                </div>
+                                <div class="team-info">
+                                    <h5 class="fw-bold mb-2"><?php echo htmlspecialchars($member['name']); ?></h5>
+                                    <p class="designation mb-1"><?php echo htmlspecialchars($member['designation']); ?></p>
+                                    <?php if (!empty($member['specialization'])): ?>
+                                        <p class="specialization mb-3"><?php echo htmlspecialchars($member['specialization']); ?></p>
+                                    <?php endif; ?>
+                                    <div class="social-links">
+                                        <?php if (!empty($member['linkedin'])): ?>
+                                            <a href="<?php echo htmlspecialchars($member['linkedin']); ?>" target="_blank" title="LinkedIn">
+                                                <i class="fab fa-linkedin"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php if (!empty($member['email'])): ?>
+                                            <a href="mailto:<?php echo htmlspecialchars($member['email']); ?>" title="Email">
+                                                <i class="fas fa-envelope"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
 
     <!-- Design Process Section -->
@@ -596,84 +598,84 @@ try {
 
     <!-- Testimonials Section -->
     <?php if (!empty($testimonials)): ?>
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">What Our Clients Say</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        Real experiences from satisfied clients who transformed their spaces
-                    </p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <?php foreach ($testimonials as $testimonial): ?>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
-                    <div class="testimonial-card">
-                        <div class="rating mb-3">
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <i class="fas fa-star <?php echo $i <= ($testimonial['rating'] ?? 5) ? 'text-warning' : 'text-muted'; ?>"></i>
-                            <?php endfor; ?>
-                        </div>
-                        <p class="testimonial-content"><?php echo htmlspecialchars($testimonial['content'] ?? $testimonial['message'] ?? ''); ?></p>
-                        <div class="testimonial-author">
-                            <img src="<?php echo htmlspecialchars($testimonial['author_image'] ?? 'assets/images/user-placeholder.jpg'); ?>"
-                                 alt="<?php echo htmlspecialchars($testimonial['author_name'] ?? 'Client'); ?>"
-                                 class="author-image">
-                            <div class="author-info">
-                                <h5><?php echo htmlspecialchars($testimonial['author_name'] ?? $testimonial['name'] ?? 'Anonymous'); ?></h5>
-                                <p class="text-muted mb-0"><?php echo htmlspecialchars($testimonial['location'] ?? ''); ?></p>
-                            </div>
-                        </div>
+        <section class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center mb-5">
+                        <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">What Our Clients Say</h2>
+                        <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
+                            Real experiences from satisfied clients who transformed their spaces
+                        </p>
                     </div>
                 </div>
-                <?php endforeach; ?>
+
+                <div class="row g-4">
+                    <?php foreach ($testimonials as $testimonial): ?>
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                            <div class="testimonial-card">
+                                <div class="rating mb-3">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <i class="fas fa-star <?php echo $i <= ($testimonial['rating'] ?? 5) ? 'text-warning' : 'text-muted'; ?>"></i>
+                                    <?php endfor; ?>
+                                </div>
+                                <p class="testimonial-content"><?php echo htmlspecialchars($testimonial['content'] ?? $testimonial['message'] ?? ''); ?></p>
+                                <div class="testimonial-author">
+                                    <img src="<?php echo htmlspecialchars($testimonial['author_image'] ?? 'assets/images/user-placeholder.jpg'); ?>"
+                                        alt="<?php echo htmlspecialchars($testimonial['author_name'] ?? 'Client'); ?>"
+                                        class="author-image">
+                                    <div class="author-info">
+                                        <h5><?php echo htmlspecialchars($testimonial['author_name'] ?? $testimonial['name'] ?? 'Anonymous'); ?></h5>
+                                        <p class="text-muted mb-0"><?php echo htmlspecialchars($testimonial['location'] ?? ''); ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
 
     <!-- FAQ Section -->
     <?php if (!empty($faqs)): ?>
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Frequently Asked Questions</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        Find answers to common questions about our interior design services
-                    </p>
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center mb-5">
+                        <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Frequently Asked Questions</h2>
+                        <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
+                            Find answers to common questions about our interior design services
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <div class="accordion" id="faqAccordion">
-                        <?php foreach ($faqs as $index => $faq): ?>
-                        <div class="accordion-item" data-aos="fade-up">
-                            <h2 class="accordion-header" id="heading<?php echo $index; ?>">
-                                <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapse<?php echo $index; ?>">
-                                    <?php echo htmlspecialchars($faq['question']); ?>
-                                </button>
-                            </h2>
-                            <div id="collapse<?php echo $index; ?>"
-                                 class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>"
-                                 data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    <?php echo htmlspecialchars($faq['answer']); ?>
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="accordion" id="faqAccordion">
+                            <?php foreach ($faqs as $index => $faq): ?>
+                                <div class="accordion-item" data-aos="fade-up">
+                                    <h2 class="accordion-header" id="heading<?php echo $index; ?>">
+                                        <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse<?php echo $index; ?>">
+                                            <?php echo htmlspecialchars($faq['question']); ?>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?php echo $index; ?>"
+                                        class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>"
+                                        data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <?php echo htmlspecialchars($faq['answer']); ?>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
 
     <!-- Contact Form Section -->
@@ -841,6 +843,7 @@ try {
         });
     </script>
 </body>
+
 </html>
 ?>
 
@@ -854,10 +857,10 @@ try {
                 <a href="#contact" class="btn btn-outline-light btn-lg">Get Started</a>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
-                <img src="/assets/img/interior-design/hero-image.jpg" 
-                     alt="Interior Design Services" 
-                     class="img-fluid rounded shadow" 
-                     loading="lazy">
+                <img src="/assets/img/interior-design/hero-image.jpg"
+                    alt="Interior Design Services"
+                    class="img-fluid rounded shadow"
+                    loading="lazy">
             </div>
         </div>
     </div>
@@ -866,31 +869,27 @@ try {
 <!-- Services Section -->
 <section id="services" class="services-section">
 
-<!-- Include Process Section -->
-<?php include __DIR__ . '/includes/interior-design/process.php'; ?>
+    <!-- Include Process Section -->
+    <?php include __DIR__ . '/includes/interior-design/process.php'; ?>
 
-<!-- Include Portfolio Section -->
-<?php include __DIR__ . '/includes/interior-design/portfolio.php'; ?>
+    <!-- Include Portfolio Section -->
+    <?php include __DIR__ . '/includes/interior-design/portfolio.php'; ?>
 
-<!-- Include Team Section -->
-<?php include __DIR__ . '/includes/interior-design/team.php'; ?>
+    <!-- Include Team Section -->
+    <?php include __DIR__ . '/includes/interior-design/team.php'; ?>
 
-<!-- Include Testimonials Section -->
-<?php include __DIR__ . '/includes/interior-design/testimonials.php'; ?>
+    <!-- Include Testimonials Section -->
+    <?php include __DIR__ . '/includes/interior-design/testimonials.php'; ?>
 
-<!-- Include FAQ Section -->
-<?php include __DIR__ . '/includes/interior-design/faq.php'; ?>
+    <!-- Include FAQ Section -->
+    <?php include __DIR__ . '/includes/interior-design/faq.php'; ?>
 
-<!-- Include Contact Section -->
-<?php include __DIR__ . '/includes/interior-design/contact.php'; ?>
+    <!-- Include Contact Section -->
+    <?php include __DIR__ . '/includes/interior-design/contact.php'; ?>
 
-<!-- Include Call to Action Section -->
-<?php include __DIR__ . '/includes/interior-design/cta.php'; ?>
+    <!-- Include Call to Action Section -->
+    <?php include __DIR__ . '/includes/interior-design/cta.php'; ?>
 
-<?php
-// Include footer
-include __DIR__ . '/includes/footer.php';
-?>
     <div class="container">
         <div class="section-header text-center" data-aos="fade-up">
             <h2>Our Services</h2>
@@ -899,15 +898,15 @@ include __DIR__ . '/includes/footer.php';
 
         <div class="row">
             <?php foreach ($services as $service): ?>
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="<?php echo htmlspecialchars($service['icon']); ?>"></i>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="<?php echo htmlspecialchars($service['icon']); ?>"></i>
+                        </div>
+                        <h3><?php echo htmlspecialchars($service['title']); ?></h3>
+                        <p><?php echo htmlspecialchars($service['description']); ?></p>
                     </div>
-                    <h3><?php echo htmlspecialchars($service['title']); ?></h3>
-                    <p><?php echo htmlspecialchars($service['description']); ?></p>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>

@@ -18,13 +18,17 @@ $active_page = 'ai-settings';
 $currentKey = $geminiService->getApiKey();
 $maskedKey = substr($currentKey, 0, 10) . '...' . substr($currentKey, -10);
 
+// Content for base layout
+ob_start();
+?>
+
 // Get usage statistics
 $stats = $geminiService->getUsageStats();
 
 // Get recent API logs
 $recentLogs = $db->fetchAll(
-    'SELECT * FROM ai_api_logs WHERE service = ? ORDER BY created_at DESC LIMIT 10',
-    ['gemini']
+'SELECT * FROM ai_api_logs WHERE service = ? ORDER BY created_at DESC LIMIT 10',
+['gemini']
 );
 
 // Include admin header
@@ -100,8 +104,8 @@ require_once __DIR__ . '/../layouts/header.php';
                                         <div class="mb-3">
                                             <label for="apiKey" class="form-label">Current API Key</label>
                                             <div class="input-group">
-                                                <input type="password" class="form-control" id="apiKey" 
-                                                       value="<?= $maskedKey ?>" placeholder="Enter Gemini API Key">
+                                                <input type="password" class="form-control" id="apiKey"
+                                                    value="<?= $maskedKey ?>" placeholder="Enter Gemini API Key">
                                                 <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKeyVisibility()">
                                                     <i class="fas fa-eye" id="apiKeyToggle"></i>
                                                 </button>
@@ -227,8 +231,8 @@ require_once __DIR__ . '/../layouts/header.php';
                                         </div>
                                         <div class="mb-3">
                                             <label for="prompt" class="form-label">Prompt / Context</label>
-                                            <textarea class="form-control" id="prompt" rows="4" 
-                                                      placeholder="Enter your prompt or context here..."></textarea>
+                                            <textarea class="form-control" id="prompt" rows="4"
+                                                placeholder="Enter your prompt or context here..."></textarea>
                                         </div>
                                         <button type="submit" class="btn btn-success">
                                             <i class="fas fa-wand-magic-sparkles me-2"></i>Generate Content
@@ -324,9 +328,9 @@ require_once __DIR__ . '/../layouts/header.php';
                                 </div>
                             </div>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="chatInput" 
-                                       placeholder="Type your message here..." 
-                                       onkeypress="if(event.key === 'Enter') sendMessage()">
+                                <input type="text" class="form-control" id="chatInput"
+                                    placeholder="Type your message here..."
+                                    onkeypress="if(event.key === 'Enter') sendMessage()">
                                 <button class="btn btn-primary" type="button" onclick="sendMessage()">
                                     <i class="fas fa-paper-plane"></i> Send
                                 </button>
@@ -340,318 +344,319 @@ require_once __DIR__ . '/../layouts/header.php';
 </div>
 
 <style>
-.card {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border: 1px solid rgba(0, 0, 0, 0.125);
-}
+    .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border: 1px solid rgba(0, 0, 0, 0.125);
+    }
 
-.card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-}
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
 
-.btn-group .btn {
-    border-radius: 0.375rem;
-}
+    .btn-group .btn {
+        border-radius: 0.375rem;
+    }
 
-.table th {
-    border-top: none;
-    font-weight: 600;
-    color: #495057;
-}
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        color: #495057;
+    }
 
-.badge {
-    font-size: 0.75em;
-}
+    .badge {
+        font-size: 0.75em;
+    }
 
-#generatedContent {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
+    #generatedContent {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
 
-#chatMessages {
-    border: 1px solid #dee2e6 !important;
-}
+    #chatMessages {
+        border: 1px solid #dee2e6 !important;
+    }
 
-.chat-message {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 10px;
-    max-width: 80%;
-}
+    .chat-message {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 80%;
+    }
 
-.chat-message.user {
-    background-color: #007bff;
-    color: white;
-    margin-left: auto;
-    text-align: right;
-}
+    .chat-message.user {
+        background-color: #007bff;
+        color: white;
+        margin-left: auto;
+        text-align: right;
+    }
 
-.chat-message.assistant {
-    background-color: #e9ecef;
-    color: #212529;
-    margin-right: auto;
-}
+    .chat-message.assistant {
+        background-color: #e9ecef;
+        color: #212529;
+        margin-right: auto;
+    }
 
-.chat-message .timestamp {
-    font-size: 0.8em;
-    opacity: 0.7;
-    margin-top: 5px;
-}
+    .chat-message .timestamp {
+        font-size: 0.8em;
+        opacity: 0.7;
+        margin-top: 5px;
+    }
 </style>
 
 <script>
-// API Key Management
-document.getElementById('apiKeyForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const apiKey = document.getElementById('apiKey').value;
-    
-    if (!apiKey) {
-        showAlert('Please enter an API key', 'danger');
-        return;
-    }
-    
-    fetch('<?= BASE_URL ?>/admin/ai-settings/update-key', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            api_key: apiKey
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showAlert('API key updated successfully!', 'success');
-            refreshStats();
-        } else {
-            showAlert(data.message || 'Failed to update API key', 'danger');
+    // API Key Management
+    document.getElementById('apiKeyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const apiKey = document.getElementById('apiKey').value;
+
+        if (!apiKey) {
+            showAlert('Please enter an API key', 'danger');
+            return;
         }
-    })
-    .catch(error => {
-        showAlert('Network error: ' + error.message, 'danger');
+
+        fetch('<?= BASE_URL ?>/admin/ai-settings/update-key', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    api_key: apiKey
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('API key updated successfully!', 'success');
+                    refreshStats();
+                } else {
+                    showAlert(data.message || 'Failed to update API key', 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Network error: ' + error.message, 'danger');
+            });
     });
-});
 
-function toggleApiKeyVisibility() {
-    const apiKeyInput = document.getElementById('apiKey');
-    const toggleIcon = document.getElementById('apiKeyToggle');
-    
-    if (apiKeyInput.type === 'password') {
-        apiKeyInput.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-    } else {
-        apiKeyInput.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
-    }
-}
+    function toggleApiKeyVisibility() {
+        const apiKeyInput = document.getElementById('apiKey');
+        const toggleIcon = document.getElementById('apiKeyToggle');
 
-function testCurrentKey() {
-    fetch('<?= BASE_URL ?>/admin/ai-settings/test-connection', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showAlert('API key is working correctly!', 'success');
+        if (apiKeyInput.type === 'password') {
+            apiKeyInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
         } else {
-            showAlert('API key test failed: ' + (data.error || data.message), 'danger');
+            apiKeyInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
         }
-    })
-    .catch(error => {
-        showAlert('Network error: ' + error.message, 'danger');
-    });
-}
-
-function testConnection() {
-    testCurrentKey();
-}
-
-// Content Generation
-document.getElementById('contentGenerationForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const contentType = document.getElementById('contentType').value;
-    const prompt = document.getElementById('prompt').value;
-    
-    if (!prompt) {
-        showAlert('Please enter a prompt', 'danger');
-        return;
     }
-    
-    const contentDiv = document.getElementById('generatedContent');
-    contentDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Generating content...</div>';
-    
-    fetch('<?= BASE_URL ?>/admin/ai-settings/generate-content', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            content_type: contentType,
-            prompt: prompt
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.data && data.data.candidates) {
-            const content = data.data.candidates[0].content.parts[0].text;
-            contentDiv.innerHTML = '<pre>' + content + '</pre>';
-            showAlert('Content generated successfully!', 'success');
-        } else {
-            contentDiv.innerHTML = '<p class="text-danger">Failed to generate content: ' + (data.error || data.message) + '</p>';
-            showAlert('Failed to generate content', 'danger');
-        }
-    })
-    .catch(error => {
-        contentDiv.innerHTML = '<p class="text-danger">Network error: ' + error.message + '</p>';
-        showAlert('Network error: ' + error.message, 'danger');
-    });
-});
 
-// Chat Interface
-function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    
-    if (!message) return;
-    
-    const chatMessages = document.getElementById('chatMessages');
-    
-    // Add user message
-    const userMessage = document.createElement('div');
-    userMessage.className = 'chat-message user';
-    userMessage.innerHTML = `
+    function testCurrentKey() {
+        fetch('<?= BASE_URL ?>/admin/ai-settings/test-connection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('API key is working correctly!', 'success');
+                } else {
+                    showAlert('API key test failed: ' + (data.error || data.message), 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Network error: ' + error.message, 'danger');
+            });
+    }
+
+    function testConnection() {
+        testCurrentKey();
+    }
+
+    // Content Generation
+    document.getElementById('contentGenerationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const contentType = document.getElementById('contentType').value;
+        const prompt = document.getElementById('prompt').value;
+
+        if (!prompt) {
+            showAlert('Please enter a prompt', 'danger');
+            return;
+        }
+
+        const contentDiv = document.getElementById('generatedContent');
+        contentDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Generating content...</div>';
+
+        fetch('<?= BASE_URL ?>/admin/ai-settings/generate-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content_type: contentType,
+                    prompt: prompt
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data && data.data.candidates) {
+                    const content = data.data.candidates[0].content.parts[0].text;
+                    contentDiv.innerHTML = '<pre>' + content + '</pre>';
+                    showAlert('Content generated successfully!', 'success');
+                } else {
+                    contentDiv.innerHTML = '<p class="text-danger">Failed to generate content: ' + (data.error || data.message) + '</p>';
+                    showAlert('Failed to generate content', 'danger');
+                }
+            })
+            .catch(error => {
+                contentDiv.innerHTML = '<p class="text-danger">Network error: ' + error.message + '</p>';
+                showAlert('Network error: ' + error.message, 'danger');
+            });
+    });
+
+    // Chat Interface
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Add user message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'chat-message user';
+        userMessage.innerHTML = `
         <div>${message}</div>
         <div class="timestamp">${new Date().toLocaleTimeString()}</div>
     `;
-    chatMessages.appendChild(userMessage);
-    
-    input.value = '';
-    
-    // Add typing indicator
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'chat-message assistant';
-    typingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
-    chatMessages.appendChild(typingIndicator);
-    
-    // Scroll to bottom
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    
-    // Send to AI
-    fetch('<?= BASE_URL ?>/admin/ai-settings/chat', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            message: message
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        typingIndicator.remove();
-        
-        if (data.success && data.data && data.data.candidates) {
-            const aiResponse = data.data.candidates[0].content.parts[0].text;
-            
-            const aiMessage = document.createElement('div');
-            aiMessage.className = 'chat-message assistant';
-            aiMessage.innerHTML = `
+        chatMessages.appendChild(userMessage);
+
+        input.value = '';
+
+        // Add typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'chat-message assistant';
+        typingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+        chatMessages.appendChild(typingIndicator);
+
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Send to AI
+        fetch('<?= BASE_URL ?>/admin/ai-settings/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                typingIndicator.remove();
+
+                if (data.success && data.data && data.data.candidates) {
+                    const aiResponse = data.data.candidates[0].content.parts[0].text;
+
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'chat-message assistant';
+                    aiMessage.innerHTML = `
                 <div>${aiResponse}</div>
                 <div class="timestamp">${new Date().toLocaleTimeString()}</div>
             `;
-            chatMessages.appendChild(aiMessage);
-        } else {
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'chat-message assistant';
-            errorMessage.innerHTML = `
+                    chatMessages.appendChild(aiMessage);
+                } else {
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'chat-message assistant';
+                    errorMessage.innerHTML = `
                 <div class="text-danger">Sorry, I encountered an error: ${data.error || data.message}</div>
                 <div class="timestamp">${new Date().toLocaleTimeString()}</div>
             `;
-            chatMessages.appendChild(errorMessage);
-        }
-        
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    })
-    .catch(error => {
-        typingIndicator.remove();
-        
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'chat-message assistant';
-        errorMessage.innerHTML = `
+                    chatMessages.appendChild(errorMessage);
+                }
+
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            })
+            .catch(error => {
+                typingIndicator.remove();
+
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'chat-message assistant';
+                errorMessage.innerHTML = `
             <div class="text-danger">Network error: ${error.message}</div>
             <div class="timestamp">${new Date().toLocaleTimeString()}</div>
         `;
-        chatMessages.appendChild(errorMessage);
-        
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
-}
+                chatMessages.appendChild(errorMessage);
 
-// Utility Functions
-function showAlert(message, type) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    alertDiv.innerHTML = `
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+    }
+
+    // Utility Functions
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-        if (alertDiv.parentNode) {
-            alertDiv.remove();
-        }
-    }, 5000);
-}
+        document.body.appendChild(alertDiv);
 
-function refreshStats() {
-    location.reload();
-}
-
-function clearLogs() {
-    if (confirm('Are you sure you want to clear API logs? This action cannot be undone.')) {
-        fetch('<?= BASE_URL ?>/admin/ai-settings/clear-logs', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                days: 30
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('Logs cleared successfully', 'success');
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showAlert('Failed to clear logs', 'danger');
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
             }
-        });
+        }, 5000);
     }
-}
 
-function exportLogs() {
-    window.open('<?= BASE_URL ?>/admin/ai-settings/export-usage-report', '_blank');
-}
+    function refreshStats() {
+        location.reload();
+    }
 
-// Initialize tooltips and other Bootstrap components
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize any Bootstrap components if needed
-});
+    function clearLogs() {
+        if (confirm('Are you sure you want to clear API logs? This action cannot be undone.')) {
+            fetch('<?= BASE_URL ?>/admin/ai-settings/clear-logs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        days: 30
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Logs cleared successfully', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showAlert('Failed to clear logs', 'danger');
+                    }
+                });
+        }
+    }
+
+    function exportLogs() {
+        window.open('<?= BASE_URL ?>/admin/ai-settings/export-usage-report', '_blank');
+    }
+
+    // Initialize tooltips and other Bootstrap components
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize any Bootstrap components if needed
+    });
 </script>
 
 <?php
-// Include admin footer
-require_once __DIR__ . '/../layouts/footer.php';
+$content = ob_get_clean();
+require_once __DIR__ . '/../../layouts/base.php';
+echo $content;
 ?>

@@ -300,13 +300,31 @@
 </head>
 
 <body>
-    <?php include __DIR__ . '/header.php'; ?>
+    <?php
+    // Check if premium header should be used (for public pages)
+    $isPremiumPage = isset($premium_layout) && $premium_layout === true;
+
+    if ($isPremiumPage) {
+        include __DIR__ . '/active/header_new.php';
+    } else {
+        include __DIR__ . '/header.php';
+    }
+    ?>
 
     <main>
         <?php echo $content ?? ''; ?>
     </main>
 
-    <?php include __DIR__ . '/footer.php'; ?>
+    <?php
+    // Check if premium footer should be used (for public pages)
+    $isPremiumPage = isset($premium_layout) && $premium_layout === true;
+
+    if ($isPremiumPage) {
+        include __DIR__ . '/active/footer_new.php';
+    } else {
+        include __DIR__ . '/footer.php';
+    }
+    ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

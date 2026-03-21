@@ -1,10 +1,21 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
 
 class AuthController extends BaseController
 {
+    public function universalLogin()
+    {
+        $data = [
+            'page_title' => 'Universal Login - APS Dream Home',
+            'page_description' => 'Login with email, mobile number, or Google',
+            'active_page' => 'login'
+        ];
+        $this->render('auth/universal_login', $data);
+    }
+
     public function login()
     {
         $data = [
@@ -84,4 +95,3 @@ class AuthController extends BaseController
         $this->redirect('/auth/profile');
     }
 }
-

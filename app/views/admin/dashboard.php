@@ -1210,7 +1210,6 @@ background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%);
     <!-- Admin Layout Footer -->
     <?php
     $content = ob_get_clean();
-    require_once __DIR__ . '/../layouts/admin_header.php';
+    require_once __DIR__ . '/../../layouts/base.php';
     echo $content;
-    require_once __DIR__ . '/../layouts/admin_footer.php';
     ?>

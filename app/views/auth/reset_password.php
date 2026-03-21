@@ -93,7 +93,7 @@ ob_start();
                                 <i class="fas fa-key me-2"></i>
                                 Reset Password
                             </button>
-                            <a href="<?= BASE_URL ?>auth/login" class="btn btn-outline-secondary btn-lg">
+                            <a href="<?= BASE_URL ?>/auth/login" class="btn btn-outline-secondary btn-lg">
                                 <i class="fas fa-arrow-left me-2"></i>
                                 Back to Login
                             </a>
@@ -106,11 +106,11 @@ ob_start();
                             <span>Your password is encrypted and secure</span>
                         </div>
                         <div class="help-links">
-                            <a href="<?= BASE_URL ?>contact" class="help-link">
+                            <a href="<?= BASE_URL ?>/contact" class="help-link">
                                 <i class="fas fa-headset me-1"></i>
                                 Need Help?
                             </a>
-                            <a href="<?= BASE_URL ?>auth/forgot-password" class="help-link">
+                            <a href="<?= BASE_URL ?>/auth/forgot-password" class="help-link">
                                 <i class="fas fa-question-circle me-1"></i>
                                 Request Another Reset
                             </a>

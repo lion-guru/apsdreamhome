@@ -3,11 +3,9 @@
 require_once 'includes/config/config.php';
 require_once 'includes/functions.php';
 
-// Set page title
-$page_title = "Customer Support - APS Dream Home";
-
-// Include header
-include 'includes/header.php';
+// Set page variables
+$page_title = 'Customer Support - APS Dream Home';
+$page_description = 'Get help and support from APS Dream Home team';
 
 // Check if user is logged in
 if (!isset($_SESSION['customer_logged_in']) || $_SESSION['customer_logged_in'] !== true) {
@@ -15,33 +13,37 @@ if (!isset($_SESSION['customer_logged_in']) || $_SESSION['customer_logged_in'] !
     exit();
 }
 
+// Content for base layout
+ob_start();
+?>
+
 // Handle form submission
 $success = false;
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $subject = filter_input(INPUT_POST, 'subject', FILTER_SANITIZE_STRING);
-    $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
-    $priority = filter_input(INPUT_POST, 'priority', FILTER_SANITIZE_STRING);
-    
-    if (empty($subject) || empty($message)) {
-        $error = 'Please fill in all required fields.';
-    } else {
-        // Insert ticket into database
-        $stmt = $conn->prepare("INSERT INTO support_tickets (customer_id, subject, message, priority, status, created_at) VALUES (?, ?, ?, ?, 'Open', NOW())");
-        $stmt->bind_param("isss", $_SESSION['customer_id'], $subject, $message, $priority);
-        
-        if ($stmt->execute()) {
-            $success = true;
-            // Reset form
-            $subject = $message = '';
-            $priority = 'medium';
-        } else {
-            $error = 'Failed to submit your request. Please try again.';
-            error_log("Support ticket submission failed: " . $stmt->error);
-        }
-        $stmt->close();
-    }
+$subject = filter_input(INPUT_POST, 'subject', FILTER_SANITIZE_STRING);
+$message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
+$priority = filter_input(INPUT_POST, 'priority', FILTER_SANITIZE_STRING);
+
+if (empty($subject) || empty($message)) {
+$error = 'Please fill in all required fields.';
+} else {
+// Insert ticket into database
+$stmt = $conn->prepare("INSERT INTO support_tickets (customer_id, subject, message, priority, status, created_at) VALUES (?, ?, ?, ?, 'Open', NOW())");
+$stmt->bind_param("isss", $_SESSION['customer_id'], $subject, $message, $priority);
+
+if ($stmt->execute()) {
+$success = true;
+// Reset form
+$subject = $message = '';
+$priority = 'medium';
+} else {
+$error = 'Failed to submit your request. Please try again.';
+error_log("Support ticket submission failed: " . $stmt->error);
+}
+$stmt->close();
+}
 }
 ?>
 
@@ -64,14 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?php echo htmlspecialchars($error); ?>
                         </div>
                     <?php endif; ?>
-                    
+
                     <form action="support.php" method="post" id="supportForm">
                         <div class="mb-3">
                             <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-lg" id="subject" name="subject" required 
-                                   value="<?php echo isset($subject) ? htmlspecialchars($subject) : ''; ?>">
+                            <input type="text" class="form-control form-control-lg" id="subject" name="subject" required
+                                value="<?php echo isset($subject) ? htmlspecialchars($subject) : ''; ?>">
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="priority" class="form-label">Priority</label>
                             <select class="form-select form-select-lg" id="priority" name="priority">
@@ -81,12 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <option value="urgent" <?php echo (isset($priority) && $priority === 'urgent') ? 'selected' : ''; ?>>Urgent</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-4">
                             <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="message" name="message" rows="6" required><?php echo isset($message) ? htmlspecialchars($message) : ''; ?></textarea>
                         </div>
-                        
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-paper-plane me-2"></i>Submit Request
@@ -96,12 +98,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="card-footer text-center py-3">
                     <div class="small">
-                        Need immediate assistance? Call us at <a href="tel:+911234567890">+91 12345 67890</a> or 
+                        Need immediate assistance? Call us at <a href="tel:+911234567890">+91 12345 67890</a> or
                         <a href="mailto:support@apsdreamhome.com">email us</a>.
                     </div>
                 </div>
             </div>
-            
+
             <!-- Support Tickets History -->
             <div class="card shadow-sm border-0 rounded-lg mt-4">
                 <div class="card-header bg-light">
@@ -115,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->bind_param("i", $_SESSION['customer_id']);
                     $stmt->execute();
                     $tickets_result = $stmt->get_result();
-                    
+
                     if ($tickets_result->num_rows > 0):
                         while ($ticket = $tickets_result->fetch_assoc()):
                             $status_class = '';
@@ -157,19 +159,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <?php if (strlen($ticket['message']) > 150): ?>...<?php endif; ?>
                                 </p>
                             </div>
-                    <?php 
-                        endwhile; 
-                    else: 
-                    ?>
+                        <?php
+                        endwhile;
+                    else:
+                        ?>
                         <div class="text-center py-4">
                             <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
                             <p class="mb-0">You haven't submitted any support tickets yet.</p>
                         </div>
-                    <?php 
-                    endif; 
+                    <?php
+                    endif;
                     $stmt->close();
                     ?>
-                    
+
                     <div class="text-end mt-3">
                         <a href="support_tickets.php" class="btn btn-outline-primary btn-sm">
                             View All Tickets <i class="fas fa-arrow-right ms-1"></i>
@@ -200,26 +202,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
         }
     });
-    
+
     // Form validation
     document.getElementById('supportForm').addEventListener('submit', function(e) {
         const subject = document.getElementById('subject').value.trim();
         const message = tinymce.get('message').getContent().trim();
-        
+
         if (!subject) {
             e.preventDefault();
             alert('Please enter a subject for your support request.');
             document.getElementById('subject').focus();
             return false;
         }
-        
+
         if (!message) {
             e.preventDefault();
             alert('Please enter your message.');
             tinymce.get('message').focus();
             return false;
         }
-        
+
         // Show loading state
         const submitBtn = this.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
@@ -228,6 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </script>
 
 <?php
-// Include footer
-include 'includes/footer.php';
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/base.php';
+echo $content;
 ?>

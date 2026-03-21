@@ -8,8 +8,8 @@ if (session_status() === PHP_SESSION_NONE) {
 $page_title = 'Associate Registration - APS Dream Home';
 $page_description = 'Join as an associate to earn with real estate';
 
-// Include public header
-require_once __DIR__ . '/../layouts/header.php';
+// Content for base layout
+ob_start();
 ?>
 
 <div class="container my-5">
@@ -285,7 +285,7 @@ require_once __DIR__ . '/../layouts/header.php';
                             <div class="form-check mb-3">
                                 <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
                                 <label class="form-check-label" for="terms">
-                                    I agree to the <a href="#" class="text-success">Terms and Conditions</a> and <a href="#" class="text-success">Privacy Policy</a> *
+                                    I agree to the <a href="<?php echo BASE_URL; ?>/terms" class="text-success">Terms and Conditions</a> and <a href="<?php echo BASE_URL; ?>/privacy" class="text-success">Privacy Policy</a> *
                                 </label>
                                 <div class="invalid-feedback">You must agree to the terms and conditions</div>
                             </div>
@@ -599,7 +599,8 @@ require_once __DIR__ . '/../layouts/header.php';
 </script>
 
 <?php
-// Include footer
-require_once __DIR__ . '/../layouts/footer.php';
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/base.php';
+echo $content;
 ?>
 <?php unset($_SESSION['old_input']); ?>

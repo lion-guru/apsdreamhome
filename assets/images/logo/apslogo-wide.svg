@@ -1,0 +1,13 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#27ae60;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="40" height="40" rx="8" fill="url(#logoGradient)"/>
+  <text x="20" y="25" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="white">APS</text>
+  <text x="20" y="32" font-family="Arial, sans-serif" font-size="4" text-anchor="middle" fill="white">DREAM</text>
+  <text x="50" y="25" font-family="Georgia, serif" font-size="10" font-weight="300" text-anchor="middle" fill="#2c3e50">Home</text>
+  <text x="50" y="35" font-family="Georgia, serif" font-size="6" font-weight="300" text-anchor="middle" fill="#27ae60">Premium Real Estate</text>
+</svg>

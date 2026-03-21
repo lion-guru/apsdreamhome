@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Financial Services Page - APS Dream Homes
  * Professional financial services for real estate
@@ -24,7 +25,6 @@ try {
     $faqsQuery = "SELECT * FROM faqs WHERE category = 'financial_services' AND status = 'active' ORDER BY display_order ASC LIMIT 6";
     $faqsStmt = $pdo->query($faqsQuery);
     $faqs = $faqsStmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (Exception $e) {
     error_log('Financial services page database error: ' . $e->getMessage());
     $services = [];
@@ -35,6 +35,7 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,7 +65,7 @@ try {
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
             text-align: center;
@@ -73,7 +74,7 @@ try {
 
         .service-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .service-icon {
@@ -110,7 +111,7 @@ try {
             border-radius: 15px;
             padding: 30px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s ease;
             height: 100%;
         }
@@ -130,21 +131,21 @@ try {
             color: white;
             margin: 0 auto 20px;
             font-size: 1.8rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .team-card {
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
         }
 
         .team-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .team-image {
@@ -269,7 +270,7 @@ try {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
         }
 
         .cta-section {
@@ -291,7 +292,7 @@ try {
         .btn-primary:hover {
             background: linear-gradient(45deg, #2ecc71, #27ae60);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .btn-outline-primary {
@@ -314,6 +315,7 @@ try {
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <?php include 'includes/templates/header.php'; ?>
@@ -364,44 +366,44 @@ try {
             </div>
 
             <?php if (!empty($services)): ?>
-            <div class="row g-4">
-                <?php foreach ($services as $service): ?>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-coins'); ?>"></i>
-                        </div>
-                        <h3 class="h4 fw-bold mb-3"><?php echo htmlspecialchars($service['title'] ?? 'Financial Service'); ?></h3>
-                        <p class="text-muted mb-4"><?php echo htmlspecialchars($service['description'] ?? 'Professional financial assistance for your real estate needs.'); ?></p>
+                <div class="row g-4">
+                    <?php foreach ($services as $service): ?>
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                            <div class="service-card">
+                                <div class="service-icon">
+                                    <i class="<?php echo htmlspecialchars($service['icon'] ?? 'fas fa-coins'); ?>"></i>
+                                </div>
+                                <h3 class="h4 fw-bold mb-3"><?php echo htmlspecialchars($service['title'] ?? 'Financial Service'); ?></h3>
+                                <p class="text-muted mb-4"><?php echo htmlspecialchars($service['description'] ?? 'Professional financial assistance for your real estate needs.'); ?></p>
 
-                        <?php if (!empty($service['features'])): ?>
-                        <?php $features = json_decode($service['features'], true); ?>
-                        <?php if (is_array($features) && !empty($features)): ?>
-                        <ul class="service-features">
-                            <?php foreach ($features as $feature): ?>
-                            <li>
-                                <i class="fas fa-check text-success"></i>
-                                <?php echo htmlspecialchars($feature); ?>
-                            </li>
-                            <?php endforeach; ?>
-                        </ul>
-                        <?php endif; ?>
-                        <?php endif; ?>
+                                <?php if (!empty($service['features'])): ?>
+                                    <?php $features = json_decode($service['features'], true); ?>
+                                    <?php if (is_array($features) && !empty($features)): ?>
+                                        <ul class="service-features">
+                                            <?php foreach ($features as $feature): ?>
+                                                <li>
+                                                    <i class="fas fa-check text-success"></i>
+                                                    <?php echo htmlspecialchars($feature); ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-coins fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted">Financial Services Coming Soon</h3>
+                        <p class="text-muted mb-4">
+                            We're currently expanding our financial services. Please contact us for immediate financial assistance.
+                        </p>
+                        <a href="contact.php" class="btn btn-primary">Contact Us</a>
                     </div>
                 </div>
-                <?php endforeach; ?>
-            </div>
-            <?php else: ?>
-            <div class="text-center py-5">
-                <div class="empty-state">
-                    <i class="fas fa-coins fa-4x text-muted mb-4"></i>
-                    <h3 class="text-muted">Financial Services Coming Soon</h3>
-                    <p class="text-muted mb-4">
-                        We're currently expanding our financial services. Please contact us for immediate financial assistance.
-                    </p>
-                    <a href="contact.php" class="btn btn-primary">Contact Us</a>
-                </div>
-            </div>
             <?php endif; ?>
         </div>
     </section>
@@ -484,50 +486,50 @@ try {
 
     <!-- Financial Team Section -->
     <?php if (!empty($advisors)): ?>
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Meet Our Financial Advisors</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        Expert financial advisors dedicated to maximizing your real estate investment returns
-                    </p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <?php foreach ($advisors as $advisor): ?>
-                <div class="col-lg-3 col-md-6" data-aos="fade-up">
-                    <div class="team-card">
-                        <div class="team-image">
-                            <img src="<?php echo htmlspecialchars($advisor['image_path'] ?? 'assets/images/team-placeholder.jpg'); ?>"
-                                 alt="<?php echo htmlspecialchars($advisor['name']); ?>">
-                        </div>
-                        <div class="team-info">
-                            <h5 class="fw-bold mb-2"><?php echo htmlspecialchars($advisor['name']); ?></h5>
-                            <p class="designation mb-1"><?php echo htmlspecialchars($advisor['designation']); ?></p>
-                            <?php if (!empty($advisor['specialization'])): ?>
-                            <p class="specialization mb-3"><?php echo htmlspecialchars($advisor['specialization']); ?></p>
-                            <?php endif; ?>
-                            <div class="social-links">
-                                <?php if (!empty($advisor['linkedin'])): ?>
-                                <a href="<?php echo htmlspecialchars($advisor['linkedin']); ?>" target="_blank" title="LinkedIn">
-                                    <i class="fab fa-linkedin"></i>
-                                </a>
-                                <?php endif; ?>
-                                <?php if (!empty($advisor['email'])): ?>
-                                <a href="mailto:<?php echo htmlspecialchars($advisor['email']); ?>" title="Email">
-                                    <i class="fas fa-envelope"></i>
-                                </a>
-                                <?php endif; ?>
-                            </div>
-                        </div>
+        <section class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center mb-5">
+                        <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Meet Our Financial Advisors</h2>
+                        <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
+                            Expert financial advisors dedicated to maximizing your real estate investment returns
+                        </p>
                     </div>
                 </div>
-                <?php endforeach; ?>
+
+                <div class="row g-4">
+                    <?php foreach ($advisors as $advisor): ?>
+                        <div class="col-lg-3 col-md-6" data-aos="fade-up">
+                            <div class="team-card">
+                                <div class="team-image">
+                                    <img src="<?php echo htmlspecialchars($advisor['image_path'] ?? 'assets/images/team-placeholder.jpg'); ?>"
+                                        alt="<?php echo htmlspecialchars($advisor['name']); ?>">
+                                </div>
+                                <div class="team-info">
+                                    <h5 class="fw-bold mb-2"><?php echo htmlspecialchars($advisor['name']); ?></h5>
+                                    <p class="designation mb-1"><?php echo htmlspecialchars($advisor['designation']); ?></p>
+                                    <?php if (!empty($advisor['specialization'])): ?>
+                                        <p class="specialization mb-3"><?php echo htmlspecialchars($advisor['specialization']); ?></p>
+                                    <?php endif; ?>
+                                    <div class="social-links">
+                                        <?php if (!empty($advisor['linkedin'])): ?>
+                                            <a href="<?php echo htmlspecialchars($advisor['linkedin']); ?>" target="_blank" title="LinkedIn">
+                                                <i class="fab fa-linkedin"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php if (!empty($advisor['email'])): ?>
+                                            <a href="mailto:<?php echo htmlspecialchars($advisor['email']); ?>" title="Email">
+                                                <i class="fas fa-envelope"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
 
     <!-- Investment Process Section -->
@@ -576,44 +578,44 @@ try {
 
     <!-- FAQ Section -->
     <?php if (!empty($faqs)): ?>
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Frequently Asked Questions</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        Find answers to common financial questions about real estate investments
-                    </p>
+        <section class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center mb-5">
+                        <h2 class="display-5 fw-bold mb-3" data-aos="fade-up">Frequently Asked Questions</h2>
+                        <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
+                            Find answers to common financial questions about real estate investments
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <div class="accordion" id="faqAccordion">
-                        <?php foreach ($faqs as $index => $faq): ?>
-                        <div class="accordion-item" data-aos="fade-up">
-                            <h2 class="accordion-header" id="heading<?php echo $index; ?>">
-                                <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#collapse<?php echo $index; ?>">
-                                    <?php echo htmlspecialchars($faq['question']); ?>
-                                </button>
-                            </h2>
-                            <div id="collapse<?php echo $index; ?>"
-                                 class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>"
-                                 data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    <?php echo htmlspecialchars($faq['answer']); ?>
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="accordion" id="faqAccordion">
+                            <?php foreach ($faqs as $index => $faq): ?>
+                                <div class="accordion-item" data-aos="fade-up">
+                                    <h2 class="accordion-header" id="heading<?php echo $index; ?>">
+                                        <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse<?php echo $index; ?>">
+                                            <?php echo htmlspecialchars($faq['question']); ?>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?php echo $index; ?>"
+                                        class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>"
+                                        data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <?php echo htmlspecialchars($faq['answer']); ?>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
-                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
     <?php endif; ?>
 
     <!-- Contact Form Section -->
@@ -749,6 +751,7 @@ try {
         });
     </script>
 </body>
+
 </html>
 ?>
 
@@ -792,26 +795,26 @@ try {
                 <p data-aos="fade-up" data-aos-delay="100">Comprehensive financial solutions for real estate</p>
             </div>
         </div>
-        
+
         <div class="row">
             <?php foreach ($services as $service): ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="service-card" data-aos="fade-up">
-                    <div class="service-icon">
-                        <i class="<?php echo htmlspecialchars($service['icon']); ?>"></i>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="service-card" data-aos="fade-up">
+                        <div class="service-icon">
+                            <i class="<?php echo htmlspecialchars($service['icon']); ?>"></i>
+                        </div>
+                        <h3><?php echo htmlspecialchars($service['title']); ?></h3>
+                        <p><?php echo htmlspecialchars($service['description']); ?></p>
+                        <ul class="service-features">
+                            <?php
+                            $features = json_decode($service['features'], true);
+                            foreach ($features as $feature):
+                            ?>
+                                <li><i class="fas fa-check"></i> <?php echo htmlspecialchars($feature); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
-                    <h3><?php echo htmlspecialchars($service['title']); ?></h3>
-                    <p><?php echo htmlspecialchars($service['description']); ?></p>
-                    <ul class="service-features">
-                        <?php
-                        $features = json_decode($service['features'], true);
-                        foreach ($features as $feature):
-                        ?>
-                        <li><i class="fas fa-check"></i> <?php echo htmlspecialchars($feature); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>
@@ -826,7 +829,7 @@ try {
                 <p data-aos="fade-up" data-aos-delay="100">Expert financial guidance you can trust</p>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up">
                 <div class="benefit-card">
@@ -837,7 +840,7 @@ try {
                     <p>In-depth market analysis and investment strategies</p>
                 </div>
             </div>
-            
+
             <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="benefit-card">
                     <div class="benefit-icon">
@@ -847,7 +850,7 @@ try {
                     <p>Protected and regulated investment solutions</p>
                 </div>
             </div>
-            
+
             <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="benefit-card">
                     <div class="benefit-icon">
@@ -870,29 +873,29 @@ try {
                 <p data-aos="fade-up" data-aos-delay="100">Expert advisors at your service</p>
             </div>
         </div>
-        
+
         <div class="row">
             <?php foreach ($advisors as $advisor): ?>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="team-card" data-aos="fade-up">
-                    <div class="team-image">
-                        <img src="<?php echo htmlspecialchars($advisor['photo']); ?>" alt="<?php echo htmlspecialchars($advisor['name']); ?>" class="img-fluid">
-                    </div>
-                    <div class="team-info">
-                        <h3><?php echo htmlspecialchars($advisor['name']); ?></h3>
-                        <p class="designation"><?php echo htmlspecialchars($advisor['designation']); ?></p>
-                        <p class="specialization"><?php echo htmlspecialchars($advisor['specialization']); ?></p>
-                        <div class="social-links">
-                            <?php if ($advisor['linkedin']): ?>
-                            <a href="<?php echo htmlspecialchars($advisor['linkedin']); ?>" target="_blank"><i class="fab fa-linkedin"></i></a>
-                            <?php endif; ?>
-                            <?php if ($advisor['email']): ?>
-                            <a href="mailto:<?php echo htmlspecialchars($advisor['email']); ?>"><i class="fas fa-envelope"></i></a>
-                            <?php endif; ?>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="team-card" data-aos="fade-up">
+                        <div class="team-image">
+                            <img src="<?php echo htmlspecialchars($advisor['photo']); ?>" alt="<?php echo htmlspecialchars($advisor['name']); ?>" class="img-fluid">
+                        </div>
+                        <div class="team-info">
+                            <h3><?php echo htmlspecialchars($advisor['name']); ?></h3>
+                            <p class="designation"><?php echo htmlspecialchars($advisor['designation']); ?></p>
+                            <p class="specialization"><?php echo htmlspecialchars($advisor['specialization']); ?></p>
+                            <div class="social-links">
+                                <?php if ($advisor['linkedin']): ?>
+                                    <a href="<?php echo htmlspecialchars($advisor['linkedin']); ?>" target="_blank"><i class="fab fa-linkedin"></i></a>
+                                <?php endif; ?>
+                                <?php if ($advisor['email']): ?>
+                                    <a href="mailto:<?php echo htmlspecialchars($advisor['email']); ?>"><i class="fas fa-envelope"></i></a>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>
@@ -907,7 +910,7 @@ try {
                 <p data-aos="fade-up" data-aos-delay="100">Simple and transparent financial planning</p>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-12">
                 <div class="process-timeline">
@@ -916,19 +919,19 @@ try {
                         <h3>Financial Assessment</h3>
                         <p>Evaluate your financial goals and requirements</p>
                     </div>
-                    
+
                     <div class="process-step" data-aos="fade-right" data-aos-delay="100">
                         <div class="step-number">2</div>
                         <h3>Strategy Development</h3>
                         <p>Create a customized investment strategy</p>
                     </div>
-                    
+
                     <div class="process-step" data-aos="fade-right" data-aos-delay="200">
                         <div class="step-number">3</div>
                         <h3>Implementation</h3>
                         <p>Execute the financial plan effectively</p>
                     </div>
-                    
+
                     <div class="process-step" data-aos="fade-right" data-aos-delay="300">
                         <div class="step-number">4</div>
                         <h3>Monitoring & Review</h3>
@@ -949,23 +952,23 @@ try {
                 <p data-aos="fade-up" data-aos-delay="100">Find answers to common financial questions</p>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-lg-8 mx-auto">
                 <div class="accordion" id="faqAccordion">
                     <?php foreach ($faqs as $index => $faq): ?>
-                    <div class="accordion-item" data-aos="fade-up">
-                        <h2 class="accordion-header" id="heading<?php echo $index; ?>">
-                            <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>">
-                                <?php echo htmlspecialchars($faq['question']); ?>
-                            </button>
-                        </h2>
-                        <div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <?php echo htmlspecialchars($faq['answer']); ?>
+                        <div class="accordion-item" data-aos="fade-up">
+                            <h2 class="accordion-header" id="heading<?php echo $index; ?>">
+                                <button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>">
+                                    <?php echo htmlspecialchars($faq['question']); ?>
+                                </button>
+                            </h2>
+                            <div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <?php echo htmlspecialchars($faq['answer']); ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -982,7 +985,7 @@ try {
                 <p data-aos="fade-up" data-aos-delay="100">Contact us for professional financial guidance</p>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-lg-8 mx-auto">
                 <form id="financialServicesForm" class="contact-form" data-aos="fade-up">
@@ -994,7 +997,7 @@ try {
                             <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <input type="tel" class="form-control" id="phone" name="phone" placeholder="Your Phone">
@@ -1009,11 +1012,11 @@ try {
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <textarea class="form-control" id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
                     </div>
-                    
+
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Send Message</button>
                     </div>
@@ -1039,7 +1042,6 @@ try {
     </div>
 </section>
 
-<?php include 'includes/footer.php'; ?>
 //
 // PERFORMANCE OPTIMIZATION GUIDELINES
 //
