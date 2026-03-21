@@ -55,7 +55,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="hero-image animate-slide-in-right">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/hero-property.jpg" alt="Dream Property" class="img-fluid rounded-3 shadow-lg">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/hero/luxury-home-1.jpg" alt="Dream Property" class="img-fluid rounded-3 shadow-lg">
                     </div>
                 </div>
             </div>
@@ -184,7 +184,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/placeholder.jpg" class="card-img-top" alt="Budh Bihar Colony">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Budh Bihar Colony">
                         <div class="card-body">
                             <h5 class="card-title">Budh Bihar Colony</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Kushinagar</p>
@@ -199,7 +199,7 @@
                 </div>
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card project-card h-100">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/placeholder.jpg" class="card-img-top" alt="Awadhpuri">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="Awadhpuri">
                         <div class="card-body">
                             <h5 class="card-title">Awadhpuri</h5>
                             <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Lucknow</p>
@@ -235,10 +235,50 @@
             </div>
 
             <div class="row" id="featuredProperties">
-                <!-- Properties will be loaded here via AJAX -->
-                <div class="col-12 text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                <!-- Static Featured Properties -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card property-card h-100 shadow-sm">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suyoday Colony">
+                        <div class="card-body">
+                            <h5 class="card-title">Suyoday Colony</h5>
+                            <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
+                            <p class="text-primary fw-bold">₹7.5 Lakhs</p>
+                            <p class="small">Premium residential plots with modern infrastructure</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Available</span>
+                                <a href="<?php echo BASE_URL; ?>/projects/suyoday-colony" class="btn btn-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card property-card h-100 shadow-sm">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG" class="card-img-top" alt="Raghunat Nagri">
+                        <div class="card-body">
+                            <h5 class="card-title">Raghunat Nagri</h5>
+                            <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
+                            <p class="text-primary fw-bold">₹8.5 Lakhs</p>
+                            <p class="small">Premium residential plots in developing area</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Available</span>
+                                <a href="<?php echo BASE_URL; ?>/projects/raghunat-nagri" class="btn btn-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card property-card h-100 shadow-sm">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" class="card-img-top" alt="Braj Radha Nagri">
+                        <div class="card-body">
+                            <h5 class="card-title">Braj Radha Nagri</h5>
+                            <p class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
+                            <p class="text-primary fw-bold">₹6.5 Lakhs</p>
+                            <p class="small">Affordable residential plots with amenities</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-warning">Planned</span>
+                                <a href="<?php echo BASE_URL; ?>/projects/braj-radha-nagri" class="btn btn-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -289,7 +329,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="about-image">
-                        <img src="<?php echo BASE_URL; ?>/assets/images/about-us.jpg" alt="About APS Dream Home" class="img-fluid rounded-3 shadow-lg">
+                        <img src="<?php echo BASE_URL; ?>/assets/images/hero-1.jpg" alt="About APS Dream Home" class="img-fluid rounded-3 shadow-lg">
                     </div>
                 </div>
             </div>
@@ -343,25 +383,25 @@
             <div class="row text-center">
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number animate-counter" data-target="500">0</div>
+                        <div class="stat-number">500+</div>
                         <div class="stat-label">Properties Sold</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number animate-counter" data-target="1000">0</div>
+                        <div class="stat-number">1000+</div>
                         <div class="stat-label">Happy Clients</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number animate-counter" data-target="8">0</div>
+                        <div class="stat-number">8+</div>
                         <div class="stat-label">Years Experience</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="stat-item">
-                        <div class="stat-number animate-counter" data-target="15">0</div>
+                        <div class="stat-number">15+</div>
                         <div class="stat-label">Cities Covered</div>
                     </div>
                 </div>
@@ -451,51 +491,5 @@
         if (typeof initBackToTop === 'function') {
             initBackToTop();
         }
-
-        // Load featured properties
-        loadFeaturedProperties();
     });
-
-    // Load featured properties function
-    function loadFeaturedProperties() {
-        fetch('<?php echo BASE_URL; ?>/api/properties/featured')
-            .then(response => response.json())
-            .then(data => {
-                const container = document.getElementById('featuredProperties');
-                if (data.properties && data.properties.length > 0) {
-                    container.innerHTML = data.properties.map(property => `
-                            <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card property-card h-100">
-                                    ${property.featured ? '<div class="featured-badge">Featured</div>' : ''}
-                                    <img src="${property.image}" class="card-img-top" alt="${property.title}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${property.title}</h5>
-                                        <p class="text-muted">${property.location}</p>
-                                        <p class="text-primary fw-bold">₹${formatPrice(property.price)}</p>
-                                        <p class="small">${property.bedrooms} BHK • ${property.area} sq.ft.</p>
-                                        <p>${property.description}</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-${property.status === 'ready-to-move' ? 'success' : 'warning'}">
-                                                ${property.status}
-                                            </span>
-                                            <a href="#" class="btn btn-primary btn-sm">View Details</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('');
-                } else {
-                    container.innerHTML = '<div class="col-12 text-center"><p>No featured properties available at the moment.</p></div>';
-                }
-            })
-            .catch(error => {
-                console.error('Error loading featured properties:', error);
-                document.getElementById('featuredProperties').innerHTML = '<div class="col-12 text-center"><p>Error loading properties. Please try again later.</p></div>';
-            });
-    }
-
-    // Format price function
-    function formatPrice(price) {
-        return new Intl.NumberFormat('en-IN').format(price);
-    }
 </script>

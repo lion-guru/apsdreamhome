@@ -590,6 +590,45 @@ function trackUserInteractions() {
   });
 }
 
+// ===== COUNTER ANIMATION =====
+function animateCounters() {
+  const counters = document.querySelectorAll(".animate-counter");
+
+  counters.forEach((counter) => {
+    const target = parseInt(counter.getAttribute("data-target"));
+    const duration = 2000; // 2 seconds
+    const increment = target / (duration / 16); // 60fps
+    let current = 0;
+
+    const updateCounter = () => {
+      current += increment;
+      if (current < target) {
+        counter.textContent = Math.ceil(current).toLocaleString();
+        requestAnimationFrame(updateCounter);
+      } else {
+        counter.textContent = target.toLocaleString();
+      }
+    };
+
+    // Start animation when element is in viewport
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          updateCounter();
+          observer.unobserve(entry.target);
+        }
+      });
+    });
+
+    observer.observe(counter);
+  });
+}
+
+// Initialize counters when DOM is ready
+document.addEventListener("DOMContentLoaded", function () {
+  animateCounters();
+});
+
 // ===== EXPORT TO GLOBAL SCOPE =====
 window.apsUtils = apsUtils;
 window.APS.utils = apsUtils;
