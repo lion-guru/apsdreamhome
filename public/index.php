@@ -5,6 +5,9 @@
  * This is the main entry point for the application
  */
 
+// Debug: Create a test file to verify this script is running
+file_put_contents(__DIR__ . '/../logs/debug_test.txt', "Index.php executed at: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+
 // Define constants
 define('APS_ROOT', dirname(__DIR__));
 define('APS_APP', APS_ROOT . '/app');
@@ -58,7 +61,24 @@ spl_autoload_register(function ($class) {
 
 // Include required files
 require_once APS_ROOT . '/app/helpers.php';
-require_once APS_ROOT . '/routes/web.php';
+
+// Create router instance
+error_log("=== INDEX: APS_ROOT = " . APS_ROOT . " ===");
+error_log("=== INDEX: Router path = " . APS_ROOT . '/routes/router.php' . " ===");
+require_once APS_ROOT . '/routes/router.php';
+error_log("=== INDEX: Creating router instance ===");
+$router = new Router();
+error_log("=== INDEX: Router created successfully ===");
+
+// Include routes
+error_log("=== INDEX: Including routes/web.php ===");
+try {
+    require_once APS_ROOT . '/routes/web.php';
+    error_log("=== INDEX: Routes included successfully ===");
+} catch (Exception $e) {
+    error_log("=== INDEX: Error including routes: " . $e->getMessage() . " ===");
+    error_log("=== INDEX: Error in file: " . $e->getFile() . " line " . $e->getLine() . " ===");
+}
 
 // Dispatch router
 try {

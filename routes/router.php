@@ -1,7 +1,9 @@
 <?php
 
+error_log("ROUTER FILE: Loading router.php - " . __FILE__);
+
 /**
- * APS Dream Home - Router
+ * APS Dream Home - Router Class
  * Handle all routing logic
  */
 class Router
@@ -41,15 +43,15 @@ class Router
         if ($path !== '/') {
             $path = ltrim($path, '/');
         }
-        
+
         $this->routes[$method][$path] = [
             'handler' => $handler,
             'middleware' => []
         ];
-        
+
         $this->lastMethod = $method;
         $this->lastPath = $path;
-        
+
         return $this;
     }
 
@@ -78,7 +80,15 @@ class Router
 
         // For XAMPP localhost, handle /apsdreamhome/public base path
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        if (str_contains($host, 'localhost')) {
+        $port = $_SERVER['SERVER_PORT'] ?? '';
+        error_log("ROUTER DEBUG: Host: $host, Port: $port");
+
+        // Check if we're running directly on localhost without subdirectory
+        if (str_contains($host, 'localhost') && !str_contains($uri, '/apsdreamhome')) {
+            // Running directly on localhost:port - don't modify URI
+            // Keep URI as is: /terms, /privacy, /admin, etc.
+            error_log("ROUTER DEBUG: Direct localhost access - keeping URI as: $uri");
+        } elseif (str_contains($host, 'localhost')) {
             $basePath = '/apsdreamhome';
             $publicPath = '/apsdreamhome/public';
 
@@ -90,6 +100,7 @@ class Router
                 if (empty($uri)) {
                     $uri = '/';
                 }
+                error_log("ROUTER DEBUG: Removed public path - URI now: $uri");
             } elseif (strpos($uri, $basePath) === 0) {
                 // Remove /apsdreamhome from URI
                 $uri = substr($uri, strlen($basePath));
@@ -97,23 +108,31 @@ class Router
                 if (empty($uri)) {
                     $uri = '/';
                 }
+                error_log("ROUTER DEBUG: Removed base path - URI now: $uri");
             }
         }
 
         // Remove script filename if present (for direct file access like index_minimal.php)
         $scriptName = basename($_SERVER['SCRIPT_NAME']);
         $scriptPath = '/' . $scriptName;
-        if (strpos($uri, $scriptPath) === 0) {
-            $uri = substr($uri, strlen($scriptPath));
+        error_log("ROUTER DEBUG: Script name: $scriptName, Script path: $scriptPath");
+        // Only remove script path if it's actually a PHP file, not a route
+        if ($scriptName === 'index.php' || str_ends_with($scriptName, '.php')) {
+            if (strpos($uri, $scriptPath) === 0) {
+                $uri = substr($uri, strlen($scriptPath));
+                error_log("ROUTER DEBUG: Removed script path - URI now: $uri");
+            }
+        } else {
+            error_log("ROUTER DEBUG: Script name is not PHP, treating as route - keeping URI: $uri");
         }
 
-        // For XAMPP localhost, remove leading slash for proper routing
+        // For XAMPP localhost, keep leading slash for route matching consistency
         $host = $_SERVER['HTTP_HOST'] ?? '';
+        error_log("ROUTER DEBUG: Before slash processing - URI: $uri");
         if (str_contains($host, 'localhost')) {
-            // Remove leading slash if present (but keep it for root)
-            if ($uri !== '/') {
-                $uri = ltrim($uri, '/');
-            }
+            // Keep leading slash for route matching (routes defined with /prefix)
+            // Don't strip leading slash - keep as /terms, /privacy, etc.
+            error_log("ROUTER DEBUG: Keeping leading slash for localhost");
         } else {
             // For production, keep leading slash
             if ($uri !== '/' && !str_starts_with($uri, '/')) {
@@ -124,27 +143,46 @@ class Router
         // If URI is empty, set to root
         if (empty($uri)) {
             $uri = '/';
+            error_log("ROUTER DEBUG: URI was empty, set to root: $uri");
         }
 
         // Remove .php extension if present (for direct file access)
         $uri = preg_replace('/\.php$/', '', $uri);
+        error_log("ROUTER DEBUG: After all processing - Final URI: $uri");
 
         error_log("FINAL ROUTER URI: $uri");
 
+        // Debug: Check if route exists
+        error_log("ROUTER DEBUG: Looking for route: $method $uri");
+
         if (!isset($this->routes[$method][$uri])) {
-            // Try to match dynamic routes with parameters
-            $matchedRoute = $this->matchDynamicRoute($method, $uri);
-            if ($matchedRoute) {
-                $routeData = $matchedRoute['route_data'];
-                $params = $matchedRoute['params'];
+            error_log("ROUTER DEBUG: Route not found in routes array");
+
+            // For localhost, try to find route without leading slash
+            $uriWithoutSlash = ltrim($uri, '/');
+            if (isset($this->routes[$method][$uriWithoutSlash])) {
+                error_log("ROUTER DEBUG: Found route without slash: $uriWithoutSlash");
+                $uri = $uriWithoutSlash;
+                $routeData = $this->routes[$method][$uri];
             } else {
-                http_response_code(404);
-                echo "Page not found: " . htmlspecialchars($uri);
-                return;
+                // Try to match dynamic routes with parameters
+                $matchedRoute = $this->matchDynamicRoute($method, $uri);
+                if ($matchedRoute) {
+                    $routeData = $matchedRoute['route_data'];
+                    $params = $matchedRoute['params'];
+                    error_log("ROUTER DEBUG: Found dynamic route");
+                } else {
+                    error_log("ROUTER DEBUG: No dynamic route found, returning 404");
+                    http_response_code(404);
+                    echo '<h1>404 - Page Not Found</h1>';
+                    echo '<p>The page you are looking for could not be found.</p>';
+                    echo '<p>Route: ' . htmlspecialchars($method . ' ' . $uri) . '</p>';
+                    return;
+                }
             }
         } else {
+            error_log("ROUTER DEBUG: Found exact route match");
             $routeData = $this->routes[$method][$uri];
-            $params = [];
         }
 
         // Support both old structure (string handler) and new (array with middleware)
@@ -161,7 +199,9 @@ class Router
                 if (method_exists($middleware, 'handle')) {
                     // Create a mock request/response if needed, or just let middleware handle globals
                     $request = new \App\Core\Http\Request();
-                    $middleware->handle($request, function($req) { return $req; });
+                    $middleware->handle($request, function ($req) {
+                        return $req;
+                    });
                 }
             }
         }
