@@ -992,12 +992,16 @@ class PageController extends BaseController
      */
     public function terms()
     {
+        error_log("PAGECONTROLLER: terms() method called");
+
         $data = [
             'page_title' => 'Terms and Conditions - APS Dream Home',
             'page_description' => 'Terms and conditions for using APS Dream Home real estate services'
         ];
 
+        error_log("PAGECONTROLLER: About to render terms_conditions view");
         $this->render('pages/legal/terms_conditions', $data);
+        error_log("PAGECONTROLLER: Finished rendering terms_conditions view");
     }
 
     /**
@@ -1011,5 +1015,57 @@ class PageController extends BaseController
         ];
 
         $this->render('pages/legal/privacy_policy', $data);
+    }
+
+    /**
+     * Get Featured Properties API
+     * Returns JSON response of featured properties for AJAX requests
+     */
+    public function getFeaturedProperties()
+    {
+        // Set response header
+        header('Content-Type: application/json');
+
+        // Featured properties data
+        $featured_properties = [
+            [
+                'id' => 1,
+                'title' => 'Suyoday Colony',
+                'location' => 'Gorakhpur',
+                'price' => '₹7.5 Lakhs',
+                'image' => BASE_URL . '/assets/images/projects/gorakhpur/suryoday.jpg',
+                'type' => 'Residential',
+                'status' => 'Available',
+                'description' => 'Premium residential plots with modern infrastructure'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Raghunat Nagri',
+                'location' => 'Gorakhpur',
+                'price' => '₹8.5 Lakhs',
+                'image' => BASE_URL . '/assets/images/projects/gorakhpur/raghunath nagri motiram.JPG',
+                'type' => 'Residential',
+                'status' => 'Available',
+                'description' => 'Premium residential plots in developing area'
+            ],
+            [
+                'id' => 3,
+                'title' => 'Braj Radha Nagri',
+                'location' => 'Gorakhpur',
+                'price' => '₹6.5 Lakhs',
+                'image' => BASE_URL . '/assets/images/projects/gorakhpur/suryoday1.jpeg',
+                'type' => 'Residential',
+                'status' => 'Available',
+                'description' => 'Affordable residential plots with amenities'
+            ]
+        ];
+
+        // Return JSON response
+        echo json_encode([
+            'success' => true,
+            'data' => $featured_properties,
+            'count' => count($featured_properties)
+        ]);
+        exit;
     }
 }

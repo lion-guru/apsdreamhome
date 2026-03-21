@@ -64,6 +64,7 @@ $router->get('/api/mlm/tree', 'MLMController@getNetworkTree');
 // Property routes
 $router->get('/properties', 'Property\PropertyController@index');
 $router->get('/properties/{id}', 'Property\PropertyController@show');
+$router->get('/api/properties/featured', 'Front\PageController@getFeaturedProperties');
 
 // Project routes
 $router->get('/projects', 'Admin\ProjectController@index');
