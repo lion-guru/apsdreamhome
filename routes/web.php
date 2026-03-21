@@ -25,6 +25,10 @@ $router->get('/admin/legal-pages', 'Admin\\LegalPagesController@index');
 $router->post('/admin/legal-pages/update-terms', 'Admin\\LegalPagesController@updateTerms');
 $router->post('/admin/legal-pages/update-privacy', 'Admin\\LegalPagesController@updatePrivacy');
 
+// Admin Layout Manager
+$router->get('/admin/layout-manager', 'Admin\\LayoutController@layoutManager');
+$router->post('/admin/layout-manager', 'Admin\\LayoutController@updateLayoutSettings');
+
 // Customer Authentication
 $router->get('/register', 'Auth\\CustomerAuthController@register');
 $router->post('/register', 'Auth\\CustomerAuthController@handleRegister');
@@ -316,6 +320,7 @@ $router->post('/api/marketing/campaign/create', 'Marketing\MarketingAutomationCo
 $router->post('/api/marketing/automation/trigger', 'Marketing\MarketingAutomationController@triggerAutomation');
 
 // Auth routes (Modern MVC)
+$router->get('/auth/universal_login', 'Auth\AuthController@universalLogin');
 $router->get('/auth/login', 'Auth\AuthController@login');
 $router->post('/auth/login', 'Auth\AuthController@authenticate');
 $router->get('/auth/logout', 'Auth\AuthController@logout');
@@ -523,7 +528,7 @@ $router->get('/security/stats', 'Security\SecurityController@getSecurityStats');
 
 // General routes
 $router->get('/', 'HomeController@index');
-$router->get('/mlm-dashboard', 'MLMController@dashboard');
+$router->get('/mlm-dashboard', 'App\Http\Controllers\MLMController@dashboard');
 $router->get('/monitoring', 'MonitoringController@dashboard');
 $router->get('/ai-valuation', 'AIValuationController@index');
 

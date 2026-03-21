@@ -9,8 +9,8 @@ $page_title = 'Terms and Conditions - APS Dream Home';
 $page_description = 'Terms and conditions for using APS Dream Home real estate services';
 $active_page = 'terms';
 
-// Include header
-require_once __DIR__ . '/../../layouts/header.php';
+// Content for base layout
+ob_start();
 ?>
 
 <div class="container my-5">
@@ -160,6 +160,7 @@ require_once __DIR__ . '/../../layouts/header.php';
 </style>
 
 <?php
-// Include footer
-require_once __DIR__ . '/../../layouts/footer.php';
+$content = ob_get_clean();
+require_once __DIR__ . '/../../layouts/base.php';
+echo $content;
 ?>

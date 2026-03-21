@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CM Dashboard View
  * Chief Manager Dashboard Interface
@@ -115,7 +116,7 @@ ob_start();
                     View All
                 </button>
             </div>
-            
+
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
@@ -166,7 +167,7 @@ ob_start();
             </div>
         </div>
     </div>
-    
+
     <!-- Quick Actions & Activities -->
     <div class="col-md-4">
         <!-- Quick Actions -->
@@ -206,7 +207,7 @@ ob_start();
                 </div>
             </div>
         </div>
-        
+
         <!-- Recent Activities -->
         <div class="glass-card">
             <h5 class="mb-3">
@@ -247,7 +248,7 @@ ob_start();
                     View All Projects
                 </button>
             </div>
-            
+
             <div class="row">
                 <?php if (!empty($projectsOverview)): ?>
                     <?php foreach ($projectsOverview as $project): ?>
@@ -271,156 +272,155 @@ ob_start();
 </div>
 
 <style>
-.cm-dashboard-header {
-    background: var(--primary-gradient);
-    border-radius: 20px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    color: white;
-}
+    .cm-dashboard-header {
+        background: var(--primary-gradient);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+    }
 
-.performance-indicator {
-    text-align: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1rem;
-    border-radius: 12px;
-    min-width: 120px;
-}
+    .performance-indicator {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 12px;
+        min-width: 120px;
+    }
 
-.indicator-label {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 0.25rem;
-}
+    .indicator-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 0.25rem;
+    }
 
-.indicator-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: white;
-}
+    .indicator-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+    }
 
-.member-avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: var(--primary-gradient);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
+    .member-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
 
-.member-name {
-    font-weight: 600;
-    color: white;
-}
+    .member-name {
+        font-weight: 600;
+        color: white;
+    }
 
-.activities-list {
-    max-height: 300px;
-    overflow-y: auto;
-}
+    .activities-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
 
-.activity-item {
-    display: flex;
-    align-items: flex-start;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-.activity-item:last-child {
-    border-bottom: none;
-}
+    .activity-item:last-child {
+        border-bottom: none;
+    }
 
-.activity-content {
-    flex: 1;
-    margin-left: 0.75rem;
-}
+    .activity-content {
+        flex: 1;
+        margin-left: 0.75rem;
+    }
 
-.activity-text {
-    color: white;
-    font-size: 0.875rem;
-    margin-bottom: 0.25rem;
-}
+    .activity-text {
+        color: white;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
 
-.project-stat {
-    text-align: center;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
+    .project-stat {
+        text-align: center;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-.project-status {
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-}
+    .project-status {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+    }
 
-.project-status.active {
-    background: rgba(16, 185, 129, 0.2);
-    color: #10b981;
-}
+    .project-status.active {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
 
-.project-status.pending {
-    background: rgba(245, 158, 11, 0.2);
-    color: #f59e0b;
-}
+    .project-status.pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
 
-.project-status.completed {
-    background: rgba(59, 130, 246, 0.2);
-    color: #3b82f6;
-}
+    .project-status.completed {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+    }
 
-.project-count {
-    font-size: 2rem;
-    font-weight: bold;
-    color: white;
-}
+    .project-count {
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+    }
 </style>
 
 <script>
-// Quick action functions
-function refreshDashboard() {
-    location.reload();
-}
+    // Quick action functions
+    function refreshDashboard() {
+        location.reload();
+    }
 
-function manageTeam() {
-    window.location.href = '<?= BASE_URL ?>admin/team';
-}
+    function manageTeam() {
+        window.location.href = '<?= BASE_URL ?>admin/team';
+    }
 
-function viewReports() {
-    window.location.href = '<?= BASE_URL ?>admin/reports';
-}
+    function viewReports() {
+        window.location.href = '<?= BASE_URL ?>admin/reports';
+    }
 
-function assignProjects() {
-    window.location.href = '<?= BASE_URL ?>admin/properties/assign';
-}
+    function assignProjects() {
+        window.location.href = '<?= BASE_URL ?>admin/properties/assign';
+    }
 
-function scheduleMeeting() {
-    alert('Meeting scheduler coming soon!');
-}
+    function scheduleMeeting() {
+        alert('Meeting scheduler coming soon!');
+    }
 
-function viewFullTeam() {
-    window.location.href = '<?= BASE_URL ?>admin/team';
-}
+    function viewFullTeam() {
+        window.location.href = '<?= BASE_URL ?>admin/team';
+    }
 
-function viewAllProjects() {
-    window.location.href = '<?= BASE_URL ?>admin/properties';
-}
+    function viewAllProjects() {
+        window.location.href = '<?= BASE_URL ?>admin/properties';
+    }
 
-// Auto-refresh dashboard every 30 seconds
-setInterval(function() {
-    refreshDashboard();
-}, 30000);
+    // Auto-refresh dashboard every 30 seconds
+    setInterval(function() {
+        refreshDashboard();
+    }, 30000);
 </script>
 
 <?php
 $content = ob_get_clean();
-require_once __DIR__ . '/../layouts/admin_header.php';
+require_once __DIR__ . '/../../layouts/base.php';
 echo $content;
-require_once __DIR__ . '/../layouts/admin_footer.php';
 ?>

@@ -8,8 +8,8 @@ if (session_status() === PHP_SESSION_NONE) {
 $page_title = 'Customer Registration - APS Dream Home';
 $page_description = 'Create your account to access premium real estate services';
 
-// Include public header
-require_once __DIR__ . '/../layouts/header.php';
+// Content for base layout
+ob_start();
 ?>
 
 <div class="container my-5">
@@ -543,7 +543,7 @@ require_once __DIR__ . '/../layouts/header.php';
 </script>
 
 <?php
-// Include footer
-require_once __DIR__ . '/../layouts/footer.php';
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/base.php';
+echo $content;
 ?>
-<?php unset($_SESSION['old_input']); ?>

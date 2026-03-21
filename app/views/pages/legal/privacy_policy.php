@@ -9,8 +9,8 @@ $page_title = 'Privacy Policy - APS Dream Home';
 $page_description = 'Privacy policy for APS Dream Home real estate services and data protection';
 $active_page = 'privacy';
 
-// Include header
-require_once __DIR__ . '/../../layouts/header.php';
+// Content for base layout
+ob_start();
 ?>
 
 <div class="container my-5">
@@ -258,6 +258,7 @@ require_once __DIR__ . '/../../layouts/header.php';
 </style>
 
 <?php
-// Include footer
-require_once __DIR__ . '/../../layouts/footer.php';
+$content = ob_get_clean();
+require_once __DIR__ . '/../../layouts/base.php';
+echo $content;
 ?>
