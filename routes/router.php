@@ -149,7 +149,6 @@ class Router
         // Remove .php extension if present (for direct file access)
         $uri = preg_replace('/\.php$/', '', $uri);
         error_log("ROUTER DEBUG: After all processing - Final URI: $uri");
-
         error_log("FINAL ROUTER URI: $uri");
 
         // Debug: Check if route exists
