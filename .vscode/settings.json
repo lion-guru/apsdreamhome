@@ -1,102 +1,132 @@
 {
   "php.version": "8.4",
   "explorer.excludeGitIgnore": true,
-  "css.format.spaceAroundSelectorSeparator": true,
-  "scss.format.spaceAroundSelectorSeparator": true,
-  "powershell.codeFormatting.trimWhitespaceAroundPipe": true,
-  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
-  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
-  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
-  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
-  "markdown.validate.enabled": true,
+
+  "// APS Dream Home - Memory Optimization Settings": "",
+  "intelephense.maxMemory": 1024,
+  "typescript.tsserver.maxTsServerMemory": 1024,
+  "intelephense.completion.maxItems": 200,
+
+  "// APS Dream Home - Intelephense Configuration": "",
+  "intelephense.diagnostics.undefinedMethods": false,
+  "intelephense.diagnostics.undefinedFunctions": false,
+  "intelephense.diagnostics.undefinedConstants": false,
+  "intelephense.diagnostics.undefinedClassConstants": false,
+  "intelephense.diagnostics.undefinedProperties": false,
+  "intelephense.diagnostics.undefinedTypes": false,
+  "intelephense.diagnostics.duplicateSymbols": true,
+
+  "// APS Dream Home - File Exclusions for Performance": "",
+  "files.watcherExclude": {
+    "**/node_modules/*/**": true,
+    "**/vendor/*/**": true,
+    "**/logs/*/**": true,
+    "**/storage/*/**": true,
+    "**/cache/*/**": true,
+    "**/backup/*/**": true,
+    "**/.git/*/**": true,
+    "**/_DEPRECATED/*/**": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/logs": true,
+    "**/storage/cache": true,
+    "**/backup": true,
+    "**/_DEPRECATED": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/logs": true,
+    "**/storage/cache": true,
+    "**/backup": true,
+    "**/_DEPRECATED": true
+  },
+
+  "// APS Dream Home - PHP Configuration": "",
+  "php.validate.enable": true,
+  "php.validate.run": "onSave",
+  "intelephense.environment.phpVersion": "8.2.0",
+
+  "// APS Dream Home - Editor Configuration": "",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.autoSave": "afterDelay",
+  "workbench.editor.showTabIndex": true,
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": false,
+  "editor.glyphMargin": false,
+  "editor.folding": true,
+  "editor.lineNumbers": "on",
+
+  "// APS Dream Home - Performance Settings": "",
+  "editor.experimentalGpuAcceleration": "off",
+  "editor.experimental.preferTreeSitter.css": false,
+  "editor.experimental.preferTreeSitter.ini": false,
+  "editor.experimental.preferTreeSitter.regex": false,
+  "editor.experimental.preferTreeSitter.typescript": false,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "typescript.enablePromptUseWorkspaceTsdk": false,
+
+  "// APS Dream Home - Language Specific": "",
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "// APS Dream Home - Database Configuration": "",
   "sqltools.connections": [
     {
       "previewLimit": 50,
       "server": "localhost",
       "port": 3306,
-      "driver": "PostgreSQL",
-      "name": "aps",
+      "driver": "MySQL",
+      "name": "APS Dream Home",
       "database": "apsdreamhome",
       "username": "root",
       "password": ""
     }
   ],
-  "editor.experimental.preferTreeSitter.css": true,
-  "editor.experimental.asyncTokenizationVerification": true,
-  "editor.experimental.asyncTokenizationLogging": true,
-  "editor.experimental.preferTreeSitter.ini": true,
-  "editor.experimental.preferTreeSitter.regex": true,
-  "editor.experimental.preferTreeSitter.typescript": true,
-  "editor.experimental.treeSitterTelemetry": true,
-  "editor.experimentalEditContextEnabled": true,
-  "editor.experimentalGpuAcceleration": "on",
-  "// APS Dream Home - Intelephense Configuration to fix false positives": "",
-  "intelephense.diagnostics.undefinedMethods": true,
-  "intelephense.diagnostics.undefinedFunctions": true,
-  "intelephense.diagnostics.undefinedConstants": true,
-  "intelephense.diagnostics.undefinedClassConstants": true,
-  "intelephense.diagnostics.undefinedProperties": true,
-  "intelephense.diagnostics.undefinedTypes": true,
-  "intelephense.diagnostics.duplicateSymbols": true,
-  "files.watcherExclude": {
-    "**/node_modules/*/**": true,
-    "**/vendor/*/**": true
-  },
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/vendor": true
-  },
-  "intelephense.files.exclude": [
-    "**/.git/**",
-    "**/.svn/**",
-    "**/.hg/**",
-    "**/CVS/**",
-    "**/.DS_Store/**",
-    "**/node_modules/**",
-    "**/bower_components/**",
-    "**/vendor/**",
-    "**/.vscode/extensions/**"
-  ],
-  "intelephense.diagnostics.exclude": [
-    "**/vendor/**"
-  ],
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/vendor": true
-  },
-  "php.validate.enable": true,
-  "php.validate.run": "onType",
-  "intelephense.environment.phpVersion": "8.2.0",
-  "codium.codeCompletion.enable": true,
-  "editor.aiStats.enabled": true,
-  "dbcode.ai.mcp.autoStart": true,
-  "notebook.formatOnSave.enabled": true,
-  "notebook.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "advancedPhpCsFixer.allowRisky": true,
-  "testing.automaticallyOpenPeekViewDuringAutoRun": true,
-  "chat.agent.maxRequests": 500,
-  "intelephense.maxMemory": 2056,
-  "typescript.tsserver.maxTsServerMemory": 2056,
-  "intelephense.completion.maxItems": 500,
-  "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": true,
-  "intelephense.compatibility.preferPsalmPhpstanPrefixedAnnotations": true,
-  "intelephense.codeLens.usages.enable": true,
-  "intelephense.codeLens.references.enable": true,
-  "intelephense.codeLens.parent.enable": true,
-  "intelephense.codeLens.overrides.enable": true,
-  "intelephense.codeLens.implementations.enable": true,
-  "intelephense.phpdoc.useFullyQualifiedNames": true,
-  "[php]": {
-    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
-  },
-  "files.autoSave": "afterDelay",
-  "workbench.editor.showTabIndex": true,
-  "typescript.disableAutomaticTypeAcquisition": true,
-  "typescript.enablePromptUseWorkspaceTsdk": true
+
+  "// APS Dream Home - Disable Unused Features": "",
+  "markdown.validate.enabled": false,
+  "css.format.spaceAroundSelectorSeparator": false,
+  "scss.format.spaceAroundSelectorSeparator": false,
+  "powershell.codeFormatting.trimWhitespaceAroundPipe": false,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
+
+  "// APS Dream Home - Disable AI Features for Performance": "",
+  "codium.codeCompletion.enable": false,
+  "editor.aiStats.enabled": false,
+  "dbcode.ai.mcp.autoStart": false,
+  "chat.agent.maxRequests": 50,
+
+  "// APS Dream Home - Disable Testing Features": "",
+  "testing.automaticallyOpenPeekViewDuringAutoRun": false,
+  "notebook.formatOnSave.enabled": false,
+  "notebook.defaultFormatter": null,
+
+  "// APS Dream Home - Disable Advanced Features": "",
+  "advancedPhpCsFixer.allowRisky": false,
+  "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": false,
+  "intelephense.compatibility.preferPsalmPhpstanPrefixedAnnotations": false,
+  "intelephense.codeLens.usages.enable": false,
+  "intelephense.codeLens.references.enable": false,
+  "intelephense.codeLens.parent.enable": false,
+  "intelephense.codeLens.overrides.enable": false,
+  "intelephense.codeLens.implementations.enable": false,
+  "intelephense.phpdoc.useFullyQualifiedNames": false
 }
