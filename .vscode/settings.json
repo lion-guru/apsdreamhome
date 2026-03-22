@@ -128,5 +128,6 @@
   "intelephense.codeLens.parent.enable": false,
   "intelephense.codeLens.overrides.enable": false,
   "intelephense.codeLens.implementations.enable": false,
-  "intelephense.phpdoc.useFullyQualifiedNames": false
+  "intelephense.phpdoc.useFullyQualifiedNames": false,
+  "editor.linkedEditing": true
 }
