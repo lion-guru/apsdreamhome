@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APS Dream Home - AI Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: #fff; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .header { 
+            background: rgba(0,0,0,0.3); 
+            padding: 20px; 
+            text-align: center; 
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 { font-size: 24px; font-weight: 300; }
+        .header p { opacity: 0.8; margin-top: 5px; }
+        .chat-container { 
+            flex: 1; 
+            display: flex; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            width: 100%; 
+            padding: 20px;
+            gap: 20px;
+        }
+        .chat-sidebar {
+            width: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .chat-box { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px;
+        }
+        .message { 
+            max-width: 85%; 
+            padding: 15px 20px; 
+            border-radius: 15px; 
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease-in;
+        }
+        .user-msg { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            align-self: flex-end; 
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .ai-msg { 
+            background: rgba(255,255,255,0.1); 
+            align-self: flex-start; 
+            border-bottom-left-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .input-area { 
+            display: flex; 
+            padding: 20px; 
+            background: rgba(0,0,0,0.2); 
+            border-radius: 0 0 15px 15px;
+            backdrop-filter: blur(10px);
+        }
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+        input[type="text"] { 
+            flex: 1; 
+            padding: 15px 20px; 
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px; 
+            background: rgba(255,255,255,0.1); 
+            color: #fff; 
+            font-size: 16px; 
+            outline: none;
+            backdrop-filter: blur(10px);
+        }
+        input[type="text"]::placeholder { color: rgba(255,255,255,0.6); }
+        button { 
+            padding: 15px 30px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:active { transform: translateY(0); }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online { background: #4ade80; }
+        .status-offline { background: #ff6b6b; }
+        .status-typing { background: #fbbf24; animation: pulse 1.5s infinite; }
+        .quick-actions {
+            margin-top: 20px;
+        }
+        .quick-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: #fff;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quick-btn:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .timestamp {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏠 APS Dream Home AI Assistant</h1>
+        <p>Apna official AI assistant - Property management aur development ke liye</p>
+    </div>
+   
+    <div class="chat-container">
+        <div class="chat-sidebar">
+            <h3>🚀 Quick Actions</h3>
+            <div class="quick-actions">
+                <button class="quick-btn" onclick="sendQuickMessage('Mujhe APS Dream Home ke baare mein batao')">
+                    📊 APS Dream Home Info
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('Property search kaise karte hain?')">
+                    🔍 Property Search Guide
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('Website development mein help chahiye')">
+                    💻 Development Help
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('Database optimization kaise karein?')">
+                    ⚡ Performance Tips
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('Raghunath Nagri mein properties')">
+                    🏡 Local Properties
+                </button>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                <h4>📊 System Status</h4>
+                <p><span class="status-indicator status-online"></span> API Connected</p>
+                <p><span class="status-indicator status-online"></span> Database Active</p>
+                <p><span class="status-indicator status-typing"></span> AI Ready</p>
+            </div>
+        </div>
+
+        <div class="chat-main">
+            <div class="chat-box" id="chat-box">
+                <div class="message ai-msg">
+                    <strong>🤖 APS AI Assistant:</strong><br>
+                    Namaste! Main APS Dream Home ka official AI hoon. Main aapko property management, website development, aur real estate ke baare mein complete help kar sakta hoon.<br><br>
+                    <strong>Main kar sakta hoon:</strong><br>
+                    • Property search aur filtering<br>
+                    • Website development guidance<br>
+                    • Database optimization<br>
+                    • Customer management<br>
+                    • Lead generation strategies<br>
+                    • Local market insights (Raghunath Nagri)<br><br>
+                    Boliye, main aapki kya seva kar sakta hoon?
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="user-input" placeholder="Apna sawal yahan likhein..." onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()">📤 Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isTyping = false;
+
+        async function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const userText = inputField.value.trim();
+            if (!userText || isTyping) return;
+
+            addMessage(userText, 'user-msg');
+            inputField.value = '';
+            isTyping = true;
+
+            const aiMessageElement = addMessage('🤔 Thinking...', 'ai-msg');
+
+            try {
+                const response = await fetch('ai_backend.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userText })
+                });
+
+                const data = await response.json();
+               
+                if (data.reply) {
+                    aiMessageElement.innerHTML = `<strong>🤖 APS AI:</strong><br>${formatText(data.reply)}<div class="timestamp">${new Date().toLocaleTimeString('hi-IN')}</div>`;
+                } else {
+                    aiMessageElement.innerHTML = `<strong>❌ Error:</strong><br>${data.error}<div class="timestamp">${new Date().toLocaleTimeString('hi-IN')}</div>`;
+                }
+            } catch (error) {
+                aiMessageElement.innerHTML = `<strong>🔧 Connection Error:</strong><br>Backend server se connect nahi ho paya. XAMPP Apache start karein.<div class="timestamp">${new Date().toLocaleTimeString('hi-IN')}</div>`;
+            } finally {
+                isTyping = false;
+            }
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('user-input').value = message;
+            sendMessage();
+        }
+
+        function addMessage(text, className) {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            
+            const timestamp = new Date().toLocaleTimeString('hi-IN');
+            const prefix = className === 'user-msg' ? 
+                '<strong>👤 Aap:</strong><br>' : 
+                '<strong>🤖 APS AI:</strong><br>';
+                
+            msgDiv.innerHTML = `${prefix}${formatText(text)}<div class="timestamp">${timestamp}</div>`;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return msgDiv;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function formatText(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<b>$1</b>')
+                .replace(/`(.*?)`/g, '<code style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;">$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // Auto-focus on input
+        document.getElementById('user-input').focus();
+        
+        // Welcome message animation
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach((msg, index) => {
+                msg.style.animationDelay = `${index * 0.1}s`;
+            });
+        }, 100);
+    </script>
+</body>
+</html>
