@@ -100,6 +100,7 @@ class Router
      */
     public function __construct(App $app)
     {
+        error_log("ROUTER CONSTRUCTOR (Core): Core Router instantiated - " . __FILE__);
         $this->app = $app;
         $this->routes = new RouteCollection();
     }
@@ -109,6 +110,7 @@ class Router
      */
     public function get($uri, $action)
     {
+        error_log("ROUTER GET (Core): Called with path: '$uri'");
         return $this->addRoute('GET', $uri, $action);
     }
 

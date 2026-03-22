@@ -5,8 +5,17 @@
     "cweijan.vscode-mysql-client2",
     "esbenp.prettier-vscode",
     "xdebug.php-debug",
-    "ritwickdey.LiveServer",
     "eamodio.gitlens",
-    "christian-kohler.path-intellisense"
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-json",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "ms-vscode.vscode-css-formatter"
+  ],
+  "unwantedRecommendations": [
+    "ritwickdey.LiveServer",
+    "ms-vscode.vscode-typescript-next",
+    "ms-vscode.vscode-javascript",
+    "ms-vscode.node-azure"
   ]
 }

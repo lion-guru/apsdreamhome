@@ -1068,4 +1068,334 @@ class PageController extends BaseController
         ]);
         exit;
     }
+
+    // WhatsApp Chat
+    public function whatsappChat()
+    {
+        $data = [
+            'page_title' => 'WhatsApp Chat - APS Dream Home',
+            'page_description' => 'Connect with us via WhatsApp for instant support'
+        ];
+        $this->render('pages/whatsapp_chat', $data);
+    }
+
+    // Virtual Tour
+    public function virtualTour()
+    {
+        $data = [
+            'page_title' => 'Virtual Tour - APS Dream Home',
+            'page_description' => 'Take a virtual tour of our premium properties'
+        ];
+        $this->render('pages/virtual_tour', $data);
+    }
+
+    // User AI Suggestions
+    public function userAiSuggestions()
+    {
+        $data = [
+            'page_title' => 'AI Suggestions - APS Dream Home',
+            'page_description' => 'Get AI-powered property suggestions'
+        ];
+        $this->render('pages/user_ai_suggestions', $data);
+    }
+
+    // User Saved Searches
+    public function userSavedSearches()
+    {
+        $data = [
+            'page_title' => 'Saved Searches - APS Dream Home',
+            'page_description' => 'View your saved property searches'
+        ];
+        $this->render('pages/user/saved_searches', $data);
+    }
+
+    // User Notifications
+    public function userNotifications()
+    {
+        $data = [
+            'page_title' => 'Notifications - APS Dream Home',
+            'page_description' => 'Manage your notifications and alerts'
+        ];
+        $this->render('pages/user/notifications', $data);
+    }
+
+    // User Investments
+    public function userInvestments()
+    {
+        $data = [
+            'page_title' => 'Investments - APS Dream Home',
+            'page_description' => 'Track your property investments'
+        ];
+        $this->render('pages/user/investments', $data);
+    }
+
+    // User Edit Profile
+    public function userEditProfile()
+    {
+        $data = [
+            'page_title' => 'Edit Profile - APS Dream Home',
+            'page_description' => 'Update your profile information'
+        ];
+        $this->render('pages/user/edit_profile', $data);
+    }
+
+    // Under Construction
+    public function underConstruction()
+    {
+        $data = [
+            'page_title' => 'Under Construction - APS Dream Home',
+            'page_description' => 'This page is under construction'
+        ];
+        $this->render('pages/under_construction', $data);
+    }
+
+    // Thank You
+    public function thankYou()
+    {
+        $data = [
+            'page_title' => 'Thank You - APS Dream Home',
+            'page_description' => 'Thank you for contacting APS Dream Home'
+        ];
+        $this->render('pages/thank_you', $data);
+    }
+
+    // Support
+    public function support()
+    {
+        $data = [
+            'page_title' => 'Support - APS Dream Home',
+            'page_description' => 'Get help and support from APS Dream Home'
+        ];
+        $this->render('pages/support', $data);
+    }
+
+    // Sitemap
+    public function sitemap()
+    {
+        $data = [
+            'page_title' => 'Sitemap - APS Dream Home',
+            'page_description' => 'Complete sitemap of APS Dream Home website'
+        ];
+        $this->render('pages/sitemap', $data);
+    }
+
+    // Services
+    public function services()
+    {
+        $data = [
+            'page_title' => 'Services - APS Dream Home',
+            'page_description' => 'Comprehensive real estate services by APS Dream Home'
+        ];
+        $this->render('pages/services', $data);
+    }
+
+    // Resell
+    public function resell()
+    {
+        $data = [
+            'page_title' => 'Resell Property - APS Dream Home',
+            'page_description' => 'Sell your property through APS Dream Home'
+        ];
+        $this->render('pages/resell', $data);
+    }
+
+    // Plots Availability
+    public function plotsAvailability()
+    {
+        $data = [
+            'page_title' => 'Plots Availability - APS Dream Home',
+            'page_description' => 'Check available plots across our projects'
+        ];
+        $this->render('pages/plots-availability', $data);
+    }
+
+    // Plot
+    public function plot()
+    {
+        $data = [
+            'page_title' => 'Plot Details - APS Dream Home',
+            'page_description' => 'View detailed plot information'
+        ];
+        $this->render('pages/plot', $data);
+    }
+
+    // News
+    public function news()
+    {
+        $data = [
+            'page_title' => 'News - APS Dream Home',
+            'page_description' => 'Latest news and updates from APS Dream Home'
+        ];
+        $this->render('pages/news', $data);
+    }
+
+    // Navigation
+    public function navigation()
+    {
+        $data = [
+            'page_title' => 'Navigation - APS Dream Home',
+            'page_description' => 'Navigate APS Dream Home website'
+        ];
+        $this->render('pages/navigation', $data);
+    }
+
+    // MLM Dashboard
+    public function mlmDashboard()
+    {
+        $data = [
+            'page_title' => 'MLM Dashboard - APS Dream Home',
+            'page_description' => 'Manage your MLM network and earnings'
+        ];
+        $this->render('pages/mlm-dashboard', $data);
+    }
+
+    // Financial Services
+    public function financialServices()
+    {
+        $data = [
+            'page_title' => 'Financial Services - APS Dream Home',
+            'page_description' => 'Banking and financial services for property buyers'
+        ];
+        $this->render('pages/financial_services', $data);
+    }
+
+    // Featured Properties
+    public function featuredProperties()
+    {
+        $data = [
+            'page_title' => 'Featured Properties - APS Dream Home',
+            'page_description' => 'Handpicked premium properties by APS Dream Home'
+        ];
+        $this->render('pages/featured_properties', $data);
+    }
+
+    // FAQs
+    public function faqs()
+    {
+        $data = [
+            'page_title' => 'FAQs - APS Dream Home',
+            'page_description' => 'Frequently asked questions about APS Dream Home'
+        ];
+        $this->render('pages/faqs', $data);
+    }
+
+    // Downloads
+    public function downloads()
+    {
+        $data = [
+            'page_title' => 'Downloads - APS Dream Home',
+            'page_description' => 'Download brochures and documents from APS Dream Home'
+        ];
+        $this->render('pages/downloads', $data);
+    }
+
+    // Customer Reviews
+    public function customerReviews()
+    {
+        $data = [
+            'page_title' => 'Customer Reviews - APS Dream Home',
+            'page_description' => 'Read reviews from our satisfied customers'
+        ];
+        $this->render('pages/customer_reviews', $data);
+    }
+
+    // Create Mobile App
+    public function createMobileApp()
+    {
+        $data = [
+            'page_title' => 'Mobile App - APS Dream Home',
+            'page_description' => 'Download APS Dream Home mobile application'
+        ];
+        $this->render('pages/create_mobile_app', $data);
+    }
+
+    // Interior Design
+    public function interiorDesign()
+    {
+        $data = [
+            'page_title' => 'Interior Design - APS Dream Home',
+            'page_description' => 'Professional interior design services'
+        ];
+        $this->render('pages/interior_design', $data);
+    }
+
+    // Email System
+    public function emailSystem()
+    {
+        $data = [
+            'page_title' => 'Email System - APS Dream Home',
+            'page_description' => 'Send emails to APS Dream Home team'
+        ];
+        $this->render('pages/email_system', $data);
+    }
+
+    // Legal Terms Conditions
+    public function legalTermsConditions()
+    {
+        $data = [
+            'page_title' => 'Terms & Conditions - APS Dream Home',
+            'page_description' => 'Detailed terms and conditions of APS Dream Home'
+        ];
+        $this->render('pages/legal/terms_conditions', $data);
+    }
+
+    // Legal Services
+    public function legalServices()
+    {
+        $data = [
+            'page_title' => 'Legal Services - APS Dream Home',
+            'page_description' => 'Legal services provided by APS Dream Home'
+        ];
+        $this->render('pages/legal/services', $data);
+    }
+
+    // Legal Documents
+    public function legalDocuments()
+    {
+        $data = [
+            'page_title' => 'Legal Documents - APS Dream Home',
+            'page_description' => 'Access legal documents and agreements'
+        ];
+        $this->render('pages/legal/documents', $data);
+    }
+
+    // System Log Security Event
+    public function systemLogSecurityEvent()
+    {
+        $data = [
+            'page_title' => 'Security Log - APS Dream Home',
+            'page_description' => 'System security event logging'
+        ];
+        $this->render('pages/system/log_security_event', $data);
+    }
+
+    // System Launch System
+    public function systemLaunchSystem()
+    {
+        $data = [
+            'page_title' => 'Launch System - APS Dream Home',
+            'page_description' => 'System launch and deployment interface'
+        ];
+        $this->render('pages/system/launch_system', $data);
+    }
+
+    // System KYC Upload
+    public function systemKycUpload()
+    {
+        $data = [
+            'page_title' => 'KYC Upload - APS Dream Home',
+            'page_description' => 'Know Your Customer verification system'
+        ];
+        $this->render('pages/system/kyc-upload', $data);
+    }
+
+    // WhatsApp Templates
+    public function whatsappTemplates()
+    {
+        $data = [
+            'page_title' => 'WhatsApp Templates - APS Dream Home',
+            'page_description' => 'WhatsApp message templates for marketing'
+        ];
+        $this->render('pages/whatsapp-templates', $data);
+    }
 }

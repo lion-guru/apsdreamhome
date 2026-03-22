@@ -75,6 +75,56 @@ $router->get('/projects/braj-radha-nagri', 'Front\PageController@brajRadhaNagri'
 $router->get('/projects/budh-bihar-colony', 'Front\PageController@budhBiharColony');
 $router->get('/projects/awadhpuri', 'Front\PageController@awadhpuri');
 
+// Additional Page Routes
+$router->get('/whatsapp-chat', 'Front\\PageController@whatsappChat');
+$router->get('/virtual-tour', 'Front\\PageController@virtualTour');
+$router->get('/user-ai-suggestions', 'Front\\PageController@userAiSuggestions');
+$router->get('/user/saved-searches', 'Front\\PageController@userSavedSearches');
+$router->get('/user/notifications', 'Front\\PageController@userNotifications');
+$router->get('/user/investments', 'Front\\PageController@userInvestments');
+$router->get('/user/edit-profile', 'Front\\PageController@userEditProfile');
+$router->get('/under-construction', 'Front\\PageController@underConstruction');
+$router->get('/thank-you', 'Front\\PageController@thankYou');
+$router->get('/testimonials', 'Front\\PageController@testimonials');
+$router->get('/team', 'Front\\PageController@team');
+$router->get('/support', 'Front\\PageController@support');
+$router->get('/sitemap', 'Front\\PageController@sitemap');
+$router->get('/services', 'Front\\PageController@services');
+$router->get('/resell', 'Front\\PageController@resell');
+$router->get('/plots-availability', 'Front\\PageController@plotsAvailability');
+$router->get('/plot', 'Front\\PageController@plot');
+$router->get('/news', 'Front\\PageController@news');
+$router->get('/navigation', 'Front\\PageController@navigation');
+$router->get('/mlm-dashboard', 'Front\\PageController@mlmDashboard');
+$router->get('/financial-services', 'Front\\PageController@financialServices');
+$router->get('/featured-properties', 'Front\\PageController@featuredProperties');
+$router->get('/faqs', 'Front\\PageController@faqs');
+$router->get('/downloads', 'Front\\PageController@downloads');
+$router->get('/customer-reviews', 'Front\\PageController@customerReviews');
+$router->get('/create-mobile-app', 'Front\\PageController@createMobileApp');
+$router->get('/interior-design', 'Front\\PageController@interiorDesign');
+$router->get('/email-system', 'Front\\PageController@emailSystem');
+
+// Legal Document Routes
+$router->get('/legal/terms-conditions', 'Front\\PageController@legalTermsConditions');
+$router->get('/legal/services', 'Front\\PageController@legalServices');
+$router->get('/legal/documents', 'Front\\PageController@legalDocuments');
+
+// System Routes
+$router->get('/system/log-security-event', 'Front\\PageController@systemLogSecurityEvent');
+$router->get('/system/launch-system', 'Front\\PageController@systemLaunchSystem');
+$router->get('/system/kyc-upload', 'Front\\PageController@systemKycUpload');
+
+// Property Routes
+$router->get('/properties/submit', 'Property\\PropertyController@submit');
+$router->get('/properties/list', 'Property\\PropertyController@list');
+$router->get('/properties/edit', 'Property\\PropertyController@edit');
+$router->get('/properties/book-plot', 'Property\\PropertyController@bookPlot');
+$router->get('/properties/book', 'Property\\PropertyController@book');
+
+// WhatsApp Templates
+$router->get('/whatsapp-templates', 'Front\\PageController@whatsappTemplates');
+
 // Admin routes - Unified Role-Based Dashboard
 $router->get('/admin', 'App\Http\Controllers\RoleBasedDashboardController@index');
 $router->get('/admin/dashboard', 'App\Http\Controllers\RoleBasedDashboardController@index');
