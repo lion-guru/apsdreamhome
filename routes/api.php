@@ -33,6 +33,10 @@ $router->post('/api/contact', 'Api\ApiEnquiryController@store');
 $router->post('/api/newsletter', 'Api\NewsletterController@subscribe');
 $router->post('/api/property-inquiry', 'Api\ApiEnquiryController@propertyInquiry');
 
+// Notification API
+$router->post('/api/notification', 'Api\NotificationController@create');
+
+
 // AI Assistant API Routes
 $router->post('/api/ai/chat', 'AIAssistantController@chat');
 $router->post('/api/v2/mobile/ai/parse-lead', 'AIAssistantController@parseLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');

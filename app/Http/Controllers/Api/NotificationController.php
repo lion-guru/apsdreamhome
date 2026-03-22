@@ -2,102 +2,106 @@
 
 namespace App\Http\Controllers\Api;
 
-use \Exception;
+use App\Http\Controllers\BaseController;
+use App\Core\Security;
+use Exception;
+use PDO;
 
-class NotificationController extends BaseApiController
+class NotificationController extends BaseController
 {
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('auth');
-        $this->middleware('csrf', ['only' => ['register', 'unregister', 'markAsRead']]);
-    }
-
-    /**
-     * List recent notifications for the authenticated user
-     */
-    public function index()
-    {
-        try {
-            $user = $this->auth->user();
-            $limit = \min(100, (int)$this->request()->input('limit', 50));
-            $offset = (int)$this->request()->input('offset', 0);
-
-            $notificationModel = $this->model('Notification');
-            $notifications = $notificationModel->getForUser($user->uid, $limit, $offset);
-
-            return $this->jsonSuccess(['notifications' => $notifications]);
-
-        } catch (Exception $e) {
-            return $this->jsonError($e->getMessage(), 500);
+        if (!$this->db) {
+            error_log('NotificationController: Failed to initialize database connection');
         }
     }
 
     /**
-     * Register a device for push notifications
+     * Creates a new notification.
      */
-    public function register()
+    public function create()
     {
-        if ($this->request()->getMethod() !== 'POST') {
-            return $this->jsonError('Method not allowed', 405);
+        $this->setCorsHeaders();
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!$data) {
+            return $this->errorResponse('Invalid JSON input.', 400);
         }
 
+        // 1. Validate input
+        $requiredFields = ['title', 'message', 'target_audience'];
+        foreach ($requiredFields as $field) {
+            if (empty($data[$field])) {
+                return $this->errorResponse("Missing required field: {$field}", 400);
+            }
+        }
+
+        // Sanitize all inputs
+        $title = Security::sanitize($data['title']);
+        $message = Security::sanitize($data['message']);
+        $targetAudience = Security::sanitize($data['target_audience']);
+        $userId = isset($data['user_id']) ? (int)Security::sanitize($data['user_id']) : null;
+        $type = isset($data['type']) ? Security::sanitize($data['type']) : 'info';
+        $campaignId = isset($data['campaign_id']) ? (int)Security::sanitize($data['campaign_id']) : null;
+
+        // 2. Insert into database
         try {
-            $user = $this->auth->user();
-            $token = strip_tags($this->request()->input('token'));
-            $platform = strip_tags($this->request()->input('platform'));
+            $sql = "INSERT INTO notifications (user_id, title, message, type, target_audience, campaign_id, created_at) 
+                    VALUES (:user_id, :title, :message, :type, :target_audience, :campaign_id, NOW())";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            $stmt->bindValue(':user_id', $userId, $userId ? PDO::PARAM_INT : PDO::PARAM_NULL);
+            $stmt->bindValue(':title', $title);
+            $stmt->bindValue(':message', $message);
+            $stmt->bindValue(':type', $type);
+            $stmt->bindValue(':target_audience', $targetAudience);
+            $stmt->bindValue(':campaign_id', $campaignId, $campaignId ? PDO::PARAM_INT : PDO::PARAM_NULL);
+            
+            $stmt->execute();
+            
+            $notificationId = $this->db->lastInsertId();
 
-            if (empty($token) || empty($platform)) {
-                return $this->jsonError('Token and platform are required', 400);
-            }
-
-            $deviceModel = $this->model('MobileDevice');
-            $existing = $deviceModel->findDevice($token, $user->uemail);
-
-            if ($existing) {
-                return $this->jsonSuccess(null, 'Device already registered');
-            }
-
-            $device = new \App\Models\MobileDevice([
-                'device_user' => $user->uemail,
-                'push_token' => $token,
-                'platform' => $platform
-            ]);
-
-            if ($device->save()) {
-                return $this->jsonSuccess(null, 'Device registered successfully', 201);
-            }
-
-            return $this->jsonError('Failed to register device');
+            return $this->successResponse([
+                'notification_id' => $notificationId,
+                'status' => 'created'
+            ], 'Notification created successfully.');
 
         } catch (Exception $e) {
-            return $this->jsonError($e->getMessage(), 500);
+            return $this->errorResponse('Failed to create notification: ' . $e->getMessage(), 500);
         }
     }
 
-    /**
-     * Unregister a device
-     */
-    public function unregister()
+    private function setCorsHeaders()
     {
-        if ($this->request()->getMethod() !== 'POST') {
-            return $this->jsonError('Method not allowed', 405);
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit(0);
         }
+    }
 
-        try {
-            $user = $this->auth->user();
-            $token = strip_tags($this->request()->input('token'));
-            if (empty($token)) {
-                return $this->jsonError('Token is required', 400);
-            }
+    protected function successResponse($data, $message = 'Success')
+    {
+        http_response_code(201); // 201 Created for successful resource creation
+        echo json_encode([
+            'success' => true,
+            'message' => $message,
+            'data' => $data
+        ]);
+        exit();
+    }
 
-            $deviceModel = $this->model('MobileDevice');
-            $deviceModel->unregisterDevice($token, $user->uemail);
-
-            return $this->jsonSuccess(null, 'Device unregistered successfully');
-
-        } catch (Exception $e) {
-            return $this->jsonError($e->getMessage(), 500);
-        }
+    protected function errorResponse($message, $code = 400)
+    {
+        http_response_code($code);
+        echo json_encode([
+            'success' => false,
+            'error' => $message
+        ]);
+        exit();
     }
 }

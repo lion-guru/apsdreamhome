@@ -654,3 +654,87 @@ Stack trace:
 [22-Mar-2026 18:00:39 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /ai_chat
 [22-Mar-2026 18:00:39 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
 [22-Mar-2026 18:00:39 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Creating router instance ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Router created successfully ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Including routes/web.php ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER SETUP: Starting route registration
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Routes included successfully ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Method: POST, URI: /apsdreamhome/api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] FINAL ROUTER URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Looking for route: POST /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Found route without slash: api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] Loading controller: App\Http\Controllers\Api\NotificationController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/NotificationController.php
+[22-Mar-2026 18:19:05 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[22-Mar-2026 18:19:05 Europe/Berlin] HTTP 403 Error: /apsdreamhome/api/notification - IP: ::1 - Message: Invalid or missing CSRF token.
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Starting error rendering for code: 403
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Message: Invalid or missing CSRF token.
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Data: []
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view path: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view file exists, including: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view included successfully
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Creating router instance ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Router created successfully ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Including routes/web.php ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER SETUP: Starting route registration
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Routes included successfully ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Method: POST, URI: /apsdreamhome/api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] FINAL ROUTER URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Looking for route: POST /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Found route without slash: api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] Loading controller: App\Http\Controllers\Api\NotificationController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/NotificationController.php
+[22-Mar-2026 18:19:05 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[22-Mar-2026 18:19:05 Europe/Berlin] HTTP 403 Error: /apsdreamhome/api/notification - IP: ::1 - Message: Invalid or missing CSRF token.
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Starting error rendering for code: 403
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Message: Invalid or missing CSRF token.
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Data: []
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view path: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view file exists, including: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view included successfully
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Creating router instance ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Router created successfully ===
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Including routes/web.php ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER SETUP: Starting route registration
+[22-Mar-2026 18:19:05 Europe/Berlin] === INDEX: Routes included successfully ===
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Method: POST, URI: /apsdreamhome/api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] FINAL ROUTER URI: /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Looking for route: POST /api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[22-Mar-2026 18:19:05 Europe/Berlin] ROUTER DEBUG: Found route without slash: api/notification
+[22-Mar-2026 18:19:05 Europe/Berlin] Loading controller: App\Http\Controllers\Api\NotificationController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Api/NotificationController.php
+[22-Mar-2026 18:19:05 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[22-Mar-2026 18:19:05 Europe/Berlin] HTTP 403 Error: /apsdreamhome/api/notification - IP: ::1 - Message: Invalid or missing CSRF token.
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Starting error rendering for code: 403
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Message: Invalid or missing CSRF token.
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Data: []
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view path: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view file exists, including: C:\xampp\htdocs\apsdreamhome\app\Core/../../app/views/errors/403.php
+[22-Mar-2026 18:19:05 Europe/Berlin] ErrorHandler::render() - Error view included successfully
