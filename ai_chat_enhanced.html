@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="APS Dream Home AI Assistant - Professional Real Estate & Development System">
+    <meta name="keywords" content="APS Dream Home, AI Assistant, Real Estate, Property Management, Lead Generation">
+    <meta name="author" content="APS Dream Home">
+    <title>🏠 APS Dream Home AI Assistant | Professional Real Estate System</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="assets/css/ai-chat-enhanced.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Enhanced Header -->
+    <div class="header">
+        <h1>🏠 APS Dream Home AI Assistant</h1>
+        <p>🚀 Professional Real Estate & Development System - Role-based AI Assistant</p>
+        
+        <!-- Role Selector -->
+        <div class="role-selector">
+            <i class="fas fa-user-tie"></i>
+            <select id="roleSelector" onchange="changeRole()">
+                <option value="director">👨‍💼 Director</option>
+                <option value="sales">💼 Sales Executive</option>
+                <option value="developer">👨‍💻 Developer</option>
+                <option value="bugfixer">🐛 Bug Fixer</option>
+                <option value="ithead">🖥️ IT Head</option>
+                <option value="superadmin">🔐 Super Admin</option>
+                <option value="customer">👤 Customer</option>
+            </select>
+        </div>
+        
+        <!-- Status Info -->
+        <div class="header-info">
+            <span id="status-indicator" class="status-indicator status-online"></span>
+            <span id="status-text">✅ AI Ready</span> |
+            <span id="current-role">Role: Director</span> |
+            <span id="time-display"></span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="chat-container">
+        <!-- Enhanced Sidebar -->
+        <div class="chat-sidebar">
+            <!-- Role-based Quick Actions -->
+            <div class="role-actions" id="roleActions">
+                <h4>🎯 Director Actions</h4>
+                <button class="quick-btn" onclick="sendQuickMessage('आज का business report दिखाओ')">
+                    📊 Today's Business Report
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('सभी projects का status update दो')">
+                    🏗️ Projects Status Update
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('team performance review करो')">
+                    👥 Team Performance Review
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('monthly revenue analysis')">
+                    💰 Monthly Revenue Analysis
+                </button>
+            </div>
+
+            <!-- File Upload Area -->
+            <div class="file-upload-area" id="fileUploadArea">
+                <h4>📎 File Upload</h4>
+                <p>Documents, Images, PDFs supported</p>
+                <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls">
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-upload"></i> Choose Files
+                </button>
+            </div>
+
+            <!-- Lead Capture Section -->
+            <div class="lead-capture">
+                <h4>🎯 Capture Lead</h4>
+                <form class="lead-form" id="leadForm">
+                    <input type="text" id="leadName" placeholder="Customer Name *" required>
+                    <input type="tel" id="leadPhone" placeholder="Phone Number *" required>
+                    <input type="email" id="leadEmail" placeholder="Email Address">
+                    <select id="leadProperty" required>
+                        <option value="">Select Property Type</option>
+                        <option value="residential">Residential Plot</option>
+                        <option value="commercial">Commercial Space</option>
+                        <option value="villa">Villa</option>
+                        <option value="apartment">Apartment</option>
+                    </select>
+                    <textarea id="leadMessage" placeholder="Customer Requirements..."></textarea>
+                    <button type="submit" class="save-lead-btn">
+                        <i class="fas fa-save"></i> Save Lead
+                    </button>
+                </form>
+            </div>
+
+            <!-- System Status -->
+            <div class="system-status">
+                <h4>📊 System Status</h4>
+                <p><span class="status-indicator status-online"></span> API Connected</p>
+                <p><span class="status-indicator status-online"></span> Database Active</p>
+                <p><span class="status-indicator status-typing"></span> AI Processing</p>
+                <p><span class="status-indicator status-online"></span> Leads: <span id="leadCount">0</span></p>
+            </div>
+        </div>
+
+        <!-- Enhanced Main Chat -->
+        <div class="chat-main">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="chat-info">
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-details">
+                        <h4>APS AI Assistant</h4>
+                        <p id="aiStatus">Professional Real Estate Guide</p>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" onclick="clearChat()" title="Clear Chat">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="action-btn" onclick="exportChat()" title="Export Chat">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="action-btn" onclick="toggleSettings()" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Box -->
+            <div class="chat-box" id="chat-box">
+                <!-- Welcome Message -->
+                <div class="message ai-msg">
+                    <div class="message-header">
+                        <span class="message-role">🤖 AI Assistant</span>
+                        <span class="timestamp">Just now</span>
+                    </div>
+                    <div class="message-content">
+                        <strong>🙏 Namaste!</strong> Main APS Dream Home ka official AI assistant hoon.<br><br>
+                        
+                        <strong>🎯 Aapki Current Role:</strong> <span id="welcomeRole">Director</span><br>
+                        <strong>🔧 Meri Capabilities:</strong><br>
+                        • Real estate guidance & market analysis<br>
+                        • Property management & sales support<br>
+                        • Development assistance & bug fixing<br>
+                        • Lead generation & customer support<br>
+                        • Database management & reporting<br>
+                        • Team coordination & project tracking<br><br>
+                        
+                        <strong>🌐 Languages:</strong> Hindi & English both supported<br>
+                        <strong>📎 File Support:</strong> Documents, Images, PDFs<br>
+                        <strong>💾 Lead Capture:</strong> Automatic database saving<br><br>
+                        
+                        <strong>🚀 Kya help chahiye aapko?</strong><br>
+                        Type your question ya use quick actions!
+                    </div>
+                    <div class="message-actions">
+                        <button class="msg-action-btn" onclick="copyMessage(this)" title="Copy">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="msg-action-btn" onclick="speakMessage(this)" title="Speak">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Input Area -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <div class="input-container">
+                        <i class="fas fa-message input-icon"></i>
+                        <input type="text" id="user-input" placeholder="Type your message in Hindi or English..." onkeypress="handleKeyPress(event)" oninput="autoResize(this)">
+                    </div>
+                    <div class="input-actions">
+                        <button class="action-input-btn" onclick="attachFile()" title="Attach File">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="action-input-btn" onclick="toggleVoice()" title="Voice Input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="action-input-btn" onclick="toggleEmoji()" title="Emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                    </div>
+                    <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Global Variables
+        let currentRole = 'director';
+        let chatHistory = [];
+        let isTyping = false;
+        let uploadedFiles = [];
+
+        // Role-based Actions Configuration
+        const roleActions = {
+            director: {
+                title: "🎯 Director Actions",
+                actions: [
+                    "आज का business report दिखाओ",
+                    "सभी projects का status update दो", 
+                    "team performance review करो",
+                    "monthly revenue analysis",
+                    "upcoming meetings schedule",
+                    "budget allocation review"
+                ]
+            },
+            sales: {
+                title: "💼 Sales Actions",
+                actions: [
+                    "today's leads status",
+                    "property availability check",
+                    "customer follow-up reminders",
+                    "sales target progress",
+                    "commission calculation",
+                    "new property listings"
+                ]
+            },
+            developer: {
+                title: "👨‍💻 Developer Actions",
+                actions: [
+                    "code review request",
+                    "bug status update",
+                    "deployment checklist",
+                    "API documentation",
+                    "database schema review",
+                    "performance optimization tips"
+                ]
+            },
+            bugfixer: {
+                title: "🐛 Bug Fixer Actions",
+                actions: [
+                    "critical bugs list",
+                    "bug resolution status",
+                    "testing procedures",
+                    "error log analysis",
+                    "system health check",
+                    "patch deployment"
+                ]
+            },
+            ithead: {
+                title: "🖥️ IT Head Actions",
+                actions: [
+                    "system security audit",
+                    "network performance",
+                    "backup status check",
+                    "server maintenance schedule",
+                    "user access management",
+                    "technology stack review"
+                ]
+            },
+            superadmin: {
+                title: "🔐 Super Admin Actions",
+                actions: [
+                    "user management dashboard",
+                    "system configuration",
+                    "security settings",
+                    "database administration",
+                    "system logs review",
+                    "emergency procedures"
+                ]
+            },
+            customer: {
+                title: "👤 Customer Actions",
+                actions: [
+                    "property search help",
+                    "loan eligibility check",
+                    "site visit scheduling",
+                    "payment plans information",
+                    "document requirements",
+                    "customer support"
+                ]
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            updateLeadCount();
+            setupFileUpload();
+            setupLeadForm();
+        });
+
+        // Role Management
+        function changeRole() {
+            const selector = document.getElementById('roleSelector');
+            currentRole = selector.value;
+            
+            // Update UI
+            document.getElementById('current-role').textContent = `Role: ${getRoleDisplayName(currentRole)}`;
+            document.getElementById('welcomeRole').textContent = getRoleDisplayName(currentRole);
+            
+            // Update role actions
+            updateRoleActions();
+            
+            // Update AI status
+            updateAIStatus();
+            
+            // Send role change message
+            addSystemMessage(`Role changed to ${getRoleDisplayName(currentRole)}`);
+        }
+
+        function getRoleDisplayName(role) {
+            const names = {
+                director: 'Director',
+                sales: 'Sales Executive', 
+                developer: 'Developer',
+                bugfixer: 'Bug Fixer',
+                ithead: 'IT Head',
+                superadmin: 'Super Admin',
+                customer: 'Customer'
+            };
+            return names[role] || role;
+        }
+
+        function updateRoleActions() {
+            const container = document.getElementById('roleActions');
+            const config = roleActions[currentRole];
+            
+            container.innerHTML = `
+                <h4>${config.title}</h4>
+                ${config.actions.map(action => `
+                    <button class="quick-btn" onclick="sendQuickMessage('${action}')">
+                        ${getActionIcon(action)} ${action}
+                    </button>
+                `).join('')}
+            `;
+        }
+
+        function getActionIcon(action) {
+            if (action.includes('report')) return '📊';
+            if (action.includes('status')) return '📈';
+            if (action.includes('team')) return '👥';
+            if (action.includes('revenue')) return '💰';
+            if (action.includes('leads')) return '🎯';
+            if (action.includes('property')) return '🏠';
+            if (action.includes('code')) return '💻';
+            if (action.includes('bug')) return '🐛';
+            if (action.includes('security')) return '🔐';
+            if (action.includes('system')) return '⚙️';
+            if (action.includes('customer')) return '👤';
+            return '🚀';
+        }
+
+        function updateAIStatus() {
+            const statusElement = document.getElementById('aiStatus');
+            const statuses = {
+                director: 'Strategic Business Advisor',
+                sales: 'Sales & Marketing Expert',
+                developer: 'Technical Development Guide',
+                bugfixer: 'Quality Assurance Specialist',
+                ithead: 'Systems & Infrastructure Manager',
+                superadmin: 'System Administration Expert',
+                customer: 'Property & Real Estate Guide'
+            };
+            statusElement.textContent = statuses[currentRole] || 'AI Assistant';
+        }
+
+        // Message Functions
+        async function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const userText = inputField.value.trim();
+            
+            if (!userText || isTyping) return;
+            
+            // Add user message
+            addMessage(userText, 'user-msg');
+            inputField.value = '';
+            isTyping = true;
+            
+            // Update UI
+            updateStatus('typing');
+            
+            // Add typing indicator
+            const typingElement = addTypingIndicator();
+            
+            try {
+                // Prepare request with role context
+                const requestData = {
+                    message: userText,
+                    role: currentRole,
+                    context: getRoleContext(),
+                    files: uploadedFiles
+                };
+                
+                const response = await fetch('ai_backend_enhanced.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                // Remove typing indicator
+                typingElement.remove();
+                
+                if (data.reply) {
+                    addMessage(data.reply, 'ai-msg', {
+                        role: currentRole,
+                        leadData: data.leadData
+                    });
+                    
+                    // Auto-capture lead if detected
+                    if (data.leadData) {
+                        autoSaveLead(data.leadData);
+                    }
+                } else {
+                    addMessage(`Error: ${data.error || 'Kuch galat ho gaya.'}`, 'ai-msg');
+                }
+            } catch (error) {
+                typingElement.remove();
+                addMessage('Connection Error: Backend server se connect nahi ho paya.', 'ai-msg');
+            } finally {
+                isTyping = false;
+                updateStatus('online');
+                uploadedFiles = []; // Clear uploaded files
+            }
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('user-input').value = message;
+            sendMessage();
+        }
+
+        function addMessage(text, className, metadata = {}) {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            
+            const timestamp = new Date().toLocaleTimeString('hi-IN');
+            const roleDisplay = metadata.role ? getRoleDisplayName(metadata.role) : '';
+            
+            msgDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="message-role">${className === 'user-msg' ? '👤 You' : '🤖 AI'}</span>
+                    <span class="timestamp">${timestamp}</span>
+                </div>
+                <div class="message-content">${formatText(text)}</div>
+                <div class="message-actions">
+                    <button class="msg-action-btn" onclick="copyMessage(this)" title="Copy">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="msg-action-btn" onclick="speakMessage(this)" title="Speak">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    ${className === 'ai-msg' ? `
+                        <button class="msg-action-btn" onclick="saveAsLead(this)" title="Save as Lead">
+                            <i class="fas fa-user-plus"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // Save to history
+            chatHistory.push({
+                type: className,
+                text: text,
+                timestamp: timestamp,
+                role: metadata.role,
+                metadata: metadata
+            });
+            
+            return msgDiv;
+        }
+
+        function addTypingIndicator() {
+            const chatBox = document.getElementById('chat-box');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-msg typing-indicator-message';
+            typingDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="message-role">🤖 AI</span>
+                    <span class="timestamp">Just now</span>
+                </div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            return typingDiv;
+        }
+
+        function addSystemMessage(text) {
+            const chatBox = document.getElementById('chat-box');
+            const systemDiv = document.createElement('div');
+            systemDiv.className = 'system-message';
+            systemDiv.style.cssText = `
+                text-align: center;
+                padding: 10px;
+                margin: 10px 0;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                font-size: 12px;
+                opacity: 0.8;
+            `;
+            systemDiv.textContent = `🔔 ${text}`;
+            
+            chatBox.appendChild(systemDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function formatText(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<b>$1</b>')
+                .replace(/`(.*?)`/g, '<code style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;">$1</code>')
+                .replace(/\n/g, '<br>')
+                .replace(/(\d+\.\s)/g, '<br>$1')
+                .replace(/(📊|🏗️|👥|💰|🎯|💻|🐛|🖥️|🔐|👤|🏠|📎|🔔)/g, '<span style="font-size: 16px;">$1</span>');
+        }
+
+        function getRoleContext() {
+            const contexts = {
+                director: 'Strategic business decisions, revenue analysis, team management, project oversight',
+                sales: 'Lead generation, customer management, property sales, target achievement',
+                developer: 'Code development, technical solutions, debugging, system architecture',
+                bugfixer: 'Bug identification, quality assurance, testing, issue resolution',
+                ithead: 'System administration, security, infrastructure, technical leadership',
+                superadmin: 'System configuration, user management, security oversight, full system access',
+                customer: 'Property information, purchase guidance, customer support, general assistance'
+            };
+            return contexts[currentRole] || '';
+        }
+
+        // File Upload Functions
+        function setupFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('fileUploadArea');
+            
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFileSelect({ target: { files: e.dataTransfer.files } });
+            });
+        }
+
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+                    return;
+                }
+                
+                uploadedFiles.push({
+                    name: file.name,
+                    type: file.type,
+                    size: file.size
+                });
+            });
+            
+            if (files.length > 0) {
+                addSystemMessage(`📎 ${files.length} file(s) uploaded: ${files.map(f => f.name).join(', ')}`);
+            }
+        }
+
+        function attachFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        // Lead Management Functions
+        function setupLeadForm() {
+            const form = document.getElementById('leadForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveLead();
+            });
+        }
+
+        function saveLead() {
+            const leadData = {
+                name: document.getElementById('leadName').value,
+                phone: document.getElementById('leadPhone').value,
+                email: document.getElementById('leadEmail').value,
+                property: document.getElementById('leadProperty').value,
+                message: document.getElementById('leadMessage').value,
+                role: currentRole,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Send to backend
+            fetch('save_lead.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(leadData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addSystemMessage(`✅ Lead saved: ${leadData.name} - ${leadData.phone}`);
+                    document.getElementById('leadForm').reset();
+                    updateLeadCount();
+                } else {
+                    addSystemMessage(`❌ Error saving lead: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                addSystemMessage(`❌ Connection error: ${error.message}`);
+            });
+        }
+
+        function autoSaveLead(leadData) {
+            if (leadData.name && leadData.phone) {
+                fetch('save_lead.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...leadData,
+                        role: currentRole,
+                        auto_captured: true
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateLeadCount();
+                    }
+                });
+            }
+        }
+
+        function saveAsLead(button) {
+            const messageElement = button.closest('.message');
+            const messageText = messageElement.querySelector('.message-content').textContent;
+            
+            // Extract potential lead info from message (basic implementation)
+            const phoneMatch = messageText.match(/(\d{10})/);
+            const emailMatch = messageText.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+            
+            if (phoneMatch || emailMatch) {
+                document.getElementById('leadPhone').value = phoneMatch ? phoneMatch[1] : '';
+                document.getElementById('leadEmail').value = emailMatch ? emailMatch[1] : '';
+                document.getElementById('leadMessage').value = messageText;
+                
+                // Scroll to lead form
+                document.querySelector('.lead-capture').scrollIntoView({ behavior: 'smooth' });
+                
+                addSystemMessage('📝 Lead information extracted - Please complete the form');
+            } else {
+                addSystemMessage('❌ No contact information found in message');
+            }
+        }
+
+        function updateLeadCount() {
+            fetch('get_lead_count.php')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('leadCount').textContent = data.count || 0;
+                })
+                .catch(() => {
+                    document.getElementById('leadCount').textContent = '?';
+                });
+        }
+
+        // Utility Functions
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time-display').textContent = now.toLocaleString('hi-IN');
+        }
+
+        function updateStatus(status) {
+            const indicator = document.getElementById('status-indicator');
+            const text = document.getElementById('status-text');
+            
+            indicator.className = `status-indicator status-${status}`;
+            
+            const statusTexts = {
+                online: '✅ AI Ready',
+                typing: '🤔 AI Thinking...',
+                offline: '❌ AI Offline'
+            };
+            
+            text.textContent = statusTexts[status] || '🔄 AI Working...';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        function clearChat() {
+            if (confirm('Are you sure you want to clear all chat history?')) {
+                document.getElementById('chat-box').innerHTML = '';
+                chatHistory = [];
+                addSystemMessage('🗑️ Chat history cleared');
+            }
+        }
+
+        function exportChat() {
+            const chatContent = chatHistory.map(msg => 
+                `[${msg.timestamp}] ${msg.type}: ${msg.text}`
+            ).join('\n');
+            
+            const blob = new Blob([chatContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `aps-chat-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addSystemMessage('📥 Chat history exported');
+        }
+
+        function copyMessage(button) {
+            const messageText = button.closest('.message').querySelector('.message-content').textContent;
+            navigator.clipboard.writeText(messageText);
+            addSystemMessage('📋 Message copied to clipboard');
+        }
+
+        function speakMessage(button) {
+            const messageText = button.closest('.message').querySelector('.message-content').textContent;
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(messageText);
+                utterance.lang = 'hi-IN';
+                speechSynthesis.speak(utterance);
+            } else {
+                addSystemMessage('❌ Text-to-speech not supported');
+            }
+        }
+
+        function toggleVoice() {
+            addSystemMessage('🎤 Voice input feature coming soon!');
+        }
+
+        function toggleEmoji() {
+            addSystemMessage('😊 Emoji picker coming soon!');
+        }
+
+        function toggleSettings() {
+            addSystemMessage('⚙️ Settings panel coming soon!');
+        }
+
+        // Initialize role actions on load
+        updateRoleActions();
+    </script>
+</body>
+</html>
