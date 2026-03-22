@@ -16,6 +16,22 @@ $router->get('/about', 'Front\\PageController@about');
 $router->get('/contact', 'Front\\PageController@contact');
 $router->post('/contact', 'Front\\PageController@submitContact');
 
+// AI Chat Routes - New Integration
+$router->get('/ai-chat', 'AIController@chat');
+$router->get('/ai-chat-enhanced', 'AIController@chatEnhanced');
+$router->get('/ai-chat/popup', 'AIController@chatPopup');
+$router->get('/property-ai-chat', 'AIController@propertyChat');
+$router->get('/property-ai-chat/{id}', 'AIController@propertyChat');
+
+// AI API Endpoints
+$router->post('/api/ai-chat', 'AIController@apiChat');
+$router->post('/api/save-lead', 'AIController@saveLead');
+$router->get('/api/lead-stats', 'AIController@leadStats');
+
+// AI Admin Routes
+$router->get('/admin/ai-config', 'AIController@configuration');
+$router->post('/admin/test-ai-api', 'AIController@testAPI');
+
 // Legal Pages
 $router->get('/terms', 'Front\\PageController@terms');
 $router->get('/privacy', 'Front\\PageController@privacy');
