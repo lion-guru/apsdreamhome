@@ -1,3 +1,11 @@
+<?php
+
+namespace App\Http\Controllers\Front;
+
+use App\Http\Controllers\BaseController;
+
+class PageController extends BaseController
+{
     // Testimonials
     public function testimonials()
     {
@@ -53,7 +61,7 @@
                 'testimonials' => $testimonials,
                 'breadcrumbs' => $breadcrumbs
             ];
-
+            
             $this->render('pages/testimonials', $data);
         } catch (Exception $e) {
             $this->renderError('Error loading testimonials page', $e->getMessage());
