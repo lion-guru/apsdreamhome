@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,47 +12,75 @@
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .card-shadow {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
         .pulse-dot {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
+
         .terminal {
             background: #1a1a1a;
             color: #00ff00;
             font-family: 'Courier New', monospace;
         }
+
         .typing-cursor {
             animation: blink 1s infinite;
         }
+
         @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
         }
+
         .metric-card {
             transition: all 0.3s ease;
         }
+
         .metric-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
+
         .progress-ring {
             transform: rotate(-90deg);
         }
+
         .progress-ring-circle {
             transition: stroke-dashoffset 0.5s ease;
         }
+
         .command-btn {
             transition: all 0.3s ease;
         }
+
         .command-btn:hover {
             transform: scale(1.05);
         }
+
         .status-indicator {
             width: 12px;
             height: 12px;
@@ -59,11 +88,21 @@
             display: inline-block;
             margin-right: 8px;
         }
-        .status-online { background: #10b981; }
-        .status-warning { background: #f59e0b; }
-        .status-offline { background: #ef4444; }
+
+        .status-online {
+            background: #10b981;
+        }
+
+        .status-warning {
+            background: #f59e0b;
+        }
+
+        .status-offline {
+            background: #ef4444;
+        }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white">
     <!-- Header -->
     <div class="gradient-bg p-6">
@@ -176,10 +215,10 @@
 
         <!-- Main Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+
             <!-- Left Column - Command Center -->
             <div class="lg:col-span-2 space-y-6">
-                
+
                 <!-- Terminal -->
                 <div class="bg-gray-800 rounded-lg border border-gray-700">
                     <div class="border-b border-gray-700 p-4">
@@ -211,7 +250,7 @@
                         <i class="fas fa-command mr-2 text-blue-400"></i>
                         Command Palette
                     </h3>
-                    
+
                     <!-- Quick Commands -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                         <button onclick="executeCommand('full_control')" class="command-btn bg-gradient-to-r from-blue-500 to-blue-600 text-white p-3 rounded-lg text-sm">
@@ -250,17 +289,15 @@
 
                     <!-- Custom Command Input -->
                     <div class="flex space-x-2">
-                        <input 
-                            type="text" 
-                            id="customCommand" 
+                        <input
+                            type="text"
+                            id="customCommand"
                             placeholder="Enter custom command..."
                             class="flex-1 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                            onkeypress="if(event.key === 'Enter') executeCustomCommand()"
-                        >
-                        <button 
+                            onkeypress="if(event.key === 'Enter') executeCustomCommand()">
+                        <button
                             onclick="executeCustomCommand()"
-                            class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
-                        >
+                            class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -287,7 +324,7 @@
 
             <!-- Right Column - Status & Monitoring -->
             <div class="space-y-6">
-                
+
                 <!-- AI Assistant Chat -->
                 <div class="bg-gray-800 rounded-lg border border-gray-700">
                     <div class="border-b border-gray-700 p-4">
@@ -319,13 +356,12 @@
                             </div>
                         </div>
                         <div class="flex space-x-2">
-                            <input 
-                                type="text" 
-                                id="aiChatInput" 
+                            <input
+                                type="text"
+                                id="aiChatInput"
                                 placeholder="Ask me anything..."
                                 class="flex-1 bg-gray-700 border border-gray-600 rounded p-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
-                                onkeypress="if(event.key === 'Enter') sendAIChat()"
-                            >
+                                onkeypress="if(event.key === 'Enter') sendAIChat()">
                             <button onclick="sendAIChat()" class="bg-purple-600 text-white p-2 rounded hover:bg-purple-700">
                                 <i class="fas fa-paper-plane text-xs"></i>
                             </button>
@@ -466,17 +502,27 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }
+                        legend: {
+                            display: false
+                        }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
                         },
                         x: {
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
                         }
                     }
                 }
@@ -503,7 +549,9 @@
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { color: 'rgba(255, 255, 255, 0.7)' }
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
                         }
                     }
                 }
@@ -513,56 +561,56 @@
         function executeCommand(command) {
             const terminal = document.getElementById('terminal');
             const timestamp = new Date().toLocaleTimeString();
-            
+
             // Add command to terminal
             terminal.innerHTML += `<div class="text-blue-400">[$timestamp] $ Executing: ${command}</div>`;
             terminal.scrollTop = terminal.scrollHeight;
-            
+
             // Show processing
             terminal.innerHTML += `<div class="text-yellow-400">[$timestamp] $ Processing...</div>`;
             terminal.scrollTop = terminal.scrollHeight;
-            
+
             // Create form data for POST request
             const formData = new FormData();
             formData.append('command', command);
-            
-            fetch('/senior-developer/execute', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                terminal.innerHTML = terminal.innerHTML.replace('<div class="text-yellow-400">[$timestamp] $ Processing...</div>', '');
-                
-                if (data.success) {
-                    terminal.innerHTML += `<div class="text-green-400">[$timestamp] $ ✓ Command executed successfully</div>`;
-                    terminal.innerHTML += `<div class="text-gray-400">[$timestamp] $ Result: ${JSON.stringify(data.result, null, 2)}</div>`;
-                    
-                    // Update activity log
-                    addActivityLog(command, 'success');
-                    
-                    // Update charts
-                    updateCharts();
-                } else {
-                    terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ ✗ Command execution failed</div>`;
-                    addActivityLog(command, 'failed');
-                }
-                
-                terminal.scrollTop = terminal.scrollHeight;
-            })
-            .catch(error => {
-                terminal.innerHTML = terminal.innerHTML.replace('<div class="text-yellow-400">[$timestamp] $ Processing...</div>', '');
-                terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ ✗ Network error occurred</div>`;
-                terminal.scrollTop = terminal.scrollHeight;
-            });
+
+            fetch('/test_execute.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    terminal.innerHTML = terminal.innerHTML.replace('<div class="text-yellow-400">[$timestamp] $ Processing...</div>', '');
+
+                    if (data.success) {
+                        terminal.innerHTML += `<div class="text-green-400">[$timestamp] $ ✓ Command executed successfully</div>`;
+                        terminal.innerHTML += `<div class="text-gray-400">[$timestamp] $ Result: ${JSON.stringify(data.result, null, 2)}</div>`;
+
+                        // Update activity log
+                        addActivityLog(command, 'success');
+
+                        // Update charts
+                        updateCharts();
+                    } else {
+                        terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ ✗ Command execution failed</div>`;
+                        addActivityLog(command, 'failed');
+                    }
+
+                    terminal.scrollTop = terminal.scrollHeight;
+                })
+                .catch(error => {
+                    terminal.innerHTML = terminal.innerHTML.replace('<div class="text-yellow-400">[$timestamp] $ Processing...</div>', '');
+                    terminal.innerHTML += `<div class="text-red-400">[$timestamp] $ ✗ Network error occurred</div>`;
+                    terminal.scrollTop = terminal.scrollHeight;
+                });
         }
 
         function executeCustomCommand() {
             const input = document.getElementById('customCommand');
             const command = input.value.trim();
-            
+
             if (command === '') return;
-            
+
             executeCommand(command);
             input.value = '';
         }
@@ -570,12 +618,12 @@
         function sendAIChat() {
             const input = document.getElementById('aiChatInput');
             const message = input.value.trim();
-            
+
             if (message === '') return;
-            
+
             // Add user message to activity log
             addActivityLog(`AI Chat: ${message}`, 'info');
-            
+
             // Simulate AI response
             setTimeout(() => {
                 const responses = [
@@ -585,29 +633,29 @@
                     "Security is well implemented. Just ensure regular security audits.",
                     "Performance is optimal. Consider implementing caching for better response times."
                 ];
-                
+
                 const randomResponse = responses[Math.floor(Math.random() * responses.length)];
                 addActivityLog(`AI Response: ${randomResponse}`, 'success');
             }, 1000);
-            
+
             input.value = '';
         }
 
         function addActivityLog(message, type) {
             const log = document.getElementById('activityLog');
             const timestamp = new Date().toLocaleTimeString();
-            
+
             let colorClass = 'text-gray-400';
             if (type === 'success') colorClass = 'text-green-400';
             else if (type === 'failed') colorClass = 'text-red-400';
             else if (type === 'info') colorClass = 'text-blue-400';
-            
+
             const logEntry = document.createElement('div');
             logEntry.className = 'text-xs p-2 bg-gray-700 rounded font-mono text-gray-300';
             logEntry.innerHTML = `<span class="${colorClass}">[${timestamp}]</span> ${message}`;
-            
+
             log.insertBefore(logEntry, log.firstChild);
-            
+
             // Keep only last 10 entries
             while (log.children.length > 10) {
                 log.removeChild(log.lastChild);
@@ -639,7 +687,7 @@
                 responseTimeChart.data.datasets[0].data.push(newData);
                 responseTimeChart.update();
             }
-            
+
             if (memoryChart) {
                 const newUsage = 55 + Math.floor(Math.random() * 15);
                 memoryChart.data.datasets[0].data = [newUsage, 100 - newUsage];
@@ -660,7 +708,7 @@
             updateCurrentTime();
             setInterval(updateCurrentTime, 1000);
             setInterval(updateCharts, 5000); // Update charts every 5 seconds
-            
+
             // Add welcome message to terminal
             const terminal = document.getElementById('terminal');
             terminal.innerHTML += `<div class="text-green-400">$ Welcome to Senior Developer Control Center v2.0</div>`;
@@ -668,4 +716,5 @@
         });
     </script>
 </body>
+
 </html>

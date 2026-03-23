@@ -41,6 +41,10 @@ $router->get('/senior-developer/monitor', 'App\\Http\\Controllers\\AIController@
 $router->get('/senior-developer/dashboard', 'App\\Http\\Controllers\\AIController@seniorDeveloperDashboard');
 $router->get('/senior-developer/chat', 'App\\Http\\Controllers\\AIController@seniorDeveloperChat');
 $router->get('/senior-developer/dashboard-v2', 'App\\Http\\Controllers\\AIController@seniorDeveloperDashboardV2');
+$router->get('/senior-developer/code-editor-simple', 'App\\Http\\Controllers\\AIController@seniorDeveloperCodeEditorSimple');
+$router->get('/senior-developer/unified', 'App\\Http\\Controllers\\AIController@seniorDeveloperUnified');
+$router->post('/senior-developer/save-code', 'App\\Http\\Controllers\\AIController@saveCode');
+$router->post('/senior-developer/run-code', 'App\\Http\\Controllers\\AIController@runCode');
 
 // Legal Pages
 $router->get('/terms', 'Front\\PageController@terms');

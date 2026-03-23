@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,27 +11,48 @@
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .card-shadow {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
         .pulse-dot {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
+
         .chat-message {
             animation: slideIn 0.3s ease-out;
         }
+
         @keyframes slideIn {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
         .typing-indicator {
             display: inline-flex;
             align-items: center;
         }
+
         .typing-indicator span {
             width: 8px;
             height: 8px;
@@ -39,18 +61,30 @@
             margin: 0 2px;
             animation: typing 1.4s infinite;
         }
+
         .typing-indicator span:nth-child(2) {
             animation-delay: 0.2s;
         }
+
         .typing-indicator span:nth-child(3) {
             animation-delay: 0.4s;
         }
+
         @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-10px);
+            }
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Header -->
     <div class="gradient-bg text-white p-6">
@@ -76,7 +110,7 @@
     <!-- Main Content -->
     <div class="container mx-auto p-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+
             <!-- Chat Area -->
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-lg card-shadow h-[600px] flex flex-col">
@@ -102,7 +136,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Chat Messages -->
                     <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4">
                         <!-- Welcome Message -->
@@ -126,25 +160,23 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Chat Input -->
                     <div class="border-t p-4">
                         <div class="flex space-x-2">
-                            <input 
-                                type="text" 
-                                id="messageInput" 
+                            <input
+                                type="text"
+                                id="messageInput"
                                 placeholder="Ask me anything about your project..."
                                 class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                onkeypress="if(event.key === 'Enter') sendMessage()"
-                            >
-                            <button 
+                                onkeypress="if(event.key === 'Enter') sendMessage()">
+                            <button
                                 onclick="sendMessage()"
-                                class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
-                            >
+                                class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
-                        
+
                         <!-- Quick Actions -->
                         <div class="mt-3 flex flex-wrap gap-2">
                             <button onclick="sendQuickMessage('Analyze current project status')" class="text-xs bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
@@ -166,7 +198,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Side Panel -->
             <div class="space-y-6">
                 <!-- Project Status -->
@@ -194,7 +226,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Current Tasks -->
                 <div class="bg-white rounded-lg card-shadow p-6">
                     <h3 class="font-bold mb-4 flex items-center">
@@ -216,7 +248,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- AI Capabilities -->
                 <div class="bg-white rounded-lg card-shadow p-6">
                     <h3 class="font-bold mb-4 flex items-center">
@@ -255,40 +287,37 @@
         let chatHistory = [];
         let isTyping = false;
 
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
+        function sendAIChat() {
+            const input = document.getElementById('aiChatInput');
             const message = input.value.trim();
-            
+
             if (message === '') return;
-            
-            addMessage(message, 'user');
+
+            // Add user message to chat
+            addChatMessage(message, 'user');
             input.value = '';
-            
+
             // Show typing indicator
             showTypingIndicator();
-            
-            // Simulate AI response
+
+            // Send to AI for real analysis
             setTimeout(() => {
                 hideTypingIndicator();
-                generateAIResponse(message);
-            }, 1000 + Math.random() * 2000);
+                generateRealAIResponse(message);
+            }, 1000);
         }
 
-        function sendQuickMessage(message) {
-            document.getElementById('messageInput').value = message;
-            sendMessage();
-        }
-
-        function addMessage(message, sender) {
-            const messagesContainer = document.getElementById('chatMessages');
+        function addChatMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages') || document.getElementById('aiChatInput').parentElement.parentElement;
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'chat-message';
-            
+            messageDiv.className = 'chat-message mb-3';
+
             if (sender === 'user') {
                 messageDiv.innerHTML = `
                     <div class="flex items-start justify-end">
                         <div class="bg-blue-600 text-white rounded-lg p-3 max-w-md">
-                            <p>${message}</p>
+                            <p class="text-sm">${message}</p>
+                            <div class="text-xs text-blue-200 mt-1">${new Date().toLocaleTimeString()}</div>
                         </div>
                         <div class="bg-gray-100 p-2 rounded-full ml-3">
                             <i class="fas fa-user text-gray-600 text-sm"></i>
@@ -307,11 +336,15 @@
                     </div>
                 `;
             }
-            
+
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            chatHistory.push({ message, sender, timestamp: new Date() });
+
+            chatHistory.push({
+                message,
+                sender,
+                timestamp: new Date()
+            });
         }
 
         function showTypingIndicator() {
@@ -333,7 +366,7 @@
                     </div>
                 </div>
             `;
-            
+
             messagesContainer.appendChild(typingDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
             isTyping = true;
@@ -495,7 +528,7 @@ Could you provide more details about what specific aspect you'd like to focus on
             };
 
             let response = responses.default;
-            
+
             // Check for keywords
             const lowerMessage = userMessage.toLowerCase();
             if (lowerMessage.includes('analyze') || lowerMessage.includes('status')) {
@@ -511,7 +544,7 @@ Could you provide more details about what specific aspect you'd like to focus on
             }
 
             addMessage(response, 'ai');
-            
+
             // Update project status dynamically
             updateProjectStatus();
         }
@@ -520,7 +553,7 @@ Could you provide more details about what specific aspect you'd like to focus on
             // Simulate real-time status updates
             const statusElement = document.getElementById('projectStatus');
             const tasksElement = document.getElementById('currentTasks');
-            
+
             // Add some dynamic updates
             setTimeout(() => {
                 const tasks = tasksElement.innerHTML;
@@ -569,4 +602,5 @@ Could you provide more details about what specific aspect you'd like to focus on
         }, 30000);
     </script>
 </body>
+
 </html>
