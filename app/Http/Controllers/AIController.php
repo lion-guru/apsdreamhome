@@ -297,7 +297,7 @@ class AIController extends BaseController
         $status = $developer->generateStatusReport();
 
         // Load the senior developer dashboard view
-        include __DIR__ . '/../views/pages/senior-developer-dashboard.php';
+        include __DIR__ . '/../../views/pages/senior-developer-dashboard.php';
     }
 
     /**
@@ -430,7 +430,7 @@ class AIController extends BaseController
         ];
 
         // Load the full dashboard view
-        include __DIR__ . '/../views/pages/senior-developer-full-dashboard.php';
+        include __DIR__ . '/../../views/pages/senior-developer-full-dashboard.php';
     }
 
     /**
