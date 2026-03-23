@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\BaseController;
 
 /**
  * APS Dream Home - AI Controller
@@ -289,9 +291,9 @@ class AIController extends BaseController
      */
     public function seniorDeveloper()
     {
-        include_once __DIR__ . '/../../SENIOR_DEVELOPER_WORKING.php';
+        include_once __DIR__ . '/../../../SENIOR_DEVELOPER_WORKING.php';
 
-        $developer = new SeniorDeveloper();
+        $developer = new \SeniorDeveloper();
         $status = $developer->generateStatusReport();
 
         // Load the senior developer dashboard view
@@ -303,9 +305,9 @@ class AIController extends BaseController
      */
     public function seniorDeveloperStatus()
     {
-        include_once __DIR__ . '/../../SENIOR_DEVELOPER_WORKING.php';
+        include_once __DIR__ . '/../../../SENIOR_DEVELOPER_WORKING.php';
 
-        $developer = new SeniorDeveloper();
+        $developer = new \SeniorDeveloper();
         $status = $developer->generateStatusReport();
 
         header('Content-Type: application/json');
@@ -321,11 +323,11 @@ class AIController extends BaseController
      */
     public function seniorDeveloperExecute()
     {
-        include_once __DIR__ . '/../../SENIOR_DEVELOPER_WORKING.php';
+        include_once __DIR__ . '/../../../SENIOR_DEVELOPER_WORKING.php';
 
         $command = $_POST['command'] ?? 'system_status';
 
-        $developer = new SeniorDeveloper();
+        $developer = new \SeniorDeveloper();
         $result = $developer->execute($command);
 
         header('Content-Type: application/json');
@@ -364,9 +366,9 @@ class AIController extends BaseController
      */
     public function seniorDeveloperMonitor()
     {
-        include_once __DIR__ . '/../../SENIOR_DEVELOPER_WORKING.php';
+        include_once __DIR__ . '/../../../SENIOR_DEVELOPER_WORKING.php';
 
-        $developer = new SeniorDeveloper();
+        $developer = new \SeniorDeveloper();
 
         // Get real-time monitoring data
         $monitoring_data = [
@@ -399,9 +401,9 @@ class AIController extends BaseController
      */
     public function seniorDeveloperDashboard()
     {
-        include_once __DIR__ . '/../../SENIOR_DEVELOPER_WORKING.php';
+        include_once __DIR__ . '/../../../SENIOR_DEVELOPER_WORKING.php';
 
-        $developer = new SeniorDeveloper();
+        $developer = new \SeniorDeveloper();
         $status = $developer->generateStatusReport();
 
         // Get recent logs
@@ -450,7 +452,7 @@ class AIController extends BaseController
     /**
      * Check if user is admin
      */
-    private function isAdmin()
+    protected function isAdmin()
     {
         $admin_roles = ['superadmin', 'director', 'ithead'];
         return in_array($this->getUserRole(), $admin_roles);
