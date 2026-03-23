@@ -972,7 +972,7 @@ class SeniorDeveloper
     /**
      * Generate status report
      */
-    private function generateStatusReport()
+    public function generateStatusReport()
     {
         $report = [
             'timestamp' => date('Y-m-d H:i:s'),
