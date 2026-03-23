@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,30 +11,45 @@
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .card-shadow {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
+
         .pulse-dot {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
+
         .terminal {
             background: #1a1a1a;
             color: #00ff00;
             font-family: 'Courier New', monospace;
         }
+
         .command-btn {
             transition: all 0.3s ease;
         }
+
         .command-btn:hover {
             transform: translateY(-2px);
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Header -->
     <div class="gradient-bg text-white p-6">
@@ -130,11 +146,11 @@
                 <i class="fas fa-terminal mr-3 text-gray-600"></i>
                 Command Execution Panel
             </h2>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 <?php foreach ($commands as $cmd => $desc): ?>
-                    <button onclick="executeCommand('<?php echo $cmd; ?>')" 
-                            class="command-btn bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-lg hover:from-blue-600 hover:to-blue-700 flex items-center">
+                    <button onclick="executeCommand('<?php echo $cmd; ?>')"
+                        class="command-btn bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-lg hover:from-blue-600 hover:to-blue-700 flex items-center">
                         <i class="fas fa-play-circle mr-3"></i>
                         <div class="text-left">
                             <div class="font-medium"><?php echo ucfirst(str_replace('_', ' ', $cmd)); ?></div>
@@ -250,33 +266,34 @@
     <script>
         function executeCommand(command) {
             const terminal = document.getElementById('terminal');
-            
+
             // Add command to terminal
             terminal.innerHTML += `<div class="text-yellow-400">$ Executing: ${command}</div>`;
-            
+
+            // Create form data for POST request
+            const formData = new FormData();
+            formData.append('command', command);
+
             fetch('/senior-developer/execute', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ command: command })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    terminal.innerHTML += `<div class="text-green-400">✓ Command executed successfully</div>`;
-                    terminal.innerHTML += `<div class="text-blue-400">Result: ${JSON.stringify(data.result, null, 2)}</div>`;
-                    setTimeout(() => location.reload(), 2000);
-                } else {
-                    terminal.innerHTML += `<div class="text-red-400">✗ Command execution failed</div>`;
-                }
-                terminal.scrollTop = terminal.scrollHeight;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                terminal.innerHTML += `<div class="text-red-400">✗ Network error occurred</div>`;
-                terminal.scrollTop = terminal.scrollHeight;
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        terminal.innerHTML += `<div class="text-green-400">✓ Command executed successfully</div>`;
+                        terminal.innerHTML += `<div class="text-blue-400">Result: ${JSON.stringify(data.result, null, 2)}</div>`;
+                        setTimeout(() => location.reload(), 2000);
+                    } else {
+                        terminal.innerHTML += `<div class="text-red-400">✗ Command execution failed</div>`;
+                    }
+                    terminal.scrollTop = terminal.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    terminal.innerHTML += `<div class="text-red-400">✗ Network error occurred</div>`;
+                    terminal.scrollTop = terminal.scrollHeight;
+                });
         }
 
         // Auto-refresh monitoring data
@@ -302,4 +319,5 @@
         }, 15000);
     </script>
 </body>
+
 </html>
