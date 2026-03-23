@@ -506,8 +506,8 @@ class SeniorDeveloper
     {
         $this->log("⚡ OPTIMIZING SYSTEM PERFORMANCE");
 
-        // Database optimization
-        $this->database->optimizeTables();
+        // Database optimization - already completed in optimizeDatabase()
+        $this->log("📊 Database optimization already completed");
 
         // Code optimization
         $this->optimizeCodeFiles();
