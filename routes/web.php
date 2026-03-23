@@ -17,20 +17,28 @@ $router->get('/contact', 'Front\\PageController@contact');
 $router->post('/contact', 'Front\\PageController@submitContact');
 
 // AI Chat Routes - New Integration
-$router->get('/ai-chat', 'AIController@chat');
-$router->get('/ai-chat-enhanced', 'AIController@chatEnhanced');
-$router->get('/ai-chat/popup', 'AIController@chatPopup');
-$router->get('/property-ai-chat', 'AIController@propertyChat');
-$router->get('/property-ai-chat/{id}', 'AIController@propertyChat');
+$router->get('/ai-chat', 'App\\Http\\Controllers\\AIController@chat');
+$router->get('/ai-chat-enhanced', 'App\\Http\\Controllers\\AIController@chatEnhanced');
+$router->get('/ai-chat/popup', 'App\\Http\\Controllers\\AIController@chatPopup');
+$router->get('/property-ai-chat', 'App\\Http\\Controllers\\AIController@propertyChat');
+$router->get('/property-ai-chat/{id}', 'App\\Http\\Controllers\\AIController@propertyChat');
 
 // AI API Endpoints
-$router->post('/api/ai-chat', 'AIController@apiChat');
-$router->post('/api/save-lead', 'AIController@saveLead');
-$router->get('/api/lead-stats', 'AIController@leadStats');
+$router->post('/api/ai-chat', 'App\\Http\\Controllers\\AIController@apiChat');
+$router->post('/api/save-lead', 'App\\Http\\Controllers\\AIController@saveLead');
+$router->get('/api/lead-stats', 'App\\Http\\Controllers\\AIController@leadStats');
 
 // AI Admin Routes
-$router->get('/admin/ai-config', 'AIController@configuration');
-$router->post('/admin/test-ai-api', 'AIController@testAPI');
+$router->get('/admin/ai-config', 'App\\Http\\Controllers\\AIController@configuration');
+$router->post('/admin/test-ai-api', 'App\\Http\\Controllers\\AIController@testAPI');
+
+// Senior Developer Routes
+$router->get('/senior-developer', 'App\\Http\\Controllers\\AIController@seniorDeveloper');
+$router->get('/senior-developer/status', 'App\\Http\\Controllers\\AIController@seniorDeveloperStatus');
+$router->post('/senior-developer/execute', 'App\\Http\\Controllers\\AIController@seniorDeveloperExecute');
+$router->get('/senior-developer/logs', 'App\\Http\\Controllers\\AIController@seniorDeveloperLogs');
+$router->get('/senior-developer/monitor', 'App\\Http\\Controllers\\AIController@seniorDeveloperMonitor');
+$router->get('/senior-developer/dashboard', 'App\\Http\\Controllers\\AIController@seniorDeveloperDashboard');
 
 // Legal Pages
 $router->get('/terms', 'Front\\PageController@terms');
