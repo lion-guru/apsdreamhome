@@ -39,6 +39,8 @@ $router->post('/senior-developer/execute', 'App\\Http\\Controllers\\AIController
 $router->get('/senior-developer/logs', 'App\\Http\\Controllers\\AIController@seniorDeveloperLogs');
 $router->get('/senior-developer/monitor', 'App\\Http\\Controllers\\AIController@seniorDeveloperMonitor');
 $router->get('/senior-developer/dashboard', 'App\\Http\\Controllers\\AIController@seniorDeveloperDashboard');
+$router->get('/senior-developer/chat', 'App\\Http\\Controllers\\AIController@seniorDeveloperChat');
+$router->get('/senior-developer/dashboard-v2', 'App\\Http\\Controllers\\AIController@seniorDeveloperDashboardV2');
 
 // Legal Pages
 $router->get('/terms', 'Front\\PageController@terms');

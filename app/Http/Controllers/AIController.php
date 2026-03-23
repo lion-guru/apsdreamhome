@@ -434,6 +434,44 @@ class AIController extends BaseController
     }
 
     /**
+     * Senior Developer Chat Interface
+     */
+    public function seniorDeveloperChat()
+    {
+        include_once __DIR__ . '/../../../SENIOR_DEVELOPER_WORKING.php';
+
+        $developer = new \SeniorDeveloper();
+        $status = $developer->generateStatusReport();
+
+        // Load the chat interface view
+        include __DIR__ . '/../../views/pages/senior-developer-chat.php';
+    }
+
+    /**
+     * Senior Developer Dashboard V2 (Enhanced)
+     */
+    public function seniorDeveloperDashboardV2()
+    {
+        include_once __DIR__ . '/../../../SENIOR_DEVELOPER_WORKING.php';
+
+        $developer = new \SeniorDeveloper();
+        $status = $developer->generateStatusReport();
+
+        // Get recent logs
+        $log_file = __DIR__ . '/../../logs/senior_developer.log';
+        $recent_logs = [];
+
+        if (file_exists($log_file)) {
+            $logs = file_get_contents($log_file);
+            $log_lines = array_slice(explode("\n", $logs), -20);
+            $recent_logs = array_filter($log_lines);
+        }
+
+        // Load the enhanced dashboard view
+        include __DIR__ . '/../../views/pages/senior-developer-full-dashboard-v2.php';
+    }
+
+    /**
      * Get current user ID
      */
     private function getUserId()
