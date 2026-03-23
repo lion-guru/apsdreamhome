@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,38 +12,61 @@
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+
         .card-shadow {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
         .pulse-dot {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
+
         .tab-active {
             background: rgba(99, 102, 241, 0.1);
             border-bottom: 2px solid #6366f1;
         }
+
         .terminal {
             background: #1a1a1a;
             color: #00ff00;
             font-family: 'Courier New', monospace;
         }
+
         .code-editor {
             font-family: 'Courier New', monospace;
             background: #f8f9fa;
         }
+
         .chat-message {
             animation: slideIn 0.3s ease-out;
         }
+
         @keyframes slideIn {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Header -->
     <div class="gradient-bg text-white p-6">
@@ -90,7 +114,7 @@
 
     <!-- Main Content -->
     <div class="container mx-auto p-6">
-        
+
         <!-- Dashboard Tab -->
         <div id="content-dashboard" class="tab-content">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -211,13 +235,12 @@
                         </div>
                     </div>
                     <div class="flex space-x-2">
-                        <input 
-                            type="text" 
-                            id="chatInput" 
+                        <input
+                            type="text"
+                            id="chatInput"
                             placeholder="Ask me anything about your project..."
                             class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            onkeypress="if(event.key === 'Enter') sendChatMessage()"
-                        >
+                            onkeypress="if(event.key === 'Enter') sendChatMessage()">
                         <button onclick="sendChatMessage()" class="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700">
                             <i class="fas fa-paper-plane"></i>
                         </button>
@@ -239,13 +262,12 @@
                                 <option value="sql">SQL</option>
                                 <option value="html">HTML</option>
                             </select>
-                            <input 
-                                type="text" 
-                                id="fileName" 
+                            <input
+                                type="text"
+                                id="fileName"
                                 placeholder="File name..."
                                 class="border rounded px-3 py-2 text-sm"
-                                value="new_file.php"
-                            >
+                                value="new_file.php">
                         </div>
                         <div class="flex space-x-2">
                             <button onclick="saveCode()" class="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
@@ -258,27 +280,104 @@
                     </div>
                 </div>
                 <div class="p-4">
-                    <textarea 
-                        id="codeEditor" 
+                    <textarea
+                        id="codeEditor"
                         placeholder="Write your code here..."
-                        class="w-full h-96 p-4 code-editor border rounded-lg focus:outline-none resize-none"
-                    ><?php
-// Senior Developer Code Editor
-// Write your code here and click "Run" to execute
+                        class="w-full h-96 p-4 code-editor border rounded-lg focus:outline-none resize-none"><?php
+                                                                                                                // Senior Developer Code Editor
+                                                                                                                // Write your code here and click "Run" to execute
 
-echo "🚀 Senior Developer Code Editor Ready!";
-echo "Current Project: APS Dream Home Real Estate Platform";
-echo "Database: 633 tables, 138 leads";
-echo "AI System: 7 roles configured";
+                                                                                                                echo "🚀 Senior Developer Code Editor Ready!";
+                                                                                                                echo "Current Project: APS Dream Home Real Estate Platform";
+                                                                                                                echo "Database: 633 tables, 138 leads";
+                                                                                                                echo "AI System: 7 roles configured";
 
-// Start coding below this line...
-?></textarea>
+                                                                                                                // Start coding below this line...
+                                                                                                                ?></textarea>
                 </div>
                 <div class="border-t p-4">
-                    <h4 class="font-bold mb-2">Output Console</h4>
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold">Output Console</h4>
+                        <div class="flex space-x-2">
+                            <button onclick="toggleAPIPanel()" class="text-xs bg-purple-600 text-white px-2 py-1 rounded hover:bg-purple-700">
+                                <i class="fas fa-plug mr-1"></i>API Extensions
+                            </button>
+                            <button onclick="clearCodeOutput()" class="text-xs bg-gray-600 text-white px-2 py-1 rounded hover:bg-gray-700">
+                                <i class="fas fa-trash mr-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
                     <div id="codeOutput" class="terminal p-4 h-32 overflow-y-auto text-sm">
                         <div class="text-green-400">$ Code Editor Ready</div>
                         <div class="text-gray-400">$ Write code above and click "Run" to execute</div>
+                    </div>
+                </div>
+
+                <!-- API Extensions Panel -->
+                <div id="apiExtensionsPanel" class="hidden border-t p-4 bg-gray-50">
+                    <h4 class="font-bold mb-3 text-purple-600">
+                        <i class="fas fa-plug mr-2"></i>API Extensions & Tools
+                    </h4>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                        <!-- GitHub API -->
+                        <button onclick="useGitHubAPI()" class="bg-gray-800 text-white p-3 rounded-lg hover:bg-gray-700 text-sm">
+                            <i class="fab fa-github mb-1 text-lg"></i>
+                            <div>GitHub API</div>
+                        </button>
+
+                        <!-- OpenAI API -->
+                        <button onclick="useOpenAIAPI()" class="bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 text-sm">
+                            <i class="fas fa-robot mb-1 text-lg"></i>
+                            <div>OpenAI API</div>
+                        </button>
+
+                        <!-- Weather API -->
+                        <button onclick="useWeatherAPI()" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 text-sm">
+                            <i class="fas fa-cloud-sun mb-1 text-lg"></i>
+                            <div>Weather API</div>
+                        </button>
+
+                        <!-- Database API -->
+                        <button onclick="useDatabaseAPI()" class="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 text-sm">
+                            <i class="fas fa-database mb-1 text-lg"></i>
+                            <div>Database API</div>
+                        </button>
+
+                        <!-- File System API -->
+                        <button onclick="useFileSystemAPI()" class="bg-orange-600 text-white p-3 rounded-lg hover:bg-orange-700 text-sm">
+                            <i class="fas fa-folder mb-1 text-lg"></i>
+                            <div>File System</div>
+                        </button>
+
+                        <!-- Email API -->
+                        <button onclick="useEmailAPI()" class="bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 text-sm">
+                            <i class="fas fa-envelope mb-1 text-lg"></i>
+                            <div>Email API</div>
+                        </button>
+
+                        <!-- Payment API -->
+                        <button onclick="usePaymentAPI()" class="bg-yellow-600 text-white p-3 rounded-lg hover:bg-yellow-700 text-sm">
+                            <i class="fas fa-credit-card mb-1 text-lg"></i>
+                            <div>Payment API</div>
+                        </button>
+
+                        <!-- Maps API -->
+                        <button onclick="useMapsAPI()" class="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 text-sm">
+                            <i class="fas fa-map mb-1 text-lg"></i>
+                            <div>Maps API</div>
+                        </button>
+                    </div>
+
+                    <!-- API Code Templates -->
+                    <div class="bg-white border rounded-lg p-3">
+                        <h5 class="font-bold text-sm mb-2">API Code Template:</h5>
+                        <div id="apiCodeTemplate" class="text-xs bg-gray-100 p-2 rounded font-mono max-h-40 overflow-y-auto">
+                            Select an API extension above to generate code template...
+                        </div>
+                        <button onclick="insertAPITemplate()" class="mt-2 bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700">
+                            <i class="fas fa-plus mr-1"></i>Insert to Editor
+                        </button>
                     </div>
                 </div>
             </div>
@@ -305,13 +404,12 @@ echo "AI System: 7 roles configured";
                 </div>
                 <div class="border-t p-4">
                     <div class="flex space-x-2">
-                        <input 
-                            type="text" 
-                            id="terminalInput" 
+                        <input
+                            type="text"
+                            id="terminalInput"
                             placeholder="Enter command..."
                             class="flex-1 p-3 bg-gray-900 text-green-400 rounded-lg focus:outline-none"
-                            onkeypress="if(event.key === 'Enter') executeTerminalCommand()"
-                        >
+                            onkeypress="if(event.key === 'Enter') executeTerminalCommand()">
                         <button onclick="executeTerminalCommand()" class="bg-green-600 text-white p-3 rounded-lg hover:bg-green-700">
                             <i class="fas fa-play"></i>
                         </button>
@@ -373,18 +471,18 @@ echo "AI System: 7 roles configured";
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
             });
-            
+
             // Remove active class from all tabs
             document.querySelectorAll('[id^="tab-"]').forEach(tabBtn => {
                 tabBtn.classList.remove('tab-active');
             });
-            
+
             // Show selected content
             document.getElementById('content-' + tab).classList.remove('hidden');
             document.getElementById('tab-' + tab).classList.add('tab-active');
-            
+
             currentTab = tab;
-            
+
             // Initialize chart when monitor tab is selected
             if (tab === 'monitor' && !performanceChart) {
                 initPerformanceChart();
@@ -394,34 +492,34 @@ echo "AI System: 7 roles configured";
         function executeCommand(command) {
             const formData = new FormData();
             formData.append('command', command);
-            
+
             fetch('/test_execute.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification('Command executed successfully!', 'success');
-                } else {
-                    showNotification('Command execution failed!', 'error');
-                }
-            })
-            .catch(error => {
-                showNotification('Network error occurred!', 'error');
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Command executed successfully!', 'success');
+                    } else {
+                        showNotification('Command execution failed!', 'error');
+                    }
+                })
+                .catch(error => {
+                    showNotification('Network error occurred!', 'error');
+                });
         }
 
         function sendChatMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
-            
+
             if (message === '') return;
-            
+
             // Add user message
             addChatMessage(message, 'user');
             input.value = '';
-            
+
             // Simulate AI response
             setTimeout(() => {
                 const response = generateAIResponse(message);
@@ -433,7 +531,7 @@ echo "AI System: 7 roles configured";
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'chat-message';
-            
+
             if (sender === 'user') {
                 messageDiv.innerHTML = `
                     <div class="flex items-start justify-end">
@@ -457,14 +555,14 @@ echo "AI System: 7 roles configured";
                     </div>
                 `;
             }
-            
+
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function generateAIResponse(message) {
             const lowerMessage = message.toLowerCase();
-            
+
             if (lowerMessage.includes('code') || lowerMessage.includes('write') || lowerMessage.includes('create')) {
                 return "मैं आपके लिए code लिख सकता हूं! Switch to the Code Editor tab above. I can help you with PHP, JavaScript, CSS, SQL, and HTML.";
             } else if (lowerMessage.includes('status') || lowerMessage.includes('analyze')) {
@@ -479,71 +577,71 @@ echo "AI System: 7 roles configured";
         function saveCode() {
             const code = document.getElementById('codeEditor').value;
             const fileName = document.getElementById('fileName').value || 'untitled.php';
-            
+
             const formData = new FormData();
             formData.append('fileName', fileName);
             formData.append('code', code);
             formData.append('language', document.getElementById('languageMode').value);
-            
+
             fetch('/senior-developer/save-code', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    addCodeOutput(`✅ File saved: ${fileName}`, 'success');
-                } else {
-                    addCodeOutput(`❌ Save failed: ${data.message}`, 'error');
-                }
-            })
-            .catch(error => {
-                addCodeOutput(`❌ Network error: ${error.message}`, 'error');
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addCodeOutput(`✅ File saved: ${fileName}`, 'success');
+                    } else {
+                        addCodeOutput(`❌ Save failed: ${data.message}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    addCodeOutput(`❌ Network error: ${error.message}`, 'error');
+                });
         }
 
         function runCode() {
             const code = document.getElementById('codeEditor').value;
-            
+
             addCodeOutput('🚀 Executing code...', 'info');
-            
+
             const formData = new FormData();
             formData.append('code', code);
             formData.append('language', document.getElementById('languageMode').value);
-            
+
             fetch('/senior-developer/run-code', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    addCodeOutput('✅ Code executed successfully!', 'success');
-                    if (data.output) {
-                        addCodeOutput(data.output, 'output');
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addCodeOutput('✅ Code executed successfully!', 'success');
+                        if (data.output) {
+                            addCodeOutput(data.output, 'output');
+                        }
+                    } else {
+                        addCodeOutput(`❌ Execution failed: ${data.message}`, 'error');
                     }
-                } else {
-                    addCodeOutput(`❌ Execution failed: ${data.message}`, 'error');
-                }
-            })
-            .catch(error => {
-                addCodeOutput(`❌ Network error: ${error.message}`, 'error');
-            });
+                })
+                .catch(error => {
+                    addCodeOutput(`❌ Network error: ${error.message}`, 'error');
+                });
         }
 
         function addCodeOutput(message, type = 'info') {
             const output = document.getElementById('codeOutput');
             const timestamp = new Date().toLocaleTimeString();
-            
+
             let colorClass = 'text-gray-400';
             if (type === 'success') colorClass = 'text-green-400';
             else if (type === 'error') colorClass = 'text-red-400';
             else if (type === 'info') colorClass = 'text-blue-400';
             else if (type === 'output') colorClass = 'text-gray-300';
-            
+
             const outputDiv = document.createElement('div');
             outputDiv.innerHTML = `<div class="${colorClass}">[${timestamp}] ${message}</div>`;
-            
+
             output.appendChild(outputDiv);
             output.scrollTop = output.scrollHeight;
         }
@@ -551,37 +649,37 @@ echo "AI System: 7 roles configured";
         function executeTerminalCommand() {
             const input = document.getElementById('terminalInput');
             const command = input.value.trim();
-            
+
             if (command === '') return;
-            
+
             const terminal = document.getElementById('terminal');
             const timestamp = new Date().toLocaleTimeString();
-            
+
             terminal.innerHTML += `<div class="text-blue-400">[${timestamp}] $ ${command}</div>`;
             terminal.scrollTop = terminal.scrollHeight;
-            
+
             const formData = new FormData();
             formData.append('command', command);
-            
+
             fetch('/test_execute.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    terminal.innerHTML += `<div class="text-green-400">[${timestamp}] $ ✓ Command executed successfully</div>`;
-                    terminal.innerHTML += `<div class="text-gray-400">[${timestamp}] $ Result: ${JSON.stringify(data.result, null, 2)}</div>`;
-                } else {
-                    terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ ✗ Command execution failed</div>`;
-                }
-                terminal.scrollTop = terminal.scrollHeight;
-            })
-            .catch(error => {
-                terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ ✗ Network error occurred</div>`;
-                terminal.scrollTop = terminal.scrollHeight;
-            });
-            
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        terminal.innerHTML += `<div class="text-green-400">[${timestamp}] $ ✓ Command executed successfully</div>`;
+                        terminal.innerHTML += `<div class="text-gray-400">[${timestamp}] $ Result: ${JSON.stringify(data.result, null, 2)}</div>`;
+                    } else {
+                        terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ ✗ Command execution failed</div>`;
+                    }
+                    terminal.scrollTop = terminal.scrollHeight;
+                })
+                .catch(error => {
+                    terminal.innerHTML += `<div class="text-red-400">[${timestamp}] $ ✗ Network error occurred</div>`;
+                    terminal.scrollTop = terminal.scrollHeight;
+                });
+
             input.value = '';
         }
 
@@ -611,17 +709,27 @@ echo "AI System: 7 roles configured";
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }
+                        legend: {
+                            display: false
+                        }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                            ticks: { color: 'rgba(0, 0, 0, 0.7)' }
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(0, 0, 0, 0.7)'
+                            }
                         },
                         x: {
-                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                            ticks: { color: 'rgba(0, 0, 0, 0.7)' }
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(0, 0, 0, 0.7)'
+                            }
                         }
                     }
                 }
@@ -635,10 +743,265 @@ echo "AI System: 7 roles configured";
             }`;
             notification.textContent = message;
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 notification.remove();
             }, 3000);
+        }
+
+        // API Extensions Functions
+        let currentAPITemplate = '';
+
+        function toggleAPIPanel() {
+            const panel = document.getElementById('apiExtensionsPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        function clearCodeOutput() {
+            const output = document.getElementById('codeOutput');
+            output.innerHTML = '<div class="text-green-400">$ Console cleared</div><div class="text-gray-400">$ Ready for new output...</div>';
+        }
+
+        function useGitHubAPI() {
+            currentAPITemplate = `<?php
+                                    // GitHub API Integration
+                                    $token = 'your_github_token_here';
+                                    $username = 'your_username';
+
+                                    // Get user repositories
+                                    $ch = curl_init();
+                                    curl_setopt($ch, CURLOPT_URL, "https://api.github.com/users/$username/repos");
+                                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                                        "Authorization: token $token",
+                                        "User-Agent: APS-Dream-Home"
+                                    ]);
+
+                                    $response = curl_exec($ch);
+                                    $repos = json_decode($response, true);
+
+                                    foreach ($repos as $repo) {
+                                        echo "Repository: " . $repo['name'] . "\\n";
+                                        echo "Stars: " . $repo['stargazers_count'] . "\\n";
+                                        echo "Language: " . $repo['language'] . "\\n\\n";
+                                    }
+
+                                    curl_close($ch);
+                                    ?>`;
+            updateAPITemplate('GitHub API - Repository listing');
+        }
+
+        function useOpenAIAPI() {
+            currentAPITemplate = `<?php
+                                    // OpenAI API Integration
+                                    $apiKey = 'your_openai_api_key';
+                                    $prompt = 'Explain the benefits of APS Dream Home platform';
+
+                                    $data = [
+                                        'model' => 'gpt-3.5-turbo',
+                                        'messages' => [
+                                            ['role' => 'user', 'content' => $prompt]
+                                        ],
+                                        'max_tokens' => 150
+                                    ];
+
+                                    $ch = curl_init();
+                                    curl_setopt($ch, CURLOPT_URL, "https://api.openai.com/v1/chat/completions");
+                                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                    curl_setopt($ch, CURLOPT_POST, true);
+                                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                                        "Content-Type: application/json",
+                                        "Authorization: Bearer $apiKey"
+                                    ]);
+
+                                    $response = curl_exec($ch);
+                                    $result = json_decode($response, true);
+
+                                    echo "AI Response: " . $result['choices'][0]['message']['content'];
+                                    curl_close($ch);
+                                    ?>`;
+            updateAPITemplate('OpenAI API - AI Chat completion');
+        }
+
+        function useWeatherAPI() {
+            currentAPITemplate = `<?php
+                                    // Weather API Integration
+                                    $apiKey = 'your_weather_api_key';
+                                    $city = 'Mumbai';
+                                    $url = "http://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric";
+
+                                    $response = file_get_contents($url);
+                                    $weather = json_decode($response, true);
+
+                                    echo "Weather in $city:\\n";
+                                    echo "Temperature: " . $weather['main']['temp'] . "°C\\n";
+                                    echo "Humidity: " . $weather['main']['humidity'] . "%\\n";
+                                    echo "Description: " . $weather['weather'][0]['description'] . "\\n";
+                                    echo "Wind Speed: " . $weather['wind']['speed'] . " m/s\\n";
+                                    ?>`;
+            updateAPITemplate('Weather API - Current weather data');
+        }
+
+        function useDatabaseAPI() {
+            currentAPITemplate = `<?php
+                                    // Database API Integration (APS Dream Home)
+                                    // Simple database connection
+                                    $host = 'localhost';
+                                    $dbname = 'apsdreamhome';
+                                    $username = 'root';
+                                    $password = '';
+
+                                    try {
+                                        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+                                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                                        // Get leads from database
+                                        $stmt = $pdo->query("SELECT id, name, email, phone, created_at FROM leads ORDER BY created_at DESC LIMIT 10");
+                                        $leads = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                        echo "Recent Leads:\\n";
+                                        foreach ($leads as $lead) {
+                                            echo "ID: " . $lead['id'] . "\\n";
+                                            echo "Name: " . $lead['name'] . "\\n";
+                                            echo "Email: " . $lead['email'] . "\\n";
+                                            echo "Phone: " . $lead['phone'] . "\\n";
+                                            echo "Created: " . $lead['created_at'] . "\\n\\n";
+                                        }
+
+                                        // Get total count
+                                        $countStmt = $pdo->query("SELECT COUNT(*) as total FROM leads");
+                                        $total = $countStmt->fetch(PDO::FETCH_ASSOC);
+                                        echo "Total Leads: " . $total['total'];
+                                    } catch (PDOException $e) {
+                                        echo "Database Error: " . $e->getMessage();
+                                    }
+                                    ?>`;
+            updateAPITemplate('Database API - APS Dream Home leads');
+        }
+
+        function useFileSystemAPI() {
+            currentAPITemplate = `<?php
+                                    // File System API Integration
+                                    $directory = __DIR__ . '/../../user_code/';
+
+                                    // Create directory if not exists
+                                    if (!is_dir($directory)) {
+                                        mkdir($directory, 0755, true);
+                                        echo "Directory created: $directory\\n";
+                                    }
+
+                                    // List files in directory
+                                    $files = scandir($directory);
+                                    echo "Files in directory:\\n";
+                                    foreach ($files as $file) {
+                                        if ($file !== '.' && $file !== '..') {
+                                            $filePath = $directory . $file;
+                                            $size = filesize($filePath);
+                                            $modified = date('Y-m-d H:i:s', filemtime($filePath));
+                                            echo "- $file (Size: $size bytes, Modified: $modified)\\n";
+                                        }
+                                    }
+
+                                    // Create a new file
+                                    $newFile = $directory . 'api_test_' . date('Y-m-d_H-i-s') . '.txt';
+                                    file_put_contents($newFile, "Created via API at " . date('Y-m-d H:i:s'));
+                                    echo "\\nNew file created: $newFile";
+                                    ?>`;
+            updateAPITemplate('File System API - Directory operations');
+        }
+
+        function useEmailAPI() {
+            currentAPITemplate = `<?php
+                                    // Email API Integration (Basic PHP mail)
+                                    $to = 'recipient@example.com';
+                                    $subject = 'Welcome to APS Dream Home';
+                                    $message = '<h1>Welcome!</h1><p>Thank you for joining APS Dream Home platform.</p>';
+                                    $headers = "From: from@apsdreamhome.com\\r\\n";
+                                    $headers .= "Content-Type: text/html; charset=UTF-8\\r\\n";
+
+                                    if (mail($to, $subject, $message, $headers)) {
+                                        echo "Email sent successfully!";
+                                    } else {
+                                        echo "Email failed to send";
+                                    }
+                                    ?>`;
+            updateAPITemplate('Email API - Basic PHP mail');
+        }
+
+        function usePaymentAPI() {
+            currentAPITemplate = `<?php
+                                    // Payment API Integration (Basic simulation)
+                                    // Simulate payment processing
+                                    $paymentData = [
+                                        'amount' => 100.00,
+                                        'currency' => 'USD',
+                                        'description' => 'APS Dream Home Property Booking',
+                                        'property_id' => 'PROP_001',
+                                        'customer_name' => 'John Doe',
+                                        'payment_id' => 'PAY_' . uniqid(),
+                                        'status' => 'success'
+                                    ];
+
+                                    echo "Payment Processed:\\n";
+                                    echo "Payment ID: " . $paymentData['payment_id'] . "\\n";
+                                    echo "Amount: $" . $paymentData['amount'] . " " . $paymentData['currency'] . "\\n";
+                                    echo "Status: " . $paymentData['status'] . "\\n";
+                                    echo "Property ID: " . $paymentData['property_id'] . "\\n";
+                                    echo "Customer: " . $paymentData['customer_name'];
+                                    ?>`;
+            updateAPITemplate('Payment API - Basic payment simulation');
+        }
+
+        function useMapsAPI() {
+            currentAPITemplate = `<?php
+                                    // Google Maps API Integration
+                                    $apiKey = 'your_google_maps_api_key';
+                                    $address = 'Mumbai, Maharashtra, India';
+
+                                    // Geocoding API
+                                    $geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=$apiKey";
+                                    $geocodeResponse = file_get_contents($geocodeUrl);
+                                    $geocodeData = json_decode($geocodeResponse, true);
+
+                                    if ($geocodeData['status'] === 'OK') {
+                                        $location = $geocodeData['results'][0]['geometry']['location'];
+                                        $lat = $location['lat'];
+                                        $lng = $location['lng'];
+
+                                        echo "Location: $address\\n";
+                                        echo "Latitude: $lat\\n";
+                                        echo "Longitude: $lng\\n";
+
+                                        // Nearby places (restaurants)
+                                        $placesUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=1000&type=restaurant&key=$apiKey";
+                                        $placesResponse = file_get_contents($placesUrl);
+                                        $placesData = json_decode($placesResponse, true);
+
+                                        echo "\\nNearby Restaurants:\\n";
+                                        foreach ($placesData['results'] as $place) {
+                                            echo "- " . $place['name'] . " (Rating: " . $place['rating'] . ")\\n";
+                                        }
+                                    } else {
+                                        echo "Geocoding failed: " . $geocodeData['error_message'];
+                                    }
+                                    ?>`;
+            updateAPITemplate('Maps API - Google Maps geocoding & places');
+        }
+
+        function updateAPITemplate(description) {
+            const templateDiv = document.getElementById('apiCodeTemplate');
+            templateDiv.innerHTML = `<div class="text-purple-600 font-bold mb-1">${description}</div><pre class="whitespace-pre-wrap text-xs">${currentAPITemplate}</pre>`;
+        }
+
+        function insertAPITemplate() {
+            if (currentAPITemplate) {
+                const editor = document.getElementById('codeEditor');
+                editor.value = currentAPITemplate;
+                showNotification('API template inserted to editor!', 'success');
+            } else {
+                showNotification('Please select an API extension first', 'error');
+            }
         }
 
         // Initialize on page load
@@ -648,4 +1011,5 @@ echo "AI System: 7 roles configured";
         });
     </script>
 </body>
+
 </html>
