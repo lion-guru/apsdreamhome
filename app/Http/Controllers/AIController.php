@@ -471,6 +471,81 @@ class AIController extends BaseController
         include __DIR__ . '/../../views/pages/senior-developer-full-dashboard-v2.php';
     }
 
+
+    /**
+     * Senior Developer Unified Platform
+     */
+    public function seniorDeveloperUnified()
+    {
+        // Load unified platform view
+        include __DIR__ . '/../../views/pages/senior-developer-unified.php';
+    }
+
+    /**
+     * Senior Developer Code Editor Simple
+     */
+    public function saveCode()
+    {
+        $fileName = $_POST['fileName'] ?? 'untitled.php';
+        $code = $_POST['code'] ?? '';
+        $language = $_POST['language'] ?? 'php';
+
+        // Create directory if it doesn't exist
+        $codeDir = __DIR__ . '/../../user_code';
+        if (!is_dir($codeDir)) {
+            mkdir($codeDir, 0755, true);
+        }
+
+        // Save file
+        $filePath = $codeDir . '/' . $fileName;
+        $result = file_put_contents($filePath, $code);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => $result !== false,
+            'message' => $result !== false ? "File saved: $fileName" : "Failed to save file",
+            'filePath' => $filePath
+        ]);
+    }
+
+    /**
+     * Run code from editor
+     */
+    public function runCode()
+    {
+        $code = $_POST['code'] ?? '';
+        $language = $_POST['language'] ?? 'php';
+
+        ob_start();
+
+        try {
+            if ($language === 'php') {
+                // Execute PHP code
+                eval('?>' . $code);
+            } else {
+                echo "Code execution for $language not yet implemented";
+            }
+
+            $output = ob_get_clean();
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'output' => $output,
+                'language' => $language
+            ]);
+        } catch (Exception $e) {
+            $error = ob_get_clean();
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'error' => $error . $e->getMessage()
+            ]);
+        }
+    }
+
     /**
      * Get current user ID
      */
