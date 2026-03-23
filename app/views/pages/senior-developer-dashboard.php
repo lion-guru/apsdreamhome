@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senior Developer - APS Dream Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="gradient-bg text-white p-6">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold flex items-center">
+                        <i class="fas fa-robot mr-3"></i>
+                        Senior Developer Dashboard
+                    </h1>
+                    <p class="text-purple-200 mt-2">Complete Project Control & Management</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-purple-200">System Status</div>
+                    <div class="text-2xl font-bold">
+                        <span class="pulse-dot text-green-400">●</span> ACTIVE
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg p-6 card-shadow">
+                <div class="flex items-center">
+                    <div class="bg-blue-100 p-3 rounded-full mr-4">
+                        <i class="fas fa-database text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500 text-sm">Database</div>
+                        <div class="text-2xl font-bold"><?php echo $status['database_status']; ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 card-shadow">
+                <div class="flex items-center">
+                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                        <i class="fas fa-brain text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500 text-sm">AI System</div>
+                        <div class="text-2xl font-bold"><?php echo $status['ai_status']; ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 card-shadow">
+                <div class="flex items-center">
+                    <div class="bg-purple-100 p-3 rounded-full mr-4">
+                        <i class="fas fa-shield-alt text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500 text-sm">Security</div>
+                        <div class="text-2xl font-bold"><?php echo $status['security_status']; ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-6 card-shadow">
+                <div class="flex items-center">
+                    <div class="bg-orange-100 p-3 rounded-full mr-4">
+                        <i class="fas fa-tachometer-alt text-orange-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-gray-500 text-sm">Performance</div>
+                        <div class="text-2xl font-bold"><?php echo $status['performance_metrics']['code_quality_score']; ?>%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-lg p-6 card-shadow mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-bolt mr-2 text-yellow-500"></i>
+                Quick Actions
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="executeCommand('full_control')" class="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-play mr-2"></i>
+                    Full Control
+                </button>
+                <button onclick="executeCommand('security_audit')" class="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 transition">
+                    <i class="fas fa-shield-alt mr-2"></i>
+                    Security Audit
+                </button>
+                <button onclick="executeCommand('optimize_system')" class="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-tachometer-alt mr-2"></i>
+                    Optimize System
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg p-6 card-shadow">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-history mr-2 text-blue-500"></i>
+                Recent Activity
+            </h2>
+            <div class="space-y-3">
+                <?php foreach ($status['last_actions'] as $action): ?>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="bg-green-100 p-2 rounded-full mr-3">
+                            <i class="fas fa-check text-green-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium"><?php echo $action; ?></div>
+                            <div class="text-sm text-gray-500"><?php echo $status['timestamp']; ?></div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function executeCommand(command) {
+            fetch('/senior-developer/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ command: command })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Command executed successfully!');
+                    location.reload();
+                } else {
+                    alert('Command execution failed!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred!');
+            });
+        }
+
+        // Auto-refresh status every 30 seconds
+        setInterval(() => {
+            fetch('/senior-developer/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update status display
+                        console.log('Status updated:', data.status);
+                    }
+                });
+        }, 30000);
+    </script>
+</body>
+</html>
