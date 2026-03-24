@@ -115,13 +115,81 @@
         </div>
     </section>
 
+    <!-- Statistics Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="card border-0 shadow">
+                        <div class="card-body">
+                            <h3 class="text-primary"><?php echo $hero_stats['years_experience']; ?>+</h3>
+                            <p class="mb-0">Years Experience</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card border-0 shadow">
+                        <div class="card-body">
+                            <h3 class="text-success"><?php echo $hero_stats['projects_completed']; ?>+</h3>
+                            <p class="mb-0">Projects Completed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card border-0 shadow">
+                        <div class="card-body">
+                            <h3 class="text-info"><?php echo $hero_stats['happy_customers']; ?>+</h3>
+                            <p class="mb-0">Happy Customers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card border-0 shadow">
+                        <div class="card-body">
+                            <h3 class="text-warning"><?php echo $hero_stats['awards_won']; ?></h3>
+                            <p class="mb-0">Awards Won</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center display-5 fw-bold mb-5">Featured Properties</h2>
+            <div class="row">
+                <?php foreach ($featured_properties as $property): ?>
+                <div class="col-md-6 mb-4">
+                    <div class="card property-card border-0 shadow">
+                        <img src="http://localhost/apsdreamhome/assets/images/<?php echo $property['image']; ?>" class="card-img-top" alt="<?php echo $property['title']; ?>">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo $property['title']; ?></h5>
+                            <p class="text-muted mb-2"><i class="fas fa-map-marker-alt"></i> <?php echo $property['location']; ?></p>
+                            <h4 class="text-primary"><?php echo $property['price']; ?></h4>
+                            <span class="badge bg-success"><?php echo $property['status']; ?></span>
+                            <div class="mt-3">
+                                <a href="/property/<?php echo $property['id']; ?>" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="text-center mt-4">
+                <a href="/properties" class="btn btn-lg btn-outline-primary">View All Properties</a>
+            </div>
+        </div>
+    </section>
+
     <!-- About Section -->
     <section class="py-5 bg-light">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <h2 class="display-5 fw-bold mb-4">About APS Dream Home</h2>
-                    <p class="lead">With over 8 years of excellence in real estate, APS Dream Home has been helping families and businesses find their perfect properties across Gorakhpur, Lucknow, and Uttar Pradesh.</p>
+                    <p class="lead">With over <?php echo $hero_stats['years_experience']; ?> years of excellence in real estate, APS Dream Home has been helping families and businesses find their perfect properties across Gorakhpur, Lucknow, and Uttar Pradesh.</p>
                     <p>Our commitment to quality, transparency, and customer satisfaction has made us a trusted name in the real estate industry.</p>
                     <a href="/about" class="btn btn-primary">Learn More</a>
                 </div>
