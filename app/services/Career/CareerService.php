@@ -3,7 +3,6 @@
 namespace App\Services\Career;
 
 use App\Core\Database\Database;
-use Psr\Log\LoggerInterface;
 
 /**
  * Modern Career Service
@@ -12,7 +11,6 @@ use Psr\Log\LoggerInterface;
 class CareerService
 {
     private Database $db;
-    private LoggerInterface $logger;
     private array $config;
     private array $allowedExtensions = ['pdf', 'doc', 'docx'];
     private int $maxFileSize = 5 * 1024 * 1024; // 5MB
@@ -27,10 +25,9 @@ class CareerService
     public const STATUS_REJECTED = 'rejected';
     public const STATUS_WITHDRAWN = 'withdrawn';
 
-    public function __construct(Database $db, LoggerInterface $logger, array $config = [])
+    public function __construct(Database $db = null, array $config = [])
     {
-        $this->db = $db;
-        $this->logger = $logger;
+        $this->db = $db ?: Database::getInstance();
         $this->config = array_merge([
             'auto_email_notifications' => true,
             'resume_storage_path' => __DIR__ . '/../../../storage/resumes/',
@@ -47,6 +44,8 @@ class CareerService
      */
     public function submitApplication(array $data, array $files = []): array
     {
+        $email = $data['email'] ?? 'unknown';
+
         try {
             // Validate required fields
             $validation = $this->validateApplicationData($data);
@@ -85,11 +84,7 @@ class CareerService
             }
 
             // Log application submission
-            $this->logger->info("Job application submitted", [
-                'application_id' => $applicationId,
-                'email' => $data['email'],
-                'job_id' => $data['job_id'] ?? null
-            ]);
+            error_log("Job application submitted: ID {$applicationId}, Email {$data['email']}");
 
             return [
                 'success' => true,
@@ -97,10 +92,7 @@ class CareerService
                 'application_id' => $applicationId
             ];
         } catch (\Exception $e) {
-            $this->logger->error("Failed to submit application", [
-                'email' => $data['email'] ?? 'unknown',
-                'error' => $e->getMessage()
-            ]);
+            error_log("Failed to submit application: {$email} - " . $e->getMessage());
 
             return [
                 'success' => false,
@@ -130,10 +122,7 @@ class CareerService
 
             return $application;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get application", [
-                'id' => $id,
-                'error' => $e->getMessage()
-            ]);
+            error_log("Failed to get application ID {$id}: " . $e->getMessage());
             return null;
         }
     }
@@ -200,7 +189,7 @@ class CareerService
 
             return $applications;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get applications", ['error' => $e->getMessage()]);
+            error_log("Failed to get applications: " . $e->getMessage());
             return [];
         }
     }
@@ -241,22 +230,14 @@ class CareerService
             }
 
             // Log status change
-            $this->logger->info("Application status updated", [
-                'application_id' => $id,
-                'old_status' => $application['status'],
-                'new_status' => $status,
-                'reason' => $reason
-            ]);
+            error_log("Application status updated: ID {$id}, {$application['status']} -> {$status}");
 
             return [
                 'success' => true,
                 'message' => 'Application status updated successfully'
             ];
         } catch (\Exception $e) {
-            $this->logger->error("Failed to update application status", [
-                'id' => $id,
-                'error' => $e->getMessage()
-            ]);
+            error_log("Failed to update application status ID {$id}: " . $e->getMessage());
 
             return [
                 'success' => false,
@@ -291,11 +272,7 @@ class CareerService
                 $this->sendInterviewInvitation($applicationId, $interviewData);
             }
 
-            $this->logger->info("Interview scheduled", [
-                'application_id' => $applicationId,
-                'interview_id' => $interviewId,
-                'interview_type' => $interviewData['type']
-            ]);
+            error_log("Interview scheduled: Application ID {$applicationId}, Interview ID {$interviewId}, Type {$interviewData['type']}");
 
             return [
                 'success' => true,
@@ -303,10 +280,7 @@ class CareerService
                 'interview_id' => $interviewId
             ];
         } catch (\Exception $e) {
-            $this->logger->error("Failed to schedule interview", [
-                'application_id' => $applicationId,
-                'error' => $e->getMessage()
-            ]);
+            error_log("Failed to schedule interview for application ID {$applicationId}: " . $e->getMessage());
 
             return [
                 'success' => false,
@@ -375,7 +349,7 @@ class CareerService
 
             return $stats;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get career stats", ['error' => $e->getMessage()]);
+            error_log("Failed to get career stats: " . $e->getMessage());
             return [];
         }
     }
@@ -555,10 +529,7 @@ class CareerService
     private function sendApplicationConfirmation(array $data, int $applicationId): void
     {
         // Mock email sending - would integrate with actual email service
-        $this->logger->info("Application confirmation sent", [
-            'email' => $data['email'],
-            'application_id' => $applicationId
-        ]);
+        error_log("Application confirmation sent to {$data['email']}, Application ID {$applicationId}");
     }
 
     private function getApplicationAttachments(int $applicationId): array
@@ -596,11 +567,7 @@ class CareerService
     private function sendStatusUpdateNotification(array $application, string $status, string $reason): void
     {
         // Mock email sending
-        $this->logger->info("Status update notification sent", [
-            'email' => $application['email'],
-            'status' => $status,
-            'reason' => $reason
-        ]);
+        error_log("Status update notification sent to {$application['email']}: {$status}, Reason: {$reason}");
     }
 
     private function validateInterviewData(array $data): array
@@ -652,10 +619,6 @@ class CareerService
     private function sendInterviewInvitation(int $applicationId, array $interviewData): void
     {
         // Mock email sending
-        $this->logger->info("Interview invitation sent", [
-            'application_id' => $applicationId,
-            'interview_type' => $interviewData['type'],
-            'scheduled_date' => $interviewData['scheduled_date']
-        ]);
+        error_log("Interview invitation sent for application ID {$applicationId}, Type {$interviewData['type']}, Date {$interviewData['scheduled_date']}");
     }
 }

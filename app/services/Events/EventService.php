@@ -1,9 +1,9 @@
-<?php
+
+php
 
 namespace App\Services\Events;
 
 use App\Core\Database;
-use Psr\Log\LoggerInterface;
 
 /**
  * Modern Event Service
@@ -12,7 +12,6 @@ use Psr\Log\LoggerInterface;
 class EventService
 {
     private Database $db;
-    private LoggerInterface $logger;
     private array $subscribers = [];
     private array $eventQueue = [];
     private bool $asyncProcessing = false;
@@ -29,10 +28,9 @@ class EventService
     public const PRIORITY_HIGH = 3;
     public const PRIORITY_CRITICAL = 4;
 
-    public function __construct(Database $db, LoggerInterface $logger, bool $asyncProcessing = false)
+    public function __construct(Database $db = null, bool $asyncProcessing = false)
     {
-        $this->db = $db;
-        $this->logger = $logger;
+        $this->db = $db ?: Database::getInstance();
         $this->asyncProcessing = $asyncProcessing;
     }
 
@@ -56,11 +54,7 @@ class EventService
             return $b['priority'] - $a['priority'];
         });
 
-        $this->logger->info("Event subscription added", [
-            'event' => $eventName,
-            'priority' => $priority,
-            'total_subscribers' => count($this->subscribers[$eventName])
-        ]);
+        error_log("Event subscription added: {$eventName}, Priority: {$priority}");
     }
 
     /**
@@ -95,9 +89,9 @@ class EventService
     {
         try {
             $eventName = $event['name'];
-            
+
             if (!isset($this->subscribers[$eventName])) {
-                $this->logger->debug("No subscribers for event", ['event' => $eventName]);
+                error_log("No subscribers for event: {$eventName}");
                 return;
             }
 
@@ -105,25 +99,14 @@ class EventService
                 try {
                     $handler = $subscriber['handler'];
                     $handler($event);
-                    
-                    $this->logger->debug("Event handler executed", [
-                        'event' => $eventName,
-                        'handler_priority' => $subscriber['priority']
-                    ]);
+
+                    error_log("Event handler executed: {$eventName}, Priority: {$subscriber['priority']}");
                 } catch (\Exception $e) {
-                    $this->logger->error("Event handler failed", [
-                        'event' => $eventName,
-                        'error' => $e->getMessage(),
-                        'priority' => $subscriber['priority']
-                    ]);
+                    error_log("Event handler failed: {$eventName}, Error: " . $e->getMessage());
                 }
             }
-
         } catch (\Exception $e) {
-            $this->logger->error("Event processing failed", [
-                'event' => $event['name'],
-                'error' => $e->getMessage()
-            ]);
+            error_log("Event processing failed: {$event['name']}, Error: " . $e->getMessage());
         }
     }
 
@@ -133,11 +116,11 @@ class EventService
     private function addToQueue(array $event): void
     {
         $this->eventQueue[] = $event;
-        
+
         // Store in database for persistence
         $sql = "INSERT INTO event_queue (event_id, event_name, event_data, event_type, priority, created_at) 
                 VALUES (?, ?, ?, ?, ?, NOW())";
-        
+
         $this->db->execute($sql, [
             $event['id'],
             $event['name'],
@@ -146,7 +129,7 @@ class EventService
             $event['priority']
         ]);
 
-        $this->logger->info("Event added to queue", ['event' => $event['name']]);
+        error_log("Event added to queue: {$event['name']}");
     }
 
     /**
@@ -161,25 +144,24 @@ class EventService
                     WHERE processed = 0 
                     ORDER BY priority DESC, created_at ASC 
                     LIMIT ?";
-            
+
             $events = $this->db->fetchAll($sql, [$limit]);
 
             foreach ($events as $eventData) {
                 $event = json_decode($eventData['event_data'], true);
-                
+
                 if ($event) {
                     $this->processEvent($event);
-                    
+
                     // Mark as processed
                     $updateSql = "UPDATE event_queue SET processed = 1, processed_at = NOW() WHERE id = ?";
                     $this->db->execute($updateSql, [$eventData['id']]);
-                    
+
                     $processed++;
                 }
             }
-
         } catch (\Exception $e) {
-            $this->logger->error("Queue processing failed", ['error' => $e->getMessage()]);
+            error_log("Queue processing failed: " . $e->getMessage());
         }
 
         return $processed;
@@ -219,9 +201,8 @@ class EventService
             $stats['active_subscribers'] = count($this->subscribers);
 
             return $stats;
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get event stats", ['error' => $e->getMessage()]);
+            error_log("Failed to get event stats: " . $e->getMessage());
             return [];
         }
     }
@@ -235,11 +216,10 @@ class EventService
             $sql = "SELECT * FROM event_log 
                     ORDER BY created_at DESC 
                     LIMIT ?";
-            
-            return $this->db->fetchAll($sql, [$limit]);
 
+            return $this->db->fetchAll($sql, [$limit]);
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get recent events", ['error' => $e->getMessage()]);
+            error_log("Failed to get recent events: " . $e->getMessage());
             return [];
         }
     }
@@ -284,10 +264,9 @@ class EventService
                 )
             ");
 
-            $this->logger->info("Event tables created/verified");
-
+            error_log("Event tables created/verified");
         } catch (\Exception $e) {
-            $this->logger->error("Failed to create event tables", ['error' => $e->getMessage()]);
+            error_log("Failed to create event tables: " . $e->getMessage());
         }
     }
 
@@ -299,7 +278,7 @@ class EventService
         try {
             $sql = "INSERT INTO event_log (event_id, event_name, event_data, event_type, priority) 
                     VALUES (?, ?, ?, ?, ?)";
-            
+
             $this->db->execute($sql, [
                 $event['id'],
                 $event['name'],
@@ -307,9 +286,8 @@ class EventService
                 $event['type'],
                 $event['priority']
             ]);
-
         } catch (\Exception $e) {
-            $this->logger->error("Failed to log event", ['error' => $e->getMessage()]);
+            error_log("Failed to log event: " . $e->getMessage());
         }
     }
 
@@ -329,12 +307,11 @@ class EventService
         try {
             $sql = "DELETE FROM event_log WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
             $deleted = $this->db->execute($sql, [$days]);
-            
-            $this->logger->info("Old event logs cleared", ['days' => $days, 'deleted' => $deleted]);
-            return $deleted;
 
+            error_log("Old event logs cleared: {$days} days, {$deleted} records");
+            return $deleted;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to clear old logs", ['error' => $e->getMessage()]);
+            error_log("Failed to clear old logs: " . $e->getMessage());
             return 0;
         }
     }
@@ -359,7 +336,7 @@ class EventService
         foreach ($this->subscribers[$eventName] as $key => $subscriber) {
             if ($subscriber['handler'] === $handler) {
                 unset($this->subscribers[$eventName][$key]);
-                $this->logger->info("Event subscription removed", ['event' => $eventName]);
+                error_log("Event subscription removed: {$eventName}");
                 return true;
             }
         }
