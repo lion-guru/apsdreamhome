@@ -93,19 +93,19 @@
     <div class="bg-white border-b">
         <div class="container mx-auto">
             <div class="flex space-x-1">
-                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-active px-6 py-3 font-medium text-sm hover:bg-gray-50">
+                <button onclick="window.switchTab ? window.switchTab('dashboard') : console.error('switchTab not loaded')" id="tab-dashboard" class="tab-active px-6 py-3 font-medium text-sm hover:bg-gray-50">
                     <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
                 </button>
-                <button onclick="switchTab('chat')" id="tab-chat" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
+                <button onclick="window.switchTab ? window.switchTab('chat') : console.error('switchTab not loaded')" id="tab-chat" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
                     <i class="fas fa-comments mr-2"></i>AI Chat
                 </button>
-                <button onclick="switchTab('code')" id="tab-code" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
+                <button onclick="window.switchTab ? window.switchTab('code') : console.error('switchTab not loaded')" id="tab-code" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
                     <i class="fas fa-code mr-2"></i>Code Editor
                 </button>
-                <button onclick="switchTab('terminal')" id="tab-terminal" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
+                <button onclick="window.switchTab ? window.switchTab('terminal') : console.error('switchTab not loaded')" id="tab-terminal" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
                     <i class="fas fa-terminal mr-2"></i>Terminal
                 </button>
-                <button onclick="switchTab('monitor')" id="tab-monitor" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
+                <button onclick="window.switchTab ? window.switchTab('monitor') : console.error('switchTab not loaded')" id="tab-monitor" class="px-6 py-3 font-medium text-sm hover:bg-gray-50">
                     <i class="fas fa-chart-line mr-2"></i>Monitor
                 </button>
             </div>
