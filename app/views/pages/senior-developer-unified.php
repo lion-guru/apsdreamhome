@@ -1026,14 +1026,14 @@
             }
         }
 
+        // Make it globally available immediately
+        window.switchTab = switchTab;
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial tab
             switchTab('dashboard');
         });
-
-        // Also define switchTab globally for immediate access
-        window.switchTab = switchTab;
     </script>
 </body>
 
