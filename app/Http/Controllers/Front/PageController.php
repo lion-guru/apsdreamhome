@@ -6,6 +6,18 @@ use App\Http\Controllers\BaseController;
 
 class PageController extends BaseController
 {
+    // Home Page
+    public function home()
+    {
+        try {
+            // Load home page view
+            include __DIR__ . '/../../../views/pages/home.php';
+        } catch (Exception $e) {
+            error_log("Home page error: " . $e->getMessage());
+            echo "Error loading home page. Please try again later.";
+        }
+    }
+
     // Testimonials
     public function testimonials()
     {
