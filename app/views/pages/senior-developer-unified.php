@@ -1004,6 +1004,28 @@
             }
         }
 
+        function switchTab(tab) {
+            // Hide all tab contents
+            const allContents = document.querySelectorAll('.tab-content');
+            allContents.forEach(content => content.classList.add('hidden'));
+
+            // Remove active class from all tabs
+            const allTabs = document.querySelectorAll('[id^="tab-"]');
+            allTabs.forEach(tabElement => tabElement.classList.remove('tab-active'));
+
+            // Show selected tab content
+            const selectedContent = document.getElementById('content-' + tab);
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+            }
+
+            // Add active class to selected tab
+            const selectedTab = document.getElementById('tab-' + tab);
+            if (selectedTab) {
+                selectedTab.classList.add('tab-active');
+            }
+        }
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial tab
