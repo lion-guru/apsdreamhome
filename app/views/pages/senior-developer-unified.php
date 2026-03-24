@@ -1031,6 +1031,9 @@
             // Set initial tab
             switchTab('dashboard');
         });
+
+        // Also define switchTab globally for immediate access
+        window.switchTab = switchTab;
     </script>
 </body>
 
