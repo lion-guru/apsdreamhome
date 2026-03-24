@@ -36,12 +36,14 @@
     "**/_DEPRECATED": true
   },
   "search.exclude": {
-    "**/node_modules": true,
-    "**/vendor": true,
-    "**/logs": true,
-    "**/storage/cache": true,
+    "**/_DEPRECATED": true,
+    "**/.git": true,
     "**/backup": true,
-    "**/_DEPRECATED": true
+    "**/bin": true,
+    "**/logs": true,
+    "**/node_modules": true,
+    "**/storage/cache": true,
+    "**/vendor": true
   },
 
   "// APS Dream Home - PHP Configuration": "",

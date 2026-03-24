@@ -1,4 +1,5 @@
 <?php
+
 /** @var Router $router */
 // API Routes
 $router->post('/api/v2/mobile/auth/login', 'Api\MobileApiController@login');
@@ -62,8 +63,7 @@ require_once __DIR__ . '/performance-cache.php';
 // Event Bus Management Routes
 require_once __DIR__ . '/events.php';
 
-// Core Functions Management Routes
-require_once __DIR__ . '/core-functions-new.php';
+// Core Functions Management Routes - Now integrated in web.php
 $router->get('/api/ai/recommendations', 'AIAssistantController@recommendations');
 $router->get('/api/ai/analyze/{id}', 'AIAssistantController@analyze');
 

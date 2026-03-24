@@ -657,6 +657,20 @@ $router->post('/users/update-status/{id}', 'User\UserController@updateStatus');
 $router->get('/users/delete/{id}', 'User\UserController@delete');
 $router->get('/users/by-role/{role}', 'User\UserController@byRole');
 
+// Core Functions API Routes (from deprecated files)
+$router->post('/api/core-functions/validate', 'CoreFunctionsController@validateInput');
+$router->post('/api/core-functions/validate-multiple', 'CoreFunctionsController@validateInputs');
+$router->post('/api/core-functions/format-phone', 'CoreFunctionsController@formatPhone');
+$router->post('/api/core-functions/generate-slug', 'CoreFunctionsController@generateSlug');
+$router->post('/api/core-functions/truncate-text', 'CoreFunctionsController@truncateText');
+$router->post('/api/core-functions/generate-random', 'CoreFunctionsController@generateRandomString');
+$router->post('/api/core-functions/format-currency', 'CoreFunctionsController@formatCurrency');
+$router->post('/api/core-functions/format-date', 'CoreFunctionsController@formatDate');
+$router->post('/api/core-functions/upload-image', 'CoreFunctionsController@uploadImage');
+$router->get('/api/core-functions/file-info', 'CoreFunctionsController@getFileInfo');
+$router->post('/api/core-functions/extract-text', 'CoreFunctionsController@extractText');
+$router->get('/api/core-functions/client-info', 'CoreFunctionsController@getClientInfo');
+
 // Report routes (Modern MVC)
 $router->get('/reports', 'Reports\ReportController@dashboard');
 $router->get('/reports/generate', 'Reports\ReportController@generate');

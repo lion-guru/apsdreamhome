@@ -770,10 +770,10 @@
 
                                     // Get user repositories
                                     $ch = curl_init();
-                                    curl_setopt($ch, CURLOPT_URL, "https://api.github.com/users/$username/repos");
+                                    curl_setopt($ch, CURLOPT_URL, "https://api.github.com/users/" . $username . "/repos");
                                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                                     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                        "Authorization: token $token",
+                                        "Authorization: token " . $token,
                                         "User-Agent: APS-Dream-Home"
                                     ]);
 
@@ -812,7 +812,7 @@
                                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
                                     curl_setopt($ch, CURLOPT_HTTPHEADER, [
                                         "Content-Type: application/json",
-                                        "Authorization: Bearer $apiKey"
+                                        "Authorization: Bearer " . $apiKey
                                     ]);
 
                                     $response = curl_exec($ch);
@@ -829,12 +829,12 @@
                                     // Weather API Integration
                                     $apiKey = 'your_weather_api_key';
                                     $city = 'Mumbai';
-                                    $url = "http://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric";
+                                    $url = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&appid=" . $apiKey . "&units=metric";
 
                                     $response = file_get_contents($url);
                                     $weather = json_decode($response, true);
 
-                                    echo "Weather in $city:\\n";
+                                    echo "Weather in " . $city . ":\n";
                                     echo "Temperature: " . $weather['main']['temp'] . "°C\\n";
                                     echo "Humidity: " . $weather['main']['humidity'] . "%\\n";
                                     echo "Description: " . $weather['weather'][0]['description'] . "\\n";
@@ -853,7 +853,7 @@
                                     $password = '';
 
                                     try {
-                                        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+                                        $pdo = new PDO("mysql:host=" . $host . ";dbname=" . $dbname, $username, $password);
                                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
                                         // Get leads from database
@@ -888,7 +888,7 @@
                                     // Create directory if not exists
                                     if (!is_dir($directory)) {
                                         mkdir($directory, 0755, true);
-                                        echo "Directory created: $directory\\n";
+                                        echo "Directory created: " . $directory . "\n";
                                     }
 
                                     // List files in directory
@@ -899,14 +899,14 @@
                                             $filePath = $directory . $file;
                                             $size = filesize($filePath);
                                             $modified = date('Y-m-d H:i:s', filemtime($filePath));
-                                            echo "- $file (Size: $size bytes, Modified: $modified)\\n";
+                                            echo "- " . $file . " (Size: " . $size . " bytes, Modified: " . $modified . ")\\n";
                                         }
                                     }
 
                                     // Create a new file
                                     $newFile = $directory . 'api_test_' . date('Y-m-d_H-i-s') . '.txt';
                                     file_put_contents($newFile, "Created via API at " . date('Y-m-d H:i:s'));
-                                    echo "\\nNew file created: $newFile";
+                                    echo "\\nNew file created: " . $newFile;
                                     ?>`;
             updateAPITemplate('File System API - Directory operations');
         }
@@ -960,7 +960,7 @@
                                     $address = 'Mumbai, Maharashtra, India';
 
                                     // Geocoding API
-                                    $geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=$apiKey";
+                                    $geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $apiKey;
                                     $geocodeResponse = file_get_contents($geocodeUrl);
                                     $geocodeData = json_decode($geocodeResponse, true);
 
@@ -974,7 +974,7 @@
                                         echo "Longitude: $lng\\n";
 
                                         // Nearby places (restaurants)
-                                        $placesUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=1000&type=restaurant&key=$apiKey";
+                                        $placesUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" . $lat . "," . $lng . "&radius=1000&type=restaurant&key=" . $apiKey;
                                         $placesResponse = file_get_contents($placesUrl);
                                         $placesData = json_decode($placesResponse, true);
 

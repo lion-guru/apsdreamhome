@@ -5,11 +5,6 @@
  * This is the main entry point for the application
  */
 
-// Start session FIRST - before any output
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 // Debug: Create a test file to verify this script is running
 file_put_contents(__DIR__ . '/../logs/debug_test.txt', "Index.php executed at: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
 
@@ -25,7 +20,7 @@ define('APS_STORAGE', APS_ROOT . '/storage');
 define('APS_LOGS', APS_ROOT . '/logs');
 
 // Define BASE_URL dynamically for XAMPP
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? "https://" : "http://";
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $domainName = $_SERVER['HTTP_HOST'] ?? 'localhost';
 // Check if accessing via XAMPP localhost/apsdreamhome
 $requestUri = $_SERVER['REQUEST_URI'] ?? '';
@@ -40,6 +35,11 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 ini_set('error_log', APS_LOGS . '/php_error.log');
+
+// Start session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Simple autoloader
 spl_autoload_register(function ($class) {
