@@ -10,7 +10,37 @@ class PageController extends BaseController
     public function home()
     {
         try {
-            // Load home page view
+            // Get hero statistics
+            $hero_stats = [
+                'years_experience' => 15,
+                'projects_completed' => 50,
+                'happy_customers' => 1000,
+                'awards_won' => 25,
+            ];
+
+            // Get featured properties
+            $featured_properties = [
+                [
+                    'id' => 1,
+                    'title' => 'Suyoday Colony',
+                    'location' => 'Gorakhpur',
+                    'price' => '₹7.5 Lakhs',
+                    'image' => 'suyoday.jpg',
+                    'type' => 'Residential',
+                    'status' => 'Available'
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Raghunat Nagri',
+                    'location' => 'Gorakhpur',
+                    'price' => '₹8.5 Lakhs',
+                    'image' => 'raghunat.jpg',
+                    'type' => 'Residential',
+                    'status' => 'Available'
+                ],
+            ];
+
+            // Load home page view with data
             include __DIR__ . '/../../../views/pages/home.php';
         } catch (Exception $e) {
             error_log("Home page error: " . $e->getMessage());
