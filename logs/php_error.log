@@ -642,3 +642,153 @@ Stack trace:
 #2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
 #3 {main}
   thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php on line 784
+[24-Mar-2026 15:15:31 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 15:15:31 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 15:15:31 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 15:15:31 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 15:15:31 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 15:15:31 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 15:15:31 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 15:15:32 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/senior-developer/unified
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /senior-developer/unified
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /senior-developer/unified
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /senior-developer/unified
+[24-Mar-2026 15:15:32 Europe/Berlin] FINAL ROUTER URI: /senior-developer/unified
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /senior-developer/unified
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 15:15:32 Europe/Berlin] ROUTER DEBUG: Found route without slash: senior-developer/unified
+[24-Mar-2026 15:15:32 Europe/Berlin] Loading controller: App\Http\Controllers\AIController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIController.php
+[24-Mar-2026 15:15:32 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 15:15:33 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php:784
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIController.php(445): include()
+#1 C:\xampp\htdocs\apsdreamhome\routes\router.php(239): App\Http\Controllers\AIController->seniorDeveloperUnified()
+#2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#3 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php on line 784
+[24-Mar-2026 15:15:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 15:15:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 15:15:59 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 15:15:59 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 15:15:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 15:15:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Method: HEAD, URI: /apsdreamhome/senior-developer/unified
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /senior-developer/unified
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /senior-developer/unified
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /senior-developer/unified
+[24-Mar-2026 15:15:59 Europe/Berlin] FINAL ROUTER URI: /senior-developer/unified
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Looking for route: HEAD /senior-developer/unified
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 15:15:59 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 15:16:24 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 15:16:24 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 15:16:24 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 15:16:24 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 15:16:24 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 15:16:24 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Method: HEAD, URI: /apsdreamhome/senior-developer/unified
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /senior-developer/unified
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /senior-developer/unified
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /senior-developer/unified
+[24-Mar-2026 15:16:24 Europe/Berlin] FINAL ROUTER URI: /senior-developer/unified
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Looking for route: HEAD /senior-developer/unified
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 15:16:24 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 15:21:59 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 15:21:59 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 15:21:59 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 15:21:59 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 15:21:59 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 15:21:59 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/senior-developer/unified
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /senior-developer/unified
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /senior-developer/unified
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /senior-developer/unified
+[24-Mar-2026 15:21:59 Europe/Berlin] FINAL ROUTER URI: /senior-developer/unified
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /senior-developer/unified
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 15:21:59 Europe/Berlin] ROUTER DEBUG: Found route without slash: senior-developer/unified
+[24-Mar-2026 15:21:59 Europe/Berlin] Loading controller: App\Http\Controllers\AIController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIController.php
+[24-Mar-2026 15:22:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 15:22:03 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php:784
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIController.php(445): include()
+#1 C:\xampp\htdocs\apsdreamhome\routes\router.php(239): App\Http\Controllers\AIController->seniorDeveloperUnified()
+#2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#3 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php on line 784
+[24-Mar-2026 15:27:57 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 15:27:57 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 15:27:57 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 15:27:57 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 15:27:57 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 15:27:57 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/senior-developer/unified
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /senior-developer/unified
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /senior-developer/unified
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /senior-developer/unified
+[24-Mar-2026 15:27:57 Europe/Berlin] FINAL ROUTER URI: /senior-developer/unified
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /senior-developer/unified
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 15:27:57 Europe/Berlin] ROUTER DEBUG: Found route without slash: senior-developer/unified
+[24-Mar-2026 15:27:57 Europe/Berlin] Loading controller: App\Http\Controllers\AIController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIController.php
+[24-Mar-2026 15:27:57 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 15:27:59 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php:784
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIController.php(445): include()
+#1 C:\xampp\htdocs\apsdreamhome\routes\router.php(239): App\Http\Controllers\AIController->seniorDeveloperUnified()
+#2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#3 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php on line 784
+[24-Mar-2026 15:29:38 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 15:29:38 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 15:29:38 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 15:29:38 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 15:29:38 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 15:29:38 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/senior-developer/unified
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /senior-developer/unified
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /senior-developer/unified
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /senior-developer/unified
+[24-Mar-2026 15:29:38 Europe/Berlin] FINAL ROUTER URI: /senior-developer/unified
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /senior-developer/unified
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 15:29:38 Europe/Berlin] ROUTER DEBUG: Found route without slash: senior-developer/unified
+[24-Mar-2026 15:29:38 Europe/Berlin] Loading controller: App\Http\Controllers\AIController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIController.php
+[24-Mar-2026 15:29:38 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 15:29:39 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php:784
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIController.php(445): include()
+#1 C:\xampp\htdocs\apsdreamhome\routes\router.php(239): App\Http\Controllers\AIController->seniorDeveloperUnified()
+#2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#3 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php on line 784
