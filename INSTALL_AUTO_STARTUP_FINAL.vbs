@@ -1,9 +1,11 @@
-' APS Dream Home - Auto Startup Installer
-' Installs the autonomous developer to Windows startup
+' APS Dream Home - Auto Startup Installer (FINAL VERSION)
+' Installs autonomous developer to Windows startup
 
 Option Explicit
 
-Dim objShell, objFSO, strScriptPath, strStartupPath, strShortcutPath
+' Declare all variables at the top
+Dim objShell, objFSO, strScriptPath, strStartupPath, strShortcutPath, objShortcut
+Dim strConfigPath, objConfig, objTextStream, objUninstallStream, intResponse
 
 ' Create shell object
 Set objShell = CreateObject("WScript.Shell")
@@ -26,17 +28,18 @@ strStartupPath = objShell.SpecialFolders("Startup")
 ' Create startup shortcut
 strShortcutPath = strStartupPath & "\APS Dream Home Developer.lnk"
 
-' Create the shortcut
+' Create shortcut
 Set objShortcut = objShell.CreateShortcut(strShortcutPath)
 
 ' Set shortcut properties
 objShortcut.TargetPath = strScriptPath & "\STARTUP_AUTO_DEVELOPER.bat"
 objShortcut.WorkingDirectory = strScriptPath
 objShortcut.Description = "APS Dream Home Autonomous Developer"
-objShortcut.IconLocation = strScriptPath & "\favicon.ico"
 
 ' Check if favicon exists, if not use default
-If Not objFSO.FileExists(strScriptPath & "\favicon.ico") Then
+If objFSO.FileExists(strScriptPath & "\favicon.ico") Then
+    objShortcut.IconLocation = strScriptPath & "\favicon.ico"
+Else
     objShortcut.IconLocation = "%SystemRoot%\System32\shell32.dll,27"
 End If
 
@@ -44,7 +47,6 @@ End If
 objShortcut.Save
 
 ' Create startup configuration file
-Dim strConfigPath
 strConfigPath = strScriptPath & "\config\auto_startup.json"
 
 ' Create config directory if not exists
@@ -53,7 +55,6 @@ If Not objFSO.FolderExists(strScriptPath & "\config") Then
 End If
 
 ' Create configuration
-Dim objConfig
 Set objConfig = CreateObject("Scripting.Dictionary")
 
 objConfig.Add "installed", True
@@ -67,7 +68,6 @@ objConfig.Add "open_browser", True
 objConfig.Add "monitoring", True
 
 ' Save configuration
-Dim objTextStream
 Set objTextStream = objFSO.CreateTextFile(strConfigPath, True)
 objTextStream.Write ConvertToJson(objConfig)
 objTextStream.Close
@@ -76,7 +76,6 @@ objTextStream.Close
 Dim strUninstallScript
 strUninstallScript = strScriptPath & "\UNINSTALL_AUTO_STARTUP.vbs"
 
-Dim objUninstallStream
 Set objUninstallStream = objFSO.CreateTextFile(strUninstallScript, True)
 
 objUninstallStream.WriteLine "' APS Dream Home - Auto Startup Uninstaller"
@@ -100,7 +99,7 @@ objUninstallStream.WriteLine "Else"
 objUninstallStream.WriteLine "    WScript.Echo ""Startup shortcut not found"""
 objUninstallStream.WriteLine "End If"
 objUninstallStream.WriteLine ""
-objUninstallStream.WriteLine "' Remove configuration"
+objUninstallStream.WriteLine "' Remove the configuration"
 objUninstallStream.WriteLine "strConfigPath = """ & strScriptPath & "\config\auto_startup.json"""
 objUninstallStream.WriteLine "If objFSO.FileExists(strConfigPath) Then"
 objUninstallStream.WriteLine "    objFSO.DeleteFile strConfigPath"
@@ -155,7 +154,6 @@ Function ConvertToJson(objDict)
 End Function
 
 ' Ask if user wants to test the installation
-Dim intResponse
 intResponse = MsgBox("Would you like to test the autonomous developer now?" & vbCrLf & vbCrLf & _
 "This will start all services and open the development environment.", _
 vbQuestion + vbYesNo, "Test Installation")

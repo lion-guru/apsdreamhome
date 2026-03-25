@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Core\Database;
+use App\Core\Database\Database;
 use App\Core\Config;
 use Exception;
 
