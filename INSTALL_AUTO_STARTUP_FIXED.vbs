@@ -1,9 +1,9 @@
-' APS Dream Home - Auto Startup Installer
+' APS Dream Home - Auto Startup Installer (FIXED VERSION)
 ' Installs the autonomous developer to Windows startup
 
 Option Explicit
 
-Dim objShell, objFSO, strScriptPath, strStartupPath, strShortcutPath
+Dim objShell, objFSO, strScriptPath, strStartupPath, strShortcutPath, objShortcut
 
 ' Create shell object
 Set objShell = CreateObject("WScript.Shell")
@@ -33,10 +33,11 @@ Set objShortcut = objShell.CreateShortcut(strShortcutPath)
 objShortcut.TargetPath = strScriptPath & "\STARTUP_AUTO_DEVELOPER.bat"
 objShortcut.WorkingDirectory = strScriptPath
 objShortcut.Description = "APS Dream Home Autonomous Developer"
-objShortcut.IconLocation = strScriptPath & "\favicon.ico"
 
 ' Check if favicon exists, if not use default
-If Not objFSO.FileExists(strScriptPath & "\favicon.ico") Then
+If objFSO.FileExists(strScriptPath & "\favicon.ico") Then
+    objShortcut.IconLocation = strScriptPath & "\favicon.ico"
+Else
     objShortcut.IconLocation = "%SystemRoot%\System32\shell32.dll,27"
 End If
 
@@ -44,7 +45,7 @@ End If
 objShortcut.Save
 
 ' Create startup configuration file
-Dim strConfigPath
+Dim strConfigPath, objConfig, objTextStream, objUninstallStream, intResponse
 strConfigPath = strScriptPath & "\config\auto_startup.json"
 
 ' Create config directory if not exists
@@ -53,7 +54,6 @@ If Not objFSO.FolderExists(strScriptPath & "\config") Then
 End If
 
 ' Create configuration
-Dim objConfig
 Set objConfig = CreateObject("Scripting.Dictionary")
 
 objConfig.Add "installed", True

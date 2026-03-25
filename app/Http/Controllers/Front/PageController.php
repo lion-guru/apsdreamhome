@@ -48,6 +48,115 @@ class PageController extends BaseController
         }
     }
 
+    // Properties Page
+    public function properties()
+    {
+        try {
+            // Get all properties with sample data
+            $properties = [
+                [
+                    'id' => 1,
+                    'title' => 'Suyoday Colony',
+                    'location' => 'Gorakhpur',
+                    'price' => '₹7.5 Lakhs',
+                    'image' => 'suyoday.jpg',
+                    'type' => 'Residential',
+                    'status' => 'Available',
+                    'area' => '1200 sq ft',
+                    'bedrooms' => '2 BHK',
+                    'description' => 'Premium residential plots with modern infrastructure and amenities.'
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Raghunat Nagri',
+                    'location' => 'Gorakhpur',
+                    'price' => '₹8.5 Lakhs',
+                    'image' => 'raghunat.jpg',
+                    'type' => 'Residential',
+                    'status' => 'Available',
+                    'area' => '1500 sq ft',
+                    'bedrooms' => '3 BHK',
+                    'description' => 'Premium residential plots in developing area with all facilities.'
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Braj Radha Nagri',
+                    'location' => 'Gorakhpur',
+                    'price' => '₹6.5 Lakhs',
+                    'image' => 'brajradha.jpg',
+                    'type' => 'Residential',
+                    'status' => 'Planned',
+                    'area' => '1000 sq ft',
+                    'bedrooms' => '2 BHK',
+                    'description' => 'Affordable residential plots with basic amenities.'
+                ],
+                [
+                    'id' => 4,
+                    'title' => 'Budh Bihar Colony',
+                    'location' => 'Kushinagar',
+                    'price' => '₹5.5 Lakhs',
+                    'image' => 'budhbihar.jpg',
+                    'type' => 'Residential',
+                    'status' => 'Ongoing',
+                    'area' => '1100 sq ft',
+                    'bedrooms' => '2 BHK',
+                    'description' => 'Integrated township at Premwaliya with modern facilities.'
+                ],
+                [
+                    'id' => 5,
+                    'title' => 'Awadhpuri',
+                    'location' => 'Lucknow',
+                    'price' => '₹12 Lakhs',
+                    'image' => 'awadhpuri.jpg',
+                    'type' => 'Residential',
+                    'status' => 'Coming Soon',
+                    'area' => '2000 sq ft',
+                    'bedrooms' => '4 BHK',
+                    'description' => '20 bigha premium project at Safadarganj with luxury amenities.'
+                ],
+                [
+                    'id' => 6,
+                    'title' => 'Commercial Complex',
+                    'location' => 'Gorakhpur',
+                    'price' => '₹25 Lakhs',
+                    'image' => 'commercial.jpg',
+                    'type' => 'Commercial',
+                    'status' => 'Available',
+                    'area' => '800 sq ft',
+                    'bedrooms' => 'N/A',
+                    'description' => 'Prime commercial space in heart of the city.'
+                ]
+            ];
+
+            // Get filter options
+            $property_types = ['All Types', 'Residential', 'Commercial', 'Land', 'Villa', 'Apartment'];
+            $locations = ['All Locations', 'Gorakhpur', 'Lucknow', 'Kanpur', 'Varanasi', 'Allahabad'];
+            $price_ranges = ['Any Price', 'Under ₹10L', '₹10L - ₹50L', '₹50L - ₹1Cr', '₹1Cr - ₹5Cr', 'Above ₹5Cr'];
+            $bedrooms = ['Any', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK'];
+
+            // Breadcrumb data
+            $breadcrumbs = [
+                ['title' => 'Home', 'url' => BASE_URL],
+                ['title' => 'Properties', 'url' => BASE_URL . '/properties']
+            ];
+
+            $data = [
+                'page_title' => 'Properties - APS Dream Home',
+                'page_description' => 'Browse our premium residential and commercial properties',
+                'properties' => $properties,
+                'property_types' => $property_types,
+                'locations' => $locations,
+                'price_ranges' => $price_ranges,
+                'bedrooms' => $bedrooms,
+                'breadcrumbs' => $breadcrumbs
+            ];
+            
+            $this->render('pages/properties', $data);
+        } catch (Exception $e) {
+            $this->renderError('Error loading properties page', $e->getMessage());
+        }
+    }
+
     // Testimonials
     public function testimonials()
     {

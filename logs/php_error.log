@@ -2165,3 +2165,1579 @@ Stack trace:
 #2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
 #3 {main}
   thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php on line 784
+[24-Mar-2026 21:05:15 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 21:05:15 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 21:05:15 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 21:05:15 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 21:05:15 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 21:05:15 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 21:05:16 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/senior-developer/unified
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /senior-developer/unified
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /senior-developer/unified
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /senior-developer/unified
+[24-Mar-2026 21:05:16 Europe/Berlin] FINAL ROUTER URI: /senior-developer/unified
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /senior-developer/unified
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 21:05:16 Europe/Berlin] ROUTER DEBUG: Found route without slash: senior-developer/unified
+[24-Mar-2026 21:05:16 Europe/Berlin] Loading controller: App\Http\Controllers\AIController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIController.php
+[24-Mar-2026 21:05:16 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 21:05:18 Europe/Berlin] PHP Fatal error:  Uncaught TypeError: Cannot access offset of type string on string in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php:784
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\AIController.php(445): include()
+#1 C:\xampp\htdocs\apsdreamhome\routes\router.php(239): App\Http\Controllers\AIController->seniorDeveloperUnified()
+#2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#3 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\pages\senior-developer-unified.php on line 784
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 22:16:43 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 22:16:43 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 22:16:43 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 22:16:43 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 22:16:43 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 22:16:44 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 22:16:44 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/ai-chat-enhanced
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/ai-assistant
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /ai-chat-enhanced
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /ai-assistant
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /ai-assistant
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /ai-chat-enhanced
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /ai-chat-enhanced
+[24-Mar-2026 22:16:44 Europe/Berlin] FINAL ROUTER URI: /ai-chat-enhanced
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /ai-chat-enhanced
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Found route without slash: ai-chat-enhanced
+[24-Mar-2026 22:16:44 Europe/Berlin] Loading controller: App\Http\Controllers\AIController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIController.php
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /ai-assistant
+[24-Mar-2026 22:16:44 Europe/Berlin] FINAL ROUTER URI: /ai-assistant
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /ai-assistant
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 22:16:44 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 22:16:45 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 22:16:46 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 22:16:46 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 22:16:46 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 22:16:46 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 22:17:31 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 22:17:31 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 22:17:31 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 22:17:31 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 22:17:31 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 22:17:31 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/apple-touch-icon.png
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/apple-touch-icon.png
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 22:17:31 Europe/Berlin] FINAL ROUTER URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/apple-touch-icon.png
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 22:17:31 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 22:18:10 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 22:18:10 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 22:18:10 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 22:18:10 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 22:18:10 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 22:18:10 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/ai-assistant
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /ai-assistant
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /ai-assistant
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /ai-assistant
+[24-Mar-2026 22:18:10 Europe/Berlin] FINAL ROUTER URI: /ai-assistant
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /ai-assistant
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 22:18:10 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:01:18 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:01:18 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:01:18 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:01:18 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:01:18 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:01:18 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/ai-chat-enhanced
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /ai-chat-enhanced
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /ai-chat-enhanced
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /ai-chat-enhanced
+[24-Mar-2026 23:01:18 Europe/Berlin] FINAL ROUTER URI: /ai-chat-enhanced
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /ai-chat-enhanced
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:01:18 Europe/Berlin] ROUTER DEBUG: Found route without slash: ai-chat-enhanced
+[24-Mar-2026 23:01:18 Europe/Berlin] Loading controller: App\Http\Controllers\AIController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/AIController.php
+[24-Mar-2026 23:01:18 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:01:23 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:01:23 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:01:23 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:01:23 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:01:23 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:01:23 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:01:23 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:01:24 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:01:24 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:01:24 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:01:24 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:01:24 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:01:24 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:01:24 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:01:24 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:01:24 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:01:24 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:01:42 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:01:42 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:01:42 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:01:42 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:01:42 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:01:42 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/apple-touch-icon.png
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:01:42 Europe/Berlin] FINAL ROUTER URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:01:42 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:06:00 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:00 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:00 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:00 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:00 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:00 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /
+[24-Mar-2026 23:06:00 Europe/Berlin] FINAL ROUTER URI: /
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /
+[24-Mar-2026 23:06:00 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[24-Mar-2026 23:06:00 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[24-Mar-2026 23:06:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:06:01 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:06:01 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder/property.svg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:06:01 Europe/Berlin] FINAL ROUTER URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/placeholder/property.svg
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:06:01 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:06:02 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:06:02 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-1.jpg
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero-1.jpg
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:06:02 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero-1.jpg
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:06:02 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /
+[24-Mar-2026 23:14:34 Europe/Berlin] FINAL ROUTER URI: /
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[24-Mar-2026 23:14:34 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[24-Mar-2026 23:14:34 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:14:34 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:14:34 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:34 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:34 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:14:35 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:14:35 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder/property.svg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:14:35 Europe/Berlin] FINAL ROUTER URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/placeholder/property.svg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:35 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-1.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero-1.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero-1.jpg
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:35 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:14:47 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:14:47 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:14:47 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:14:47 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:14:47 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:14:47 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/properties
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /properties
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /properties
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /properties
+[24-Mar-2026 23:14:47 Europe/Berlin] FINAL ROUTER URI: /properties
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /properties
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:14:47 Europe/Berlin] ROUTER DEBUG: Found route without slash: properties
+[24-Mar-2026 23:14:47 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[24-Mar-2026 23:14:47 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:14:47 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method App\Http\Controllers\Front\PageController::properties() in C:\xampp\htdocs\apsdreamhome\routes\router.php:239
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#1 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\routes\router.php on line 239
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/properties
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /properties
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /properties
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /properties
+[24-Mar-2026 23:16:01 Europe/Berlin] FINAL ROUTER URI: /properties
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /properties
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Found route without slash: properties
+[24-Mar-2026 23:16:01 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[24-Mar-2026 23:16:01 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:16:01 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:16:01 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:16:01 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:16:01 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:16:22 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:16:22 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:16:22 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:16:22 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:16:22 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:16:22 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/apple-touch-icon.png
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:16:22 Europe/Berlin] FINAL ROUTER URI: /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/apple-touch-icon.png
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:16:22 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/properties
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /properties
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /properties
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /properties
+[24-Mar-2026 23:16:49 Europe/Berlin] FINAL ROUTER URI: /properties
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /properties
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Found route without slash: properties
+[24-Mar-2026 23:16:49 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[24-Mar-2026 23:16:49 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:16:49 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:16:49 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:16:49 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:16:49 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/properties
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /properties
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /properties
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /properties
+[24-Mar-2026 23:19:03 Europe/Berlin] FINAL ROUTER URI: /properties
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /properties
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Found route without slash: properties
+[24-Mar-2026 23:19:03 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[24-Mar-2026 23:19:03 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:03 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:19:03 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:03 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[24-Mar-2026 23:19:40 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[24-Mar-2026 23:19:40 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero/luxury-home-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero-1.jpg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday1.jpeg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:19:40 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder/property.svg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:19:40 Europe/Berlin] FINAL ROUTER URI: /assets/images/placeholder/property.svg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/placeholder/property.svg
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:19:40 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/properties
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /properties
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /properties
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /properties
+[24-Mar-2026 23:20:48 Europe/Berlin] FINAL ROUTER URI: /properties
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /properties
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Found route without slash: properties
+[24-Mar-2026 23:20:48 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[24-Mar-2026 23:20:48 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:20:48 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:20:48 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:20:48 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:20:48 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:22:12 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:22:12 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:22:12 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:22:12 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:22:12 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:22:12 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/login
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/login
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/login
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/login
+[24-Mar-2026 23:22:12 Europe/Berlin] FINAL ROUTER URI: /admin/login
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /admin/login
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:22:12 Europe/Berlin] ROUTER DEBUG: Found route without slash: admin/login
+[24-Mar-2026 23:22:12 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[24-Mar-2026 23:22:13 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:25:50 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:25:50 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:25:50 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:25:50 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:25:50 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:25:50 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Method: POST, URI: /apsdreamhome/admin/login
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/login
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/login
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/login
+[24-Mar-2026 23:25:50 Europe/Berlin] FINAL ROUTER URI: /admin/login
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Looking for route: POST /admin/login
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:25:50 Europe/Berlin] ROUTER DEBUG: Found route without slash: admin/login
+[24-Mar-2026 23:25:50 Europe/Berlin] Loading controller: App\Http\Controllers\Auth\AdminAuthController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Auth/AdminAuthController.php
+[24-Mar-2026 23:25:50 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:25:51 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:25:51 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:25:51 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:25:51 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:25:51 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:25:51 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/dashboard
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/dashboard
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/dashboard
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/dashboard
+[24-Mar-2026 23:25:51 Europe/Berlin] FINAL ROUTER URI: /admin/dashboard
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /admin/dashboard
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:25:51 Europe/Berlin] ROUTER DEBUG: Found route without slash: admin/dashboard
+[24-Mar-2026 23:25:51 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminDashboardController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminDashboardController.php
+[24-Mar-2026 23:25:51 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:25:55 Europe/Berlin] PHP Warning:  require_once(C:\xampp\htdocs\apsdreamhome\app\views\admin/../../layouts/base.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\apsdreamhome\app\views\admin\dashboard.php on line 1213
+[24-Mar-2026 23:25:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\xampp\htdocs\apsdreamhome\app\views\admin/../../layouts/base.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\apsdreamhome\app\views\admin\dashboard.php:1213
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\BaseController.php(129): include()
+#1 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\AdminDashboardController.php(46): App\Http\Controllers\BaseController->render('admin/dashboard', Array)
+#2 C:\xampp\htdocs\apsdreamhome\routes\router.php(239): App\Http\Controllers\Admin\AdminDashboardController->dashboard()
+#3 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#4 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\views\admin\dashboard.php on line 1213
+[24-Mar-2026 23:32:44 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:32:44 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:32:44 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:32:44 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:32:44 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:32:44 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/dashboard
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/dashboard
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/dashboard
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/dashboard
+[24-Mar-2026 23:32:44 Europe/Berlin] FINAL ROUTER URI: /admin/dashboard
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /admin/dashboard
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:32:44 Europe/Berlin] ROUTER DEBUG: Found route without slash: admin/dashboard
+[24-Mar-2026 23:32:44 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\AdminDashboardController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/AdminDashboardController.php
+[24-Mar-2026 23:32:44 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:32:45 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:32:45 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:32:45 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[24-Mar-2026 23:32:46 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:32:46 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[24-Mar-2026 23:32:46 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:32:46 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[24-Mar-2026 23:34:15 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[24-Mar-2026 23:34:15 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[24-Mar-2026 23:34:15 Europe/Berlin] === INDEX: Creating router instance ===
+[24-Mar-2026 23:34:15 Europe/Berlin] === INDEX: Router created successfully ===
+[24-Mar-2026 23:34:15 Europe/Berlin] === INDEX: Including routes/web.php ===
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER SETUP: Starting route registration
+[24-Mar-2026 23:34:15 Europe/Berlin] === INDEX: Routes included successfully ===
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/properties
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/properties
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/properties
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/properties
+[24-Mar-2026 23:34:15 Europe/Berlin] FINAL ROUTER URI: /admin/properties
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /admin/properties
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[24-Mar-2026 23:34:15 Europe/Berlin] ROUTER DEBUG: Found route without slash: admin/properties
+[24-Mar-2026 23:34:15 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\PropertyManagementController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/PropertyManagementController.php
+[24-Mar-2026 23:34:16 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[24-Mar-2026 23:34:16 Europe/Berlin] PHP Fatal error:  Uncaught Error: Class "App\Core\Database" not found in C:\xampp\htdocs\apsdreamhome\app\Services\LoggingService.php:21
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\PropertyManagementController.php(22): App\Services\LoggingService->__construct()
+#1 C:\xampp\htdocs\apsdreamhome\routes\router.php(233): App\Http\Controllers\Admin\PropertyManagementController->__construct()
+#2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#3 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\Services\LoggingService.php on line 21
+[25-Mar-2026 06:35:20 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:20 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:20 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:20 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:20 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:20 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /
+[25-Mar-2026 06:35:20 Europe/Berlin] FINAL ROUTER URI: /
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /
+[25-Mar-2026 06:35:20 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[25-Mar-2026 06:35:20 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[25-Mar-2026 06:35:20 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[25-Mar-2026 06:35:21 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:21 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:21 Europe/Berlin] FINAL ROUTER URI: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[25-Mar-2026 06:35:21 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:21 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:21 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:32 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:32 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:32 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:33 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:33 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:33 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:33 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/apple-touch-icon.png
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/apple-touch-icon.png
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/apple-touch-icon.png
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/apple-touch-icon.png
+[25-Mar-2026 06:35:33 Europe/Berlin] FINAL ROUTER URI: /assets/images/apple-touch-icon.png
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/apple-touch-icon.png
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:33 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:49 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:49 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:49 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:49 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:49 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:49 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/company/projects
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /company/projects
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /company/projects
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /company/projects
+[25-Mar-2026 06:35:49 Europe/Berlin] FINAL ROUTER URI: /company/projects
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /company/projects
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:49 Europe/Berlin] ROUTER DEBUG: Found route without slash: company/projects
+[25-Mar-2026 06:35:49 Europe/Berlin] Loading controller: App\Http\Controllers\Front\PageController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Front/PageController.php
+[25-Mar-2026 06:35:49 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[25-Mar-2026 06:35:49 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method App\Http\Controllers\Front\PageController::projects() in C:\xampp\htdocs\apsdreamhome\routes\router.php:239
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#1 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\routes\router.php on line 239
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /
+[25-Mar-2026 06:35:53 Europe/Berlin] FINAL ROUTER URI: /
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Found exact route match
+[25-Mar-2026 06:35:53 Europe/Berlin] Loading controller: App\Http\Controllers\HomeController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/HomeController.php
+[25-Mar-2026 06:35:53 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/css/style.css
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/css/style.css
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/css/style.css
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/css/style.css
+[25-Mar-2026 06:35:53 Europe/Berlin] FINAL ROUTER URI: /assets/css/style.css
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/css/style.css
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero/luxury-home-1.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday.jpg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:53 Europe/Berlin] FINAL ROUTER URI: /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/projects/gorakhpur/suryoday1.jpeg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/js/main.js
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/js/main.js
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/js/main.js
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/js/main.js
+[25-Mar-2026 06:35:53 Europe/Berlin] FINAL ROUTER URI: /assets/js/main.js
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/js/main.js
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:53 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:53 Europe/Berlin] FINAL ROUTER URI: /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/placeholder/property.svg
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:53 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:35:54 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:35:54 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:35:54 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:35:54 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:35:54 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:35:54 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/assets/images/hero-1.jpg
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:54 Europe/Berlin] FINAL ROUTER URI: /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /assets/images/hero-1.jpg
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:35:54 Europe/Berlin] ROUTER DEBUG: No dynamic route found, returning 404
+[25-Mar-2026 06:39:00 Europe/Berlin] === INDEX: APS_ROOT = C:\xampp\htdocs\apsdreamhome ===
+[25-Mar-2026 06:39:00 Europe/Berlin] === INDEX: Router path = C:\xampp\htdocs\apsdreamhome/routes/router.php ===
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER FILE: Loading router.php - C:\xampp\htdocs\apsdreamhome\routes\router.php
+[25-Mar-2026 06:39:00 Europe/Berlin] === INDEX: Creating router instance ===
+[25-Mar-2026 06:39:00 Europe/Berlin] === INDEX: Router created successfully ===
+[25-Mar-2026 06:39:00 Europe/Berlin] === INDEX: Including routes/web.php ===
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER SETUP: Starting route registration
+[25-Mar-2026 06:39:00 Europe/Berlin] === INDEX: Routes included successfully ===
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Method: GET, URI: /apsdreamhome/admin/properties
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Host: localhost, Port: 80
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Removed base path - URI now: /admin/properties
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Script name: index.php, Script path: /index.php
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Before slash processing - URI: /admin/properties
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Keeping leading slash for localhost
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: After all processing - Final URI: /admin/properties
+[25-Mar-2026 06:39:00 Europe/Berlin] FINAL ROUTER URI: /admin/properties
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Looking for route: GET /admin/properties
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Route not found in routes array
+[25-Mar-2026 06:39:00 Europe/Berlin] ROUTER DEBUG: Found route without slash: admin/properties
+[25-Mar-2026 06:39:00 Europe/Berlin] Loading controller: App\Http\Controllers\Admin\PropertyManagementController from C:\xampp\htdocs\apsdreamhome\routes/../app/Http/Controllers/Admin/PropertyManagementController.php
+[25-Mar-2026 06:39:00 Europe/Berlin] Failed to initialize LocalizationService: LocalizationService must be initialized with dependencies first using initialize()
+[25-Mar-2026 06:39:00 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method App\Core\Database\Database::getConnection() in C:\xampp\htdocs\apsdreamhome\app\Services\LoggingService.php:21
+Stack trace:
+#0 C:\xampp\htdocs\apsdreamhome\app\Http\Controllers\Admin\PropertyManagementController.php(22): App\Services\LoggingService->__construct()
+#1 C:\xampp\htdocs\apsdreamhome\routes\router.php(233): App\Http\Controllers\Admin\PropertyManagementController->__construct()
+#2 C:\xampp\htdocs\apsdreamhome\public\index.php(86): Router->dispatch()
+#3 {main}
+  thrown in C:\xampp\htdocs\apsdreamhome\app\Services\LoggingService.php on line 21
